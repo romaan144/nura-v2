@@ -1,0 +1,28 @@
+{
+  "name": "Nüra",
+  "short_name": "Nüra",
+  "description": "La IA que conecta personas reales",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8F8FA",
+  "theme_color": "#F8F8FA",
+  "orientation": "portrait",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/logo-iso.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo-iso.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["lifestyle", "social"],
+  "screenshots": [],
+  "prefer_related_applications": false
+}

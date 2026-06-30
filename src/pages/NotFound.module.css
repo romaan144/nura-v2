@@ -1,0 +1,25 @@
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page { min-height: 100dvh; background: var(--paper); display: flex; align-items: center; justify-content: center; padding: 32px; }
+.content { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.logo { width: 64px; height: 64px; object-fit: contain; opacity: 0.4; }
+.title { font-size: var(--text-heading); font-weight: 800; color: var(--ink); letter-spacing: -0.5px; }
+.desc { font-size: var(--text-sm); color: var(--soft); line-height: 1.6; max-width: 260px; }
+.btn { padding: 12px 28px; background: var(--purple); color: white; border: none; border-radius: 100px; font-size: var(--text-sm); font-weight: 700; cursor: pointer; }
+
+.btnSecondary {
+  padding: 12px 28px;
+  background: rgba(0,0,0,0.05);
+  color: rgba(0,0,0,0.55);
+  border: none;
+  border-radius: 100px;
+  font-size: var(--text-base);
+  font-weight: 600;
+  cursor: pointer;
+  font-family: -apple-system,'Inter',sans-serif;
+  transition: opacity 0.15s;
+}
+.btnSecondary:active { opacity: 0.7; }

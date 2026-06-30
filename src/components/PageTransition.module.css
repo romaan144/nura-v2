@@ -1,0 +1,10 @@
+.wrap { flex: 1; min-height: 0; }
+
+.animIn {
+  animation: pageIn 0.2s ease-out forwards;
+}
+
+@keyframes pageIn {
+  from { transform: translateY(5px); }
+  to   { transform: translateY(0); }
+}

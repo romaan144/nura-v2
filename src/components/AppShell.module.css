@@ -1,0 +1,11 @@
+/* ── APP SHELL — única fuente de verdad del layout ─────────────────────
+   Todas las páginas (excepto Home, Login, Chat, Onboarding) renderizan aquí.
+   Ninguna página necesita calcular padding-top, safe-area ni nav-height.
+   ────────────────────────────────────────────────────────────────────── */
+.shell {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+}

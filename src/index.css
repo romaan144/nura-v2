@@ -1,0 +1,456 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
+
+:root {
+  color-scheme: light only;
+}
+
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-size: var(--text-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  background: var(--paper);
+}
+
+:root {
+  /* ── TYPE SCALE (6 stops — Apple pattern) ─────────── */
+  --text-xs:   11px;   /* captions, badges, timestamps */
+  --text-sm:   13px;   /* secondary, meta, labels */
+  --text-base: 15px;   /* body, messages, descriptions */
+  --text-md:   17px;   /* subheadings, emphasized body */
+  --text-lg:   22px;   /* section titles, card headers */
+  --text-xl:   28px;
+  --text-hero: 22px;   /* hero names */
+  --text-heading: 20px;  /* screen titles, step titles */
+  --text-num:  32px;   /* large numbers: ratings, scores */   /* page titles, hero text */
+
+  /* ── SHADOW SCALE (4 tokens) ───────────────────────── */
+  --shadow-xs:  0 1px 3px rgba(13,13,26,0.06);
+
+  /* ── SPACING SCALE ─────────────────────────────────────── */
+  /* ── SAFE AREA LAYOUT ───────────────────────────────────────────
+     Universal spacing that accounts for device safe areas.
+     Every page uses these instead of hardcoded px values.
+  ── */
+  --header-h: calc(max(env(safe-area-inset-top, 0px), 12px) + 64px);
+  --nav-h:    calc(max(env(safe-area-inset-bottom, 0px), 8px) + 65px);
+
+
+  --space-micro:   8px;   /* micro: between inline elements */
+  --space-std:    16px;   /* standard: padding, small gaps */
+  --space-block:  24px;   /* block: between content blocks */
+  --space-section:32px;   /* section: between major sections */
+
+  /* ── RADIUS SCALE ───────────────────────────────────── */
+  --radius-xs:   4px;
+  --radius-full: 100px;
+
+  /* ── Nüra palette — from the logo ─────────────────── */
+  --red2:     #E8002D;
+  --cyan:     #00D4C8;
+  --cyan2:    #00B4AA;
+  --purple:    #7B2FFF;
+  --purple-10: rgba(123,47,255,0.10);
+  --purple-20: rgba(123,47,255,0.20);
+  --purple-40: rgba(123,47,255,0.40);
+  --purple2:  #5A1FCC;
+
+  /* Neutrals */
+  --ink:      #0D0D1A;
+  /* ── INK OPACITY SCALE ─────────────────────────────── */
+  --ink-primary:   rgba(0,0,0,0.85);
+  --ink-secondary: rgba(0,0,0,0.55);
+  --ink-tertiary:  rgba(0,0,0,0.38);
+  --ink-disabled:  rgba(0,0,0,0.25);
+  --ink-border:    rgba(0,0,0,0.08);
+  --mid:      #3D3D5C;
+  --soft:     #8888AA;
+  --rule:     #E4E4F0;
+  --rule2:    #F0F0FA;
+  --paper:    #F5F5F8;
+  --white:    #FFFFFF;
+
+  /* ── SEMANTIC COLORS ────────────────────────────────── */
+  --green:        #059669;   /* verified, available, success */
+  --green-light:  #ECFDF5;   /* green background tint */
+  --green-dot:    #22C55E;   /* availability dot */
+  --red:          #EF4444;   /* error, remove, danger */
+  --red-light:    #FEF2F2;   /* red background tint */
+  --amber-light:  #FEF3C7;   /* amber background tint */
+  --blue:         #3B82F6;   /* info, links */
+  --blue-light:   #EFF6FF;   /* blue background tint */
+
+  --green-old: #00C48C;  /* legacy — use --green instead */
+  --amber:    #FFB800;
+
+  /* Gradients */
+  --grad-main: linear-gradient(135deg, #FF3B3B 0%, #A020F0 50%, #00D4C8 100%);
+  --grad-soft: linear-gradient(135deg, rgba(255,59,59,0.08) 0%, rgba(160,32,240,0.06) 50%, rgba(0,212,200,0.08) 100%);
+  --grad-card: linear-gradient(145deg, #ffffff 0%, #F8F6FF 100%);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 4px rgba(13,13,26,0.06);
+  --shadow-md: 0 4px 20px rgba(13,13,26,0.08);
+  --shadow-lg: 0 12px 48px rgba(13,13,26,0.12);
+  --shadow-color: 0 8px 32px rgba(123,47,255,0.18);
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 30px;
+
+  /* Spacing system — use these everywhere */
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  12px;
+  --space-lg:  16px;
+  --space-xl:  20px;
+  --space-2xl: 28px;
+
+  /* Card standard */
+  --card-padding: 16px;
+  --card-radius:  18px;
+  --card-shadow:  0 2px 8px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05);
+
+  /* Page horizontal margin */
+  --page-x: clamp(12px, 4vw, 20px);
+}
+
+:root {
+  --chat-gap:             12px;
+  --chat-gap-md:          20px;
+  --float-bottom-h:       76px;
+  --float-bottom-h-chips: 133px;
+}
+
+
+
+h1, h2, h3 { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; }
+button { cursor: pointer; font-family: inherit; border: none; background: none; }
+input, textarea { font-family: inherit; }
+a { text-decoration: none; color: inherit; }
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
+
+
+/* ── GLASS MORPHISM UTILITIES ── */
+.glass {
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+body {
+  background: #F7F7F9;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: clamp(13px, 3.8vw, 16px);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Safe area — fill iPhone rounded screen */
+html {
+  height: 100%;
+}
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  min-height: 100dvh;
+  box-sizing: border-box;
+}
+
+/* ══════════════════════════════════════════════════════════
+   DESKTOP LAYOUT — 768px+
+   ══════════════════════════════════════════════════════════ */
+@media (min-width: 768px) {
+
+  /* Desktop shell */
+  body {
+    background: #DDDDE0;
+    min-height: 100dvh;
+    display: flex;
+    align-items: stretch;
+  }
+
+  #root {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    background: #F7F7F9;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.07), 0 4px 48px rgba(0,0,0,0.14);
+    min-height: 100dvh;
+  }
+}
+
+.desktopMain {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ══════════════════════════════════════════════════════════
+   DESKTOP FIXES — contain all fixed/sticky elements
+   ══════════════════════════════════════════════════════════ */
+@media (min-width: 768px) {
+
+  /* Pages that use height:100dvh need to fill desktopMain instead */
+  .desktopMain {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Home and RegisterHelper — chat pages that need to fill height */
+  .desktopMain > * {
+    flex: 1;
+  }
+
+  /* Notification overlay in Feed — should be within the app, not full screen */
+  /* Fixed by targeting the overlay to be within #root bounds */
+
+  /* Sticky headers on desktop — no offset needed (no top bar) */
+
+  /* Login blobs — contain within the login page */
+
+  /* General padding improvements for desktop content */
+  .desktopMain input,
+  .desktopMain textarea {
+    font-size: 15px; /* Prevent zoom on focus on desktop */
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   GLASS SYSTEM — mismo material en toda la app
+   ══════════════════════════════════════════════════════ */
+
+/* Burbuja circular (botones nav, back, share) */
+.glassCircle {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.35);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.05), 0 0 0 0.5px rgba(0,0,0,0.06);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+  transition: opacity 0.2s;
+  color: var(--ink-secondary);
+}
+.glassCircle:active { opacity: 0.6; }
+
+/* Cápsula de input */
+.glassCapsule {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 100px;
+  padding: 9px 9px 9px 18px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.05), 0 0 0 0.5px rgba(0,0,0,0.06);
+  transition: all 0.25s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+.glassCapsule:focus-within {
+  background: rgba(255,255,255,0.86);
+}
+
+/* ── PREMIUM SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.2); }
+
+/* ── SELECTION ── */
+::selection { background: rgba(123,47,255,0.15); color: inherit; }
+
+/* ── BUTTON RESET ── */
+button { font-family: -apple-system, 'Inter', sans-serif; cursor: pointer; }
+
+/* ── SMOOTH RENDERING ── */
+* { -webkit-tap-highlight-color: transparent; }
+img { -webkit-user-drag: none; }
+
+/* ── FOCUS VISIBLE — iOS style ── */
+*:focus { outline: none; }
+*:focus-visible { outline: 2px solid rgba(123,47,255,0.5); outline-offset: 2px; border-radius: 4px; }
+input:focus-visible, textarea:focus-visible { outline: none; }
+
+/* ── BOTTOM NAV CLEARANCE ─────────────────────────────────
+   Pages with scrollable content need padding to clear the
+   72px bottom nav. Applied globally on mobile.
+   ────────────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .pageScrollable {
+    padding-bottom: calc(72px + max(env(safe-area-inset-bottom, 0px), 8px));
+  }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── FEEDBACK TÁCTIL GLOBAL ────────────────────────────────────────── */
+button,
+a,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:active,
+a:active,
+[role="button"]:active {
+  transform: scale(0.96);
+  opacity: 0.82;
+  transition: transform 0.08s ease-out, opacity 0.08s ease-out;
+}
+
+input:active,
+textarea:active {
+  transform: none;
+  opacity: 1;
+}
+
+/* ── ENTRADA TARJETAS ────────────────────────────────────────────────── */
+@keyframes cardIn {
+  from { transform: translateY(40px); }
+  to   { transform: translateY(0); }
+}
+
+/* ── SKELETON LOADER ─────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(0,0,0,0.05) 25%,
+    rgba(0,0,0,0.09) 37%,
+    rgba(0,0,0,0.05) 63%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-card {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 14px 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(0,0,0,0.07);
+}
+
+.skeleton-avatar {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.skeleton-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton-line-lg { height: 13px; width: 55%; }
+.skeleton-line-md { height: 11px; width: 35%; }
+.skeleton-line-sm { height: 10px; width: 75%; }
+
+/* ── EMPTY STATE ENTRADA ─────────────────────────────────────────────── */
+@keyframes emptyIn {
+  from { transform: translateY(20px); }
+  to   { transform: translateY(0); }
+}
+@keyframes floatIcon {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   KEYFRAMES GLOBALES — todos forwards, sin both, sin will-change
+   ══════════════════════════════════════════════════════════════ */
+
+@keyframes fadeUp {
+  from { transform: translateY(20px); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes fadeLeft {
+  from { transform: translateX(-16px); }
+  to   { transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.88); }
+  to   { transform: scale(1); }
+}
+
+@keyframes headerDown {
+  from { transform: translateY(-8px); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes bubbleIn {
+  from { transform: translateY(10px) scale(0.97); }
+  to   { transform: translateY(0) scale(1); }
+}
+
+@keyframes pillSlide {
+  from { transform: translateX(-10px); }
+  to   { transform: translateX(0); }
+}
+
+@keyframes msgIn {
+  from { transform: translateY(14px); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes chipIn {
+  from { transform: translateY(8px); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes slideInTest {
+  from { transform: translateY(60px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes cardCascade {
+  from { transform: translateY(16px); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@keyframes fadeInLeft {
+  from { transform: translateX(-12px); opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+
+@keyframes popIn {
+  from { transform: scale(0.94); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
