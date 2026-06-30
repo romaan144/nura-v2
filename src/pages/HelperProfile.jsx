@@ -215,6 +215,17 @@ function HelperProfileInner() {
       } catch {}
       setShowGate(true); return
     }
+    const hasContext = location.state?.userQuery || location.state?.analysis || window.__nuraLastQuery
+    if (hasContext) {
+      navigate(`/intro/${enrichedH.id}`, {
+        state: {
+          helper: h,
+          userQuery: location.state?.userQuery,
+          analysis: location.state?.analysis || window.__nuraLastAnalysis
+        }
+      })
+      return
+    }
     navigate(`/chat/${enrichedH.id}`, { state: { helper: h, userQuery: location.state?.userQuery } })
   }
 

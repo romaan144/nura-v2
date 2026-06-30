@@ -237,9 +237,9 @@ export default function Chat() {
     return []
   })
 
-  // Add welcome message from helper if chat is empty
+  // Add welcome message from helper if chat is empty (only when there's no intro letter pending)
   useEffect(() => {
-    if (messages.length === 0 && helper) {
+    if (messages.length === 0 && helper && !location.state?.introLetterText) {
       const firstName = helper.name?.split(' ')?.[0] || helper.name
       const welcomeMsg = {
         id: 'welcome',
@@ -264,7 +264,7 @@ export default function Chat() {
   }
 
   const [input, setInput] = useState(() =>
-    (!!location.state?.userQuery || !!window.__nuraLastQuery) && !hasHistory
+    (!!location.state?.userQuery || !!window.__nuraLastQuery) && !hasHistory && !location.state?.introLetterText
       ? buildPreFill(
           helpersCache?.[parseInt(id)] || helpersCache?.[id] ||
           HELPERS.filter(Boolean).find(h => String(h.id) === String(id)),
@@ -284,6 +284,31 @@ export default function Chat() {
     if (!helper) return
     setSuggested(generateFirstMessage(helper))
     markRead?.(helper.id)
+
+    // If coming from the Intro Letter screen, send it as the first user message
+    if (location.state?.introLetterText && !hasHistory) {
+      const letterMsg = {
+        id: Date.now(),
+        from: 'user',
+        text: location.state.introLetterText,
+        time: new Date().toISOString()
+      }
+      setMessages([letterMsg])
+      setTyping(true)
+      const delay = 1200 + Math.random() * 600
+      setTimeout(() => {
+        setTyping(false)
+        const reply = getHelperReply(helper, 1, location.state.introLetterText, true)
+        const replyMsg = {
+          id: Date.now() + 1,
+          from: 'helper',
+          text: reply,
+          time: new Date().toISOString()
+        }
+        setMessages(prev => [...prev, replyMsg])
+      }, delay)
+      return
+    }
 
     // Send initial greeting if no history
     if (!hasHistory) {

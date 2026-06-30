@@ -17,10 +17,26 @@ function generateFirstMessage(helper) {
   return map[helper.category] || `Hola ${name}, te contacto Hola, ¿tienes disponibilidad?`
 }
 
-function getHelperReply(helper, count, userMsg = '') {
+function getHelperReply(helper, count, userMsg = '', isIntroLetter = false) {
   const name = getFirstName(helper.name) || ''
   const t = userMsg.toLowerCase()
-  
+
+  // Response to a Nüra-written intro letter — acknowledge the context, don't re-ask basics
+  if (isIntroLetter && count === 1) {
+    const cat = helper.category || 'otro'
+    const acknowledgments = {
+      logopeda:    `Hola, gracias por escribir. He leído el contexto que me ha pasado Nüra — me encajan bien estos casos. ¿Te viene bien que hablemos esta semana para concretar horarios?`,
+      cuidado:     `Hola, gracias por confiar en mí. Ya tengo una idea clara de la situación gracias al mensaje de Nüra. ¿Podemos hablar para conocer mejor los horarios y empezar pronto?`,
+      tecnico:     `Hola, perfecto, ya veo de qué se trata. Puedo pasar a verlo. ¿Qué días te van mejor?`,
+      salud:       `Hola, gracias por contarme tu situación a través de Nüra. Me gustaría agendar una primera sesión para conocernos mejor. ¿Tienes disponibilidad esta semana?`,
+      legal:       `Hola, he leído el resumen de tu caso. Creo que puedo orientarte bien. ¿Te viene bien una primera llamada para hablar con más detalle?`,
+      entrenador:  `Hola, genial que me escribas. Con el contexto que me ha dado Nüra ya tengo una idea de por dónde empezar. ¿Reservamos la primera sesión de valoración?`,
+      mascotas:    `Hola, gracias por el mensaje. Encantada de ayudar — ¿cuándo te vendría bien empezar?`,
+      clases:      `Hola, gracias por escribir. Con lo que me cuenta Nüra ya sé por dónde enfocar las clases. ¿Empezamos esta semana?`,
+    }
+    return acknowledgments[cat] || `Hola, gracias por escribirme con tanto detalle. Ya tengo claro el contexto — ¿cuándo te vendría bien que habláramos?`
+  }
+
   // Initial greeting (count=0) — warm professional hello
   if (count === 0) {
     const cat = helper.category || 'otro'

@@ -6,6 +6,7 @@ import Splash from './pages/Splash'
 import Home from './pages/Home'
 import Results from './pages/Results'
 const HelperProfile = lazy(() => import('./pages/HelperProfile'))
+const IntroLetter = lazy(() => import('./pages/IntroLetter'))
 import Chat from './pages/Chat'
 import Login from './pages/Login'
 import Profile from './pages/Profile'
@@ -72,6 +73,7 @@ function AppRoutes() {
                 : <Navigate to="/" />
             } />
             <Route path="/helper/:id" element={<HelperProfile />} />
+            <Route path="/intro/:id" element={<IntroLetter />} />
             <Route path="/chat/:id" element={<Chat />} />
             <Route path="/my-services" element={<MyServices />} />
             <Route path="/siguiendo" element={<Siguiendo />} />
