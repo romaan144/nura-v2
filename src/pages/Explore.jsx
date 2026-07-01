@@ -24,12 +24,12 @@ const ACTIVITY_SIGNALS = [
 function getLiveHelpers() {
   const picks = [2003, 2001, 2020, 2044, 2128]
   return picks.map((id, i) => {
-    const base = LOCAL_DEMO_HELPERS.find(h => h.id === id)
+    const base = LOCAL_DEMO_HELPERS.find(h => h?.id === id)
+    if (!base) return null
     const enriched = DEMO_ENRICHMENTS[id]
-    const h = enriched ? { ...enriched, ...base } : base
-    if (!h) return null
+    const h = enriched ? { ...enriched, ...base, id } : { ...base, id }
     return { ...h, activitySignal: ACTIVITY_SIGNALS[i % ACTIVITY_SIGNALS.length]() }
-  }).filter(Boolean)
+  }).filter(h => h != null && h.id != null)
 }
 
 function EscaparateVivo({ onHelperTap }) {
