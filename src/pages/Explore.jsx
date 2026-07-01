@@ -6,10 +6,110 @@ import { Search, ArrowLeft, Loader2, SlidersHorizontal,
          Dumbbell, Baby, MapPin, Star, Laptop, Palette, Car, PartyPopper, Globe } from 'lucide-react'
 import { searchHelpers, getAllHelpers } from '../utils/supabase'
 import { HELPERS as LOCAL_DEMO_HELPERS } from '../data/helpers'
+import { DEMO_ENRICHMENTS } from '../data/demoEnrichments'
 import { analyzeNeed, matchHelpers } from '../utils/matching'
 import { useUser } from '../context/UserContext'
 import HelperCard from '../components/HelperCard'
 import styles from './Explore.module.css'
+
+// ── Escaparate Vivo — señales de actividad reciente ──────────────────────
+const ACTIVITY_SIGNALS = [
+  () => `respondió a un mensaje hace ${Math.floor(Math.random()*50)+5} minutos`,
+  () => `completó una sesión esta mañana`,
+  () => `aceptó una consulta hace ${Math.floor(Math.random()*3)+1} hora${Math.floor(Math.random()*3)+1 > 1 ? 's' : ''}`,
+  () => `está disponible ahora mismo`,
+  () => `recibió una valoración de 5★ hoy`,
+]
+
+function getLiveHelpers() {
+  const picks = [2003, 2001, 2020, 2044, 2128]
+  return picks.map((id, i) => {
+    const base = LOCAL_DEMO_HELPERS.find(h => h.id === id)
+    const enriched = DEMO_ENRICHMENTS[id]
+    const h = enriched ? { ...enriched, ...base } : base
+    if (!h) return null
+    return { ...h, activitySignal: ACTIVITY_SIGNALS[i % ACTIVITY_SIGNALS.length]() }
+  }).filter(Boolean)
+}
+
+function EscaparateVivo({ onHelperTap }) {
+  const [liveHelpers] = useState(getLiveHelpers)
+  return (
+    <div style={{ margin: '0 0 16px' }}>
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '0 16px', marginBottom: '10px'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <div style={{
+            width: '7px', height: '7px', borderRadius: '50%',
+            background: '#10B981', boxShadow: '0 0 0 3px rgba(16,185,129,0.20)',
+            animation: 'bgPulseAnim 2s ease-in-out infinite'
+          }} />
+          <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.1px' }}>
+            Activos ahora
+          </span>
+        </div>
+        <span style={{ fontSize: '11px', color: 'rgba(0,0,0,0.35)' }}>Barcelona</span>
+      </div>
+
+      <div style={{
+        display: 'flex', gap: '10px',
+        overflowX: 'auto', paddingLeft: '16px', paddingRight: '16px',
+        paddingBottom: '4px', scrollbarWidth: 'none',
+        WebkitOverflowScrolling: 'touch',
+      }}>
+        {liveHelpers.map((h, i) => (
+          <div key={h.id} onClick={() => onHelperTap(h)} style={{
+            flexShrink: 0, width: '138px',
+            background: 'white', borderRadius: '16px',
+            border: '1px solid rgba(0,0,0,0.07)',
+            padding: '12px 12px 10px',
+            boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
+            cursor: 'pointer',
+            animation: `cardCascade 0.4s ease-out ${i * 60}ms both`,
+          }}>
+            <div style={{ position: 'relative', marginBottom: '8px' }}>
+              {h.avatarUrl
+                ? <img src={h.avatarUrl} alt={h.name}
+                    style={{ width: '44px', height: '44px', borderRadius: '50%', objectFit: 'cover' }} />
+                : <div style={{
+                    width: '44px', height: '44px', borderRadius: '50%',
+                    background: h.avatarColor || 'var(--purple)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '14px', fontWeight: 700, color: 'white'
+                  }}>{h.avatar || h.name?.[0]}</div>
+              }
+              <div style={{
+                position: 'absolute', bottom: 1, right: 1,
+                width: '10px', height: '10px', borderRadius: '50%',
+                background: '#10B981', border: '2px solid white',
+              }} />
+            </div>
+            <div style={{
+              fontSize: '12px', fontWeight: 700, color: 'var(--ink)',
+              letterSpacing: '-0.2px', marginBottom: '2px',
+              whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'
+            }}>
+              {h.name?.split(' ')?.[0]} {h.name?.split(' ')?.[1]?.[0]}.
+            </div>
+            <div style={{
+              fontSize: '10px', color: 'rgba(0,0,0,0.45)',
+              marginBottom: '7px', lineHeight: 1.3,
+              display: '-webkit-box', WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical', overflow: 'hidden'
+            }}>{h.specialty}</div>
+            <div style={{
+              fontSize: '10px', color: '#059669', fontWeight: 500, lineHeight: 1.3,
+              display: '-webkit-box', WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical', overflow: 'hidden'
+            }}>{h.activitySignal}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 // ── CATEGORÍAS ────────────────────────────────────────────────────────────
 const CATEGORIES = [
@@ -356,6 +456,10 @@ export default function Explore() {
             🏘 47 personas en Barcelona usan Nüra esta semana · 1.008 profesionales verificados
           </div>
         )}
+        {!isListView && !isLoading && (
+          <EscaparateVivo onHelperTap={h => navigate(`/helper/${h.id}`, { state: { helper: h } })} />
+        )}
+
         {!isListView && !isLoading && (
           <div className={styles.catGrid}>
             {CATEGORIES.map(cat => {
