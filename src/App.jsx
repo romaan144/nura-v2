@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { useUser } from './context/UserContext'
 
 import Splash from './pages/Splash'
+import MomentoCero from './pages/MomentoCero'
 import Home from './pages/Home'
 import Results from './pages/Results'
 const HelperProfile = lazy(() => import('./pages/HelperProfile'))
@@ -31,6 +32,7 @@ import AppErrorBoundary from './components/AppErrorBoundary'
 function AppRoutes() {
   const [searchState, setSearchState] = useState(null)
   const [showSplash, setShowSplash] = useState(true)
+  const [showMomentoCero, setShowMomentoCero] = useState(false)
   const location = useLocation()
   const { user } = useUser()
   const [showOnboarding, setShowOnboarding] = useState(() => {
@@ -39,7 +41,14 @@ function AppRoutes() {
   })
 
   if (showSplash) {
-    return <Splash onFinish={() => setShowSplash(false)} />
+    return <Splash onFinish={() => {
+      setShowSplash(false)
+      setShowMomentoCero(true)
+    }} />
+  }
+
+  if (showMomentoCero) {
+    return <MomentoCero onFinish={() => setShowMomentoCero(false)} />
   }
 
   return (
