@@ -121,8 +121,9 @@ export function UserProvider({ children }) {
     }
     setChats(updated)
     save('nura_chats', updated)
-    if (!contactedHelpers.includes(helperId)) {
-      const c = [...contactedHelpers, helperId]
+    if (!contactedHelpers.find(c => (c.id || c) === helperId)) {
+      const entry = { id: helperId, name: helperName, contactedAt: Date.now() }
+      const c = [...contactedHelpers, entry]
       setContactedHelpers(c)
       save('nura_contacted', c)
     }

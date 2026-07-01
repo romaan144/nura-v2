@@ -219,7 +219,7 @@ const HELPER_SUGGESTIONS = [
 
 export default function Home({ setSearchState }) {
   const navigate = useNavigate()
-  const { user, addSearch, searchHistory, favorites, helpersCache, nuraChatMessages, setNuraChatMessages, nuraLastMatches, setNuraLastMatches, cacheHelpers } = useUser()
+  const { user, addSearch, searchHistory, favorites, helpersCache, nuraChatMessages, setNuraChatMessages, nuraLastMatches, setNuraLastMatches, cacheHelpers, contactedHelpers } = useUser()
   // messages persisted in context so they survive navigation
   const messages = nuraChatMessages
   const setMessages = setNuraChatMessages
@@ -340,6 +340,36 @@ export default function Home({ setSearchState }) {
         })
       }, 8000))
     }
+
+    // ── La Confirmación Humana ──────────────────────────────────────────
+    // 3 real days after contact (30s in demo) Nüra asks if the connection worked
+    const DEMO_MODE = true // set to false in production
+    const THRESHOLD = DEMO_MODE ? 30 * 1000 : 3 * 24 * 60 * 60 * 1000
+
+    const pending = (contactedHelpers || []).find(c => {
+      if (!c?.contactedAt) return false
+      const elapsed = Date.now() - c.contactedAt
+      const alreadyAnswered = c.confirmed !== undefined
+      return elapsed >= THRESHOLD && !alreadyAnswered
+    })
+
+    if (pending && user && nuraChatMessages.length === 0) {
+      timers.push(setTimeout(() => {
+        setMessages(prev => {
+          if (prev.some(m => m.isConfirmacion)) return prev
+          return [...prev, {
+            id: Date.now() + 88,
+            from: 'nura',
+            isConfirmacion: true,
+            confirmacionHelperId: pending.id,
+            confirmacionHelperName: pending.name,
+            lines: [`¿Pudiste resolver lo que necesitabas con **${pending.name?.split(' ')?.[0] || pending.name}**?`],
+            chips: ['Sí, genial', 'No del todo'],
+          }]
+        })
+      }, DEMO_MODE ? 4000 : 500))
+    }
+
     return () => timers.forEach(clearTimeout)
   }, [user?.id])
 
@@ -366,6 +396,35 @@ export default function Home({ setSearchState }) {
     setShowSuggestions(false)
     setMessages(prev => [...prev, { id: Date.now(), from: 'user', text: msg }])
     setLoading(true)
+
+    // ── La Confirmación Humana — interceptar respuesta ──────────────
+    const confirmMsg = messages.find(m => m.isConfirmacion)
+    if (confirmMsg) {
+      const helperName = confirmMsg.confirmacionHelperName?.split(' ')?.[0] || 'el profesional'
+      const isPositive = msg.toLowerCase().includes('sí') || msg.toLowerCase().includes('genial')
+
+      setTimeout(() => {
+        if (isPositive) {
+          setMessages(prev => [...prev, {
+            id: Date.now(), from: 'nura',
+            lines: [
+              `Me alegra mucho. **${helperName}** queda anotado como una conexión que funcionó. 🤍`,
+              `Esto ayuda a que otras personas en tu misma situación le encuentren más fácilmente.`
+            ]
+          }])
+        } else {
+          setMessages(prev => [...prev, {
+            id: Date.now(), from: 'nura',
+            lines: [
+              `Lo siento. ¿Quieres que busque otra persona para lo que necesitabas?`
+            ],
+            chips: ['Sí, busca otra persona', 'Ya lo resolví de otra forma']
+          }])
+        }
+        setLoading(false)
+      }, 800)
+      return
+    }
 
     const intent = detectIntent(msg, user)
 
