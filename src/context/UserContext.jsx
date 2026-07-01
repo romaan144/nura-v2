@@ -193,6 +193,14 @@ export function UserProvider({ children }) {
     save('nura_notifications', updated)
   }
 
+  function confirmContact(helperId, confirmed) {
+    const updated = contactedHelpers.map(c =>
+      (c.id || c) === helperId ? { ...c, confirmed, confirmedAt: Date.now() } : c
+    )
+    setContactedHelpers(updated)
+    save('nura_contacted', updated)
+  }
+
   const unreadNotifs = (notifications||[]).filter(n => !n.read).length
   const totalUnreadChats = chats.reduce((s, c) => s + (c.unread || 0), 0)
 
@@ -202,7 +210,7 @@ export function UserProvider({ children }) {
       chats, addChat, markRead, totalUnreadChats,
       ratings, addRating, hasRated,
       searchHistory, addSearch,
-      contactedHelpers,
+      contactedHelpers, confirmContact,
       helpersCache, cacheHelpers,
       following, follow, unfollow, isFollowing,
       notifications, markNotifsRead, unreadNotifs,

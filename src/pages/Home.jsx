@@ -25,7 +25,7 @@ const CONTEXT_CHIPS = {
 }
 
 
-function getWelcome(user, searchHistory, following, helpersCache) {
+function getWelcome(user, searchHistory, following, helpersCache, contactedHelpers) {
   const hour = new Date().getHours()
   const greeting = hour < 14 ? 'Buenos días' : hour < 21 ? 'Buenas tardes' : 'Buenas noches'
   const firstName = user?.name?.split(' ')?.[0] || user?.name
@@ -35,16 +35,48 @@ function getWelcome(user, searchHistory, following, helpersCache) {
     `Describe lo que necesitas. Encontraremos a la persona adecuada.`,
   ]
 
-  // Use what Nüra knows about this user
+  // ── La Memoria Viva ─────────────────────────────────────────────────
+  // If there's a confirmed successful connection, Nüra asks about that person
+  const confirmedContacts = (contactedHelpers || []).filter(c => c?.confirmed === true)
+  if (confirmedContacts.length > 0) {
+    const last = confirmedContacts[confirmedContacts.length - 1]
+    const helperFirst = last.name?.split(' ')?.[0] || last.name
+    // Find what the user originally searched for when they contacted this helper
+    const relatedSearch = (searchHistory || []).find(s =>
+      s.category === last.category ||
+      (s.query && last.name && s.query.toLowerCase().includes(helperFirst.toLowerCase()))
+    )
+    if (relatedSearch) {
+      return [
+        `${greeting}, **${firstName}**.`,
+        `¿Cómo va todo con **${helperFirst}**? ¿Necesitas algo más para lo que buscabas, o hay algo nuevo en lo que pueda ayudarte?`
+      ]
+    }
+    return [
+      `${greeting}, **${firstName}**.`,
+      `¿Cómo está yendo todo con **${helperFirst}**? Cuéntame si puedo ayudarte con algo más.`
+    ]
+  }
+
+  // If there are contacts pending confirmation (no answer yet)
+  const pendingContacts = (contactedHelpers || []).filter(c => c?.id && c?.confirmed === undefined)
+  if (pendingContacts.length > 0) {
+    const last = pendingContacts[pendingContacts.length - 1]
+    const helperFirst = last.name?.split(' ')?.[0] || last.name
+    return [
+      `${greeting}, **${firstName}**.`,
+      `¿Pudiste resolver lo que necesitabas con **${helperFirst}**? ¿O buscamos otra persona?`
+    ]
+  }
+
+  // ── Returning user with recent search ───────────────────────────────
   const lastSearch = searchHistory?.[searchHistory.length - 1]?.query
   const favHelpers = (following || [])
     .map(id => helpersCache?.[id] || helpersCache?.[String(id)])
     .filter(Boolean)
   const topFav = favHelpers[0]
 
-  // Returning user with history — show active memory
   if (lastSearch && searchHistory?.length > 2) {
-    // Check if search was recent (last 48h)
     const lastSearchObj = searchHistory[searchHistory.length - 1]
     const hoursAgo = lastSearchObj?.ts
       ? Math.floor((Date.now() - lastSearchObj.ts) / (1000 * 60 * 60))
@@ -76,6 +108,7 @@ function getWelcome(user, searchHistory, following, helpersCache) {
       `¿Qué necesitas hoy? Cuéntamelo y encuentro a la persona exacta.`
     ]
   }
+
   // Default greeting
   if (user.isHelper) return [`${greeting}, **${firstName}**. ¿Qué necesitas hoy?`]
   return [
@@ -219,7 +252,7 @@ const HELPER_SUGGESTIONS = [
 
 export default function Home({ setSearchState }) {
   const navigate = useNavigate()
-  const { user, addSearch, searchHistory, favorites, helpersCache, nuraChatMessages, setNuraChatMessages, nuraLastMatches, setNuraLastMatches, cacheHelpers, contactedHelpers } = useUser()
+  const { user, addSearch, searchHistory, favorites, helpersCache, nuraChatMessages, setNuraChatMessages, nuraLastMatches, setNuraLastMatches, cacheHelpers, contactedHelpers, confirmContact } = useUser()
   // messages persisted in context so they survive navigation
   const messages = nuraChatMessages
   const setMessages = setNuraChatMessages
@@ -241,7 +274,7 @@ export default function Home({ setSearchState }) {
   const [floatH, setFloatH] = useState(84) /* header height fallback */
 
   useEffect(() => {
-    let lines = getWelcome(user)
+    let lines = getWelcome(user, searchHistory, following, helpersCache, contactedHelpers)
     // If just came from onboarding with a name — magic first moment
     let justOnboarded; try { justOnboarded = sessionStorage.getItem('nura_just_onboarded') } catch {}
     if (justOnboarded) {
@@ -402,6 +435,11 @@ export default function Home({ setSearchState }) {
     if (confirmMsg) {
       const helperName = confirmMsg.confirmacionHelperName?.split(' ')?.[0] || 'el profesional'
       const isPositive = msg.toLowerCase().includes('sí') || msg.toLowerCase().includes('genial')
+
+      // Persist the confirmation in context
+      if (confirmMsg.confirmacionHelperId) {
+        confirmContact(confirmMsg.confirmacionHelperId, isPositive)
+      }
 
       setTimeout(() => {
         if (isPositive) {
@@ -814,7 +852,7 @@ export default function Home({ setSearchState }) {
               onClick={() => {
                 setMessages([])
                 setLastMatches([])
-                setTimeout(() => setMessages([{ id: 1, from: 'nura', lines: getWelcome(user) }]), 100)
+                setTimeout(() => setMessages([{ id: 1, from: 'nura', lines: getWelcome(user, searchHistory, following, helpersCache, contactedHelpers) }]), 100)
               }}>
               <RotateCcw size={15} color="rgba(0,0,0,0.6)" />
             </button>
