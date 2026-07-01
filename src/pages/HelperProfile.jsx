@@ -247,127 +247,160 @@ function HelperProfileInner() {
       <div className={styles.scroll}>
 
         {/* ══════════════════════════════════════════════════
-            HERO — quien es esta persona en 5 segundos
+            HERO EDITORIAL — la persona, no el formulario
             ══════════════════════════════════════════════════ */}
-        <div className={styles.hero} style={{animation:'fadeInUp 0.3s ease-out forwards'}}>
+        <div className={styles.hero} style={{animation:'fadeInUp 0.35s ease-out forwards'}}>
 
-          {/* Avatar + availability */}
-          <div className={styles.avatarWrap}>
-            {enrichedH.avatarUrl
-              ? <img src={enrichedH.avatarUrl} alt={enrichedH.name} className={styles.avatar} style={{opacity:0}} onLoad={e => e.target.style.animation="popIn 0.35s ease-out forwards"} />
-              : <div className={styles.avatarFallback} style={{background: enrichedH.avatarColor || 'var(--purple)'}}>
-                  {enrichedH.name?.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase() || enrichedH.avatar}
+          {/* Avatar grande — protagonista */}
+          <div style={{
+            display:'flex', flexDirection:'column', alignItems:'center',
+            paddingTop:'8px', paddingBottom:'20px',
+            borderBottom:'1px solid rgba(0,0,0,0.06)',
+            marginBottom:'20px'
+          }}>
+            <div style={{position:'relative', marginBottom:'14px'}}>
+              {enrichedH.avatarUrl
+                ? <img src={enrichedH.avatarUrl} alt={enrichedH.name}
+                    style={{
+                      width:'96px', height:'96px', borderRadius:'50%', objectFit:'cover',
+                      boxShadow:'0 4px 20px rgba(0,0,0,0.12)',
+                      opacity:0, animation:'popIn 0.4s ease-out 0.1s forwards'
+                    }} />
+                : <div style={{
+                    width:'96px', height:'96px', borderRadius:'50%',
+                    background: enrichedH.avatarColor || 'var(--purple)',
+                    display:'flex', alignItems:'center', justifyContent:'center',
+                    fontSize:'32px', fontWeight:700, color:'white',
+                    boxShadow:'0 4px 20px rgba(0,0,0,0.15)',
+                    animation:'popIn 0.4s ease-out 0.1s forwards'
+                  }}>
+                    {enrichedH.name?.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase() || enrichedH.avatar}
+                  </div>
+              }
+              {enrichedH.available && (
+                <div style={{
+                  position:'absolute', bottom:2, right:2,
+                  width:'20px', height:'20px', borderRadius:'50%',
+                  background:'#10B981', border:'3px solid white',
+                  boxShadow:'0 2px 6px rgba(16,185,129,0.4)'
+                }} />
+              )}
+            </div>
+
+            {/* Nombre grande */}
+            <h1 style={{
+              fontSize:'24px', fontWeight:800, color:'var(--ink)',
+              letterSpacing:'-0.5px', margin:'0 0 4px', textAlign:'center'
+            }}>{enrichedH.name}</h1>
+
+            {/* Especialidad */}
+            <div style={{
+              fontSize:'14px', color:'rgba(0,0,0,0.45)', fontWeight:500,
+              textAlign:'center', marginBottom:'10px'
+            }}>
+              {enrichedH.specialty}
+              {enrichedH.dniVerified && (
+                <span style={{
+                  marginLeft:'8px', fontSize:'11px', fontWeight:700,
+                  color:'#065f46', background:'rgba(16,185,129,0.12)',
+                  borderRadius:'99px', padding:'2px 8px',
+                  display:'inline-flex', alignItems:'center', gap:'3px'
+                }}>
+                  <Shield size={9} color='#065f46' /> Verificado
+                </span>
+              )}
+            </div>
+
+            {/* Stats como logros — no como números */}
+            <div style={{
+              display:'flex', gap:'0', alignItems:'stretch',
+              background:'rgba(0,0,0,0.03)', borderRadius:'14px',
+              overflow:'hidden', border:'1px solid rgba(0,0,0,0.06)',
+              width:'100%', maxWidth:'320px'
+            }}>
+              {enrichedH.rating && (
+                <div style={{flex:1, padding:'10px 8px', textAlign:'center', borderRight:'1px solid rgba(0,0,0,0.06)'}}>
+                  <div style={{fontSize:'17px', fontWeight:800, color:'var(--ink)', letterSpacing:'-0.5px'}}>
+                    {enrichedH.rating}★
+                  </div>
+                  <div style={{fontSize:'10px', color:'rgba(0,0,0,0.4)', marginTop:'1px', fontWeight:500}}>
+                    {enrichedH.reviews} valoraciones
+                  </div>
                 </div>
-            }
-            {enrichedH.available && <span className={styles.availDot} />}
+              )}
+              {enrichedH.price && enrichedH.price !== 'Consultar' && (
+                <div style={{flex:1, padding:'10px 8px', textAlign:'center', borderRight: enrichedH.responseTime ? '1px solid rgba(0,0,0,0.06)' : 'none'}}>
+                  <div style={{fontSize:'15px', fontWeight:800, color:'var(--ink)', letterSpacing:'-0.3px'}}>
+                    {enrichedH.price.split('/')[0]}
+                  </div>
+                  <div style={{fontSize:'10px', color:'rgba(0,0,0,0.4)', marginTop:'1px', fontWeight:500}}>
+                    {enrichedH.price.includes('/') ? enrichedH.price.split('/')[1] : 'por sesión'}
+                  </div>
+                </div>
+              )}
+              {enrichedH.responseTime && (
+                <div style={{flex:1, padding:'10px 8px', textAlign:'center'}}>
+                  <div style={{fontSize:'15px', fontWeight:800, color:'#059669', letterSpacing:'-0.3px'}}>
+                    {enrichedH.responseTime}
+                  </div>
+                  <div style={{fontSize:'10px', color:'rgba(0,0,0,0.4)', marginTop:'1px', fontWeight:500}}>respuesta</div>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Name */}
-          <h1 className={styles.name}>{enrichedH.name}</h1>
-          {/* Popularity signal */}
-          {enrichedH.reviews >= 50 && (
-            <div style={{
-              display:'inline-flex', alignItems:'center', gap:'4px',
-              fontSize:'11px', fontWeight:600, color:'#92400e',
-              background:'rgba(245,158,11,0.10)', borderRadius:'99px',
-              padding:'3px 10px', border:'1px solid rgba(245,158,11,0.20)',
-              marginBottom:'4px'
-            }}>
-              🔥 {enrichedH.reviews >= 100 ? 'Muy solicitado' : 'Popular'} · {Math.floor(enrichedH.reviews * 0.12)} contactos este mes
-            </div>
-          )}
-          {enrichedH.reviews >= 30 && (
-            <div style={{
-              fontSize:'11px', color:'rgba(0,0,0,0.38)',
-              marginBottom:'4px', letterSpacing:'0.1px'
-            }}>
-              {Math.floor(enrichedH.reviews * 0.08 + 2)} personas cerca de ti contactaron con {firstName} este mes
-            </div>
-          )}
-
-          {/* Specialty + verified */}
-          <div className={styles.specialty}>
-            {enrichedH.specialty}
-            {enrichedH.dniVerified && (
-              <span className={styles.verifiedBadge}>
-                <Shield size={10} color="var(--green)" /> Verificado
-              </span>
-            )}
-          </div>
-
-          {/* Education headline — the most trust-building line */}
-          {mainEdu && (
-            <div className={styles.eduHeadline}>
-              <BookOpen size={11} color="rgba(0,0,0,0.35)" />
-              <span>{mainEdu.title} · {mainEdu.institution?.split('—')[0].trim()}</span>
-            </div>
-          )}
-
-          {/* Location */}
-          {(enrichedH.zone || enrichedH.city) && (
-            <div className={styles.location}>
-              <MapPin size={11} color="rgba(0,0,0,0.35)" />
-              <span>{enrichedH.zone}{enrichedH.city && enrichedH.zone !== enrichedH.city ? `, ${enrichedH.city}` : ''}</span>
-              {enrichedH.distance && <span className={styles.locationDist}> · {enrichedH.distance} km de ti</span>}
-            </div>
-          )}
-
-          {/* Availability status — simple, no day grid */}
-          {enrichedH.available && (
-            <div className={styles.availStatus}>
-              <span className={styles.availDotInline} />
-              Disponible
-            </div>
-          )}
-
-          {/* Stats row */}
-          <div className={styles.statsRow}>
-            {enrichedH.rating && (
-              <div className={styles.stat}>
-                <Star size={12} fill="var(--amber)" color="var(--amber)" />
-                <strong>{enrichedH.rating}</strong>
-                {enrichedH.reviews > 0 && <span>({enrichedH.reviews})</span>}
-              </div>
-            )}
-            {enrichedH.price && enrichedH.price !== 'Consultar' && (
-              <div className={styles.stat}>
-                <strong>{enrichedH.price}</strong>
-              </div>
-            )}
-            {enrichedH.responseTime && (
-              <div className={styles.stat}>
-                <span style={{color:'rgba(0,0,0,0.38)'}}>Responde en {enrichedH.responseTime}</span>
-              </div>
-            )}
-            {enrichedH.urgent && (
-              <div className={`${styles.stat} ${styles.statUrgent}`}>
-                <Zap size={10} /> Urgencias
-              </div>
-            )}
-          </div>
-
-          {/* Personal quote — emotional hook */}
+          {/* La cita — protagonismo editorial */}
           {enrichedH.quote && (
             <div style={{
-              margin:'0 0 12px', padding:'12px 14px',
-              background:'rgba(123,47,255,0.05)',
-              borderRadius:'12px', borderLeft:'3px solid var(--purple)',
-              fontStyle:'italic', fontSize:'14px', color:'var(--ink)',
-              lineHeight:1.6, letterSpacing:'-0.1px'
+              margin:'0 0 20px', padding:'20px',
+              background:'linear-gradient(135deg, rgba(123,47,255,0.06) 0%, rgba(123,47,255,0.02) 100%)',
+              borderRadius:'16px',
+              animation:'fadeInUp 0.35s ease-out 0.1s both'
             }}>
-              "{enrichedH.quote}"
+              <div style={{
+                fontSize:'11px', fontWeight:700, color:'var(--purple)',
+                letterSpacing:'1px', textTransform:'uppercase', marginBottom:'10px'
+              }}>En sus propias palabras</div>
+              <p style={{
+                fontSize:'17px', fontWeight:500, color:'var(--ink)',
+                lineHeight:1.55, letterSpacing:'-0.2px', margin:0,
+                fontStyle:'italic'
+              }}>"{enrichedH.quote}"</p>
             </div>
           )}
 
           {/* Bio */}
           {enrichedH.bio && (
-            <p className={styles.bio}>{enrichedH.bio}</p>
+            <p style={{
+              fontSize:'14px', color:'rgba(0,0,0,0.6)', lineHeight:1.65,
+              letterSpacing:'-0.1px', margin:'0 0 20px',
+              animation:'fadeInUp 0.35s ease-out 0.15s both'
+            }}>{enrichedH.bio}</p>
           )}
 
-          {/* Trust badges — before CTA */}
+          {/* Señales de actividad local */}
+          {enrichedH.reviews >= 30 && (
+            <div style={{
+              fontSize:'12px', color:'rgba(0,0,0,0.4)',
+              marginBottom:'16px', textAlign:'center',
+              animation:'fadeInUp 0.35s ease-out 0.18s both'
+            }}>
+              {Math.floor(enrichedH.reviews * 0.08 + 2)} personas cerca de ti contactaron con {firstName} este mes
+              {enrichedH.reviews >= 100 && (
+                <span style={{
+                  marginLeft:'8px', fontSize:'11px', fontWeight:600, color:'#92400e',
+                  background:'rgba(245,158,11,0.10)', borderRadius:'99px',
+                  padding:'2px 8px', border:'1px solid rgba(245,158,11,0.20)'
+                }}>🔥 Muy solicitado</span>
+              )}
+            </div>
+          )}
+
+          {/* Trust badges */}
           <div style={{
             display:'flex', gap:'6px', flexWrap:'wrap',
-            justifyContent:'center', marginBottom:'10px'
+            justifyContent:'center', marginBottom:'14px',
+            animation:'fadeInUp 0.35s ease-out 0.2s both'
           }}>
             {[
               enrichedH.verified && '✓ Identidad verificada',
@@ -377,24 +410,44 @@ function HelperProfileInner() {
               <span key={badge} style={{
                 fontSize:'10px', fontWeight:600, color:'#065f46',
                 background:'rgba(16,185,129,0.10)', borderRadius:'99px',
-                padding:'3px 10px', border:'1px solid rgba(16,185,129,0.20)',
-                letterSpacing:'0.1px'
+                padding:'3px 10px', border:'1px solid rgba(16,185,129,0.20)'
               }}>{badge}</span>
             ))}
           </div>
 
-          {/* CTA */}
-          <button className={styles.ctaPrimary} onClick={handleContact} style={{animation:"popIn 0.3s ease-out 0.2s forwards"}}>
+          {/* Nüra recomienda — justo antes del CTA */}
+          <div style={{
+            margin:'0 0 14px', padding:'12px 14px',
+            background:'rgba(0,0,0,0.03)', borderRadius:'12px',
+            display:'flex', alignItems:'flex-start', gap:'8px',
+            animation:'fadeInUp 0.35s ease-out 0.22s both'
+          }}>
+            <img src="/logo-iso.png" alt="Nüra" style={{width:'18px',height:'18px',flexShrink:0,marginTop:'1px',opacity:0.7}} />
+            <p style={{
+              fontSize:'12px', color:'rgba(0,0,0,0.5)', lineHeight:1.5,
+              margin:0, fontStyle:'italic'
+            }}>
+              {location.state?.matchReason
+                ? `Te recomiendo a ${firstName} porque ${location.state.matchReason}.`
+                : `${firstName} es uno de los profesionales mejor valorados en su categoría en Barcelona.`
+              }
+            </p>
+          </div>
+
+          {/* CTA principal */}
+          <button className={styles.ctaPrimary} onClick={handleContact}
+            style={{animation:'popIn 0.3s ease-out 0.25s forwards'}}>
             <MessageCircle size={15} /> Escribir a {firstName}
           </button>
-          <button className={styles.ctaSecondary} style={{animation:"popIn 0.3s ease-out 0.28s forwards"}}
+          <button className={styles.ctaSecondary}
+            style={{animation:'popIn 0.3s ease-out 0.3s forwards'}}
             onClick={() => user ? setShowConfirm(true) : setShowGate(true)}>
             <Calendar size={14} /> Ver disponibilidad
           </button>
 
         </div>
 
-        {/* ── Próxima disponibilidad ── */}
+        {/* ── Disponibilidad ── */}
         <div style={{
           display:'flex', alignItems:'center', gap:'8px',
           padding:'10px 16px', margin:'0 20px 4px',
@@ -415,8 +468,7 @@ function HelperProfileInner() {
           {['L','M','X','J','V','S','D'].map((day, i) => (
             <div key={day} style={{
               minWidth:'36px', height:'36px', borderRadius:'10px',
-              display:'flex', flexDirection:'column', alignItems:'center',
-              justifyContent:'center', gap:'1px',
+              display:'flex', alignItems:'center', justifyContent:'center',
               background: i < 5 ? 'rgba(123,47,255,0.10)' : 'rgba(0,0,0,0.04)',
               border: i < 5 ? '1.5px solid rgba(123,47,255,0.20)' : '1.5px solid rgba(0,0,0,0.07)',
             }}>
@@ -497,13 +549,42 @@ function HelperProfileInner() {
               </div>
             </div>
             {enrichedH.qualitativeComments?.length > 0 && (
-              <div className={styles.reviewList}>
-                {enrichedH.qualitativeComments.slice(0,3).map((c, i) => (
-                  <div key={i} className={styles.reviewItem}>
-                    <p>{typeof c === 'string' ? c : c.text}</p>
-                    {c.user && <span>— {c.user}</span>}
-                  </div>
-                ))}
+              <div style={{display:'flex',flexDirection:'column',gap:'10px',marginTop:'4px'}}>
+                {enrichedH.qualitativeComments.slice(0,3).map((c, i) => {
+                  const text = typeof c === 'string' ? c : c.text
+                  const user = typeof c === 'string' ? null : c.user
+                  const initials = user ? user.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() : '?'
+                  const colors = ['#7B2FFF','#059669','#D97706']
+                  return (
+                    <div key={i} style={{
+                      display:'flex', gap:'10px', alignItems:'flex-start',
+                      animation:`fadeInUp 0.3s ease-out ${i*80}ms both`
+                    }}>
+                      <div style={{
+                        width:'32px', height:'32px', borderRadius:'50%',
+                        background:colors[i % colors.length], flexShrink:0,
+                        display:'flex', alignItems:'center', justifyContent:'center',
+                        fontSize:'11px', fontWeight:700, color:'white'
+                      }}>{initials}</div>
+                      <div style={{flex:1, minWidth:0}}>
+                        <div style={{
+                          background:'rgba(0,0,0,0.04)', borderRadius:'0 12px 12px 12px',
+                          padding:'10px 12px', marginBottom:'4px'
+                        }}>
+                          <p style={{
+                            fontSize:'13px', color:'var(--ink)', lineHeight:1.5,
+                            margin:0, letterSpacing:'-0.1px'
+                          }}>"{text}"</p>
+                        </div>
+                        {user && (
+                          <span style={{fontSize:'10px',color:'rgba(0,0,0,0.4)',fontWeight:500,paddingLeft:'4px'}}>
+                            — {user}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
             )}
           </section>
