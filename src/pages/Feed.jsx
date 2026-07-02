@@ -14,10 +14,69 @@ import { useUser } from '../context/UserContext'
 import { showToast } from '../components/Toast'
 
 import styles from './Feed.module.css'
+import { getConnectionStories } from '../data/connectionStories'
+import { Badge } from '../components/ui'
 
 // ── Build feed — deterministic order, not random ───────────────────────────
 // Daily seed: changes once per day, making feed feel fresh on return visits
 const DAILY_SEED = Math.floor(Date.now() / (1000 * 60 * 60 * 24))
+
+// ── El Muro de Conexiones — una historia verificada ──
+function ConnectionCard({ story, index }) {
+  const navigate = useNavigate()
+  const h = story.helper
+  return (
+    <div
+      onClick={() => h?.id && navigate(`/helper/${h.id}`, { state: { helper: h } })}
+      style={{
+        background:'white', borderRadius:'var(--radius-md)',
+        border:'1px solid var(--ink-border)', padding:'14px 16px',
+        marginBottom:'10px', cursor:'pointer',
+        boxShadow:'var(--shadow-sm)',
+        animation:`cardCascade 0.45s ease-out ${index*70}ms both`
+      }}>
+      <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'8px'}}>
+        <Badge variant={story.mine ? 'purple' : 'success'}>
+          {story.mine ? '✓ Tu conexión' : '✓ Conexión verificada'}
+        </Badge>
+        <span style={{fontSize:'10px', color:'var(--ink-tertiary)'}}>{story.timeAgo}</span>
+      </div>
+      <p style={{
+        fontSize:'var(--text-sm)', color:'var(--ink)', lineHeight:1.55,
+        letterSpacing:'-0.1px', margin:'0 0 10px'
+      }}>{story.text}</p>
+      {h && (
+        <div style={{
+          display:'flex', alignItems:'center', gap:'10px',
+          paddingTop:'10px', borderTop:'1px solid var(--ink-border)'
+        }}>
+          {h.avatarUrl
+            ? <img src={h.avatarUrl} alt={h.name}
+                style={{width:'34px', height:'34px', borderRadius:'50%', objectFit:'cover', flexShrink:0}} />
+            : <div style={{
+                width:'34px', height:'34px', borderRadius:'50%', flexShrink:0,
+                background: h.avatarColor || 'var(--purple)',
+                display:'flex', alignItems:'center', justifyContent:'center',
+                fontSize:'12px', fontWeight:700, color:'white'
+              }}>{h.avatar || h.name?.[0]}</div>
+          }
+          <div style={{flex:1, minWidth:0}}>
+            <div style={{
+              fontSize:'12px', fontWeight:700, color:'var(--ink)',
+              whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'
+            }}>{h.name}</div>
+            <div style={{fontSize:'10px', color:'var(--ink-tertiary)', marginTop:'1px'}}>{h.specialty}</div>
+          </div>
+          {story.seconds && (
+            <span style={{fontSize:'10px', fontWeight:600, color:'var(--purple)', flexShrink:0}}>
+              ⚡ {story.seconds}s
+            </span>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
 
 function buildFeed(following, helpers, companies) {
   const posts = []
@@ -190,7 +249,7 @@ function PostCard({ post }) {
 // ── Main Feed ──────────────────────────────────────────────────────────────
 export default function Feed() {
   const navigate = useNavigate()
-  const { following, searchHistory } = useUser()
+  const { following, searchHistory, contactedHelpers, personas, helpersCache } = useUser()
   const [tab, setTab] = useState('para-ti')
   const [feedLoading, setFeedLoading] = useState(true)
   const [supabaseHelpers, setSupabaseHelpers] = useState(LOCAL_HELPERS)
@@ -229,6 +288,28 @@ export default function Feed() {
     : allPosts
 
   const followingCount = allPosts.filter(p => p.following).length
+
+  // ── El Muro de Conexiones: las tuyas primero, luego las de la comunidad ──
+  const myStories = (contactedHelpers || [])
+    .filter(c => c?.confirmed === true)
+    .map(c => {
+      const helper = helpersCache?.[c.id] || helpersCache?.[String(c.id)]
+        || LOCAL_HELPERS.find(h => h?.id === c.id)
+      if (!helper) return null
+      const lp = (personas || []).find(p => (p.contactedHelperIds || []).includes(c.id))
+      const mins = c.confirmedAt ? Math.max(1, Math.round((Date.now() - c.confirmedAt) / 60000)) : null
+      const timeAgo = !mins ? 'reciente'
+        : mins < 60 ? `hace ${mins} min`
+        : mins < 1440 ? `hace ${Math.round(mins/60)} h`
+        : `hace ${Math.round(mins/1440)} días`
+      return {
+        id: 'mine_' + c.id, mine: true, helper, timeAgo,
+        text: lp
+          ? `Encontraste ayuda para ${lp.label} — y confirmaste que funcionó.`
+          : `Encontraste la ayuda que buscabas — y confirmaste que funcionó.`,
+      }
+    }).filter(Boolean)
+  const muroStories = [...myStories, ...getConnectionStories()]
 
   return (
     <div className={styles.page}>
@@ -355,11 +436,25 @@ export default function Feed() {
                 </div>
               </div>
             )}
-            {displayPosts.map((post, i) => (
-              <div key={post.id || i} style={{animation:`cardCascade 0.45s ease-out ${i*80}ms both`}}>
-                <PostCard post={post} />
+            {tab === 'para-ti' ? (<>
+              <div style={{margin:'6px 0 12px'}}>
+                <div style={{fontSize:'15px', fontWeight:800, color:'var(--ink)', letterSpacing:'-0.3px'}}>
+                  Conexiones reales
+                </div>
+                <div style={{fontSize:'11px', color:'var(--ink-tertiary)', marginTop:'2px'}}>
+                  Historias verificadas por las personas que las vivieron · Barcelona
+                </div>
               </div>
-            ))}
+              {muroStories.map((s, i) => (
+                <ConnectionCard key={s.id || i} story={s} index={i} />
+              ))}
+            </>) : (
+              displayPosts.map((post, i) => (
+                <div key={post.id || i} style={{animation:`cardCascade 0.45s ease-out ${i*80}ms both`}}>
+                  <PostCard post={post} />
+                </div>
+              ))
+            )}
           </>)
         )}
       </div>
