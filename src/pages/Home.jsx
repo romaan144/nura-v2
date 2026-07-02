@@ -11,6 +11,7 @@ import RegisterGate from '../components/RegisterGate'
 import { haptic } from '../utils/haptic'
 import { scheduleLocalNotification, notifySearchAbandoned } from '../utils/notifications'
 import styles from './Home.module.css'
+import { PULSO_THRESHOLD, PULSO_DELAY, CONFIRMACION_THRESHOLD, CONFIRMACION_DELAY } from '../config'
 
 // Category-aware refine chips — show the dimensions that matter for each need
 const CONTEXT_CHIPS = {
@@ -361,9 +362,7 @@ export default function Home({ setSearchState }) {
     }
 
     // ── El Pulso — mensaje semanal al profesional ───────────────────────
-    const DEMO_MODE_PULSO = true
     const timers = []
-    const PULSO_THRESHOLD = DEMO_MODE_PULSO ? 35 * 1000 : 7 * 24 * 60 * 60 * 1000
 
     if (user?.isHelper) {
       let lastPulso = 0
@@ -408,7 +407,7 @@ export default function Home({ setSearchState }) {
               chips: contacts > 0 ? ['Ver mis contactos', 'Mejorar mi perfil'] : ['Mejorar mi perfil', 'Ver qué buscan']
             }]
           })
-        }, DEMO_MODE_PULSO ? 5000 : 1000))
+        }, PULSO_DELAY))
       } else {
         // Fallback: generic helper proactive after 8s
         timers.push(setTimeout(() => {
@@ -424,15 +423,13 @@ export default function Home({ setSearchState }) {
     }
 
     // ── La Confirmación Humana ──────────────────────────────────────────
-    // 3 real days after contact (30s in demo) Nüra asks if the connection worked
-    const DEMO_MODE = true // set to false in production
-    const THRESHOLD = DEMO_MODE ? 30 * 1000 : 3 * 24 * 60 * 60 * 1000
+    // 3 días reales tras el contacto (30s en demo) Nüra pregunta si funcionó
 
     const pending = (contactedHelpers || []).find(c => {
       if (!c?.contactedAt) return false
       const elapsed = Date.now() - c.contactedAt
       const alreadyAnswered = c.confirmed !== undefined
-      return elapsed >= THRESHOLD && !alreadyAnswered
+      return elapsed >= CONFIRMACION_THRESHOLD && !alreadyAnswered
     })
 
     if (pending && user && nuraChatMessages.length === 0) {
@@ -449,7 +446,7 @@ export default function Home({ setSearchState }) {
             chips: ['Sí, genial', 'No del todo'],
           }]
         })
-      }, DEMO_MODE ? 4000 : 500))
+      }, CONFIRMACION_DELAY))
     }
 
     return () => timers.forEach(clearTimeout)

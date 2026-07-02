@@ -4,6 +4,7 @@ import { useUser } from './context/UserContext'
 
 import Splash from './pages/Splash'
 import MomentoCero from './pages/MomentoCero'
+import { MOMENTO_CERO_COOLDOWN } from './config'
 import Home from './pages/Home'
 import Results from './pages/Results'
 const HelperProfile = lazy(() => import('./pages/HelperProfile'))
@@ -43,7 +44,15 @@ function AppRoutes() {
   if (showSplash) {
     return <Splash onFinish={() => {
       setShowSplash(false)
-      setShowMomentoCero(true)
+      // El Ritmo del Momento Cero — la demostración solo cuando toca.
+      // Primera vez siempre; después según cooldown (demo: 2h, producción: nunca más).
+      let lastShown = 0
+      try { lastShown = parseInt(localStorage.getItem('nura_mc_last_shown') || '0') } catch {}
+      const shouldShow = lastShown === 0 || (Date.now() - lastShown >= MOMENTO_CERO_COOLDOWN)
+      if (shouldShow) {
+        try { localStorage.setItem('nura_mc_last_shown', String(Date.now())) } catch {}
+        setShowMomentoCero(true)
+      }
     }} />
   }
 
