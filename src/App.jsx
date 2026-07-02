@@ -6,7 +6,6 @@ import Splash from './pages/Splash'
 import MomentoCero from './pages/MomentoCero'
 import { MOMENTO_CERO_COOLDOWN } from './config'
 import Home from './pages/Home'
-import Results from './pages/Results'
 const HelperProfile = lazy(() => import('./pages/HelperProfile'))
 const IntroLetter = lazy(() => import('./pages/IntroLetter'))
 import Chat from './pages/Chat'
@@ -31,7 +30,6 @@ import './index.css'
 import AppErrorBoundary from './components/AppErrorBoundary'
 
 function AppRoutes() {
-  const [searchState, setSearchState] = useState(null)
   const [showSplash, setShowSplash] = useState(true)
   const [showMomentoCero, setShowMomentoCero] = useState(false)
   const location = useLocation()
@@ -84,12 +82,8 @@ function AppRoutes() {
             </div>
           }>
           <Routes location={location} key={location.pathname}>
-            <Route path="/" element={<Home setSearchState={setSearchState} />} />
-            <Route path="/results" element={
-              searchState
-                ? <Results searchState={searchState} setSearchState={setSearchState} />
-                : <Navigate to="/" />
-            } />
+            <Route path="/" element={<Home />} />
+            <Route path="/results" element={<Navigate to="/explore" replace />} />
             <Route path="/helper/:id" element={<HelperProfile />} />
             <Route path="/intro/:id" element={<IntroLetter />} />
             <Route path="/chat/:id" element={<Chat />} />

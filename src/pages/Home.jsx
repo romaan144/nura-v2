@@ -271,7 +271,7 @@ const HELPER_SUGGESTIONS = [
 ]
 
 
-export default function Home({ setSearchState }) {
+export default function Home() {
   const navigate = useNavigate()
   const { user, addSearch, searchHistory, favorites, helpersCache, nuraChatMessages, setNuraChatMessages, nuraLastMatches, setNuraLastMatches, cacheHelpers, contactedHelpers, confirmContact, following, personas, upsertPersona } = useUser()
   // messages persisted in context so they survive navigation
@@ -802,7 +802,6 @@ export default function Home({ setSearchState }) {
       }
       window.__nuraLastAnalysis = analysis
       try { sessionStorage.setItem('nura_last_analysis', JSON.stringify(analysis)) } catch {}
-      setSearchState({ query: msg, analysis, matches })
       setLastMatches(matches)
       // Schedule reminder if user doesn't contact
       scheduleLocalNotification(
