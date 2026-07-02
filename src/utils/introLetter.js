@@ -13,6 +13,7 @@ function getFirstName(fullName) {
 function describeSituation(analysis, userQuery) {
   const cat = analysis?.categoria
   const signals = analysis?.complexSignals || {}
+  const paraQuien = analysis?.paraQuien
 
   if (signals.alzheimer) {
     return 'tiene una persona cercana con Alzheimer y necesita cuidado de confianza'
@@ -27,7 +28,9 @@ function describeSituation(analysis, userQuery) {
     return 'tiene una persona mayor que vive sola y necesita compañía y cuidado'
   }
   if (cat === 'cuidado') {
-    return 'busca cuidado de confianza para alguien cercano'
+    return paraQuien === 'familia'
+      ? 'busca cuidado de confianza para alguien de su familia'
+      : 'busca cuidado de confianza para alguien cercano'
   }
   if (cat === 'salud' || cat === 'logopedia') {
     return 'está buscando apoyo profesional para una situación de salud'
@@ -50,6 +53,8 @@ function describeSituation(analysis, userQuery) {
   if (cat === 'entrenador') {
     return 'quiere empezar a cuidar su condición física'
   }
+  if (paraQuien === 'familia') return 'necesita ayuda para alguien de su familia'
+  if (paraQuien === 'hogar') return 'necesita ayuda para su hogar o negocio'
   return 'tiene una necesidad para la que cree que puedes ayudar'
 }
 

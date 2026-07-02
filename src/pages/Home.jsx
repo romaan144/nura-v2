@@ -258,6 +258,9 @@ export default function Home({ setSearchState }) {
   const messages = nuraChatMessages
   const setMessages = setNuraChatMessages
   const [input, setInput] = useState('')
+  const [forWhom, setForWhom] = useState(() => {
+    try { return sessionStorage.getItem('nura_for_whom') || '' } catch { return '' }
+  })
   const [loading, setLoading] = useState(false)
   const [listening, setListening] = useState(false)
   const [showGate, setShowGate] = useState(false)
@@ -345,6 +348,20 @@ export default function Home({ setSearchState }) {
     // Returning user — single message + immediate action chips
     const lastQ = searchHistory?.[0]?.query
     const msgs = [{ id: 1, from: 'nura', lines }]
+
+    // ── La Pregunta — contexto antes del texto ──
+    // Solo cuando no hay memoria que continuar ni búsqueda previa que retomar
+    let forWhomAnswered; try { forWhomAnswered = sessionStorage.getItem('nura_for_whom') } catch {}
+    const lastQPre = searchHistory?.[0]?.query
+    if (!forWhomAnswered && !lastQPre && !(contactedHelpers?.length)) {
+      msgs[0] = {
+        ...msgs[0],
+        lines: [...msgs[0].lines, '¿Para quién necesitas ayuda?'],
+        isPregunta: true,
+        chips: ['Para mí', 'Para alguien de mi familia', 'Para mi hogar o negocio']
+      }
+    }
+
     if (user && lastQ && nuraChatMessages.length === 0) {
       const hour = new Date().getHours()
       const g = hour < 14 ? 'Buenos días' : hour < 21 ? 'Buenas tardes' : 'Buenas noches'
@@ -475,6 +492,24 @@ export default function Home({ setSearchState }) {
     setShowSuggestions(false)
     setMessages(prev => [...prev, { id: Date.now(), from: 'user', text: msg }])
     setLoading(true)
+
+    // ── La Pregunta — interceptar selección ─────────────────────────
+    const FOR_WHOM = { 'Para mí': 'mi', 'Para alguien de mi familia': 'familia', 'Para mi hogar o negocio': 'hogar' }
+    if (FOR_WHOM[msg]) {
+      const val = FOR_WHOM[msg]
+      try { sessionStorage.setItem('nura_for_whom', val) } catch {}
+      setForWhom(val)
+      setTimeout(() => {
+        const replies = {
+          mi: 'Perfecto. Cuéntame qué necesitas — estoy aquí para ayudarte.',
+          familia: 'Entendido. Cuéntame qué le pasa y encontraré a la persona adecuada para cuidar de los tuyos.',
+          hogar: 'Perfecto. Cuéntame qué necesita tu hogar o negocio y busco a la persona indicada.'
+        }
+        setMessages(prev => [...prev, { id: Date.now(), from: 'nura', lines: [replies[val]] }])
+        setLoading(false)
+      }, 600)
+      return
+    }
 
     // ── El Pulso — interceptar respuesta a chips ────────────────────
     const pulsoMsg = messages.find(m => m.isPulso)
@@ -729,6 +764,7 @@ export default function Home({ setSearchState }) {
       addSearch?.(msg, analysis?.categoria)
       window.__nuraLastQuery = msg
       try { sessionStorage.setItem('nura_last_query', msg) } catch {}
+      if (forWhom) analysis.paraQuien = forWhom
       window.__nuraLastAnalysis = analysis
       try { sessionStorage.setItem('nura_last_analysis', JSON.stringify(analysis)) } catch {}
       setSearchState({ query: msg, analysis, matches })
@@ -1124,7 +1160,7 @@ export default function Home({ setSearchState }) {
         <div className={styles.inputCapsule}>
           <button className={styles.plusBtn}><Plus size={18} /></button>
           <input ref={inputRef} className={styles.input}
-            placeholder="Cuéntame qué necesitas..."
+            placeholder={forWhom === 'familia' ? 'Cuéntame qué le pasa...' : forWhom === 'hogar' ? 'Cuéntame qué necesita tu hogar...' : 'Cuéntame qué necesitas...'}
             value={input} onChange={e => setInput(e.target.value)}
             onKeyDown={handleKey} disabled={loading}
             onFocus={() => setInputFocused(true)}
