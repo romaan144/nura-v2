@@ -238,7 +238,7 @@ function HelperProfileInner() {
   return (
     <div className={styles.page}>
       <PageHeader showBack rightEl={
-        <button className={styles.shareBtn} onClick={handleShare}>
+        <button className={styles.shareBtn} onClick={handleShare} aria-label="Compartir perfil">
           {shared
             ? <span style={{display:'flex',alignItems:'center',gap:'4px',color:'var(--green)',fontSize:'var(--text-xs)',fontWeight:700}}><Check size={11} color='var(--green)' strokeWidth={3}/> Copiado</span>
             : <Share2 size={17} color="rgba(0,0,0,0.55)" />}

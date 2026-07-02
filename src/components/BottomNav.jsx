@@ -24,7 +24,7 @@ export default function BottomNav() {
   if (HIDE_ON.some(p => location.pathname.startsWith(p))) return null
 
   return (
-    <nav className={styles.nav}>
+    <nav className={styles.nav} aria-label="Navegación principal">
       {TABS.map(({ path, icon: Icon, label }) => {
         const active = path === '/'
           ? location.pathname === '/'
@@ -34,6 +34,7 @@ export default function BottomNav() {
             key={path}
             className={`${styles.tab} ${active ? styles.tabActive : ''}`}
             onClick={() => navigate(path)}
+            aria-current={active ? 'page' : undefined}
           >
             <div className={styles.iconWrap}>
               <Icon size={22} strokeWidth={active ? 2.2 : 1.7} />

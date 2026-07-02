@@ -33,7 +33,7 @@ export function Badge({ variant = 'neutral', size = 'sm', children, style }) {
 // Punto verde de "activo / disponible" — un solo verde en toda la app
 export function LiveDot({ size = 10, ring = true, style }) {
   return (
-    <span style={{
+    <span aria-hidden="true" style={{
       display: 'inline-block', width: size, height: size, borderRadius: '50%',
       background: 'var(--green-dot)',
       border: ring ? '2px solid white' : 'none',

@@ -98,7 +98,7 @@ export default function HelperCard({ helper, onContact, showContact = true, show
 
         {/* CTA — always vertically centered */}
         <div className={styles.cta}>
-          <button className={`${styles.favBtn} ${following ? styles.favBtnActive : ''}`} onClick={handleFollow}>
+          <button className={`${styles.favBtn} ${following ? styles.favBtnActive : ''}`} onClick={handleFollow} aria-label={following ? `Dejar de seguir a ${firstName}` : `Seguir a ${firstName}`}>
             {following ? <UserCheck size={13} color='var(--purple)' strokeWidth={2} /> : <UserPlus size={13} color='rgba(0,0,0,0.3)' strokeWidth={1.8} />}
           </button>
           {showContact && (

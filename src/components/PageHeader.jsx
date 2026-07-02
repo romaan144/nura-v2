@@ -8,7 +8,7 @@ export default function PageHeader({ showBack, onBack, title, rightEl }) {
     <div className={styles.header}>
       <div className={styles.left}>
         {showBack && (
-          <button className={styles.circleBtn} onClick={() => onBack ? onBack() : navigate(-1)}>
+          <button className={styles.circleBtn} onClick={() => onBack ? onBack() : navigate(-1)} aria-label="Volver">
             <ArrowLeft size={18} />
           </button>
         )}

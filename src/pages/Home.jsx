@@ -999,7 +999,7 @@ export default function Home({ setSearchState }) {
                 setMessages([])
                 setLastMatches([])
                 setTimeout(() => setMessages([{ id: 1, from: 'nura', lines: getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas) }]), 100)
-              }}>
+              }} aria-label="Empezar conversación de nuevo">
               <RotateCcw size={15} color="rgba(0,0,0,0.6)" />
             </button>
           )}
@@ -1193,16 +1193,16 @@ export default function Home({ setSearchState }) {
         })()}
 
         <div className={styles.inputCapsule}>
-          <button className={styles.plusBtn}><Plus size={18} /></button>
-          <input ref={inputRef} className={styles.input}
+          <button className={styles.plusBtn} aria-label="Adjuntar"><Plus size={18} /></button>
+          <input ref={inputRef} className={styles.input} aria-label="Cuéntale a Nüra qué necesitas"
             placeholder={forWhom === 'familia' ? 'Cuéntame qué le pasa...' : forWhom === 'hogar' ? 'Cuéntame qué necesita tu hogar...' : 'Cuéntame qué necesitas...'}
             value={input} onChange={e => setInput(e.target.value)}
             onKeyDown={handleKey} disabled={loading}
             onFocus={() => setInputFocused(true)}
             onBlur={() => setTimeout(() => setInputFocused(false), 200)} />
           {input.trim()
-            ? <button className={styles.sendBtn} onClick={() => handleSend()}><Send size={16} /></button>
-            : <button className={`${styles.sendBtn} ${listening ? styles.micActive : styles.micBtn}`} onClick={toggleMic}>
+            ? <button className={styles.sendBtn} onClick={() => handleSend()} aria-label="Enviar mensaje"><Send size={16} /></button>
+            : <button className={`${styles.sendBtn} ${listening ? styles.micActive : styles.micBtn}`} onClick={toggleMic} aria-label={listening ? 'Detener dictado' : 'Dictar por voz'}>
                 {listening ? <MicOff size={16} /> : <Mic size={16} />}
               </button>
           }

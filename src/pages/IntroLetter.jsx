@@ -64,7 +64,7 @@ export default function IntroLetter() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <button className={styles.back} onClick={() => navigate(-1)}>
+        <button className={styles.back} onClick={() => navigate(-1)} aria-label="Volver">
           <ArrowLeft size={18} />
         </button>
         <div className={styles.headerTitle}>Carta de presentación</div>
@@ -97,6 +97,7 @@ export default function IntroLetter() {
           <textarea
             ref={textareaRef}
             className={styles.letterText}
+            aria-label="Carta de presentación editable"
             value={letter}
             onChange={e => setLetter(e.target.value)}
             rows={1}

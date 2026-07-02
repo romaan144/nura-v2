@@ -478,7 +478,7 @@ export default function Chat() {
 
       {/* Floating header */}
       <header className={styles.header}>
-        <button className={styles.back} onClick={() => navigate(-1)}>
+        <button className={styles.back} onClick={() => navigate(-1)} aria-label="Volver">
           <ArrowLeft size={17} />
         </button>
 
@@ -666,13 +666,13 @@ export default function Chat() {
       {/* Floating input */}
       <div className={styles.inputWrap}>
         <div className={styles.inputBar}>
-          <button className={styles.plusBtn}><Plus size={18} /></button>
-          <input className={styles.input}
+          <button className={styles.plusBtn} aria-label="Adjuntar"><Plus size={18} /></button>
+          <input className={styles.input} aria-label="Escribe tu mensaje"
             placeholder="Escribe un mensaje..."
             value={input} onChange={e => setInput(e.target.value)} onKeyDown={handleKey} />
           {input.trim()
-            ? <button className={styles.sendBtn} onClick={() => sendMessage()}><Send size={16} /></button>
-            : <button className={`${styles.sendBtn} ${listening ? styles.micActive : styles.micBtn}`} onClick={toggleMic}>
+            ? <button className={styles.sendBtn} onClick={() => sendMessage()} aria-label="Enviar mensaje"><Send size={16} /></button>
+            : <button className={`${styles.sendBtn} ${listening ? styles.micActive : styles.micBtn}`} onClick={toggleMic} aria-label={listening ? 'Detener dictado' : 'Dictar por voz'}>
                 {listening ? <MicOff size={16} /> : <Mic size={16} />}
               </button>
           }
