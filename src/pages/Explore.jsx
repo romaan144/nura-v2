@@ -11,6 +11,7 @@ import { analyzeNeed, matchHelpers } from '../utils/matching'
 import { useUser } from '../context/UserContext'
 import HelperCard from '../components/HelperCard'
 import styles from './Explore.module.css'
+import { LiveDot } from '../components/ui'
 
 // ── Escaparate Vivo — señales de actividad reciente ──────────────────────
 const ACTIVITY_SIGNALS = [
@@ -80,11 +81,7 @@ function EscaparateVivo({ onHelperTap }) {
                     fontSize: '14px', fontWeight: 700, color: 'white'
                   }}>{h.avatar || h.name?.[0]}</div>
               }
-              <div style={{
-                position: 'absolute', bottom: 1, right: 1,
-                width: '10px', height: '10px', borderRadius: '50%',
-                background: '#10B981', border: '2px solid white',
-              }} />
+              <LiveDot size={10} style={{position: 'absolute', bottom: 1, right: 1}} />
             </div>
             <div style={{
               fontSize: '12px', fontWeight: 700, color: 'var(--ink)',

@@ -77,7 +77,7 @@ body {
   /* ── SEMANTIC COLORS ────────────────────────────────── */
   --green:        #059669;   /* verified, available, success */
   --green-light:  #ECFDF5;   /* green background tint */
-  --green-dot:    #22C55E;   /* availability dot */
+  --green-dot:    #10B981;   /* availability dot — único verde "activo" de la app */
   --red:          #EF4444;   /* error, remove, danger */
   --red-light:    #FEF2F2;   /* red background tint */
   --amber-light:  #FEF3C7;   /* amber background tint */

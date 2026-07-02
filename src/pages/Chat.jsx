@@ -10,6 +10,7 @@ import { haptic } from '../utils/haptic'
 import RatingModal from '../components/RatingModal'
 import styles from './Chat.module.css'
 import { generateFirstMessage, getHelperReply, getNuraIntervention } from '../utils/chatReplies'
+import { Badge } from '../components/ui'
 
 // ── Context-aware first message ───────────────────────────────────────────
 
@@ -504,11 +505,7 @@ export default function Chat() {
                       </span>
                     )}
                     {helper.verified && (
-                      <span style={{
-                        flexShrink:0,fontSize:'9px',fontWeight:600,
-                        color:'#065f46',background:'rgba(16,185,129,0.12)',
-                        borderRadius:'99px',padding:'1px 5px',whiteSpace:'nowrap'
-                      }}>✓ Verif.</span>
+                      <Badge variant="success" size="xs" style={{flexShrink:0}}>✓ Verif.</Badge>
                     )}
                   </>
               }

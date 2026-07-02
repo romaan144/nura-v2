@@ -13,6 +13,7 @@ import { DEMO_ENRICHMENTS } from '../data/demoEnrichments'
 import { showToast } from '../components/Toast'
 import RegisterGate from '../components/RegisterGate'
 import { getHelperById } from '../utils/supabase'
+import { Badge, LiveDot, Bubble, StatBar } from '../components/ui'
 
 // ── HELPERS ─────────────────────────────────────────────────────────────────
 
@@ -278,12 +279,7 @@ function HelperProfileInner() {
                   </div>
               }
               {enrichedH.available && (
-                <div style={{
-                  position:'absolute', bottom:2, right:2,
-                  width:'20px', height:'20px', borderRadius:'50%',
-                  background:'#10B981', border:'3px solid white',
-                  boxShadow:'0 2px 6px rgba(16,185,129,0.4)'
-                }} />
+                <LiveDot size={20} style={{position:'absolute', bottom:2, right:2, border:'3px solid white'}} />
               )}
             </div>
 
@@ -300,53 +296,21 @@ function HelperProfileInner() {
             }}>
               {enrichedH.specialty}
               {enrichedH.dniVerified && (
-                <span style={{
-                  marginLeft:'8px', fontSize:'11px', fontWeight:700,
-                  color:'#065f46', background:'rgba(16,185,129,0.12)',
-                  borderRadius:'99px', padding:'2px 8px',
-                  display:'inline-flex', alignItems:'center', gap:'3px'
-                }}>
+                <Badge variant="success" size="md" style={{marginLeft:'8px', fontWeight:700}}>
                   <Shield size={9} color='#065f46' /> Verificado
-                </span>
+                </Badge>
               )}
             </div>
 
             {/* Stats como logros — no como números */}
-            <div style={{
-              display:'flex', gap:'0', alignItems:'stretch',
-              background:'rgba(0,0,0,0.03)', borderRadius:'14px',
-              overflow:'hidden', border:'1px solid rgba(0,0,0,0.06)',
-              width:'100%', maxWidth:'320px'
-            }}>
-              {enrichedH.rating && (
-                <div style={{flex:1, padding:'10px 8px', textAlign:'center', borderRight:'1px solid rgba(0,0,0,0.06)'}}>
-                  <div style={{fontSize:'17px', fontWeight:800, color:'var(--ink)', letterSpacing:'-0.5px'}}>
-                    {enrichedH.rating}★
-                  </div>
-                  <div style={{fontSize:'10px', color:'rgba(0,0,0,0.4)', marginTop:'1px', fontWeight:500}}>
-                    {enrichedH.reviews} valoraciones
-                  </div>
-                </div>
-              )}
-              {enrichedH.price && enrichedH.price !== 'Consultar' && (
-                <div style={{flex:1, padding:'10px 8px', textAlign:'center', borderRight: enrichedH.responseTime ? '1px solid rgba(0,0,0,0.06)' : 'none'}}>
-                  <div style={{fontSize:'15px', fontWeight:800, color:'var(--ink)', letterSpacing:'-0.3px'}}>
-                    {enrichedH.price.split('/')[0]}
-                  </div>
-                  <div style={{fontSize:'10px', color:'rgba(0,0,0,0.4)', marginTop:'1px', fontWeight:500}}>
-                    {enrichedH.price.includes('/') ? enrichedH.price.split('/')[1] : 'por sesión'}
-                  </div>
-                </div>
-              )}
-              {enrichedH.responseTime && (
-                <div style={{flex:1, padding:'10px 8px', textAlign:'center'}}>
-                  <div style={{fontSize:'15px', fontWeight:800, color:'#059669', letterSpacing:'-0.3px'}}>
-                    {enrichedH.responseTime}
-                  </div>
-                  <div style={{fontSize:'10px', color:'rgba(0,0,0,0.4)', marginTop:'1px', fontWeight:500}}>respuesta</div>
-                </div>
-              )}
-            </div>
+            <StatBar stats={[
+              enrichedH.rating && { value: `${enrichedH.rating}★`, label: `${enrichedH.reviews} valoraciones` },
+              enrichedH.price && enrichedH.price !== 'Consultar' && {
+                value: enrichedH.price.split('/')[0],
+                label: enrichedH.price.includes('/') ? enrichedH.price.split('/')[1] : 'por sesión'
+              },
+              enrichedH.responseTime && { value: enrichedH.responseTime, label: 'respuesta', color: 'var(--green)' },
+            ].filter(Boolean)} />
           </div>
 
           {/* La cita — protagonismo editorial */}
@@ -387,11 +351,7 @@ function HelperProfileInner() {
             }}>
               {Math.floor(enrichedH.reviews * 0.08 + 2)} personas cerca de ti contactaron con {firstName} este mes
               {enrichedH.reviews >= 100 && (
-                <span style={{
-                  marginLeft:'8px', fontSize:'11px', fontWeight:600, color:'#92400e',
-                  background:'rgba(245,158,11,0.10)', borderRadius:'99px',
-                  padding:'2px 8px', border:'1px solid rgba(245,158,11,0.20)'
-                }}>🔥 Muy solicitado</span>
+                <Badge variant="warning" style={{marginLeft:'8px'}}>🔥 Muy solicitado</Badge>
               )}
             </div>
           )}
@@ -407,11 +367,7 @@ function HelperProfileInner() {
               enrichedH.dniVerified && '✓ DNI comprobado',
               enrichedH.criminalRecordClear && '✓ Sin antecedentes',
             ].filter(Boolean).map(badge => (
-              <span key={badge} style={{
-                fontSize:'10px', fontWeight:600, color:'#065f46',
-                background:'rgba(16,185,129,0.10)', borderRadius:'99px',
-                padding:'3px 10px', border:'1px solid rgba(16,185,129,0.20)'
-              }}>{badge}</span>
+              <Badge key={badge} variant="success" size="md">{badge}</Badge>
             ))}
           </div>
 
@@ -454,7 +410,7 @@ function HelperProfileInner() {
           background:'rgba(16,185,129,0.08)', borderRadius:'12px',
           border:'1px solid rgba(16,185,129,0.15)'
         }}>
-          <div style={{width:'8px',height:'8px',borderRadius:'50%',background:'#10B981',flexShrink:0}} />
+          <LiveDot size={8} ring={false} />
           <div>
             <span style={{fontSize:'12px',fontWeight:600,color:'#065f46'}}>Disponible ahora</span>
             <span style={{fontSize:'12px',color:'rgba(0,0,0,0.4)',marginLeft:'6px'}}>
@@ -550,41 +506,15 @@ function HelperProfileInner() {
             </div>
             {enrichedH.qualitativeComments?.length > 0 && (
               <div style={{display:'flex',flexDirection:'column',gap:'10px',marginTop:'4px'}}>
-                {enrichedH.qualitativeComments.slice(0,3).map((c, i) => {
-                  const text = typeof c === 'string' ? c : c.text
-                  const user = typeof c === 'string' ? null : c.user
-                  const initials = user ? user.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() : '?'
-                  const colors = ['#7B2FFF','#059669','#D97706']
-                  return (
-                    <div key={i} style={{
-                      display:'flex', gap:'10px', alignItems:'flex-start',
-                      animation:`fadeInUp 0.3s ease-out ${i*80}ms both`
-                    }}>
-                      <div style={{
-                        width:'32px', height:'32px', borderRadius:'50%',
-                        background:colors[i % colors.length], flexShrink:0,
-                        display:'flex', alignItems:'center', justifyContent:'center',
-                        fontSize:'11px', fontWeight:700, color:'white'
-                      }}>{initials}</div>
-                      <div style={{flex:1, minWidth:0}}>
-                        <div style={{
-                          background:'rgba(0,0,0,0.04)', borderRadius:'0 12px 12px 12px',
-                          padding:'10px 12px', marginBottom:'4px'
-                        }}>
-                          <p style={{
-                            fontSize:'13px', color:'var(--ink)', lineHeight:1.5,
-                            margin:0, letterSpacing:'-0.1px'
-                          }}>"{text}"</p>
-                        </div>
-                        {user && (
-                          <span style={{fontSize:'10px',color:'rgba(0,0,0,0.4)',fontWeight:500,paddingLeft:'4px'}}>
-                            — {user}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  )
-                })}
+                {enrichedH.qualitativeComments.slice(0,3).map((c, i) => (
+                  <Bubble
+                    key={i}
+                    index={i}
+                    text={typeof c === 'string' ? c : c.text}
+                    author={typeof c === 'string' ? null : c.user}
+                    style={{animation:`fadeInUp 0.3s ease-out ${i*80}ms both`}}
+                  />
+                ))}
               </div>
             )}
           </section>
