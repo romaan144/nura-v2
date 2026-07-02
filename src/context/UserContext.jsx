@@ -11,6 +11,7 @@ export function UserProvider({ children }) {
   const [ratings, setRatings] = useState(() => load('nura_ratings', []))
   const [searchHistory, setSearchHistory] = useState(() => load('nura_search_history', []))
   const [contactedHelpers, setContactedHelpers] = useState(() => load('nura_contacted', []))
+  const [personas, setPersonas] = useState(() => load('nura_personas', []))
   const [helpersCache, setHelpersCache] = useState({})
   const [following, setFollowing] = useState(() => {
     const stored = load('nura_following', null)
@@ -127,6 +128,13 @@ export function UserProvider({ children }) {
       setContactedHelpers(c)
       save('nura_contacted', c)
     }
+    // El Espejo — vincular este contacto a la persona activa de la búsqueda
+    try {
+      if (window.__nuraActivePersona) {
+        linkPersonaContact(window.__nuraActivePersona, helperId)
+        window.__nuraActivePersona = null
+      }
+    } catch {}
   }
 
   function markRead(helperId) {
@@ -193,6 +201,45 @@ export function UserProvider({ children }) {
     save('nura_notifications', updated)
   }
 
+  // ── El Espejo — las personas de la vida del usuario ──
+  function upsertPersona(extracted, query) {
+    if (!extracted?.relacion) return null
+    const existing = personas.find(p => p.relacion === extracted.relacion)
+    let id, updated
+    if (existing) {
+      id = existing.id
+      const atributos = [...new Set([...(existing.atributos || []), ...(extracted.atributos || [])])]
+      updated = personas.map(p => p.id === id
+        ? { ...p, atributos, lastMentioned: Date.now(), lastQuery: query }
+        : p)
+    } else {
+      id = 'p_' + Date.now()
+      updated = [...personas, {
+        id, relacion: extracted.relacion, label: extracted.label, suyo: extracted.suyo,
+        atributos: extracted.atributos || [],
+        firstMentioned: Date.now(), lastMentioned: Date.now(),
+        lastQuery: query, contactedHelperIds: [],
+      }]
+    }
+    setPersonas(updated)
+    save('nura_personas', updated)
+    return id
+  }
+
+  function linkPersonaContact(personaId, helperId) {
+    const updated = personas.map(p => p.id === personaId && !(p.contactedHelperIds || []).includes(helperId)
+      ? { ...p, contactedHelperIds: [...(p.contactedHelperIds || []), helperId] }
+      : p)
+    setPersonas(updated)
+    save('nura_personas', updated)
+  }
+
+  function removePersona(personaId) {
+    const updated = personas.filter(p => p.id !== personaId)
+    setPersonas(updated)
+    save('nura_personas', updated)
+  }
+
   function confirmContact(helperId, confirmed) {
     const updated = contactedHelpers.map(c =>
       (c.id || c) === helperId ? { ...c, confirmed, confirmedAt: Date.now() } : c
@@ -211,6 +258,7 @@ export function UserProvider({ children }) {
       ratings, addRating, hasRated,
       searchHistory, addSearch,
       contactedHelpers, confirmContact,
+      personas, upsertPersona, linkPersonaContact, removePersona,
       helpersCache, cacheHelpers,
       following, follow, unfollow, isFollowing,
       notifications, markNotifsRead, unreadNotifs,

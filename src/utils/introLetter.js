@@ -4,6 +4,8 @@
 // No es una plantilla genérica: se construye combinando lo que el motor
 // de matching ya sabe sobre la necesidad del usuario.
 
+import { suyoDe } from './personas'
+
 function getFirstName(fullName) {
   if (!fullName) return ''
   return fullName.replace(/^(Dr\.|Dra\.|DJ)\s+/i, '').split(' ')[0]
@@ -14,18 +16,31 @@ function describeSituation(analysis, userQuery) {
   const cat = analysis?.categoria
   const signals = analysis?.complexSignals || {}
   const paraQuien = analysis?.paraQuien
+  // El Espejo — si sabemos quién es, la carta lo dice con nombre propio
+  const quien = suyoDe(analysis?.persona)
 
   if (signals.alzheimer) {
-    return 'tiene una persona cercana con Alzheimer y necesita cuidado de confianza'
+    return quien
+      ? `${quien} tiene Alzheimer y necesita cuidado de confianza`
+      : 'tiene una persona cercana con Alzheimer y necesita cuidado de confianza'
   }
   if (signals.infantil && cat === 'logopedia') {
-    return 'tiene un niño o niña que necesita apoyo con el habla'
+    return quien
+      ? `${quien} necesita apoyo con el habla`
+      : 'tiene un niño o niña que necesita apoyo con el habla'
   }
   if (signals.infantil) {
-    return 'necesita ayuda relacionada con sus hijos'
+    return quien
+      ? `necesita ayuda para ${quien.replace('su ', 'su ')}`
+      : 'necesita ayuda relacionada con sus hijos'
   }
   if (signals.sola) {
-    return 'tiene una persona mayor que vive sola y necesita compañía y cuidado'
+    return quien
+      ? `${quien} vive sola y necesita compañía y cuidado`
+      : 'tiene una persona mayor que vive sola y necesita compañía y cuidado'
+  }
+  if (quien && cat === 'cuidado') {
+    return `busca cuidado de confianza para ${quien}`
   }
   if (cat === 'cuidado') {
     return paraQuien === 'familia'

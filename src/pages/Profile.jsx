@@ -4,13 +4,14 @@ import { useNavigate } from 'react-router-dom'
 import { LogOut, Edit2, Check, X, Award, MessageCircle,
          Heart, ClipboardList, User, Phone, Search, Star , UserPlus, UserCheck } from 'lucide-react'
 import { useUser } from '../context/UserContext'
+import { Badge } from '../components/ui'
 import styles from './Profile.module.css'
 
 export default function Profile() {
   const {
     user, logout, updateUser,
     chats, ratings, searchHistory, favorites, isFollowing,
-    services
+    services, personas, removePersona, helpersCache
   } = useUser()
   const navigate = useNavigate()
 
@@ -155,6 +156,56 @@ export default function Profile() {
             </div>
           ) : null
         })()}
+
+        {/* ── EL ESPEJO: LAS PERSONAS DE TU VIDA ────────── */}
+        {(personas || []).length > 0 && (
+          <div style={{margin:'0 0 20px', animation:'fadeInUp 0.3s ease-out 60ms both'}}>
+            <div style={{
+              fontSize:'11px', fontWeight:700, color:'var(--purple)',
+              letterSpacing:'0.8px', textTransform:'uppercase', marginBottom:'10px'
+            }}>Las personas de tu vida</div>
+            <div style={{display:'flex', flexDirection:'column', gap:'8px'}}>
+              {personas.map(p => {
+                const helperNames = (p.contactedHelperIds || [])
+                  .map(id => helpersCache?.[id]?.name?.split(' ')?.[0] || helpersCache?.[String(id)]?.name?.split(' ')?.[0])
+                  .filter(Boolean)
+                return (
+                  <div key={p.id} style={{
+                    background:'white', borderRadius:'var(--radius-md)',
+                    border:'1px solid var(--ink-border)', padding:'12px 14px',
+                    display:'flex', alignItems:'flex-start', gap:'10px'
+                  }}>
+                    <div style={{flex:1, minWidth:0}}>
+                      <div style={{
+                        fontSize:'var(--text-sm)', fontWeight:700, color:'var(--ink)',
+                        letterSpacing:'-0.1px', marginBottom:'4px', textTransform:'capitalize'
+                      }}>{p.label.replace('tu ', '')}</div>
+                      {(p.atributos || []).length > 0 && (
+                        <div style={{display:'flex', gap:'4px', flexWrap:'wrap', marginBottom: helperNames.length ? '6px' : 0}}>
+                          {p.atributos.map(a => <Badge key={a} variant="neutral">{a}</Badge>)}
+                        </div>
+                      )}
+                      {helperNames.length > 0 && (
+                        <div style={{fontSize:'11px', color:'var(--green)', fontWeight:500}}>
+                          ✓ {helperNames.join(', ')} {helperNames.length === 1 ? 'ayuda' : 'ayudan'} con esto
+                        </div>
+                      )}
+                    </div>
+                    <button onClick={() => removePersona(p.id)} style={{
+                      background:'none', border:'none', padding:'2px',
+                      color:'var(--ink-disabled)', flexShrink:0, cursor:'pointer'
+                    }} aria-label={`Olvidar a ${p.label}`}>
+                      <X size={13} />
+                    </button>
+                  </div>
+                )
+              })}
+            </div>
+            <p style={{fontSize:'10px', color:'var(--ink-tertiary)', marginTop:'8px', lineHeight:1.4}}>
+              Nüra recuerda esto para ayudarte mejor. Puedes borrar cualquier persona cuando quieras.
+            </p>
+          </div>
+        )}
 
         {/* ── ZONA 2: ACTIVIDAD HUMANA ──────────────────── */}
         <div className={styles.activityZone} style={{animation:`fadeInUp 0.3s ease-out 80ms forwards`}}>

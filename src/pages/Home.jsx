@@ -12,6 +12,7 @@ import { haptic } from '../utils/haptic'
 import { scheduleLocalNotification, notifySearchAbandoned } from '../utils/notifications'
 import styles from './Home.module.css'
 import { PULSO_THRESHOLD, PULSO_DELAY, CONFIRMACION_THRESHOLD, CONFIRMACION_DELAY } from '../config'
+import { extractPersona } from '../utils/personas'
 
 // Category-aware refine chips — show the dimensions that matter for each need
 const CONTEXT_CHIPS = {
@@ -26,7 +27,7 @@ const CONTEXT_CHIPS = {
 }
 
 
-function getWelcome(user, searchHistory, following, helpersCache, contactedHelpers) {
+function getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas) {
   const hour = new Date().getHours()
   const greeting = hour < 14 ? 'Buenos días' : hour < 21 ? 'Buenas tardes' : 'Buenas noches'
   const firstName = user?.name?.split(' ')?.[0] || user?.name
@@ -42,6 +43,14 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
   if (confirmedContacts.length > 0) {
     const last = confirmedContacts[confirmedContacts.length - 1]
     const helperFirst = last.name?.split(' ')?.[0] || last.name
+    // El Espejo — si este contacto está vinculado a una persona, preguntar por ella
+    const linkedPersona = (personas || []).find(p => (p.contactedHelperIds || []).includes(last.id))
+    if (linkedPersona) {
+      return [
+        `${greeting}, **${firstName}**.`,
+        `¿Cómo está ${linkedPersona.label}? Me alegra que **${helperFirst}** esté con vosotros. Si necesitas algo más, aquí estoy.`
+      ]
+    }
     // Find what the user originally searched for when they contacted this helper
     const relatedSearch = (searchHistory || []).find(s =>
       s.category === last.category ||
@@ -68,6 +77,17 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
       `${greeting}, **${firstName}**.`,
       `¿Pudiste resolver lo que necesitabas con **${helperFirst}**? ¿O buscamos otra persona?`
     ]
+  }
+
+  // ── El Espejo — persona conocida, aún sin conexión cerrada ──────────
+  if ((personas || []).length > 0) {
+    const p = personas[personas.length - 1]
+    if (!(p.contactedHelperIds || []).length) {
+      return [
+        `${greeting}, **${firstName}**.`,
+        `La última vez me hablaste de ${p.label}. ¿Cómo está? ¿Buscamos a alguien que pueda ayudar?`
+      ]
+    }
   }
 
   // ── Returning user with recent search ───────────────────────────────
@@ -253,7 +273,7 @@ const HELPER_SUGGESTIONS = [
 
 export default function Home({ setSearchState }) {
   const navigate = useNavigate()
-  const { user, addSearch, searchHistory, favorites, helpersCache, nuraChatMessages, setNuraChatMessages, nuraLastMatches, setNuraLastMatches, cacheHelpers, contactedHelpers, confirmContact, following } = useUser()
+  const { user, addSearch, searchHistory, favorites, helpersCache, nuraChatMessages, setNuraChatMessages, nuraLastMatches, setNuraLastMatches, cacheHelpers, contactedHelpers, confirmContact, following, personas, upsertPersona } = useUser()
   // messages persisted in context so they survive navigation
   const messages = nuraChatMessages
   const setMessages = setNuraChatMessages
@@ -278,7 +298,7 @@ export default function Home({ setSearchState }) {
   const [floatH, setFloatH] = useState(84) /* header height fallback */
 
   useEffect(() => {
-    let lines = getWelcome(user, searchHistory, following, helpersCache, contactedHelpers)
+    let lines = getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas)
     // If just came from onboarding with a name — magic first moment
     let justOnboarded; try { justOnboarded = sessionStorage.getItem('nura_just_onboarded') } catch {}
     if (justOnboarded) {
@@ -459,7 +479,13 @@ export default function Home({ setSearchState }) {
             isConfirmacion: true,
             confirmacionHelperId: pending.id,
             confirmacionHelperName: pending.name,
-            lines: [`¿Pudiste resolver lo que necesitabas con **${pending.name?.split(' ')?.[0] || pending.name}**?`],
+            lines: [(() => {
+              const lp = (personas || []).find(p => (p.contactedHelperIds || []).includes(pending.id))
+              const hn = pending.name?.split(' ')?.[0] || pending.name
+              return lp
+                ? `¿Pudiste resolver lo que necesitabas para ${lp.label} con **${hn}**?`
+                : `¿Pudiste resolver lo que necesitabas con **${hn}**?`
+            })()],
             chips: ['Sí, genial', 'No del todo'],
           }]
         })
@@ -765,6 +791,15 @@ export default function Home({ setSearchState }) {
       window.__nuraLastQuery = msg
       try { sessionStorage.setItem('nura_last_query', msg) } catch {}
       if (forWhom) analysis.paraQuien = forWhom
+      // El Espejo — detectar y recordar a la persona de esta búsqueda
+      const personaDetected = extractPersona(msg)
+      if (personaDetected) {
+        const pid = upsertPersona(personaDetected, msg)
+        analysis.persona = personaDetected.relacion
+        try { window.__nuraActivePersona = pid } catch {}
+      } else {
+        try { window.__nuraActivePersona = null } catch {}
+      }
       window.__nuraLastAnalysis = analysis
       try { sessionStorage.setItem('nura_last_analysis', JSON.stringify(analysis)) } catch {}
       setSearchState({ query: msg, analysis, matches })
@@ -963,7 +998,7 @@ export default function Home({ setSearchState }) {
               onClick={() => {
                 setMessages([])
                 setLastMatches([])
-                setTimeout(() => setMessages([{ id: 1, from: 'nura', lines: getWelcome(user, searchHistory, following, helpersCache, contactedHelpers) }]), 100)
+                setTimeout(() => setMessages([{ id: 1, from: 'nura', lines: getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas) }]), 100)
               }}>
               <RotateCcw size={15} color="rgba(0,0,0,0.6)" />
             </button>
