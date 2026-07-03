@@ -7,6 +7,7 @@ import { useUser } from '../context/UserContext'
 import { showToast } from '../components/Toast'
 import HelperCard from '../components/HelperCard'
 import HelperCarousel from '../components/HelperCarousel'
+import HelperCard from '../components/HelperCard'
 import RegisterGate from '../components/RegisterGate'
 import { haptic } from '../utils/haptic'
 import { scheduleLocalNotification, notifySearchAbandoned } from '../utils/notifications'
@@ -40,6 +41,49 @@ function buildComprehension(analysis) {
   if (analysis?.urgente) chips.push('Urgente')
   chips.push('Cerca de ti')
   return chips.slice(0, 5)
+}
+
+// ── La Recomendación — una persona primero, con convicción ──
+function ResultsBlock({ results }) {
+  const [showAlts, setShowAlts] = useState(false)
+  if (!results?.length) return null
+  const top = results[0]
+  const alts = results.slice(1)
+  const firstName = top?.name?.split(' ')?.[0] || ''
+  const reason = window.__nuraMatchReasons?.[String(top?.id)]
+  const persona = window.__nuraLastAnalysis?.persona
+  const paraLabel = persona && PERSONA_CHIP[persona]
+    ? ' ' + PERSONA_CHIP[persona].charAt(0).toLowerCase() + PERSONA_CHIP[persona].slice(1)
+    : ''
+  return (
+    <div>
+      <div style={{
+        fontSize:'12px', color:'var(--ink-secondary)', lineHeight:1.5,
+        margin:'2px 0 8px', letterSpacing:'-0.1px'
+      }}>
+        <span style={{color:'var(--purple)', fontWeight:700}}>✦</span>{' '}
+        De 1.008 profesionales, <strong>{firstName}</strong> es mi recomendación{paraLabel}
+        {reason ? <> — {reason}</> : null}.
+      </div>
+      <HelperCard helper={top} showPrice />
+      {alts.length > 0 && (
+        !showAlts ? (
+          <button onClick={() => setShowAlts(true)} style={{
+            width:'100%', marginTop:'8px', padding:'10px',
+            background:'transparent', border:'1px dashed var(--ink-border)',
+            borderRadius:'var(--radius-md)', color:'var(--ink-secondary)',
+            fontSize:'12px', fontWeight:600
+          }}>
+            Ver {alts.length} alternativa{alts.length > 1 ? 's' : ''}
+          </button>
+        ) : (
+          <div style={{marginTop:'10px'}}>
+            <HelperCarousel helpers={alts} />
+          </div>
+        )
+      )}
+    </div>
+  )
 }
 
 // Category-aware refine chips — show the dimensions that matter for each need
@@ -1161,7 +1205,7 @@ export default function Home() {
             )}
             {msg.results && (
               <div className={styles.carouselBlock}>
-                <HelperCarousel helpers={msg.results} />
+                <ResultsBlock results={msg.results} />
               </div>
             )}
 
