@@ -112,7 +112,7 @@ function EscaparateVivo({ onHelperTap }) {
 const CATEGORIES = [
   {
     id: 'salud',
-    label: 'Salud y bienestar',
+    label: 'Cuidar mi salud',
     desc: 'Psicólogos, logopedas, médicos y bienestar',
     icon: Heart,
     color: '#FF6B6B',
@@ -122,7 +122,7 @@ const CATEGORIES = [
   },
   {
     id: 'tecnico',
-    label: 'Técnicos',
+    label: 'Arreglar algo en casa',
     desc: 'Fontaneros, electricistas y reparaciones',
     icon: Wrench,
     color: '#F59E0B',
@@ -132,7 +132,7 @@ const CATEGORIES = [
   },
   {
     id: 'clases',
-    label: 'Clases y formación',
+    label: 'Aprender algo nuevo',
     desc: 'Idiomas, música y refuerzo escolar',
     icon: BookOpen,
     color: '#3B82F6',
@@ -143,7 +143,7 @@ const CATEGORIES = [
   },
   {
     id: 'asesoria',
-    label: 'Asesoría',
+    label: 'Resolver un tema legal',
     desc: 'Abogados, gestores y consultoría',
     icon: Scale,
     color: '#8B5CF6',
@@ -153,7 +153,7 @@ const CATEGORIES = [
   },
   {
     id: 'hogar',
-    label: 'Hogar',
+    label: 'Poner mi casa a punto',
     desc: 'Limpieza, cocina y ayuda doméstica',
     icon: Home,
     color: '#10B981',
@@ -163,7 +163,7 @@ const CATEGORIES = [
   },
   {
     id: 'mascotas',
-    label: 'Mascotas',
+    label: 'Cuidar a mi mascota',
     desc: 'Cuidadores, paseos y adiestramiento',
     icon: PawPrint,
     color: '#F97316',
@@ -173,7 +173,7 @@ const CATEGORIES = [
   },
   {
     id: 'entrenamiento',
-    label: 'Entrenamiento',
+    label: 'Ponerme en forma',
     desc: 'Personal trainers y deportes',
     icon: Dumbbell,
     color: '#06B6D4',
@@ -184,7 +184,7 @@ const CATEGORIES = [
   },
   {
     id: 'cuidado',
-    label: 'Cuidado de personas',
+    label: 'Cuidar a alguien querido',
     desc: 'Cuidadores, auxiliares y compañía',
     icon: Baby,
     color: '#EC4899',
@@ -194,7 +194,7 @@ const CATEGORIES = [
   },
   {
     id: 'tecnologia',
-    label: 'Tecnología',
+    label: 'Ayuda con tecnología',
     desc: 'Técnicos, desarrollo web y apps',
     icon: Laptop,
     color: '#6366F1',
@@ -204,7 +204,7 @@ const CATEGORIES = [
   },
   {
     id: 'diseno',
-    label: 'Creatividad y diseño',
+    label: 'Crear algo',
     desc: 'Fotógrafos, diseñadores y creativos',
     icon: Palette,
     color: '#F43F5E',
@@ -214,7 +214,7 @@ const CATEGORIES = [
   },
   {
     id: 'automocion',
-    label: 'Automoción',
+    label: 'Mi coche o moto',
     desc: 'Mecánicos y cuidado del vehículo',
     icon: Car,
     color: '#64748B',
@@ -224,7 +224,7 @@ const CATEGORIES = [
   },
   {
     id: 'eventos',
-    label: 'Eventos',
+    label: 'Celebrar algo',
     desc: 'DJs, animadores y wedding planners',
     icon: PartyPopper,
     color: '#F97316',
@@ -234,7 +234,7 @@ const CATEGORIES = [
   },
   {
     id: 'idiomas',
-    label: 'Viajes e idiomas',
+    label: 'Viajar o hablar otro idioma',
     desc: 'Guías, traductores e intérpretes',
     icon: Globe,
     color: '#0EA5E9',
