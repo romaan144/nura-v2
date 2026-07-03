@@ -407,7 +407,8 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
   try {
     let remote = []
     try {
-      remote = (await searchHelpers(analysis.categoria, analysis.palabrasClave)) || []
+      const timeoutSb = new Promise(res => setTimeout(() => res([]), 3000))
+      remote = (await Promise.race([searchHelpers(analysis.categoria, analysis.palabrasClave), timeoutSb])) || []
     } catch (e) { console.error('[Nüra] Supabase no disponible — pool local activo:', e); remote = [] }
     if (remote && remote.length > 0) {
       pool = [...demoPool, ...remote.map(normalizeHelper).filter(Boolean)]
