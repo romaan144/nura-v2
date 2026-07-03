@@ -623,8 +623,9 @@ export default function Home() {
     }
 
     // ── El Pulso — interceptar respuesta a chips ────────────────────
+    const PULSO_CHIPS = ['Ver mis contactos', 'Mejorar mi perfil', 'Ver qué buscan', 'Actualizar perfil', 'Ahora no']
     const pulsoMsg = messages.find(m => m.isPulso)
-    if (pulsoMsg) {
+    if (pulsoMsg && PULSO_CHIPS.includes(msg)) {
       const t = msg.toLowerCase()
       setTimeout(() => {
         if (t.includes('contacto') || t.includes('escrib')) {
@@ -653,7 +654,7 @@ export default function Home() {
 
     // ── La Confirmación Humana — interceptar respuesta ──────────────
     const confirmMsg = messages.find(m => m.isConfirmacion)
-    if (confirmMsg) {
+    if (confirmMsg && (msg === 'Sí, genial' || msg === 'No del todo')) {
       const helperName = confirmMsg.confirmacionHelperName?.split(' ')?.[0] || 'el profesional'
       const isPositive = msg.toLowerCase().includes('sí') || msg.toLowerCase().includes('genial')
 
