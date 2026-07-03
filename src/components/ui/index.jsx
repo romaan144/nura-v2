@@ -68,6 +68,7 @@ export function Bubble({ text, author, index = 0, style }) {
           <p style={{
             fontSize: 'var(--text-sm)', color: 'var(--ink)', lineHeight: 1.5,
             margin: 0, letterSpacing: '-0.1px',
+            fontFamily: 'var(--font-voice)', fontStyle: 'italic',
           }}>"{text}"</p>
         </div>
         {author && (

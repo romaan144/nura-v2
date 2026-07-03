@@ -464,3 +464,6 @@ textarea:active {
     scroll-behavior: auto !important;
   }
 }
+
+/* ── La Voz Tipográfica — solo donde hablan los humanos ── */
+:root { --font-voice: 'Fraunces', Georgia, serif; }

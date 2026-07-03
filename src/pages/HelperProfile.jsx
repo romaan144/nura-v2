@@ -328,7 +328,7 @@ function HelperProfileInner() {
               <p style={{
                 fontSize:'17px', fontWeight:500, color:'var(--ink)',
                 lineHeight:1.55, letterSpacing:'-0.2px', margin:0,
-                fontStyle:'italic'
+                fontStyle:'italic', fontFamily:'var(--font-voice)'
               }}>"{enrichedH.quote}"</p>
             </div>
           )}
