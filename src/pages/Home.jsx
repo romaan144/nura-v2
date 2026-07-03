@@ -790,16 +790,18 @@ export default function Home() {
     try {
       // Analyse first so we can use it for contextual loading message
       const analysis = await analyzeNeed(msg)
-      if (forWhom) analysis.paraQuien = forWhom
-      // El Espejo — detectar y recordar a la persona de esta búsqueda
-      const personaDetected = extractPersona(msg)
-      if (personaDetected) {
-        const pid = upsertPersona(personaDetected, msg)
-        analysis.persona = personaDetected.relacion
-        try { window.__nuraActivePersona = pid } catch {}
-      } else {
-        try { window.__nuraActivePersona = null } catch {}
-      }
+      try {
+        if (forWhom) analysis.paraQuien = forWhom
+        // El Espejo — detectar y recordar a la persona de esta búsqueda
+        const personaDetected = extractPersona(msg)
+        if (personaDetected) {
+          const pid = upsertPersona(personaDetected, msg)
+          analysis.persona = personaDetected.relacion
+          window.__nuraActivePersona = pid
+        } else {
+          window.__nuraActivePersona = null
+        }
+      } catch (e) { console.error('[Nüra] contexto persona:', e) }
       window.__nuraLastAnalysis = analysis
       try { sessionStorage.setItem('nura_last_analysis', JSON.stringify(analysis)) } catch {}
       // Empathy acknowledgment — instant, before searching
@@ -1024,7 +1026,9 @@ export default function Home() {
     } catch {
       clearInterval(window.__nuraStatusInterval)
       setMessages(prev => prev.filter(m => !m.loading))
-      setMessages(prev => [...prev, { id: Date.now(), from: 'nura', lines: ['Algo fue mal. Inténtalo de nuevo.'] }])
+      console.error('[Nüra] búsqueda:', err)
+      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+        lines: ['Algo fue mal. Inténtalo de nuevo.', `⚙️ ${err?.message || err}`] }])
     }
     setLoading(false)
   }
