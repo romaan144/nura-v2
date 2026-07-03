@@ -13,6 +13,7 @@ import { scheduleLocalNotification, notifySearchAbandoned } from '../utils/notif
 import styles from './Home.module.css'
 import { PULSO_THRESHOLD, PULSO_DELAY, CONFIRMACION_THRESHOLD, CONFIRMACION_DELAY } from '../config'
 import { extractPersona } from '../utils/personas'
+import { HELPERS as LOCAL_FALLBACK_HELPERS } from '../data/helpers'
 
 // ── La Comprensión Visible — lo que Nüra ha entendido, en chips ──
 const CAT_HUMANA = {
@@ -847,7 +848,12 @@ export default function Home() {
           }
         }, 900)
       }, 600)
-      const matches = await matchHelpers(analysis, 4)
+      let matches = await matchHelpers(analysis, 4)
+      // Red de seguridad final: la búsqueda nunca devuelve vacío
+      if (!matches?.length) {
+        matches = (LOCAL_FALLBACK_HELPERS || []).filter(x => x && x.id >= 2000)
+          .sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 4)
+      }
       clearInterval(window.__nuraStatusInterval)
       setMessages(prev => prev.filter(m => !m.loading))
 
