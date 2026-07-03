@@ -45,10 +45,17 @@ function buildComprehension(analysis) {
 
 // ── La Recomendación — una persona primero, con convicción ──
 function ResultsBlock({ results }) {
-  const [showAlts, setShowAlts] = useState(false)
+  const [revealed, setRevealed] = useState(1)
+  useEffect(() => {
+    if (!results || results.length <= 1) return
+    const t = setInterval(() => {
+      setRevealed(r => (r >= results.length ? (clearInterval(t), r) : r + 1))
+    }, 550)
+    return () => clearInterval(t)
+  }, [results])
   if (!results?.length) return null
   const top = results[0]
-  const alts = results.slice(1)
+  const alts = results.slice(1, revealed)
   const firstName = top?.name?.split(' ')?.[0] || ''
   const reason = window.__nuraMatchReasons?.[String(top?.id)]
   const persona = window.__nuraLastAnalysis?.persona
@@ -65,23 +72,20 @@ function ResultsBlock({ results }) {
         De 1.008 profesionales, <strong>{firstName}</strong> es mi recomendación{paraLabel}
         {reason ? <> — {reason}</> : null}.
       </div>
-      <HelperCard helper={top} showPrice />
-      {alts.length > 0 && (
-        !showAlts ? (
-          <button onClick={() => setShowAlts(true)} style={{
-            width:'100%', marginTop:'8px', padding:'10px',
-            background:'transparent', border:'1px dashed var(--ink-border)',
-            borderRadius:'var(--radius-md)', color:'var(--ink-secondary)',
-            fontSize:'12px', fontWeight:600
-          }}>
-            Ver {alts.length} alternativa{alts.length > 1 ? 's' : ''}
-          </button>
-        ) : (
-          <div style={{marginTop:'10px'}}>
-            <HelperCarousel helpers={alts} />
-          </div>
-        )
+      <div style={{animation:'cardCascade 0.45s ease-out both'}}>
+        <HelperCard helper={top} showPrice />
+      </div>
+      {revealed > 1 && (
+        <div style={{fontSize:'12px', fontWeight:600, color:'var(--ink-secondary)',
+          margin:'12px 0 8px'}}>También encajan:</div>
       )}
+      <div style={{display:'flex', flexDirection:'column', gap:'10px'}}>
+        {alts.map((a, i) => (
+          <div key={a.id || i} style={{animation:'cardCascade 0.5s ease-out both'}}>
+            <HelperCard helper={a} showPrice />
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
