@@ -752,6 +752,7 @@ export default function Home() {
         const resultMsg = { id: Date.now(), from: 'nura', lines: [refineLine], results: refined,
           refineChips: ['Más barato', 'Más cerca', 'Mejor valorado', 'Online'] }
         setMessages(prev => [...prev, resultMsg])
+      setLoading(false)
         setLastMatches(refined)
         setLoading(false)
         return
@@ -764,6 +765,7 @@ export default function Home() {
       if (refined?.length) {
         const resultMsg = { id: Date.now(), from: 'nura', lines: [`He ajustado los resultados.`], results: refined }
         setMessages(prev => [...prev, resultMsg])
+      setLoading(false)
         setTimeout(() => setMessages(prev => [...prev, { id: Date.now()+1, from: 'nura', lines: ['¿Te convence alguno?'] }]), 1200)
         setLastMatches(refined)
         setLoading(false)
@@ -1035,9 +1037,11 @@ export default function Home() {
           : ['Ampliar búsqueda', 'Cambiar zona', 'Online también']
       }
       setMessages(prev => [...prev, resultMsg])
+      setLoading(false)
     } catch {
       clearInterval(window.__nuraStatusInterval)
       setMessages(prev => prev.filter(m => !m.loading))
+      setLoading(false)
       console.error('[Nüra] búsqueda:', err)
       setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
         lines: ['Algo fue mal. Inténtalo de nuevo.', `⚙️ ${err?.message || err}`] }])
@@ -1319,7 +1323,7 @@ export default function Home() {
           <input ref={inputRef} className={styles.input} aria-label="Cuéntale a Nüra qué necesitas"
             placeholder={forWhom === 'familia' ? 'Cuéntame qué le pasa...' : forWhom === 'hogar' ? 'Cuéntame qué necesita tu hogar...' : 'Cuéntame qué necesitas...'}
             value={input} onChange={e => setInput(e.target.value)}
-            onKeyDown={handleKey} disabled={loading}
+            onKeyDown={handleKey} readOnly={false}
             onFocus={() => setInputFocused(true)}
             onBlur={() => setTimeout(() => setInputFocused(false), 200)} />
           {input.trim()
