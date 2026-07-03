@@ -14,6 +14,34 @@ import styles from './Home.module.css'
 import { PULSO_THRESHOLD, PULSO_DELAY, CONFIRMACION_THRESHOLD, CONFIRMACION_DELAY } from '../config'
 import { extractPersona } from '../utils/personas'
 
+// ── La Comprensión Visible — lo que Nüra ha entendido, en chips ──
+const CAT_HUMANA = {
+  cuidado:'Compañía y cuidado', salud:'Apoyo de salud', logopedia:'Apoyo con el habla',
+  tecnico:'Arreglo técnico', legal:'Orientación legal', clases:'Clases y apoyo',
+  mascotas:'Cuidado de mascotas', hogar:'Ayuda en el hogar', entrenador:'Entrenamiento',
+}
+const PERSONA_CHIP = {
+  madre:'Para tu madre', padre:'Para tu padre', hijo:'Para tu hijo', hija:'Para tu hija',
+  abuela:'Para tu abuela', abuelo:'Para tu abuelo', marido:'Para tu marido',
+  mujer:'Para tu mujer', pareja:'Para tu pareja', hermana:'Para tu hermana',
+  hermano:'Para tu hermano', bebe:'Para tu bebé',
+}
+function buildComprehension(analysis) {
+  const chips = []
+  const s = analysis?.complexSignals || {}
+  if (analysis?.persona && PERSONA_CHIP[analysis.persona]) chips.push(PERSONA_CHIP[analysis.persona])
+  else if (analysis?.paraQuien === 'familia') chips.push('Para tu familia')
+  else if (analysis?.paraQuien === 'hogar') chips.push('Para tu hogar')
+  if (CAT_HUMANA[analysis?.categoria]) chips.push(CAT_HUMANA[analysis.categoria])
+  if (s.alzheimer) chips.push('Experiencia en Alzheimer')
+  if (s.infantil) chips.push('Con niños')
+  if (s.sola) chips.push('Vive sola')
+  if (s.nocturno) chips.push('Horario nocturno')
+  if (analysis?.urgente) chips.push('Urgente')
+  chips.push('Cerca de ti')
+  return chips.slice(0, 5)
+}
+
 // Category-aware refine chips — show the dimensions that matter for each need
 const CONTEXT_CHIPS = {
   cuidado: ['Solo mañanas', 'Con experiencia en Alzheimer', 'Disponible hoy', 'Más cerca'],
@@ -281,6 +309,7 @@ export default function Home() {
   const [forWhom, setForWhom] = useState(() => {
     try { return sessionStorage.getItem('nura_for_whom') || '' } catch { return '' }
   })
+  const correctionRef = useRef(null)
   const [loading, setLoading] = useState(false)
   const [listening, setListening] = useState(false)
   const [showGate, setShowGate] = useState(false)
@@ -509,8 +538,15 @@ export default function Home() {
     })
   }
 
+  function startCorrection(originalQuery) {
+    correctionRef.current = originalQuery || window.__nuraLastQuery || ''
+    setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+      lines: ['Vale — dime qué he entendido mal y ajusto la búsqueda.'] }])
+    setTimeout(() => inputRef.current?.focus?.(), 200)
+  }
+
   async function handleSend(text) {
-    const msg = text || input
+    let msg = text || input
     if (!msg.trim() || loading) return
     haptic('light')
 
@@ -518,6 +554,12 @@ export default function Home() {
     setShowSuggestions(false)
     setMessages(prev => [...prev, { id: Date.now(), from: 'user', text: msg }])
     setLoading(true)
+
+    // ── Comprensión Visible: si hay corrección pendiente, combinar con la consulta original ──
+    if (correctionRef.current) {
+      msg = `${correctionRef.current}. ${msg}`
+      correctionRef.current = null
+    }
 
     // ── La Pregunta — interceptar selección ─────────────────────────
     const FOR_WHOM = { 'Para mí': 'mi', 'Para alguien de mi familia': 'familia', 'Para mi hogar o negocio': 'hogar' }
@@ -705,6 +747,18 @@ export default function Home() {
     try {
       // Analyse first so we can use it for contextual loading message
       const analysis = await analyzeNeed(msg)
+      if (forWhom) analysis.paraQuien = forWhom
+      // El Espejo — detectar y recordar a la persona de esta búsqueda
+      const personaDetected = extractPersona(msg)
+      if (personaDetected) {
+        const pid = upsertPersona(personaDetected, msg)
+        analysis.persona = personaDetected.relacion
+        try { window.__nuraActivePersona = pid } catch {}
+      } else {
+        try { window.__nuraActivePersona = null } catch {}
+      }
+      window.__nuraLastAnalysis = analysis
+      try { sessionStorage.setItem('nura_last_analysis', JSON.stringify(analysis)) } catch {}
       // Empathy acknowledgment — instant, before searching
       const empathyLine = analysis?.urgente
         ? '⚡ Entendido. Situación urgente — busco disponibilidad ahora mismo.'
@@ -723,7 +777,7 @@ export default function Home() {
         : analysis?.categoria === 'psicologia'
         ? 'Gracias por contarme. Busco el psicólogo más adecuado para ti.'
         : '¿Te entiendo bien? Déjame buscar la persona exacta que necesitas.'
-      setMessages(prev => [...prev, { id: Date.now() + 0.3, from: 'nura', lines: [empathyLine] }])
+      setMessages(prev => [...prev, { id: Date.now() + 0.3, from: 'nura', lines: [empathyLine], comprehensionChips: buildComprehension(analysis), originalQuery: msg }])
 
       // Progressive loading messages — feel like magic
       const loadingSteps = analysis?.urgente
@@ -790,18 +844,6 @@ export default function Home() {
       addSearch?.(msg, analysis?.categoria)
       window.__nuraLastQuery = msg
       try { sessionStorage.setItem('nura_last_query', msg) } catch {}
-      if (forWhom) analysis.paraQuien = forWhom
-      // El Espejo — detectar y recordar a la persona de esta búsqueda
-      const personaDetected = extractPersona(msg)
-      if (personaDetected) {
-        const pid = upsertPersona(personaDetected, msg)
-        analysis.persona = personaDetected.relacion
-        try { window.__nuraActivePersona = pid } catch {}
-      } else {
-        try { window.__nuraActivePersona = null } catch {}
-      }
-      window.__nuraLastAnalysis = analysis
-      try { sessionStorage.setItem('nura_last_analysis', JSON.stringify(analysis)) } catch {}
       setLastMatches(matches)
       // Schedule reminder if user doesn't contact
       scheduleLocalNotification(
@@ -1095,6 +1137,28 @@ export default function Home() {
               )}
               </div>
             </div>
+            {msg.comprehensionChips && (
+              <div style={{marginTop:'8px'}}>
+                <div style={{fontSize:'10px', fontWeight:700, color:'var(--purple)',
+                  letterSpacing:'0.6px', textTransform:'uppercase', marginBottom:'6px'}}>
+                  Lo he entendido así
+                </div>
+                <div style={{display:'flex', flexWrap:'wrap', gap:'6px'}}>
+                  {msg.comprehensionChips.map(c => (
+                    <button key={c} onClick={() => startCorrection(msg.originalQuery)}
+                      aria-label={`Corregir: ${c}`}
+                      style={{background:'var(--purple-10)', border:'1px solid var(--purple-20)',
+                        color:'var(--purple)', borderRadius:'var(--radius-full)',
+                        padding:'5px 12px', fontSize:'12px', fontWeight:600}}>
+                      {c}
+                    </button>
+                  ))}
+                </div>
+                <div style={{fontSize:'10px', color:'var(--ink-tertiary)', marginTop:'6px'}}>
+                  Toca cualquier dato si algo no encaja
+                </div>
+              </div>
+            )}
             {msg.results && (
               <div className={styles.carouselBlock}>
                 <HelperCarousel helpers={msg.results} />
