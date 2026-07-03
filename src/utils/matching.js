@@ -405,7 +405,10 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
 
   // Try Supabase
   try {
-    const remote = await searchHelpers(analysis.categoria, analysis.palabrasClave)
+    let remote = []
+    try {
+      remote = (await searchHelpers(analysis.categoria, analysis.palabrasClave)) || []
+    } catch (e) { console.error('[Nüra] Supabase no disponible — pool local activo:', e); remote = [] }
     if (remote && remote.length > 0) {
       pool = [...demoPool, ...remote.map(normalizeHelper).filter(Boolean)]
     }
