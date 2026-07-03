@@ -789,7 +789,8 @@ export default function Home() {
 
     try {
       // Analyse first so we can use it for contextual loading message
-      const analysis = await analyzeNeed(msg)
+      const analysis = (await analyzeNeed(msg))
+        || { categoria: 'otro', palabrasClave: msg.toLowerCase().split(' '), complexSignals: {} }
       try {
         if (forWhom) analysis.paraQuien = forWhom
         // El Espejo — detectar y recordar a la persona de esta búsqueda
