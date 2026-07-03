@@ -4,7 +4,8 @@ import { useUser } from './context/UserContext'
 
 import Splash from './pages/Splash'
 import MomentoCero from './pages/MomentoCero'
-import { MOMENTO_CERO_COOLDOWN } from './config'
+import { MOMENTO_CERO_COOLDOWN, NURA_BUILD } from './config'
+console.log('[Nüra] build', NURA_BUILD)
 import Home from './pages/Home'
 const HelperProfile = lazy(() => import('./pages/HelperProfile'))
 const IntroLetter = lazy(() => import('./pages/IntroLetter'))

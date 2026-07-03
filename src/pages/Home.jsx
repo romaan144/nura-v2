@@ -845,7 +845,7 @@ export default function Home() {
       let stepIdx = 0
       setTimeout(() => {
         setMessages(prev => [...prev, { id: Date.now() + 0.5, from: 'nura', lines: [loadingSteps[0]], loading: true }])
-        const stepInterval = setInterval(() => {
+        const stepInterval = window.__nuraStatusInterval = setInterval(() => {
           stepIdx++
           if (stepIdx < loadingSteps.length) {
             setMessages(prev => prev.map(m => m.loading ? { ...m, lines: [loadingSteps[stepIdx]] } : m))
@@ -854,6 +854,7 @@ export default function Home() {
           }
         }, 900)
       }, 600)
+      const searchStartTime = Date.now()
       let matches = await matchHelpers(analysis, 4)
       // Red de seguridad final: la búsqueda nunca devuelve vacío
       if (!matches?.length) {
@@ -1038,7 +1039,7 @@ export default function Home() {
       }
       setMessages(prev => [...prev, resultMsg])
       setLoading(false)
-    } catch {
+    } catch (err) {
       clearInterval(window.__nuraStatusInterval)
       setMessages(prev => prev.filter(m => !m.loading))
       setLoading(false)

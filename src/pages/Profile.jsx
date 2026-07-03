@@ -6,6 +6,7 @@ import { LogOut, Edit2, Check, X, Award, MessageCircle,
 import { useUser } from '../context/UserContext'
 import { Badge } from '../components/ui'
 import styles from './Profile.module.css'
+import { NURA_BUILD } from '../config'
 
 export default function Profile() {
   const {
@@ -296,6 +297,9 @@ export default function Profile() {
         </div>
 
         {/* ── ZONA 5: CONFIGURACIÓN DISCRETA ────────────── */}
+        <div style={{textAlign:'center', fontSize:'10px', color:'var(--ink-disabled, rgba(0,0,0,0.25))', margin:'2px 0 10px'}}>
+          Nüra 2 · {NURA_BUILD}
+        </div>
         <button className={styles.logoutBtn} onClick={() => { logout(); navigate('/') }}>
           <LogOut size={15} />
           Cerrar sesión
