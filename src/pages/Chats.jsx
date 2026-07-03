@@ -5,6 +5,7 @@ import { Search, MessageCircle } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import { HELPERS } from '../data/helpers'
 import styles from './Chats.module.css'
+import { Badge } from '../components/ui'
 
 // ── REALISTIC DEMO CONVERSATIONS ─────────────────────────────────────────
 // These simulate what the app looks like with active users.
@@ -123,7 +124,7 @@ function formatChatTime(isoStr) {
 
 export default function Chats() {
   const navigate  = useNavigate()
-  const { chats, markRead, helpersCache, getChatHistory } = useUser()
+  const { chats, markRead, helpersCache, getChatHistory, personas, contactedHelpers } = useUser()
   const [search, setSearch] = useState('')
 
   function getHelper(id) {
@@ -226,6 +227,17 @@ export default function Chats() {
                   <span className={styles.chatName}>{chat.helperName}</span>
                   <span className={styles.chatTime}>{formatChatTime(chat.lastTime)}</span>
                 </div>
+                {(() => {
+                  const lp = (personas || []).find(p => (p.contactedHelperIds || []).includes(chat.helperId))
+                  const ok = (contactedHelpers || []).find(x => (x.id || x) === chat.helperId)?.confirmed === true
+                  if (!lp && !ok) return null
+                  return (
+                    <div style={{display:'flex', alignItems:'center', gap:'5px', margin:'1px 0 2px'}}>
+                      {lp && <span style={{fontSize:'10px', color:'var(--ink-tertiary)', fontWeight:500}}>Te ayuda con {lp.label}</span>}
+                      {ok && <Badge variant="success" size="xs">✓ funcionó</Badge>}
+                    </div>
+                  )
+                })()}
                 <div className={styles.chatBottom}>
                   <span className={styles.chatLastMsg}>{chat.lastMsg}</span>
                   {chat.unread > 0 && <span className={styles.unreadBadge}>{chat.unread}</span>}
