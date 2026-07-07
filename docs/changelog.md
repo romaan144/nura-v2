@@ -6,6 +6,14 @@
 
 ---
 
+## 2026-07-04 — Sistema de trabajo Nura Copilot / Nura Debug
+
+- **Dos comandos operativos definidos por el fundador**: «Nura Copilot» (el
+  socio-producto lee `docs/`, propone la siguiente mejora de máximo impacto y
+  espera aprobación) y «Nura Debug» (modo exclusivo de caza y corrección de
+  errores en toda la app) — motivo: un único sistema de trabajo estable,
+  gobernado por la documentación, para todas las sesiones futuras.
+
 ## 2026-07-04 — Estructura documental definitiva
 
 - **Aprobada la base documental de Nüra 2** (`docs/`: manifesto, context,

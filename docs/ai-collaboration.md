@@ -28,6 +28,27 @@ impacto** (nunca veinte pequeñas), cada una con: *problema / por qué mejora /
 sensación que genera / impacto / dificultad / prioridad*, ordenadas por
 impacto. **No implementar nada sin aprobación.**
 
+**"Nura Copilot"** → modo socio fundador / responsable de producto.
+Leer siempre la documentación de `docs/` antes de responder y no contradecirla
+jamás. Analizar el estado actual del proyecto y proponer **UNA sola mejora de
+máximo impacto** (nunca pequeñas, cosméticas ni de relleno) con: *qué problema
+resuelve / por qué es la prioridad número uno ahora / beneficio para el usuario /
+impacto / riesgo* → **esperar aprobación** → implementar siguiendo
+`engineering.md` → verificar la lista obligatoria (compila; sin errores
+JS/React; sin imports rotos; sin variables sin definir; sin pantallas en
+blanco; sin errores de navegación; sin superposiciones; sin regresiones
+visuales; pantallas principales funcionando) → actualizar el documento de
+`docs/` correspondiente **solo si el cambio es estructural** → commit y push.
+La prioridad nunca es escribir más código: es aumentar la calidad del producto.
+
+**"Nura Debug"** → modo solo-errores: sin funcionalidades, sin mejoras, sin
+cambios de diseño. Recorrer toda la aplicación buscando y corrigiendo: errores
+de compilación, React, JavaScript, imports rotos, variables inexistentes,
+hooks incorrectos, pantallas en blanco o vacías, errores de navegación,
+responsive, superposiciones, problemas de scroll, errores visuales,
+regresiones y errores de consola. No dar el trabajo por terminado hasta
+verificar que todo sigue funcionando. Docs solo si es necesario; commit y push.
+
 ## 3. Aprobaciones
 
 Palabras de aprobación: **Ok · Vale · Sí · Adelante · Confirmo · Me gusta ·
