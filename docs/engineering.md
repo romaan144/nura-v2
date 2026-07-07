@@ -24,6 +24,9 @@ Repos, deploys y tabla canónica: `context.md` §2.
    ```
    Nunca `build | grep` encadenado a push: el filtro devuelve éxito aunque el
    build falle (así se coló un build roto a `main` — una vez, y última).
+3-bis. **Tests de comprensión** — si el cambio toca `matching.js` o el
+   análisis, `npm run test:matching` debe estar en verde antes del push
+   (suite dorada de consultas reales en `scripts/test-matching.mjs`).
 4. **Análisis estático de hooks** tras early-return. Falsos positivos
    conocidos: componentes con callbacks `.map` definidos a nivel de módulo —
    verificar el patrón antes de "corregir" nada.

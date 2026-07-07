@@ -301,6 +301,12 @@ function applyRefinement(helpers, refinementText) {
 }
 
 // ── ANALYZE NEED ──────────────────────────────────────────────────────────
+// ── Puente de vocabulario: ids internos legacy → ids de la app ──
+// Las tablas internas (precios, resúmenes, keywords) conservan sus claves;
+// hacia fuera, la app habla un solo idioma (CAT_HUMANA, chips, Explorar).
+const APP_CATEGORIA = { matematicas: 'clases', limpieza: 'hogar' }
+const toApp = c => APP_CATEGORIA[c] || c
+
 export function analyzeNeed(userText) {
   // Expand text with semantic synonyms first
   const expanded = expandText(userText)
@@ -357,7 +363,7 @@ export function analyzeNeed(userText) {
   }
   
   return Promise.resolve({
-    categoria, presencial, urgente, nivelRequerido,
+    categoria: toApp(categoria), presencial, urgente, nivelRequerido,
     resumen: resumenMap[categoria] || 'Busca ayuda',
     palabrasClave,
     confidence: maxScore, // so UI can show fallback if confidence is 0
@@ -399,7 +405,7 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
 
   // Always include demo helpers (id >= 2000) that match the category
   const demoPool = LOCAL_HELPERS
-    .filter(h => h?.id >= 2000 && h?.category === analysis.categoria)
+    .filter(h => h?.id >= 2000 && toApp(h?.category) === analysis.categoria)
     .map(normalizeHelper).filter(Boolean)
 
   // Try Supabase
@@ -429,7 +435,7 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
     let score = 0
     // Demo helpers (id >= 2000) get priority boost — rich profiles, verified data
     if (h.id >= 2000) score += 80
-    if (h.category === analysis.categoria) score += 40
+    if (toApp(h.category) === analysis.categoria) score += 40
     const keywords = analysis.palabrasClave || []
     keywords.forEach(kw => {
       const normKw = normalize(kw)

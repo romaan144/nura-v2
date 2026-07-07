@@ -6,6 +6,21 @@
 
 ---
 
+## 2026-07-04 — La Inteligencia Medible (Nura Copilot mejora 3)
+
+- **Puente de vocabulario `toApp()`**: el análisis emitía ids legacy
+  ('matematicas', 'limpieza') mientras los datos y la app ya hablaban el
+  vocabulario nuevo ('clases', 'hogar'). Normalización en las 3 fronteras
+  (retorno del análisis + 2 comparaciones del matcher), tablas internas
+  intactas — motivo: el pool garantizado de "clases" pasaba de 1 helper a 14;
+  chips de comprensión y refinamiento correctos.
+- **Suite dorada de comprensión** (`npm run test:matching`): 17 consultas
+  humanas reales ejecutadas contra el pipeline real, con expectativas de
+  categoría y resultados no vacíos. Rojo = no se pushea. La técnica que ganó
+  la guerra de bugs, institucionalizada como paso del flujo (engineering §2).
+- 2 filas legacy normalizadas en los datos de profesionales.
+- Sello `NURA_BUILD` → `2026.07.04-c`.
+
 ## 2026-07-04 — La Conversación Viva (Nura Copilot mejora 2)
 
 - **El chat tras la Carta deja de ser plantilla**: la respuesta del profesional

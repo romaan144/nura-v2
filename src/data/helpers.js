@@ -151,7 +151,7 @@ colleagueOpinions: [{ name:"Paco Llopis", role:"Técnico", text:"El mejor compa�
   {
     id: 4, name: "María López Castillo", avatar: "ML", avatarColor: "#7C3AED",
     avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=maria",
-    specialty: "Limpiadora de hogar", category: "limpieza",
+    specialty: "Limpiadora de hogar", category: "hogar",
     tags: ["limpieza hogar", "ecológico", "recurrente", "referencias"],
     rating: 4.4, reviews: 58, distance: 0.6, zone: "Eixample", city: "Barcelona",
     price: "15€/hora", bio: "Servicio de limpieza del hogar con productos ecológicos. Disponible lunes y jueves. 58 valoraciones verificadas. 6 años de experiencia.", verified: true, available: true, presential: true, online: false,
@@ -290,7 +290,7 @@ managerOpinion: { name:"Dr. Pau Roca", role:"Veterinario titular", text:"Marta t
   {
     id: 7, name: "Lucía Vidal Torres", avatar: "LV", avatarColor: "#DB2777",
     avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=lucia",
-    specialty: "Profesora particular", category: "matematicas",
+    specialty: "Profesora particular", category: "clases",
     tags: ["matemáticas", "bachillerato", "ESO", "selectividad"],
     rating: 4.9, reviews: 28, distance: 1.1, zone: "Sarrià", city: "Barcelona",
     price: "18€/hora", bio: "Estudiante de 4º de Matemáticas en la UB. Clases particulares para ESO y Bachillerato. Método propio para hacer los problemas comprensibles.", verified: true, available: true, presential: true, online: true,
