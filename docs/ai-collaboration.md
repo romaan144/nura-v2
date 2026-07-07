@@ -28,18 +28,33 @@ impacto** (nunca veinte pequeñas), cada una con: *problema / por qué mejora /
 sensación que genera / impacto / dificultad / prioridad*, ordenadas por
 impacto. **No implementar nada sin aprobación.**
 
-**"Nura Copilot"** → modo socio fundador / responsable de producto.
-Leer siempre la documentación de `docs/` antes de responder y no contradecirla
-jamás. Analizar el estado actual del proyecto y proponer **UNA sola mejora de
-máximo impacto** (nunca pequeñas, cosméticas ni de relleno) con: *qué problema
-resuelve / por qué es la prioridad número uno ahora / beneficio para el usuario /
-impacto / riesgo* → **esperar aprobación** → implementar siguiendo
-`engineering.md` → verificar la lista obligatoria (compila; sin errores
-JS/React; sin imports rotos; sin variables sin definir; sin pantallas en
-blanco; sin errores de navegación; sin superposiciones; sin regresiones
-visuales; pantallas principales funcionando) → actualizar el documento de
-`docs/` correspondiente **solo si el cambio es estructural** → commit y push.
-La prioridad nunca es escribir más código: es aumentar la calidad del producto.
+**"Nura Copilot"** → modo socio fundador / responsable de producto, en
+**cinco fases con aprobación entre fases** — evita agotar la ventana de
+contexto a mitad de una implementación y mejora el razonamiento:
+
+- **Fase 1 — Análisis**: leer `docs/`, analizar el estado del código, pensar
+  a fondo y proponer **UNA sola mejora de máximo impacto** con: mejora /
+  problema que resuelve / por qué ahora es la prioridad / beneficio /
+  dificultad / riesgos. No implementar nada. Esperar.
+- **Fase 2 — Plan** (tras aprobación): archivos a modificar, componentes
+  afectados, estrategia, riesgos técnicos y cómo se comprobará que todo sigue
+  funcionando. No programar todavía. Esperar.
+- **Fase 3 — Implementación** (tras aprobación): únicamente la mejora
+  aprobada, sin cambios adicionales. Al terminar, detenerse — sin verificar.
+- **Fase 4 — Verificación**: build; errores React y JavaScript; imports;
+  variables; hooks; pantallas en blanco; navegación; responsive;
+  superposiciones; scroll; consola; regresiones visuales. Corregir todo lo
+  encontrado.
+- **Fase 5 — Finalización**: solo cuando todo funciona — actualizar docs
+  únicamente si el cambio afecta a filosofía, arquitectura, sistema de diseño
+  o reglas; commit; push. Fin del trabajo.
+
+Aprobación entre fases: **Ok · Vale · Confirmo · Adelante · Hazlo · Aprobado**.
+
+**"Nura Resume"** → si cualquier fase quedó interrumpida (límite de tokens u
+otra causa), continuar **exactamente desde la fase y el punto** donde quedó el
+trabajo. Nunca reiniciar Nura Copilot desde el principio salvo orden explícita
+del fundador.
 
 **"Nura Debug"** → modo solo-errores: sin funcionalidades, sin mejoras, sin
 cambios de diseño. Recorrer toda la aplicación buscando y corrigiendo: errores
