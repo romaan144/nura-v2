@@ -17,11 +17,6 @@ export default function RegisterGate({ onClose, reason = 'contact' }) {
       desc: 'Crea tu cuenta gratis para contactar con este profesional y gestionar todos tus servicios desde un solo lugar.',
     },
     follow: {
-      Icon: UserPlus,
-      title: 'Sigue a profesionales',
-      desc: 'Sigue a los profesionales que te interesan y encuéntralos fácilmente cuando los necesites.',
-    },
-    follow: {
       Icon: User,
       title: 'Sigue a este profesional',
       desc: 'Crea tu cuenta para seguir a profesionales y ver sus actualizaciones de disponibilidad.',

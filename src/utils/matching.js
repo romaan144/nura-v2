@@ -163,7 +163,6 @@ const SEMANTIC_MAP = {
   'suspenso': 'refuerzo clases matemáticas deberes',
   'examen': 'clases refuerzo estudiar',
   'selectividad': 'selectividad clases refuerzo',
-  'inglés': 'inglés idioma clases',
   'instituto': 'refuerzo clases eso bachillerato',
   'cole': 'refuerzo clases primaria niños',
   'deberes': 'deberes clases refuerzo',

@@ -744,7 +744,7 @@ export default function Home() {
             : `Ninguno de estos atiende urgencias. Prueba buscar "urgente" directamente.`
         } else {
           // Generic: re-run with same analysis
-          const reRefined = await matchHelpers({ categoria: analysis?.categoria || 'otro', palabrasClave: [] }, 4, msg, lastMatches)
+          const reRefined = await matchHelpers({ categoria: window.__nuraLastAnalysis?.categoria || 'otro', palabrasClave: [] }, 4, msg, lastMatches)
           refined = reRefined?.length ? reRefined : refined
           refineLine = 'He ajustado los resultados.'
         }
@@ -1022,6 +1022,10 @@ export default function Home() {
         : matches.length > 0
         ? `Hay ${matches.length} disponibles ahora. ¿Te cuento más sobre ${topFirstName}?`
         : null
+
+      // [Certificación 2026-07-04] declaración perdida en refactor — restaurada como no-op
+      // [PENDIENTE] reactivar personalización con searchHistory
+      const personalizationLine = null
 
       const resultMsg = {
         id: Date.now(), from: 'nura',

@@ -11,7 +11,7 @@ import { NURA_BUILD } from '../config'
 export default function Profile() {
   const {
     user, logout, updateUser,
-    chats, ratings, searchHistory, favorites, isFollowing,
+    chats, ratings, searchHistory, favorites, isFollowing, following,
     services, personas, removePersona, helpersCache
   } = useUser()
   const navigate = useNavigate()

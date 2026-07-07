@@ -11,6 +11,7 @@ import RatingModal from '../components/RatingModal'
 import styles from './Chat.module.css'
 import { generateFirstMessage, getHelperReply, getNuraIntervention } from '../utils/chatReplies'
 import { Badge } from '../components/ui'
+import RegisterGate from '../components/RegisterGate'
 
 // ── Context-aware first message ───────────────────────────────────────────
 
@@ -90,6 +91,7 @@ function extractDateFromMessages(messages) {
 
 // ── Confirm Service Modal ─────────────────────────────────────────────────
 function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) {
+  const navigate = useNavigate()
   const [date, setDate] = useState(prefillDate || '')
   const [time, setTime] = useState(prefillTime || '')
   const [note, setNote] = useState('')

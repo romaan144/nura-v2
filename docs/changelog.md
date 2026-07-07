@@ -6,6 +6,24 @@
 
 ---
 
+## 2026-07-04 — Certificación de Estabilidad (primera mejora Nura Copilot)
+
+- **Análisis estático real instaurado** (ESLint + reglas React, script
+  `npm run lint`) — motivo: la clase de bug "compila pero explota en runtime"
+  (identificadores sin definir) es indetectable por el build; dos incidentes
+  reales lo demostraron.
+- **Corregidos 8 errores encontrados por el barrido**: `RegisterGate` sin
+  importar en Chat (crash del gate al 4º mensaje), `Clock` sin importar en
+  HelperProfile, `personalizationLine` sin declarar en el camino principal de
+  resultados de Home (granada latente con usuario + profesional seguido),
+  `following` sin destructurar en Profile, `navigate` huérfano en un
+  subcomponente de Chat, `analysis` fuera de scope en el refinamiento, y dos
+  claves duplicadas (RegisterGate 'follow', matching 'inglés').
+- **Pipeline verificado por ejecución real**: tres consultas (incluida una
+  basura) → matches correctos en <250ms con la red de seguridad activa.
+  Auditoría de rutas: cero navegaciones sin destino.
+- Sello `NURA_BUILD` → `2026.07.04-a`.
+
 ## 2026-07-04 — Sistema de trabajo Nura Copilot / Nura Debug
 
 - **Dos comandos operativos definidos por el fundador**: «Nura Copilot» (el
