@@ -58,7 +58,10 @@ Todas en producción. Descripción de producto; mecánica exacta en
 6. **La Carta de Presentación Viva** — al contactar, Nüra redacta el primer
    mensaje en nombre del usuario a partir del contexto real de su búsqueda;
    editable y regenerable. El profesional responde reconociendo el contexto:
-   nadie tiene que explicarse dos veces.
+   nadie tiene que explicarse dos veces. En demo, la conversación continúa
+   **viva**: reconocimiento con nombre propio ("será un placer ayudar con tu
+   madre"), ritmo humano de escritura y un siguiente paso concreto — día y
+   franja — aceptable con un toque ("✓ Acordado").
 
 **Después del contacto**
 7. **La Confirmación Humana** — pasado un tiempo, Nüra pregunta:

@@ -78,6 +78,11 @@ export function extractPersona(text) {
   return { relacion, label: meta.label, suyo: meta.suyo, genero: meta.genero, atributos }
 }
 
+// Etiqueta en segunda persona ('tu madre') para conversación
+export function labelDe(relacion) {
+  return RELACIONES[relacion]?.label || null
+}
+
 // Etiqueta posesiva de tercera persona para la Carta de Presentación
 export function suyoDe(relacion) {
   return RELACIONES[relacion]?.suyo || null

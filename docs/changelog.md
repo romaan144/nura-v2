@@ -6,6 +6,18 @@
 
 ---
 
+## 2026-07-04 — La Conversación Viva (Nura Copilot mejora 2)
+
+- **El chat tras la Carta deja de ser plantilla**: la respuesta del profesional
+  se construye desde el contexto real (persona de El Espejo, señales de la
+  situación, su especialidad), llega en dos mensajes con ritmo humano de
+  escritura y propone un siguiente paso concreto — día y franja — aceptable
+  con un toque ("✓ Acordado: martes por la mañana").
+- **Decisión de límites**: la simulación existe **solo en DEMO_MODE**; en
+  producción aquí responden humanos reales — motivo: el manifiesto ("la IA no
+  reemplaza humanos"). El andamio muestra cómo se sentirá; no sustituye a nadie.
+- Sello `NURA_BUILD` → `2026.07.04-b`.
+
 ## 2026-07-04 — Certificación de Estabilidad (primera mejora Nura Copilot)
 
 - **Análisis estático real instaurado** (ESLint + reglas React, script

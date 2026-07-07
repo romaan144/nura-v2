@@ -9,7 +9,8 @@ import { notifyServiceConfirmed } from '../utils/notifications'
 import { haptic } from '../utils/haptic'
 import RatingModal from '../components/RatingModal'
 import styles from './Chat.module.css'
-import { generateFirstMessage, getHelperReply, getNuraIntervention } from '../utils/chatReplies'
+import { generateFirstMessage, getHelperReply, getNuraIntervention, buildLivingConversation } from '../utils/chatReplies'
+import { DEMO_MODE } from '../config'
 import { Badge } from '../components/ui'
 import RegisterGate from '../components/RegisterGate'
 
@@ -277,6 +278,24 @@ export default function Chat() {
   )
   const [suggested, setSuggested] = useState('')
   const [typing, setTyping] = useState(false)
+
+  // ── La Conversación Viva: aceptar o mover la propuesta del profesional ──
+  function answerProposal(msgId, accepted, label) {
+    setMessages(prev => prev.map(m => m.id === msgId ? { ...m, proposalAnswered: true } : m))
+    const userText = accepted ? `Sí, ${label} me va bien 👍` : '¿Podemos buscar otro momento?'
+    setMessages(prev => [...prev, { id: Date.now(), from: 'user', text: userText, time: new Date().toISOString() }])
+    setTyping(true)
+    setTimeout(() => {
+      setTyping(false)
+      const replyText = accepted
+        ? `¡Perfecto! ${label.charAt(0).toUpperCase() + label.slice(1)} entonces 👌 Te escribo el día antes para confirmar los detalles. Cualquier cosa mientras tanto, aquí estoy.`
+        : '¡Claro, sin problema! Dime qué día y franja te encajan mejor y me adapto 🙂'
+      setMessages(prev => [...prev, { id: Date.now() + 1, from: 'helper', text: replyText, time: new Date().toISOString() }])
+      if (accepted) {
+        setTimeout(() => setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura', text: `✓ Acordado: ${label}`, time: new Date().toISOString() }]), 900)
+      }
+    }, 1100)
+  }
   const [showRating, setShowRating] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [msgCount, setMsgCount] = useState(() => Math.floor((getChatHistory(id)?.filter(m => m.from === 'helper')?.length || 0)))
@@ -297,19 +316,33 @@ export default function Chat() {
         time: new Date().toISOString()
       }
       setMessages([letterMsg])
-      setTyping(true)
-      const delay = 1200 + Math.random() * 600
-      setTimeout(() => {
-        setTyping(false)
-        const reply = getHelperReply(helper, 1, location.state.introLetterText, true)
-        const replyMsg = {
-          id: Date.now() + 1,
-          from: 'helper',
-          text: reply,
-          time: new Date().toISOString()
-        }
-        setMessages(prev => [...prev, replyMsg])
-      }, delay)
+      const chatAnalysis = (() => { try { return window.__nuraLastAnalysis || JSON.parse(sessionStorage.getItem('nura_last_analysis') || 'null') } catch { return null } })()
+      if (DEMO_MODE && chatAnalysis) {
+        // La Conversación Viva — solo en demo; en producción responden humanos reales
+        const conv = buildLivingConversation({ helper, analysis: chatAnalysis, userQuery: location.state?.userQuery || window.__nuraLastQuery || '' })
+        setTyping(true)
+        setTimeout(() => {
+          setMessages(prev => [...prev, { id: Date.now() + 1, from: 'helper', text: conv.messages[0], time: new Date().toISOString() }])
+          setTimeout(() => {
+            setTyping(false)
+            setMessages(prev => [...prev, { id: Date.now() + 2, from: 'helper', text: conv.messages[1], time: new Date().toISOString(), proposal: conv.proposal }])
+          }, Math.min(2800, 800 + conv.messages[1].length * 14))
+        }, Math.min(2600, 700 + conv.messages[0].length * 14))
+      } else {
+        setTyping(true)
+        const delay = 1200 + Math.random() * 600
+        setTimeout(() => {
+          setTyping(false)
+          const reply = getHelperReply(helper, 1, location.state.introLetterText, true)
+          const replyMsg = {
+            id: Date.now() + 1,
+            from: 'helper',
+            text: reply,
+            time: new Date().toISOString()
+          }
+          setMessages(prev => [...prev, replyMsg])
+        }, delay)
+      }
       return
     }
 
@@ -604,6 +637,21 @@ export default function Chat() {
               )}
               <div className={`${styles.msgBubble} ${isNura ? styles.msgBubbleNura : ''}`}>
                 <p>{msg.text}</p>
+                {msg.from === 'helper' && msg.proposal && !msg.proposalAnswered && (
+                  <div style={{display:'flex', gap:'6px', marginTop:'8px', flexWrap:'wrap'}}>
+                    <button onClick={() => answerProposal(msg.id, true, msg.proposal.label)}
+                      style={{background:'var(--purple)', color:'white', border:'none',
+                        borderRadius:'99px', padding:'7px 14px', fontSize:'12px', fontWeight:600}}>
+                      ✓ Me va bien
+                    </button>
+                    <button onClick={() => answerProposal(msg.id, false, msg.proposal.label)}
+                      style={{background:'rgba(0,0,0,0.05)', color:'var(--ink)',
+                        border:'1px solid var(--ink-border)', borderRadius:'99px',
+                        padding:'7px 14px', fontSize:'12px', fontWeight:600}}>
+                      Otro momento
+                    </button>
+                  </div>
+                )}
                 {isNura && msg.chips && (
                   <div style={{display:'flex',gap:'6px',marginTop:'8px',flexWrap:'wrap'}}>
                     {msg.chips.map((chip, ci) => (

@@ -1,4 +1,5 @@
 import { getFirstName } from './name'
+import { labelDe } from './personas'
 
 // ── Chat Reply Utilities ─────────────────────────────────────────────────
 // Business logic for generating helper responses, separated from UI layer
@@ -202,4 +203,36 @@ function getNuraIntervention(helper, count, messages) {
   return fallbacks[count] || null
 }
 
-export { generateFirstMessage, getHelperReply, getNuraIntervention }
+// ── La Conversación Viva — respuesta construida desde el contexto real ──
+const DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado']
+
+function nextBusinessDay() {
+  const d = new Date()
+  do { d.setDate(d.getDate() + 1) } while (d.getDay() === 0 || d.getDay() === 6)
+  return DIAS[d.getDay()]
+}
+
+function detectFranja(text) {
+  const t = (text || '').toLowerCase()
+  if (t.includes('tard')) return 'por la tarde'
+  if (t.includes('noch')) return 'por la noche'
+  return 'por la mañana'
+}
+
+function buildLivingConversation({ helper, analysis, userQuery }) {
+  const firstName = helper?.name?.split(' ')?.[0] || ''
+  const persona = labelDe(analysis?.persona)
+  const s = analysis?.complexSignals || {}
+  const especial =
+    s.alzheimer ? 'Los casos de Alzheimer son mi día a día desde hace años, así que entiendo bien lo que necesitáis.' :
+    s.infantil ? 'Trabajo muchísimo con peques — la paciencia y el juego son mi método.' :
+    s.sola ? 'Sé lo importante que es una compañía constante y de confianza.' :
+    `Es exactamente el tipo de ayuda que doy cada semana${helper?.specialty ? ` como ${helper.specialty.toLowerCase()}` : ''}.`
+  const msg1 = `Hola, soy ${firstName} 😊 Acabo de leer tu mensaje con calma${persona ? ` — será un placer ayudar con ${persona}` : ''}. ${especial}`
+  const franja = detectFranja(userQuery)
+  const day = nextBusinessDay()
+  const msg2 = `Si te parece, podemos empezar con una primera visita sin compromiso para conocernos. ¿Te iría bien el ${day} ${franja}?`
+  return { messages: [msg1, msg2], proposal: { label: `${day} ${franja}` } }
+}
+
+export { generateFirstMessage, getHelperReply, getNuraIntervention, buildLivingConversation }
