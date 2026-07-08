@@ -6,6 +6,14 @@
 
 ---
 
+## 2026-07-04 — Nura Copilot por fases + Nura Resume
+
+- **El flujo Copilot pasa a cinco fases con aprobación entre fases**
+  (Análisis → Plan → Implementación → Verificación → Finalización) y nace
+  «Nura Resume» para retomar trabajo interrumpido exactamente donde quedó —
+  motivo: evitar agotar la ventana de contexto a mitad de una implementación
+  y mejorar la calidad del razonamiento. Sustituye al flujo de una respuesta.
+
 ## 2026-07-04 — La Inteligencia Medible (Nura Copilot mejora 3)
 
 - **Puente de vocabulario `toApp()`**: el análisis emitía ids legacy
@@ -19,7 +27,23 @@
   categoría y resultados no vacíos. Rojo = no se pushea. La técnica que ganó
   la guerra de bugs, institucionalizada como paso del flujo (engineering §2).
 - 2 filas legacy normalizadas en los datos de profesionales.
-- Sello `NURA_BUILD` → `2026.07.04-c`.
+- **Primer run de la suite: rojo (4/17) — y destapó el mecanismo enfermo**:
+  coincidencia por subcadena ('forma' ⊂ 'reforma' → entrenador) + desempates
+  por orden de tabla. Endurecido a **palabra completa** y listas reforzadas
+  con especificidad (logopedia: 'pronuncia/no pronuncia/la r'; mascotas:
+  'pasee/mi perro/mi gato').
+- **Fe de errores del propio proceso**: el primer push salió con la suite en
+  rojo porque su salida se encadenó a un pipe que tragó el exit code — la
+  clase de error que engineering §2.3 ya prohibía para el build. Corregido:
+  la suite gatea el push con su exit real.
+- **Segundo hallazgo de la suite — la subcadena tenía dos sedes**: la
+  expansión semántica (`expandText`) casaba sus disparadores por `includes`,
+  y el disparador 'forma' ⊂ 'reforma' inyectaba vocabulario fitness al texto
+  expandido → +1×4 puntos falsos a entrenador. Endurecida también a palabra
+  completa. Fe de errores intermedia: un falso diagnóstico (backslashes
+  "dobles" que solo eran el render JSON de la herramienta) se descartó por
+  ejecución real — la única fuente de verdad.
+- Sello `NURA_BUILD` → `2026.07.04-c`, y `2026.07.04-d` tras el endurecimiento.
 
 ## 2026-07-04 — La Conversación Viva (Nura Copilot mejora 2)
 

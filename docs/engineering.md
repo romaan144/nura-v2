@@ -27,6 +27,8 @@ Repos, deploys y tabla canónica: `context.md` §2.
 3-bis. **Tests de comprensión** — si el cambio toca `matching.js` o el
    análisis, `npm run test:matching` debe estar en verde antes del push
    (suite dorada de consultas reales en `scripts/test-matching.mjs`).
+   El exit code de la suite debe gatear el push — nunca encadenar su salida
+   a pipes que traguen el código de salida.
 4. **Análisis estático de hooks** tras early-return. Falsos positivos
    conocidos: componentes con callbacks `.map` definidos a nivel de módulo —
    verificar el patrón antes de "corregir" nada.
@@ -71,6 +73,10 @@ Repos, deploys y tabla canónica: `context.md` §2.
     nunca en la barra flotante inferior (regla canónica y motivo:
     `design-system.md` §4).
 12. Animaciones y iOS: regla canónica en `design-system.md` §4.
+13. **La salida de las herramientas escapa backslashes** (render JSON): el
+    código generado que contiene regex se verifica por EJECUCIÓN, nunca por
+    lectura visual de la salida. Y al endurecer un matcher, endurecer también
+    sus tributarios (la expansión de sinónimos): la subcadena tenía dos sedes.
 
 ## 4. Secretos y credenciales
 

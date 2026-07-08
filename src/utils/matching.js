@@ -194,7 +194,7 @@ const SEMANTIC_MAP = {
 const CATEGORY_KEYWORDS = {
   logopedia: ['logopeda','logopedia','habla','lenguaje','pronunciación','pronunciar',
     'fonema','tartamudez','tartamudea','voz','dislalia','disfagia','comunicación',
-    'hablar','retraso lenguaje','terapia habla'],
+    'hablar','retraso lenguaje','terapia habla','pronuncia','no pronuncia','la r','erre'],
   tecnico: ['caldera','fontanero','fontanería','electricista','técnico','reparar',
     'avería','instalación','grifo','tubería','luz','calefacción','aire acondicionado',
     'pintor','cerrajero','electrodoméstico','lavadora','nevera','frigorífico','horno',
@@ -210,7 +210,7 @@ const CATEGORY_KEYWORDS = {
     'canguro','guardería','padre mayor','madre mayor','sola en casa','vive sola',
     'confía','de confianza','mañanas','entre semana','demencia','postoperatorio','demencia'],
   mascotas: ['perro','gato','mascota','animal','pasear','veterinario','adiestramiento',
-    'cachorro','felino','canino','pájaro','conejo','perrita','gatito','paseo'],
+    'cachorro','felino','canino','pájaro','conejo','perrita','gatito','paseo','pasea','pasee','paseos','paseador','mi perro','mi gato'],
   matematicas: ['matemáticas','mates','clases','profesor','refuerzo','estudiar',
     'deberes','física','química','inglés','idioma','piano','música','programación',
     'francés','alemán','italiano','clase particular','academia','tutorías',
@@ -265,7 +265,7 @@ function expandText(text) {
   
   for (const [trigger, expansion] of Object.entries(SEMANTIC_MAP)) {
     const normTrigger = normalize(trigger)
-    if (normText.includes(normTrigger)) {
+    if (hitWord(normText, normTrigger)) {
       expanded += ' ' + expansion
     }
   }
@@ -307,6 +307,10 @@ function applyRefinement(helpers, refinementText) {
 const APP_CATEGORIA = { matematicas: 'clases', limpieza: 'hogar' }
 const toApp = c => APP_CATEGORIA[c] || c
 
+// Coincidencia por palabra completa: 'forma' ya no puede colarse en 'reforma'
+const escapeRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+const hitWord = (text, kw) => new RegExp(`\\b${escapeRe(kw)}\\b`).test(text)
+
 export function analyzeNeed(userText) {
   // Expand text with semantic synonyms first
   const expanded = expandText(userText)
@@ -321,8 +325,8 @@ export function analyzeNeed(userText) {
     let score = 0
     for (const kw of keywords) {
       const normKw = normalize(kw)
-      if (normOriginal.includes(normKw)) score += 3      // exact match in original = high weight
-      else if (normExpanded.includes(normKw)) score += 1  // semantic expansion match
+      if (hitWord(normOriginal, normKw)) score += 3      // palabra completa en el original
+      else if (hitWord(normExpanded, normKw)) score += 1  // palabra completa en la expansión
     }
     if (score > maxScore) { maxScore = score; categoria = cat }
   }
