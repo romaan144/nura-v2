@@ -216,7 +216,7 @@ export default function Chat() {
   const location = useLocation()
   const { addChat, markRead, hasRated, helpersCache, addService,
     services, getChatHistory, saveChatHistory, user
-  } = useUser()
+ , personas, addCita } = useUser()
   const [showRegGate, setShowRegGate] = useState(false)
 
   const [helper, setHelper] = useState(
@@ -292,6 +292,11 @@ export default function Chat() {
         : '¡Claro, sin problema! Dime qué día y franja te encajan mejor y me adapto 🙂'
       setMessages(prev => [...prev, { id: Date.now() + 1, from: 'helper', text: replyText, time: new Date().toISOString() }])
       if (accepted) {
+        // La Cita — el acuerdo se convierte en un objeto vivo
+        try {
+          const lp = (personas || []).find(p => (p.contactedHelperIds || []).includes(helper?.id))
+          addCita({ helperId: helper?.id, helperName: helper?.name, personaId: lp?.id, personaLabel: lp?.label, label })
+        } catch (e) { console.error('[Nüra] cita:', e) }
         setTimeout(() => setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura', text: `✓ Acordado: ${label}`, time: new Date().toISOString() }]), 900)
       }
     }, 1100)

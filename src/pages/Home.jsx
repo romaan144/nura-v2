@@ -103,7 +103,7 @@ const CONTEXT_CHIPS = {
 }
 
 
-function getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas) {
+function getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas) {
   const hour = new Date().getHours()
   const greeting = hour < 14 ? 'Buenos días' : hour < 21 ? 'Buenas tardes' : 'Buenas noches'
   const firstName = user?.name?.split(' ')?.[0] || user?.name
@@ -115,6 +115,21 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
 
   // ── La Memoria Viva ─────────────────────────────────────────────────
   // If there's a confirmed successful connection, Nüra asks about that person
+  // ── La Cita — el futuro recordado: la visita próxima saluda primero ──
+  const citaProxima = (citas || []).slice().reverse().find(ci => {
+    const c = (contactedHelpers || []).find(x => (x.id || x) === ci.helperId)
+    return c && c.confirmed === undefined
+  })
+  if (citaProxima) {
+    const hf = citaProxima.helperName?.split(' ')?.[0] || citaProxima.helperName
+    return [
+      `${greeting}, **${firstName}**.`,
+      citaProxima.personaLabel
+        ? `El ${citaProxima.label}, **${hf}** está con ${citaProxima.personaLabel}. Todo listo 💜`
+        : `El ${citaProxima.label} tienes tu primera cita con **${hf}**. Todo listo 💜`
+    ]
+  }
+
   const confirmedContacts = (contactedHelpers || []).filter(c => c?.confirmed === true)
   if (confirmedContacts.length > 0) {
     const last = confirmedContacts[confirmedContacts.length - 1]
@@ -349,7 +364,7 @@ const HELPER_SUGGESTIONS = [
 
 export default function Home() {
   const navigate = useNavigate()
-  const { user, addSearch, searchHistory, favorites, helpersCache, nuraChatMessages, setNuraChatMessages, nuraLastMatches, setNuraLastMatches, cacheHelpers, contactedHelpers, confirmContact, following, personas, upsertPersona } = useUser()
+  const { user, addSearch, searchHistory, favorites, helpersCache, nuraChatMessages, setNuraChatMessages, nuraLastMatches, setNuraLastMatches, cacheHelpers, contactedHelpers, confirmContact, following, personas, upsertPersona, citas } = useUser()
   // messages persisted in context so they survive navigation
   const messages = nuraChatMessages
   const setMessages = setNuraChatMessages
@@ -375,7 +390,7 @@ export default function Home() {
   const [floatH, setFloatH] = useState(84) /* header height fallback */
 
   useEffect(() => {
-    let lines = getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas)
+    let lines = getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas)
     // If just came from onboarding with a name — magic first moment
     let justOnboarded; try { justOnboarded = sessionStorage.getItem('nura_just_onboarded') } catch {}
     if (justOnboarded) {
@@ -558,7 +573,9 @@ export default function Home() {
             confirmacionHelperName: pending.name,
             lines: [(() => {
               const lp = (personas || []).find(p => (p.contactedHelperIds || []).includes(pending.id))
+              const ci = (citas || []).slice().reverse().find(x => x.helperId === pending.id)
               const hn = pending.name?.split(' ')?.[0] || pending.name
+              if (ci) return `¿Qué tal fue la visita del ${ci.label} con **${hn}**${lp ? ` para ${lp.label}` : ''}? ¿Pudisteis resolverlo?`
               return lp
                 ? `¿Pudiste resolver lo que necesitabas para ${lp.label} con **${hn}**?`
                 : `¿Pudiste resolver lo que necesitabas con **${hn}**?`
@@ -1107,7 +1124,7 @@ export default function Home() {
               onClick={() => {
                 setMessages([])
                 setLastMatches([])
-                setTimeout(() => setMessages([{ id: 1, from: 'nura', lines: getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas) }]), 100)
+                setTimeout(() => setMessages([{ id: 1, from: 'nura', lines: getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas) }]), 100)
               }} aria-label="Empezar conversación de nuevo">
               <RotateCcw size={15} color="rgba(0,0,0,0.6)" />
             </button>

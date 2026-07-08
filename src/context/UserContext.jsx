@@ -12,6 +12,7 @@ export function UserProvider({ children }) {
   const [searchHistory, setSearchHistory] = useState(() => load('nura_search_history', []))
   const [contactedHelpers, setContactedHelpers] = useState(() => load('nura_contacted', []))
   const [personas, setPersonas] = useState(() => load('nura_personas', []))
+  const [citas, setCitas] = useState(() => load('nura_citas', []))
   const [helpersCache, setHelpersCache] = useState({})
   const [following, setFollowing] = useState(() => {
     const stored = load('nura_following', null)
@@ -240,6 +241,19 @@ export function UserProvider({ children }) {
     save('nura_personas', updated)
   }
 
+  // ── La Cita — la memoria que mira hacia adelante ──
+  function addCita({ helperId, helperName, personaId, personaLabel, label }) {
+    const nueva = {
+      id: 'c_' + Date.now(), helperId, helperName,
+      personaId: personaId || null, personaLabel: personaLabel || null,
+      label, createdAt: Date.now(),
+    }
+    const updated = [...citas, nueva]
+    setCitas(updated)
+    save('nura_citas', updated)
+    return nueva
+  }
+
   function confirmContact(helperId, confirmed) {
     const updated = contactedHelpers.map(c =>
       (c.id || c) === helperId ? { ...c, confirmed, confirmedAt: Date.now() } : c
@@ -259,6 +273,7 @@ export function UserProvider({ children }) {
       searchHistory, addSearch,
       contactedHelpers, confirmContact,
       personas, upsertPersona, linkPersonaContact, removePersona,
+      citas, addCita,
       helpersCache, cacheHelpers,
       following, follow, unfollow, isFollowing,
       notifications, markNotifsRead, unreadNotifs,

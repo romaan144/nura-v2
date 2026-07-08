@@ -124,7 +124,7 @@ function formatChatTime(isoStr) {
 
 export default function Chats() {
   const navigate  = useNavigate()
-  const { chats, markRead, helpersCache, getChatHistory, personas, contactedHelpers } = useUser()
+  const { chats, markRead, helpersCache, getChatHistory, personas, contactedHelpers, citas } = useUser()
   const [search, setSearch] = useState('')
 
   function getHelper(id) {
@@ -229,11 +229,15 @@ export default function Chats() {
                 </div>
                 {(() => {
                   const lp = (personas || []).find(p => (p.contactedHelperIds || []).includes(chat.helperId))
-                  const ok = (contactedHelpers || []).find(x => (x.id || x) === chat.helperId)?.confirmed === true
-                  if (!lp && !ok) return null
+                  const contacto = (contactedHelpers || []).find(x => (x.id || x) === chat.helperId)
+                  const ok = contacto?.confirmed === true
+                  const ci = (citas || []).slice().reverse().find(x => x.helperId === chat.helperId)
+                  const citaViva = ci && contacto?.confirmed === undefined
+                  if (!lp && !ok && !citaViva) return null
                   return (
-                    <div style={{display:'flex', alignItems:'center', gap:'5px', margin:'1px 0 2px'}}>
+                    <div style={{display:'flex', alignItems:'center', gap:'5px', margin:'1px 0 2px', flexWrap:'wrap'}}>
                       {lp && <span style={{fontSize:'10px', color:'var(--ink-tertiary)', fontWeight:500}}>Te ayuda con {lp.label}</span>}
+                      {citaViva && <span style={{fontSize:'10px', color:'var(--purple)', fontWeight:600}}>📅 {ci.label}</span>}
                       {ok && <Badge variant="success" size="xs">✓ funcionó</Badge>}
                     </div>
                   )

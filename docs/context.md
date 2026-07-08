@@ -61,7 +61,10 @@ Todas en producción. Descripción de producto; mecánica exacta en
    nadie tiene que explicarse dos veces. En demo, la conversación continúa
    **viva**: reconocimiento con nombre propio ("será un placer ayudar con tu
    madre"), ritmo humano de escritura y un siguiente paso concreto — día y
-   franja — aceptable con un toque ("✓ Acordado").
+   franja — aceptable con un toque ("✓ Acordado"). El acuerdo se convierte en **La Cita**: Nüra lo
+   recuerda hacia adelante — el saludo anuncia la visita próxima ("El martes
+   por la mañana, Elena está con tu madre. Todo listo 💜"), Chats la muestra
+   (📅) y la Confirmación Humana pregunta por la visita real.
 
 **Después del contacto**
 7. **La Confirmación Humana** — pasado un tiempo, Nüra pregunta:

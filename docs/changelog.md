@@ -6,6 +6,17 @@
 
 ---
 
+## 2026-07-04 — La Cita (Nura Copilot mejora 4)
+
+- **El acuerdo de la Conversación Viva se convierte en un objeto vivo**
+  (`nura_citas`): el saludo de Home cambia de tiempo verbal y anuncia la
+  visita próxima, Chats la muestra (📅 martes por la mañana) y la
+  Confirmación Humana deja de preguntar a ciegas — pregunta por la visita
+  real. Ciclo de vida sin timers: la cita es "próxima" mientras su contacto
+  siga sin confirmar — motivo: Nüra ya recordaba el pasado; ahora cuida lo
+  que va a pasar.
+- Sello `NURA_BUILD` → `2026.07.04-e`.
+
 ## 2026-07-04 — Nura Copilot por fases + Nura Resume
 
 - **El flujo Copilot pasa a cinco fases con aprobación entre fases**

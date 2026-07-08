@@ -144,7 +144,7 @@ del perfil **solo si hay contexto de búsqueda**; sin contexto → chat directo)
 vínculos erróneos.
 
 **Persistencia (localStorage):** `nura_contacted` (contactos + `confirmed`/
-`confirmedAt`) · `nura_personas` (El Espejo) · `nura_chats` ·
+`confirmedAt`) · `nura_personas` (El Espejo) · `nura_citas` (La Cita — acuerdos de visita) · `nura_chats` ·
 `nura_search_history` · `nura_mc_last_shown` (Momento Cero) ·
 `nura_last_pulso` · `nura_onboarded` · `nura_last_analysis` ·
 [PENDIENTE: clave exacta de ratings].
