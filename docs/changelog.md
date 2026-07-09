@@ -6,6 +6,19 @@
 
 ---
 
+## 2026-07-04 — Aire, pasada 2: Explorar y Chats
+
+- **Explorar sin tablón**: extirpada la línea de marketing ("47 personas en
+  Barcelona… · 1.008 verificados") — misma especie que la de Home. La Voz se
+  muda a donde ya había un elemento: **el buscador pregunta "¿Qué
+  necesitas?"** — cero elementos nuevos.
+- **Chats vacío, cálido**: el estado vacío habla en la Voz ("Cuando conectes
+  con alguien, vuestra conversación vivirá aquí").
+- La puerta de build atrapó un envoltorio vacío tras la extirpación —
+  corregido antes de que nada saliera al remoto: el sistema de puertas
+  funcionando.
+- Sello `NURA_BUILD` → `2026.07.04-h`.
+
 ## 2026-07-04 — Rediseño "Aire" (feedback directo del fundador)
 
 - **La pantalla inicial vuelve a respirar**: extirpados los tres bloques de

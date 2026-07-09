@@ -430,7 +430,7 @@ export default function Explore() {
             <input
               ref={inputRef}
               className={styles.searchInput}
-              placeholder="Buscar profesionales..."
+              placeholder="¿Qué necesitas?"
               value={searchText}
               onChange={e => setSearchText(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSearch(e)}
@@ -444,15 +444,6 @@ export default function Explore() {
         </div>
 
         {/* ── GRID DE CATEGORÍAS ──────────────────────────── */}
-        {!isListView && !isLoading && (
-          <div style={{
-            padding:'8px 16px 4px', textAlign:'center',
-            fontSize:'11px', color:'rgba(0,0,0,0.32)',
-            fontWeight:500, letterSpacing:'0.2px'
-          }}>
-            🏘 47 personas en Barcelona usan Nüra esta semana · 1.008 profesionales verificados
-          </div>
-        )}
         {!isListView && !isLoading && (
           <EscaparateVivo onHelperTap={h => navigate(`/helper/${h.id}`, { state: { helper: h } })} />
         )}

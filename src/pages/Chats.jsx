@@ -166,15 +166,14 @@ export default function Chats() {
 
       <div className={styles.list}>
         {allChats.length === 0 && (
-          <div style={{textAlign:'center',padding:'64px 24px 32px',display:'flex',flexDirection:'column',alignItems:'center',gap:'8px'}}>
-            <MessageCircle size={44} strokeWidth={1.3} color='rgba(0,0,0,0.15)' style={{marginBottom:'4px'}} />
-            <p style={{fontSize:'var(--text-sm)',fontWeight:600,color:'var(--ink-primary)'}}>Aquí aparecerán tus conversaciones</p>
-            <p style={{fontSize:'var(--text-xs)',color:'var(--ink-tertiary)',lineHeight:1.6,maxWidth:'220px'}}>Cuando contactes con un profesional, la conversación aparecerá aquí.</p>
-            <button
-              onClick={() => navigate('/')}
-              style={{marginTop:'8px',padding:'10px 20px',background:'var(--purple)',color:'white',border:'none',borderRadius:'100px',fontSize:'var(--text-xs)',fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>
-              Buscar ahora
-            </button>
+          <div style={{textAlign:'center', padding:'72px 32px 0'}}>
+            <p style={{fontFamily:'var(--font-voice)', fontSize:'19px', color:'var(--ink)',
+              lineHeight:1.45, letterSpacing:'-0.3px', margin:'0 0 8px'}}>
+              Cuando conectes con alguien, vuestra conversación vivirá aquí.
+            </p>
+            <p style={{fontSize:'13px', color:'var(--ink-tertiary)', margin:0, lineHeight:1.5}}>
+              Cuéntale a Nüra qué necesitas y ella encontrará a la persona.
+            </p>
           </div>
         )}
 
