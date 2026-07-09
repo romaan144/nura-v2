@@ -92,7 +92,14 @@ Todas en producción. Descripción de producto; mecánica exacta en
     posts de los profesionales seguidos.
 
 **Lado del profesional**
-14. **El Pulso** — resumen periódico con lo que pasó con su perfil esa semana
+14. **El Primer Día del Profesional** — al registrarse, el profesional tiene
+    hogar: en su Perfil ve **su tarjeta exactamente como la ven quienes le
+    necesitan** (espejo, sin navegación), señales reales y estables del día
+    ("3 vistas hoy · 7 búsquedas en tu zona"), su primer paso guiado (añadir
+    su cita personal, que viste su perfil con la Voz Tipográfica) y el hueco
+    honesto de su reputación naciente. El saludo de Home también vive para
+    él: "Mientras no mirabas, 3 personas vieron tu perfil…"
+15. **El Pulso** — resumen periódico con lo que pasó con su perfil esa semana
     y una sugerencia accionable: inteligencia de mercado, no un dashboard.
 
 **Infraestructura de producto:** sistema de diseño propio, La Voz Tipográfica,

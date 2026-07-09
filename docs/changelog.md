@@ -6,6 +6,18 @@
 
 ---
 
+## 2026-07-04 — El Primer Día del Profesional (Nura Copilot mejora 5)
+
+- **El lado oferta deja de morir en el minuto uno**: el Perfil del
+  profesional registrado se convierte en su hogar — espejo de su tarjeta
+  real, señales deterministas del día (`proSignals`: fecha+nombre, el número
+  no baila entre pantallas), primer paso guiado (su cita personal, un solo
+  campo → `helperProfile.quote`) y reputación naciente honesta, sin ✓
+  falsos. El saludo de Home cobra vida también para él — motivo: el viaje
+  de la demanda estaba completo; era el turno del otro pulmón del
+  marketplace, ensamblado con piezas ya certificadas.
+- Sello `NURA_BUILD` → `2026.07.04-f`.
+
 ## 2026-07-04 — La Cita (Nura Copilot mejora 4)
 
 - **El acuerdo de la Conversación Viva se convierte en un objeto vivo**

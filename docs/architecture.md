@@ -37,6 +37,10 @@
   se fuerza explícito — `{ ...enriched, ...base, id }` — y se filtran nulos.
 - El matching da **boost** a los perfiles demo para que la demo siempre muestre
   perfiles ricos primero.
+- `src/utils/proSignals.js` — señales deterministas del día para el
+  profesional (semilla fecha+nombre): el mismo número en saludo y Perfil
+  durante todo el día. La cita personal del profesional vive en
+  `nura_user.helperProfile.quote` (sin clave de storage nueva).
 - `src/data/connectionStories.js` — historias semilla del Muro, construidas
   **desde la especialidad real** de cada helper para que texto y tarjeta nunca
   se contradigan.

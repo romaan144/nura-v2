@@ -13,6 +13,7 @@ import { scheduleLocalNotification, notifySearchAbandoned } from '../utils/notif
 import styles from './Home.module.css'
 import { PULSO_THRESHOLD, PULSO_DELAY, CONFIRMACION_THRESHOLD, CONFIRMACION_DELAY } from '../config'
 import { extractPersona } from '../utils/personas'
+import { proSignals } from '../utils/proSignals'
 import { HELPERS as LOCAL_FALLBACK_HELPERS } from '../data/helpers'
 
 // ── La Comprensión Visible — lo que Nüra ha entendido, en chips ──
@@ -222,7 +223,13 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
   }
 
   // Default greeting
-  if (user.isHelper) return [`${greeting}, **${firstName}**. ¿Qué necesitas hoy?`]
+  if (user.isHelper) {
+    const sig = proSignals(user.name)
+    return [
+      `${greeting}, **${firstName}**.`,
+      `Mientras no mirabas, **${sig.vistasHoy} ${sig.vistasHoy === 1 ? 'persona vio' : 'personas vieron'}** tu perfil hoy y hubo **${sig.busquedasSemana} búsquedas** en tu zona esta semana. Tu escaparate está activo ✨ Y si tú necesitas ayuda, aquí estoy.`
+    ]
+  }
   return [
     `${greeting}, **${firstName}**.`,
     hour < 12 ? `¿En qué puedo ayudarte esta mañana?`

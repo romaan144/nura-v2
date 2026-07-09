@@ -4,7 +4,9 @@ import { useNavigate } from 'react-router-dom'
 import { LogOut, Edit2, Check, X, Award, MessageCircle,
          Heart, ClipboardList, User, Phone, Search, Star , UserPlus, UserCheck } from 'lucide-react'
 import { useUser } from '../context/UserContext'
-import { Badge } from '../components/ui'
+import { Badge, StatBar } from '../components/ui'
+import HelperCard from '../components/HelperCard'
+import { proSignals } from '../utils/proSignals'
 import styles from './Profile.module.css'
 import { NURA_BUILD } from '../config'
 
@@ -14,6 +16,28 @@ export default function Profile() {
     chats, ratings, searchHistory, favorites, isFollowing, following,
     services, personas, removePersona, helpersCache
   } = useUser()
+
+  // ── El Primer Día del Profesional ──
+  const hp = user?.helperProfile || {}
+  const proQuote = hp.quote || hp.bio || ''
+  const [quoteDraft, setQuoteDraft] = useState('')
+  const proSig = proSignals(user?.name || '')
+  const proPreview = user?.isHelper ? {
+    id: 'me',
+    name: user.name,
+    specialty: hp.specialty || hp.skill || hp.categoria || 'Profesional de Nüra',
+    price: hp.price,
+    zone: hp.zone || hp.city || 'Barcelona',
+    quote: proQuote || undefined,
+    verified: true,
+    avatarUrl: `https://api.dicebear.com/9.x/personas/svg?seed=${encodeURIComponent(user.name || 'pro')}`,
+  } : null
+  function saveQuote() {
+    const v = quoteDraft.trim()
+    if (!v) return
+    updateUser({ helperProfile: { ...hp, quote: v } })
+    setQuoteDraft('')
+  }
   const navigate = useNavigate()
 
   const [editingName, setEditingName]   = useState(false)
@@ -266,6 +290,55 @@ export default function Profile() {
         )}
 
         {/* ── ZONA 4: EVOLUCIÓN ─────────────────────────── */}
+        {user.isHelper && (
+          <div style={{margin:'0 0 20px', animation:'fadeInUp 0.3s ease-out 240ms both'}}>
+            <div style={{fontSize:'11px', fontWeight:700, color:'var(--purple)',
+              letterSpacing:'0.8px', textTransform:'uppercase', marginBottom:'10px'}}>
+              Así te ven quienes te necesitan
+            </div>
+            <div style={{pointerEvents:'none'}}>
+              <HelperCard helper={proPreview} showPrice />
+            </div>
+            <div style={{marginTop:'12px', display:'flex', justifyContent:'center'}}>
+              <StatBar stats={[
+                { value: proSig.vistasHoy, label: 'vistas hoy' },
+                { value: proSig.busquedasSemana, label: 'búsquedas en tu zona' },
+                { value: '—', label: 'conexiones ✓' },
+              ]} />
+            </div>
+            {!proQuote ? (
+              <div style={{marginTop:'12px', background:'var(--purple-10)',
+                border:'1px solid var(--purple-20)', borderRadius:'var(--radius-md)', padding:'14px'}}>
+                <div style={{fontSize:'13px', fontWeight:700, color:'var(--ink)', marginBottom:'4px'}}>
+                  Tu primer paso
+                </div>
+                <p style={{fontSize:'12px', color:'var(--ink-secondary)', margin:'0 0 10px', lineHeight:1.5}}>
+                  Añade tu cita personal — es lo primero que leen, con tu voz.
+                  Los perfiles con cita generan mucha más confianza.
+                </p>
+                <textarea value={quoteDraft} onChange={e => setQuoteDraft(e.target.value)}
+                  placeholder="Ej: Cuido a cada persona como cuidaría a mi propia familia."
+                  aria-label="Tu cita personal"
+                  style={{width:'100%', minHeight:'64px', border:'1px solid var(--ink-border)',
+                    borderRadius:'10px', padding:'10px', fontSize:'14px',
+                    fontFamily:'var(--font-voice)', fontStyle:'italic', resize:'none', background:'white'}} />
+                <button onClick={saveQuote} disabled={!quoteDraft.trim()}
+                  style={{marginTop:'8px', background: quoteDraft.trim() ? 'var(--purple)' : 'rgba(0,0,0,0.15)',
+                    color:'white', border:'none', borderRadius:'99px', padding:'9px 16px',
+                    fontSize:'12px', fontWeight:700}}>
+                  Guardar mi cita
+                </button>
+              </div>
+            ) : (
+              <div style={{marginTop:'12px', fontSize:'11px', color:'var(--ink-tertiary)',
+                display:'flex', alignItems:'center', flexWrap:'wrap', gap:'6px'}}>
+                <Badge variant="success" size="xs">✓ Cita añadida</Badge>
+                <span>Tu primera conexión verificada aparecerá aquí cuando ocurra.</span>
+              </div>
+            )}
+          </div>
+        )}
+
         {!user.isHelper && (
           <div className={styles.evolutionZone} style={{animation:`fadeInUp 0.3s ease-out 240ms forwards`}}>
             <p className={styles.evolutionQ}>¿Tienes algo que ofrecer?</p>
