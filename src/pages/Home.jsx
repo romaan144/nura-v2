@@ -1149,51 +1149,6 @@ export default function Home() {
       </div>
 
       <div className={styles.messages} style={{paddingTop: topH + 'px'}}>
-        {messages.length <= 1 && (
-          <div style={{margin:'4px 0 16px'}}>
-            <div style={{
-              textAlign:'center', fontSize:'11px', color:'rgba(0,0,0,0.32)',
-              letterSpacing:'0.2px', paddingBottom:'10px', fontWeight:500
-            }}>
-              1.008 profesionales verificados · Primer resultado en {'<'} 10 segundos
-            </div>
-            <div style={{
-              margin:'0 0 10px', padding:'12px 16px',
-              background:'rgba(123,47,255,0.06)',
-              borderRadius:'16px', borderLeft:'3px solid var(--purple)'
-            }}>
-              <div style={{fontSize:'12px',fontWeight:700,color:'var(--purple)',marginBottom:'4px',letterSpacing:'-0.1px'}}>
-                Historia real
-              </div>
-              <div style={{fontSize:'13px',color:'var(--ink)',lineHeight:1.5,letterSpacing:'-0.1px'}}>
-                "María encontró a Carlos en <strong>47 segundos</strong>. Su hijo de 5 años ya pronuncia la R perfectamente después de 8 sesiones."
-              </div>
-              <div style={{fontSize:'11px',color:'rgba(0,0,0,0.38)',marginTop:'4px'}}>
-                — María P., Barcelona · Logopedia infantil
-              </div>
-            </div>
-            <div style={{
-              display:'grid', gridTemplateColumns:'1fr 1fr 1fr',
-              gap:'8px', margin:'0 0 4px'
-            }}>
-              {[
-                {num:'2.847', label:'ayudas conectadas'},
-                {num:'94%', label:'encontraron lo que buscaban'},
-                {num:'< 3 min', label:'tiempo medio de respuesta'},
-              ].map(({num, label}) => (
-                <div key={label} style={{
-                  padding:'10px 8px', background:'white',
-                  borderRadius:'12px', textAlign:'center',
-                  boxShadow:'0 1px 6px rgba(0,0,0,0.07)',
-                  border:'1px solid rgba(0,0,0,0.06)'
-                }}>
-                  <div style={{fontSize:'15px',fontWeight:800,color:'var(--purple)',letterSpacing:'-0.5px',lineHeight:1}}>{num}</div>
-                  <div style={{fontSize:'9px',color:'rgba(0,0,0,0.4)',marginTop:'3px',lineHeight:1.3,fontWeight:500}}>{label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
         {messages.map((msg, msgIdx) => {
           const prevMsg = messages[msgIdx - 1]
           const prevHadResults = prevMsg?.results?.length > 0
@@ -1207,7 +1162,7 @@ export default function Home() {
                   <img src="/logo-iso.png" alt="Nüra" className={styles.nuraAvatarImg} />
                 </div>
               )}
-              <div className={`${styles.bubble} ${msg.from === 'user' ? styles.bubbleUser : styles.bubbleNura}`}>
+              <div className={`${styles.bubble} ${msg.from === 'user' ? styles.bubbleUser : styles.bubbleNura} ${msgIdx === 0 && msg.from !== 'user' ? styles.greeting : ''}`}>
                 {msg.text && <p>{msg.text}</p>}
                 {msg.lines?.map((line, i) => <p key={i}>{formatLine(line)}</p>)}
                 {msg.loading && <div className={styles.typingDots}><span /><span /><span /></div>}
@@ -1262,7 +1217,7 @@ export default function Home() {
         })}
                 <div
           className={styles.chatSpacer}
-          data-chips={(showSuggestions || !!messages[messages.length-1]?.refineChips) ? 'true' : 'false'}
+          data-chips={messages[messages.length-1]?.refineChips ? 'true' : 'false'}
         />
         <div ref={bottomRef} />
       </div>

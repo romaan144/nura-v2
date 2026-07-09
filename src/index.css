@@ -66,12 +66,12 @@ body {
   --ink-secondary: rgba(0,0,0,0.55);
   --ink-tertiary:  rgba(0,0,0,0.38);
   --ink-disabled:  rgba(0,0,0,0.25);
-  --ink-border:    rgba(0,0,0,0.08);
+  --ink-border:    rgba(0,0,0,0.06);
   --mid:      #3D3D5C;
   --soft:     #8888AA;
   --rule:     #E4E4F0;
   --rule2:    #F0F0FA;
-  --paper:    #F5F5F8;
+  --paper:    #F7F6F2;   /* Aire: papel cálido */
   --white:    #FFFFFF;
 
   /* ── SEMANTIC COLORS ────────────────────────────────── */
@@ -99,7 +99,7 @@ body {
   --shadow-color: 0 8px 32px rgba(123,47,255,0.18);
 
   --radius-sm: 10px;
-  --radius-md: 16px;
+  --radius-md: 18px;
   --radius-lg: 22px;
   --radius-xl: 30px;
 

@@ -78,6 +78,15 @@ contenido va en el área scrollable (bug histórico real).
 **Superficie especial:** El Momento Cero es la única pantalla oscura de la app
 (fondo nocturno con pulso radial morado) — intencionado, no extender a otras.
 
+### El principio "Aire" (Home)
+
+La pantalla inicial es un lugar para respirar y contar: **saludo + input,
+nada más**. La prueba social vive donde le corresponde (El Momento Cero y el
+Muro); Home no acumula marketing. Regla de conversación: **Nüra habla en
+texto abierto** — sin burbuja, una voz, no un bot — y el saludo abre en la
+Voz Tipográfica (23px); el usuario responde en burbuja morada suave con
+radio amplio.
+
 ## 5. Lenguaje e identidad verbal
 *(traducción operativa de la esencia de marca de `manifesto.md`)*
 

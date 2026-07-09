@@ -6,6 +6,19 @@
 
 ---
 
+## 2026-07-04 — Rediseño "Aire" (feedback directo del fundador)
+
+- **La pantalla inicial vuelve a respirar**: extirpados los tres bloques de
+  marketing del estado vacío (línea de stats, historia de María, grid de
+  métricas — 46 líneas) — motivo: el fundador la sintió "fea y con demasiada
+  información", y tenía razón: cinco rondas de features la habían convertido
+  en un tablón. La prueba social vive en el Momento Cero y el Muro.
+- **Nüra habla en texto abierto**: muere la burbuja-bot con blur; el saludo
+  abre en la Voz Tipográfica (23px). El usuario, en burbuja morada suave.
+- **Suavizado global por tokens**: papel cálido (#F7F6F2), bordes más
+  ligeros, radios más amplios — la app entera se destensa con tres líneas.
+- Sello `NURA_BUILD` → `2026.07.04-g`.
+
 ## 2026-07-04 — El Primer Día del Profesional (Nura Copilot mejora 5)
 
 - **El lado oferta deja de morir en el minuto uno**: el Perfil del

@@ -258,20 +258,31 @@
 .bubble p:last-child { margin-bottom: 0; }
 .bubble p:empty { display: none; }
 .bubbleNura {
-  background: rgba(255,255,255,0.92);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid rgba(255,255,255,0.6);
-  border-left: 2px solid rgba(123,47,255,0.2);
-  color: var(--ink-primary);
-  border-radius: var(--radius-xs) var(--radius-md) var(--radius-md) var(--radius-md);
-  box-shadow: var(--shadow-xs);
+  /* Aire: Nüra habla en texto abierto — una voz, no un bot */
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: var(--ink);
+  border-radius: 0;
+  padding-left: 2px;
 }
 .bubbleUser {
   background: var(--purple);
   color: white;
-  border-radius: var(--radius-md) var(--radius-md) var(--radius-xs) var(--radius-md);
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-xs) var(--radius-lg);
+  box-shadow: 0 2px 10px rgba(123,47,255,0.22);
 }
+
+/* El saludo abre con la Voz */
+.greeting p:first-child {
+  font-family: var(--font-voice);
+  font-size: 23px;
+  font-weight: 500;
+  letter-spacing: -0.4px;
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+.greeting p { font-size: 16px; line-height: 1.55; }
 
 .typingDots {
   display: flex; gap: 5px; align-items: center; padding: 4px 0;
