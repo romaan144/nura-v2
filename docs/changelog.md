@@ -6,6 +6,16 @@
 
 ---
 
+## 2026-07-04 — Aire, pasada 4: perfil profesional y modales
+
+- **El hero del perfil pierde dos capas redundantes**: el bloque "Disponible
+  ahora" (triplicaba el punto verde del avatar y el tiempo de la StatBar) y
+  los chips decorativos de días L-V (sin semántica real). Once capas → nueve.
+- **RegisterGate cálido**: sombra tibia, papel de Aire y el título en la Voz
+  — el gate es Nüra pidiéndote conocerte, no un formulario.
+- ConfirmModal suavizado al mismo lenguaje.
+- Sello `NURA_BUILD` → `2026.07.04-j`.
+
 ## 2026-07-04 — Aire, pasada 3: la conversación
 
 - **La Carta se lee como carta**: dentro del chat, el primer mensaje llega en

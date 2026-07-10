@@ -40,16 +40,16 @@ export default function RegisterGate({ onClose, reason = 'contact' }) {
   return (
     <div onClick={onClose} style={{
       position: 'fixed', inset: 0, zIndex: 300,
-      background: 'rgba(0,0,0,0.45)',
+      background: 'rgba(30,25,40,0.35)',  /* Aire: sombra tibia */
       backdropFilter: 'blur(8px)',
       WebkitBackdropFilter: 'blur(8px)',
       display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
     }}>
       <div onClick={e => e.stopPropagation()} style={{
-        background: 'rgba(255,255,255,0.97)',
+        background: 'rgba(252,251,248,0.98)',  /* papel cálido */
         backdropFilter: 'blur(32px)',
         WebkitBackdropFilter: 'blur(32px)',
-        borderRadius: '24px 24px 0 0',
+        borderRadius: '28px 28px 0 0',
         padding: '8px 22px 32px',
         width: '100%', maxWidth: '500px',
         boxShadow: '0 -8px 40px rgba(0,0,0,0.1)',
@@ -61,7 +61,7 @@ export default function RegisterGate({ onClose, reason = 'contact' }) {
         {/* Icon + headline */}
         <div style={{textAlign:'center',marginBottom:'20px'}}>
           <div style={{fontSize:'44px',marginBottom:'12px',lineHeight:1}}>{(() => { const IC = r.Icon; return IC ? <IC size={36} strokeWidth={1.4} color='var(--purple)' /> : null })()}</div>
-          <h2 style={{fontSize:'var(--text-md)',fontWeight:800,color:'rgba(0,0,0,0.85)',letterSpacing:'-0.4px',margin:'0 0 8px'}}>
+          <h2 style={{fontFamily:'var(--font-voice)',fontSize:'21px',fontWeight:500,color:'var(--ink)',letterSpacing:'-0.4px',margin:'0 0 8px'}}>
             {r.title}
           </h2>
           <p style={{fontSize:'var(--text-sm)',color:'rgba(0,0,0,0.45)',lineHeight:1.65,margin:0,maxWidth:'280px',marginInline:'auto'}}>
