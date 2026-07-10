@@ -6,6 +6,18 @@
 
 ---
 
+## 2026-07-04 — Fe de errores: el zombi de getWelcome + el lint entra en la puerta
+
+- La excisión de "recientes" (anclada al siguiente comentario de sección) se
+  tragó vecinos: el cierre de `getWelcome`, `detectIntent` entero y la
+  cabeza de `getDynamicSuggestions` — cuyo cuerpo huérfano quedó absorbido
+  como zombi dentro de `getWelcome` (llaves balanceadas → build ciego) con
+  5 `no-undef` minando el saludo por defecto. **Salió a main porque el lint
+  era informativo, no puerta.** Reconstruido quirúrgicamente desde HEAD~1.
+- **Regla permanente**: el push exige tres puertas con exit real — build,
+  lint (`no-undef` = 0) y suite. La puerta que faltaba, instalada.
+- Sello `NURA_BUILD` → `2026.07.04-m`.
+
 ## 2026-07-04 — Aire, pasada 6: La Interacción (feedback del fundador)
 
 - **`stopThinking()` — autoridad única del estado "pensando"** con

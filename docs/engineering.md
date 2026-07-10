@@ -22,7 +22,8 @@ Repos, deploys y tabla canónica: `context.md` §2.
    ```
    npm run build > /tmp/b.log 2>&1 && grep -q "✓ built" /tmp/b.log && …push
    ```
-   Nunca `build | grep` encadenado a push: el filtro devuelve éxito aunque el
+   El push exige TRES puertas con exit real: build, **lint (`no-undef` = 0)**
+   y la suite dorada. Nunca `build | grep` encadenado a push: el filtro devuelve éxito aunque el
    build falle (así se coló un build roto a `main` — una vez, y última).
 3-bis. **Tests de comprensión** — si el cambio toca `matching.js` o el
    análisis, `npm run test:matching` debe estar en verde antes del push

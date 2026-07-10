@@ -172,6 +172,40 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
     }
   }
 
+  // Default greeting
+  if (user.isHelper) {
+    const sig = proSignals(user.name)
+    return [
+      `${greeting}, **${firstName}**.`,
+      `Mientras no mirabas, **${sig.vistasHoy} ${sig.vistasHoy === 1 ? 'persona vio' : 'personas vieron'}** tu perfil hoy y hubo **${sig.busquedasSemana} búsquedas** en tu zona esta semana. Tu escaparate está activo ✨ Y si tú necesitas ayuda, aquí estoy.`
+    ]
+  }
+  return [
+    `${greeting}, **${firstName}**.`,
+    hour < 12 ? `¿En qué puedo ayudarte esta mañana?`
+    : hour < 18 ? `Cuéntame qué necesitas y lo encontramos.`
+    : `¿Qué necesitas esta noche?`
+  ]
+}
+
+function detectIntent(text, user) {
+  const t = text.toLowerCase()
+  if (user?.isHelper && (t.includes('aprendido') || t.includes('certificado') || t.includes('estudié') || t.includes('trabajé')))
+    return 'update_profile'
+  if (t.includes('empresa') || t.includes('contratar') || t.includes('empleado') || t.includes('trabajó'))
+    return 'b2b'
+  if (user?.isHelper && (t.includes('cliente') || t.includes('ofrecer') || t.includes('disponible')))
+    return 'helper_visibility'
+  return 'search'
+}
+
+function getDynamicSuggestions(user, searchHistory) {
+  const hour = new Date().getHours()
+  const day  = new Date().getDay()
+  const isWeekend = day === 0 || day === 6
+  const isMorning = hour >= 7 && hour < 13
+  const isAfternoon = hour >= 13 && hour < 20
+
   // ── 1. HISTORY-BASED SUGGESTIONS (highest priority) ───────────────────
   // Map past searches to follow-up suggestions for the same category
   const FOLLOWUP_MAP = {
