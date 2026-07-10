@@ -440,10 +440,7 @@
 /* ── CHAT SPACER ── */
 .chatSpacer {
   flex-shrink: 0;
-  height: var(--float-bottom-h);
-}
-.chatSpacer[data-chips="true"] {
-  height: var(--float-bottom-h-chips);
+  height: var(--float-bottom-h-chips);  /* constante generosa: nada se solapa nunca */
 }
 
 /* ── INPUT FOCUS STATE ───────────────────────────────────────────────── */

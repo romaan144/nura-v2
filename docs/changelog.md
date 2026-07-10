@@ -6,6 +6,24 @@
 
 ---
 
+## 2026-07-04 — Aire, pasada 6: La Interacción (feedback del fundador)
+
+- **`stopThinking()` — autoridad única del estado "pensando"** con
+  autocuración: cualquier pensamiento anterior muere al iniciar una nueva
+  interacción (14 `setLoading` dispersos + puntos huérfanos = "se queda
+  pillado"). Los refineChips de resultados viejos se retiran en cada envío:
+  una conversación, no capas superpuestas.
+- **Chips al trío universal con handler real** (Más cerca · Mejor valorado ·
+  Más barato): los contextuales sin handler ('Primera consulta gratis',
+  'Solo mañanas'…) caían como búsqueda literal basura — eran los "botones
+  que sobran".
+- **Búsquedas recientes, fuera** de sus dos sedes (override del init con
+  chips 'Buscar de nuevo' + rama lastSearch de getWelcome) — la memoria
+  valiosa (personas, citas, conexiones) permanece.
+- **Spacer constante**: muere el hack `data-chips`; nada vuelve a solaparse
+  con la barra flotante.
+- Sello `NURA_BUILD` → `2026.07.04-l`.
+
 ## 2026-07-04 — Aire, pasada 5: La Tarjeta Persona (feedback del fundador)
 
 - **La tarjeta del profesional, reescrita como canon único** — el fundador

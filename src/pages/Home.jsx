@@ -92,16 +92,6 @@ function ResultsBlock({ results }) {
 }
 
 // Category-aware refine chips — show the dimensions that matter for each need
-const CONTEXT_CHIPS = {
-  cuidado: ['Solo mañanas', 'Con experiencia en Alzheimer', 'Disponible hoy', 'Más cerca'],
-  salud: ['Esta semana', 'Online también', 'Mejor valorado', 'Más cerca'],
-  tecnico: ['Urgente hoy', 'Más barato', 'Mejor valorado', 'Más cerca'],
-  legal: ['Primera consulta gratis', 'Más barato', 'Mejor valorado', 'Online'],
-  clases: ['Online también', 'Más barato', 'Mejor valorado', 'Esta semana'],
-  mascotas: ['Disponible hoy', 'Más cerca', 'Mejor valorado', 'Con fotos'],
-  hogar: ['Más barato', 'Disponible hoy', 'Mejor valorado', 'Más cerca'],
-  entrenador: ['Online también', 'Más barato', 'Mejor valorado', 'Esta semana'],
-}
 
 
 function getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas) {
@@ -181,82 +171,6 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
       ]
     }
   }
-
-  // ── Returning user with recent search ───────────────────────────────
-  const lastSearch = searchHistory?.[searchHistory.length - 1]?.query
-  const favHelpers = (following || [])
-    .map(id => helpersCache?.[id] || helpersCache?.[String(id)])
-    .filter(Boolean)
-  const topFav = favHelpers[0]
-
-  if (lastSearch && searchHistory?.length > 2) {
-    const lastSearchObj = searchHistory[searchHistory.length - 1]
-    const hoursAgo = lastSearchObj?.ts
-      ? Math.floor((Date.now() - lastSearchObj.ts) / (1000 * 60 * 60))
-      : 99
-    if (hoursAgo < 48) {
-      return [
-        `${greeting}, **${firstName}**.`,
-        `Ayer buscaste **${lastSearch}**. ¿Encontraste a alguien, o quieres que siga buscando?`
-      ]
-    }
-    return [
-      `${greeting}, **${firstName}**.`,
-      `La última vez buscaste **${lastSearch}**. ¿Sigues necesitando ayuda con eso, o tienes una nueva necesidad?`
-    ]
-  }
-
-  // User with favorites
-  if (topFav && following?.length > 0) {
-    return [
-      `${greeting}, **${firstName}**.`,
-      `**${topFav.name?.split(' ')?.[0]}** está entre tus seguidos. ¿Le escribo?`
-    ]
-  }
-
-  // First or second visit
-  if (searchHistory?.length === 1) {
-    return [
-      `Bienvenido de nuevo, **${firstName}**.`,
-      `¿Qué necesitas hoy? Cuéntamelo y encuentro a la persona exacta.`
-    ]
-  }
-
-  // Default greeting
-  if (user.isHelper) {
-    const sig = proSignals(user.name)
-    return [
-      `${greeting}, **${firstName}**.`,
-      `Mientras no mirabas, **${sig.vistasHoy} ${sig.vistasHoy === 1 ? 'persona vio' : 'personas vieron'}** tu perfil hoy y hubo **${sig.busquedasSemana} búsquedas** en tu zona esta semana. Tu escaparate está activo ✨ Y si tú necesitas ayuda, aquí estoy.`
-    ]
-  }
-  return [
-    `${greeting}, **${firstName}**.`,
-    hour < 12 ? `¿En qué puedo ayudarte esta mañana?`
-    : hour < 18 ? `Cuéntame qué necesitas y lo encontramos.`
-    : `¿Qué necesitas esta noche?`
-  ]
-}
-
-function detectIntent(text, user) {
-  const t = text.toLowerCase()
-  if (user?.isHelper && (t.includes('aprendido') || t.includes('certificado') || t.includes('estudié') || t.includes('trabajé')))
-    return 'update_profile'
-  if (t.includes('empresa') || t.includes('contratar') || t.includes('empleado') || t.includes('trabajó'))
-    return 'b2b'
-  if (user?.isHelper && (t.includes('cliente') || t.includes('ofrecer') || t.includes('disponible')))
-    return 'helper_visibility'
-  return 'search'
-}
-
-// ── DYNAMIC SUGGESTIONS ───────────────────────────────────────────────────
-// Rotates based on time of day, day of week, and user history
-function getDynamicSuggestions(user, searchHistory) {
-  const hour = new Date().getHours()
-  const day  = new Date().getDay()
-  const isWeekend = day === 0 || day === 6
-  const isMorning = hour >= 7 && hour < 13
-  const isAfternoon = hour >= 13 && hour < 20
 
   // ── 1. HISTORY-BASED SUGGESTIONS (highest priority) ───────────────────
   // Map past searches to follow-up suggestions for the same category
@@ -481,16 +395,6 @@ export default function Home() {
       }
     }
 
-    if (user && lastQ && nuraChatMessages.length === 0) {
-      const hour = new Date().getHours()
-      const g = hour < 14 ? 'Buenos días' : hour < 21 ? 'Buenas tardes' : 'Buenas noches'
-      const firstName = user.name?.split(' ')?.[0] || user.name
-      msgs[0] = {
-        id: 1, from: 'nura',
-        lines: [`${g}, **${firstName}**. La última vez buscaste **${lastQ}**.`],
-        chips: ['Buscar de nuevo', 'Buscar algo diferente']
-      }
-    }
 
     // Only init if no previous conversation
     if (nuraChatMessages.length === 0) {
@@ -617,6 +521,13 @@ export default function Home() {
     setTimeout(() => inputRef.current?.focus?.(), 200)
   }
 
+  // ── Una sola autoridad del estado "pensando" ──
+  function stopThinking() {
+    try { clearInterval(window.__nuraStatusInterval) } catch {}
+    setMessages(prev => prev.filter(m => !m.loading))
+    setLoading(false)
+  }
+
   async function handleSend(text) {
     let msg = text || input
     if (!msg.trim() || loading) return
@@ -625,6 +536,10 @@ export default function Home() {
     setInput('')
     setShowSuggestions(false)
     setMessages(prev => [...prev, { id: Date.now(), from: 'user', text: msg }])
+    // Autocuración: el pensamiento anterior muere al empezar uno nuevo;
+    // los chips de resultados viejos se retiran (una conversación, no capas)
+    stopThinking()
+    setMessages(prev => prev.map(m => m.refineChips ? { ...m, refineChips: undefined } : m))
     setLoading(true)
 
     // ── Comprensión Visible: si hay corrección pendiente, combinar con la consulta original ──
@@ -774,7 +689,7 @@ export default function Home() {
         }
 
         const resultMsg = { id: Date.now(), from: 'nura', lines: [refineLine], results: refined,
-          refineChips: ['Más barato', 'Más cerca', 'Mejor valorado', 'Online'] }
+          refineChips: ['Más cerca', 'Mejor valorado', 'Más barato'] }
         setMessages(prev => [...prev, resultMsg])
       setLoading(false)
         setLastMatches(refined)
@@ -885,8 +800,7 @@ export default function Home() {
         matches = (LOCAL_FALLBACK_HELPERS || []).filter(x => x && x.id >= 2000)
           .sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 4)
       }
-      clearInterval(window.__nuraStatusInterval)
-      setMessages(prev => prev.filter(m => !m.loading))
+      stopThinking()
 
       if (!matches?.length) {
         // Smart recovery: suggest alternatives based on the analysis
@@ -1062,15 +976,13 @@ export default function Home() {
               : [resultLine, ...(priceCtx ? [priceCtx] : []), 'Crea tu cuenta gratis para escribirles.']),
         results: matches,
         refineChips: matches.length > 0
-          ? (CONTEXT_CHIPS[analysis?.categoria] || ['Más barato', 'Más cerca', 'Mejor valorado', 'Online'])
+          ? ['Más cerca', 'Mejor valorado', 'Más barato']
           : ['Ampliar búsqueda', 'Cambiar zona', 'Online también']
       }
       setMessages(prev => [...prev, resultMsg])
       setLoading(false)
     } catch (err) {
-      clearInterval(window.__nuraStatusInterval)
-      setMessages(prev => prev.filter(m => !m.loading))
-      setLoading(false)
+      stopThinking()
       console.error('[Nüra] búsqueda:', err)
       setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
         lines: ['Algo fue mal. Inténtalo de nuevo.', `⚙️ ${err?.message || err}`] }])
@@ -1217,7 +1129,6 @@ export default function Home() {
         })}
                 <div
           className={styles.chatSpacer}
-          data-chips={messages[messages.length-1]?.refineChips ? 'true' : 'false'}
         />
         <div ref={bottomRef} />
       </div>
