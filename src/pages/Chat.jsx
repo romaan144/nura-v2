@@ -100,7 +100,7 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
   const name = helper.name?.split(' ')?.[0] || helper.name
 
   if (done) return (
-    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:200,display:'flex',alignItems:'center',justifyContent:'center',padding:'20px'}}>
+    <div style={{position:'fixed',inset:0,background: 'rgba(30,25,40,0.35)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:200,display:'flex',alignItems:'center',justifyContent:'center',padding:'20px'}}>
       <div style={{background:'rgba(255,255,255,0.95)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',border:'1px solid rgba(255,255,255,0.5)',borderRadius:'24px',padding:'36px 28px',textAlign:'center',maxWidth:'320px',width:'100%',boxShadow:'0 8px 40px rgba(0,0,0,0.12)'}}>
         {/* Avatar with checkmark */}
         <div style={{position:'relative',display:'inline-block',marginBottom:'12px'}}>
