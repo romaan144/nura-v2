@@ -6,6 +6,22 @@
 
 ---
 
+## 2026-07-04 — Aire, pasada 5: La Tarjeta Persona (feedback del fundador)
+
+- **La tarjeta del profesional, reescrita como canon único** — el fundador
+  no la sentía bonita ni unificada, y el código le daba la razón: dos marcas
+  de verificado compitiendo por la misma esquina del avatar, nueve iconos,
+  doble botonera y razón duplicada. La nueva: persona protagonista, una
+  línea de esencia, una de datos, **una sola acción** (Escribir, flujo de
+  invitado intacto).
+- **Tres eliminaciones deliberadas**: botón Seguir (vive en el perfil),
+  línea "Disponible ahora·Responde en X" (el LiveDot y la StatBar del perfil
+  ya lo dicen), y la razón ✦ por tarjeta (la convicción vive en la
+  Revelación — "una respuesta, no una estantería").
+- Cascada automática a las 4 superficies que la consumen. Registrada como
+  componente canon en design-system §4 con prohibición de variantes.
+- Sello `NURA_BUILD` → `2026.07.04-k`.
+
 ## 2026-07-04 — Aire, pasada 4: perfil profesional y modales
 
 - **El hero del perfil pierde dos capas redundantes**: el bloque "Disponible

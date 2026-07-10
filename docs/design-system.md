@@ -46,6 +46,13 @@ pantalla. Si un patrón visual se repite, se extrae aquí.
 - **`Bubble`** — testimonios como conversación: avatar de iniciales en color
   rotatorio, burbuja `0 12px 12px 12px`, autor debajo. Texto en `--font-voice`
   itálica.
+- **La Tarjeta Persona** (`src/components/HelperCard.jsx`) — representación
+  canónica del profesional en TODA la app (resultados, Explorar, espejo del
+  Primer Día, tiras): avatar 54 con LiveDot, nombre + un solo ✓, esencia en
+  una línea (especialidad · zona), datos en otra (★ · precio · distancia),
+  **una única acción** (Escribir). Sin botón de seguir (vive en el perfil),
+  sin líneas de disponibilidad (el punto ya lo dice), sin razón ✦ por
+  tarjeta (la convicción vive en la Revelación). Prohibido crear variantes.
 - **`StatBar`** — números como logros: 1–3 columnas con separadores, valor
   grande + etiqueta pequeña ("4.9★ / valoraciones").
 
