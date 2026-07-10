@@ -234,13 +234,45 @@
   flex-shrink: 0; align-self: flex-start; margin-top: 2px;
 }
 .msgBubbleNura {
-  background: rgba(123,47,255,0.06) !important;
-  border: 1px solid rgba(123,47,255,0.12) !important;
-  color: var(--ink-primary) !important;
-  border-radius: 4px 18px 18px 18px !important;
+  /* Aire: Nüra en el chat es una ceremonia serena, no otro globo */
+  background: transparent !important;
+  border: none !important;
+  color: var(--ink-tertiary) !important;
+  border-radius: 0 !important;
   box-shadow: none !important;
+  text-align: center;
+  max-width: 100% !important;
 }
-.msgBubbleNura p { font-size: var(--text-sm) !important; font-style: italic; }
+.msgBubbleNura p { font-size: 12px !important; font-style: normal; letter-spacing: 0.1px; }
+.msgSystem { justify-content: center !important; }
+
+/* Aire: la Carta se lee como carta */
+.msgLetter {
+  background: #FDFBF7 !important;
+  border: 1px solid rgba(123,47,255,0.14) !important;
+  color: var(--ink) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.06) !important;
+  max-width: 88% !important;
+}
+.msgLetter p {
+  font-family: var(--font-voice) !important;
+  font-style: italic;
+  font-size: 15px !important;
+  line-height: 1.6 !important;
+  color: var(--ink) !important;
+}
+.msgLetter::after {
+  content: 'Carta de presentación · escrita con Nüra';
+  display: block;
+  margin-top: 8px;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-style: normal;
+  font-size: 10px;
+  letter-spacing: 0.4px;
+  color: rgba(123,47,255,0.6);
+  text-transform: uppercase;
+}
 
 /* Quick replies floating */
 

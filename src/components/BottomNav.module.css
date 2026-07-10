@@ -6,10 +6,10 @@
   position: fixed;
   bottom: 0; left: 0; right: 0;
   z-index: 100;
-  background: rgba(255,255,255,0.82);
+  background: rgba(247,246,242,0.86);  /* Aire: papel cálido */
   -webkit-backdrop-filter: blur(32px) saturate(200%);
   backdrop-filter: blur(32px) saturate(200%);
-  border-top: 0.5px solid rgba(0,0,0,0.08);
+  border-top: 0.5px solid rgba(0,0,0,0.05);
   padding: 6px 0 max(env(safe-area-inset-bottom), 8px);
 }
 

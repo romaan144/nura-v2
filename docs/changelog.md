@@ -6,6 +6,17 @@
 
 ---
 
+## 2026-07-04 — Aire, pasada 3: la conversación
+
+- **La Carta se lee como carta**: dentro del chat, el primer mensaje llega en
+  papel cálido con la Voz Tipográfica y el sello "Carta de presentación ·
+  escrita con Nüra" — momento de Voz según la regla del sistema.
+- **Nüra en el chat es ceremonia, no globo**: sus intervenciones (✓ Acordado,
+  seguimientos) pasan a línea serena centrada en tinta terciaria.
+- **BottomNav entibiada** al papel de Aire (fondo cálido, borde más ligero) —
+  respira en las cinco pestañas a la vez.
+- Sello `NURA_BUILD` → `2026.07.04-i`.
+
 ## 2026-07-04 — Aire, pasada 2: Explorar y Chats
 
 - **Explorar sin tablón**: extirpada la línea de marketing ("47 personas en

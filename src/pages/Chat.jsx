@@ -317,6 +317,7 @@ export default function Chat() {
       const letterMsg = {
         id: Date.now(),
         from: 'user',
+        isLetter: true,
         text: location.state.introLetterText,
         time: new Date().toISOString()
       }
@@ -629,7 +630,7 @@ export default function Chat() {
           const { msg } = item
           const isNura = msg.from === 'nura'
           return (
-            <div key={msg.id} className={`${styles.msg} ${msg.from === 'user' ? styles.msgUser : styles.msgHelper}`} style={{animation:`fadeInUp 0.25s ease-out forwards`}}>
+            <div key={msg.id} className={`${styles.msg} ${msg.from === 'user' ? styles.msgUser : styles.msgHelper} ${msg.from === 'nura' ? styles.msgSystem : ''}`} style={{animation:`fadeInUp 0.25s ease-out forwards`}}>
               {msg.from === 'helper' && (
                 helper.avatarUrl
                   ? <img src={helper.avatarUrl} alt="" className={styles.msgAvatarImg} />
@@ -640,7 +641,7 @@ export default function Chat() {
                   <img src="/logo-iso.png" alt="Nüra" style={{width:'18px',height:'18px',objectFit:'contain'}} />
                 </div>
               )}
-              <div className={`${styles.msgBubble} ${isNura ? styles.msgBubbleNura : ''}`}>
+              <div className={`${styles.msgBubble} ${isNura ? styles.msgBubbleNura : ''} ${msg.isLetter ? styles.msgLetter : ''}`}>
                 <p>{msg.text}</p>
                 {msg.from === 'helper' && msg.proposal && !msg.proposalAnswered && (
                   <div style={{display:'flex', gap:'6px', marginTop:'8px', flexWrap:'wrap'}}>
