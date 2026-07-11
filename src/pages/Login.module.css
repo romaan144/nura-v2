@@ -45,7 +45,7 @@
 .progressFill { height: 100%; background: var(--grad-main); border-radius: 2px; transition: width 0.5s ease; }
 
 .step { display: flex; flex-direction: column; gap: 16px; }
-.stepTitle { font-size: var(--text-heading); font-weight: 800; color: var(--ink); letter-spacing: -0.3px; margin: 0; }
+.stepTitle { font-family: var(--font-voice); font-size: 23px; font-weight: 500; color: var(--ink); letter-spacing: -0.4px; margin: 0; }
 .stepDesc { font-size: var(--text-sm); color: var(--mid); line-height: 1.5; margin: 0; }
 .hint { color: var(--purple); font-weight: 600; }
 
@@ -88,3 +88,20 @@
   .blob1, .blob2 { position: absolute; } /* absolute within .page, not fixed */
   .card { max-width: 400px; }
 }
+
+
+/* ── Aire: el umbral ─────────────────────────────────────────── */
+.input {
+  font-size: 16px;              /* iOS: sin zoom al enfocar */
+  border: 1px solid var(--ink-border);
+  border-radius: 14px;
+  background: white;
+}
+.btn { border-radius: var(--radius-full); font-weight: 700; }
+.link { color: var(--purple); }
+.pendingLine {
+  font-size: 13px;
+  color: var(--ink-secondary);
+  margin: 4px 0 0;
+}
+.pendingLine strong { color: var(--purple); font-weight: 700; }

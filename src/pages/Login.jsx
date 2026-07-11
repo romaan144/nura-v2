@@ -73,6 +73,16 @@ export default function Login() {
         {step === 'phone' && (
           <div className={styles.step}>
             <h2 className={styles.stepTitle}>Accede a Nüra</h2>
+            {(() => {
+              try {
+                const p = JSON.parse(sessionStorage.getItem('nura_pending_helper') || 'null')
+                return p ? (
+                  <p className={styles.pendingLine}>
+                    Para escribir a <strong>{p.name?.split(' ')?.[0]}</strong> ✨
+                  </p>
+                ) : null
+              } catch { return null }
+            })()}
             <p className={styles.stepDesc}>Para contactar profesionales y guardar tu historial necesitas una cuenta. Es gratis y tarda 30 segundos.</p>
             <div className={styles.phoneRow}>
               <div className={styles.flag}>+34</div>

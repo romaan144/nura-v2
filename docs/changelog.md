@@ -6,6 +6,18 @@
 
 ---
 
+## 2026-07-04 — Aire, pasada 7: Los Umbrales (Login e IntroLetter)
+
+- **Login habla**: el título en la Voz, y si llegas para escribir a alguien,
+  el umbral lo recuerda ("Para escribir a **Elena** ✨" desde el contexto de
+  invitado pendiente) — la interrupción se vuelve parte del viaje. Inputs a
+  16px (iOS sin zoom), botón píldora.
+- **IntroLetter, mismo papel que el chat**: la carta se escribe sobre la
+  tarjeta cálida con borde morado tenue que luego luce en la conversación;
+  chrome transparente, Regenerar como píldora fantasma, Enviar como píldora
+  primaria.
+- Sello `NURA_BUILD` → `2026.07.04-n`.
+
 ## 2026-07-04 — Fe de errores: el zombi de getWelcome + el lint entra en la puerta
 
 - La excisión de "recientes" (anclada al siguiente comentario de sección) se
