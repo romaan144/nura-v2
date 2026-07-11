@@ -409,7 +409,6 @@ export default function Home() {
       return
     }
     // Returning user — single message + immediate action chips
-    const lastQ = searchHistory?.[0]?.query
     const msgs = [{ id: 1, from: 'nura', lines }]
 
     // ── La Pregunta — contexto antes del texto ──
@@ -847,15 +846,6 @@ export default function Home() {
       )
       // Surprise moment: Nüra shows it remembers the user
       if (searchHistory?.length >= 1) {
-        const lastQuery = searchHistory?.[searchHistory.length - 2]?.query
-        if (lastQuery) {
-          setTimeout(() => {
-            setMessages(prev => [...prev, {
-              id: Date.now() + 99, from: 'nura',
-              lines: [`Por cierto — la última vez buscaste **${lastQuery}**. Si sigue sin resolverse, puedo buscar de nuevo cuando quieras.`]
-            }])
-          }, 4500)
-        }
       }
       // Cache helpers for instant profile + chat loading
       if (matches?.length) {
