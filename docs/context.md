@@ -48,7 +48,7 @@ Todas en producción. Descripción de producto; mecánica exacta en
 4. **La Revelación Progresiva** — los resultados llegan como los encuentra la
    IA: primero la recomendación con convicción y razones ("✦ De todos los
    profesionales, Elena es mi recomendación para tu madre — …") con su tarjeta
-   destacada; después "También encajan:" y las alternativas cayendo una a una.
+ La estrella queda fija: las alternativas aparecen como fila discreta de persona-chips (avatar · nombre · ★) bajo la tarjeta, sin desplazarla.
    Una respuesta, no una estantería. Todo dentro del chat.
 
 **Conocer y contactar**
