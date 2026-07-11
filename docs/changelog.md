@@ -6,6 +6,15 @@
 
 ---
 
+## 2026-07-04 — Aire, afinado de La Interacción (6-bis)
+
+- **Los chips conversacionales viejos también mueren al buscar** (Pregunta,
+  seguimientos): eran "los botones que sobran una vez buscas" — la cirugía
+  anterior solo retiraba los de refinamiento.
+- **Timeouts recortados** (Supabase 4000→2500, race del matcher →2200): el
+  peor caso con red lenta baja de ~7s a ~3.5s de puntos pensando.
+- Sello NURA_BUILD → 2026.07.04-o.
+
 ## 2026-07-04 — Aire, pasada 7: Los Umbrales (Login e IntroLetter)
 
 - **Login habla**: el título en la Voz, y si llegas para escribir a alguien,

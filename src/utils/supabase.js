@@ -177,7 +177,7 @@ export async function searchHelpers(category, keywords = []) {
       // Exact match first, case-insensitive via ilike without wildcards
       url += `&category=ilike.${encodeURIComponent(category)}`
     }
-    const res = await fetch(url, { headers, signal: AbortSignal.timeout(4000) })
+    const res = await fetch(url, { headers, signal: AbortSignal.timeout(2500) })
     if (!res.ok) return null
     const data = await res.json()
     if (!Array.isArray(data) || data.length === 0) return null
@@ -194,7 +194,7 @@ export async function searchHelpers(category, keywords = []) {
 
 export async function getHelperById(id) {
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/helpers?id=eq.${id}&select=*&limit=1`, { headers, signal: AbortSignal.timeout(4000) })
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/helpers?id=eq.${id}&select=*&limit=1`, { headers, signal: AbortSignal.timeout(2500) })
     if (!res.ok) return null
     const data = await res.json()
     return data?.[0] ? normalize(data[0]) : null
@@ -203,7 +203,7 @@ export async function getHelperById(id) {
 
 export async function getAllHelpers() {
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/helpers?select=*&limit=1000&order=rating.desc`, { headers, signal: AbortSignal.timeout(4000) })
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/helpers?select=*&limit=1000&order=rating.desc`, { headers, signal: AbortSignal.timeout(2500) })
     if (!res.ok) return null
     const data = await res.json()
     return Array.isArray(data) ? data.map(normalize) : null

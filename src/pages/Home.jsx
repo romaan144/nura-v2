@@ -573,7 +573,7 @@ export default function Home() {
     // Autocuración: el pensamiento anterior muere al empezar uno nuevo;
     // los chips de resultados viejos se retiran (una conversación, no capas)
     stopThinking()
-    setMessages(prev => prev.map(m => m.refineChips ? { ...m, refineChips: undefined } : m))
+    setMessages(prev => prev.map(m => (m.refineChips || m.chips) ? { ...m, refineChips: undefined, chips: undefined } : m))
     setLoading(true)
 
     // ── Comprensión Visible: si hay corrección pendiente, combinar con la consulta original ──
