@@ -46,17 +46,10 @@ function buildComprehension(analysis) {
 
 // ── La Recomendación — una persona primero, con convicción ──
 function ResultsBlock({ results }) {
-  const [revealed, setRevealed] = useState(1)
-  useEffect(() => {
-    if (!results || results.length <= 1) return
-    const t = setInterval(() => {
-      setRevealed(r => (r >= results.length ? (clearInterval(t), r) : r + 1))
-    }, 550)
-    return () => clearInterval(t)
-  }, [results])
+  const navigate = useNavigate()
   if (!results?.length) return null
   const top = results[0]
-  const alts = results.slice(1, revealed)
+  const alts = results.slice(1, 4)
   const firstName = top?.name?.split(' ')?.[0] || ''
   const reason = window.__nuraMatchReasons?.[String(top?.id)]
   const persona = window.__nuraLastAnalysis?.persona
@@ -76,22 +69,36 @@ function ResultsBlock({ results }) {
       <div style={{animation:'cardCascade 0.45s ease-out both'}}>
         <HelperCard helper={top} showPrice />
       </div>
-      {revealed > 1 && (
-        <div style={{fontSize:'12px', fontWeight:600, color:'var(--ink-secondary)',
-          margin:'12px 0 8px'}}>También encajan:</div>
-      )}
-      <div style={{display:'flex', flexDirection:'column', gap:'10px'}}>
-        {alts.map((a, i) => (
-          <div key={a.id || i} style={{animation:'cardCascade 0.5s ease-out both'}}>
-            <HelperCard helper={a} showPrice />
+      {alts.length > 0 && (
+        <>
+          <div style={{fontSize:'11px', fontWeight:600, color:'var(--ink-tertiary)',
+            letterSpacing:'0.3px', margin:'12px 0 7px'}}>TAMBIÉN ENCAJAN</div>
+          <div style={{display:'flex', flexWrap:'wrap', gap:'8px'}}>
+            {alts.map((a, i) => (
+              <button key={a.id || i}
+                onClick={() => navigate(`/helper/${a.id}`, { state: { helper: a, fromSearch: true, userQuery: window.__nuraLastQuery, analysis: window.__nuraLastAnalysis } })}
+                aria-label={`Ver perfil de ${a.name}`}
+                style={{
+                  display:'flex', alignItems:'center', gap:'7px',
+                  background:'white', border:'1px solid var(--ink-border)',
+                  borderRadius:'99px', padding:'5px 12px 5px 5px',
+                  boxShadow:'var(--shadow-sm)', cursor:'pointer',
+                  animation:'popIn 0.35s ease-out both',
+                  animationDelay:`${200 + i * 140}ms`,
+                }}>
+                {a.avatarUrl
+                  ? <img src={a.avatarUrl} alt="" style={{width:30, height:30, borderRadius:'50%', objectFit:'cover'}} />
+                  : <div style={{width:30, height:30, borderRadius:'50%', background:a.avatarColor || 'var(--purple)', color:'white', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:700}}>{a.avatar || a.name?.[0]}</div>}
+                <span style={{fontSize:'12.5px', fontWeight:600, color:'var(--ink)'}}>{a.name?.split(' ')?.[0]}</span>
+                {a.rating && <span style={{fontSize:'11px', color:'var(--ink-tertiary)'}}>★ {a.rating}</span>}
+              </button>
+            ))}
           </div>
-        ))}
-      </div>
+        </>
+      )}
     </div>
   )
 }
-
-// Category-aware refine chips — show the dimensions that matter for each need
 
 
 function getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas) {

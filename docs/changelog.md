@@ -6,6 +6,17 @@
 
 ---
 
+## 2026-07-04 — Aire, pasada 8: la Revelación sin desplazamiento
+
+- **La recomendación ya no se desplaza a sí misma** (feedback del fundador):
+  muere la cascada de tarjetas completas que crecía el bloque y empujaba a
+  la estrella fuera de pantalla. Nuevo patrón: **una tarjeta protagonista +
+  fila de persona-chips** (avatar · nombre · ★, popIn escalonado sin
+  crecimiento — la altura queda reservada al montar). El scroll aterriza una
+  vez, sobre la respuesta. "Una respuesta, no una estantería" — ahora
+  también físicamente.
+- Sello `NURA_BUILD` → `2026.07.04-p`.
+
 ## 2026-07-04 — Aire, afinado de La Interacción (6-bis)
 
 - **Los chips conversacionales viejos también mueren al buscar** (Pregunta,
