@@ -844,9 +844,6 @@ export default function Home() {
         `Tienes ${matches.length} profesionales disponibles. ¿Ya les has escrito?`,
         2 * 60 * 60 * 1000
       )
-      // Surprise moment: Nüra shows it remembers the user
-      if (searchHistory?.length >= 1) {
-      }
       // Cache helpers for instant profile + chat loading
       if (matches?.length) {
         const cacheMap = {}
