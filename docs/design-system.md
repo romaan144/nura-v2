@@ -108,6 +108,18 @@ radio amplio.
 - **Confianza siempre en verde success con ✓:** "✓ Identidad verificada",
   "✓ Conexión verificada", "✓ funcionó".
 
+### La Gramática de la Recomendación (voz post-búsqueda)
+
+Brevedad + certeza + calidez. **Prohibido narrar el algoritmo o volcar cifras
+en la prosa** (cronómetros, conteos de perfiles, estadísticas — los números
+viven en la tarjeta). El nombre del recomendado suena **una vez** en texto y
+una en la tarjeta. Flujo: comprensión en una línea → un beat sereno ("Dame un
+segundo…") → recomendación con porqué humano (máx. 2 frases de señales
+reales) → tarjeta → "Si prefieres comparar, también encajarían **X**, **Y** y
+**Z**." + chips. La urgencia modifica el porqué ("…y puede estar allí hoy
+mismo"), nunca añade sirenas. La memoria solo habla cuando la conversación
+actual la invoca.
+
 ## 6. Accesibilidad (base establecida)
 
 - Todo control de solo-icono lleva `aria-label` (volver, enviar, dictar,

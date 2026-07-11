@@ -6,6 +6,20 @@
 
 ---
 
+## 2026-07-04 — La Gramática de la Recomendación (mandato del fundador)
+
+- **La voz post-búsqueda, reescrita entera**: mueren el cronómetro (⚡2.1s),
+  el "Filtrando entre 743 perfiles" con número aleatorio, el "mejor
+  candidato", el "De 1.008 profesionales", la línea estadística de precios,
+  la justificación extra del match, el "👆 Pulsa en cualquier tarjeta" y la
+  triple repetición del nombre. Cinco líneas de sistema → **una de Nüra**:
+  "Creo que ya tengo a la persona. Mi recomendación es **Elena**: [porqué
+  humano de señales reales]".
+- Comprensión en una línea; pensando sereno sin teatro; alternativas como
+  "Si prefieres comparar, también encajarían…" + chips; bloque mudo.
+  Regla registrada en design-system §5-bis.
+- Sello `NURA_BUILD` → `2026.07.04-q`.
+
 ## 2026-07-04 — Aire, pasada 8: la Revelación sin desplazamiento
 
 - **La recomendación ya no se desplaza a sí misma** (feedback del fundador):

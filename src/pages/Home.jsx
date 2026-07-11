@@ -50,29 +50,18 @@ function ResultsBlock({ results }) {
   if (!results?.length) return null
   const top = results[0]
   const alts = results.slice(1, 4)
-  const firstName = top?.name?.split(' ')?.[0] || ''
-  const reason = window.__nuraMatchReasons?.[String(top?.id)]
-  const persona = window.__nuraLastAnalysis?.persona
-  const paraLabel = persona && PERSONA_CHIP[persona]
-    ? ' ' + PERSONA_CHIP[persona].charAt(0).toLowerCase() + PERSONA_CHIP[persona].slice(1)
-    : ''
   return (
     <div>
-      <div style={{
-        fontSize:'12px', color:'var(--ink-secondary)', lineHeight:1.5,
-        margin:'2px 0 8px', letterSpacing:'-0.1px'
-      }}>
-        <span style={{color:'var(--purple)', fontWeight:700}}>✦</span>{' '}
-        De 1.008 profesionales, <strong>{firstName}</strong> es mi recomendación{paraLabel}
-        {reason ? <> — {reason}</> : null}.
-      </div>
       <div style={{animation:'cardCascade 0.45s ease-out both'}}>
         <HelperCard helper={top} showPrice />
       </div>
       {alts.length > 0 && (
         <>
-          <div style={{fontSize:'11px', fontWeight:600, color:'var(--ink-tertiary)',
-            letterSpacing:'0.3px', margin:'12px 0 7px'}}>TAMBIÉN ENCAJAN</div>
+          <div style={{fontSize:'12px', color:'var(--ink-secondary)', margin:'12px 0 8px', lineHeight:1.5}}>
+            Si prefieres comparar, también encajarían {alts.map((a, i) => (
+              <span key={i}><strong>{a.name?.split(' ')?.[0]}</strong>{i < alts.length - 2 ? ', ' : i === alts.length - 2 ? ' y ' : ''}</span>
+            ))}.
+          </div>
           <div style={{display:'flex', flexWrap:'wrap', gap:'8px'}}>
             {alts.map((a, i) => (
               <button key={a.id || i}
@@ -794,47 +783,13 @@ export default function Home() {
       window.__nuraLastAnalysis = analysis
       try { sessionStorage.setItem('nura_last_analysis', JSON.stringify(analysis)) } catch {}
       // Empathy acknowledgment — instant, before searching
-      const empathyLine = analysis?.urgente
-        ? '⚡ Entendido. Situación urgente — busco disponibilidad ahora mismo.'
-        : analysis?.categoria === 'cuidado'
-        ? 'Entiendo. Cuidar a alguien querido es una decisión importante. Busco a las mejores cuidadoras verificadas cerca de ti.'
-        : analysis?.categoria === 'tecnico'
-        ? 'Entendido. Te localizo técnicos disponibles en tu zona.'
-        : analysis?.categoria === 'logopeda'
-        ? 'Entendido. Busco logopedas especializados cerca de ti.'
-        : analysis?.categoria === 'salud'
-        ? 'Entendido. Busco el profesional de salud más adecuado para ti.'
-        : analysis?.categoria === 'legal'
-        ? 'Entendido. Te busco asesores jurídicos de confianza.'
-        : analysis?.categoria === 'matematicas'
-        ? 'Entendido. Busco el profesor ideal para lo que necesitas.'
-        : analysis?.categoria === 'psicologia'
-        ? 'Gracias por contarme. Busco el psicólogo más adecuado para ti.'
-        : '¿Te entiendo bien? Déjame buscar la persona exacta que necesitas.'
+      const empathyLine = `Entendido${analysis?.persona && PERSONA_CHIP[analysis.persona] ? ' — ' + PERSONA_CHIP[analysis.persona].charAt(0).toLowerCase() + PERSONA_CHIP[analysis.persona].slice(1) : ''}.`
       setMessages(prev => [...prev, { id: Date.now() + 0.3, from: 'nura', lines: [empathyLine], comprehensionChips: buildComprehension(analysis), originalQuery: msg }])
 
-      // Progressive loading messages — feel like magic
-      const loadingSteps = analysis?.urgente
-        ? ['⚡ Buscando disponibilidad urgente...', 'Filtrando por zona y respuesta inmediata...', 'Comparando perfiles verificados...']
-        : analysis?.categoria === 'cuidado'
-        ? ['Analizando tu situación familiar...', 'Filtrando cuidadoras verificadas en tu zona...', 'Revisando disponibilidad y referencias...']
-        : analysis?.categoria === 'salud'
-        ? ['Entendiendo tu necesidad...', 'Buscando especialistas disponibles...', 'Comparando perfiles y valoraciones...']
-        : ['Analizando tu búsqueda...', `Filtrando entre ${Math.floor(Math.random()*200)+600} perfiles...`, 'Seleccionando los mejores para ti...']
-
-      let stepIdx = 0
+      // El pensando sereno — sin narrar el algoritmo
       setTimeout(() => {
-        setMessages(prev => [...prev, { id: Date.now() + 0.5, from: 'nura', lines: [loadingSteps[0]], loading: true }])
-        const stepInterval = window.__nuraStatusInterval = setInterval(() => {
-          stepIdx++
-          if (stepIdx < loadingSteps.length) {
-            setMessages(prev => prev.map(m => m.loading ? { ...m, lines: [loadingSteps[stepIdx]] } : m))
-          } else {
-            clearInterval(stepInterval)
-          }
-        }, 900)
-      }, 600)
-      const searchStartTime = Date.now()
+        setMessages(prev => [...prev, { id: Date.now() + 0.5, from: 'nura', lines: ['Dame un segundo. Estoy pensando en quién encaja de verdad.'], loading: true }])
+      }, 450)
       let matches = await matchHelpers(analysis, 4)
       // Red de seguridad final: la búsqueda nunca devuelve vacío
       if (!matches?.length) {
@@ -946,15 +901,22 @@ export default function Home() {
       const zona = top?.zone || top?.city || 'Barcelona'
       const topName = top?.name?.split(' ')?.[0] || ''
       const topFirstName = top?.name?.split(' ')?.[0] || ''
-      const elapsedSec = ((Date.now() - searchStartTime) / 1000).toFixed(1)
-      const resultLine = matches.length === 1
-        ? `He encontrado a **${topFirstName}**, ${especialidad.slice(0,-1)} verificado cerca de ti. ⚡ ${elapsedSec}s`
-        : `He encontrado **${matches.length} ${especialidad}** cerca de ti en ${elapsedSec} segundos. El mejor candidato es **${topFirstName}**.`
+      // La Gramática de la Recomendación — humana, breve, segura
+      const paraLabel2 = analysis?.persona && PERSONA_CHIP[analysis.persona]
+        ? PERSONA_CHIP[analysis.persona].charAt(0).toLowerCase() + PERSONA_CHIP[analysis.persona].slice(1)
+        : ''
+      const sg = analysis?.complexSignals || {}
+      const whyParts = []
+      if (sg.alzheimer) whyParts.push('lleva años acompañando casos de Alzheimer')
+      else if (sg.infantil) whyParts.push('trabaja muchísimo con peques')
+      else if (paraLabel2) whyParts.push(`tiene mucha experiencia con casos como el ${paraLabel2.replace('para ', 'de ')}`)
+      if (top?.distance && top.distance <= 1.2) whyParts.push('trabaja muy cerca de ti')
+      else if (top?.distance && top.distance <= 3) whyParts.push('está a unos minutos de tu casa')
+      if ((top?.rating || 0) >= 4.8) whyParts.push('tiene valoraciones excelentes')
+      const why = whyParts.slice(0, 2).join(' y ') || 'encaja especialmente bien con lo que necesitas'
+      const urgentTail = analysis?.urgente ? ' — y puede estar allí hoy mismo' : ''
+      const resultLine = `Creo que ya tengo a la persona. Mi recomendación es **${topFirstName}**: ${why}${urgentTail}.`
 
-      // Price context — reduces doubt at decision moment
-      const priceCtx = matches.length > 0
-        ? getPriceContext(matches[0], analysis?.categoria)
-        : null
 
       // Build rich match explanation — the core AI differentiator
       function buildMatchReason(helper, analysis, userMsg) {
@@ -996,11 +958,7 @@ export default function Home() {
       }
 
       const matchExplanation = buildMatchReason(top, analysis, msg)
-      const followLine = matches.length >= 3 && matchExplanation
-        ? matchExplanation
-        : matches.length > 0
-        ? `Hay ${matches.length} disponibles ahora. ¿Te cuento más sobre ${topFirstName}?`
-        : null
+
 
       // [Certificación 2026-07-04] declaración perdida en refactor — restaurada como no-op
       // [PENDIENTE] reactivar personalización con searchHistory
@@ -1008,13 +966,7 @@ export default function Home() {
 
       const resultMsg = {
         id: Date.now(), from: 'nura',
-        lines: followLine
-          ? (user
-              ? [resultLine, ...(priceCtx ? [priceCtx] : []), ...(personalizationLine ? [personalizationLine] : []), followLine, '👆 Pulsa en cualquier tarjeta para ver el perfil completo y escribirle.']
-              : [resultLine, ...(priceCtx ? [priceCtx] : []), followLine, 'Para contactarles, crea tu cuenta gratis. Solo tarda 30 segundos.'])
-          : (user
-              ? [resultLine, ...(priceCtx ? [priceCtx] : [])]
-              : [resultLine, ...(priceCtx ? [priceCtx] : []), 'Crea tu cuenta gratis para escribirles.']),
+        lines: [resultLine],
         results: matches,
         refineChips: matches.length > 0
           ? ['Más cerca', 'Mejor valorado', 'Más barato']
