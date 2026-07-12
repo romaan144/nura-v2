@@ -6,6 +6,19 @@
 
 ---
 
+## 2026-07-04 — El Ancla de Dominio (colisiones de categoría)
+
+- **Los sustantivos mandan sobre los verbos** (feedback: "cuidado de
+  mascotas" recomendaba una niñera; la inversa también viva: "pasear a mi
+  abuela" → mascotas). DOMAIN_ANCHORS (+4) por categoría — personas,
+  animales, oficios, objetos — deciden los empates que las acciones
+  genéricas provocaban; el ancla ganadora alimenta el chip de comprensión.
+- **Lección de la suite en su primer run rojo**: las anclas deben casar por
+  palabra EXACTA — por tallo, los oficios ('cuidadora','paseador') sangraban
+  hacia sus verbos ('cuidado','pasear') y regalaban el +4 al lado equivocado.
+- Suite: +6 colisiones bidireccionales +2 negativas → **32 casos**.
+- Sello NURA_BUILD → 2026.07.04-s.
+
 ## 2026-07-04 — Reconstrucción de la búsqueda: El Contrato (mandato del fundador)
 
 - **Cuatro raíces, con evidencia**: (R1) temporizador del pensando sin dueño

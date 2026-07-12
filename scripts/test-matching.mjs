@@ -48,6 +48,12 @@ const GOLDEN = [
   { q: 'cuidar a mi gato el fin de semana', cat: 'mascotas' },
   { q: 'una cuidadora con experiencia para mi padre', cat: 'cuidado' },
   { q: 'entrenadora para volver a ponerme en forma', cat: 'entrenador' },
+  { q: 'cuidado de mascotas', cat: 'mascotas' },
+  { q: 'cuidado de niños por las tardes', cat: 'cuidado' },
+  { q: 'pasear a mi abuela por el parque', cat: 'cuidado' },
+  { q: 'alguien que cuide de mi perro este finde', cat: 'mascotas' },
+  { q: 'profesor particular para mi hijo', cat: 'clases' },
+  { q: 'cuidar el jardín semanalmente', cat: 'hogar' },
 ]
 const HONESTY = ['asdfgh qwerty zzz', 'necesito algo no sé muy bien qué']
 const NEGATIVE = [
@@ -55,6 +61,8 @@ const NEGATIVE = [
   { q: 'Abogado laboralista', forbid: 'salud' },
   { q: 'Profesor de inglés online', forbid: 'cuidado' },
   { q: 'Necesito un cerrajero urgente', forbid: 'entrenador' },
+  { q: 'cuidado de mascotas', forbid: 'cuidado' },
+  { q: 'pasear a mi abuela por el parque', forbid: 'mascotas' },
 ]
 
 let failed = 0

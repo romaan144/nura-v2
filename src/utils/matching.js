@@ -329,6 +329,23 @@ function hitStem(textWords, kw) {
   return kw.split(' ').every(k => textWords.some(w => wordMatches(w, k)))
 }
 
+// ── El Ancla de Dominio ──
+// Sustantivos inconfundibles (personas, animales, oficios, objetos) que
+// deciden los empates: 'mascotas' manda sobre el verbo genérico 'cuidado';
+// 'abuela' manda sobre 'pasear'. Las acciones acompañan; el dominio decide.
+const DOMAIN_ANCHORS = {
+  mascotas: ['mascota','mascotas','perro','perros','perrito','gato','gatos','gatito','cachorro','animal','animales','paseador','adiestrador','veterinario'],
+  cuidado: ['niño','niños','niña','bebé','hijo','hija','madre','padre','abuelo','abuela','mayor','mayores','anciano','anciana','alzheimer','dependiente','canguro','niñera','cuidadora','cuidador'],
+  matematicas: ['inglés','matemáticas','mates','idioma','idiomas','guitarra','piano','selectividad','francés','alemán','profesor','profesora','profe','academia'],
+  hogar: ['reforma','obra','jardín','jardinero','piscina','mudanza','baño','cocina','decorador'],
+  limpieza: ['limpieza','plancha','planchar','cristales'],
+  tecnico: ['fontanero','electricista','cerrajero','caldera','enchufe','fuga','persiana','instalación','instalador'],
+  salud: ['fisioterapeuta','fisio','psicólogo','psicóloga','nutricionista','masajista','ansiedad','espalda'],
+  logopedia: ['logopeda','tartamudez','pronunciación'],
+  entrenador: ['entrenador','entrenadora','entrenamiento','gimnasio','gym','fitness','yoga','pilates','crossfit'],
+  legal: ['abogado','abogada','gestor','gestoría','contrato','despido','renta','herencia'],
+}
+
 export function analyzeNeed(userText) {
   // Expand text with semantic synonyms first
   const expanded = expandText(userText)
@@ -349,6 +366,14 @@ export function analyzeNeed(userText) {
       if (hitWord(normOriginal, normKw)) { score += 3; if (!catBestKw[cat]) catBestKw[cat] = kw }
       else if (hitStem(origWords, normKw)) { score += 2; if (!catBestKw[cat]) catBestKw[cat] = kw }
       else if (hitWord(normExpanded, normKw)) score += 1
+    }
+    for (const anchor of (DOMAIN_ANCHORS[cat] || [])) {
+      const na = normalize(anchor)
+      if (hitWord(normOriginal, na)) {  // exactas: los tallos devolverían el sangrado genérico
+        score += 4
+        catBestKw[cat] = anchor
+        break
+      }
     }
     if (score > maxScore) { maxScore = score; categoria = cat }
   }
