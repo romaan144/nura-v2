@@ -6,6 +6,16 @@
 
 ---
 
+## 2026-07-04 — Las pestañas viven (feedback del fundador)
+
+- **Muere el parpadeo de navegación**: `<Routes key={pathname}>` remontaba
+  el árbol entero en cada cambio y `PageTransition` lo fundía — toda entrada
+  a una pestaña re-nacía (animaciones replay, búsqueda de Home re-animada al
+  volver). Ahora las 5 pestañas viven montadas tras su primera visita y solo
+  alternan visibilidad: estado y scroll intactos, animaciones una vez por
+  vida. Detalles (perfil, carta, chat) conservan su transición como overlay.
+- Sello `NURA_BUILD` → `2026.07.04-t`.
+
 ## 2026-07-04 — El Ancla de Dominio (colisiones de categoría)
 
 - **Los sustantivos mandan sobre los verbos** (feedback: "cuidado de

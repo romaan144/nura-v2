@@ -79,6 +79,8 @@ contenido va en el área scrollable (bug histórico real).
 - Entradas: `cardCascade` (tarjetas: resultados, Muro, Escaparate — la
   Revelación Progresiva la reutiliza montando tarjetas escalonadas por estado),
   `fadeInUp`, `popIn`.
+- Las animaciones de entrada ocurren **una vez por vida de la pestaña**
+  (las pestañas viven montadas — keep-alive); nunca por visita.
 - `prefers-reduced-motion: reduce` desactiva globalmente toda animación.
 - Probar toda animación nueva en iOS antes de darla por buena.
 

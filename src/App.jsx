@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useUser } from './context/UserContext'
 
@@ -40,6 +40,20 @@ function AppRoutes() {
     return !localStorage.getItem('nura_onboarded')
   })
 
+  // ── Las pestañas viven ──
+  // Montadas siempre tras su primera visita; solo alternan visibilidad.
+  // Las animaciones de entrada ocurren UNA vez por vida de pestaña, el
+  // estado y el scroll se conservan, y nada parpadea al cambiar.
+  const TAB_PATHS = ['/', '/explore', '/feed', '/chats', '/profile']
+  const isTab = TAB_PATHS.includes(location.pathname)
+  const [seenTabs, setSeenTabs] = useState({ '/': true })
+  useEffect(() => {
+    if (isTab && !seenTabs[location.pathname]) {
+      setSeenTabs(s => ({ ...s, [location.pathname]: true }))
+    }
+  }, [location.pathname, isTab, seenTabs])
+  const tabStyle = p => ({ display: location.pathname === p ? 'block' : 'none', height: '100%' })
+
   if (showSplash) {
     return <Splash onFinish={() => {
       setShowSplash(false)
@@ -73,34 +87,42 @@ function AppRoutes() {
 
       <AppShell>
       <div className="desktopMain">
-        <PageTransition>
-          <Suspense fallback={
-            <div style={{display:'flex',alignItems:'center',justifyContent:'center',
-              height:'100dvh',background:'#F7F7F9'}}>
-              <img src="/logo-iso.png" alt="" style={{width:'36px',opacity:0.35,
-                animation:'pulse 1.5s ease-in-out infinite'}} />
-              <style>{`@keyframes pulse{0%,100%{opacity:0.35}50%{opacity:0.7}}`}</style>
-            </div>
-          }>
-          <Routes location={location} key={location.pathname}>
-            <Route path="/" element={<Home />} />
-            <Route path="/results" element={<Navigate to="/explore" replace />} />
-            <Route path="/helper/:id" element={<HelperProfile />} />
-            <Route path="/intro/:id" element={<IntroLetter />} />
-            <Route path="/chat/:id" element={<Chat />} />
-            <Route path="/my-services" element={<MyServices />} />
-            <Route path="/siguiendo" element={<Siguiendo />} />
-            <Route path="/onboarding" element={<OnboardingPage />} />
-            <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/chats" element={<Chats />} />
-            <Route path="/register-helper" element={<RegisterHelper />} />
-            <Route path="/explore" element={<Explore />} />
-            <Route path="/feed" element={<Feed />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          </Suspense>
-        </PageTransition>
+        {/* Pestañas vivas: montadas tras su primera visita, visibles según ruta */}
+        <div style={tabStyle('/')}><Home /></div>
+        {seenTabs['/explore'] && <div style={tabStyle('/explore')}><Explore /></div>}
+        {seenTabs['/feed'] && (
+          <div style={tabStyle('/feed')}>
+            <Suspense fallback={null}><Feed /></Suspense>
+          </div>
+        )}
+        {seenTabs['/chats'] && <div style={tabStyle('/chats')}><Chats /></div>}
+        {seenTabs['/profile'] && <div style={tabStyle('/profile')}><Profile /></div>}
+
+        {!isTab && (
+          <PageTransition>
+            <Suspense fallback={
+              <div style={{display:'flex',alignItems:'center',justifyContent:'center',
+                height:'100dvh',background:'#F7F7F9'}}>
+                <img src="/logo-iso.png" alt="" style={{width:'36px',opacity:0.35,
+                  animation:'pulse 1.5s ease-in-out infinite'}} />
+                <style>{`@keyframes pulse{0%,100%{opacity:0.35}50%{opacity:0.7}}`}</style>
+              </div>
+            }>
+            <Routes location={location} key={location.pathname}>
+              <Route path="/results" element={<Navigate to="/explore" replace />} />
+              <Route path="/helper/:id" element={<HelperProfile />} />
+              <Route path="/intro/:id" element={<IntroLetter />} />
+              <Route path="/chat/:id" element={<Chat />} />
+              <Route path="/my-services" element={<MyServices />} />
+              <Route path="/siguiendo" element={<Siguiendo />} />
+              <Route path="/onboarding" element={<OnboardingPage />} />
+              <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
+              <Route path="/register-helper" element={<RegisterHelper />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            </Suspense>
+          </PageTransition>
+        )}
       </div>
       </AppShell>
 

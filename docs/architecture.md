@@ -93,6 +93,16 @@ Orden real de ejecución en `handleSend` de `src/pages/Home.jsx`:
     interval y mensaje de carga, libera `loading` y publica el error con su
     detalle técnico (línea ⚙️) para diagnóstico en dispositivo.
 
+### Las pestañas viven (2026-07-04)
+
+Las cinco pestañas (Home, Explorar, Muro, Chats, Perfil) se montan en su
+primera visita y **permanecen montadas** alternando solo visibilidad
+(`display`), fuera del árbol `<Routes key={pathname}>` que antes remontaba
+todo en cada navegación bajo `PageTransition`. Resultado: estado y scroll
+conservados, animaciones una vez por vida, cero parpadeo. Las rutas de
+detalle (perfil, carta, chat, login…) mantienen su transición como overlay
+(`!isTab`). El Muro conserva su `lazy` (carga en la primera visita).
+
 ### Búsqueda v2 — El Contrato (2026-07-04)
 
 - **Identidad**: cada envío incrementa `searchSeqRef`; `alive()` guarda todo
