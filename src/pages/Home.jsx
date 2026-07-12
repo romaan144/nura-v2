@@ -30,6 +30,7 @@ const PERSONA_CHIP = {
 }
 function buildComprehension(analysis) {
   const chips = []
+  if (analysis?.matchedTerm) chips.push(analysis.matchedTerm.charAt(0).toUpperCase() + analysis.matchedTerm.slice(1))
   const s = analysis?.complexSignals || {}
   if (analysis?.persona && PERSONA_CHIP[analysis.persona]) chips.push(PERSONA_CHIP[analysis.persona])
   else if (analysis?.paraQuien === 'familia') chips.push('Para tu familia')
@@ -324,6 +325,7 @@ export default function Home() {
     try { return sessionStorage.getItem('nura_for_whom') || '' } catch { return '' }
   })
   const correctionRef = useRef(null)
+  const searchSeqRef = useRef(0)  // El Contrato: solo la búsqueda activa toca la interfaz
   const [loading, setLoading] = useState(false)
   const [listening, setListening] = useState(false)
   const [showGate, setShowGate] = useState(false)
@@ -570,6 +572,8 @@ export default function Home() {
     stopThinking()
     setMessages(prev => prev.map(m => (m.refineChips || m.chips) ? { ...m, refineChips: undefined, chips: undefined } : m))
     setLoading(true)
+    const sid = ++searchSeqRef.current
+    const alive = () => searchSeqRef.current === sid
 
     // ── Comprensión Visible: si hay corrección pendiente, combinar con la consulta original ──
     if (correctionRef.current) {
@@ -785,15 +789,21 @@ export default function Home() {
       const empathyLine = `Entendido${analysis?.persona && PERSONA_CHIP[analysis.persona] ? ' — ' + PERSONA_CHIP[analysis.persona].charAt(0).toLowerCase() + PERSONA_CHIP[analysis.persona].slice(1) : ''}.`
       setMessages(prev => [...prev, { id: Date.now() + 0.3, from: 'nura', lines: [empathyLine], comprehensionChips: buildComprehension(analysis), originalQuery: msg }])
 
-      // El pensando sereno — sin narrar el algoritmo
-      setTimeout(() => {
+      // El pensando sereno — con dueño y cancelación (El Contrato)
+      const thinkingTimer = setTimeout(() => {
+        if (!alive()) return
         setMessages(prev => [...prev, { id: Date.now() + 0.5, from: 'nura', lines: ['Dame un segundo. Estoy pensando en quién encaja de verdad.'], loading: true }])
       }, 450)
       let matches = await matchHelpers(analysis, 4)
-      // Red de seguridad final: la búsqueda nunca devuelve vacío
+      clearTimeout(thinkingTimer)
+      if (!alive()) return
+      // Honestidad antes que confianza falsa: sin comprensión no hay tarjetas
       if (!matches?.length) {
-        matches = (LOCAL_FALLBACK_HELPERS || []).filter(x => x && x.id >= 2000)
-          .sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 4)
+        stopThinking()
+        setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
+          lines: ['No estoy segura de haberte entendido del todo — ¿me lo cuentas con otras palabras? Por ejemplo: "entrenador personal cerca de casa" o "alguien que cuide a mi madre".'],
+          chips: ['Entrenador personal', 'Cuidar a un familiar', 'Una reparación en casa'] }])
+        return
       }
       stopThinking()
 
@@ -962,6 +972,7 @@ export default function Home() {
       setMessages(prev => [...prev, resultMsg])
       setLoading(false)
     } catch (err) {
+      searchSeqRef.current++  // invalida temporizadores huérfanos de esta búsqueda
       stopThinking()
       console.error('[Nüra] búsqueda:', err)
       setMessages(prev => [...prev, { id: Date.now(), from: 'nura',

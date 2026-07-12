@@ -217,7 +217,7 @@ const CATEGORY_KEYWORDS = {
     'selectividad','bachillerato','eso','primaria','universidad','oposiciones',
     'guitarra','ballet','ajedrez','suspenso','examen','instituto','cole'],
   entrenador: [
-    'perder peso', 'adelgazar', 'bajar de peso', 'dieta y ejercicio','entrenador','gym','gimnasio','deporte','ejercicio','fitness','correr',
+    'perder peso', 'adelgazar', 'bajar de peso', 'dieta y ejercicio','entrenador','entrenamiento','entrenamiento personal','entrenar','gym','gimnasio','deporte','ejercicio','fitness','correr',
     'adelgazar','musculación','yoga','pilates','running','crossfit','natación',
     'ciclismo','spinning','zumba','baile','aeróbic','pesas','cardio','ponerse en forma',
     'músculo','forma'],
@@ -311,6 +311,24 @@ const toApp = c => APP_CATEGORIA[c] || c
 const escapeRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 const hitWord = (text, kw) => new RegExp(`\\b${escapeRe(kw)}\\b`).test(text)
 
+// Tallo ligero español — 'entrenamiento'/'entrenador'/'entrenadora' comparten raíz.
+// Solo entra en juego cuando la coincidencia exacta de palabra falla.
+function stem(w) {
+  if (!w || w.length < 5) return w
+  let s = w.replace(/(mientos|miento|ciones|cion|dores|doras|dora|dor|istas|ista)$/, '')
+  if (s.length >= 6) s = s.replace(/(es|as|os|a|o|s)$/, '')
+  else s = s.replace(/(es|s)$/, '')
+  return s
+}
+function wordMatches(tw, kw) {
+  if (tw === kw) return true
+  const st = stem(tw), sk = stem(kw)
+  return st === sk || (st.length >= 4 && sk.length >= 4 && (st.startsWith(sk) || sk.startsWith(st)))
+}
+function hitStem(textWords, kw) {
+  return kw.split(' ').every(k => textWords.some(w => wordMatches(w, k)))
+}
+
 export function analyzeNeed(userText) {
   // Expand text with semantic synonyms first
   const expanded = expandText(userText)
@@ -321,30 +339,25 @@ export function analyzeNeed(userText) {
   let categoria = 'otro'
   let maxScore = 0
   
+  const origWords = normOriginal.split(' ').filter(w => w.length > 2)
+  const catBestKw = {}
+
   for (const [cat, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
     let score = 0
     for (const kw of keywords) {
       const normKw = normalize(kw)
-      if (hitWord(normOriginal, normKw)) score += 3      // palabra completa en el original
-      else if (hitWord(normExpanded, normKw)) score += 1  // palabra completa en la expansión
+      if (hitWord(normOriginal, normKw)) { score += 3; if (!catBestKw[cat]) catBestKw[cat] = kw }
+      else if (hitStem(origWords, normKw)) { score += 2; if (!catBestKw[cat]) catBestKw[cat] = kw }
+      else if (hitWord(normExpanded, normKw)) score += 1
     }
     if (score > maxScore) { maxScore = score; categoria = cat }
   }
   
   // If still no clear match, try partial word matching
-  if (maxScore === 0) {
-    for (const [cat, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
-      const words = normOriginal.split(' ').filter(w => w.length > 3)
-      const partialMatches = keywords.filter(kw => 
-        words.some(w => normalize(kw).includes(w) || w.includes(normalize(kw)))
-      ).length
-      if (partialMatches > maxScore) { maxScore = partialMatches; categoria = cat }
-    }
-  }
   
-  const urgente = URGENCY_KEYWORDS.some(k => normExpanded.includes(normalize(k)))
-  const hasOnline = ONLINE_KEYWORDS.some(k => normExpanded.includes(normalize(k)))
-  const hasPresential = PRESENTIAL_KEYWORDS.some(k => normExpanded.includes(normalize(k)))
+  const urgente = URGENCY_KEYWORDS.some(k => hitWord(normExpanded, normalize(k)))
+  const hasOnline = ONLINE_KEYWORDS.some(k => hitWord(normExpanded, normalize(k)))
+  const hasPresential = PRESENTIAL_KEYWORDS.some(k => hitWord(normExpanded, normalize(k)))
   const presencial = hasPresential || (!hasOnline && ['tecnico','cuidado','limpieza','mascotas'].includes(categoria))
   
   const QUALIFICATION_MAP = {
@@ -367,7 +380,7 @@ export function analyzeNeed(userText) {
   }
   
   return Promise.resolve({
-    categoria: toApp(categoria), presencial, urgente, nivelRequerido,
+    categoria: toApp(categoria), matchedTerm: catBestKw[categoria] || null, presencial, urgente, nivelRequerido,
     resumen: resumenMap[categoria] || 'Busca ayuda',
     palabrasClave,
     confidence: maxScore, // so UI can show fallback if confidence is 0
@@ -399,7 +412,9 @@ function normalizeHelper(h) {
 export async function matchHelpers(analysis, limit = 4, refinement = null, previousResults = null) {
   // Refinement mode
   if (refinement && previousResults?.length > 0) {
-    return applyRefinement(previousResults, refinement).slice(0, limit)
+    if (!analysis?.categoria || analysis.categoria === 'otro') return []
+    return applyRefinement(previousResults, refinement)
+      .filter(h => toApp(h?.category) === analysis.categoria).slice(0, limit)
   }
 
   const levelOrder = { student: 0, experienced: 1, professional: 2 }
@@ -459,7 +474,10 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
   
   // Filter: must have some content
   const withContent = sorted.filter(h => h.bio || h.specialty || (h.tags||[]).length > 0)
-  const results = (withContent.length > 0 ? withContent : sorted).slice(0, limit)
-  
-  return results
+  // LA PUERTA: compatibilidad estricta — ningún boost, rating ni cercanía la cruza.
+  // Sin comprensión (categoria 'otro') no hay recomendaciones: honestidad > confianza falsa.
+  if (!analysis?.categoria || analysis.categoria === 'otro') return []
+  const finalPool = withContent.length > 0 ? withContent : sorted
+  const compatibles = finalPool.filter(h => toApp(h?.category) === analysis.categoria)
+  return compatibles.slice(0, limit)
 }

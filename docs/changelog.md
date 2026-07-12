@@ -6,6 +6,27 @@
 
 ---
 
+## 2026-07-04 — Reconstrucción de la búsqueda: El Contrato (mandato del fundador)
+
+- **Cuatro raíces, con evidencia**: (R1) temporizador del pensando sin dueño
+  → disparaba tras los resultados y quedaba infinito; (R2) frontera de
+  palabra sin morfología → 'entrenamiento' no tocaba 'entrenador' y caía en
+  'otro' con comprensión vacía; (R3) el fallback difuso era la tercera sede
+  de la subcadena, y la red de seguridad devolvía cualquier profesión por
+  rating (reproducido: paseadora ★5 para entrenamiento; en dispositivo, un
+  cerrajero); (R4) monolito handleSend.
+- **Entra El Contrato**: identidad de búsqueda (`sid`/`alive()`, catch
+  invalida), pensando cancelable con dueño, **puerta de compatibilidad** en
+  los dos returns de matchHelpers, **honestidad sin comprensión** (cero
+  tarjetas + petición de reformular), tallos con género en el scorer,
+  señales por palabra completa, `matchedTerm` como primer chip de
+  comprensión ("Entrenamiento personal").
+- **Suite v2 como nueva puerta**: 24 casos (10 del mandato + morfología +
+  honestidad + 4 negativas) en verde, gateando cada push. Memo de
+  ResultsBlock evaluado y descartado: estabilidad ya garantizada por
+  snapshot + keys + Contrato.
+- Sello `NURA_BUILD` → `2026.07.04-r`.
+
 ## 2026-07-04 — La Gramática de la Recomendación (mandato del fundador)
 
 - **La voz post-búsqueda, reescrita entera**: mueren el cronómetro (⚡2.1s),

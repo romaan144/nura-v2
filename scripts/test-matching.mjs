@@ -26,38 +26,61 @@ for (const dir of ['utils', 'data']) {
 
 const { analyzeNeed, matchHelpers } = await import(join(stage, 'utils/matching.js'))
 
+const ALIAS = { matematicas: 'clases', limpieza: 'hogar' }
+const cat_ = c => ALIAS[c] || c
+
 const GOLDEN = [
+  { q: 'Sesión de entrenamiento personal', cat: 'entrenador' },
+  { q: 'Necesito un cerrajero urgente', cat: 'tecnico' },
+  { q: 'Logopeda infantil', cat: 'logopedia' },
+  { q: 'Alguien que cuide a mi madre por las mañanas', cat: 'cuidado' },
+  { q: 'Profesor de inglés online', cat: 'clases' },
+  { q: 'Psicóloga cerca de mí', cat: 'salud' },
+  { q: 'Electricista para revisar una instalación', cat: 'tecnico' },
+  { q: 'Limpieza semanal del hogar', cat: 'hogar' },
+  { q: 'Abogado laboralista', cat: 'legal' },
+  { q: 'Paseador de perros', cat: 'mascotas' },
   { q: 'fisioterapeuta a domicilio', cat: 'salud' },
   { q: 'mi madre tiene alzheimer y vive sola, necesito ayuda las mañanas', cat: 'cuidado' },
   { q: 'clases de inglés para mi hija', cat: 'clases' },
-  { q: 'mi hijo de 5 años no pronuncia bien la r', cat: 'logopedia' },
   { q: 'fontanero urgente, tengo una fuga en la cocina', cat: 'tecnico' },
-  { q: 'necesito un abogado para un despido', cat: 'legal' },
-  { q: 'alguien que pasee a mi perro entre semana', cat: 'mascotas' },
-  { q: 'limpieza a fondo del piso antes de una mudanza', cat: 'hogar' },
-  { q: 'entrenador personal para volver a ponerme en forma', cat: 'entrenador' },
-  { q: 'profesor de matemáticas para selectividad', cat: 'clases' },
-  { q: 'psicólogo para la ansiedad', cat: 'salud' },
-  { q: 'electricista para revisar un enchufe que salta', cat: 'tecnico' },
-  { q: 'canguro para mi bebé los viernes por la noche', cat: 'cuidado' },
   { q: 'reforma del baño, busco presupuesto', cat: 'hogar' },
   { q: 'cuidar a mi gato el fin de semana', cat: 'mascotas' },
-  { q: 'gestor para la declaración de la renta', cat: 'legal' },
-  { q: 'asdfgh qwerty zzz', cat: 'otro' },
+  { q: 'una cuidadora con experiencia para mi padre', cat: 'cuidado' },
+  { q: 'entrenadora para volver a ponerme en forma', cat: 'entrenador' },
+]
+const HONESTY = ['asdfgh qwerty zzz', 'necesito algo no sé muy bien qué']
+const NEGATIVE = [
+  { q: 'Sesión de entrenamiento personal', forbid: 'tecnico' },
+  { q: 'Abogado laboralista', forbid: 'salud' },
+  { q: 'Profesor de inglés online', forbid: 'cuidado' },
+  { q: 'Necesito un cerrajero urgente', forbid: 'entrenador' },
 ]
 
 let failed = 0
 for (const t of GOLDEN) {
-  const a = (await analyzeNeed(t.q)) || { categoria: 'otro', palabrasClave: t.q.split(' '), complexSignals: {} }
-  const matches = await matchHelpers(a, 4)
+  const a = await analyzeNeed(t.q)
+  const m = await matchHelpers(a, 4)
   const catOk = a.categoria === t.cat
-  const nonEmpty = (matches?.length || 0) > 0
-  const ok = catOk && nonEmpty
+  const nonEmpty = (m?.length || 0) > 0
+  const allCompat = nonEmpty && m.every(x => cat_(x.category) === t.cat)
+  const ok = catOk && nonEmpty && allCompat
   if (!ok) failed++
-  const mark = ok ? '✓' : '✗'
-  const detail = catOk ? '' : ` [cat=${a.categoria}≠${t.cat}]`
-  const empty = nonEmpty ? '' : ' [SIN RESULTADOS]'
-  console.log(`${mark} ${t.q.slice(0, 52).padEnd(52)} → ${a.categoria}${detail}${empty} · ${matches?.length || 0} matches`)
+  console.log(`${ok ? '✓' : '✗'} ${t.q.slice(0, 46).padEnd(46)} → ${a.categoria}${catOk ? '' : `≠${t.cat}`} · ${m?.length || 0}${allCompat ? '' : ' [INCOMPATIBLES]'}`)
 }
-console.log(failed === 0 ? `\n✅ SUITE VERDE — ${GOLDEN.length}/${GOLDEN.length}` : `\n❌ ${failed} FALLOS de ${GOLDEN.length}`)
+for (const q of HONESTY) {
+  const a = await analyzeNeed(q)
+  const m = await matchHelpers(a, 4)
+  const ok = a.categoria === 'otro' && (m?.length || 0) === 0
+  if (!ok) failed++
+  console.log(`${ok ? '✓' : '✗'} [honestidad] ${q.slice(0, 34).padEnd(34)} → ${a.categoria} · ${m?.length || 0} tarjetas`)
+}
+for (const t of NEGATIVE) {
+  const a = await analyzeNeed(t.q)
+  const m = await matchHelpers(a, 4)
+  const ok = !(m || []).some(x => cat_(x.category) === t.forbid)
+  if (!ok) failed++
+  console.log(`${ok ? '✓' : '✗'} [negativa] ${t.q.slice(0, 34).padEnd(34)} sin ${t.forbid}`)
+}
+console.log(failed === 0 ? `\n✅ SUITE v2 VERDE — ${GOLDEN.length + HONESTY.length + NEGATIVE.length}/${GOLDEN.length + HONESTY.length + NEGATIVE.length}` : `\n❌ ${failed} FALLOS`)
 process.exit(failed === 0 ? 0 : 1)

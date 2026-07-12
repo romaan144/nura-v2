@@ -93,6 +93,24 @@ Orden real de ejecución en `handleSend` de `src/pages/Home.jsx`:
     interval y mensaje de carga, libera `loading` y publica el error con su
     detalle técnico (línea ⚙️) para diagnóstico en dispositivo.
 
+### Búsqueda v2 — El Contrato (2026-07-04)
+
+- **Identidad**: cada envío incrementa `searchSeqRef`; `alive()` guarda todo
+  escritor post-await — solo la búsqueda activa toca la interfaz. El catch
+  invalida (`seq++`) temporizadores huérfanos.
+- **Pensando con dueño**: el temporizador de 450 ms se cancela al resolver y
+  su callback comprueba `alive()` — nunca aparece tras los resultados.
+- **Puerta de compatibilidad** (matchHelpers, en sus DOS returns): con
+  categoría conocida solo pasan profesionales de esa categoría; ningún boost,
+  rating ni cercanía la cruza. Con `otro`: retorno vacío.
+- **Honestidad sin comprensión**: cero tarjetas; Nüra pide reformular con
+  ejemplos. Una recomendación incorrecta es peor que ninguna.
+- **Tallos** en el scorer (exacta 3 · tallo 2 · expansión 1) con género
+  (-a/-o) y sufijos (-miento/-ción/-dor/-ista); el fallback difuso por
+  subcadena fue extirpado. `matchedTerm` alimenta el chip de comprensión.
+- **Suite v2** (`npm run test:matching`): 18 doradas + 2 honestidad + 4
+  negativas = 24 casos gateando cada push.
+
 ## 5. Contrato de mensajes del chat de Home
 
 Un mensaje es un objeto en `nuraChatMessages` (contexto, **no persistido**:
