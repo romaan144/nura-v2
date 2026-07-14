@@ -6,6 +6,17 @@
 
 ---
 
+## 2026-07-04 — Entrada directa (feedback del fundador)
+
+- **Mueren las ceremonias encadenadas de la entrada** (Splash siempre →
+  Momento Cero condicional → OnboardingOverlay): dos-tres animaciones
+  redundantes, cargadas y ajenas a Aire, con early-returns que además
+  retrasaban el montaje de las pestañas vivas. Ahora: la app monta al
+  instante bajo un único **respiro del iso** (~700 ms sobre papel) y la
+  ceremonia de marca es el saludo en la Voz. Momento Cero y Onboarding
+  sobreviven como rutas bajo demanda para demos.
+- Sello `NURA_BUILD` → `2026.07.04-v`.
+
 ## 2026-07-04 — La Gramática llega al perfil (feedback del fundador)
 
 - **Una sola fuente del porqué**: buildWhy(helper, analysis) alimenta el

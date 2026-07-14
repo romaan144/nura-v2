@@ -2,8 +2,6 @@ import { useState, useEffect, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useUser } from './context/UserContext'
 
-import Splash from './pages/Splash'
-import MomentoCero from './pages/MomentoCero'
 import { MOMENTO_CERO_COOLDOWN, NURA_BUILD } from './config'
 console.log('[Nüra] build', NURA_BUILD)
 import Home from './pages/Home'
@@ -22,7 +20,6 @@ import AppShell from './components/AppShell'
 import DesktopSidebar from './components/DesktopSidebar'
 import ScrollToTop from './components/ScrollToTop'
 import OnboardingPage from './pages/Onboarding'
-import OnboardingOverlay from './components/OnboardingOverlay'
 const MyServices = lazy(() => import('./pages/MyServices'))
 import Siguiendo from './pages/Siguiendo'
 import Toast from './components/Toast'
@@ -31,14 +28,14 @@ import './index.css'
 import AppErrorBoundary from './components/AppErrorBoundary'
 
 function AppRoutes() {
-  const [showSplash, setShowSplash] = useState(true)
-  const [showMomentoCero, setShowMomentoCero] = useState(false)
+  // Entrada directa: un solo respiro del iso mientras arranca el JS
+  const [booting, setBooting] = useState(true)
+  useEffect(() => {
+    const t = setTimeout(() => setBooting(false), 750)
+    return () => clearTimeout(t)
+  }, [])
   const location = useLocation()
   const { user } = useUser()
-  const [showOnboarding, setShowOnboarding] = useState(() => {
-    if (user) return false
-    return !localStorage.getItem('nura_onboarded')
-  })
 
   // ── Las pestañas viven ──
   // Montadas siempre tras su primera visita; solo alternan visibilidad.
@@ -54,32 +51,17 @@ function AppRoutes() {
   }, [location.pathname, isTab, seenTabs])
   const tabStyle = p => ({ display: location.pathname === p ? 'block' : 'none', height: '100%' })
 
-  if (showSplash) {
-    return <Splash onFinish={() => {
-      setShowSplash(false)
-      // El Ritmo del Momento Cero — la demostración solo cuando toca.
-      // Primera vez siempre; después según cooldown (demo: 2h, producción: nunca más).
-      let lastShown = 0
-      try { lastShown = parseInt(localStorage.getItem('nura_mc_last_shown') || '0') } catch {}
-      const shouldShow = lastShown === 0 || (Date.now() - lastShown >= MOMENTO_CERO_COOLDOWN)
-      if (shouldShow) {
-        try { localStorage.setItem('nura_mc_last_shown', String(Date.now())) } catch {}
-        setShowMomentoCero(true)
-      }
-    }} />
-  }
 
-  if (showMomentoCero) {
-    return <MomentoCero onFinish={() => setShowMomentoCero(false)} />
-  }
 
   return (
     <>
-      {showOnboarding && (
-        <OnboardingOverlay onComplete={() => {
-          localStorage.setItem('nura_onboarded', '1')
-          setShowOnboarding(false)
-        }} />
+
+      {booting && (
+        <div style={{position:'fixed', inset:0, zIndex:9999, background:'var(--paper)',
+          display:'flex', alignItems:'center', justifyContent:'center',
+          animation:'bootBreath 0.45s ease 0.25s both'}}>
+          <img src="/logo-iso.png" alt="" style={{width:44, opacity:0.9}} />
+        </div>
       )}
 
       <ScrollToTop />

@@ -467,3 +467,5 @@ textarea:active {
 
 /* ── La Voz Tipográfica — solo donde hablan los humanos ── */
 :root { --font-voice: 'Fraunces', Georgia, serif; }
+
+@keyframes bootBreath { to { opacity: 0; visibility: hidden } }
