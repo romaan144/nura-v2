@@ -46,6 +46,22 @@ function buildComprehension(analysis) {
 }
 
 // ── La Recomendación — una persona primero, con convicción ──
+// ── La Gramática: el porqué humano, ÚNICA fuente (chat + perfil) ──
+function buildWhy(helper, analysis) {
+  const paraLabel = analysis?.persona && PERSONA_CHIP[analysis.persona]
+    ? PERSONA_CHIP[analysis.persona].charAt(0).toLowerCase() + PERSONA_CHIP[analysis.persona].slice(1)
+    : ''
+  const s = analysis?.complexSignals || {}
+  const parts = []
+  if (s.alzheimer) parts.push('lleva años acompañando casos de Alzheimer')
+  else if (s.infantil) parts.push('trabaja muchísimo con peques')
+  else if (paraLabel) parts.push(`tiene mucha experiencia con casos como el ${paraLabel.replace('para ', 'de ')}`)
+  if (helper?.distance && helper.distance <= 1.2) parts.push('trabaja muy cerca de ti')
+  else if (helper?.distance && helper.distance <= 3) parts.push('está a unos minutos de tu casa')
+  if ((helper?.rating || 0) >= 4.8) parts.push('tiene valoraciones excelentes')
+  return parts.slice(0, 2).join(' y ') || 'encaja especialmente bien con lo que necesitas'
+}
+
 function ResultsBlock({ results }) {
   const navigate = useNavigate()
   if (!results?.length) return null
@@ -871,7 +887,7 @@ export default function Home() {
           const reasons = {}
           matches.forEach((h, i) => {
             if (!h?.id) return
-            const reason = buildMatchReason(h, analysis, msg)
+            const reason = buildWhy(h, analysis)
             if (reason) reasons[String(h.id)] = reason
           })
           window.__nuraMatchReasons = { ...(window.__nuraMatchReasons||{}), ...reasons }
@@ -899,62 +915,13 @@ export default function Home() {
       const topName = top?.name?.split(' ')?.[0] || ''
       const topFirstName = top?.name?.split(' ')?.[0] || ''
       // La Gramática de la Recomendación — humana, breve, segura
-      const paraLabel2 = analysis?.persona && PERSONA_CHIP[analysis.persona]
-        ? PERSONA_CHIP[analysis.persona].charAt(0).toLowerCase() + PERSONA_CHIP[analysis.persona].slice(1)
-        : ''
-      const sg = analysis?.complexSignals || {}
-      const whyParts = []
-      if (sg.alzheimer) whyParts.push('lleva años acompañando casos de Alzheimer')
-      else if (sg.infantil) whyParts.push('trabaja muchísimo con peques')
-      else if (paraLabel2) whyParts.push(`tiene mucha experiencia con casos como el ${paraLabel2.replace('para ', 'de ')}`)
-      if (top?.distance && top.distance <= 1.2) whyParts.push('trabaja muy cerca de ti')
-      else if (top?.distance && top.distance <= 3) whyParts.push('está a unos minutos de tu casa')
-      if ((top?.rating || 0) >= 4.8) whyParts.push('tiene valoraciones excelentes')
-      const why = whyParts.slice(0, 2).join(' y ') || 'encaja especialmente bien con lo que necesitas'
+      const why = buildWhy(top, analysis)
       const urgentTail = analysis?.urgente ? ' — y puede estar allí hoy mismo' : ''
       const resultLine = `Creo que ya tengo a la persona. Mi recomendación es **${topFirstName}**: ${why}${urgentTail}.`
 
 
       // Build rich match explanation — the core AI differentiator
-      function buildMatchReason(helper, analysis, userMsg) {
-        if (!helper) return null
-        const name = helper.name?.split(' ')?.[0]
-        const reasons = []
 
-        // Reference the user's specific words when possible
-        const msgLower = (userMsg || '').toLowerCase()
-        if (msgLower.includes('niño') || msgLower.includes('hijo') || msgLower.includes('pequeño'))
-          reasons.push('trabaja con niños')
-        else if (msgLower.includes('mayor') || msgLower.includes('abuela') || msgLower.includes('padre'))
-          reasons.push('especialista en personas mayores')
-        else if (msgLower.includes('urgent') || msgLower.includes('hoy') || msgLower.includes('ahora'))
-          reasons.push('disponible hoy')
-        else if (helper.specialty) reasons.push(`especialista en ${helper.specialty.toLowerCase()}`)
-
-        // Experience signal
-        if (helper.reviews >= 80) reasons.push(`${helper.reviews} clientes satisfechos`)
-        else if (helper.reviews >= 30) reasons.push(`${helper.reviews} valoraciones`)
-
-        // Distance
-        if (helper.distance) reasons.push(`a ${helper.distance}km de ti`)
-
-        // Response time
-        if (helper.responseTime) reasons.push(`responde en ${helper.responseTime}`)
-
-        // Urgency match
-        if (analysis?.urgente && helper.urgent) reasons.push('atiende urgencias hoy')
-
-        // Modality match
-        if (analysis?.modalidad === 'online' && helper.online) reasons.push('disponible online')
-        else if (analysis?.modalidad === 'presencial' && helper.presential) reasons.push('visita a domicilio')
-
-        if (reasons.length === 0) return `**${name}** está disponible y tiene ${helper.rating}★`
-
-        const mainReason = reasons.slice(0, 2).join(' y ')
-        return `**${name}** es mi recomendación: ${mainReason}. ${helper.rating}★ de media.`
-      }
-
-      const matchExplanation = buildMatchReason(top, analysis, msg)
 
 
       // [Certificación 2026-07-04] declaración perdida en refactor — restaurada como no-op

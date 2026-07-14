@@ -6,6 +6,17 @@
 
 ---
 
+## 2026-07-04 — La Gramática llega al perfil (feedback del fundador)
+
+- **Una sola fuente del porqué**: buildWhy(helper, analysis) alimenta el
+  chat Y el mapa de razones que consume la caja del perfil (incluido su
+  persistidor a sessionStorage). Muere buildMatchReason (38 líneas), que
+  producía "**Elena** es mi recomendación: … 164 clientes satisfechos.
+  4.9★" — nombre repetido tras la plantilla, markdown crudo y cifras en
+  prosa. La puerta de lint cazó un llamador huérfano antes del push.
+- La caja del perfil gana cinturón anti-asteriscos y punto final único.
+- Sello NURA_BUILD → 2026.07.04-u.
+
 ## 2026-07-04 — Las pestañas viven (feedback del fundador)
 
 - **Muere el parpadeo de navegación**: `<Routes key={pathname}>` remontaba

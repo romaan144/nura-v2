@@ -384,7 +384,7 @@ function HelperProfileInner() {
               margin:0, fontStyle:'italic'
             }}>
               {location.state?.matchReason
-                ? `Te recomiendo a ${firstName} porque ${location.state.matchReason}.`
+                ? `Te recomiendo a ${firstName} porque ${String(location.state.matchReason).replace(/\*\*/g, '').trim().replace(/\.$/, '')}.`
                 : `${firstName} es uno de los profesionales mejor valorados en su categoría en Barcelona.`
               }
             </p>
