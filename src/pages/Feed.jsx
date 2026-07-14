@@ -309,7 +309,13 @@ export default function Feed() {
           : `Encontraste la ayuda que buscabas — y confirmaste que funcionó.`,
       }
     }).filter(Boolean)
-  const myStories = [...(ctxStories || []), ...(localStories || [])]
+  const _seen = new Set()
+  const myStories = [...(ctxStories || []), ...(localStories || [])].filter(s => {
+    const k = s?.helper?.id ?? s?.helperId
+    if (k == null || _seen.has(k)) return false
+    _seen.add(k)
+    return true
+  })
   const muroStories = [...myStories, ...getConnectionStories()]
 
   return (
