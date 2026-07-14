@@ -332,7 +332,7 @@ const HELPER_SUGGESTIONS = [
 
 export default function Home() {
   const navigate = useNavigate()
-  const { user, addSearch, searchHistory, favorites, helpersCache, nuraChatMessages, setNuraChatMessages, nuraLastMatches, setNuraLastMatches, cacheHelpers, contactedHelpers, confirmContact, following, personas, upsertPersona, citas } = useUser()
+  const { user, addSearch, searchHistory, favorites, helpersCache, nuraChatMessages, setNuraChatMessages, nuraLastMatches, setNuraLastMatches, cacheHelpers, contactedHelpers, confirmContact, following, personas, upsertPersona, citas, addStory } = useUser()
   // messages persisted in context so they survive navigation
   const messages = nuraChatMessages
   const setMessages = setNuraChatMessages
@@ -654,6 +654,22 @@ export default function Home() {
       // Persist the confirmation in context
       if (confirmMsg.confirmacionHelperId) {
         confirmContact(confirmMsg.confirmacionHelperId, isPositive)
+        if (isPositive) {
+          // El Muro que crece contigo: la ayuda real se vuelve prueba visible
+          try {
+            const hid = confirmMsg.confirmacionHelperId
+            const hf = (helpersCache || []).find(x => x?.id === hid) || { id: hid, name: confirmMsg.confirmacionHelperName }
+            const lp = (personas || []).find(p => (p.contactedHelperIds || []).includes(hid))
+            const ci = (citas || []).slice().reverse().find(c => c.helperId === hid)
+            const fn = user?.name?.split(' ')?.[0] || 'Alguien'
+            addStory({
+              id: 'me_' + hid, helperId: hid,
+              helper: { id: hf.id, name: hf.name, specialty: hf.specialty, category: hf.category, zone: hf.zone, avatarUrl: hf.avatarUrl, avatar: hf.avatar, avatarColor: hf.avatarColor, rating: hf.rating, verified: hf.verified },
+              seconds: null, timeAgo: 'hoy',
+              text: `${fn} encontró ${lp ? `ayuda de confianza para ${lp.label}` : 'la ayuda que necesitaba'}${ci ? ` — primera visita, el ${ci.label}` : ''}. ✓ Funcionó.`,
+            })
+          } catch (e) { console.error('[Nüra] historia:', e) }
+        }
       }
 
       setTimeout(() => {
@@ -662,7 +678,7 @@ export default function Home() {
             id: Date.now(), from: 'nura',
             lines: [
               `Me alegra mucho. **${helperName}** queda anotado como una conexión que funcionó. 🤍`,
-              `Esto ayuda a que otras personas en tu misma situación le encuentren más fácilmente.`
+              `He escrito vuestra historia en el Muro 💜 — ya está ayudando a que otros se atrevan.`
             ]
           }])
         } else {

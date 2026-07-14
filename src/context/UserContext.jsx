@@ -13,6 +13,7 @@ export function UserProvider({ children }) {
   const [contactedHelpers, setContactedHelpers] = useState(() => load('nura_contacted', []))
   const [personas, setPersonas] = useState(() => load('nura_personas', []))
   const [citas, setCitas] = useState(() => load('nura_citas', []))
+  const [myStories, setMyStories] = useState(() => load('nura_my_stories', []))
   const [helpersCache, setHelpersCache] = useState({})
   const [following, setFollowing] = useState(() => {
     const stored = load('nura_following', null)
@@ -242,6 +243,15 @@ export function UserProvider({ children }) {
   }
 
   // ── La Cita — la memoria que mira hacia adelante ──
+  // ── El Muro que crece contigo ──
+  function addStory(story) {
+    if (!story?.helperId) return
+    if (myStories.some(s => s.helperId === story.helperId)) return  // una historia por conexión
+    const updated = [story, ...myStories]
+    setMyStories(updated)
+    save('nura_my_stories', updated)
+  }
+
   function addCita({ helperId, helperName, personaId, personaLabel, label }) {
     const nueva = {
       id: 'c_' + Date.now(), helperId, helperName,
@@ -274,6 +284,7 @@ export function UserProvider({ children }) {
       contactedHelpers, confirmContact,
       personas, upsertPersona, linkPersonaContact, removePersona,
       citas, addCita,
+      myStories, addStory,
       helpersCache, cacheHelpers,
       following, follow, unfollow, isFollowing,
       notifications, markNotifsRead, unreadNotifs,

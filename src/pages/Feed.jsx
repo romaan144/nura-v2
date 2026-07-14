@@ -69,7 +69,7 @@ function ConnectionCard({ story, index }) {
           </div>
           {story.seconds && (
             <span style={{fontSize:'10px', fontWeight:600, color:'var(--purple)', flexShrink:0}}>
-              ⚡ {story.seconds}s
+              {story.seconds != null ? <>⚡ {story.seconds}s</> : <>✓ hoy</>}
             </span>
           )}
         </div>
@@ -249,7 +249,7 @@ function PostCard({ post }) {
 // ── Main Feed ──────────────────────────────────────────────────────────────
 export default function Feed() {
   const navigate = useNavigate()
-  const { following, searchHistory, contactedHelpers, personas, helpersCache } = useUser()
+  const { following, searchHistory, contactedHelpers, personas, helpersCache, myStories: ctxStories } = useUser()
   const [tab, setTab] = useState('para-ti')
   const [feedLoading, setFeedLoading] = useState(true)
   const [supabaseHelpers, setSupabaseHelpers] = useState(LOCAL_HELPERS)
@@ -290,7 +290,7 @@ export default function Feed() {
   const followingCount = allPosts.filter(p => p.following).length
 
   // ── El Muro de Conexiones: las tuyas primero, luego las de la comunidad ──
-  const myStories = (contactedHelpers || [])
+  const localStories = (contactedHelpers || [])
     .filter(c => c?.confirmed === true)
     .map(c => {
       const helper = helpersCache?.[c.id] || helpersCache?.[String(c.id)]
@@ -309,6 +309,7 @@ export default function Feed() {
           : `Encontraste la ayuda que buscabas — y confirmaste que funcionó.`,
       }
     }).filter(Boolean)
+  const myStories = [...(ctxStories || []), ...(localStories || [])]
   const muroStories = [...myStories, ...getConnectionStories()]
 
   return (

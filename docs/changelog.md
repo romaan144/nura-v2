@@ -6,6 +6,17 @@
 
 ---
 
+## 2026-07-04 — El Muro que crece contigo (Nura Copilot)
+
+- **El ciclo deja de morir en privado**: al confirmar "✓ funcionó", Nüra
+  escribe la historia (Gramática: nombre de pila, persona de El Espejo,
+  primera visita de La Cita) con snapshot del helper y la añade al Muro
+  delante de las semilla — `nura_my_stories`, una historia por conexión.
+  El Muro L312 ya esperaba `myStories`: un andamio antiguo, ahora vivo.
+  Celebración en el propio flujo de Confirmación. El flywheel del pitch,
+  dentro del producto.
+- Sello `NURA_BUILD` → `2026.07.04-w`.
+
 ## 2026-07-04 — Entrada directa (feedback del fundador)
 
 - **Mueren las ceremonias encadenadas de la entrada** (Splash siempre →
