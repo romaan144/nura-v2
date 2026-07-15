@@ -14,7 +14,7 @@ export default function Profile() {
   const {
     user, logout, updateUser,
     chats, ratings, searchHistory, favorites, isFollowing, following,
-    services, personas, removePersona, helpersCache
+    services, personas, removePersona, helpersCache, contactedHelpers, citas
   } = useUser()
 
   // ── El Primer Día del Profesional ──
@@ -232,64 +232,7 @@ export default function Profile() {
           </div>
         )}
 
-        {/* ── ZONA 2: ACTIVIDAD HUMANA ──────────────────── */}
-        <div className={styles.activityZone} style={{animation:`fadeInUp 0.3s ease-out 80ms forwards`}}>
-          <p className={styles.zoneLabel}>Tu actividad</p>
-          <div className={styles.activityGrid}>
-            <button className={styles.activityCard} onClick={() => navigate('/')}>
-              <span className={styles.activityNum}>{searchCount}</span>
-              <span className={styles.activityDesc}>
-                {searchCount === 1 ? 'búsqueda realizada' : 'búsquedas realizadas'}
-              </span>
-              <Search size={16} className={styles.activityIcon} strokeWidth={1.5} />
-            </button>
-            <button className={styles.activityCard} onClick={() => navigate('/chats')}>
-              <span className={styles.activityNum}>{chatCount}</span>
-              <span className={styles.activityDesc}>
-                {chatCount === 1 ? 'profesional contactado' : 'profesionales contactados'}
-              </span>
-              <MessageCircle size={16} className={styles.activityIcon} strokeWidth={1.5} />
-            </button>
-          </div>
 
-          <button className={styles.favRow} onClick={() => navigate('/my-services')}>
-            <ClipboardList size={15} color="var(--purple)" strokeWidth={1.8} />
-            <span className={styles.favText}>Mis servicios e historial</span>
-          </button>
-
-          {favCount > 0 ? (
-            <button className={styles.favRow} onClick={() => navigate('/siguiendo')}>
-              <UserCheck size={15} color="var(--purple)" strokeWidth={1.8} />
-              <span className={styles.favText}>
-                {favCount === 1 ? '1 profesional al que sigues' : `${favCount} profesionales que sigues`}
-              </span>
-            </button>
-          ) : (
-            <div className={styles.favEmpty}>
-              <UserPlus size={14} strokeWidth={1.5} color="var(--ink-disabled)" />
-              <span className={styles.favEmptyText}>
-                Guarda profesionales que te interesen para encontrarlos rápido
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* ── ZONA 3: BÚSQUEDAS RECIENTES ───────────────── */}
-        {recentSearches.length > 0 && (
-          <div className={styles.recentZone} style={{animation:`fadeInUp 0.3s ease-out 160ms forwards`}}>
-            <p className={styles.zoneLabel}>Búsquedas recientes</p>
-            <div className={styles.recentList}>
-              {recentSearches.map((q, i) => (
-                <button key={i} className={styles.recentItem} onClick={() => navigate('/')}>
-                  <Search size={13} color="var(--ink-tertiary)" strokeWidth={1.8} />
-                  <span className={styles.recentText}>{q}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* ── ZONA 4: EVOLUCIÓN ─────────────────────────── */}
         {user.isHelper && (
           <div style={{margin:'0 0 20px', animation:'fadeInUp 0.3s ease-out 240ms both'}}>
             <div style={{fontSize:'11px', fontWeight:700, color:'var(--purple)',
@@ -338,6 +281,70 @@ export default function Profile() {
             )}
           </div>
         )}
+
+        {/* ── TU MUNDO: la cita próxima ── */}
+        {(() => {
+          const cp = (citas || []).slice().reverse().find(ci => {
+            const c = (contactedHelpers || []).find(x => (x.id || x) === ci.helperId)
+            return c && c.confirmed === undefined
+          })
+          if (!cp) return null
+          const hf = cp.helperName?.split(' ')?.[0] || cp.helperName
+          return (
+            <div style={{margin:'0 0 20px', padding:'14px 16px', background:'white',
+              border:'1px solid var(--ink-border)', borderRadius:'var(--radius-md)',
+              boxShadow:'var(--shadow-sm)', display:'flex', alignItems:'center', gap:'10px'}}>
+              <span style={{fontSize:'18px'}}>📅</span>
+              <div style={{fontSize:'13px', color:'var(--ink)', lineHeight:1.45}}>
+                El {cp.label}, <strong>{hf}</strong>{cp.personaLabel ? <> está con {cp.personaLabel}</> : <> — vuestra primera cita</>}. Todo listo 💜
+              </div>
+            </div>
+          )
+        })()}
+
+        {/* ── ZONA 2: ACTIVIDAD HUMANA ──────────────────── */}
+        <div className={styles.activityZone} style={{animation:`fadeInUp 0.3s ease-out 80ms forwards`}}>
+          <p className={styles.zoneLabel}>Tu actividad</p>
+          <div className={styles.activityGrid}>
+            <button className={styles.activityCard} onClick={() => navigate('/')}>
+              <span className={styles.activityNum}>{searchCount}</span>
+              <span className={styles.activityDesc}>
+                {searchCount === 1 ? 'búsqueda realizada' : 'búsquedas realizadas'}
+              </span>
+              <Search size={16} className={styles.activityIcon} strokeWidth={1.5} />
+            </button>
+            <button className={styles.activityCard} onClick={() => navigate('/chats')}>
+              <span className={styles.activityNum}>{chatCount}</span>
+              <span className={styles.activityDesc}>
+                {chatCount === 1 ? 'profesional contactado' : 'profesionales contactados'}
+              </span>
+              <MessageCircle size={16} className={styles.activityIcon} strokeWidth={1.5} />
+            </button>
+          </div>
+
+          <button className={styles.favRow} onClick={() => navigate('/my-services')}>
+            <ClipboardList size={15} color="var(--purple)" strokeWidth={1.8} />
+            <span className={styles.favText}>Mis servicios e historial</span>
+          </button>
+
+          {favCount > 0 ? (
+            <button className={styles.favRow} onClick={() => navigate('/siguiendo')}>
+              <UserCheck size={15} color="var(--purple)" strokeWidth={1.8} />
+              <span className={styles.favText}>
+                {favCount === 1 ? '1 profesional al que sigues' : `${favCount} profesionales que sigues`}
+              </span>
+            </button>
+          ) : (
+            <div className={styles.favEmpty}>
+              <UserPlus size={14} strokeWidth={1.5} color="var(--ink-disabled)" />
+              <span className={styles.favEmptyText}>
+                Guarda profesionales que te interesen para encontrarlos rápido
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* ── ZONA 4: EVOLUCIÓN ─────────────────────────── */}
 
         {!user.isHelper && (
           <div className={styles.evolutionZone} style={{animation:`fadeInUp 0.3s ease-out 240ms forwards`}}>

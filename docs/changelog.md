@@ -6,6 +6,15 @@
 
 ---
 
+## 2026-07-04 — El Perfil como Casa (Nura diseño)
+
+- **Tres actos con dramaturgia**: Identidad → Tu mundo (el Primer Día del
+  Profesional sube a su hogar; nace la tarjeta de **cita próxima** — "El
+  martes, Elena está con tu madre. Todo listo 💜") → Tu actividad y ajustes.
+- **ZONA 3 "Búsquedas recientes" extirpada del Perfil** (15L): la especie
+  que la ley del fundador exterminó en Home sobrevivía aquí.
+- Sello `NURA_BUILD` → `2026.07.04-y`.
+
 ## 2026-07-04 — Los chips son parámetros (mandato del fundador)
 
 - Tocar un chip de comprensión abría el sistema del input (historial v1
