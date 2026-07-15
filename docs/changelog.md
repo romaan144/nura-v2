@@ -6,6 +6,15 @@
 
 ---
 
+## 2026-07-04 — Los chips son parámetros (mandato del fundador)
+
+- Tocar un chip de comprensión abría el sistema del input (historial v1
+  sobre la conversación). Ahora: toggle ✓ en el mensaje, refuerzo
+  silencioso del análisis, resultados **in-place** bajo el Contrato (no-op
+  si el top no cambia). **Ley de separación**: el dropdown del input solo
+  existe en estado vacío. Elemento del chip reescrito como canon.
+- Sello `NURA_BUILD` → `2026.07.04-x`.
+
 ## 2026-07-04 — El Muro que crece contigo (Nura Copilot)
 
 - **El ciclo deja de morir en privado**: al confirmar "✓ funcionó", Nüra

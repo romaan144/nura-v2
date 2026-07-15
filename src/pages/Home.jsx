@@ -575,6 +575,31 @@ export default function Home() {
     setLoading(false)
   }
 
+  // ── Chips de comprensión: parámetros del análisis, nunca consultas ──
+  async function handleComprehensionChip(chip, msgId) {
+    const msgC = messages.find(m => m.id === msgId)
+    const set = new Set(msgC?.confirmedChips || [])
+    const off = set.has(chip)
+    if (off) set.delete(chip); else set.add(chip)
+    setMessages(prev => prev.map(m => m.id === msgId ? { ...m, confirmedChips: [...set] } : m))
+    if (off) return
+    const a = window.__nuraLastAnalysis
+    if (!a) return
+    const reforzado = { ...a, palabrasClave: [String(chip).toLowerCase(), ...(a.palabrasClave || [])] }
+    window.__nuraLastAnalysis = reforzado
+    const sid = ++searchSeqRef.current
+    const nuevos = await matchHelpers(reforzado, 4)
+    if (searchSeqRef.current !== sid || !nuevos?.length) return
+    setMessages(prev => {
+      const ridx = [...prev].reverse().findIndex(m => m.results?.length)
+      if (ridx === -1) return prev
+      const idx = prev.length - 1 - ridx
+      const cur = prev[idx]
+      const same = cur.results.length === nuevos.length && cur.results.every((r, i) => r?.id === nuevos[i]?.id)
+      return same ? prev : prev.map((m, i) => i === idx ? { ...m, results: nuevos } : m)
+    })
+  }
+
   async function handleSend(text) {
     let msg = text || input
     if (!msg.trim() || loading) return
@@ -1078,12 +1103,14 @@ export default function Home() {
                 </div>
                 <div style={{display:'flex', flexWrap:'wrap', gap:'6px'}}>
                   {msg.comprehensionChips.map(c => (
-                    <button key={c} onClick={() => startCorrection(msg.originalQuery)}
-                      aria-label={`Corregir: ${c}`}
-                      style={{background:'var(--purple-10)', border:'1px solid var(--purple-20)',
-                        color:'var(--purple)', borderRadius:'var(--radius-full)',
-                        padding:'5px 12px', fontSize:'12px', fontWeight:600}}>
-                      {c}
+                    <button key={c} onClick={() => handleComprehensionChip(c, msg.id)}
+                      aria-label={`Confirmar ${c}`}
+                      style={(msg.confirmedChips || []).includes(c)
+                        ? {background:'var(--purple)', color:'white', border:'1px solid var(--purple)',
+                           borderRadius:'99px', padding:'5px 12px', fontSize:'11.5px', fontWeight:600}
+                        : {background:'white', color:'var(--ink)', border:'1px solid var(--ink-border)',
+                           borderRadius:'99px', padding:'5px 12px', fontSize:'11.5px', fontWeight:600}}>
+                      {(msg.confirmedChips || []).includes(c) ? '✓ ' : ''}{c}
                     </button>
                   ))}
                 </div>
@@ -1109,7 +1136,7 @@ export default function Home() {
 
       {/* Floating bottom — suggestions + input capsule only */}
       <div className={styles.floatBottom} style={{animation:"fadeInUp 0.35s ease-out 0.1s forwards"}}>
-        {inputFocused && !input && searchHistory?.length > 0 && (
+        {inputFocused && messages.length <= 1 && !input && searchHistory?.length > 0 && (
           <div className={styles.recentSearches}>
             <span className={styles.recentLabel}>Recientes</span>
             {searchHistory.slice(0, 3).map((s, i) => (
