@@ -6,6 +6,17 @@
 
 ---
 
+## 2026-07-04 — La Tinta Viva (mandato estético del fundador)
+
+- **Una sola tinta**: el texto era negro frío (#0D0D1A + alphas de negro
+  puro) sobre papel cálido; ahora tinta violeta cálida (#211D33) en texto,
+  jerarquías y sombras — toda la app lee y flota a una misma temperatura.
+- **Una sola respiración**: la curva de firma cubic-bezier(0.22,1,0.36,1)
+  sustituye a cada `ease-out` genérico del código (31 sitios) — animaciones
+  y transiciones laten igual en todas las pantallas. Ley en design-system.
+- "Más no es mejor": cuatro gestos de token, cero componentes tocados.
+- Sello `NURA_BUILD` → `2026.07.04-z`.
+
 ## 2026-07-04 — El Perfil como Casa (Nura diseño)
 
 - **Tres actos con dramaturgia**: Identidad → Tu mundo (el Primer Día del

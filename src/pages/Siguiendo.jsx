@@ -20,7 +20,7 @@ export default function Siguiendo() {
     <div className={styles.page}>
       <PageHeader showBack />
       <div className={styles.content}>
-        <h2 className={styles.title} style={{animation:"fadeInUp 0.25s ease-out forwards"}}>Siguiendo</h2>
+        <h2 className={styles.title} style={{animation:"fadeInUp 0.25s cubic-bezier(0.22, 1, 0.36, 1) forwards"}}>Siguiendo</h2>
         <p className={styles.sub}>{saved.length} profesional{saved.length !== 1 ? 's' : ''} guardado{saved.length !== 1 ? 's' : ''}</p>
 
         {saved.length === 0 ? (
@@ -38,7 +38,7 @@ export default function Siguiendo() {
         ) : (
           <div className={styles.list}>
             {(saved||[]).map((h, i) => (
-              <div key={h.id} style={{animation:`cardCascade 0.45s ease-out ${i*80}ms both`}}>
+              <div key={h.id} style={{animation:`cardCascade 0.45s cubic-bezier(0.22, 1, 0.36, 1) ${i*80}ms both`}}>
               <div className={styles.card} onClick={() => navigate(`/helper/${h.id}`, { state: { helper: h } })}>
                 <div className={styles.cardLeft}>
                   <img src={h.avatarUrl || `https://api.dicebear.com/9.x/personas/svg?seed=${h.name}`}

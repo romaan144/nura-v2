@@ -48,7 +48,7 @@ function CarouselCard({ helper, isTopPick, matchReason }) {
       {/* Avatar */}
       <div className={styles.avatarWrap}>
         {helper.avatarUrl
-          ? <img src={helper.avatarUrl} alt={helper.name} className={styles.avatar} style={{opacity:0}} onLoad={e => e.target.style.animation="fadeInUp 0.3s ease-out forwards"} />
+          ? <img src={helper.avatarUrl} alt={helper.name} className={styles.avatar} style={{opacity:0}} onLoad={e => e.target.style.animation="fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards"} />
           : <div className={styles.avatarFallback} style={{ background: helper.avatarColor || 'var(--purple)' }}>
               {helper.avatar || helper.name?.[0]}
             </div>

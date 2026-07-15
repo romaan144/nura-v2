@@ -33,7 +33,7 @@ function ConnectionCard({ story, index }) {
         border:'1px solid var(--ink-border)', padding:'14px 16px',
         marginBottom:'10px', cursor:'pointer',
         boxShadow:'var(--shadow-sm)',
-        animation:`cardCascade 0.45s ease-out ${index*70}ms both`
+        animation:`cardCascade 0.45s cubic-bezier(0.22, 1, 0.36, 1) ${index*70}ms both`
       }}>
       <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'8px'}}>
         <Badge variant={story.mine ? 'purple' : 'success'}>
@@ -323,7 +323,7 @@ export default function Feed() {
       <PageHeader />
 
       {/* Tabs */}
-      <div className={styles.tabs} style={{animation:"fadeInUp 0.25s ease-out forwards"}}>
+      <div className={styles.tabs} style={{animation:"fadeInUp 0.25s cubic-bezier(0.22, 1, 0.36, 1) forwards"}}>
         <div className={styles.tabsInner}>
           <button
             className={`${styles.tab} ${tab==='para-ti' ? styles.tabActive : ''}`}
@@ -457,7 +457,7 @@ export default function Feed() {
               ))}
             </>) : (
               displayPosts.map((post, i) => (
-                <div key={post.id || i} style={{animation:`cardCascade 0.45s ease-out ${i*80}ms both`}}>
+                <div key={post.id || i} style={{animation:`cardCascade 0.45s cubic-bezier(0.22, 1, 0.36, 1) ${i*80}ms both`}}>
                   <PostCard post={post} />
                 </div>
               ))

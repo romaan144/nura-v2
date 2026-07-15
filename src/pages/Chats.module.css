@@ -160,7 +160,7 @@
 .chatItem:nth-child(5) { animation-delay: 185ms; }
 .chatItem:nth-child(n+6) { animation-delay: 216ms; }
 .chatItem {
-  animation: chatItemIn 0.22s ease-out forwards;
+  animation: chatItemIn 0.22s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 .emptyIso {
   margin-bottom: 4px;
@@ -171,5 +171,5 @@
   text-align: center;
   color: var(--soft);
   font-size: var(--text-sm);
-  animation: fadeUp 0.22s ease-out forwards;
+  animation: fadeUp 0.22s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }

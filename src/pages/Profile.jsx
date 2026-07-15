@@ -103,7 +103,7 @@ export default function Profile() {
       <div className={styles.scroll}>
 
         {/* ── ZONA 1: IDENTIDAD ─────────────────────────── */}
-        <div className={styles.identity} style={{animation:`fadeInUp 0.3s ease-out 0ms forwards`}}>
+        <div className={styles.identity} style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0ms forwards`}}>
           <div className={styles.avatarWrap}>
             <img
               src={`https://api.dicebear.com/9.x/personas/svg?seed=${encodeURIComponent(user.name || 'user')}`}
@@ -184,7 +184,7 @@ export default function Profile() {
 
         {/* ── EL ESPEJO: LAS PERSONAS DE TU VIDA ────────── */}
         {(personas || []).length > 0 && (
-          <div style={{margin:'0 0 20px', animation:'fadeInUp 0.3s ease-out 60ms both'}}>
+          <div style={{margin:'0 0 20px', animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 60ms both'}}>
             <div style={{
               fontSize:'11px', fontWeight:700, color:'var(--purple)',
               letterSpacing:'0.8px', textTransform:'uppercase', marginBottom:'10px'
@@ -234,7 +234,7 @@ export default function Profile() {
 
 
         {user.isHelper && (
-          <div style={{margin:'0 0 20px', animation:'fadeInUp 0.3s ease-out 240ms both'}}>
+          <div style={{margin:'0 0 20px', animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 240ms both'}}>
             <div style={{fontSize:'11px', fontWeight:700, color:'var(--purple)',
               letterSpacing:'0.8px', textTransform:'uppercase', marginBottom:'10px'}}>
               Así te ven quienes te necesitan
@@ -303,7 +303,7 @@ export default function Profile() {
         })()}
 
         {/* ── ZONA 2: ACTIVIDAD HUMANA ──────────────────── */}
-        <div className={styles.activityZone} style={{animation:`fadeInUp 0.3s ease-out 80ms forwards`}}>
+        <div className={styles.activityZone} style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 80ms forwards`}}>
           <p className={styles.zoneLabel}>Tu actividad</p>
           <div className={styles.activityGrid}>
             <button className={styles.activityCard} onClick={() => navigate('/')}>
@@ -347,7 +347,7 @@ export default function Profile() {
         {/* ── ZONA 4: EVOLUCIÓN ─────────────────────────── */}
 
         {!user.isHelper && (
-          <div className={styles.evolutionZone} style={{animation:`fadeInUp 0.3s ease-out 240ms forwards`}}>
+          <div className={styles.evolutionZone} style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 240ms forwards`}}>
             <p className={styles.evolutionQ}>¿Tienes algo que ofrecer?</p>
             <p className={styles.evolutionSub}>
               Muchas personas de Nüra también ayudan a otros. Crea tu perfil profesional y empieza a recibir solicitudes.

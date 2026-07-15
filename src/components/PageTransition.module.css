@@ -1,7 +1,7 @@
 .wrap { flex: 1; min-height: 0; }
 
 .animIn {
-  animation: pageIn 0.2s ease-out forwards;
+  animation: pageIn 0.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @keyframes pageIn {

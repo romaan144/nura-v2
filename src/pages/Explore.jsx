@@ -68,7 +68,7 @@ function EscaparateVivo({ onHelperTap }) {
             padding: '12px 12px 10px',
             boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
             cursor: 'pointer',
-            animation: `cardCascade 0.4s ease-out ${i * 60}ms both`,
+            animation: `cardCascade 0.4s cubic-bezier(0.22, 1, 0.36, 1) ${i * 60}ms both`,
           }}>
             <div style={{ position: 'relative', marginBottom: '8px' }}>
               {h.avatarUrl
@@ -491,7 +491,7 @@ export default function Explore() {
         {isListView && !isLoading && (
           <>
             {/* Header de resultados */}
-            <div className={styles.resultsHeader} style={{animation:"fadeInUp 0.25s ease-out forwards"}}>
+            <div className={styles.resultsHeader} style={{animation:"fadeInUp 0.25s cubic-bezier(0.22, 1, 0.36, 1) forwards"}}>
               {activeCategory && (
                 <div className={styles.catPill} style={{ '--cat-color': activeCategory.color, '--cat-bg': activeCategory.bg }}>
                   {(() => { const Icon = activeCategory.icon; return <Icon size={13} color={activeCategory.color} /> })()}
@@ -543,7 +543,7 @@ export default function Explore() {
                 <div className={styles.list} key={`${activeCategory}-${activeSubcategory}`}>
                   {pagedList.map((h, i) => (
                     <div key={h.id} style={{
-                      animation: `cardCascade 0.35s ease-out ${i * 55}ms both`,
+                      animation: `cardCascade 0.35s cubic-bezier(0.22, 1, 0.36, 1) ${i * 55}ms both`,
                     }}>
                       <HelperCard helper={h} onClick={() => navigate(`/helper/${h.id}`)} />
                     </div>

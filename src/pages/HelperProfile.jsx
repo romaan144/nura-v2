@@ -250,7 +250,7 @@ function HelperProfileInner() {
         {/* ══════════════════════════════════════════════════
             HERO EDITORIAL — la persona, no el formulario
             ══════════════════════════════════════════════════ */}
-        <div className={styles.hero} style={{animation:'fadeInUp 0.35s ease-out forwards'}}>
+        <div className={styles.hero} style={{animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards'}}>
 
           {/* Avatar grande — protagonista */}
           <div style={{
@@ -265,7 +265,7 @@ function HelperProfileInner() {
                     style={{
                       width:'96px', height:'96px', borderRadius:'50%', objectFit:'cover',
                       boxShadow:'0 4px 20px rgba(0,0,0,0.12)',
-                      opacity:0, animation:'popIn 0.4s ease-out 0.1s forwards'
+                      opacity:0, animation:'popIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards'
                     }} />
                 : <div style={{
                     width:'96px', height:'96px', borderRadius:'50%',
@@ -273,7 +273,7 @@ function HelperProfileInner() {
                     display:'flex', alignItems:'center', justifyContent:'center',
                     fontSize:'32px', fontWeight:700, color:'white',
                     boxShadow:'0 4px 20px rgba(0,0,0,0.15)',
-                    animation:'popIn 0.4s ease-out 0.1s forwards'
+                    animation:'popIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards'
                   }}>
                     {enrichedH.name?.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase() || enrichedH.avatar}
                   </div>
@@ -319,7 +319,7 @@ function HelperProfileInner() {
               margin:'0 0 20px', padding:'20px',
               background:'linear-gradient(135deg, rgba(123,47,255,0.06) 0%, rgba(123,47,255,0.02) 100%)',
               borderRadius:'16px',
-              animation:'fadeInUp 0.35s ease-out 0.1s both'
+              animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both'
             }}>
               <div style={{
                 fontSize:'11px', fontWeight:700, color:'var(--purple)',
@@ -338,7 +338,7 @@ function HelperProfileInner() {
             <p style={{
               fontSize:'14px', color:'rgba(0,0,0,0.6)', lineHeight:1.65,
               letterSpacing:'-0.1px', margin:'0 0 20px',
-              animation:'fadeInUp 0.35s ease-out 0.15s both'
+              animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both'
             }}>{enrichedH.bio}</p>
           )}
 
@@ -347,7 +347,7 @@ function HelperProfileInner() {
             <div style={{
               fontSize:'12px', color:'rgba(0,0,0,0.4)',
               marginBottom:'16px', textAlign:'center',
-              animation:'fadeInUp 0.35s ease-out 0.18s both'
+              animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both'
             }}>
               {Math.floor(enrichedH.reviews * 0.08 + 2)} personas cerca de ti contactaron con {firstName} este mes
               {enrichedH.reviews >= 100 && (
@@ -360,7 +360,7 @@ function HelperProfileInner() {
           <div style={{
             display:'flex', gap:'6px', flexWrap:'wrap',
             justifyContent:'center', marginBottom:'14px',
-            animation:'fadeInUp 0.35s ease-out 0.2s both'
+            animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both'
           }}>
             {[
               enrichedH.verified && '✓ Identidad verificada',
@@ -376,7 +376,7 @@ function HelperProfileInner() {
             margin:'0 0 14px', padding:'12px 14px',
             background:'rgba(0,0,0,0.03)', borderRadius:'12px',
             display:'flex', alignItems:'flex-start', gap:'8px',
-            animation:'fadeInUp 0.35s ease-out 0.22s both'
+            animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both'
           }}>
             <img src="/logo-iso.png" alt="Nüra" style={{width:'18px',height:'18px',flexShrink:0,marginTop:'1px',opacity:0.7}} />
             <p style={{
@@ -392,11 +392,11 @@ function HelperProfileInner() {
 
           {/* CTA principal */}
           <button className={styles.ctaPrimary} onClick={handleContact}
-            style={{animation:'popIn 0.3s ease-out 0.25s forwards'}}>
+            style={{animation:'popIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.25s forwards'}}>
             <MessageCircle size={15} /> Escribir a {firstName}
           </button>
           <button className={styles.ctaSecondary}
-            style={{animation:'popIn 0.3s ease-out 0.3s forwards'}}
+            style={{animation:'popIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards'}}
             onClick={() => user ? setShowConfirm(true) : setShowGate(true)}>
             <Calendar size={14} /> Ver disponibilidad
           </button>
@@ -412,7 +412,7 @@ function HelperProfileInner() {
 
         {/* ── Cómo puedo ayudarte ── */}
         {(enrichedH.tags?.length > 0 || enrichedH.specialty) && (
-          <section style={{animation:`fadeInUp 0.3s ease-out 0ms forwards`}} className={`${styles.section} ${styles.sectionFirst}`}>
+          <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0ms forwards`}} className={`${styles.section} ${styles.sectionFirst}`}>
             <h2 className={styles.sectionHeading}>Puedo ayudarte con</h2>
             <div className={styles.ayudaList}>
               {(() => {
@@ -459,7 +459,7 @@ function HelperProfileInner() {
 
 {/* ── Valoraciones ── */}
         {enrichedH.reviews > 0 && (
-          <section style={{animation:`fadeInUp 0.3s ease-out 80ms forwards`}} className={styles.section}>
+          <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 80ms forwards`}} className={styles.section}>
             <h2 className={styles.sectionHeading}>
               <Star size={14} fill="var(--amber)" color="var(--amber)" /> Lo que dicen de {firstName}
             </h2>
@@ -484,7 +484,7 @@ function HelperProfileInner() {
                     index={i}
                     text={typeof c === 'string' ? c : c.text}
                     author={typeof c === 'string' ? null : c.user}
-                    style={{animation:`fadeInUp 0.3s ease-out ${i*80}ms both`}}
+                    style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) ${i*80}ms both`}}
                   />
                 ))}
               </div>
@@ -494,7 +494,7 @@ function HelperProfileInner() {
 
         {/* ── Experiencia ── */}
         {enrichedH.experience?.length > 0 && (
-          <section style={{animation:`fadeInUp 0.3s ease-out 160ms forwards`}} className={styles.section}>
+          <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 160ms forwards`}} className={styles.section}>
             <h2 className={styles.sectionHeading}>
               <Briefcase size={14} /> Trayectoria profesional
             </h2>
@@ -542,7 +542,7 @@ function HelperProfileInner() {
 
         {/* ── Formación ── */}
         {enrichedH.education?.length > 0 && (
-          <section style={{animation:`fadeInUp 0.3s ease-out 240ms forwards`}} className={styles.section}>
+          <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 240ms forwards`}} className={styles.section}>
             <h2 className={styles.sectionHeading}>
               <BookOpen size={14} /> Formación académica
             </h2>
@@ -567,7 +567,7 @@ function HelperProfileInner() {
 
         {/* ── Habilidades ── */}
         {enrichedH.skills?.length > 0 && (
-          <section style={{animation:`fadeInUp 0.3s ease-out 320ms forwards`}} className={styles.section}>
+          <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 320ms forwards`}} className={styles.section}>
             <h2 className={styles.sectionHeading}>En qué destaca</h2>
             <div className={styles.tags}>
               {enrichedH.skills.map((s, i) => (
@@ -579,7 +579,7 @@ function HelperProfileInner() {
 
         {/* ── Idiomas ── */}
         {enrichedH.languages?.length > 0 && (
-          <section style={{animation:`fadeInUp 0.3s ease-out 400ms forwards`}} className={styles.section}>
+          <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 400ms forwards`}} className={styles.section}>
             <h2 className={styles.sectionHeading}>
               <Globe size={14} /> Idiomas
             </h2>
@@ -593,7 +593,7 @@ function HelperProfileInner() {
 
         {/* ── Publicaciones ── */}
         {enrichedH.posts?.length > 0 && (
-          <section style={{animation:`fadeInUp 0.3s ease-out 480ms forwards`}} className={styles.section}>
+          <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 480ms forwards`}} className={styles.section}>
             <h2 className={styles.sectionHeading}>Publicaciones</h2>
             {enrichedH.posts.slice(0,2).map((post, i) => (
               <PostCard key={i} post={post} />

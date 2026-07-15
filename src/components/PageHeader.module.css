@@ -10,7 +10,7 @@
   padding: max(env(safe-area-inset-top, 0px), 12px) 14px 10px;
   background: transparent;
   pointer-events: none;
-  animation: headerIn 0.22s ease-out forwards;
+  animation: headerIn 0.22s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 .header > * { pointer-events: all; }
 

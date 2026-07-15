@@ -33,6 +33,14 @@ más **`--font-voice`** (Fraunces, serif cálida) para La Voz Tipográfica (§3)
 [PENDIENTE] Formalizar escala de espaciado como tokens (hoy: valores coherentes
 por convención).
 
+### La Tinta Viva (2026-07-04)
+
+**Una sola tinta**: texto y sombras comparten el mismo violeta cálido
+(`--ink #211D33` y sus alphas) — la app lee a la misma temperatura que su
+papel. **Una sola respiración**: todo movimiento (animaciones y
+transiciones) usa la curva de firma `cubic-bezier(0.22, 1, 0.36, 1)`;
+prohibido el `ease-out` genérico.
+
 ## 2. Componentes base — `src/components/ui/index.jsx`
 
 **Regla:** ningún patrón de esta lista se reimplementa inline en ninguna

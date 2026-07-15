@@ -72,7 +72,7 @@
   -webkit-tap-highlight-color: transparent;
   box-shadow: var(--shadow-md);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-  animation: cardIn 0.22s ease-out forwards;
+  animation: cardIn 0.22s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .catCard:active {
@@ -275,7 +275,7 @@
   transition: background 0.16s ease, color 0.16s ease,
               border-color 0.16s ease, transform 0.14s ease,
               box-shadow 0.16s ease;
-  animation: pillIn 0.22s ease-out forwards;
+  animation: pillIn 0.22s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .subCatActive {
