@@ -55,7 +55,15 @@ papel. **Una sola respiración**: todo movimiento (animaciones y
 transiciones) usa la curva de firma `cubic-bezier(0.22, 1, 0.36, 1)`;
 prohibido el `ease-out` genérico.
 
-## 2. Componentes base — `src/components/ui/index.jsx`
+## 2. Componentes base
+
+### ObraCard (Nüra Obra)
+Pieza canon de publicación tipada: chip de tipo (morado-10, uppercase) →
+título en Voz 16.5 → cuerpo clamp-4 con "ver más" → **Resultado:** si
+existe → pie mini-persona tocable + `✓ contrastado` + fecha. Tarjeta blanca
+canon; sin hilo. Tipos: caso · trabajo · consejo · evolución · actualidad ·
+hito. No existe el post libre.
+ — `src/components/ui/index.jsx`
 
 **Regla:** ningún patrón de esta lista se reimplementa inline en ninguna
 pantalla. Si un patrón visual se repite, se extrae aquí.

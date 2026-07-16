@@ -1,4 +1,6 @@
 import PageHeader from '../components/PageHeader'
+import ObraCard from '../components/ObraCard'
+import { getObraDeHelper } from '../data/obraPosts'
 import ErrorBoundary from '../components/ErrorBoundary'
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
@@ -411,6 +413,15 @@ function HelperProfileInner() {
             ══════════════════════════════════════════════════ */}
 
         {/* ── Cómo puedo ayudarte ── */}
+        {getObraDeHelper(enrichedH.id, 2).length > 0 && (
+          <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0ms forwards`}} className={`${styles.section} ${styles.sectionFirst}`}>
+            <h2 className={styles.sectionHeading}>Su obra</h2>
+            <div style={{display:'flex', flexDirection:'column', gap:'10px'}}>
+              {getObraDeHelper(enrichedH.id, 2).map(post => <ObraCard key={post.id} post={post} />)}
+            </div>
+          </section>
+        )}
+
         {(enrichedH.tags?.length > 0 || enrichedH.specialty) && (
           <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0ms forwards`}} className={`${styles.section} ${styles.sectionFirst}`}>
             <h2 className={styles.sectionHeading}>Puedo ayudarte con</h2>

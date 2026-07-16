@@ -6,6 +6,17 @@
 
 ---
 
+## 2026-07-04 — Nüra Obra F1 (visión aprobada del fundador)
+
+- **Nace la Obra**: publicación tipada (caso/trabajo/consejo/evolución/
+  actualidad/hito) con resultado — no existe el post libre. 12 semillas
+  contra profesionales reales del pool (el caso de la R, la instalación
+  del 87, los seis meses de Jordi…), 4 marcadas `✓ contrastado`.
+- **ObraCard** canon (chip+Voz+resultado+pie tocable) · Comunidad pasa a
+  **río mixto 2:1** (la oferta demuestra, la demanda verifica) · el perfil
+  gana **"Su obra"** antes del catálogo — la confianza primero.
+- Sello `NURA_BUILD` → `2026.07.04-ad`.
+
 ## 2026-07-04 — Comunidad: El Latido del Barrio (mandato del fundador)
 
 - **Reescrita desde 0**: muere el feed genérico (posts, sugeridos, carruseles

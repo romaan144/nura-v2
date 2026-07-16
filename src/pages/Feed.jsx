@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import HelperCard from '../components/HelperCard'
 import { getConnectionStories, getDestacados } from '../data/connectionStories'
+import ObraCard from '../components/ObraCard'
+import { getObra } from '../data/obraPosts'
 
 // ═══════════════════════════════════════════════════════════════
 // COMUNIDAD — El Latido del Barrio (desde 0)
@@ -69,21 +71,37 @@ export default function Feed() {
 
         <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--ink-tertiary)',
           letterSpacing: '0.6px', textTransform: 'uppercase', margin: '0 0 10px' }}>
-          Conexiones reales
+          La obra del barrio
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-          {rio.map((s, i) => (
-            <div key={s.id || i} style={{ animation: `fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) ${Math.min(i, 5) * 70}ms both` }}>
-              <p style={{ fontFamily: 'var(--font-voice)', fontStyle: 'italic', fontSize: '14px',
-                lineHeight: 1.55, color: 'var(--ink)', margin: '0 0 8px' }}>
-                {s.text}
-              </p>
-              <HelperCard helper={s.helper} />
-              <div style={{ fontSize: '11px', color: 'var(--ink-tertiary)', marginTop: '5px' }}>
-                {s.seconds != null ? <>⚡ encontrado en {s.seconds}s · </> : <>✓ conexión real · </>}{s.timeAgo}
+          {(() => {
+            const obras = getObra()
+            const mixto = []
+            let o = 0, c = 0
+            while (o < obras.length || c < rio.length) {
+              if (o < obras.length) mixto.push({ kind: 'obra', it: obras[o++] })
+              if (o < obras.length) mixto.push({ kind: 'obra', it: obras[o++] })
+              if (c < rio.length) mixto.push({ kind: 'conexion', it: rio[c++] })
+            }
+            return mixto.map((m, i) => (
+              <div key={(m.it.id || i) + m.kind} style={{ animation: `fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) ${Math.min(i, 5) * 70}ms both` }}>
+                {m.kind === 'obra' ? (
+                  <ObraCard post={m.it} />
+                ) : (
+                  <>
+                    <p style={{ fontFamily: 'var(--font-voice)', fontStyle: 'italic', fontSize: '14px',
+                      lineHeight: 1.55, color: 'var(--ink)', margin: '0 0 8px' }}>
+                      {m.it.text}
+                    </p>
+                    <HelperCard helper={m.it.helper} />
+                    <div style={{ fontSize: '11px', color: 'var(--ink-tertiary)', marginTop: '5px' }}>
+                      {m.it.seconds != null ? <>⚡ encontrado en {m.it.seconds}s · </> : <>✓ conexión real · </>}{m.it.timeAgo}
+                    </div>
+                  </>
+                )}
               </div>
-            </div>
-          ))}
+            ))
+          })()}
         </div>
 
         {destacados.length > 0 && (
