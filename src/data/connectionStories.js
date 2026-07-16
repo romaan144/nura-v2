@@ -52,3 +52,17 @@ export function getConnectionStories() {
     }
   }).filter(Boolean)
 }
+
+
+// Personas destacadas del barrio (deterministas por día, diversas por categoría)
+export function getDestacados(n = 3) {
+  const day = new Date().getDate()
+  const pool = (HELPERS || []).filter(h => h && h.rating >= 4.7)
+  const cats = new Set()
+  const out = []
+  for (let i = 0; i < pool.length && out.length < n; i++) {
+    const h = pool[(i + day) % pool.length]
+    if (h && !cats.has(h.category)) { cats.add(h.category); out.push(h) }
+  }
+  return out
+}

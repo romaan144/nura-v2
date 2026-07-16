@@ -6,6 +6,18 @@
 
 ---
 
+## 2026-07-04 — Comunidad: El Latido del Barrio (mandato del fundador)
+
+- **Reescrita desde 0**: muere el feed genérico (posts, sugeridos, carruseles
+  legacy) y el ConnectionCard artesanal. Nace: cabecera con aurora + Voz +
+  **pulso del día** (determinista + tus conexiones reales sumando), **tu
+  historia primero**, el río de conexiones sobre la **Tarjeta Persona canon**
+  (texto de historia en Voz itálica), tres **destacados del barrio**
+  (deterministas, diversos por categoría) y el cierre que alimenta el
+  círculo: "¿Y tú? Cuéntale a Nüra". Ley del mapa enmendada: la cabecera de
+  Comunidad entra en Auroras.
+- Sello `NURA_BUILD` → `2026.07.04-ac`.
+
 ## 2026-07-04 — El Alma Completa (Nura diseño)
 
 - La dirección artística se cierra: la **Carta gana atmósfera interior**

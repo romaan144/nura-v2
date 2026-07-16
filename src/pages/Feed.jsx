@@ -1,472 +1,118 @@
-import React, { useState, useEffect } from 'react'
-import PageHeader from '../components/PageHeader'
-import { Briefcase, Users2, Award, Bookmark, Check, MessageCircle, Share2, Shield, UserPlus, Heart, Star, Rss } from 'lucide-react'
-import RegisterGate from '../components/RegisterGate'
 import { useNavigate } from 'react-router-dom'
-import { getAllHelpers } from '../utils/supabase'
-import { HELPERS as LOCAL_HELPERS } from '../data/helpers'
-import { DEMO_ENRICHMENTS } from '../data/demoEnrichments'
-import HelperCarousel from '../components/HelperCarousel'
-import HelperCard from '../components/HelperCard'
-import { generateDynamicPosts } from '../utils/feedGenerator'
-import { COMPANIES } from '../data/companies'
 import { useUser } from '../context/UserContext'
-import { showToast } from '../components/Toast'
+import HelperCard from '../components/HelperCard'
+import { getConnectionStories, getDestacados } from '../data/connectionStories'
 
-import styles from './Feed.module.css'
-import { getConnectionStories } from '../data/connectionStories'
-import { Badge } from '../components/ui'
+// ═══════════════════════════════════════════════════════════════
+// COMUNIDAD — El Latido del Barrio (desde 0)
+// No es un feed: es la prueba social como experiencia. El pulso del
+// día, tu conexión primero, el río de historias sobre la Tarjeta
+// canon, tres personas cerca de ti, y el cierre que alimenta el
+// círculo. Manifiesto puro: conexiones reales generan la siguiente.
+// ═══════════════════════════════════════════════════════════════
 
-// ── Build feed — deterministic order, not random ───────────────────────────
-// Daily seed: changes once per day, making feed feel fresh on return visits
-const DAILY_SEED = Math.floor(Date.now() / (1000 * 60 * 60 * 24))
-
-// ── El Muro de Conexiones — una historia verificada ──
-function ConnectionCard({ story, index }) {
-  const navigate = useNavigate()
-  const h = story.helper
-  return (
-    <div
-      onClick={() => h?.id && navigate(`/helper/${h.id}`, { state: { helper: h } })}
-      style={{
-        background:'white', borderRadius:'var(--radius-md)',
-        border:'1px solid var(--ink-border)', padding:'14px 16px',
-        marginBottom:'10px', cursor:'pointer',
-        boxShadow:'var(--shadow-sm)',
-        animation:`cardCascade 0.45s cubic-bezier(0.22, 1, 0.36, 1) ${index*70}ms both`
-      }}>
-      <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'8px'}}>
-        <Badge variant={story.mine ? 'purple' : 'success'}>
-          {story.mine ? '✓ Tu conexión' : '✓ Conexión verificada'}
-        </Badge>
-        <span style={{fontSize:'10px', color:'var(--ink-tertiary)'}}>{story.timeAgo}</span>
-      </div>
-      <p style={{
-        fontSize:'var(--text-sm)', color:'var(--ink)', lineHeight:1.55,
-        letterSpacing:'-0.1px', margin:'0 0 10px'
-      }}>{story.text}</p>
-      {h && (
-        <div style={{
-          display:'flex', alignItems:'center', gap:'10px',
-          paddingTop:'10px', borderTop:'1px solid var(--ink-border)'
-        }}>
-          {h.avatarUrl
-            ? <img src={h.avatarUrl} alt={h.name}
-                style={{width:'34px', height:'34px', borderRadius:'50%', objectFit:'cover', flexShrink:0}} />
-            : <div style={{
-                width:'34px', height:'34px', borderRadius:'50%', flexShrink:0,
-                background: h.avatarColor || 'var(--purple)',
-                display:'flex', alignItems:'center', justifyContent:'center',
-                fontSize:'12px', fontWeight:700, color:'white'
-              }}>{h.avatar || h.name?.[0]}</div>
-          }
-          <div style={{flex:1, minWidth:0}}>
-            <div style={{
-              fontSize:'12px', fontWeight:700, color:'var(--ink)',
-              whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'
-            }}>{h.name}</div>
-            <div style={{fontSize:'10px', color:'var(--ink-tertiary)', marginTop:'1px'}}>{h.specialty}</div>
-          </div>
-          {story.seconds && (
-            <span style={{fontSize:'10px', fontWeight:600, color:'var(--purple)', flexShrink:0}}>
-              {story.seconds != null ? <>⚡ {story.seconds}s</> : <>✓ hoy</>}
-            </span>
-          )}
-        </div>
-      )}
-    </div>
-  )
+function pulsoDelDia(extra = 0) {
+  const day = new Date().toISOString().slice(0, 10)
+  let h = 0
+  for (let i = 0; i < day.length; i++) h = (h * 31 + day.charCodeAt(i)) >>> 0
+  return { conexiones: 2 + (h % 4) + extra, citas: 1 + ((h >> 3) % 3) }
 }
 
-function buildFeed(following, helpers, companies) {
-  const posts = []
-
-  // Following content first
-  const followedHelpers = helpers.filter(h =>
-    (following||[]).includes(h.id) || (following||[]).includes(String(h.id))
-  )
-  const followedCompanies = companies.filter(c => (following||[]).includes(c.id))
-
-  followedHelpers.forEach(h => {
-    h.posts?.forEach(p => posts.push({ ...p, author: h, authorType: 'helper', following: true }))
-  })
-  followedCompanies.forEach(c => {
-    c.posts?.forEach(p => posts.push({ ...p, author: c, authorType: 'company', following: true }))
-  })
-
-  // Then suggested (not following)
-  const unfollowedHelpers = helpers.filter(h =>
-    !(following||[]).includes(h.id) && !(following||[]).includes(String(h.id))
-  )
-  const unfollowedCompanies = companies.filter(c => !(following||[]).includes(c.id))
-
-  unfollowedHelpers.forEach(h => {
-    h.posts?.slice(0,1).forEach(p => posts.push({ ...p, author: h, authorType: 'helper', suggested: true }))
-  })
-  unfollowedCompanies.forEach(c => {
-    c.posts?.slice(0,1).forEach(p => posts.push({ ...p, author: c, authorType: 'company', suggested: true }))
-  })
-
-  // Add dynamic AI-generated posts (availability, tips, new helpers)
-  const dynamicPosts = generateDynamicPosts(helpers, 20)
-  posts.push(...dynamicPosts)
-
-  // Sort by most recent (by date string priority) — following first, then suggested
-  // Score: following=2pts, dynamic(Hoy)=1pt, cert posts=0.5pt
-  function postScore(p) {
-    let s = 0
-    if (p.following)               s += 10  // followed content first
-    if (p.dynamic)                 s += 6   // AI-generated always fresh
-    if (p.type === 'availability') s += 4   // availability = action
-    if (p.type === 'tip')          s += 3   // Nüra tips useful
-    if (p.date === 'Hoy')          s += 3   // recency
-    if (p.type === 'cert')         s += 2   // credentials = trust
-    if (p.badge)                   s += 2   // social proof
-    if (p.verifiedWork)            s += 1   // work post
-    // Daily jitter: same post scores differently each day → feed feels fresh
-    const jitter = ((p.id || 0) * 17 + DAILY_SEED * 7) % 3
-    s += jitter * 0.1
-    return s
-  }
-  return posts.sort((a, b) => postScore(b) - postScore(a))
-}
-
-// ── Post Card ──────────────────────────────────────────────────────────────
-function PostCard({ post }) {
-  const navigate = useNavigate()
-  const { follow, unfollow, isFollowing, user } = useUser()
-  const [showGateLocal, setShowGateLocal] = useState(false)
-  const [liked, setLiked] = useState(false)
-  const [likes, setLikes] = useState(post.likes || 0)
-  const [saved, setSaved] = useState(false)
-  const [expanded, setExpanded] = useState(false)
-  const isLong = post.text?.length > 200
-  const author = post.author
-  const followed = isFollowing(author.id)
-
-  function handleFollow(e) {
-    e.stopPropagation()
-    if (!user) { setShowGateLocal(true); return }
-    if (followed) {
-      unfollow(author.id)
-      showToast('Dejaste de seguir')
-    } else {
-      follow(author.id)
-      showToast(`Siguiendo a ${author.name?.split(' ')?.[0]}`)
-    }
-  }
-
-  return (
-    <div className={styles.card}>
-      {/* Suggested label */}
-      {post.suggested && !post.following && (
-        <div className={styles.suggestedLabel}>Sugerido para ti</div>
-      )}
-
-      {/* Header */}
-      <div className={styles.cardHeader}>
-        <div className={styles.authorRow}
-          onClick={() => post.authorType === 'helper' && navigate(`/helper/${author.id}`, { state: { helper: author } })}>
-          <div className={styles.avatarWrap}>
-            {author.avatarUrl
-              ? <img src={author.avatarUrl} alt="" className={styles.avatarImg} />
-              : <div className={styles.avatarFallback} style={{background: author.avatarColor}}>
-                  {author.avatar || author.name?.[0]}
-                </div>
-            }
-            {(author.verified || author.dniVerified) && (
-              <span className={styles.verifiedDot}><Shield size={8} color="white" /></span>
-            )}
-          </div>
-          <div className={styles.authorMeta}>
-            <div className={styles.authorName}>
-              {author.name}
-              {author.founder && <Award size={11} color='#92400E' style={{marginLeft:'4px'}} />}
-            </div>
-            <div className={styles.authorSub}>
-              {post.authorType === 'company' ? author.handle : author.specialty} · {post.date}
-            </div>
-          </div>
-        </div>
-
-        {/* Follow button */}
-        {post.authorType !== 'nura' && (
-        <button
-          className={followed ? styles.followingBtn : styles.followBtn}
-          onClick={handleFollow}>
-          {followed ? <><Check size={12} /> Siguiendo</> : <><UserPlus size={12} /> Seguir</>}
-        </button>
-        )}
-      </div>
-
-      {/* Content */}
-      <p className={styles.postText} data-expanded={expanded}>{post.text}</p>
-      {isLong && !expanded && (
-        <div className={styles.fadeWrap}>
-          <button className={styles.verMasBtn} onClick={() => setExpanded(true)}>
-            Ver más
-          </button>
-        </div>
-      )}
-
-      {/* Badge */}
-      {post.badge && <div className={styles.badge}>{post.badge}</div>}
-      {post.type === 'availability' && !post.badge && (
-        <div className={styles.availabilityBadge}><span style={{display:'inline-block',width:'7px',height:'7px',borderRadius:'50%',background:'var(--green)',marginRight:'5px',verticalAlign:'middle'}}/>Disponible esta semana</div>
-      )}
-      {post.type === 'tip' && !post.badge && (
-        <div className={styles.tipBadge}>Consejo profesional</div>
-      )}
-      {post.type === 'hiring' && (
-        <div className={styles.hiringBadge}><Briefcase size={10} style={{marginRight:'4px'}}/> Oferta de empleo · Perfil Nüra requerido</div>
-      )}
-
-      {/* Actions */}
-      <div className={styles.actions}>
-        <button
-          className={`${styles.action} ${liked ? styles.actionLiked : ''}`}
-          onClick={() => { setLiked(l => !l); setLikes(n => liked ? n-1 : n+1) }}>
-          <Heart size={17} fill={liked?'var(--red)':'none'} color={liked?'var(--red)':'rgba(0,0,0,0.35)'} />
-          <span>{likes}</span>
-        </button>
-        <button className={styles.action}>
-          <MessageCircle size={17} color="rgba(0,0,0,0.35)" />
-          <span>{post.comments || 0}</span>
-        </button>
-        <button className={styles.action}>
-          <Share2 size={17} color="rgba(0,0,0,0.35)" />
-        </button>
-        <button className={`${styles.action} ${styles.actionEnd} ${saved ? styles.actionSaved : ''}`}
-          onClick={() => setSaved(s => !s)}>
-          <Bookmark size={17} fill={saved?'var(--purple)':'none'} color={saved?'var(--purple)':'rgba(0,0,0,0.35)'} />
-        </button>
-      </div>
-      {showGateLocal && <RegisterGate reason="follow" onClose={() => setShowGateLocal(false)} />}
-    </div>
-  )
-}
-
-// ── Main Feed ──────────────────────────────────────────────────────────────
 export default function Feed() {
   const navigate = useNavigate()
-  const { following, searchHistory, contactedHelpers, personas, helpersCache, myStories: ctxStories } = useUser()
-  const [tab, setTab] = useState('para-ti')
-  const [feedLoading, setFeedLoading] = useState(true)
-  const [supabaseHelpers, setSupabaseHelpers] = useState(LOCAL_HELPERS)
-  useEffect(() => {
-    // Show local helpers immediately, replace with Supabase when ready
-    setFeedLoading(false)
-    async function loadHelpers() {
-      try {
-        const remote = await getAllHelpers()
-        if (remote?.length > 0) setSupabaseHelpers(remote)
-      } catch (e) { console.error('Feed Supabase:', e) }
-    }
-    loadHelpers()
-  }, [])
-  const [showGate, setShowGate] = useState(false)
+  const { user, myStories } = useUser()
 
-  // Merge demo enrichments so posts appear in feed
-  const enrichedLocalHelpers = LOCAL_HELPERS.map(h =>
-    h.id >= 2000 && DEMO_ENRICHMENTS[h.id]
-      ? { ...DEMO_ENRICHMENTS[h.id], ...h, posts: DEMO_ENRICHMENTS[h.id].posts }
-      : h
-  )
-  const feedHelpers = [...enrichedLocalHelpers, ...supabaseHelpers]
-    .filter(h => h != null && h.id != null)
-    .filter((h, i, arr) => arr.findIndex(x => x != null && x.id === h.id) === i)
-
-  // Memoize daily pick so it doesn't disappear on tab switch
-  const dailyPick = React.useMemo(() => {
-    const available = feedHelpers.filter(h => h.available)
-    if (!available.length) return null
-    return available[DAILY_SEED % available.length]
-  }, [feedHelpers])
-  const allPosts = buildFeed(following, feedHelpers, COMPANIES)
-  const displayPosts = tab === 'siguiendo'
-    ? allPosts.filter(p => p.following)
-    : allPosts
-
-  const followingCount = allPosts.filter(p => p.following).length
-
-  // ── El Muro de Conexiones: las tuyas primero, luego las de la comunidad ──
-  const localStories = (contactedHelpers || [])
-    .filter(c => c?.confirmed === true)
-    .map(c => {
-      const helper = helpersCache?.[c.id] || helpersCache?.[String(c.id)]
-        || LOCAL_HELPERS.find(h => h?.id === c.id)
-      if (!helper) return null
-      const lp = (personas || []).find(p => (p.contactedHelperIds || []).includes(c.id))
-      const mins = c.confirmedAt ? Math.max(1, Math.round((Date.now() - c.confirmedAt) / 60000)) : null
-      const timeAgo = !mins ? 'reciente'
-        : mins < 60 ? `hace ${mins} min`
-        : mins < 1440 ? `hace ${Math.round(mins/60)} h`
-        : `hace ${Math.round(mins/1440)} días`
-      return {
-        id: 'mine_' + c.id, mine: true, helper, timeAgo,
-        text: lp
-          ? `Encontraste ayuda para ${lp.label} — y confirmaste que funcionó.`
-          : `Encontraste la ayuda que buscabas — y confirmaste que funcionó.`,
-      }
-    }).filter(Boolean)
-  const _seen = new Set()
-  const myStories = [...(ctxStories || []), ...(localStories || [])].filter(s => {
+  const seeds = getConnectionStories()
+  const seen = new Set()
+  const stories = [...(myStories || []), ...seeds].filter(s => {
     const k = s?.helper?.id ?? s?.helperId
-    if (k == null || _seen.has(k)) return false
-    _seen.add(k)
+    if (k == null || seen.has(k)) return false
+    seen.add(k)
     return true
   })
-  const muroStories = [...myStories, ...getConnectionStories()]
+  const mia = (myStories || [])[0]
+  const rio = mia ? stories.filter(s => s.id !== mia.id) : stories
+  const destacados = getDestacados(3)
+  const pulso = pulsoDelDia((myStories || []).length)
 
   return (
-    <div className={styles.page}>
-      <PageHeader />
+    <div style={{ minHeight: '100dvh', background: 'var(--paper)', paddingBottom: '96px' }}>
+      <div className="aurora" style={{ padding: '54px 20px 18px' }}>
+        <h1 style={{ fontFamily: 'var(--font-voice)', fontWeight: 500, fontSize: '26px',
+          letterSpacing: '-0.6px', color: 'var(--ink)', margin: 0 }}>
+          Comunidad
+        </h1>
+        <div className="hilo" style={{ width: '64px', margin: '8px 0 10px' }} />
+        <p style={{ fontSize: '13px', color: 'var(--ink-secondary)', margin: 0, lineHeight: 1.5 }}>
+          Esta semana en tu zona: <strong style={{ color: 'var(--ink)' }}>{pulso.conexiones} conexiones ✓</strong>
+          {' '}· <strong style={{ color: 'var(--ink)' }}>{pulso.citas} citas acordadas</strong>
+        </p>
+      </div>
 
-      {/* Tabs */}
-      <div className={styles.tabs} style={{animation:"fadeInUp 0.25s cubic-bezier(0.22, 1, 0.36, 1) forwards"}}>
-        <div className={styles.tabsInner}>
-          <button
-            className={`${styles.tab} ${tab==='para-ti' ? styles.tabActive : ''}`}
-            onClick={() => setTab('para-ti')}>
-            Para ti
-          </button>
-          <button
-            className={`${styles.tab} ${tab==='siguiendo' ? styles.tabActive : ''}`}
-            onClick={() => setTab('siguiendo')}>
-            Siguiendo{followingCount > 0 ? ` (${followingCount})` : ''}
+      <div style={{ padding: '0 16px' }}>
+        {mia && (
+          <div style={{ margin: '6px 0 22px', animation: 'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) both' }}>
+            <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--purple)',
+              letterSpacing: '0.6px', textTransform: 'uppercase', marginBottom: '8px' }}>
+              Tu conexión
+            </div>
+            <div style={{ background: 'white', border: '1px solid var(--purple-20)',
+              borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-md)', padding: '14px' }}>
+              <p style={{ fontFamily: 'var(--font-voice)', fontStyle: 'italic', fontSize: '14.5px',
+                lineHeight: 1.55, color: 'var(--ink)', margin: '0 0 12px' }}>
+                {mia.text}
+              </p>
+              <HelperCard helper={mia.helper} />
+            </div>
+          </div>
+        )}
+
+        <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--ink-tertiary)',
+          letterSpacing: '0.6px', textTransform: 'uppercase', margin: '0 0 10px' }}>
+          Conexiones reales
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+          {rio.map((s, i) => (
+            <div key={s.id || i} style={{ animation: `fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) ${Math.min(i, 5) * 70}ms both` }}>
+              <p style={{ fontFamily: 'var(--font-voice)', fontStyle: 'italic', fontSize: '14px',
+                lineHeight: 1.55, color: 'var(--ink)', margin: '0 0 8px' }}>
+                {s.text}
+              </p>
+              <HelperCard helper={s.helper} />
+              <div style={{ fontSize: '11px', color: 'var(--ink-tertiary)', marginTop: '5px' }}>
+                {s.seconds != null ? <>⚡ encontrado en {s.seconds}s · </> : <>✓ conexión real · </>}{s.timeAgo}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {destacados.length > 0 && (
+          <>
+            <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--ink-tertiary)',
+              letterSpacing: '0.6px', textTransform: 'uppercase', margin: '28px 0 10px' }}>
+              Cerca de ti, esta semana
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {destacados.map(h => <HelperCard key={h.id} helper={h} showPrice />)}
+            </div>
+          </>
+        )}
+
+        <div style={{ margin: '30px 0 8px', textAlign: 'center' }}>
+          <p style={{ fontFamily: 'var(--font-voice)', fontSize: '17px', color: 'var(--ink)',
+            letterSpacing: '-0.3px', margin: '0 0 10px' }}>
+            ¿Y tú? Cuéntale a Nüra qué necesitas.
+          </p>
+          <button onClick={() => navigate('/')}
+            aria-label="Ir a buscar"
+            style={{ background: 'var(--purple)', color: 'white', border: 'none',
+              borderRadius: 'var(--radius-full)', padding: '11px 22px',
+              fontSize: '13px', fontWeight: 700, cursor: 'pointer',
+              boxShadow: '0 4px 14px rgba(123,47,255,0.3)' }}>
+            Buscar a mi persona
           </button>
         </div>
       </div>
-
-      {/* Feed */}
-      <div className={styles.feed}>
-
-        {/* Nüra personalized section — based on last search */}
-        
-        {/* ── Profesional del día ── */}
-        {tab === 'para-ti' && dailyPick && (
-          <div className={styles.nuraPick} key="nura-pick"
-            onClick={() => navigate(`/helper/${dailyPick.id}`, { state: { helper: dailyPick } })}>
-            <div className={styles.nuraPickHeader}>
-              <span className={styles.nuraPickLabel}>Profesional del día</span>
-            </div>
-            <HelperCard helper={dailyPick} />
-          </div>
-        )}
-
-{tab === 'para-ti' && searchHistory?.length > 0 && (() => {
-          const lastQ = searchHistory[0]?.query
-          const lastCat = searchHistory[0]?.category
-          const words = lastQ.toLowerCase().split(/\s+/).filter(w => w.length > 3)
-          const related = feedHelpers.filter(h =>
-            h.available && (
-              (lastCat && h.category === lastCat) ||
-              words.some(w =>
-                h.specialty?.toLowerCase().includes(w) ||
-                h.category?.toLowerCase().includes(w) ||
-                h.bio?.toLowerCase().includes(w) ||
-                (h.tags||[]).some(t => t.toLowerCase().includes(w))
-              )
-            )
-          ).slice(0, 3)
-          if (!related.length || !lastQ) return null
-          return (
-            <div style={{
-              background:'linear-gradient(135deg,rgba(123,47,255,0.06),rgba(0,212,200,0.04))',
-              border:'1px solid rgba(123,47,255,0.1)',
-              borderRadius:'20px',padding:'16px',marginBottom:'10px',
-            }}>
-              <div style={{display:'flex',alignItems:'center',gap:'6px',marginBottom:'12px'}}>
-                <img src="/logo-iso.png" alt="Nüra" style={{width:'14px',height:'14px',objectFit:'contain'}} />
-                <span style={{fontSize:'var(--text-xs)',fontWeight:700,color:'var(--purple)',letterSpacing:'0.4px',textTransform:'uppercase'}}>
-                  Basado en tu búsqueda
-                </span>
-              </div>
-              <p style={{fontSize:'var(--text-sm)',color:'rgba(0,0,0,0.55)',margin:'0 0 12px',lineHeight:1.5}}>
-                Buscaste <strong style={{color:'rgba(0,0,0,0.75)'}}>{lastQ}</strong>. Estos profesionales están disponibles ahora.
-              </p>
-              <HelperCarousel helpers={related} />
-            </div>
-          )
-        })()}
-
-        {feedLoading && (
-          <div style={{display:'flex',flexDirection:'column',gap:'10px'}}>
-            {[1,2].map(i => (
-              <div key={i} style={{background:'rgba(255,255,255,0.85)',borderRadius:'20px',padding:'16px',
-                animation:'pulse 1.5s ease-in-out infinite',boxShadow:'0 1px 8px rgba(0,0,0,0.04)'}}>
-                <div style={{display:'flex',gap:'10px',alignItems:'center',marginBottom:'14px'}}>
-                  <div style={{width:'38px',height:'38px',borderRadius:'50%',background:'rgba(0,0,0,0.06)',flexShrink:0}} />
-                  <div style={{flex:1}}>
-                    <div style={{height:'13px',borderRadius:'7px',background:'rgba(0,0,0,0.06)',width:'50%',marginBottom:'6px'}} />
-                    <div style={{height:'10px',borderRadius:'5px',background:'rgba(0,0,0,0.04)',width:'35%'}} />
-                  </div>
-                  <div style={{width:'60px',height:'26px',borderRadius:'13px',background:'rgba(0,0,0,0.06)'}} />
-                </div>
-                <div style={{height:'12px',borderRadius:'6px',background:'rgba(0,0,0,0.04)',width:'95%',marginBottom:'8px'}} />
-                <div style={{height:'12px',borderRadius:'6px',background:'rgba(0,0,0,0.04)',width:'80%'}} />
-              </div>
-            ))}
-            <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}`}</style>
-          </div>
-        )}
-        {!feedLoading && displayPosts.length === 0 ? (
-          <div className={styles.empty}>
-            <Users2 size={44} color='rgba(0,0,0,0.12)' strokeWidth={1.2} />
-            <h3>Aún no sigues a nadie</h3>
-            <p>Sigue a profesionales para ver sus publicaciones aquí. Están en la tab "Para ti".</p>
-            <button className={styles.emptyBtn} onClick={() => setTab('para-ti')}>
-              Descubrir profesionales
-            </button>
-          </div>
-        ) : (
-          !feedLoading && (<>
-            {tab === 'para-ti' && displayPosts.length > 0 && (
-              <div style={{
-                margin:'0 0 6px', padding:'14px 16px',
-                background:'linear-gradient(135deg,rgba(123,47,255,0.08),rgba(123,47,255,0.03))',
-                borderRadius:'16px', border:'1px solid rgba(123,47,255,0.12)'
-              }}>
-                <div style={{fontSize:'10px',fontWeight:700,color:'var(--purple)',letterSpacing:'0.6px',textTransform:'uppercase',marginBottom:'8px'}}>
-                  ✦ Nuevas ayudas cerca de ti
-                </div>
-                <div style={{display:'flex',gap:'10px',overflowX:'auto',paddingBottom:'2px'}}>
-                  {displayPosts
-                    .filter(p => p?.author?.name && p?.authorType === 'helper')
-                    .filter((p,i,arr) => arr.findIndex(x => x.author.id === p.author.id) === i)
-                    .slice(0,5)
-                    .map((p,i) => (
-                      <div key={p.author.id || i} style={{minWidth:'250px',flexShrink:0}}>
-                        <HelperCard helper={p.author} showContact={false} showPrice />
-                      </div>
-                    ))}
-                </div>
-              </div>
-            )}
-            {tab === 'para-ti' ? (<>
-              <div style={{margin:'6px 0 12px'}}>
-                <div style={{fontSize:'15px', fontWeight:800, color:'var(--ink)', letterSpacing:'-0.3px'}} style={{fontFamily:'var(--font-voice)', fontWeight:500, fontSize:'22px', letterSpacing:'-0.5px'}}>
-                  Conexiones reales
-                </div>
-                <div className="hilo" style={{margin:'8px 0 2px', width:'64px'}} />
-                <div style={{fontSize:'11px', color:'var(--ink-tertiary)', marginTop:'2px'}}>
-                  Historias verificadas por las personas que las vivieron · Barcelona
-                </div>
-              </div>
-              {muroStories.map((s, i) => (
-                <ConnectionCard key={s.id || i} story={s} index={i} />
-              ))}
-            </>) : (
-              displayPosts.map((post, i) => (
-                <div key={post.id || i} style={{animation:`cardCascade 0.45s cubic-bezier(0.22, 1, 0.36, 1) ${i*80}ms both`}}>
-                  <PostCard post={post} />
-                </div>
-              ))
-            )}
-          </>)
-        )}
-      </div>
-      {showGate && <RegisterGate reason="follow" onClose={() => setShowGate(false)} />}
     </div>
   )
 }
