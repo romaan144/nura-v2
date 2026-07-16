@@ -127,7 +127,7 @@ export default function Profile() {
             </div>
           ) : (
             <button className={styles.nameTap} onClick={() => { setNameInput(user.name); setEditingName(true) }}>
-              <h2 className={styles.name}>{user.name}</h2>
+              <h2 className={styles.name} style={{fontFamily:'var(--font-voice)', fontWeight:500, letterSpacing:'-0.5px'}}>{user.name}</h2>
               <Edit2 size={13} className={styles.editHint} />
             </button>
           )}

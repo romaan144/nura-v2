@@ -445,9 +445,10 @@ export default function Feed() {
             )}
             {tab === 'para-ti' ? (<>
               <div style={{margin:'6px 0 12px'}}>
-                <div style={{fontSize:'15px', fontWeight:800, color:'var(--ink)', letterSpacing:'-0.3px'}}>
+                <div style={{fontSize:'15px', fontWeight:800, color:'var(--ink)', letterSpacing:'-0.3px'}} style={{fontFamily:'var(--font-voice)', fontWeight:500, fontSize:'22px', letterSpacing:'-0.5px'}}>
                   Conexiones reales
                 </div>
+                <div className="hilo" style={{margin:'8px 0 2px', width:'64px'}} />
                 <div style={{fontSize:'11px', color:'var(--ink-tertiary)', marginTop:'2px'}}>
                   Historias verificadas por las personas que las vivieron · Barcelona
                 </div>

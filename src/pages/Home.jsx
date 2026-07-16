@@ -72,6 +72,7 @@ function ResultsBlock({ results }) {
       <div style={{animation:'cardCascade 0.45s cubic-bezier(0.22, 1, 0.36, 1) both'}}>
         <HelperCard helper={top} showPrice />
       </div>
+      <div className="hilo" style={{margin:'12px 6px 2px'}} />
       {alts.length > 0 && (
         <>
           <div style={{fontSize:'12px', color:'var(--ink-secondary)', margin:'12px 0 8px', lineHeight:1.5}}>

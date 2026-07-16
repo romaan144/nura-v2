@@ -6,6 +6,14 @@
 
 ---
 
+## 2026-07-04 — El Alma Visible (mandato artístico del fundador)
+
+- El degradado del logo entra al producto: **auroras** sobre Home, el hero
+  del profesional y Login; la **Voz a display** en los nombres (perfil
+  propio y profesional) y el título del Muro; **el hilo** degradado firmando
+  la Recomendación y la Comunidad. Arte visible, tres pinceladas de sistema.
+- Sello `NURA_BUILD` → `2026.07.04-aa`.
+
 ## 2026-07-04 — La Tinta Viva (mandato estético del fundador)
 
 - **Una sola tinta**: el texto era negro frío (#0D0D1A + alphas de negro

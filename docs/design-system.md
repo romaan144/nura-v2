@@ -33,6 +33,15 @@ más **`--font-voice`** (Fraunces, serif cálida) para La Voz Tipográfica (§3)
 [PENDIENTE] Formalizar escala de espaciado como tokens (hoy: valores coherentes
 por convención).
 
+### El Alma Visible (2026-07-04)
+
+El degradado del logo vive también en el producto: **auroras** (lavados
+radiales rojo→morado→cian a 5-10%) sobre el papel de las superficies clave
+(Home, hero del profesional, Login). La **Voz sube a display**: los nombres
+de las personas y los títulos de pantalla, en Fraunces grande. **El hilo**:
+línea degradada de 2px que firma los momentos importantes (la Recomendación,
+la Comunidad). Tres pinceladas de sistema; prohibido el confeti.
+
 ### La Tinta Viva (2026-07-04)
 
 **Una sola tinta**: texto y sombras comparten el mismo violeta cálido

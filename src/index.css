@@ -469,3 +469,18 @@ textarea:active {
 :root { --font-voice: 'Fraunces', Georgia, serif; }
 
 @keyframes bootBreath { to { opacity: 0; visibility: hidden } }
+
+/* ── El Alma Visible ─────────────────────────────────────────── */
+.aurora { position: relative; }
+.aurora::before {
+  content: ''; position: absolute; inset: -24px -24px auto; height: 230px;
+  pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(420px 200px at 16% 0%, rgba(255,59,92,0.08), transparent 62%),
+    radial-gradient(540px 250px at 86% 6%, rgba(123,47,255,0.10), transparent 64%);
+}
+.aurora > * { position: relative; z-index: 1; }
+.hilo {
+  height: 2px; border: 0;
+  background: linear-gradient(90deg, transparent, rgba(123,47,255,0.45), transparent);
+}

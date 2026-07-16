@@ -53,7 +53,7 @@ export default function Login() {
   const progress = ((steps.indexOf(step) + 1) / steps.length) * 100
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} aurora`}>
       {/* Background blobs */}
       <div className={styles.blob1} />
       <div className={styles.blob2} />
