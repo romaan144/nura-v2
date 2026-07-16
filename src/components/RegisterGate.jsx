@@ -64,6 +64,7 @@ export default function RegisterGate({ onClose, reason = 'contact' }) {
           <h2 style={{fontFamily:'var(--font-voice)',fontSize:'21px',fontWeight:500,color:'var(--ink)',letterSpacing:'-0.4px',margin:'0 0 8px'}}>
             {r.title}
           </h2>
+          <div className="hilo" style={{width:'56px', margin:'2px 0 10px'}} />
           <p style={{fontSize:'var(--text-sm)',color:'rgba(0,0,0,0.45)',lineHeight:1.65,margin:0,maxWidth:'280px',marginInline:'auto'}}>
             {r.desc}
           </p>

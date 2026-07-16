@@ -6,6 +6,15 @@
 
 ---
 
+## 2026-07-04 — El Alma Completa (Nura diseño)
+
+- La dirección artística se cierra: la **Carta gana atmósfera interior**
+  (radial morado ≤6% sobre su papel, en el chat y en el compositor); los
+  **umbrales firman con hilo** (Gate y ConfirmModal, bajo sus títulos);
+  Chats se evalúa contra el sistema compartido. **El mapa cerrado** entra
+  en design-system con prohibición de extender recetas sin editar la ley.
+- Sello `NURA_BUILD` → `2026.07.04-ab`.
+
 ## 2026-07-04 — El Alma Visible (mandato artístico del fundador)
 
 - El degradado del logo entra al producto: **auroras** sobre Home, el hero

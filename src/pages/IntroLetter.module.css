@@ -135,7 +135,7 @@
 /* ── Aire: la carta se escribe sobre su propio papel ─────────── */
 .header { background: transparent; border-bottom: none; }
 .letterCard {
-  background: #FDFBF7;
+  background: radial-gradient(340px 170px at 85% -10%, rgba(123,47,255,0.06), transparent 60%), #FDFBF7;
   border: 1px solid rgba(123,47,255,0.14);
   border-radius: var(--radius-md);
   box-shadow: 0 3px 14px rgba(0,0,0,0.06);

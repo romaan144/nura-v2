@@ -116,6 +116,7 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
           <span style={{position:'absolute',bottom:-2,right:-2,width:'20px',height:'20px',background:'var(--green-dot)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center'}}><svg width='11' height='11' viewBox='0 0 12 12' fill='none'><path d='M2 6l3 3 5-5' stroke='white' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round'/></svg></span>
         </div>
         <h3 className={styles.modalTitle}>¡Solicitud enviada!</h3>
+            <div className="hilo" style={{width:'56px', margin:'2px auto 10px'}} />
         <p style={{fontSize:'var(--text-sm)',color:'rgba(0,0,0,0.45)',marginBottom:'12px',lineHeight:1.6}}>{name} confirmará disponibilidad en breve.</p>
         {(date || time) && (
           <div style={{background:'rgba(0,0,0,0.03)',border:'1px solid rgba(0,0,0,0.06)',borderRadius:'12px',

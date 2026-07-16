@@ -40,7 +40,12 @@ radiales rojo→morado→cian a 5-10%) sobre el papel de las superficies clave
 (Home, hero del profesional, Login). La **Voz sube a display**: los nombres
 de las personas y los títulos de pantalla, en Fraunces grande. **El hilo**:
 línea degradada de 2px que firma los momentos importantes (la Recomendación,
-la Comunidad). Tres pinceladas de sistema; prohibido el confeti.
+la Comunidad). **El mapa cerrado**: Auroras = {Home, hero del profesional, Login, la
+Carta (interior, ≤6%)} · Hilo = {la Recomendación, el Muro, el Gate,
+ConfirmModal} · Voz-display = {nombres de personas, título del Muro}.
+Explorar queda papel a propósito: el respiro entre atmósferas es parte de
+la composición. **Prohibido extender cualquier receta sin editar esta ley
+primero.**
 
 ### La Tinta Viva (2026-07-04)
 
