@@ -285,7 +285,7 @@ function HelperProfileInner() {
 
             {/* Nombre grande */}
             <h1 style={{
-              fontSize:'24px', fontWeight:800, color:'var(--ink)',
+              fontFamily:'var(--font-voice)', fontSize:'27px', fontWeight:500, letterSpacing:'-0.6px', color:'var(--ink)',
               letterSpacing:'-0.5px', margin:'0 0 4px', textAlign:'center'
             }}>{enrichedH.name}</h1>
 
