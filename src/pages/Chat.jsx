@@ -146,6 +146,7 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
       <div style={{background:'rgba(255,255,255,0.95)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',border:'1px solid rgba(255,255,255,0.5)',borderRadius:'24px 24px 0 0',padding:'24px 20px 32px',width:'100%',maxWidth:'500px',boxShadow:'0 -8px 40px rgba(0,0,0,0.1)'}}>
         <div style={{width:'36px',height:'4px',background:'rgba(0,0,0,0.1)',borderRadius:'2px',margin:'0 auto 24px'}} />
         <h3 style={{fontSize:'var(--text-md)',fontWeight:800,marginBottom:'4px',color:'rgba(0,0,0,0.85)',letterSpacing:'-0.3px'}}>Solicitar servicio</h3>
+        <div className="hilo" style={{width:'56px', margin:'2px 0 10px'}} />
         <p style={{fontSize:'var(--text-sm)',color:'rgba(0,0,0,0.45)',marginBottom: prefillDate ? '12px' : '20px'}}>Con {name} · {helper.price || 'Precio a consultar'}</p>
         {prefillDate && (
           <div style={{display:'flex',alignItems:'center',gap:'6px',
