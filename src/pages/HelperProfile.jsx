@@ -287,7 +287,7 @@ function HelperProfileInner() {
 
             {/* Nombre grande */}
             <h1 style={{
-              fontFamily:'var(--font-voice)', fontSize:'27px', fontWeight:500, letterSpacing:'-0.6px', color:'var(--ink)',
+              fontFamily:'var(--font-voice)', fontSize:'27px', fontWeight:700, letterSpacing:'-0.8px', color:'var(--ink)',
               letterSpacing:'-0.5px', margin:'0 0 4px', textAlign:'center'
             }}>{enrichedH.name}</h1>
 
@@ -330,7 +330,7 @@ function HelperProfileInner() {
               <p style={{
                 fontSize:'17px', fontWeight:500, color:'var(--ink)',
                 lineHeight:1.55, letterSpacing:'-0.2px', margin:0,
-                fontStyle:'italic', fontFamily:'var(--font-voice)'
+                fontFamily:'var(--font-voice)'
               }}>"{enrichedH.quote}"</p>
             </div>
           )}

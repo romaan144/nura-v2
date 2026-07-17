@@ -40,8 +40,8 @@ export default function Feed() {
   return (
     <div style={{ minHeight: '100dvh', background: 'var(--paper)', paddingBottom: '96px' }}>
       <div className="aurora" style={{ padding: '54px 20px 18px' }}>
-        <h1 style={{ fontFamily: 'var(--font-voice)', fontWeight: 500, fontSize: '26px',
-          letterSpacing: '-0.6px', color: 'var(--ink)', margin: 0 }}>
+        <h1 style={{ fontFamily: 'var(--font-voice)', fontWeight: 700, fontSize: '26px',
+          letterSpacing: '-0.9px', color: 'var(--ink)', margin: 0 }}>
           Comunidad
         </h1>
         <div className="hilo" style={{ width: '64px', margin: '8px 0 10px' }} />
@@ -60,7 +60,7 @@ export default function Feed() {
             </div>
             <div style={{ background: 'white', border: '1px solid var(--purple-20)',
               borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-md)', padding: '14px' }}>
-              <p style={{ fontFamily: 'var(--font-voice)', fontStyle: 'italic', fontSize: '14.5px',
+              <p style={{ fontFamily: 'var(--font-voice)', fontSize: '14.5px',
                 lineHeight: 1.55, color: 'var(--ink)', margin: '0 0 12px' }}>
                 {mia.text}
               </p>
@@ -89,7 +89,7 @@ export default function Feed() {
                   <ObraCard post={m.it} />
                 ) : (
                   <>
-                    <p style={{ fontFamily: 'var(--font-voice)', fontStyle: 'italic', fontSize: '14px',
+                    <p style={{ fontFamily: 'var(--font-voice)', fontSize: '14px',
                       lineHeight: 1.55, color: 'var(--ink)', margin: '0 0 8px' }}>
                       {m.it.text}
                     </p>

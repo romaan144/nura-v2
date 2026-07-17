@@ -363,8 +363,8 @@ export default function Explore() {
         {/* LA PLAZA: portada */}
         {!isListView && !isLoading && (
           <>
-            <h1 style={{fontFamily:'var(--font-voice)', fontWeight:500, fontSize:'24px',
-              letterSpacing:'-0.5px', color:'var(--ink)', margin:'2px 4px 16px', lineHeight:1.25}}>
+            <h1 style={{fontFamily:'var(--font-voice)', fontWeight:700, fontSize:'24px',
+              letterSpacing:'-0.8px', color:'var(--ink)', margin:'2px 4px 16px', lineHeight:1.25}}>
               El barrio, a una búsqueda.
             </h1>
             <div style={{display:'flex', gap:'8px', overflowX:'auto', padding:'0 0 6px',
@@ -385,7 +385,7 @@ export default function Explore() {
               Cerca de ti, esta semana
             </div>
             <div style={{display:'flex', flexDirection:'column', gap:'10px'}}>
-              {getDestacados(3).map(h => (
+              {getDestacados(8).map(h => (
                 <HelperCard key={h.id} helper={h} showPrice />
               ))}
             </div>

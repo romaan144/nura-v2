@@ -329,7 +329,6 @@
 .quote p {
   font-size: var(--text-xs);
   color: var(--ink-secondary);
-  font-style: italic;
   line-height: 1.55;
   margin: 0 0 4px;
 }
@@ -402,7 +401,6 @@
   color: var(--ink-secondary);
   line-height: 1.6;
   margin: 0 0 4px;
-  font-style: italic;
 }
 .reviewItem p::before { content: '\201C'; }
 .reviewItem p::after  { content: '\201D'; }

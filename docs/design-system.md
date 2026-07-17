@@ -33,6 +33,13 @@ más **`--font-voice`** (Fraunces, serif cálida) para La Voz Tipográfica (§3)
 [PENDIENTE] Formalizar escala de espaciado como tokens (hoy: valores coherentes
 por convención).
 
+### La Voz Moderna (2026-07-04 — corrección de dirección del fundador)
+
+La Voz **no es una serif**: es la sans del sistema con peso alto (700) y
+tracking apretado en display. **Prohibidas las serifas y las cursivas** en
+toda la app — moderna y futurista, jamás "de libro". El token
+`--font-voice` gobierna todas las sedes.
+
 ### El Alma Visible (2026-07-04)
 
 El degradado del logo vive también en el producto: **auroras** (lavados

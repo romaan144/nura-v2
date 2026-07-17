@@ -62,7 +62,7 @@ export default function HowItWorks() {
         <p style={{
           fontSize:'var(--text-md)', fontWeight:800, color:'rgba(0,0,0,0.8)',
           letterSpacing:'-0.4px', lineHeight:1.5, margin:0,
-          fontStyle:'italic',
+          
         }}>
           "La IA no reemplaza humanos.<br/>Nüra conecta humanos."
         </p>
@@ -129,7 +129,7 @@ export default function HowItWorks() {
             No creemos que la IA deba reemplazar el contacto humano. Creemos que debe facilitar que dos personas se encuentren — la que necesita ayuda y la que puede darla.
           </p>
           <p style={{fontSize:'var(--text-sm)',color:'rgba(0,0,0,0.55)',lineHeight:1.7,margin:0,
-            fontStyle:'italic',borderLeft:'3px solid rgba(123,47,255,0.2)',paddingLeft:'12px'}}>
+            borderLeft:'3px solid rgba(123,47,255,0.2)',paddingLeft:'12px'}}>
             "La tecnología más poderosa es la que pone en contacto a personas."
           </p>
         </div>

@@ -257,7 +257,6 @@
 }
 .msgLetter p {
   font-family: var(--font-voice) !important;
-  font-style: italic;
   font-size: 15px !important;
   line-height: 1.6 !important;
   color: var(--ink) !important;

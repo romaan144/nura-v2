@@ -6,6 +6,16 @@
 
 ---
 
+## 2026-07-04 — La Voz Moderna (corrección de dirección del fundador)
+
+- **La serif sale de toda la app** ("letra de lápiz de libro"): el token
+  `--font-voice` pasa a la sans del sistema — una línea, ~20 sedes curadas
+  a la vez. **Cursivas exterminadas** globalmente. Pesos display a 700 con
+  tracking -0.8 en las sedes clave (portada Explorar, Comunidad, nombres).
+  Explorar recupera músculo: portada con 8 profesionales (uno por
+  categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
+- Sello `NURA_BUILD` → `2026.07.04-af`.
+
 ## 2026-07-04 — Explorar, la Plaza (Nura diseño)
 
 - **Muere la portada v1**: EscaparateVivo (liveness fingida — la especie que

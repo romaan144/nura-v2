@@ -127,7 +127,7 @@ export default function Profile() {
             </div>
           ) : (
             <button className={styles.nameTap} onClick={() => { setNameInput(user.name); setEditingName(true) }}>
-              <h2 className={styles.name} style={{fontFamily:'var(--font-voice)', fontWeight:500, letterSpacing:'-0.5px'}}>{user.name}</h2>
+              <h2 className={styles.name} style={{fontFamily:'var(--font-voice)', fontWeight:700, letterSpacing:'-0.7px'}}>{user.name}</h2>
               <Edit2 size={13} className={styles.editHint} />
             </button>
           )}
@@ -264,7 +264,7 @@ export default function Profile() {
                   aria-label="Tu cita personal"
                   style={{width:'100%', minHeight:'64px', border:'1px solid var(--ink-border)',
                     borderRadius:'10px', padding:'10px', fontSize:'14px',
-                    fontFamily:'var(--font-voice)', fontStyle:'italic', resize:'none', background:'white'}} />
+                    fontFamily:'var(--font-voice)', resize:'none', background:'white'}} />
                 <button onClick={saveQuote} disabled={!quoteDraft.trim()}
                   style={{marginTop:'8px', background: quoteDraft.trim() ? 'var(--purple)' : 'rgba(0,0,0,0.15)',
                     color:'white', border:'none', borderRadius:'99px', padding:'9px 16px',

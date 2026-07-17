@@ -466,7 +466,7 @@ textarea:active {
 }
 
 /* ── La Voz Tipográfica — solo donde hablan los humanos ── */
-:root { --font-voice: 'Fraunces', Georgia, serif; }
+:root { --font-voice: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;  /* La Voz Moderna: sans, jamás serif */ }
 
 @keyframes bootBreath { to { opacity: 0; visibility: hidden } }
 
