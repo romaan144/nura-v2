@@ -383,8 +383,7 @@ function HelperProfileInner() {
             <img src="/logo-iso.png" alt="Nüra" style={{width:'18px',height:'18px',flexShrink:0,marginTop:'1px',opacity:0.7}} />
             <p style={{
               fontSize:'12px', color:'rgba(0,0,0,0.5)', lineHeight:1.5,
-              margin:0, fontStyle:'italic'
-            }}>
+              margin:0, }}>
               {location.state?.matchReason
                 ? `Te recomiendo a ${firstName} porque ${String(location.state.matchReason).replace(/\*\*/g, '').trim().replace(/\.$/, '')}.`
                 : `${firstName} es uno de los profesionales mejor valorados en su categoría en Barcelona.`

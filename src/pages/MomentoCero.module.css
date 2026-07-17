@@ -70,7 +70,7 @@
 .needText {
   font-size: 16px; font-weight: 500; color: white;
   line-height: 1.5; letter-spacing: -0.2px;
-  font-family: var(--font-voice); font-style: italic;
+  font-family: var(--font-voice);
 }
 
 /* ── Analyzing ───────────────────────────────────── */

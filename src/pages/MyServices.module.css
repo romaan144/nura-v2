@@ -38,7 +38,7 @@
 .helperName { font-size: var(--text-sm); font-weight: 700; color: var(--ink-primary); letter-spacing: -0.2px; }
 .specialty { font-size: var(--text-xs); color: var(--ink-secondary); }
 .meta { display: flex; align-items: center; gap: 5px; font-size: var(--text-xs); color: rgba(0,0,0,0.4); margin-top: 4px; }
-.note { font-size: var(--text-xs); color: rgba(0,0,0,0.5); font-style: italic; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.note { font-size: var(--text-xs); color: rgba(0,0,0,0.5); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* Right */
 .right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
