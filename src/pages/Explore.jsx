@@ -415,6 +415,21 @@ export default function Explore() {
               </span>
             </div>
 
+            {/* Subcategorías */}
+            {activeCategory?.subcategories?.length > 0 && (
+              <div className={styles.subCatRow}>
+                {activeCategory.subcategories.map(sub => (
+                  <button
+                    key={sub}
+                    className={`${styles.subCatPill} ${activeSubcategory === sub ? styles.subCatActive : ''}`}
+                    style={activeSubcategory === sub ? {background: activeCategory.color, borderColor: activeCategory.color} : {}}
+                    onClick={() => { setActiveSubcategory(sub); setVisibleCount(20) }}>
+                    {sub}
+                  </button>
+                ))}
+              </div>
+            )}
+
 
             {/* Filtros */}
             <div className={styles.filtersRow}>

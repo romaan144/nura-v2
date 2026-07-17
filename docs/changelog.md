@@ -16,6 +16,14 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — Restauración II: las subcategorías vuelven
+
+- Cayeron en el mismo commit que la Plaza, así que la restauración del grid
+  no las trajo. Extraídas verbatim de 785b191 (misma fuente que el grid) y
+  reinsertadas en su sitio: tras el contador de resultados, antes de los
+  filtros. Sus estados y clases del module seguían vivos.
+- Sello `NURA_BUILD` → `2026.07.04-ah`.
+
 ## 2026-07-04 — Restauración dirigida (el ojo del fundador manda)
 
 - **El grid de categorías VUELVE** ("era de lo más bonito de la app"):
