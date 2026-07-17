@@ -401,6 +401,7 @@
   color: var(--ink-secondary);
   line-height: 1.6;
   margin: 0 0 4px;
+ 
 }
 .reviewItem p::before { content: '\201C'; }
 .reviewItem p::after  { content: '\201D'; }

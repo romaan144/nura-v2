@@ -10,7 +10,6 @@ import { DEMO_ENRICHMENTS } from '../data/demoEnrichments'
 import { analyzeNeed, matchHelpers } from '../utils/matching'
 import { useUser } from '../context/UserContext'
 import HelperCard from '../components/HelperCard'
-import { getDestacados } from '../data/connectionStories'
 import styles from './Explore.module.css'
 import { LiveDot } from '../components/ui'
 
@@ -360,36 +359,43 @@ export default function Explore() {
           </form>
         </div>
 
-        {/* LA PLAZA: portada */}
         {!isListView && !isLoading && (
-          <>
-            <h1 style={{fontFamily:'var(--font-voice)', fontWeight:700, fontSize:'24px',
-              letterSpacing:'-0.8px', color:'var(--ink)', margin:'2px 4px 16px', lineHeight:1.25}}>
-              El barrio, a una búsqueda.
-            </h1>
-            <div style={{display:'flex', gap:'8px', overflowX:'auto', padding:'0 0 6px',
-              margin:'0 0 18px', WebkitOverflowScrolling:'touch'}}>
-              {CATEGORIES.map(cat => { const Icon = cat.icon; return (
-                <button key={cat.id}
-                  onClick={() => { setActiveSubcategory('Todos'); setActiveCategory(cat) }}
-                  style={{display:'inline-flex', alignItems:'center', gap:'6px', flexShrink:0,
-                    background:'white', border:'1px solid var(--ink-border)', borderRadius:'99px',
-                    padding:'8px 14px', fontSize:'12.5px', fontWeight:600, color:'var(--ink)',
-                    boxShadow:'var(--shadow-sm)', cursor:'pointer'}}>
-                  <Icon size={14} color={cat.color} strokeWidth={2.2} />{cat.label}
+          <div className={styles.catGrid}>
+            {CATEGORIES.map(cat => {
+              const Icon = cat.icon
+              return (
+                <button
+                  key={cat.id}
+                  className={styles.catCard}
+                  onClick={() => openCategory(cat)}
+                >
+                  <div className={styles.catIconWrap} style={{background: cat.bg}}>
+                    <Icon size={24} color={cat.color} strokeWidth={1.8} />
+                  </div>
+                  <div className={styles.catInfo}>
+                    <span className={styles.catLabel}>{cat.label}</span>
+                    <span className={styles.catDesc}>{cat.desc}</span>
+                  </div>
                 </button>
-              ) })}
-            </div>
-            <div style={{fontSize:'11px', fontWeight:700, color:'var(--ink-tertiary)',
-              letterSpacing:'0.6px', textTransform:'uppercase', margin:'0 0 10px'}}>
-              Cerca de ti, esta semana
-            </div>
-            <div style={{display:'flex', flexDirection:'column', gap:'10px'}}>
-              {getDestacados(8).map(h => (
-                <HelperCard key={h.id} helper={h} showPrice />
-              ))}
-            </div>
-          </>
+              )
+            })}
+          </div>
+        )}
+
+        {/* ── LOADING ─────────────────────────────────────── */}
+        {isLoading && (
+          <div style={{display:'flex',flexDirection:'column',gap:'10px',padding:'0 16px'}}>
+            {[0,1,2,3,4].map(i => (
+              <div key={i} className="skeleton-card">
+                <div className="skeleton skeleton-avatar" />
+                <div className="skeleton-body">
+                  <div className="skeleton skeleton-line-lg" />
+                  <div className="skeleton skeleton-line-md" />
+                  <div className="skeleton skeleton-line-sm" />
+                </div>
+              </div>
+            ))}
+          </div>
         )}
 
 

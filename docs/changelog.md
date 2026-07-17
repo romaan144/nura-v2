@@ -16,6 +16,19 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — Restauración dirigida (el ojo del fundador manda)
+
+- **El grid de categorías VUELVE** ("era de lo más bonito de la app"):
+  restaurado verbatim desde git; la Plaza de píldoras se retira. El
+  Escaparate sigue muerto (nadie lo lloró).
+- **Colaterales de los regex de cursivas, reparados de raíz**: el forense
+  encontró una línea `}}>` y una declaración CSS completas devoradas junto
+  a los italics ("textos sin márgenes"). Cura: `src` restaurado íntegro
+  desde 111d5cb y reaplicado quirúrgico — token sans (1 línea), pesos
+  display (4 sedes exactas), cursivas por sede SIN comodines de
+  whitespace. Lección grabada: jamás `\s*` en regex de excisión.
+- Sello `NURA_BUILD` → `2026.07.04-ag`.
+
 ## 2026-07-04 — Explorar, la Plaza (Nura diseño)
 
 - **Muere la portada v1**: EscaparateVivo (liveness fingida — la especie que
