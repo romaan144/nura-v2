@@ -412,15 +412,15 @@ function HelperProfileInner() {
             La persona es la protagonista
             ══════════════════════════════════════════════════ */}
 
-        {/* ── Cómo puedo ayudarte ── */}
         {getObraDeHelper(enrichedH.id, 2).length > 0 && (
-          <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0ms forwards`}} className={`${styles.section} ${styles.sectionFirst}`}>
+          <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0ms forwards`}} className={styles.section}>
             <h2 className={styles.sectionHeading}>Su obra</h2>
             <div style={{display:'flex', flexDirection:'column', gap:'10px'}}>
               {getObraDeHelper(enrichedH.id, 2).map(post => <ObraCard key={post.id} post={post} />)}
             </div>
           </section>
         )}
+        {/* ── Cómo puedo ayudarte ── */}
 
         {(enrichedH.tags?.length > 0 || enrichedH.specialty) && (
           <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0ms forwards`}} className={`${styles.section} ${styles.sectionFirst}`}>
