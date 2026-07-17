@@ -6,6 +6,18 @@
 
 ---
 
+## 2026-07-04 — Explorar, la Plaza (Nura diseño)
+
+- **Muere la portada v1**: EscaparateVivo (liveness fingida — la especie que
+  la Gramática extirpó del chat) y el grid con subcategorías (dos niveles de
+  fricción). **Nace la Plaza**: frase-portada en Voz ("El barrio, a una
+  búsqueda."), fila de píldoras con labels humanos e icono con su color de
+  acento, y "Cerca de ti, esta semana" con Destacados canon. List-view canon
+  intacta. Enmienda Voz-display; subcategorías → keywords futuras.
+  Lecciones de la cirugía: comentarios decorativos llevan NBSP (anclar en
+  código) y verificar la aguja contra el texto literal del guard.
+- Sello `NURA_BUILD` → `2026.07.04-ae`.
+
 ## 2026-07-04 — Nüra Obra F1 (visión aprobada del fundador)
 
 - **Nace la Obra**: publicación tipada (caso/trabajo/consejo/evolución/

@@ -122,6 +122,8 @@ cuando la conexión responde. Detalle técnico en `architecture.md`.
   Código **certificado** el 2026-07-04 (barrido ESLint completo + ejecución real
   del pipeline + auditoría de rutas — ver `changelog.md`); sello `2026.07.04-a`
   visible en el Perfil. Resta solo la comprobación visual en dispositivo.
+- [PENDIENTE] Las listas de subcategorías de Explore (datos conservados en
+  CATEGORIES) valen oro como keywords futuras del matching.
 - [PENDIENTE] Extraer `runSearch(id)` del monolito handleSend — el Contrato
   ya rige vía guardas; la extracción es refactor de mantenibilidad.
 - [PENDIENTE] Al lanzar producción: cambiar el interruptor demo en la

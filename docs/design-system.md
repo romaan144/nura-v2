@@ -42,7 +42,7 @@ de las personas y los títulos de pantalla, en Fraunces grande. **El hilo**:
 línea degradada de 2px que firma los momentos importantes (la Recomendación,
 la Comunidad). **El mapa cerrado**: Auroras = {Home, hero del profesional, Login, **cabecera de Comunidad**, la
 Carta (interior, ≤6%)} · Hilo = {la Recomendación, el Muro, el Gate,
-ConfirmModal} · Voz-display = {nombres de personas, título del Muro}.
+ConfirmModal} · Voz-display = {nombres de personas, título del Muro, frase-portada de Explorar}.
 Explorar queda papel a propósito: el respiro entre atmósferas es parte de
 la composición. **Prohibido extender cualquier receta sin editar esta ley
 primero.**

@@ -10,6 +10,7 @@ import { DEMO_ENRICHMENTS } from '../data/demoEnrichments'
 import { analyzeNeed, matchHelpers } from '../utils/matching'
 import { useUser } from '../context/UserContext'
 import HelperCard from '../components/HelperCard'
+import { getDestacados } from '../data/connectionStories'
 import styles from './Explore.module.css'
 import { LiveDot } from '../components/ui'
 
@@ -22,91 +23,7 @@ const ACTIVITY_SIGNALS = [
   () => `recibió una valoración de 5★ hoy`,
 ]
 
-function getLiveHelpers() {
-  const picks = [2003, 2001, 2020, 2044, 2128]
-  return picks.map((id, i) => {
-    const base = LOCAL_DEMO_HELPERS.find(h => h?.id === id)
-    if (!base) return null
-    const enriched = DEMO_ENRICHMENTS[id]
-    const h = enriched ? { ...enriched, ...base, id } : { ...base, id }
-    return { ...h, activitySignal: ACTIVITY_SIGNALS[i % ACTIVITY_SIGNALS.length]() }
-  }).filter(h => h != null && h.id != null)
-}
 
-function EscaparateVivo({ onHelperTap }) {
-  const [liveHelpers] = useState(getLiveHelpers)
-  return (
-    <div style={{ margin: '0 0 16px' }}>
-      <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '0 16px', marginBottom: '10px'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <div style={{
-            width: '7px', height: '7px', borderRadius: '50%',
-            background: '#10B981', boxShadow: '0 0 0 3px rgba(16,185,129,0.20)',
-            animation: 'bgPulseAnim 2s ease-in-out infinite'
-          }} />
-          <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.1px' }}>
-            Activos ahora
-          </span>
-        </div>
-        <span style={{ fontSize: '11px', color: 'rgba(0,0,0,0.35)' }}>Barcelona</span>
-      </div>
-
-      <div style={{
-        display: 'flex', gap: '10px',
-        overflowX: 'auto', paddingLeft: '16px', paddingRight: '16px',
-        paddingBottom: '4px', scrollbarWidth: 'none',
-        WebkitOverflowScrolling: 'touch',
-      }}>
-        {liveHelpers.map((h, i) => (
-          <div key={h.id} onClick={() => onHelperTap(h)} style={{
-            flexShrink: 0, width: '138px',
-            background: 'white', borderRadius: '16px',
-            border: '1px solid rgba(0,0,0,0.07)',
-            padding: '12px 12px 10px',
-            boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
-            cursor: 'pointer',
-            animation: `cardCascade 0.4s cubic-bezier(0.22, 1, 0.36, 1) ${i * 60}ms both`,
-          }}>
-            <div style={{ position: 'relative', marginBottom: '8px' }}>
-              {h.avatarUrl
-                ? <img src={h.avatarUrl} alt={h.name}
-                    style={{ width: '44px', height: '44px', borderRadius: '50%', objectFit: 'cover' }} />
-                : <div style={{
-                    width: '44px', height: '44px', borderRadius: '50%',
-                    background: h.avatarColor || 'var(--purple)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '14px', fontWeight: 700, color: 'white'
-                  }}>{h.avatar || h.name?.[0]}</div>
-              }
-              <LiveDot size={10} style={{position: 'absolute', bottom: 1, right: 1}} />
-            </div>
-            <div style={{
-              fontSize: '12px', fontWeight: 700, color: 'var(--ink)',
-              letterSpacing: '-0.2px', marginBottom: '2px',
-              whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'
-            }}>
-              {h.name?.split(' ')?.[0]} {h.name?.split(' ')?.[1]?.[0]}.
-            </div>
-            <div style={{
-              fontSize: '10px', color: 'rgba(0,0,0,0.45)',
-              marginBottom: '7px', lineHeight: 1.3,
-              display: '-webkit-box', WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical', overflow: 'hidden'
-            }}>{h.specialty}</div>
-            <div style={{
-              fontSize: '10px', color: '#059669', fontWeight: 500, lineHeight: 1.3,
-              display: '-webkit-box', WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical', overflow: 'hidden'
-            }}>{h.activitySignal}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
 
 // ── CATEGORÍAS ────────────────────────────────────────────────────────────
 const CATEGORIES = [
@@ -443,49 +360,38 @@ export default function Explore() {
           </form>
         </div>
 
-        {/* ── GRID DE CATEGORÍAS ──────────────────────────── */}
+        {/* LA PLAZA: portada */}
         {!isListView && !isLoading && (
-          <EscaparateVivo onHelperTap={h => navigate(`/helper/${h.id}`, { state: { helper: h } })} />
-        )}
-
-        {!isListView && !isLoading && (
-          <div className={styles.catGrid}>
-            {CATEGORIES.map(cat => {
-              const Icon = cat.icon
-              return (
-                <button
-                  key={cat.id}
-                  className={styles.catCard}
-                  onClick={() => openCategory(cat)}
-                >
-                  <div className={styles.catIconWrap} style={{background: cat.bg}}>
-                    <Icon size={24} color={cat.color} strokeWidth={1.8} />
-                  </div>
-                  <div className={styles.catInfo}>
-                    <span className={styles.catLabel}>{cat.label}</span>
-                    <span className={styles.catDesc}>{cat.desc}</span>
-                  </div>
+          <>
+            <h1 style={{fontFamily:'var(--font-voice)', fontWeight:500, fontSize:'24px',
+              letterSpacing:'-0.5px', color:'var(--ink)', margin:'2px 4px 16px', lineHeight:1.25}}>
+              El barrio, a una búsqueda.
+            </h1>
+            <div style={{display:'flex', gap:'8px', overflowX:'auto', padding:'0 0 6px',
+              margin:'0 0 18px', WebkitOverflowScrolling:'touch'}}>
+              {CATEGORIES.map(cat => { const Icon = cat.icon; return (
+                <button key={cat.id}
+                  onClick={() => { setActiveSubcategory('Todos'); setActiveCategory(cat) }}
+                  style={{display:'inline-flex', alignItems:'center', gap:'6px', flexShrink:0,
+                    background:'white', border:'1px solid var(--ink-border)', borderRadius:'99px',
+                    padding:'8px 14px', fontSize:'12.5px', fontWeight:600, color:'var(--ink)',
+                    boxShadow:'var(--shadow-sm)', cursor:'pointer'}}>
+                  <Icon size={14} color={cat.color} strokeWidth={2.2} />{cat.label}
                 </button>
-              )
-            })}
-          </div>
+              ) })}
+            </div>
+            <div style={{fontSize:'11px', fontWeight:700, color:'var(--ink-tertiary)',
+              letterSpacing:'0.6px', textTransform:'uppercase', margin:'0 0 10px'}}>
+              Cerca de ti, esta semana
+            </div>
+            <div style={{display:'flex', flexDirection:'column', gap:'10px'}}>
+              {getDestacados(3).map(h => (
+                <HelperCard key={h.id} helper={h} showPrice />
+              ))}
+            </div>
+          </>
         )}
 
-        {/* ── LOADING ─────────────────────────────────────── */}
-        {isLoading && (
-          <div style={{display:'flex',flexDirection:'column',gap:'10px',padding:'0 16px'}}>
-            {[0,1,2,3,4].map(i => (
-              <div key={i} className="skeleton-card">
-                <div className="skeleton skeleton-avatar" />
-                <div className="skeleton-body">
-                  <div className="skeleton skeleton-line-lg" />
-                  <div className="skeleton skeleton-line-md" />
-                  <div className="skeleton skeleton-line-sm" />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
 
         {/* ── RESULTADOS ──────────────────────────────────── */}
         {isListView && !isLoading && (
@@ -503,20 +409,6 @@ export default function Explore() {
               </span>
             </div>
 
-            {/* Subcategorías */}
-            {activeCategory?.subcategories?.length > 0 && (
-              <div className={styles.subCatRow}>
-                {activeCategory.subcategories.map(sub => (
-                  <button
-                    key={sub}
-                    className={`${styles.subCatPill} ${activeSubcategory === sub ? styles.subCatActive : ''}`}
-                    style={activeSubcategory === sub ? {background: activeCategory.color, borderColor: activeCategory.color} : {}}
-                    onClick={() => { setActiveSubcategory(sub); setVisibleCount(20) }}>
-                    {sub}
-                  </button>
-                ))}
-              </div>
-            )}
 
             {/* Filtros */}
             <div className={styles.filtersRow}>
