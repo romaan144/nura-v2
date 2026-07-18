@@ -6,6 +6,7 @@ import { getFirstName } from '../utils/name'
 import { useUser } from '../context/UserContext'
 import { showToast } from '../components/Toast'
 import HelperCard from '../components/HelperCard'
+import { getObra, TYPE_META } from '../data/obraPosts'
 import HelperCarousel from '../components/HelperCarousel'
 import RegisterGate from '../components/RegisterGate'
 import { haptic } from '../utils/haptic'
@@ -194,12 +195,23 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
       `Mientras no mirabas, **${sig.vistasHoy} ${sig.vistasHoy === 1 ? 'persona vio' : 'personas vieron'}** tu perfil hoy y hubo **${sig.busquedasSemana} búsquedas** en tu zona esta semana. Tu escaparate está activo ✨ Y si tú necesitas ayuda, aquí estoy.`
     ]
   }
+  // El susurro de Seguir: la evolución te encuentra (solo rama default)
+  let susurro = null
+  try {
+    const seg = getObra(99).filter(p => (following || []).includes(p.helperId))
+    if (seg.length) {
+      const p = seg[0]
+      const first = p.who?.name?.split(' ')?.[0] || ''
+      susurro = `**${first}**, al que sigues, publicó ${p.dateLabel} — ${String(TYPE_META[p.type]?.label || 'obra').toLowerCase()}: “${p.title}”.`
+    }
+  } catch { /* silencioso */ }
+
   return [
     `${greeting}, **${firstName}**.`,
     hour < 12 ? `¿En qué puedo ayudarte esta mañana?`
     : hour < 18 ? `Cuéntame qué necesitas y lo encontramos.`
     : `¿Qué necesitas esta noche?`
-  ]
+  ].concat(susurro ? [susurro] : [])
 }
 
 function detectIntent(text, user) {

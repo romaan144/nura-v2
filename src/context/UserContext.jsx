@@ -22,7 +22,7 @@ export function UserProvider({ children }) {
     return [1, 5]  // Carlos logopeda + Elena cuidadora
   })
   const [notifications, setNotifications] = useState(() => load('nura_notifications', []))
-  const [favorites, setFavorites] = useState(() => load('nura_following', []))
+  const [favorites, setFavorites] = useState(() => load('nura_favorites', []))
   const [nuraChatMessages, setNuraChatMessages] = useState([])  // always starts fresh
   const [chatHistories, setChatHistories] = useState(() => load('nura_chat_histories', {}))
   const [services, setServices] = useState(() => load('nura_services', []))

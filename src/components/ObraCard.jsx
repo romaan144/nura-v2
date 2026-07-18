@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TYPE_META } from '../data/obraPosts'
+import { useUser } from '../context/UserContext'
 
 // ObraCard — la pieza canon de la Obra (Nüra Obra · F1)
 export default function ObraCard({ post }) {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
+  const { isFollowing } = useUser()
   if (!post) return null
   const meta = TYPE_META[post.type] || { label: 'Obra', icon: '✦' }
   const long = (post.body || '').length > 180
@@ -53,6 +55,7 @@ export default function ObraCard({ post }) {
           <span style={{ color: 'var(--ink-tertiary)', fontWeight: 400 }}> · {post.who?.specialty}</span>
         </span>
         <span style={{ marginLeft: 'auto', fontSize: '11px', color: 'var(--ink-tertiary)' }}>
+          {isFollowing?.(post.helperId) && <span style={{ color: 'var(--purple)', fontWeight: 700 }}>Siguiendo ✓ · </span>}
           {post.verified && <span style={{ color: 'var(--purple)', fontWeight: 700 }}>✓ contrastado · </span>}
           {post.dateLabel}
         </span>

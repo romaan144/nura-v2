@@ -16,6 +16,18 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — Seguir cobra vida (Obra F2 · Nura Copilot)
+
+- **Seguir deja de ser un favorito muerto**: filtro Todos|Siguiendo en la
+  cabecera de Comunidad (río entero filtrado, vacío honesto), **el susurro
+  del saludo** ("Marc, al que sigues, publicó hace 2 días — trabajo: …")
+  solo en la rama default, y la marca **"Siguiendo ✓"** en ObraCard.
+  getWelcome ya recibía `following` — cero cambios de firma. Bug reparado:
+  favorites compartía clave con following ('nura_following') → ahora
+  'nura_favorites' en load y save (favoritos demo previos se vacían).
+  Comentarios profesionales → siguiente ciclo.
+- Sello `NURA_BUILD` → `2026.07.04-ai`.
+
 ## 2026-07-04 — Restauración II: las subcategorías vuelven
 
 - Cayeron en el mismo commit que la Plaza, así que la restauración del grid

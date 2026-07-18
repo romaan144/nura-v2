@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import HelperCard from '../components/HelperCard'
@@ -22,7 +23,8 @@ function pulsoDelDia(extra = 0) {
 
 export default function Feed() {
   const navigate = useNavigate()
-  const { user, myStories } = useUser()
+  const { user, myStories, following } = useUser()
+  const [modo, setModo] = useState('todos')
 
   const seeds = getConnectionStories()
   const seen = new Set()
@@ -34,6 +36,10 @@ export default function Feed() {
   })
   const mia = (myStories || [])[0]
   const rio = mia ? stories.filter(s => s.id !== mia.id) : stories
+  const obrasAll = getObra()
+  const sigue = id => (following || []).includes(id)
+  const obras = modo === 'siguiendo' ? obrasAll.filter(o => sigue(o.helperId)) : obrasAll
+  const rioF = modo === 'siguiendo' ? rio.filter(s => sigue(s.helper?.id ?? s.helperId)) : rio
   const destacados = getDestacados(3)
   const pulso = pulsoDelDia((myStories || []).length)
 
@@ -49,6 +55,18 @@ export default function Feed() {
           Esta semana en tu zona: <strong style={{ color: 'var(--ink)' }}>{pulso.conexiones} conexiones ✓</strong>
           {' '}· <strong style={{ color: 'var(--ink)' }}>{pulso.citas} citas acordadas</strong>
         </p>
+        <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+          {['todos', 'siguiendo'].map(m => (
+            <button key={m} onClick={() => setModo(m)}
+              style={{ background: modo === m ? 'var(--purple)' : 'white',
+                color: modo === m ? 'white' : 'var(--ink)',
+                border: '1px solid ' + (modo === m ? 'var(--purple)' : 'var(--ink-border)'),
+                borderRadius: '99px', padding: '6px 14px', fontSize: '12px',
+                fontWeight: 700, cursor: 'pointer' }}>
+              {m === 'todos' ? 'Todos' : 'Siguiendo'}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div style={{ padding: '0 16px' }}>
@@ -74,14 +92,17 @@ export default function Feed() {
           La obra del barrio
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-          {(() => {
-            const obras = getObra()
+          {modo === 'siguiendo' && obras.length === 0 && rioF.length === 0 ? (
+            <p style={{ fontSize: '13.5px', color: 'var(--ink-secondary)', lineHeight: 1.55, padding: '6px 2px' }}>
+              Aún no sigues a nadie. Toca ♡ en un perfil para seguir su evolución profesional.
+            </p>
+          ) : (() => {
             const mixto = []
             let o = 0, c = 0
-            while (o < obras.length || c < rio.length) {
+            while (o < obras.length || c < rioF.length) {
               if (o < obras.length) mixto.push({ kind: 'obra', it: obras[o++] })
               if (o < obras.length) mixto.push({ kind: 'obra', it: obras[o++] })
-              if (c < rio.length) mixto.push({ kind: 'conexion', it: rio[c++] })
+              if (c < rioF.length) mixto.push({ kind: 'conexion', it: rioF[c++] })
             }
             return mixto.map((m, i) => (
               <div key={(m.it.id || i) + m.kind} style={{ animation: `fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) ${Math.min(i, 5) * 70}ms both` }}>
