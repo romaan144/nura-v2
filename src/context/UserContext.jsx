@@ -55,7 +55,7 @@ export function UserProvider({ children }) {
   useEffect(() => { save('nura_ratings', ratings) }, [ratings])
   useEffect(() => { save('nura_search_history', searchHistory) }, [searchHistory])
   useEffect(() => { save('nura_following', following) }, [following])
-  useEffect(() => { save('nura_following', favorites) }, [favorites])
+  useEffect(() => { save('nura_favorites', favorites) }, [favorites])
   // nuraChatMessages: intentionally NOT persisted — Nüra always starts fresh
   useEffect(() => { save('nura_chat_histories', chatHistories) }, [chatHistories])
   useEffect(() => { save('nura_services', services) }, [services])
