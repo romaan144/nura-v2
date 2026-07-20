@@ -40,6 +40,26 @@ export const SEED_OBRA = [
     title: 'Certificada en terapia miofuncional', body: 'Tres meses de formación para tratar mejor la deglución atípica y los hábitos orales. Lo que aprendo fuera vuelve siempre a la consulta.' },
 ]
 
+// Comentarios semilla — el tono del mandato: útiles, firmados, sin ruido
+export const SEED_COMMENTS = {
+  o1: [
+    { id: 'c1', author: 'Marta G.', text: 'Gracias por compartir esto. Mi hija tiene 5 años y está igual — me has dado esperanza.', ago: 'hace 6 días' },
+    { id: 'c2', author: 'Nuria P.', text: '¿Cuántas sesiones suelen hacer falta en un caso así?', ago: 'hace 4 días' },
+  ],
+  o3: [
+    { id: 'c3', author: 'Albert M.', text: 'Muy interesante el caso. ¿Cuánto tardasteis en total con la purga incluida?', ago: 'hace 3 días' },
+  ],
+  o8: [
+    { id: 'c4', author: 'Pau R.', text: 'Nos pasó algo parecido con mi hermano. Lo difícil no es empezar, es el mes tres.', ago: 'hace 5 días' },
+    { id: 'c5', author: 'Laura S.', text: 'Enhorabuena a Jordi. Y a ti por no venderle un plan imposible.', ago: 'hace 2 días' },
+  ],
+  o5: [
+    { id: 'c6', author: 'Rosa V.', text: 'Gracias por explicarlo así. Estamos justo en ese punto con mi padre.', ago: 'hace 7 días' },
+  ],
+}
+
+export const COMMENT_STARTERS = ['Gracias por compartir esto', '¿Cómo lo resolvisteis?', 'Nos pasó algo parecido']
+
 const dias = h => 1 + ((h * 7) % 9)
 
 export function getObra(limit = 20) {

@@ -1,13 +1,28 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { TYPE_META } from '../data/obraPosts'
+import { TYPE_META, COMMENT_STARTERS } from '../data/obraPosts'
 import { useUser } from '../context/UserContext'
 
 // ObraCard — la pieza canon de la Obra (Nüra Obra · F1)
 export default function ObraCard({ post }) {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
-  const { isFollowing } = useUser()
+  const { isFollowing, user, addComment, commentsFor } = useUser()
+  const [openThread, setOpenThread] = useState(false)
+  const [draft, setDraft] = useState('')
+  const comments = commentsFor?.(post?.id) || []
+
+  const publicar = txt => {
+    const t = String(txt || '').trim()
+    if (!t) return
+    if (!user) {
+      try { sessionStorage.setItem('nura_return_to', window.location.pathname) } catch { /* noop */ }
+      navigate('/login')
+      return
+    }
+    addComment(post.id, t)
+    setDraft('')
+  }
   if (!post) return null
   const meta = TYPE_META[post.type] || { label: 'Obra', icon: '✦' }
   const long = (post.body || '').length > 180
@@ -59,7 +74,53 @@ export default function ObraCard({ post }) {
           {post.verified && <span style={{ color: 'var(--purple)', fontWeight: 700 }}>✓ contrastado · </span>}
           {post.dateLabel}
         </span>
+      <button onClick={() => setOpenThread(v => !v)}
+        aria-label={`${comments.length} comentarios`}
+        style={{ background: 'none', border: 'none', padding: '8px 0 0', cursor: 'pointer',
+          fontSize: '12px', color: openThread ? 'var(--purple)' : 'var(--ink-tertiary)', fontWeight: 600 }}>
+        💬 {comments.length > 0 ? comments.length : 'Comentar'}
       </button>
+      </button>
+    {openThread && (
+        <div style={{ borderTop: '1px solid var(--ink-border)', marginTop: '10px', paddingTop: '10px' }}>
+          {comments.map(c => (
+            <div key={c.id} style={{ marginBottom: '10px', animation: 'popIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both' }}>
+              <span style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--ink)' }}>{c.author}</span>
+              <span style={{ fontSize: '11px', color: 'var(--ink-tertiary)' }}> · {c.ago}</span>
+              <p style={{ fontSize: '13px', lineHeight: 1.5, color: 'var(--ink-secondary)', margin: '2px 0 0' }}>{c.text}</p>
+            </div>
+          ))}
+          {user ? (
+            <>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', margin: '10px 0 8px' }}>
+                {COMMENT_STARTERS.map(s => (
+                  <button key={s} onClick={() => publicar(s)}
+                    style={{ background: 'var(--purple-10)', color: 'var(--purple)', border: 'none',
+                      borderRadius: '99px', padding: '5px 11px', fontSize: '11.5px', fontWeight: 600, cursor: 'pointer' }}>
+                    {s}
+                  </button>
+                ))}
+              </div>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input value={draft} onChange={e => setDraft(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') publicar(draft) }}
+                  placeholder="Escribe un comentario…"
+                  style={{ flex: 1, border: '1px solid var(--ink-border)', borderRadius: '99px',
+                    padding: '9px 14px', fontSize: '13px', outline: 'none', background: 'var(--paper)' }} />
+                <button onClick={() => publicar(draft)} aria-label="Publicar comentario"
+                  style={{ background: 'var(--purple)', color: 'white', border: 'none', borderRadius: '50%',
+                    width: '36px', height: '36px', fontSize: '15px', cursor: 'pointer', flexShrink: 0 }}>→</button>
+              </div>
+            </>
+          ) : (
+            <button onClick={() => publicar('x')}
+              style={{ background: 'none', border: '1px dashed var(--ink-border)', borderRadius: '99px',
+                padding: '9px 14px', fontSize: '12.5px', color: 'var(--ink-secondary)', width: '100%', cursor: 'pointer' }}>
+              Crea tu cuenta para comentar
+            </button>
+          )}
+        </div>
+      )}
     </article>
   )
 }

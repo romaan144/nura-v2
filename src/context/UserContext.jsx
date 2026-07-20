@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import { SEED_COMMENTS } from '../data/obraPosts'
 
 const UserContext = createContext(null)
 
@@ -14,6 +15,7 @@ export function UserProvider({ children }) {
   const [personas, setPersonas] = useState(() => load('nura_personas', []))
   const [citas, setCitas] = useState(() => load('nura_citas', []))
   const [myStories, setMyStories] = useState(() => load('nura_my_stories', []))
+  const [obraComments, setObraComments] = useState(() => load('nura_obra_comments', {}))
   const [helpersCache, setHelpersCache] = useState({})
   const [following, setFollowing] = useState(() => {
     const stored = load('nura_following', null)
@@ -243,6 +245,19 @@ export function UserProvider({ children }) {
   }
 
   // ── La Cita — la memoria que mira hacia adelante ──
+  // ── Los Comentarios Profesionales ──
+  function addComment(postId, text) {
+    const t = String(text || '').trim()
+    if (!postId || !t) return
+    const c = { id: 'u' + Date.now(), author: (user?.name?.split(' ')?.[0] || 'Tú'), text: t, ago: 'ahora', mine: true }
+    const updated = { ...obraComments, [postId]: [...(obraComments[postId] || []), c] }
+    setObraComments(updated)
+    save('nura_obra_comments', updated)
+  }
+  function commentsFor(postId) {
+    return [...(SEED_COMMENTS[postId] || []), ...(obraComments[postId] || [])]
+  }
+
   // ── El Muro que crece contigo ──
   function addStory(story) {
     if (!story?.helperId) return
@@ -285,6 +300,7 @@ export function UserProvider({ children }) {
       personas, upsertPersona, linkPersonaContact, removePersona,
       citas, addCita,
       myStories, addStory,
+      addComment, commentsFor,
       helpersCache, cacheHelpers,
       following, follow, unfollow, isFollowing,
       notifications, markNotifsRead, unreadNotifs,

@@ -16,6 +16,17 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — Los Comentarios Profesionales (Obra F2 completo)
+
+- **La Obra deja de ser monólogo**: contador 💬 en el pie de ObraCard, hilo
+  desplegable bajo la tarjeta (sin modal), **arranques guiados del mandato**
+  como chips de un toque, e input firmado. Invitados leen y encuentran la
+  puerta de siempre (nura_return_to → Login). Semillas: 6 comentarios
+  vecinales en 4 piezas. Persistencia `nura_obra_comments`; el estado vive
+  en contexto, así que el contador coincide en Comunidad y en el perfil.
+  Sin likes, sin anonimato — palabra firmada, como la obra.
+- Sello `NURA_BUILD` → `2026.07.04-aj`.
+
 ## 2026-07-04 — Seguir cobra vida (Obra F2 · Nura Copilot)
 
 - **Seguir deja de ser un favorito muerto**: filtro Todos|Siguiendo en la
