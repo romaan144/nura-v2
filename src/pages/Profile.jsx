@@ -1,5 +1,9 @@
 import { useState } from 'react'
 import PageHeader from '../components/PageHeader'
+import { useState as useStateObra } from 'react'
+import ObraComposer from '../components/ObraComposer'
+import ObraCard from '../components/ObraCard'
+import { getObraDeHelper } from '../data/obraPosts'
 import { useNavigate } from 'react-router-dom'
 import { LogOut, Edit2, Check, X, Award, MessageCircle,
          Heart, ClipboardList, User, Phone, Search, Star , UserPlus, UserCheck } from 'lucide-react'
@@ -39,6 +43,7 @@ export default function Profile() {
     setQuoteDraft('')
   }
   const navigate = useNavigate()
+  const [composerOpen, setComposerOpen] = useStateObra(false)
 
   const [editingName, setEditingName]   = useState(false)
   const [nameInput,   setNameInput]     = useState('')
@@ -93,6 +98,7 @@ export default function Profile() {
 
   /* ── Render ─────────────────────────────────────────────── */
   return (
+    <>
     <div className={styles.page}>
       <PageHeader rightEl={
         <button className={styles.logoutIcon} onClick={() => { logout(); navigate('/') }}>
@@ -239,6 +245,18 @@ export default function Profile() {
               letterSpacing:'0.8px', textTransform:'uppercase', marginBottom:'10px'}}>
               Así te ven quienes te necesitan
             </div>
+            <button onClick={() => setComposerOpen(true)}
+              style={{width:'100%', background:'var(--purple)', color:'white', border:'none',
+                borderRadius:'var(--radius-full)', padding:'12px', fontSize:'13px',
+                fontWeight:700, cursor:'pointer', margin:'12px 0 10px'}}>
+              ✍️ Publicar en tu obra
+            </button>
+            {getObraDeHelper(user.helperId || user.id, 2).length > 0 && (
+              <div style={{display:'flex', flexDirection:'column', gap:'10px', marginBottom:'12px'}}>
+                {getObraDeHelper(user.helperId || user.id, 2).map(post => <ObraCard key={post.id} post={post} />)}
+              </div>
+            )}
+
             <div style={{pointerEvents:'none'}}>
               <HelperCard helper={proPreview} showPrice />
             </div>
@@ -389,5 +407,7 @@ export default function Profile() {
 
       </div>
     </div>
+    {composerOpen && <ObraComposer onClose={() => setComposerOpen(false)} />}
+    </>
   )
 }

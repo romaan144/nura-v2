@@ -16,6 +16,18 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — El profesional publica su obra (bucle de oferta cerrado)
+
+- **ObraComposer**: seis tipos, título, cuerpo y **Resultado exigido** en
+  caso/trabajo/evolución — el formulario es el filtro anti-humo. Publicar
+  guarda en `nura_obra_mias` y la pieza aparece al instante en su perfil,
+  en el río de Comunidad y **en `obraSignal`**: lo que escribe mejora su
+  propia recomendación desde el segundo siguiente.
+- **Fusión única** (`ALL()` sobre el espejo `window.__nuraMisObras`,
+  poblado por el provider): las tres funciones de obra beben de la misma
+  fuente — cero divergencia entre escaparate y motor.
+- Sello `NURA_BUILD` → `2026.07.04-al`.
+
 ## 2026-07-04 — La Obra alimenta a la IA (Obra F3 · el foso)
 
 - **Publicar en Nüra entrena a tu propia recomendadora**: `obraSignal`

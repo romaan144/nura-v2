@@ -16,6 +16,7 @@ export function UserProvider({ children }) {
   const [citas, setCitas] = useState(() => load('nura_citas', []))
   const [myStories, setMyStories] = useState(() => load('nura_my_stories', []))
   const [obraComments, setObraComments] = useState(() => load('nura_obra_comments', {}))
+  const [misObras, setMisObras] = useState(() => load('nura_obra_mias', []))
   const [helpersCache, setHelpersCache] = useState({})
   const [following, setFollowing] = useState(() => {
     const stored = load('nura_following', null)
@@ -58,6 +59,7 @@ export function UserProvider({ children }) {
   useEffect(() => { save('nura_search_history', searchHistory) }, [searchHistory])
   useEffect(() => { save('nura_following', following) }, [following])
   useEffect(() => { save('nura_favorites', favorites) }, [favorites])
+  useEffect(() => { try { window.__nuraMisObras = misObras } catch { /* noop */ } }, [misObras])
   // nuraChatMessages: intentionally NOT persisted — Nüra always starts fresh
   useEffect(() => { save('nura_chat_histories', chatHistories) }, [chatHistories])
   useEffect(() => { save('nura_services', services) }, [services])
@@ -245,6 +247,22 @@ export function UserProvider({ children }) {
   }
 
   // ── La Cita — la memoria que mira hacia adelante ──
+  // ── El profesional publica su obra ──
+  function addObra({ type, title, body, result }) {
+    if (!title?.trim() || !body?.trim()) return
+    const hid = user?.helperId || user?.id
+    const pieza = {
+      id: 'my' + Date.now(), helperId: hid, mine: true,
+      who: { name: user?.name || 'Yo', specialty: user?.helperProfile?.specialty || 'Profesional' },
+      type: type || 'caso', title: title.trim(), body: body.trim(),
+      result: result?.trim() || undefined, dateLabel: 'hoy', verified: false,
+    }
+    const updated = [pieza, ...misObras]
+    setMisObras(updated)
+    save('nura_obra_mias', updated)
+    try { window.__nuraMisObras = updated } catch { /* noop */ }
+  }
+
   // ── Los Comentarios Profesionales ──
   function addComment(postId, text) {
     const t = String(text || '').trim()
@@ -301,6 +319,7 @@ export function UserProvider({ children }) {
       citas, addCita,
       myStories, addStory,
       addComment, commentsFor,
+      misObras, addObra,
       helpersCache, cacheHelpers,
       following, follow, unfollow, isFollowing,
       notifications, markNotifsRead, unreadNotifs,
