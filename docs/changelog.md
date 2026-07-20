@@ -16,6 +16,17 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — La Obra alimenta a la IA (Obra F3 · el foso)
+
+- **Publicar en Nüra entrena a tu propia recomendadora**: `obraSignal`
+  puntúa (tope +6, escala verificada contra distancia -2/km y rating x2)
+  solo cuando el contenido de una pieza casa de verdad con la consulta —
+  jamás por tener obra. Vive dentro del scoring, después de LA PUERTA: no
+  puede colar incompatibles. `buildWhy` la cita en última prioridad ("ha
+  documentado un caso muy parecido al tuyo"). Suite +4 casos que verifican
+  que la señal nunca desordena ni distorsiona.
+- Sello `NURA_BUILD` → `2026.07.04-ak`.
+
 ## 2026-07-04 — Los Comentarios Profesionales (Obra F2 completo)
 
 - **La Obra deja de ser monólogo**: contador 💬 en el pie de ObraCard, hilo

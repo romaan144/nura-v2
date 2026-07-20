@@ -62,6 +62,24 @@ export const COMMENT_STARTERS = ['Gracias por compartir esto', '¿Cómo lo resol
 
 const dias = h => 1 + ((h * 7) % 9)
 
+// ── La señal de la Obra ──
+// Publicar en Nüra = entrenar a tu propia recomendadora. Pequeña (tope 6),
+// subordinada a la compatibilidad, y SOLO cuando el contenido casa de verdad.
+const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+export function obraSignal(helperId, analysis) {
+  const kws = (analysis?.palabrasClave || []).map(norm).filter(k => k.length > 3)
+  if (!kws.length) return { score: 0, best: null }
+  let best = null, bestHits = 0
+  for (const p of SEED_OBRA) {
+    if (p.helperId !== Number(helperId)) continue
+    const text = norm(`${p.title} ${p.body} ${p.result || ''}`)
+    const hits = kws.filter(k => new RegExp(`\\b${k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(text)).length
+    if (hits > bestHits) { bestHits = hits; best = p }
+  }
+  if (!bestHits) return { score: 0, best: null }
+  return { score: Math.min(6, bestHits * 3), best }
+}
+
 export function getObra(limit = 20) {
   return SEED_OBRA
     .map(p => ({ ...p, dateLabel: `hace ${dias(p.helperId)} ${dias(p.helperId) === 1 ? 'día' : 'días'}` }))

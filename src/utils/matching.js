@@ -41,6 +41,7 @@ export function getPriceContext(helper, categoria) {
 }
 
 import { HELPERS as LOCAL_HELPERS } from '../data/helpers'
+import { obraSignal } from '../data/obraPosts'
 import { searchHelpers } from './supabase'
 
 // ── SEMANTIC EXPANSION MAP ────────────────────────────────────────────────
@@ -492,7 +493,9 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
     if (h.available) score += 5
     score += (h.rating || 4.5) * 2
     score -= (h.distance || 1) * 2
-    return { ...h, score }
+    const os = obraSignal(h.id, analysis)
+    score += os.score
+    return { ...h, score, __obra: os.best }
   })
 
   const sorted = scored.sort((a, b) => b.score - a.score)

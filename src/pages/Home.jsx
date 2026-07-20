@@ -60,6 +60,7 @@ function buildWhy(helper, analysis) {
   if (helper?.distance && helper.distance <= 1.2) parts.push('trabaja muy cerca de ti')
   else if (helper?.distance && helper.distance <= 3) parts.push('está a unos minutos de tu casa')
   if ((helper?.rating || 0) >= 4.8) parts.push('tiene valoraciones excelentes')
+  if (helper?.__obra && parts.length < 2) parts.push('ha documentado un caso muy parecido al tuyo')
   return parts.slice(0, 2).join(' y ') || 'encaja especialmente bien con lo que necesitas'
 }
 

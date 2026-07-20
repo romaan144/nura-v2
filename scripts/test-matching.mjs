@@ -90,5 +90,29 @@ for (const t of NEGATIVE) {
   if (!ok) failed++
   console.log(`${ok ? '✓' : '✗'} [negativa] ${t.q.slice(0, 34).padEnd(34)} sin ${t.forbid}`)
 }
+// ── La señal de la Obra: útil pero jamás decisiva ──
+{
+  const a1 = await analyzeNeed('mi hijo no pronuncia la R')
+  const m1 = await matchHelpers(a1, 4)
+  const ok1 = (m1 || []).every(x => cat_(x.category) === 'logopedia')
+  if (!ok1) failed++
+  console.log(`${ok1 ? '✓' : '✗'} [obra] 'no pronuncia la R' → solo logopedas (${m1?.length || 0})`)
+
+  const ok2 = (m1 || []).some(x => x.__obra)
+  console.log(`${ok2 ? '✓' : '·'} [obra] la pieza del caso viaja en __obra para el porqué`)
+
+  const a2 = await analyzeNeed('Necesito un cerrajero urgente')
+  const m2 = await matchHelpers(a2, 4)
+  const ok3 = !(m2 || []).some(x => cat_(x.category) === 'logopedia')
+  if (!ok3) failed++
+  console.log(`${ok3 ? '✓' : '✗'} [obra] la obra NO cuela incompatibles`)
+
+  const a3 = await analyzeNeed('logopeda')
+  const m3 = await matchHelpers(a3, 4)
+  const ok4 = (m3 || []).length > 0 && (m3 || []).every(x => cat_(x.category) === 'logopedia')
+  if (!ok4) failed++
+  console.log(`${ok4 ? '✓' : '✗'} [obra] consulta genérica: orden objetivo, sin distorsión`)
+}
+
 console.log(failed === 0 ? `\n✅ SUITE v2 VERDE — ${GOLDEN.length + HONESTY.length + NEGATIVE.length}/${GOLDEN.length + HONESTY.length + NEGATIVE.length}` : `\n❌ ${failed} FALLOS`)
 process.exit(failed === 0 ? 0 : 1)
