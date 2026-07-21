@@ -16,6 +16,14 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — La Revelación aterriza arriba (feedback del fundador)
+
+- Con la tarjeta vertical, el anclaje del navegador al fondo dejaba la
+  recomendación por encima del viewport: había que subir para verla. Ahora
+  el bloque de resultados lleva ref y **su inicio** se lleva a la parte alta
+  (`block: 'start'`) al aparecer: se lee de arriba abajo, como debe.
+- Sello `NURA_BUILD` → `2026.07.04-av`.
+
 ## 2026-07-04 — La Tarjeta Vertical gana voz (feedback del fundador)
 
 - La recomendación grande incorpora **"En sus propias palabras"** (campo

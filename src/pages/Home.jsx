@@ -346,10 +346,20 @@ export default function Home() {
   const lastMatches = nuraLastMatches
   const setLastMatches = setNuraLastMatches
   const bottomRef  = useRef(null)
+  const resultRef = useRef(null)  // la Revelación aterriza aquí, no en el fondo
   const inputRef   = useRef(null)
   const topRef     = useRef(null)
   const [topH, setTopH] = useState(80)
   const [floatH, setFloatH] = useState(84) /* header height fallback */
+
+  // La Revelación aterriza en su inicio: la recomendación queda a la vista
+  useEffect(() => {
+    if (!resultRef.current) return
+    const t = setTimeout(() => {
+      try { resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }) } catch { /* noop */ }
+    }, 60)
+    return () => clearTimeout(t)
+  }, [messages.length])
 
   useEffect(() => {
     let lines = getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas)
@@ -1113,7 +1123,7 @@ export default function Home() {
               </div>
             )}
             {msg.results && (
-              <div className={styles.carouselBlock}>
+              <div className={styles.carouselBlock} ref={resultRef}>
                 <ResultsBlock results={msg.results} />
               </div>
             )}
