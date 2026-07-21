@@ -16,6 +16,19 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — LA DIFERENCIA CON EXPLORAR (causa definitiva)
+
+- Dato decisivo del fundador: **el límite es correcto en Profesionales y solo
+  falla en Inicio**. Comparando ambos contenedores raíz: Explorar usa
+  `height: 100%` y **fluye** dentro del layout de la app (que ya reserva la
+  BottomNav); Home usaba `position: fixed; inset: 0`, saliéndose del flujo y
+  pegándose al viewport — ignorando esa reserva. De ahí que su límite
+  inferior cayera antes que la barra.
+- Cura: Home adopta el patrón que funciona (flujo + `height: 100%` +
+  `overflow: hidden`), `.floatBottom` se ancla a `bottom: 0` de la caja ya
+  reservada y `.chatSpacer` vuelve a reservar solo el input.
+- Sello `NURA_BUILD` → `2026.07.04-bi`.
+
 ## 2026-07-04 — El recorte del padre (`overflow: hidden` en .page)
 
 - Síntoma preciso del fundador: una tarjeta a medias **se corta por encima**
