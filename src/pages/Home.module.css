@@ -449,7 +449,7 @@
 /* ── CHAT SPACER ── */
 .chatSpacer {
   flex-shrink: 0;
-  height: var(--float-bottom-h-chips);  /* constante generosa: nada se solapa nunca */
+  height: var(--float-bottom-h);  /* los chips ya no viven en la barra: solo el input */
 }
 
 /* ── INPUT FOCUS STATE ───────────────────────────────────────────────── */
@@ -480,3 +480,38 @@
     radial-gradient(680px 320px at 88% -2%, rgba(123,47,255,0.07), transparent 62%),
     radial-gradient(600px 300px at 50% 104%, rgba(0,209,255,0.05), transparent 60%);
 }
+
+
+/* ── Filtros de refinamiento (bajo la respuesta) ──
+   Se anuncian como lo que son: ajustan ESTA búsqueda. */
+.refineRow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin: 14px 2px 4px;
+}
+.refineLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-tertiary);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  width: 100%;
+  margin-bottom: 2px;
+}
+.refineChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 9px 15px;
+  background: white;
+  border: 1px solid var(--purple-20);
+  border-radius: var(--radius-full);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--purple);
+  cursor: pointer;
+  box-shadow: var(--shadow-xs);
+}
+.refineChip:active { opacity: 0.7; }

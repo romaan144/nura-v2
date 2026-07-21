@@ -1138,9 +1138,10 @@ export default function Home() {
           const lastMsg = msg
           const activeChips = lastMsg?.refineChips
           if (activeChips) return (
-            <div className={styles.suggestions}>
+            <div className={styles.refineRow}>
+              <div className={styles.refineLabel}>Ajustar esta búsqueda</div>
               {activeChips.map((chip, i) => (
-                <button key={i} className={styles.suggestion}
+                <button key={i} className={styles.refineChip}
                   onClick={() => {
                     if (chip === 'Crear cuenta') { navigate('/login'); return }
                     if (chip === 'Más barato' && lastMatches?.length > 0) {
@@ -1183,7 +1184,7 @@ export default function Home() {
                     }
                     handleSend(chip)
                   }}>
-                  <span className={styles.suggestionText}>{chip}</span>
+                  {chip === 'Más cerca' ? '📍' : chip === 'Más barato' ? '💰' : chip === 'Mejor valorado' ? '★' : chip === 'Online' ? '💻' : '✦'} {chip}
                 </button>
               ))}
             </div>

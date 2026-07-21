@@ -16,6 +16,16 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — Los filtros se explican solos (feedback del fundador)
+
+- Tras mudarlos bajo la respuesta heredaban el look de sugerencia flotante y
+  no se leían como filtros. Ahora: **rótulo "AJUSTAR ESTA BÚSQUEDA"**, chips
+  con icono (📍 💰 ★ 💻), borde y texto en morado (acción de Nüra, no
+  sugerencia pasiva), y ritmo propio (14px arriba, 7px entre chips).
+- **Hueco muerto eliminado**: el spacer del chat seguía reservando la altura
+  de unos chips que ya no viven en la barra del input (133px → 76px).
+- Sello `NURA_BUILD` → `2026.07.04-bb`.
+
 ## 2026-07-04 — Los filtros, bajo la respuesta (feedback del fundador)
 
 - Los chips de refinamiento (Más cerca · Mejor valorado · Más barato) vivían
