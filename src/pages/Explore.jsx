@@ -403,7 +403,7 @@ export default function Explore() {
         {isListView && !isLoading && (
           <>
             {/* Header de resultados */}
-            <div className={styles.resultsHeader} style={{animation:"fadeInUp 0.25s cubic-bezier(0.22, 1, 0.36, 1) forwards"}}>
+            <div className={styles.resultsHeader} >
               {activeCategory && (
                 <div className={styles.catPill} style={{ '--cat-color': activeCategory.color, '--cat-bg': activeCategory.bg }}>
                   {(() => { const Icon = activeCategory.icon; return <Icon size={13} color={activeCategory.color} /> })()}
