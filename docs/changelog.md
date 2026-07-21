@@ -16,6 +16,18 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — La franja bajo la nav (composición, no geometría)
+
+- **Causa**: la BottomNav es translúcida (86% + blur 32px), así que filtra lo
+  que hay detrás. En Home, detrás vivía el radial cian del Alma Visible
+  posicionado `at 50% 104%` — justo en la franja inferior. La nav lo mezclaba
+  con su papel y el ojo leía dos fondos superpuestos. La geometría (`.page`,
+  `--nav-h`, `.floatBottom` transparente) era correcta.
+- **Cambio mínimo**: el radial se recoge a `at 50% 88%` con menor extensión e
+  intensidad — su cola se apaga antes del borde. Nav intacta (fondo, blur,
+  altura, safe-area, posición); auroras superiores intactas; cero JSX.
+- Sello `NURA_BUILD` → `2026.07.04-bd`.
+
 ## 2026-07-04 — El fondo termina en la línea de la nav
 
 - Regresión propia del sello -ay: se añadió `height: 100dvh` a un `.page`
