@@ -16,6 +16,22 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — El borde inferior, corregido de raíz (cirugía completa)
+
+- Segundo intento del cambio de patrón, esta vez recolocando **los tres
+  anclajes a la vez** (el fallo del primero fue cambiar el contenedor y
+  dejar los hijos absolutos con sus offsets antiguos):
+  1. `.page` pasa de `fixed; inset: 0` a `position: relative; height: 100%`
+     — fluye dentro del layout, que ya reserva la BottomNav (patrón de
+     Explorar, la pestaña que siempre renderizó correcta).
+  2. `.floatBottom` de `bottom: var(--nav-h)` a `bottom: 0` — la caja de
+     `.page` ya termina en la línea de la nav.
+  3. `.chatSpacer` vuelve a reservar solo el input.
+  4. `.desktopMain` gana `display:flex; flex-direction:column; min-height:0`
+     para dar referencia de altura real al hijo con `height: 100%`.
+  `.floatTop` no cambia: se ancla arriba, donde ambos patrones coinciden.
+- Sello `NURA_BUILD` → `2026.07.04-bl`.
+
 ## 2026-07-04 — Limpieza del borde inferior (tras la reversión)
 
 - Con todo el árbol a la vista: `.messages` tenía `height: 100%` **además**
