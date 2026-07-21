@@ -119,6 +119,8 @@ contenido va en el área scrollable (bug histórico real).
 - **La entrada es directa**: un respiro del iso (≤700 ms, fundido sobre
   papel) cubre el arranque; la ceremonia de marca es el saludo en la Voz.
   Momento Cero y Onboarding viven como rutas bajo demanda, no en la entrada.
+- **El estado de bienvenida de Home es FIJO**: saludo, mensajes,
+  sugerencias e input aparecen sin animación en cada entrada a la pestaña.
 - **Las listas y los resultados NO animan su entrada**: aparecen. Tras tres
   escalones de optimización, el listón real (iPhone/Safari) no sostiene
   cascadas sin tiritar — y aparecer al instante siempre se ve mejor que

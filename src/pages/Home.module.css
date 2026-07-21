@@ -462,13 +462,7 @@
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.recentSearches .recentItem:nth-child(1) { animation-delay: 0ms; }
-.recentSearches .recentItem:nth-child(2) { animation-delay: 45ms; }
-.recentSearches .recentItem:nth-child(3) { animation-delay: 90ms; }
 
-.recentSearches .recentItem:nth-child(1) { animation-delay: 0ms; }
-.recentSearches .recentItem:nth-child(2) { animation-delay: 45ms; }
-.recentSearches .recentItem:nth-child(3) { animation-delay: 90ms; }
 
 /* El Alma Visible: aurora de Home */
 .messages {

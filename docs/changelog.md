@@ -16,6 +16,15 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — La bienvenida, fija (feedback del fundador)
+
+- El estado de bienvenida animaba en cada entrada a Buscar: cabecera del
+  saludo (fadeInUp), mensajes en cascada (cardCascade escalonado) y barra
+  inferior con input y sugerencias (fadeInUp con retardo). **Todo fijo**:
+  la pestaña se abre y ya está ahí. Retirada también la cascada de las
+  recientes en el module. Ley extendida en design-system.
+- Sello `NURA_BUILD` → `2026.07.04-as`.
+
 ## 2026-07-04 — Fuera la animación de entrada (decisión final)
 
 - Tras tres escalones (capa GPU, capa única, reflow de avatares) el lag

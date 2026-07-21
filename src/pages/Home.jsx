@@ -1040,7 +1040,7 @@ export default function Home() {
 
 
       {/* Floating top — three independent bubbles */}
-      <div className={styles.floatTop} ref={topRef} style={{animation:"fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards"}}>
+      <div className={styles.floatTop} ref={topRef}>
         
         <div />
 
@@ -1078,7 +1078,7 @@ export default function Home() {
           // Spacing: 16px between messages, 24px after carousel, 20px for user replies
           const spacingClass = prevHadResults ? styles.afterCarousel : ''
           return (
-          <div key={msg.id} style={{marginTop: msgIdx === 0 ? 0 : msg.from === 'user' ? 'var(--chat-gap-md)' : 'var(--chat-gap)', animation: `cardCascade 0.38s cubic-bezier(0.22, 1, 0.36, 1) ${msgIdx * 60}ms both`}}>
+          <div key={msg.id} style={{marginTop: msgIdx === 0 ? 0 : msg.from === 'user' ? 'var(--chat-gap-md)' : 'var(--chat-gap)'}}>
             <div className={`${styles.msgRow} ${msg.from === 'user' ? styles.msgRowUser : ''} ${spacingClass}`}>
               {msg.from === 'nura' && (
                 <div className={styles.nuraAvatar}>
@@ -1147,7 +1147,7 @@ export default function Home() {
       </div>
 
       {/* Floating bottom — suggestions + input capsule only */}
-      <div className={styles.floatBottom} style={{animation:"fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards"}}>
+      <div className={styles.floatBottom}>
         {inputFocused && messages.length <= 1 && !input && searchHistory?.length > 0 && (
           <div className={styles.recentSearches}>
             <span className={styles.recentLabel}>Recientes</span>
