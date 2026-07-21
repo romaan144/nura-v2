@@ -16,6 +16,15 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — Los filtros, bajo la respuesta (feedback del fundador)
+
+- Los chips de refinamiento (Más cerca · Mejor valorado · Más barato) vivían
+  anclados a la barra del input, lejos de lo que refinan. Ahora cierran el
+  bloque de respuesta y leen los chips **del propio mensaje** (no del último
+  de la conversación): cada respuesta lleva los suyos y el input queda
+  limpio.
+- Sello `NURA_BUILD` → `2026.07.04-ba`.
+
 ## 2026-07-04 — EL CULPABLE: `justify-content: flex-end` (autopsia)
 
 - Cinco intentos de arreglar por JS un problema que era **de CSS**: el

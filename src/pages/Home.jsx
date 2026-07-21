@@ -1134,31 +1134,8 @@ export default function Home() {
               </div>
             )}
 
-          </div>
-          )
-        })}
-                <div
-          className={styles.chatSpacer}
-        />
-        <div ref={bottomRef} />
-      </div>
-
-      {/* Floating bottom — suggestions + input capsule only */}
-      <div className={styles.floatBottom}>
-        {inputFocused && messages.length <= 1 && !input && searchHistory?.length > 0 && (
-          <div className={styles.recentSearches}>
-            <span className={styles.recentLabel}>Recientes</span>
-            {searchHistory.slice(0, 3).map((s, i) => (
-              <button key={i} className={styles.recentItem} onClick={() => handleSend(s.query)}>
-                <Clock size={12} color='rgba(0,0,0,0.35)' style={{flexShrink:0}} />
-                <span className={styles.recentText}>{s.query}</span>
-              </button>
-            ))}
-          </div>
-        )}
-
         {(() => {
-          const lastMsg = messages[messages.length - 1]
+          const lastMsg = msg
           const activeChips = lastMsg?.refineChips
           if (activeChips) return (
             <div className={styles.suggestions}>
@@ -1222,6 +1199,30 @@ export default function Home() {
           )
           return null
         })()}
+
+          </div>
+          )
+        })}
+                <div
+          className={styles.chatSpacer}
+        />
+        <div ref={bottomRef} />
+      </div>
+
+      {/* Floating bottom — suggestions + input capsule only */}
+      <div className={styles.floatBottom}>
+        {inputFocused && messages.length <= 1 && !input && searchHistory?.length > 0 && (
+          <div className={styles.recentSearches}>
+            <span className={styles.recentLabel}>Recientes</span>
+            {searchHistory.slice(0, 3).map((s, i) => (
+              <button key={i} className={styles.recentItem} onClick={() => handleSend(s.query)}>
+                <Clock size={12} color='rgba(0,0,0,0.35)' style={{flexShrink:0}} />
+                <span className={styles.recentText}>{s.query}</span>
+              </button>
+            ))}
+          </div>
+        )}
+
 
         <div className={styles.inputCapsule}>
           <button className={styles.plusBtn} aria-label="Adjuntar"><Plus size={18} /></button>
