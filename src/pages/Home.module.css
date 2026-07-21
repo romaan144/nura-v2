@@ -22,7 +22,9 @@
     radial-gradient(680px 320px at 88% -2%, rgba(123,47,255,0.07), transparent 62%),
     radial-gradient(560px 300px at 50% 96%, rgba(0,209,255,0.04), transparent 58%),
     var(--paper);
-  overflow: hidden;
+  /* Sin recorte en el padre: era él quien cortaba las tarjetas por encima de
+     la línea de la nav. El scroller interno ya gestiona su desbordamiento. */
+  overflow: visible;
   /* iOS: 'inset: 0' ya fija la altura al viewport visual. Añadir 100dvh
      sumaba el padding de la nav y el fondo se pasaba de la línea. */
   overscroll-behavior: none;
@@ -36,6 +38,9 @@
   overflow-y: auto;
   overflow-x: hidden;
   padding: 64px 14px 0;
+  /* El área scrollable termina en el borde del viewport; la nav se dibuja
+     encima (fixed). El contenido reserva su espacio con .chatSpacer. */
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start; /* el contenido crece hacia ABAJO: la respuesta

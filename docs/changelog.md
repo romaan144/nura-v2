@@ -16,6 +16,18 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — El recorte del padre (`overflow: hidden` en .page)
+
+- Síntoma preciso del fundador: una tarjeta a medias **se corta por encima**
+  de la línea de la nav. Ese corte es un `overflow: hidden` — y lo tenía
+  `.page`, el contenedor padre. Su caja de contenido terminaba antes del
+  borde del viewport, así que recortaba el scroller y todo lo que asomara.
+- Cura: `.page` pasa a `overflow: visible` (el scroller interno ya gestiona
+  su propio desbordamiento) y `.messages` toma `height: 100%` para llegar al
+  borde real. La nav se dibuja encima al ser `fixed`; la reserva de espacio
+  la sigue haciendo `.chatSpacer` dentro del scroll.
+- Sello `NURA_BUILD` → `2026.07.04-bh`.
+
 ## 2026-07-04 — EL SCROLLER ANIDADO (la causa que faltaba)
 
 - Tras corregir `.page` y `.chatSpacer`, la línea persistía: el culpable
