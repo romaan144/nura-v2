@@ -14,11 +14,36 @@ import { proSignals } from '../utils/proSignals'
 import styles from './Profile.module.css'
 import { NURA_BUILD } from '../config'
 
+// ── Tu semana: la voz de Nüra para quien trabaja ──
+// Gramática: frase humana primero, cifras discretas después, cero vanidad.
+function buildSemana({ contactedHelpers, citas, misObras, obraPropia }) {
+  const abiertas = (contactedHelpers || []).filter(c => c && c.confirmed === undefined).length
+  const proximas = (citas || []).filter(ci => {
+    const c = (contactedHelpers || []).find(x => (x.id || x) === ci.helperId)
+    return c && c.confirmed === undefined
+  })
+  const piezas = (misObras || []).length + (obraPropia || 0)
+  const trozos = []
+  if (abiertas > 0) trozos.push(`**${abiertas}** ${abiertas === 1 ? 'conversación abierta' : 'conversaciones abiertas'}`)
+  if (proximas.length > 0) trozos.push(`una cita el **${proximas[0].label}**`)
+  const frase = trozos.length
+    ? `Esta semana tienes ${trozos.join(' y ')}.`
+    : piezas > 0
+    ? 'Semana tranquila. Tu obra sigue trabajando por ti.'
+    : 'Semana tranquila. Cuando publiques algo, Nüra sabrá recomendarte mejor.'
+  const accion = abiertas > 0
+    ? { txt: 'Responder mensajes', to: '/chats' }
+    : proximas.length > 0
+    ? { txt: 'Ver la cita', to: '/chats' }
+    : { txt: 'Publicar en tu obra', to: null }
+  return { frase, abiertas, citas: proximas.length, piezas, accion }
+}
+
 export default function Profile() {
   const {
     user, logout, updateUser,
     chats, ratings, searchHistory, favorites, isFollowing, following,
-    services, personas, removePersona, helpersCache, contactedHelpers, citas
+    services, personas, removePersona, helpersCache, contactedHelpers, citas, misObras
   } = useUser()
 
   // ── El Primer Día del Profesional ──
@@ -238,6 +263,38 @@ export default function Profile() {
           </div>
         )}
 
+
+        {user.isHelper && (() => {
+          const sem = buildSemana({ contactedHelpers, citas, misObras,
+            obraPropia: getObraDeHelper(user.helperId || user.id, 9).filter(o => !o.mine).length })
+          return (
+            <div style={{margin:'0 0 20px', padding:'16px', background:'white',
+              border:'1px solid var(--purple-20)', borderRadius:'var(--radius-md)',
+              boxShadow:'var(--shadow-md)', animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 200ms both'}}>
+              <div style={{fontSize:'11px', fontWeight:700, color:'var(--purple)',
+                letterSpacing:'0.8px', textTransform:'uppercase', marginBottom:'8px'}}>
+                Tu semana
+              </div>
+              <p style={{fontFamily:'var(--font-voice)', fontSize:'16px', fontWeight:600,
+                letterSpacing:'-0.4px', lineHeight:1.4, color:'var(--ink)', margin:'0 0 12px'}}
+                dangerouslySetInnerHTML={{__html: sem.frase.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')}} />
+              <div style={{display:'flex', gap:'18px', marginBottom:'12px'}}>
+                {[[sem.abiertas, 'abiertas'], [sem.citas, 'citas'], [sem.piezas, 'publicaciones']].map(([n, l]) => (
+                  <div key={l}>
+                    <div style={{fontSize:'19px', fontWeight:700, color:'var(--ink)', lineHeight:1}}>{n}</div>
+                    <div style={{fontSize:'10.5px', color:'var(--ink-tertiary)', marginTop:'3px'}}>{l}</div>
+                  </div>
+                ))}
+              </div>
+              <button onClick={() => sem.accion.to ? navigate(sem.accion.to) : setComposerOpen(true)}
+                style={{width:'100%', background:'var(--purple-10)', color:'var(--purple)',
+                  border:'none', borderRadius:'var(--radius-full)', padding:'11px',
+                  fontSize:'12.5px', fontWeight:700, cursor:'pointer'}}>
+                {sem.accion.txt} →
+              </button>
+            </div>
+          )
+        })()}
 
         {user.isHelper && (
           <div style={{margin:'0 0 20px', animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 240ms both'}}>

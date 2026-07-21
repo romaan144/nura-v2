@@ -16,6 +16,15 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — El Panel del Profesional: "Tu semana" (Nura Copilot)
+
+- **La cocina del profesional deja de estar vacía**: una tarjeta abre su
+  Acto II con la voz de Nüra (Gramática: frase humana, cifras discretas,
+  cero vanidad) — conversaciones abiertas, cita próxima, obra publicada — y
+  **una sola acción sugerida** por prioridad (responder > ver la cita >
+  publicar). Composición pura: todos los datos ya vivían en contexto.
+- Sello `NURA_BUILD` → `2026.07.04-an`.
+
 ## 2026-07-04 — La Cuarta Puerta (Nura Copilot)
 
 - **`npm run smoke`**: 8 pantallas × 2 escenarios (invitado / profesional con
