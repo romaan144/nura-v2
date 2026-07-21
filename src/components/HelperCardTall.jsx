@@ -84,6 +84,43 @@ export default function HelperCardTall({ helper, small = false }) {
         {helper.distance && <span style={{ color: 'var(--ink-tertiary)' }}>a {helper.distance} km</span>}
       </div>
 
+      {!small && (helper.quote || helper.bio) && (
+        <div style={{ marginTop: '14px', paddingTop: '14px', borderTop: '1px solid var(--ink-border)', width: '100%' }}>
+          <div style={{ fontSize: '10px', fontWeight: 700, color: 'var(--purple)',
+            letterSpacing: '0.7px', textTransform: 'uppercase', marginBottom: '7px' }}>
+            En sus propias palabras
+          </div>
+          <p style={{ fontFamily: 'var(--font-voice)', fontSize: '14px', fontWeight: 500,
+            color: 'var(--ink)', lineHeight: 1.5, letterSpacing: '-0.2px', margin: 0,
+            display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+            “{helper.quote || helper.bio}”
+          </p>
+        </div>
+      )}
+
+      {!small && (helper.responseTime || helper.experience || helper.dniVerified) && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '6px', marginTop: '12px' }}>
+          {helper.responseTime && (
+            <span style={{ background: 'var(--paper)', border: '1px solid var(--ink-border)',
+              borderRadius: '99px', padding: '4px 10px', fontSize: '11px', color: 'var(--ink-secondary)' }}>
+              Responde en {helper.responseTime}
+            </span>
+          )}
+          {helper.experience && (
+            <span style={{ background: 'var(--paper)', border: '1px solid var(--ink-border)',
+              borderRadius: '99px', padding: '4px 10px', fontSize: '11px', color: 'var(--ink-secondary)' }}>
+              {helper.experience}
+            </span>
+          )}
+          {helper.dniVerified && (
+            <span style={{ background: 'var(--purple-10)', borderRadius: '99px', padding: '4px 10px',
+              fontSize: '11px', color: 'var(--purple)', fontWeight: 600 }}>
+              Identidad verificada
+            </span>
+          )}
+        </div>
+      )}
+
       {!small && (
         <button onClick={handleContact}
           style={{ width: '100%', marginTop: '16px', background: 'var(--purple)', color: 'white',

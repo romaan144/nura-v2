@@ -66,7 +66,9 @@ prohibido el `ease-out` genérico.
 
 ### Tarjeta Vertical (la Recomendación)
 La respuesta de Nüra usa `HelperCardTall`: retrato 96px arriba, nombre 19px,
-especialidad, meta (★ · precio · distancia) y **una acción ancha** ("Escribir
+especialidad, meta (★ · precio · distancia), **su voz** ("En sus propias
+palabras", clamp 4 líneas), píldoras de confianza (respuesta · experiencia ·
+identidad) y **una acción ancha** ("Escribir
 a X"). Las alternativas son la MISMA tarjeta con `small` (retrato 62, sin
 acción) en rejilla de tres: coherencia por escala, no por invención. La
 Tarjeta canon horizontal sigue rigiendo listas, Explorar, Comunidad y perfil.

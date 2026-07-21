@@ -16,6 +16,15 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — La Tarjeta Vertical gana voz (feedback del fundador)
+
+- La recomendación grande incorpora **"En sus propias palabras"** (campo
+  `quote`, respaldo `bio`, clamp de 4 líneas, en la Voz) y **tres señales de
+  confianza** que ya existían en los datos y se perdían: tiempo de
+  respuesta, experiencia e identidad verificada. Convence sin salir de la
+  tarjeta. Las miniaturas siguen limpias.
+- Sello `NURA_BUILD` → `2026.07.04-au`.
+
 ## 2026-07-04 — La Tarjeta Vertical (mandato del fundador)
 
 - La recomendación deja de ser una fila: **tarjeta vertical grande** (retrato
