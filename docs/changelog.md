@@ -16,6 +16,16 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — REVERSIÓN DEFINITIVA del borde inferior
+
+- El cambio de patrón de layout (fixed→relative) rompe el posicionamiento de
+  Home incluso recolocando los anclajes. Revertidos Home.module.css e
+  index.css al estado c3cc3e9. **Este borde NO se vuelve a tocar sin poder
+  medir la geometría real en el dispositivo** (headless bloqueado en el
+  sandbox, capturas no disponibles). Dos intentos, dos reversiones: seguir
+  probando reglas a ciegas cuesta más de lo que arregla.
+- Sello NURA_BUILD → 2026.07.04-bm.
+
 ## 2026-07-04 — El borde inferior, corregido de raíz (cirugía completa)
 
 - Segundo intento del cambio de patrón, esta vez recolocando **los tres

@@ -197,9 +197,6 @@ body {
 .desktopMain {
   flex: 1;
   min-width: 0;
-  min-height: 0;   /* que el hijo con height:100% tenga referencia real */
-  display: flex;
-  flex-direction: column;
   /* Sin overflow propio: las pestañas gestionan su scroll interno. Este
      scroller anidado creaba una segunda área con su propio límite inferior,
      que aparecía como una línea por encima de la BottomNav. */
