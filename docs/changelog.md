@@ -16,6 +16,17 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — Fuera la animación de entrada (decisión final)
+
+- Tras tres escalones (capa GPU, capa única, reflow de avatares) el lag
+  persiste en iPhone/Safari. **Decisión: los resultados y las listas dejan
+  de animar su entrada** — aparecen. Nüra no necesita coreografía para ser
+  premium; necesita no tiritar nunca. Retiradas: revealBlock en la
+  Revelación, fadeInUp en el río de Comunidad y las cascadas de Explorar.
+  Las keyframes sobreviven para overlays y transiciones de pantalla (una
+  sola capa, sin contenido cargando). Ley escrita en design-system.
+- Sello `NURA_BUILD` → `2026.07.04-ar`.
+
 ## 2026-07-04 — Safari iOS: el reflow de los avatares (tercer escalón)
 
 - Pista del fundador (iPhone/Safari) → sospechoso correcto: cada avatar que

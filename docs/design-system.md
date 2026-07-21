@@ -119,6 +119,11 @@ contenido va en el área scrollable (bug histórico real).
 - **La entrada es directa**: un respiro del iso (≤700 ms, fundido sobre
   papel) cubre el arranque; la ceremonia de marca es el saludo en la Voz.
   Momento Cero y Onboarding viven como rutas bajo demanda, no en la entrada.
+- **Las listas y los resultados NO animan su entrada**: aparecen. Tras tres
+  escalones de optimización, el listón real (iPhone/Safari) no sostiene
+  cascadas sin tiritar — y aparecer al instante siempre se ve mejor que
+  aparecer con lag. La animación queda reservada a overlays y transiciones
+  de pantalla, donde hay una sola capa y ningún contenido cargando.
 - **60fps o nada**: solo se animan `transform` y `opacity`; los elementos
   que entran llevan capa propia (`will-change` + `backface-visibility`), y
   el escalonado nunca deja más de 3 capas animando a la vez.

@@ -448,10 +448,6 @@ textarea:active {
   from { transform: translateY(10px); opacity: 0; }
   to   { transform: translateY(0);    opacity: 1; }
 }
-/* Safari iOS: la decodificación de avatares repinta durante la entrada.
-   Reservar espacio y aislar el subárbol evita el reflow en cada llegada. */
-[style*="revealBlock"] img { content-visibility: auto; }
-
 [style*="revealBlock"] {
   will-change: transform, opacity;
   backface-visibility: hidden;

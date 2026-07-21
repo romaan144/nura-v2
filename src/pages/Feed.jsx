@@ -71,7 +71,7 @@ export default function Feed() {
 
       <div style={{ padding: '0 16px' }}>
         {mia && (
-          <div style={{ margin: '6px 0 22px', animation: 'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) both' }}>
+          <div style={{ margin: '6px 0 22px' }}>
             <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--purple)',
               letterSpacing: '0.6px', textTransform: 'uppercase', marginBottom: '8px' }}>
               Tu conexión
@@ -105,7 +105,7 @@ export default function Feed() {
               if (c < rioF.length) mixto.push({ kind: 'conexion', it: rioF[c++] })
             }
             return mixto.map((m, i) => (
-              <div key={(m.it.id || i) + m.kind} style={i < 2 ? { animation: 'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) both' } : undefined}>
+              <div key={(m.it.id || i) + m.kind} >
                 {m.kind === 'obra' ? (
                   <ObraCard post={m.it} />
                 ) : (
