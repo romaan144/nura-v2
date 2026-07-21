@@ -6,6 +6,7 @@ import { getFirstName } from '../utils/name'
 import { useUser } from '../context/UserContext'
 import { showToast } from '../components/Toast'
 import HelperCard from '../components/HelperCard'
+import HelperCardTall from '../components/HelperCardTall'
 import { getObra, TYPE_META } from '../data/obraPosts'
 import HelperCarousel from '../components/HelperCarousel'
 import RegisterGate from '../components/RegisterGate'
@@ -71,35 +72,15 @@ function ResultsBlock({ results }) {
   const alts = results.slice(1, 4)
   return (
     <div>
-      <div>
-        <HelperCard helper={top} showPrice />
-      </div>
+      <HelperCardTall helper={top} />
       <div className="hilo" style={{margin:'12px 6px 2px'}} />
       {alts.length > 0 && (
         <>
-          <div style={{fontSize:'12px', color:'var(--ink-secondary)', margin:'12px 0 8px', lineHeight:1.5}}>
-            Si prefieres comparar, también encajarían {alts.map((a, i) => (
-              <span key={i}><strong>{a.name?.split(' ')?.[0]}</strong>{i < alts.length - 2 ? ', ' : i === alts.length - 2 ? ' y ' : ''}</span>
-            ))}.
+          <div style={{fontSize:'12px', color:'var(--ink-secondary)', margin:'14px 0 8px', lineHeight:1.5}}>
+            Si prefieres comparar, también encajarían:
           </div>
-          <div style={{display:'flex', flexWrap:'wrap', gap:'8px'}}>
-            {alts.map((a, i) => (
-              <button key={a.id || i}
-                onClick={() => navigate(`/helper/${a.id}`, { state: { helper: a, fromSearch: true, userQuery: window.__nuraLastQuery, analysis: window.__nuraLastAnalysis } })}
-                aria-label={`Ver perfil de ${a.name}`}
-                style={{
-                  display:'flex', alignItems:'center', gap:'7px',
-                  background:'white', border:'1px solid var(--ink-border)',
-                  borderRadius:'99px', padding:'5px 12px 5px 5px',
-                  boxShadow:'var(--shadow-sm)', cursor:'pointer',
-                }}>
-                {a.avatarUrl
-                  ? <img src={a.avatarUrl} alt="" style={{width:30, height:30, borderRadius:'50%', objectFit:'cover'}} />
-                  : <div style={{width:30, height:30, borderRadius:'50%', background:a.avatarColor || 'var(--purple)', color:'white', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:700}}>{a.avatar || a.name?.[0]}</div>}
-                <span style={{fontSize:'12.5px', fontWeight:600, color:'var(--ink)'}}>{a.name?.split(' ')?.[0]}</span>
-                {a.rating && <span style={{fontSize:'11px', color:'var(--ink-tertiary)'}}>★ {a.rating}</span>}
-              </button>
-            ))}
+          <div style={{display:'grid', gridTemplateColumns:`repeat(${Math.min(alts.length, 3)}, 1fr)`, gap:'8px'}}>
+            {alts.map((a, i) => <HelperCardTall key={a.id || i} helper={a} small />)}
           </div>
         </>
       )}

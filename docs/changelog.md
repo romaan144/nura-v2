@@ -16,6 +16,16 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — La Tarjeta Vertical (mandato del fundador)
+
+- La recomendación deja de ser una fila: **tarjeta vertical grande** (retrato
+  96, nombre 19px, meta centrada, acción ancha "Escribir a X"). Las
+  alternativas dejan de ser chips y pasan a ser **la misma tarjeta en
+  miniatura** (retrato 62, sin acción) en rejilla de tres. Mismo flujo de
+  invitado, mismos datos, misma navegación — cambia la arquitectura, no el
+  contrato. Registrada en design-system.
+- Sello `NURA_BUILD` → `2026.07.04-at`.
+
 ## 2026-07-04 — La bienvenida, fija (feedback del fundador)
 
 - El estado de bienvenida animaba en cada entrada a Buscar: cabecera del

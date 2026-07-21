@@ -64,6 +64,13 @@ prohibido el `ease-out` genérico.
 
 ## 2. Componentes base
 
+### Tarjeta Vertical (la Recomendación)
+La respuesta de Nüra usa `HelperCardTall`: retrato 96px arriba, nombre 19px,
+especialidad, meta (★ · precio · distancia) y **una acción ancha** ("Escribir
+a X"). Las alternativas son la MISMA tarjeta con `small` (retrato 62, sin
+acción) en rejilla de tres: coherencia por escala, no por invención. La
+Tarjeta canon horizontal sigue rigiendo listas, Explorar, Comunidad y perfil.
+
 ### ObraCard (Nüra Obra)
 Pieza canon de publicación tipada: chip de tipo (morado-10, uppercase) →
 título en Voz 16.5 → cuerpo clamp-4 con "ver más" → **Resultado:** si
