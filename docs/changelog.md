@@ -16,6 +16,16 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — REVERSIÓN: el cambio a flujo rompió el posicionamiento
+
+- Pasar .page de 'fixed; inset:0' a flujo desplazó todo lo anclado a ella
+  (cabecera flotante, barra del input, spacer). Revertido Home.module.css al
+  estado -bh, que no estaba roto. El problema del límite inferior queda
+  ABIERTO: la hipótesis del contenedor raíz era correcta en el diagnóstico
+  pero su aplicación exigía recolocar los tres anclajes a la vez, no solo
+  cambiar el contenedor.
+- Sello NURA_BUILD → 2026.07.04-bj.
+
 ## 2026-07-04 — LA DIFERENCIA CON EXPLORAR (causa definitiva)
 
 - Dato decisivo del fundador: **el límite es correcto en Profesionales y solo

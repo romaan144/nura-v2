@@ -6,11 +6,8 @@
 
 /* ── PAGE — full screen canvas ─────────────────────── */
 .page {
-  /* Mismo patrón que Explorar (que renderiza correcto): la pantalla FLUYE
-     dentro del layout de la app, que ya reserva la BottomNav. El anterior
-     'position: fixed; inset: 0' la sacaba del flujo y la pegaba al viewport
-     ignorando esa reserva — por eso el límite caía antes solo en Home. */
-  height: 100%;
+  position: fixed;
+  inset: 0;
   display: flex;
   flex-direction: column;
   /* Sin padding-bottom: 'inset: 0' ya fija la caja al viewport. Ese padding
@@ -27,7 +24,7 @@
     var(--paper);
   /* Sin recorte en el padre: era él quien cortaba las tarjetas por encima de
      la línea de la nav. El scroller interno ya gestiona su desbordamiento. */
-  overflow: hidden;
+  overflow: visible;
   /* iOS: 'inset: 0' ya fija la altura al viewport visual. Añadir 100dvh
      sumaba el padding de la nav y el fondo se pasaba de la línea. */
   overscroll-behavior: none;
@@ -41,6 +38,9 @@
   overflow-y: auto;
   overflow-x: hidden;
   padding: 64px 14px 0;
+  /* El área scrollable termina en el borde del viewport; la nav se dibuja
+     encima (fixed). El contenido reserva su espacio con .chatSpacer. */
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start; /* el contenido crece hacia ABAJO: la respuesta
@@ -68,7 +68,7 @@
 /* ── FLOATING BOTTOM LAYER ──────────────────────────── */
 .floatBottom {
   position: absolute;
-  bottom: 0;  /* .page ya termina en la línea de la nav */
+  bottom: var(--nav-h);
   left: 0; right: 0;
   padding: var(--chat-gap) 20px var(--chat-gap);
   z-index: 30;
@@ -462,7 +462,8 @@
 /* ── CHAT SPACER ── */
 .chatSpacer {
   flex-shrink: 0;
-  height: var(--float-bottom-h);  /* solo el input: la nav ya queda fuera de .page */
+  height: calc(var(--float-bottom-h) + var(--nav-h));  /* input + barra fija:
+     el último contenido se ve entero al llegar al final */
 }
 
 /* ── INPUT FOCUS STATE ───────────────────────────────────────────────── */
