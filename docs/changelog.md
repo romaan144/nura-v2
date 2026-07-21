@@ -16,6 +16,16 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — La Revelación, una sola capa (segundo escalón)
+
+- El fundador sigue viendo tirones tras la promoción a GPU: se sube al
+  escalón anunciado. **La Revelación entera entra como un único elemento**
+  (`revealBlock`, una capa, `contain: paint`) y dentro **nada se mueve** —
+  mueren la animación propia de la tarjeta y el popIn escalonado de los
+  chips. En Comunidad, solo las dos primeras piezas del río entran
+  animadas; el resto aparece sin animación. Menos vida, más calidad.
+- Sello `NURA_BUILD` → `2026.07.04-ap`.
+
 ## 2026-07-04 — Animaciones a 60fps (feedback del fundador)
 
 - **Diagnóstico honesto**: las keyframes ya eran correctas (solo transform y

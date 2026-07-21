@@ -105,7 +105,7 @@ export default function Feed() {
               if (c < rioF.length) mixto.push({ kind: 'conexion', it: rioF[c++] })
             }
             return mixto.map((m, i) => (
-              <div key={(m.it.id || i) + m.kind} style={{ animation: `fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) ${Math.min(i, 3) * 50}ms both` }}>
+              <div key={(m.it.id || i) + m.kind} style={i < 2 ? { animation: 'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) both' } : undefined}>
                 {m.kind === 'obra' ? (
                   <ObraCard post={m.it} />
                 ) : (

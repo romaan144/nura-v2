@@ -444,6 +444,17 @@ textarea:active {
   -webkit-backface-visibility: hidden;
 }
 
+@keyframes revealBlock {
+  from { transform: translateY(10px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+[style*="revealBlock"] {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  contain: paint;
+}
+
 @keyframes cardCascade {
   from { transform: translateY(16px); }
   to   { transform: translateY(0); }
