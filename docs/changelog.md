@@ -16,6 +16,17 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — Safari iOS: el reflow de los avatares (tercer escalón)
+
+- Pista del fundador (iPhone/Safari) → sospechoso correcto: cada avatar que
+  termina de decodificar durante la entrada **repinta y reflowa** (sin
+  dimensiones reservadas, cuatro tarjetas = cuatro golpes de layout en plena
+  animación). Cura: `width/height` explícitos + `decoding="async"` en el
+  avatar, `contain: layout paint` en el bloque, `content-visibility: auto`
+  en sus imágenes, y `translateZ(0)` + 30 ms de arranque para que la capa
+  exista antes del primer fotograma.
+- Sello `NURA_BUILD` → `2026.07.04-aq`.
+
 ## 2026-07-04 — La Revelación, una sola capa (segundo escalón)
 
 - El fundador sigue viendo tirones tras la promoción a GPU: se sube al

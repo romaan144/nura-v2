@@ -70,7 +70,7 @@ function ResultsBlock({ results }) {
   const top = results[0]
   const alts = results.slice(1, 4)
   return (
-    <div style={{animation:'revealBlock 0.34s cubic-bezier(0.22, 1, 0.36, 1) both'}}>
+    <div style={{animation:'revealBlock 0.32s cubic-bezier(0.22, 1, 0.36, 1) 30ms both', transform:'translateZ(0)'}}>
       <div>
         <HelperCard helper={top} showPrice />
       </div>

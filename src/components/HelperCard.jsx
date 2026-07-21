@@ -64,7 +64,7 @@ export default function HelperCard({ helper, onContact, showContact = true, show
       }}>
       <div style={{ position: 'relative', flexShrink: 0 }}>
         {helper.avatarUrl
-          ? <img src={helper.avatarUrl} alt="" style={{ width: 54, height: 54, borderRadius: '50%', objectFit: 'cover', display: 'block' }} />
+          ? <img decoding="async" loading="eager" width="54" height="54" src={helper.avatarUrl} alt="" style={{ width: 54, height: 54, borderRadius: '50%', objectFit: 'cover', display: 'block' }} />
           : <div style={{
               width: 54, height: 54, borderRadius: '50%',
               background: helper.avatarColor || 'var(--purple)',
