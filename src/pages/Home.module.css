@@ -10,7 +10,10 @@
   inset: 0;
   display: flex;
   flex-direction: column;
-  padding-bottom: var(--nav-h); /* reserve space for fixed BottomNav */
+  /* Sin padding-bottom: 'inset: 0' ya fija la caja al viewport. Ese padding
+     encogía el área útil, así que el scroller (.messages, flex:1) terminaba
+     65px+safe-area por encima de la nav y el fondo con él. La reserva de la
+     barra vive ahora DENTRO del scroll (.chatSpacer). */
   /* El Alma Visible vive aquí, no en el scroller: .page cubre desde el borde
      superior hasta la línea de la nav, así que el degradado llega siempre
      al final — sin trozos de papel liso bajo el input. */
@@ -454,7 +457,8 @@
 /* ── CHAT SPACER ── */
 .chatSpacer {
   flex-shrink: 0;
-  height: var(--float-bottom-h);  /* los chips ya no viven en la barra: solo el input */
+  height: calc(var(--float-bottom-h) + var(--nav-h));  /* input + barra fija:
+     el último contenido se ve entero al llegar al final */
 }
 
 /* ── INPUT FOCUS STATE ───────────────────────────────────────────────── */

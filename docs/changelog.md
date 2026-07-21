@@ -16,6 +16,21 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — La geometría del borde inferior (causa raíz)
+
+- **Causa**: `.page` tenía `position: fixed; inset: 0` **y**
+  `padding-bottom: var(--nav-h)`. Con la altura ya fijada por `inset: 0`, ese
+  padding encogía el área útil desde dentro: `.messages` (flex:1, el
+  contenedor con `overflow-y: auto`) terminaba 65px+safe-area por encima de
+  la nav, y el fondo con él. De ahí la banda de nadie, el corte visual y la
+  sensación de dos capas mal encajadas — doble reserva de la misma barra.
+- **Cura geométrica (2 líneas, cero fondos artificiales)**: fuera el
+  `padding-bottom` de `.page` (el scroller llega al borde real y la nav se
+  dibuja encima, fija) y la reserva se muda **dentro del scroll**:
+  `.chatSpacer` pasa a `calc(--float-bottom-h + --nav-h)`, así el último
+  contenido se ve entero por encima del input y de la navegación.
+- Sello `NURA_BUILD` → `2026.07.04-bf`.
+
 ## 2026-07-04 — El fondo llega hasta abajo (la aurora vivía en el scroller)
 
 - **Causa real** (más de fondo que la de -bd): las auroras se pintaban sobre
