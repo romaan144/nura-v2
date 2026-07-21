@@ -346,20 +346,29 @@ export default function Home() {
   const lastMatches = nuraLastMatches
   const setLastMatches = setNuraLastMatches
   const bottomRef  = useRef(null)
-  const resultRef = useRef(null)  // la Revelación aterriza aquí, no en el fondo
+  const resultRef = useRef(null)   // el MENSAJE de la respuesta (no solo el bloque)
+  const scrollerRef = useRef(null) // el contenedor con scroll
   const inputRef   = useRef(null)
   const topRef     = useRef(null)
   const [topH, setTopH] = useState(80)
   const [floatH, setFloatH] = useState(84) /* header height fallback */
 
-  // La Revelación aterriza en su inicio: la recomendación queda a la vista
+  // La Revelación aterriza arriba: posicionamiento manual (scrollIntoView
+  // pelea con el crecimiento del contenedor). Dos pasadas: tras el layout y
+  // tras la carga de avatares, que cambian la altura.
   useEffect(() => {
-    if (!resultRef.current) return
-    const t = setTimeout(() => {
-      try { resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }) } catch { /* noop */ }
-    }, 60)
-    return () => clearTimeout(t)
-  }, [messages.length])
+    const el = resultRef.current, sc = scrollerRef.current
+    if (!el || !sc) return
+    const place = () => {
+      try {
+        const top = el.offsetTop - (topH || 0) - 12
+        sc.scrollTo({ top: Math.max(0, top), behavior: 'smooth' })
+      } catch { /* noop */ }
+    }
+    const a = setTimeout(place, 80)
+    const b = setTimeout(place, 420)
+    return () => { clearTimeout(a); clearTimeout(b) }
+  }, [messages.length, topH])
 
   useEffect(() => {
     let lines = getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas)
@@ -1062,14 +1071,14 @@ export default function Home() {
         </div>
       </div>
 
-      <div className={styles.messages} style={{paddingTop: topH + 'px'}}>
+      <div className={styles.messages} ref={scrollerRef} style={{paddingTop: topH + 'px'}}>
         {messages.map((msg, msgIdx) => {
           const prevMsg = messages[msgIdx - 1]
           const prevHadResults = prevMsg?.results?.length > 0
           // Spacing: 16px between messages, 24px after carousel, 20px for user replies
           const spacingClass = prevHadResults ? styles.afterCarousel : ''
           return (
-          <div key={msg.id} style={{marginTop: msgIdx === 0 ? 0 : msg.from === 'user' ? 'var(--chat-gap-md)' : 'var(--chat-gap)'}}>
+          <div key={msg.id} style={{marginTop: msgIdx === 0 ? 0 : msg.from === 'user' ? 'var(--chat-gap-md)' : 'var(--chat-gap)'}} ref={msg.results?.length ? resultRef : undefined}>
             <div className={`${styles.msgRow} ${msg.from === 'user' ? styles.msgRowUser : ''} ${spacingClass}`}>
               {msg.from === 'nura' && (
                 <div className={styles.nuraAvatar}>
@@ -1123,7 +1132,7 @@ export default function Home() {
               </div>
             )}
             {msg.results && (
-              <div className={styles.carouselBlock} ref={resultRef}>
+              <div className={styles.carouselBlock}>
                 <ResultsBlock results={msg.results} />
               </div>
             )}

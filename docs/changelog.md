@@ -16,6 +16,17 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — La Revelación aterriza arriba, de verdad (segundo intento)
+
+- `scrollIntoView` no bastaba: pelea con el crecimiento del contenedor y el
+  ancla estaba en el bloque de tarjetas, no en el mensaje. Ahora el ancla es
+  **el mensaje completo** (frase + tarjeta) y el scroll se posiciona **a
+  mano** sobre el contenedor (`offsetTop` menos la cabecera flotante), con
+  **doble pasada** (80 ms tras layout, 420 ms tras cargar avatares, que
+  cambian la altura). La respuesta queda arriba y el usuario baja cuando
+  quiere.
+- Sello `NURA_BUILD` → `2026.07.04-aw`.
+
 ## 2026-07-04 — La Revelación aterriza arriba (feedback del fundador)
 
 - Con la tarjeta vertical, el anclaje del navegador al fondo dejaba la
