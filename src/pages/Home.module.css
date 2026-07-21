@@ -13,10 +13,16 @@
   padding-bottom: var(--nav-h); /* reserve space for fixed BottomNav */
   background: var(--paper);
   overflow: hidden;
+  /* iOS: la altura sigue al viewport visual — el cierre del teclado no
+     reajusta el layout ni arrastra la vista. */
+  height: 100dvh;
+  max-height: 100dvh;
+  overscroll-behavior: none;
 }
 
 /* ── MESSAGES — scrollable, full page, behind everything */
 .messages {
+  overscroll-behavior-y: contain;
   overflow-anchor: none;  /* el navegador no reancla al crecer: la vista se queda donde el usuario la dejó */
   flex: 1;
   overflow-y: auto;

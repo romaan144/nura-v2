@@ -599,7 +599,16 @@ export default function Home() {
     })
   }
 
+  // iOS: al enviar, evitar que el cierre del teclado reajuste el viewport
+  function blurSinSalto() {
+    try {
+      const el = document.activeElement
+      if (el && el.blur) { el.blur() }
+    } catch { /* noop */ }
+  }
+
   async function handleSend(text) {
+    blurSinSalto()
     let msg = text || input
     if (!msg.trim() || loading) return
     haptic('light')

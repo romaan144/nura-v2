@@ -16,6 +16,15 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — El teclado de iOS (última pieza del salto)
+
+- Con cero scroll programado el salto persistía: el culpable restante es el
+  **reajuste de viewport de Safari al cerrarse el teclado**. Cura: altura del
+  contenedor a `100dvh` (viewport visual, no layout), `overscroll-behavior`
+  contenido para que el scroll no encadene con el documento, y blur
+  controlado al enviar.
+- Sello `NURA_BUILD` → `2026.07.04-ay`.
+
 ## 2026-07-04 — Cero scroll automático (decisión final)
 
 - Tercer intento fallido en dispositivo: se elimina **todo** scroll
