@@ -16,6 +16,15 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — El fondo termina en la línea de la nav
+
+- Regresión propia del sello -ay: se añadió `height: 100dvh` a un `.page`
+  que ya estaba en `position: fixed; inset: 0`. Con el `padding-bottom` de
+  la nav, el contenedor medía 100dvh **más** la barra y el fondo se pasaba
+  por debajo de la línea. `inset: 0` ya fija la altura al viewport visual:
+  la altura explícita sobraba.
+- Sello `NURA_BUILD` → `2026.07.04-bc`.
+
 ## 2026-07-04 — Los filtros se explican solos (feedback del fundador)
 
 - Tras mudarlos bajo la respuesta heredaban el look de sugerencia flotante y

@@ -13,10 +13,8 @@
   padding-bottom: var(--nav-h); /* reserve space for fixed BottomNav */
   background: var(--paper);
   overflow: hidden;
-  /* iOS: la altura sigue al viewport visual — el cierre del teclado no
-     reajusta el layout ni arrastra la vista. */
-  height: 100dvh;
-  max-height: 100dvh;
+  /* iOS: 'inset: 0' ya fija la altura al viewport visual. Añadir 100dvh
+     sumaba el padding de la nav y el fondo se pasaba de la línea. */
   overscroll-behavior: none;
 }
 
