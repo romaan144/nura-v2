@@ -435,6 +435,15 @@ textarea:active {
   to   { transform: translateY(0); opacity: 1; }
 }
 
+/* Suavidad de 60fps: promover a capa propia mientras se anima.
+   'backface-visibility' fuerza aceleración en Safari iOS, y
+   'will-change' se limita a los elementos que de verdad entran. */
+[style*="cardCascade"], [style*="fadeInUp"], [style*="popIn"] {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
 @keyframes cardCascade {
   from { transform: translateY(16px); }
   to   { transform: translateY(0); }

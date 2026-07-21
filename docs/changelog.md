@@ -16,6 +16,17 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — Animaciones a 60fps (feedback del fundador)
+
+- **Diagnóstico honesto**: las keyframes ya eran correctas (solo transform y
+  opacity, cero layout). El tirón venía de **cuántas animaciones arrancan a
+  la vez** sobre un árbol en reconciliación, sin promoción a capa GPU.
+- Cura: `will-change` + `backface-visibility` en los tres entrantes
+  (cardCascade/fadeInUp/popIn) para que el compositor les dé capa propia;
+  escalonados recortados (chips 140→60 ms, río 70→50 ms con tope 3) para que
+  nunca haya más de tres capas animando simultáneas.
+- Sello `NURA_BUILD` → `2026.07.04-ao`.
+
 ## 2026-07-04 — El Panel del Profesional: "Tu semana" (Nura Copilot)
 
 - **La cocina del profesional deja de estar vacía**: una tarjeta abre su

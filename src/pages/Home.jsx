@@ -71,7 +71,7 @@ function ResultsBlock({ results }) {
   const alts = results.slice(1, 4)
   return (
     <div>
-      <div style={{animation:'cardCascade 0.45s cubic-bezier(0.22, 1, 0.36, 1) both'}}>
+      <div style={{animation:'cardCascade 0.4s cubic-bezier(0.22, 1, 0.36, 1) both', willChange:'transform'}}>
         <HelperCard helper={top} showPrice />
       </div>
       <div className="hilo" style={{margin:'12px 6px 2px'}} />
@@ -92,8 +92,8 @@ function ResultsBlock({ results }) {
                   background:'white', border:'1px solid var(--ink-border)',
                   borderRadius:'99px', padding:'5px 12px 5px 5px',
                   boxShadow:'var(--shadow-sm)', cursor:'pointer',
-                  animation:'popIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both',
-                  animationDelay:`${200 + i * 140}ms`,
+                  animation:'popIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both',
+                  animationDelay:`${240 + i * 60}ms`,
                 }}>
                 {a.avatarUrl
                   ? <img src={a.avatarUrl} alt="" style={{width:30, height:30, borderRadius:'50%', objectFit:'cover'}} />

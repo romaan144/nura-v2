@@ -119,6 +119,9 @@ contenido va en el área scrollable (bug histórico real).
 - **La entrada es directa**: un respiro del iso (≤700 ms, fundido sobre
   papel) cubre el arranque; la ceremonia de marca es el saludo en la Voz.
   Momento Cero y Onboarding viven como rutas bajo demanda, no en la entrada.
+- **60fps o nada**: solo se animan `transform` y `opacity`; los elementos
+  que entran llevan capa propia (`will-change` + `backface-visibility`), y
+  el escalonado nunca deja más de 3 capas animando a la vez.
 - Las animaciones de entrada ocurren **una vez por vida de la pestaña**
   (las pestañas viven montadas — keep-alive); nunca por visita.
 - `prefers-reduced-motion: reduce` desactiva globalmente toda animación.
