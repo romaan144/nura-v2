@@ -197,7 +197,9 @@ body {
 .desktopMain {
   flex: 1;
   min-width: 0;
-  overflow-y: auto;
+  /* Sin overflow propio: las pestañas gestionan su scroll interno. Este
+     scroller anidado creaba una segunda área con su propio límite inferior,
+     que aparecía como una línea por encima de la BottomNav. */
   overflow-x: hidden;
 }
 

@@ -16,6 +16,18 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — EL SCROLLER ANIDADO (la causa que faltaba)
+
+- Tras corregir `.page` y `.chatSpacer`, la línea persistía: el culpable
+  estaba **un piso más arriba**. `.desktopMain` (el envoltorio de las
+  pestañas vivas, en index.css) tenía su propio `overflow-y: auto` — dos
+  scrollers anidados. Ese contenedor creaba una segunda área con su propio
+  límite inferior, visible como corte por encima de la BottomNav.
+- Cura: `.desktopMain` deja de scrollear (cada pestaña ya gestiona su scroll
+  interno). Lección para el próximo bug de layout: **revisar los ancestros
+  antes que el componente.**
+- Sello `NURA_BUILD` → `2026.07.04-bg`.
+
 ## 2026-07-04 — La geometría del borde inferior (causa raíz)
 
 - **Causa**: `.page` tenía `position: fixed; inset: 0` **y**
