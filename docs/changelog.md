@@ -16,6 +16,17 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — El fondo llega hasta abajo (la aurora vivía en el scroller)
+
+- **Causa real** (más de fondo que la de -bd): las auroras se pintaban sobre
+  `.messages`, el contenedor de scroll — cuya caja termina donde termina el
+  contenido. El área bajo el input quedaba con el papel liso de `.page`: un
+  trozo visiblemente sin degradado antes de la nav.
+- **Cura**: el degradado se muda a `.page`, que cubre desde el borde superior
+  hasta la línea de la nav — el fondo llega siempre al final. Nav, input y
+  geometría intactos; cero JSX.
+- Sello `NURA_BUILD` → `2026.07.04-be`.
+
 ## 2026-07-04 — La franja bajo la nav (composición, no geometría)
 
 - **Causa**: la BottomNav es translúcida (86% + blur 32px), así que filtra lo

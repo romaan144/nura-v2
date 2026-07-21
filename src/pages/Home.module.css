@@ -11,7 +11,14 @@
   display: flex;
   flex-direction: column;
   padding-bottom: var(--nav-h); /* reserve space for fixed BottomNav */
-  background: var(--paper);
+  /* El Alma Visible vive aquí, no en el scroller: .page cubre desde el borde
+     superior hasta la línea de la nav, así que el degradado llega siempre
+     al final — sin trozos de papel liso bajo el input. */
+  background:
+    radial-gradient(560px 280px at 12% -4%, rgba(255,59,92,0.06), transparent 60%),
+    radial-gradient(680px 320px at 88% -2%, rgba(123,47,255,0.07), transparent 62%),
+    radial-gradient(560px 300px at 50% 96%, rgba(0,209,255,0.04), transparent 58%),
+    var(--paper);
   overflow: hidden;
   /* iOS: 'inset: 0' ya fija la altura al viewport visual. Añadir 100dvh
      sumaba el padding de la nav y el fondo se pasaba de la línea. */
@@ -472,12 +479,7 @@
 
 
 /* El Alma Visible: aurora de Home */
-.messages {
-  background:
-    radial-gradient(560px 280px at 12% -4%, rgba(255,59,92,0.06), transparent 60%),
-    radial-gradient(680px 320px at 88% -2%, rgba(123,47,255,0.07), transparent 62%),
-    radial-gradient(560px 240px at 50% 88%, rgba(0,209,255,0.04), transparent 55%);
-}
+
 
 
 /* ── Filtros de refinamiento (bajo la respuesta) ──
