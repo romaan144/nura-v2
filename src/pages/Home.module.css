@@ -24,7 +24,7 @@
     var(--paper);
   /* Sin recorte en el padre: era él quien cortaba las tarjetas por encima de
      la línea de la nav. El scroller interno ya gestiona su desbordamiento. */
-  overflow: visible;
+  overflow: hidden;
   /* iOS: 'inset: 0' ya fija la altura al viewport visual. Añadir 100dvh
      sumaba el padding de la nav y el fondo se pasaba de la línea. */
   overscroll-behavior: none;
@@ -40,7 +40,6 @@
   padding: 64px 14px 0;
   /* El área scrollable termina en el borde del viewport; la nav se dibuja
      encima (fixed). El contenido reserva su espacio con .chatSpacer. */
-  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start; /* el contenido crece hacia ABAJO: la respuesta
@@ -462,7 +461,9 @@
 /* ── CHAT SPACER ── */
 .chatSpacer {
   flex-shrink: 0;
-  height: calc(var(--float-bottom-h) + var(--nav-h));  /* input + barra fija:
+  height: calc(var(--float-bottom-h) + var(--nav-h));  /* input(76) + nav(65+safe):
+     .floatBottom se ancla en bottom:var(--nav-h), así que el contenido debe
+     librar AMBOS para verse entero al final del scroll */  /* input + barra fija:
      el último contenido se ve entero al llegar al final */
 }
 

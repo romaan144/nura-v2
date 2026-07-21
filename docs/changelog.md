@@ -16,6 +16,16 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — Limpieza del borde inferior (tras la reversión)
+
+- Con todo el árbol a la vista: `.messages` tenía `height: 100%` **además**
+  de `flex: 1` — en un contenedor flex column eso fuerza altura completa
+  ignorando el reparto, y su caja podía desbordar la del padre. Retirado
+  (redundante) y restaurado `overflow: hidden` en `.page`. La reserva del
+  spacer (input + nav) es correcta porque `.floatBottom` se ancla sobre la
+  nav: el contenido debe librar ambos para verse entero.
+- Sello `NURA_BUILD` → `2026.07.04-bk`.
+
 ## 2026-07-04 — REVERSIÓN: el cambio a flujo rompió el posicionamiento
 
 - Pasar .page de 'fixed; inset:0' a flujo desplazó todo lo anclado a ella
