@@ -100,3 +100,21 @@ Repos, deploys y tabla canónica: `context.md` §2.
 El inventario de estado (localStorage / sessionStorage / window), el contrato
 de mensajes y la estructura del repo viven en **`architecture.md`** — este
 documento define comportamiento, no inventario.
+
+
+### La Cuarta Puerta — verificación de superficie (2026-07-04)
+
+`npm run smoke` monta **8 pantallas × 2 escenarios** (invitado y profesional
+con obra, seguidos y conexión confirmada) con Vite SSR + `renderToString`,
+sobre un `UserProvider` real con localStorage presembrado. Falla si alguna
+lanza al renderizar.
+
+**Por qué existe**: build, lint y suite no ven si una pantalla *renderiza*.
+Prueba de fuego documentada: con `pulsoDelDia` saboteado, el build salió
+**verde** y el smoke cazó `pulsoDelDiaX is not defined` en las dos variantes.
+
+**Límite honesto**: SSR no ejecuta `useEffect` — caza render, no efectos. No
+sustituye la verificación en dispositivo; elimina la clase de fallos que
+jamás debería llegar a ella.
+
+**Obligatoria antes de cada push**, junto a build, lint y suite.

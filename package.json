@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test:matching": "node scripts/test-matching.mjs"
+    "test:matching": "node scripts/test-matching.mjs",
+    "smoke": "node scripts/smoke.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.17.0",

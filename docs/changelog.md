@@ -16,6 +16,16 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — La Cuarta Puerta (Nura Copilot)
+
+- **`npm run smoke`**: 8 pantallas × 2 escenarios (invitado / profesional con
+  obra) renderizadas con Vite SSR sobre un UserProvider real. Cubre el punto
+  ciego que causó la mala racha: build, lint y suite no ven si una pantalla
+  renderiza. **Prueba de fuego**: con Feed saboteado, el build salió verde y
+  el smoke cazó el fallo en ambos escenarios. Límite escrito: SSR no ejecuta
+  efectos. Cuarta puerta obligatoria en engineering.md.
+- Sello `NURA_BUILD` → `2026.07.04-am`.
+
 ## 2026-07-04 — El profesional publica su obra (bucle de oferta cerrado)
 
 - **ObraComposer**: seis tipos, título, cuerpo y **Resultado exigido** en
