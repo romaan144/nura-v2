@@ -30,7 +30,9 @@
   padding: 64px 14px 0;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end; /* content always anchored to bottom — no JS scroll needed */
+  justify-content: flex-start; /* el contenido crece hacia ABAJO: la respuesta
+     queda donde nace y el usuario baja cuando quiere. El flex-end anterior
+     anclaba todo al fondo y empujaba la recomendación fuera de pantalla. */
   gap: 0;
   -webkit-overflow-scrolling: touch;
   min-height: 0;

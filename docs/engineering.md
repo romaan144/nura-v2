@@ -118,3 +118,10 @@ sustituye la verificación en dispositivo; elimina la clase de fallos que
 jamás debería llegar a ella.
 
 **Obligatoria antes de cada push**, junto a build, lint y suite.
+
+
+### Lección: cuando el JS no lo arregla, es CSS (2026-07-04)
+
+Cinco iteraciones intentando frenar por JavaScript un desplazamiento que
+causaba `justify-content: flex-end` en el contenedor de chat. Antes de
+iterar sobre efectos y timeouts, **leer el layout del contenedor**.

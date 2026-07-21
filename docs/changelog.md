@@ -16,6 +16,20 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — EL CULPABLE: `justify-content: flex-end` (autopsia)
+
+- Cinco intentos de arreglar por JS un problema que era **de CSS**: el
+  contenedor de mensajes tenía `justify-content: flex-end` con el comentario
+  *"content always anchored to bottom — no JS scroll needed"*. El contenido
+  estaba anclado al fondo por layout: **cada mensaje nuevo empujaba lo
+  anterior hacia arriba**, sacando la recomendación de la pantalla sin que
+  nadie hiciera scroll. Ningún cambio de JavaScript podía curarlo.
+- Cura: `flex-start` en conversación (crece hacia abajo, la respuesta se
+  queda donde nace) manteniendo `flex-end` solo en el estado de bienvenida,
+  donde el asentado inferior es deseable. Lección: **cuando el
+  comportamiento no responde al JS, el culpable es el layout.**
+- Sello `NURA_BUILD` → `2026.07.04-az`.
+
 ## 2026-07-04 — El teclado de iOS (última pieza del salto)
 
 - Con cero scroll programado el salto persistía: el culpable restante es el
