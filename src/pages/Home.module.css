@@ -17,6 +17,7 @@
 
 /* ── MESSAGES — scrollable, full page, behind everything */
 .messages {
+  overflow-anchor: none;  /* el navegador no reancla al crecer: la vista se queda donde el usuario la dejó */
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;

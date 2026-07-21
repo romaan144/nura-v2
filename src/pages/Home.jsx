@@ -353,22 +353,9 @@ export default function Home() {
   const [topH, setTopH] = useState(80)
   const [floatH, setFloatH] = useState(84) /* header height fallback */
 
-  // La Revelación aterriza arriba: posicionamiento manual (scrollIntoView
-  // pelea con el crecimiento del contenedor). Dos pasadas: tras el layout y
-  // tras la carga de avatares, que cambian la altura.
-  useEffect(() => {
-    const el = resultRef.current, sc = scrollerRef.current
-    if (!el || !sc) return
-    const place = () => {
-      try {
-        const top = el.offsetTop - (topH || 0) - 12
-        sc.scrollTo({ top: Math.max(0, top), behavior: 'smooth' })
-      } catch { /* noop */ }
-    }
-    const a = setTimeout(place, 80)
-    const b = setTimeout(place, 420)
-    return () => { clearTimeout(a); clearTimeout(b) }
-  }, [messages.length, topH])
+  // Cero scroll automático: la vista NO se mueve sola. La respuesta entra
+  // debajo y el usuario baja cuando quiere. Ninguna mecánica puede fallar
+  // si no hay mecánica. (Ley del fundador, 3 intentos de auto-scroll.)
 
   useEffect(() => {
     let lines = getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas)

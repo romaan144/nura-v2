@@ -16,6 +16,15 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — Cero scroll automático (decisión final)
+
+- Tercer intento fallido en dispositivo: se elimina **todo** scroll
+  programado y se añade `overflow-anchor: none` para que el navegador
+  tampoco reancle al crecer el contenido. La vista se queda donde el usuario
+  la dejó al enviar; la respuesta entra debajo y él baja cuando quiere. Ley
+  en design-system: la conversación no se mueve sola.
+- Sello `NURA_BUILD` → `2026.07.04-ax`.
+
 ## 2026-07-04 — La Revelación aterriza arriba, de verdad (segundo intento)
 
 - `scrollIntoView` no bastaba: pelea con el crecimiento del contenedor y el
