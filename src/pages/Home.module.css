@@ -243,6 +243,10 @@
   }
 .msgRowUser { flex-direction: row-reverse; }
 
+.nuraAvatarSpacer {
+  width: 38px;
+  flex-shrink: 0;
+}
 .nuraAvatar {
   width: 38px; height: 38px;
   border-radius: 50%;

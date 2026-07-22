@@ -26,6 +26,13 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — El logo no se repite en mensajes seguidos de Nura
+
+- Dos mensajes seguidos de Nura repetian el logo. Ahora solo en el primero
+  de la tanda (firstOfNuraRun); los siguientes reservan su ancho
+  (nuraAvatarSpacer 38px) para alinear el texto, como en chats reales.
+- Sello NURA_BUILD 2026.07.04-cd.
+
 ## 2026-07-04 — Fuera "Lo he entendido así"
 
 - Eliminado el bloque de comprensión (chips "Lo he entendido así" + pie "toca
