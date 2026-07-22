@@ -38,6 +38,9 @@
   overflow-y: auto;
   overflow-x: hidden;
   padding: 64px 14px 0;
+  margin-bottom: var(--nav-h);  /* el fondo del chat termina en la línea de
+     la nav, no en el borde del viewport: sin esto .messages pasaba 65px por
+     detrás de la barra. Solo Home tiene este scroller de fondo. */
   /* El área scrollable termina en el borde del viewport; la nav se dibuja
      encima (fixed). El contenido reserva su espacio con .chatSpacer. */
   display: flex;
@@ -461,10 +464,7 @@
 /* ── CHAT SPACER ── */
 .chatSpacer {
   flex-shrink: 0;
-  height: calc(var(--float-bottom-h) + var(--nav-h));  /* input(76) + nav(65+safe):
-     .floatBottom se ancla en bottom:var(--nav-h), así que el contenido debe
-     librar AMBOS para verse entero al final del scroll */  /* input + barra fija:
-     el último contenido se ve entero al llegar al final */
+  height: var(--float-bottom-h);  /* solo el input: el scroller ya no llega bajo la barra */
 }
 
 /* ── INPUT FOCUS STATE ───────────────────────────────────────────────── */

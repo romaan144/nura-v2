@@ -26,6 +26,18 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — EL BORDE, RESUELTO: el fondo del chat pasaba tras la nav
+
+- Diagnóstico definitivo tras mapear TODAS las cajas ancladas a .page: el
+  input (.floatBottom) estaba bien, en bottom:var(--nav-h). El culpable era
+  .messages (el fondo scrollable del chat): llegaba al borde del viewport y
+  **pasaba 65px por detrás de la barra**. Solo Home tiene ese scroller de
+  fondo — por eso solo Home fallaba, y las demás pestañas no.
+- Cura mínima sin tocar un solo anclaje: .messages gana
+  `margin-bottom: var(--nav-h)` (termina en la línea de la nav); el spacer
+  vuelve a reservar solo el input. Input y cabecera no se mueven.
+- Sello NURA_BUILD → 2026.07.04-bp.
+
 ## 2026-07-04 — REVERSIÓN DEFINITIVA del borde inferior
 
 - El cambio de patrón de layout (fixed→relative) rompe el posicionamiento de
