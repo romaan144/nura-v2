@@ -26,6 +26,15 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — Tarjetas de lado a lado, centradas, con respiro
+
+- La indentación de 48px descentraba las tarjetas y quedaba mal. Vuelven a
+  lado-a-lado (centradas en la pantalla) con 8px de respiro lateral para que
+  no parezcan tan anchas. El TEXTO de Nüra conserva su indentación de
+  burbuja (eso estaba bien); solo las tarjetas y filtros van a ancho
+  centrado.
+- Sello NURA_BUILD → 2026.07.04-cb.
+
 ## 2026-07-04 — Márgenes inteligentes por tipo de respuesta
 
 - El 20% derecho comprimía las tarjetas. Regla por tipo: el TEXTO
