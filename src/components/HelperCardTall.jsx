@@ -57,7 +57,7 @@ export default function HelperCardTall({ helper, small = false }) {
           : <div style={{ width: av, height: av, borderRadius: '50%', background: helper.avatarColor || 'var(--purple)',
               color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: small ? 22 : 34, fontWeight: 700 }}>{helper.avatar || firstName?.[0]}</div>}
-        {helper.online && <LiveDot />}
+        {helper.online && <LiveDot style={{ position: 'absolute', bottom: 1, right: 1 }} />}
       </div>
 
       <div style={{ fontSize: small ? '14px' : '19px', fontWeight: 700, color: 'var(--ink)',

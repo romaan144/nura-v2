@@ -26,6 +26,16 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — Tarjetas secundarias: filas alineadas entre si
+
+- El punto de conectado (LiveDot) era inline-block dentro del avatar: se
+  apilaba debajo y empujaba nombre/especialidad/meta hacia abajo solo en las
+  tarjetas con punto, desalineandolas de las demas. Ahora va posicionado
+  encima del avatar (esquina inf. derecha), sin ocupar flujo. Ademas la
+  rejilla de alternativas usa align-items:start. Nombre con nombre, meta con
+  meta, tengan punto o no.
+- Sello NURA_BUILD 2026.07.04-cf.
+
 ## 2026-07-04 — Grises mas legibles (menos translucidos)
 
 - Los textos secundarios ("si prefieres comparar", "AJUSTAR ESTA BUSQUEDA" y

@@ -79,7 +79,7 @@ function ResultsBlock({ results }) {
           <div style={{fontSize:'12px', color:'var(--ink-secondary)', margin:'14px 0 8px', lineHeight:1.5}}>
             Si prefieres comparar, también encajarían:
           </div>
-          <div style={{display:'grid', gridTemplateColumns:`repeat(${Math.min(alts.length, 3)}, 1fr)`, gap:'8px'}}>
+          <div style={{display:'grid', gridTemplateColumns:`repeat(${Math.min(alts.length, 3)}, 1fr)`, gap:'8px', alignItems:'start'}}>
             {alts.map((a, i) => <HelperCardTall key={a.id || i} helper={a} small />)}
           </div>
         </>
