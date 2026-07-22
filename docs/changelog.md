@@ -26,6 +26,16 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — El fondo scrollea tras el input (matiz del fundador)
+
+- El margin-bottom de -bp cortaba el fondo donde empieza el input; pero el
+  input es una burbuja flotante y el chat debe scrollear POR DETRÁS de ella
+  hasta la barra. Corregido: `.messages` sin recorte (fondo hasta la barra) y
+  `.chatSpacer` reserva input+barra, de modo que la última tarjeta sube por
+  encima de ambos mientras el fondo pasa por detrás. El límite real del
+  scroll es la barra, no el input.
+- Sello NURA_BUILD → 2026.07.04-bq.
+
 ## 2026-07-04 — EL BORDE, RESUELTO: el fondo del chat pasaba tras la nav
 
 - Diagnóstico definitivo tras mapear TODAS las cajas ancladas a .page: el
