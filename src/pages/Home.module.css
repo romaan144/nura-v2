@@ -7,11 +7,7 @@
 /* ── PAGE — full screen canvas ─────────────────────── */
 .page {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: var(--nav-h);  /* la caja termina en la línea de la nav, no en el
-     borde del viewport. Único cambio: los anclajes internos no se tocan. */
+  inset: 0;
   display: flex;
   flex-direction: column;
   /* Sin padding-bottom: 'inset: 0' ya fija la caja al viewport. Ese padding
