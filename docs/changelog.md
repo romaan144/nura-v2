@@ -26,6 +26,15 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — La bienvenida asienta JUSTO encima del input
+
+- Quitar el spacer en bienvenida (-bs) dejó el saludo pegado al fondo real
+  del contenedor, que pasa por detrás del input → quedaba tapado. Cura:
+  `.welcomeSpacer` (altura del input, sin la barra) reserva la burbuja en
+  bienvenida, así el flex-end deja el saludo justo encima del input; en
+  conversación sigue el .chatSpacer completo.
+- Sello NURA_BUILD → 2026.07.04-bt.
+
 ## 2026-07-04 — La bienvenida vuelve a asentar abajo
 
 - Efecto colateral de -bq: el .chatSpacer (que reserva input+barra dentro del

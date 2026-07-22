@@ -1204,7 +1204,9 @@ export default function Home() {
           </div>
           )
         })}
-                {messages.length > 1 && <div className={styles.chatSpacer} />}
+                {messages.length > 1
+          ? <div className={styles.chatSpacer} />
+          : <div className={styles.welcomeSpacer} />}
         <div ref={bottomRef} />
       </div>
 

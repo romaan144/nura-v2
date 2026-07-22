@@ -462,6 +462,12 @@
 .refineChips::-webkit-scrollbar { display: none; }
 
 /* ── CHAT SPACER ── */
+.welcomeSpacer {
+  flex-shrink: 0;
+  /* Solo la burbuja del input: en bienvenida el saludo asienta justo encima
+     del input flotante (que ya va sobre la barra). */
+  height: var(--float-bottom-h);
+}
 .chatSpacer {
   flex-shrink: 0;
   /* input flotante (76) + barra (65+safe): el último contenido sube por
