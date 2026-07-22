@@ -1104,30 +1104,7 @@ export default function Home() {
               )}
               </div>
             </div>
-            {msg.comprehensionChips && (
-              <div style={{marginTop:'8px', marginLeft:'48px'}}>
-                <div style={{fontSize:'10px', fontWeight:700, color:'var(--purple)',
-                  letterSpacing:'0.6px', textTransform:'uppercase', marginBottom:'6px'}}>
-                  Lo he entendido así
-                </div>
-                <div style={{display:'flex', flexWrap:'wrap', gap:'6px'}}>
-                  {msg.comprehensionChips.map(c => (
-                    <button key={c} onClick={() => handleComprehensionChip(c, msg.id)}
-                      aria-label={`Confirmar ${c}`}
-                      style={(msg.confirmedChips || []).includes(c)
-                        ? {background:'var(--purple)', color:'white', border:'1px solid var(--purple)',
-                           borderRadius:'99px', padding:'5px 12px', fontSize:'11.5px', fontWeight:600}
-                        : {background:'white', color:'var(--ink)', border:'1px solid var(--ink-border)',
-                           borderRadius:'99px', padding:'5px 12px', fontSize:'11.5px', fontWeight:600}}>
-                      {(msg.confirmedChips || []).includes(c) ? '✓ ' : ''}{c}
-                    </button>
-                  ))}
-                </div>
-                <div style={{fontSize:'10px', color:'var(--ink-tertiary)', marginTop:'6px'}}>
-                  Toca cualquier dato si algo no encaja
-                </div>
-              </div>
-            )}
+
             {msg.results && (
               <div className={styles.carouselBlock}>
                 <ResultsBlock results={msg.results} />

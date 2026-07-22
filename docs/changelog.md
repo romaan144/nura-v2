@@ -26,6 +26,13 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — Fuera "Lo he entendido así"
+
+- Eliminado el bloque de comprensión (chips "Lo he entendido así" + pie "toca
+  cualquier dato si algo no encaja"). Se sobreentiende que Nüra entendió la
+  búsqueda: mostrarlo era ruido. La respuesta va directa a la recomendación.
+- Sello NURA_BUILD → 2026.07.04-cc.
+
 ## 2026-07-04 — Tarjetas de lado a lado, centradas, con respiro
 
 - La indentación de 48px descentraba las tarjetas y quedaba mal. Vuelven a
