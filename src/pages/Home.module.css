@@ -37,7 +37,8 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 64px 16px 0;  /* margen lateral unificado con Explorar (16px) */
+  padding: var(--header-h) 16px 0;  /* margen superior unificado (--header-h,
+     respeta el notch) y lateral 16px, como el resto de la app */
   /* El fondo llega hasta la barra: el contenido scrollea POR DETRÁS del
      input flotante. El hueco de la burbuja lo reserva .chatSpacer, no un
      recorte del fondo. */

@@ -62,6 +62,8 @@ papel. **Una sola respiración**: todo movimiento (animaciones y
 transiciones) usa la curva de firma `cubic-bezier(0.22, 1, 0.36, 1)`;
 prohibido el `ease-out` genérico.
 
+- **Margen superior de la app: `--header-h`** (respeta el notch). Todas las
+  pestañas arrancan su contenido a esta altura.
 - **Gutter lateral de la app: 16px** (referencia: Explorar). Todas las
   pestañas comparten este margen.
 

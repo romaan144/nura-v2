@@ -26,6 +26,14 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — Margen superior unificado (--header-h en toda la app)
+
+- Había dos sistemas: Explore/Chats/Perfil usaban `--header-h` (respeta el
+  notch); Home usaba 64px crudo (sin safe-area, más pegado en iPhone) y
+  Comunidad 54px crudo (el más pegado). Ambos alineados a `--header-h`, la
+  variable que ya respetaba el notch. Armonía superior en las cinco pestañas.
+- Sello NURA_BUILD → 2026.07.04-bw.
+
 ## 2026-07-04 — Gutter de 16px en TODA la app
 
 - Barrido completo tras unificar Home: Chats (header 20→16, búsqueda 14→16),
