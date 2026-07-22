@@ -6,6 +6,10 @@
   position: fixed;
   bottom: 0; left: 0; right: 0;
   z-index: 100;
+  /* La barra mide EXACTAMENTE lo que reserva --nav-h (antes se
+     autodimensionaba y quedaban unos px de desajuste con el fondo). */
+  height: var(--nav-h);
+  box-sizing: border-box;
   background: rgba(247,246,242,0.86);  /* Aire: papel cálido */
   -webkit-backdrop-filter: blur(32px) saturate(200%);
   backdrop-filter: blur(32px) saturate(200%);

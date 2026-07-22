@@ -26,6 +26,18 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — Los pocos píxeles: la barra medía distinto de lo reservado
+
+- Síntoma final: hueco de pocos px entre el fondo y la barra, solo en Home.
+  Causa: `.nav` NO tenía `height` — se autodimensionaba por contenido +
+  padding(6px) + border(0.5px), mientras `--nav-h` reservaba un 65px
+  estimado. Reserva y realidad no coincidían al píxel.
+- Cura definitiva: `.nav` gana `height: var(--nav-h)` + `box-sizing:
+  border-box`, así mide EXACTAMENTE lo que se reserva — el hueco desaparece
+  por definición. Afecta a todas las pestañas por igual (mejora la precisión
+  global), pero solo se notaba en Home por su fondo scrollable.
+- Sello NURA_BUILD → 2026.07.04-br.
+
 ## 2026-07-04 — El fondo scrollea tras el input (matiz del fundador)
 
 - El margin-bottom de -bp cortaba el fondo donde empieza el input; pero el
