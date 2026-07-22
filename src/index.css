@@ -63,8 +63,8 @@ body {
   --ink:      #211D33;   /* La Tinta Viva: violeta cálida */
   /* ── INK OPACITY SCALE ─────────────────────────────── */
   --ink-primary:   rgba(0,0,0,0.85);
-  --ink-secondary: rgba(33,29,51,0.58);
-  --ink-tertiary:  rgba(33,29,51,0.40);
+  --ink-secondary: rgba(33,29,51,0.72);
+  --ink-tertiary:  rgba(33,29,51,0.55);
   --ink-disabled:  rgba(0,0,0,0.25);
   --ink-border:    rgba(0,0,0,0.06);
   --mid:      #3D3D5C;

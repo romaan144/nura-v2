@@ -26,6 +26,14 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — Grises mas legibles (menos translucidos)
+
+- Los textos secundarios ("si prefieres comparar", "AJUSTAR ESTA BUSQUEDA" y
+  demas) se veian deslavados: --ink-secondary estaba a 58% de opacidad y
+  --ink-tertiary a 40%. Subidos a 72% y 55% respectivamente — mas presentes
+  y comodos de leer, en toda la app.
+- Sello NURA_BUILD 2026.07.04-ce.
+
 ## 2026-07-04 — El logo no se repite en mensajes seguidos de Nura
 
 - Dos mensajes seguidos de Nura repetian el logo. Ahora solo en el primero
