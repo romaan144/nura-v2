@@ -26,6 +26,15 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — Márgenes laterales unificados (16px, el de Explorar)
+
+- El fundador notó que Home tenía menos margen lateral que Profesionales.
+  Medido: Home usaba 14px, Explore 16px. Home se iguala a 16px en el scroll
+  (tarjeta + burbujas) y en sus flotantes (.floatTop/.floatBottom), que se
+  alinean con el contenido. Explorar (16px) queda como referencia del gutter
+  de la app.
+- Sello NURA_BUILD → 2026.07.04-bu.
+
 ## 2026-07-04 — La bienvenida asienta JUSTO encima del input
 
 - Quitar el spacer en bienvenida (-bs) dejó el saludo pegado al fondo real

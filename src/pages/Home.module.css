@@ -37,7 +37,7 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 64px 14px 0;
+  padding: 64px 16px 0;  /* margen lateral unificado con Explorar (16px) */
   /* El fondo llega hasta la barra: el contenido scrollea POR DETRÁS del
      input flotante. El hueco de la burbuja lo reserva .chatSpacer, no un
      recorte del fondo. */
@@ -57,8 +57,8 @@
 .floatTop {
   position: absolute;
   top: max(env(safe-area-inset-top, 0px), 12px);
-  left: 14px;
-  right: 14px;
+  left: 16px;
+  right: 16px;
   z-index: 30;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
