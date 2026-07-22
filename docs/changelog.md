@@ -26,6 +26,16 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — Márgenes inteligentes por tipo de respuesta
+
+- El 20% derecho comprimía las tarjetas. Regla por tipo: el TEXTO
+  conversacional de Nüra se indenta como burbuja (48px izq + max-width 80%,
+  poco ancho, mucho aire); las TARJETAS y filtros comparten la misma
+  alineación izquierda (48px, para leerse como respuesta de Nüra) pero
+  respiran a la derecha (necesitan el ancho para no comprimir la
+  información). Cada respuesta con el margen que su contenido pide.
+- Sello NURA_BUILD → 2026.07.04-ca.
+
 ## 2026-07-04 — El bloque de resultados iguala el ANCHO de la burbuja de Nüra
 
 - La indentación izquierda (48px) ya estaba; faltaba la derecha: la burbuja

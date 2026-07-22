@@ -1129,7 +1129,7 @@ export default function Home() {
               </div>
             )}
             {msg.results && (
-              <div className={styles.carouselBlock} style={{marginLeft:'48px', marginRight:'20%'}}>
+              <div className={styles.carouselBlock} style={{marginLeft:'48px'}}>
                 <ResultsBlock results={msg.results} />
               </div>
             )}

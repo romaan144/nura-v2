@@ -67,6 +67,11 @@ prohibido el `ease-out` genérico.
 - **Gutter lateral de la app: 16px** (referencia: Explorar). Todas las
   pestañas comparten este margen.
 
+- **Márgenes por tipo de respuesta (chat de Nüra)**: todo lo que dice Nüra
+  comparte la alineación izquierda de 48px (avatar + gap). Por la derecha,
+  el texto conversacional respeta `max-width: 80%` (aire), mientras tarjetas
+  y filtros respiran a ancho completo (evita comprimir información).
+
 ## 2. Componentes base
 
 ### Tarjeta Vertical (la Recomendación)
