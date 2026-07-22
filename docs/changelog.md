@@ -26,6 +26,14 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — Gutter de 16px en TODA la app
+
+- Barrido completo tras unificar Home: Chats (header 20→16, búsqueda 14→16),
+  Comunidad (cabecera aurora 20→16; el río ya iba a 16) y Perfil (secciones
+  24/20→16). Solo se tocó el margen LATERAL de página; paddings verticales e
+  interiores de tarjetas/botones intactos. Toda la app comparte 16px.
+- Sello NURA_BUILD → 2026.07.04-bv.
+
 ## 2026-07-04 — Márgenes laterales unificados (16px, el de Explorar)
 
 - El fundador notó que Home tenía menos margen lateral que Profesionales.

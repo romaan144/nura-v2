@@ -45,7 +45,7 @@ export default function Feed() {
 
   return (
     <div style={{ minHeight: '100dvh', background: 'var(--paper)', paddingBottom: '96px' }}>
-      <div className="aurora" style={{ padding: '54px 20px 18px' }}>
+      <div className="aurora" style={{ padding: '54px 16px 18px' }}>
         <h1 style={{ fontFamily: 'var(--font-voice)', fontWeight: 700, fontSize: '26px',
           letterSpacing: '-0.9px', color: 'var(--ink)', margin: 0 }}>
           Comunidad
