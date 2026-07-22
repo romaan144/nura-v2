@@ -1105,7 +1105,7 @@ export default function Home() {
               </div>
             </div>
             {msg.comprehensionChips && (
-              <div style={{marginTop:'8px'}}>
+              <div style={{marginTop:'8px', marginLeft:'48px'}}>
                 <div style={{fontSize:'10px', fontWeight:700, color:'var(--purple)',
                   letterSpacing:'0.6px', textTransform:'uppercase', marginBottom:'6px'}}>
                   Lo he entendido así

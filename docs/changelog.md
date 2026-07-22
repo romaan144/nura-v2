@@ -26,6 +26,15 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — La comprensión se alinea con las burbujas de Nüra
+
+- Los chips "Lo he entendido así" y el pie "si algo no encaja" vivían fuera
+  de la fila flex (tras cerrar la burbuja), así que pegaban al margen
+  izquierdo, a la altura del logo. Ahora llevan `margin-left: 48px` =
+  avatar(38) + gap(10), quedando indentados como el resto de respuestas de
+  Nüra.
+- Sello NURA_BUILD → 2026.07.04-bx.
+
 ## 2026-07-04 — Margen superior unificado (--header-h en toda la app)
 
 - Había dos sistemas: Explore/Chats/Perfil usaban `--header-h` (respeta el
