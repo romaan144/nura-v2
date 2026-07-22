@@ -26,6 +26,15 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — El bloque de resultados iguala el ANCHO de la burbuja de Nüra
+
+- La indentación izquierda (48px) ya estaba; faltaba la derecha: la burbuja
+  de Nüra tiene `max-width: 80%` (deja aire a la derecha) mientras las
+  tarjetas llegaban al borde. Ahora el bloque de tarjetas y los filtros
+  llevan `margin-right: 20%` además del `margin-left: 48px`: la respuesta
+  completa ocupa exactamente el mismo ancho que el texto de Nüra.
+- Sello NURA_BUILD → 2026.07.04-bz.
+
 ## 2026-07-04 — Todo el bloque de resultados se alinea con Nüra (48px)
 
 - La tarjeta principal, la frase "si prefieres comparar" con sus
