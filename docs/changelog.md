@@ -16,6 +16,16 @@
   categoría). Ley nueva en design-system: prohibidas serifas y cursivas.
 - Sello `NURA_BUILD` → `2026.07.04-af`.
 
+## 2026-07-04 — El borde inferior: un solo número (sin tocar anclajes)
+
+- En vez de cambiar el patrón de layout (que descolocaba los tres anclajes),
+  se mantiene `.page` en `position: fixed` y se sube **solo su lado inferior**
+  de `inset: 0` a `bottom: var(--nav-h)`. La caja termina en la línea de la
+  nav en lugar del borde del viewport. Los hijos absolutos (`.floatTop`,
+  `.floatBottom`) y el spacer conservan sus referencias — no puede desplazar
+  nada. Reversión inmediata a 97095ae si el límite no encaja.
+- Sello `NURA_BUILD` → `2026.07.04-bn`.
+
 ## 2026-07-04 — REVERSIÓN DEFINITIVA del borde inferior
 
 - El cambio de patrón de layout (fixed→relative) rompe el posicionamiento de
