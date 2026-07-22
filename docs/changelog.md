@@ -26,6 +26,15 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — Todo el bloque de resultados se alinea con Nüra (48px)
+
+- La tarjeta principal, la frase "si prefieres comparar" con sus
+  alternativas, y los filtros "ajustar esta búsqueda" vivían a la altura del
+  logo. Ahora todo el bloque lleva la indentación de 48px (avatar + gap),
+  igual que la comprensión y las burbujas: la respuesta completa de Nüra
+  queda alineada, con el logo siempre más a la izquierda.
+- Sello NURA_BUILD → 2026.07.04-by.
+
 ## 2026-07-04 — La comprensión se alinea con las burbujas de Nüra
 
 - Los chips "Lo he entendido así" y el pie "si algo no encaja" vivían fuera

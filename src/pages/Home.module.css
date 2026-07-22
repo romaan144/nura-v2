@@ -508,7 +508,7 @@
   align-items: center;
   gap: 7px;
   flex-wrap: wrap;
-  margin: 14px 2px 4px;
+  margin: 14px 2px 4px 48px;
 }
 .refineLabel {
   font-size: 11px;
