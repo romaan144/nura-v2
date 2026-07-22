@@ -26,6 +26,16 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — La bienvenida vuelve a asentar abajo
+
+- Efecto colateral de -bq: el .chatSpacer (que reserva input+barra dentro del
+  scroll) también se renderizaba en bienvenida, y con `justify-content:
+  flex-end` empujaba el saludo hacia arriba — quedaba centrado en vez de
+  asentado contra el input. Cura: el spacer solo se renderiza con
+  conversación (messages.length > 1); en bienvenida, flex-end asienta el
+  saludo abajo como antes.
+- Sello NURA_BUILD → 2026.07.04-bs.
+
 ## 2026-07-04 — Los pocos píxeles: la barra medía distinto de lo reservado
 
 - Síntoma final: hueco de pocos px entre el fondo y la barra, solo en Home.
