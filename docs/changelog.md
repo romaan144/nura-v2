@@ -26,6 +26,21 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — El Rotulo: la tipografia menuda, bajo control (Nura diseno)
+
+- El rotulo de seccion (TU SEMANA, CERCA DE TI, EN SUS PROPIAS PALABRAS...)
+  aparecia 17 veces en 8 archivos. Tamano y peso coincidian, pero el
+  **tracking tenia SIETE valores** (0.3 a 1px) — y en versalitas pequenas el
+  espaciado ES el diseno.
+- Nace `SectionLabel` con tracking **0.6px calibrado** (0,05-0,08em es el
+  rango sano en 11px) y dos tonos. Migrados los rotulos reales conservando
+  margen y color: cero movimiento de layout, cero cambio de color.
+- Clasificacion previa: de los 17, seis son **insignias** (fondo + pildora),
+  otra familia — les corresponde `Badge`, no se fuerzan aqui.
+- Falsa alarma verificada antes de tocar: el color sospechoso de la tarjeta
+  vertical era correcto; mi censo habia capturado el borde del padre.
+- Sello NURA_BUILD 2026.07.04-cn.
+
 ## 2026-07-04 — La Superficie: una sola piel (Nura diseno)
 
 - Tres tarjetas, tres pieles: HelperCard curvaba 30px con sombra md y borde

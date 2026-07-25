@@ -108,6 +108,14 @@ jerarquia de curvas, no accidentes. **Borde `--ink-border`**, **relleno
 `--space-14 --space-16`**, **sombra con jerarquia**: `sm` en reposo
 (listas, rios) y `md` reservada al protagonista (la recomendacion).
 
+### SectionLabel (primitiva)
+El rotulo de seccion en versalitas. **Un solo tracking: 0.6px** — en 11px
+mayusculas lo sano es 0,05-0,08em, asi que es calibrado, no promedio
+(convivian SIETE valores: 0.3 a 1px). Tonos `muted` (--ink-tertiary) y
+`brand` (--purple). No se queda con el margen: cada sitio pasa el suyo.
+**Prohibido dibujar un rotulo a mano.** Las insignias (con fondo y
+pildora) son otra familia: les corresponde `Badge`.
+
 ### Button (primitiva)
 `<Button variant="primary|secondary|ghost" full disabled onClick>`.
 **`minHeight: 44px` cocido dentro**: el area tactil deja de ser una

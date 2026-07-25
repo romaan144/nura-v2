@@ -1,6 +1,6 @@
 import PageHeader from '../components/PageHeader'
 import ObraCard from '../components/ObraCard'
-import { Button } from '../components/ui'
+import { Button, SectionLabel } from '../components/ui'
 import { getObraDeHelper } from '../data/obraPosts'
 import ErrorBoundary from '../components/ErrorBoundary'
 import { useState, useEffect } from 'react'
@@ -111,7 +111,7 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
             <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)',marginBottom:'var(--space-20)'}}>
               {/* Day pills */}
               <div>
-                <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'rgba(33,29,51,0.4)',margin:'0 0 var(--space-8)',letterSpacing:'0.5px',textTransform:'uppercase'}}>Fecha</p>
+                <SectionLabel tone="muted" style={{margin:'0 0 var(--space-8)',color:'rgba(33,29,51,0.4)'}}>Fecha</SectionLabel>
                 <div className={styles.rowScroll}>
                   {Array.from({length:7},(_,i)=>{
                     const d=new Date(); d.setDate(d.getDate()+i)
@@ -132,7 +132,7 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
               </div>
               {/* Time pills */}
               <div>
-                <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'rgba(33,29,51,0.4)',margin:'0 0 var(--space-8)',letterSpacing:'0.5px',textTransform:'uppercase'}}>Hora</p>
+                <SectionLabel tone="muted" style={{margin:'0 0 var(--space-8)',color:'rgba(33,29,51,0.4)'}}>Hora</SectionLabel>
                 <div style={{display:'flex',gap:'var(--space-6)',flexWrap:'wrap'}}>
                   {['9:00','10:00','11:00','12:00','16:00','17:00','18:00','19:00'].map(t=>(
                     <button key={t} onClick={()=>setTime(t)} style={{
@@ -324,10 +324,7 @@ function HelperProfileInner() {
               borderRadius:'var(--radius-card)',
               animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both'
             }}>
-              <div style={{
-                fontSize:'var(--text-xs)', fontWeight:700, color:'var(--purple)',
-                letterSpacing:'1px', textTransform:'uppercase', marginBottom:'var(--space-10)'
-              }}>En sus propias palabras</div>
+              <SectionLabel tone="brand" style={{marginBottom:'var(--space-10)'}}>En sus propias palabras</SectionLabel>
               <p style={{
                 fontSize:'var(--text-md)', fontWeight:500, color:'var(--ink)',
                 lineHeight:1.55, letterSpacing:'-0.2px', margin:0,

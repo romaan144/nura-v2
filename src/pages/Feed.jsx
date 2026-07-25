@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button } from '../components/ui'
+import { Button, SectionLabel } from '../components/ui'
 import { useUser } from '../context/UserContext'
 import HelperCard from '../components/HelperCard'
 import { getConnectionStories, getDestacados } from '../data/connectionStories'
@@ -73,10 +73,9 @@ export default function Feed() {
       <div style={{ padding: '0 var(--space-16)' }}>
         {mia && (
           <div style={{ margin: 'var(--space-6) 0 22px' }}>
-            <div style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--purple)',
-              letterSpacing: '0.6px', textTransform: 'uppercase', marginBottom: 'var(--space-8)' }}>
+            <SectionLabel tone="brand" style={{marginBottom: 'var(--space-8)'}}>
               Tu conexión
-            </div>
+            </SectionLabel>
             <div style={{ background: 'white', border: '1px solid var(--purple-20)',
               borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-md)', padding: 'var(--space-14)' }}>
               <p style={{ fontFamily: 'var(--font-voice)', fontSize: 'var(--text-base)',
@@ -88,10 +87,9 @@ export default function Feed() {
           </div>
         )}
 
-        <div style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--ink-tertiary)',
-          letterSpacing: '0.6px', textTransform: 'uppercase', margin: '0 0 var(--space-10)' }}>
+        <SectionLabel tone="muted" style={{margin: '0 0 var(--space-10)'}}>
           La obra del barrio
-        </div>
+        </SectionLabel>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
           {modo === 'siguiendo' && obras.length === 0 && rioF.length === 0 ? (
             <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)', lineHeight: 1.55, padding: 'var(--space-6) var(--space-2)' }}>
@@ -128,10 +126,9 @@ export default function Feed() {
 
         {destacados.length > 0 && (
           <>
-            <div style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--ink-tertiary)',
-              letterSpacing: '0.6px', textTransform: 'uppercase', margin: 'var(--space-28) 0 var(--space-10)' }}>
+            <SectionLabel tone="muted" style={{margin: 'var(--space-28) 0 var(--space-10)'}}>
               Cerca de ti, esta semana
-            </div>
+            </SectionLabel>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-10)' }}>
               {destacados.map(h => <HelperCard key={h.id} helper={h} showPrice />)}
             </div>

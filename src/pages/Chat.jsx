@@ -12,7 +12,7 @@ import styles from './Chat.module.css'
 import { generateFirstMessage, getHelperReply, getNuraIntervention, buildLivingConversation } from '../utils/chatReplies'
 import { buildChatOpener } from '../utils/introLetter'
 import { DEMO_MODE } from '../config'
-import { Badge } from '../components/ui'
+import { Badge, SectionLabel } from '../components/ui'
 import RegisterGate from '../components/RegisterGate'
 
 // ── Context-aware first message ───────────────────────────────────────────
@@ -163,7 +163,7 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
         <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)',marginBottom:'var(--space-20)'}}>
           {/* Day pills */}
           <div>
-            <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'rgba(33,29,51,0.4)',margin:'0 0 var(--space-8)',letterSpacing:'0.5px',textTransform:'uppercase'}}>Fecha</p>
+            <SectionLabel tone="muted" style={{margin:'0 0 var(--space-8)',color:'rgba(33,29,51,0.4)'}}>Fecha</SectionLabel>
             <div style={{display:'flex',gap:'var(--space-6)',overflowX:'auto',paddingBottom:'var(--space-4)'}}>
               {Array.from({length:7},(_,i)=>{
                 const d=new Date(); d.setDate(d.getDate()+i)
@@ -183,7 +183,7 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
           </div>
           {/* Time pills */}
           <div>
-            <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'rgba(33,29,51,0.4)',margin:'0 0 var(--space-8)',letterSpacing:'0.5px',textTransform:'uppercase'}}>Hora</p>
+            <SectionLabel tone="muted" style={{margin:'0 0 var(--space-8)',color:'rgba(33,29,51,0.4)'}}>Hora</SectionLabel>
             <div style={{display:'flex',gap:'var(--space-6)',flexWrap:'wrap'}}>
               {['9:00','10:00','11:00','12:00','16:00','17:00','18:00','19:00'].map(t=>(
                 <button key={t} onClick={()=>setTime(t)} style={{
@@ -578,8 +578,7 @@ export default function Chat() {
                 borderRadius:'var(--radius-card)',padding:'var(--space-10) var(--space-14)',
                 marginBottom:'var(--space-4)',maxWidth:'260px',textAlign:'left',
               }}>
-                <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'var(--purple)',margin:'0 0 var(--space-4)',
-                  letterSpacing:'0.3px',textTransform:'uppercase'}}>Mensaje sugerido</p>
+                <SectionLabel tone="brand" style={{margin:'0 0 var(--space-4)'}}>Mensaje sugerido</SectionLabel>
                 <p style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.5)',margin:0,lineHeight:1.6}}>
                   Revisa el mensaje antes de enviarlo.
                 </p>

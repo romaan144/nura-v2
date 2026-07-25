@@ -150,3 +150,27 @@ export function Button({
     </button>
   )
 }
+
+// ═══════════════════════════════════════════════════════════════
+// SectionLabel — el rotulo de seccion. Convivian SIETE trackings
+// distintos (0.3 a 1px); en versalitas de 11px lo sano es 0,05-0,08em,
+// asi que 0.6px es calibrado, no promedio. No se queda con el margen:
+// cada sitio conserva el suyo via style, para no mover layout.
+// ═══════════════════════════════════════════════════════════════
+export function SectionLabel({ tone = 'muted', children, style, ...rest }) {
+  return (
+    <div
+      style={{
+        fontSize: 'var(--text-xs)',
+        fontWeight: 700,
+        letterSpacing: '0.6px',
+        textTransform: 'uppercase',
+        color: tone === 'brand' ? 'var(--purple)' : 'var(--ink-tertiary)',
+        ...style,
+      }}
+      {...rest}
+    >
+      {children}
+    </div>
+  )
+}

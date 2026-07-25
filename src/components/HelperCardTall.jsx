@@ -3,7 +3,7 @@ import { useUser } from '../context/UserContext'
 import { showToast } from './Toast'
 import { haptic } from '../utils/haptic'
 import { getFirstName } from '../utils/name'
-import { LiveDot, Button } from './ui'
+import { LiveDot, Button, SectionLabel } from './ui'
 
 // ═══════════════════════════════════════════════════════════════
 // La Tarjeta Vertical — la recomendación como protagonista.
@@ -86,10 +86,9 @@ export default function HelperCardTall({ helper, small = false }) {
 
       {!small && (helper.quote || helper.bio) && (
         <div style={{ marginTop: 'var(--space-14)', paddingTop: 'var(--space-14)', borderTop: '1px solid var(--ink-border)', width: '100%' }}>
-          <div style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--purple)',
-            letterSpacing: '0.7px', textTransform: 'uppercase', marginBottom: '7px' }}>
+          <SectionLabel tone="brand" style={{marginBottom: '7px'}}>
             En sus propias palabras
-          </div>
+          </SectionLabel>
           <p style={{ fontFamily: 'var(--font-voice)', fontSize: 'var(--text-sm)', fontWeight: 500,
             color: 'var(--ink)', lineHeight: 1.5, letterSpacing: '-0.2px', margin: 0,
             display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>

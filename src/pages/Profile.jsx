@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import PageHeader from '../components/PageHeader'
-import { Button } from '../components/ui'
+import { Button, SectionLabel } from '../components/ui'
 import { useState as useStateObra } from 'react'
 import ObraComposer from '../components/ObraComposer'
 import ObraCard from '../components/ObraCard'
@@ -217,10 +217,7 @@ export default function Profile() {
         {/* ── EL ESPEJO: LAS PERSONAS DE TU VIDA ────────── */}
         {(personas || []).length > 0 && (
           <div style={{margin:'0 0 var(--space-20)', animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 60ms both'}}>
-            <div style={{
-              fontSize:'var(--text-xs)', fontWeight:700, color:'var(--purple)',
-              letterSpacing:'0.8px', textTransform:'uppercase', marginBottom:'var(--space-10)'
-            }}>Las personas de tu vida</div>
+            <SectionLabel tone="brand" style={{marginBottom:'var(--space-10)'}}>Las personas de tu vida</SectionLabel>
             <div style={{display:'flex', flexDirection:'column', gap:'var(--space-8)'}}>
               {personas.map(p => {
                 const helperNames = (p.contactedHelperIds || [])
@@ -272,10 +269,9 @@ export default function Profile() {
             <div style={{margin:'0 0 var(--space-20)', padding:'var(--space-16)', background:'white',
               border:'1px solid var(--purple-20)', borderRadius:'var(--radius-md)',
               boxShadow:'var(--shadow-md)', animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 200ms both'}}>
-              <div style={{fontSize:'var(--text-xs)', fontWeight:700, color:'var(--purple)',
-                letterSpacing:'0.8px', textTransform:'uppercase', marginBottom:'var(--space-8)'}}>
+              <SectionLabel tone="brand" style={{marginBottom:'var(--space-8)'}}>
                 Tu semana
-              </div>
+              </SectionLabel>
               <p style={{fontFamily:'var(--font-voice)', fontSize:'var(--text-base)', fontWeight:600,
                 letterSpacing:'-0.4px', lineHeight:1.4, color:'var(--ink)', margin:'0 0 var(--space-12)'}}
                 dangerouslySetInnerHTML={{__html: sem.frase.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')}} />
@@ -299,10 +295,9 @@ export default function Profile() {
 
         {user.isHelper && (
           <div style={{margin:'0 0 var(--space-20)', animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 240ms both'}}>
-            <div style={{fontSize:'var(--text-xs)', fontWeight:700, color:'var(--purple)',
-              letterSpacing:'0.8px', textTransform:'uppercase', marginBottom:'var(--space-10)'}}>
+            <SectionLabel tone="brand" style={{marginBottom:'var(--space-10)'}}>
               Así te ven quienes te necesitan
-            </div>
+            </SectionLabel>
             <Button variant="primary" full onClick={() => setComposerOpen(true)}
               style={{margin:'var(--space-12) 0 var(--space-10)'}}>
               ✍️ Publicar en tu obra
