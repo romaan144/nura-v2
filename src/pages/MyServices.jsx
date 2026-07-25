@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Button } from '../components/ui'
 import { Calendar, CheckCircle, ChevronRight, Star, ClipboardList, MessageCircle, RotateCcw } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import PageHeader from '../components/PageHeader'
@@ -275,10 +276,9 @@ export default function MyServices() {
                     style={{flex:1,padding:'13px',background:'rgba(33,29,51,0.05)',color:'rgba(33,29,51,0.55)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
                     Cancelar
                   </button>
-                  <button onClick={submitRating}
-                    style={{flex:2,padding:'13px',background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:'pointer',fontFamily:'inherit'}}>
+                  <Button variant="primary" onClick={submitRating} style={{flex:2}}>
                     Enviar valoración
-                  </button>
+                  </Button>
                 </div>
               </>
             )}

@@ -26,6 +26,23 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — El Boton: la primitiva que faltaba (Nura diseno)
+
+- Hallazgo: **138 botones en la app y 0 componentes compartidos**. En
+  components/ui vivian Badge, LiveDot, Bubble y StatBar, pero no Button:
+  cada pantalla se dibujaba el suyo, con paddings de 13px, 15px o
+  var(--space-14) segun quien lo escribiera.
+- Nace `<Button>` con variantes primary/secondary/ghost y **minHeight 44px
+  cocido dentro** — el pendiente de area tactil que arrastrabamos, resuelto
+  de raiz y para todos a la vez.
+- Migrados los 6 botones de accion principal (Escribir a X, Publicar en tu
+  obra, Crear cuenta gratis, Buscar a mi persona, Enviar solicitud, Enviar
+  valoracion), uno a uno, conservando cada onClick. El `disabled` del
+  boton de cita ahora lo atenua la primitiva, no un opacity a mano.
+- No migrados a proposito: los botones circulares de envio (Chat, ObraCard)
+  son iconos, otra familia — piden un IconButton en otra pasada.
+- Sello NURA_BUILD 2026.07.04-cl.
+
 ## 2026-07-04 — El Ritmo: la escala de espaciado, viva (Nura diseno)
 
 - Cifra mas extrema de la auditoria: 216 espaciados a mano, **0 usos de

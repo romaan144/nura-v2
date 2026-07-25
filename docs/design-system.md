@@ -101,6 +101,15 @@ prohibido el `ease-out` genérico.
 
 ## 2. Componentes base
 
+### Button (primitiva)
+`<Button variant="primary|secondary|ghost" full disabled onClick>`.
+**`minHeight: 44px` cocido dentro**: el area tactil deja de ser una
+decision de cada pantalla. Radio `--radius-full`, texto `--text-sm` peso
+700, transicion con la curva de firma. **Prohibido dibujar a mano un boton
+de accion**: si hace falta otra forma, se anade variante.
+Pendiente: los botones de icono (envio circular) piden un `IconButton`
+propio — son otra familia, no se fuerzan aqui.
+
 ### Tarjeta Vertical (la Recomendación)
 La respuesta de Nüra usa `HelperCardTall`: retrato 96px arriba, nombre 19px,
 especialidad, meta (★ · precio · distancia), **su voz** ("En sus propias

@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Shield, Star, MessageCircle, UserPlus, ArrowRight, User, Sparkles } from 'lucide-react'
+import { Button } from './ui'
 
 /**
  * RegisterGate — bottom sheet that appears when unregistered user
@@ -83,18 +84,11 @@ export default function RegisterGate({ onClose, reason = 'contact' }) {
 
         {/* CTAs */}
         <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)'}}>
-          <button
+          <Button variant="primary" full
             onClick={() => { onClose(); sessionStorage.setItem('nura_return_to', location.pathname + location.search); navigate('/login') }}
-            style={{
-              display:'flex',alignItems:'center',justifyContent:'center',gap:'var(--space-8)',
-              width:'100%',padding:'15px',
-              background:'var(--purple)',color:'white',
-              border:'none',borderRadius:'var(--radius-full)',
-              fontSize:'var(--text-base)',fontWeight:700,
-              cursor:'pointer',letterSpacing:'-0.2px',
-            }}>
+            style={{fontSize:'var(--text-base)',letterSpacing:'-0.2px'}}>
             Crear cuenta gratis <ArrowRight size={16} />
-          </button>
+          </Button>
           <button
             onClick={() => { onClose(); sessionStorage.setItem('nura_return_to', location.pathname + location.search); navigate('/login') }}
             style={{

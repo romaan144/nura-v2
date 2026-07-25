@@ -111,3 +111,42 @@ export function StatBar({ stats, style }) {
     </div>
   )
 }
+
+// ═══════════════════════════════════════════════════════════════
+// Button — la primitiva que faltaba. 138 botones vivian dibujados a
+// mano; el area tactil de 44px se garantiza aqui una vez, no 138.
+// ═══════════════════════════════════════════════════════════════
+export function Button({
+  variant = 'primary', full = false, disabled = false,
+  onClick, children, style, ...rest
+}) {
+  const base = {
+    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+    gap: 'var(--space-6)',
+    minHeight: '44px',                       // area tactil: ley, no opcion
+    padding: '0 var(--space-20)',
+    width: full ? '100%' : undefined,
+    borderRadius: 'var(--radius-full)',
+    fontSize: 'var(--text-sm)', fontWeight: 700,
+    fontFamily: 'inherit', lineHeight: 1,
+    cursor: disabled ? 'default' : 'pointer',
+    transition: 'opacity 0.18s cubic-bezier(0.22, 1, 0.36, 1)',
+    opacity: disabled ? 0.45 : 1,
+  }
+  const skins = {
+    primary:   { background: 'var(--purple)', color: 'white', border: 'none' },
+    secondary: { background: 'white', color: 'var(--ink)', border: '1px solid var(--ink-border)' },
+    ghost:     { background: 'none', color: 'var(--purple)', border: 'none' },
+  }
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={disabled ? undefined : onClick}
+      style={{ ...base, ...(skins[variant] || skins.primary), ...style }}
+      {...rest}
+    >
+      {children}
+    </button>
+  )
+}

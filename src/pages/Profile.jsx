@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import PageHeader from '../components/PageHeader'
+import { Button } from '../components/ui'
 import { useState as useStateObra } from 'react'
 import ObraComposer from '../components/ObraComposer'
 import ObraCard from '../components/ObraCard'
@@ -302,12 +303,10 @@ export default function Profile() {
               letterSpacing:'0.8px', textTransform:'uppercase', marginBottom:'var(--space-10)'}}>
               Así te ven quienes te necesitan
             </div>
-            <button onClick={() => setComposerOpen(true)}
-              style={{width:'100%', background:'var(--purple)', color:'white', border:'none',
-                borderRadius:'var(--radius-full)', padding:'var(--space-12)', fontSize:'var(--text-sm)',
-                fontWeight:700, cursor:'pointer', margin:'var(--space-12) 0 var(--space-10)'}}>
+            <Button variant="primary" full onClick={() => setComposerOpen(true)}
+              style={{margin:'var(--space-12) 0 var(--space-10)'}}>
               ✍️ Publicar en tu obra
-            </button>
+            </Button>
             {getObraDeHelper(user.helperId || user.id, 2).length > 0 && (
               <div style={{display:'flex', flexDirection:'column', gap:'var(--space-10)', marginBottom:'var(--space-12)'}}>
                 {getObraDeHelper(user.helperId || user.id, 2).map(post => <ObraCard key={post.id} post={post} />)}

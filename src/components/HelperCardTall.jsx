@@ -3,7 +3,7 @@ import { useUser } from '../context/UserContext'
 import { showToast } from './Toast'
 import { haptic } from '../utils/haptic'
 import { getFirstName } from '../utils/name'
-import { LiveDot } from './ui'
+import { LiveDot, Button } from './ui'
 
 // ═══════════════════════════════════════════════════════════════
 // La Tarjeta Vertical — la recomendación como protagonista.
@@ -122,12 +122,10 @@ export default function HelperCardTall({ helper, small = false }) {
       )}
 
       {!small && (
-        <button onClick={handleContact}
-          style={{ width: '100%', marginTop: 'var(--space-16)', background: 'var(--purple)', color: 'white',
-            border: 'none', borderRadius: 'var(--radius-full)', padding: '13px',
-            fontSize: 'var(--text-sm)', fontWeight: 700, cursor: 'pointer' }}>
+        <Button variant="primary" full onClick={handleContact}
+          style={{ marginTop: 'var(--space-16)' }}>
           Escribir a {firstName}
-        </button>
+        </Button>
       )}
     </div>
   )

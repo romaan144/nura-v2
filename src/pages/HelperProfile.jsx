@@ -1,5 +1,6 @@
 import PageHeader from '../components/PageHeader'
 import ObraCard from '../components/ObraCard'
+import { Button } from '../components/ui'
 import { getObraDeHelper } from '../data/obraPosts'
 import ErrorBoundary from '../components/ErrorBoundary'
 import { useState, useEffect } from 'react'
@@ -97,9 +98,9 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
               </div>
             )}
             <div style={{display:'flex',flexDirection:'column',gap:'var(--space-8)',width:'100%',marginTop:'var(--space-4)'}}>
-              <button onClick={() => { onClose(); onNavigate('/my-services') }} style={style.btnPrimary}>
+              <Button variant="primary" full onClick={() => { onClose(); onNavigate('/my-services') }}>
                 Ver Mis servicios
-              </button>
+              </Button>
               <button onClick={onClose} style={style.btnSecondary}>Volver al perfil</button>
             </div>
           </div>
@@ -150,10 +151,10 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
             </div>
             <div className={styles.rowGap8}>
               <button onClick={onClose} style={{...style.btnSecondary,flex:1}}>Cancelar</button>
-              <button onClick={confirm} disabled={!date}
-                style={{...style.btnPrimary,flex:2,opacity:date?1:0.4}}>
+              <Button variant="primary" onClick={confirm} disabled={!date}
+                style={{flex:2}}>
                 Enviar solicitud
-              </button>
+              </Button>
             </div>
           </>
         )}

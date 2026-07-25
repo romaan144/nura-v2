@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Button } from '../components/ui'
 import { useUser } from '../context/UserContext'
 import HelperCard from '../components/HelperCard'
 import { getConnectionStories, getDestacados } from '../data/connectionStories'
@@ -142,14 +143,11 @@ export default function Feed() {
             letterSpacing: '-0.3px', margin: '0 0 var(--space-10)' }}>
             ¿Y tú? Cuéntale a Nüra qué necesitas.
           </p>
-          <button onClick={() => navigate('/')}
+          <Button variant="primary" onClick={() => navigate('/')}
             aria-label="Ir a buscar"
-            style={{ background: 'var(--purple)', color: 'white', border: 'none',
-              borderRadius: 'var(--radius-full)', padding: '11px 22px',
-              fontSize: 'var(--text-sm)', fontWeight: 700, cursor: 'pointer',
-              boxShadow: '0 4px 14px var(--purple-30)' }}>
+            style={{ boxShadow: '0 4px 14px var(--purple-30)' }}>
             Buscar a mi persona
-          </button>
+          </Button>
         </div>
       </div>
     </div>
