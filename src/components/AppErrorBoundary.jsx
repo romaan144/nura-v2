@@ -6,7 +6,7 @@ export default class AppErrorBoundary extends Component {
   render() {
     if (this.state.error) return (
       <div style={{padding:'24px',fontFamily:'monospace',background:'var(--red-light)',minHeight:'100dvh'}}>
-        <h2 style={{color:'#DC2626',fontSize:'16px'}}>Error de la aplicación</h2>
+        <h2 style={{color:'#DC2626',fontSize:'var(--text-base)'}}>Error de la aplicación</h2>
         <pre style={{fontSize:'var(--text-xs)',color:'#991B1B',whiteSpace:'pre-wrap',wordBreak:'break-all'}}>
           {this.state.error?.message}
           {'\n\n'}

@@ -537,7 +537,7 @@ export default function Chat() {
                     <span className={styles.onlineDot} style={{flexShrink:0}} />
                     <span style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',minWidth:0}}>{chatSpecialty}</span>
                     {helper.rating && (
-                      <span style={{flexShrink:0,fontSize:'10px',color:'rgba(0,0,0,0.4)'}}>
+                      <span style={{flexShrink:0,fontSize:'var(--text-xs)',color:'rgba(0,0,0,0.4)'}}>
                         ★ {helper.rating}
                       </span>
                     )}
@@ -643,13 +643,13 @@ export default function Chat() {
                   <div style={{display:'flex', gap:'6px', marginTop:'8px', flexWrap:'wrap'}}>
                     <button onClick={() => answerProposal(msg.id, true, msg.proposal.label)}
                       style={{background:'var(--purple)', color:'white', border:'none',
-                        borderRadius:'99px', padding:'7px 14px', fontSize:'12px', fontWeight:600}}>
+                        borderRadius:'99px', padding:'7px 14px', fontSize:'var(--text-xs)', fontWeight:600}}>
                       ✓ Me va bien
                     </button>
                     <button onClick={() => answerProposal(msg.id, false, msg.proposal.label)}
                       style={{background:'rgba(0,0,0,0.05)', color:'var(--ink)',
                         border:'1px solid var(--ink-border)', borderRadius:'99px',
-                        padding:'7px 14px', fontSize:'12px', fontWeight:600}}>
+                        padding:'7px 14px', fontSize:'var(--text-xs)', fontWeight:600}}>
                       Otro momento
                     </button>
                   </div>

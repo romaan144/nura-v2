@@ -78,19 +78,19 @@ export default function HelperCard({ helper, onContact, showContact = true, show
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <span style={{
-            fontSize: '15px', fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.2px',
+            fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.2px',
             whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
           }}>{firstName}{lastInitial ? ` ${lastInitial}.` : ''}</span>
           {helper.verified && <Badge variant="success" size="xs">✓</Badge>}
         </div>
         <div style={{
-          fontSize: '12px', color: 'var(--ink-secondary)', marginTop: '2px',
+          fontSize: 'var(--text-xs)', color: 'var(--ink-secondary)', marginTop: '2px',
           whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
         }}>
           {helper.specialty}{helper.zone ? ` · ${helper.zone}` : ''}
         </div>
         {metaParts.length > 0 && (
-          <div style={{ fontSize: '12px', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
+          <div style={{ fontSize: 'var(--text-xs)', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
             {metaParts.map((part, i) => (
               <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                 {i > 0 && <span style={{ color: 'var(--ink-disabled, rgba(0,0,0,0.2))' }}>·</span>}
@@ -106,7 +106,7 @@ export default function HelperCard({ helper, onContact, showContact = true, show
           style={{
             flexShrink: 0, background: 'var(--purple-10)', color: 'var(--purple)',
             border: '1px solid var(--purple-20)', borderRadius: 'var(--radius-full)',
-            padding: '8px 14px', fontSize: '12px', fontWeight: 700, cursor: 'pointer',
+            padding: '8px 14px', fontSize: 'var(--text-xs)', fontWeight: 700, cursor: 'pointer',
           }}>
           Escribir
         </button>

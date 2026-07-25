@@ -61,7 +61,7 @@ export default function RegisterGate({ onClose, reason = 'contact' }) {
         {/* Icon + headline */}
         <div style={{textAlign:'center',marginBottom:'20px'}}>
           <div style={{fontSize:'44px',marginBottom:'12px',lineHeight:1}}>{(() => { const IC = r.Icon; return IC ? <IC size={36} strokeWidth={1.4} color='var(--purple)' /> : null })()}</div>
-          <h2 style={{fontFamily:'var(--font-voice)',fontSize:'21px',fontWeight:500,color:'var(--ink)',letterSpacing:'-0.4px',margin:'0 0 8px'}}>
+          <h2 style={{fontFamily:'var(--font-voice)',fontSize:'var(--text-heading)',fontWeight:500,color:'var(--ink)',letterSpacing:'-0.4px',margin:'0 0 8px'}}>
             {r.title}
           </h2>
           <div className="hilo" style={{width:'56px', margin:'2px 0 10px'}} />

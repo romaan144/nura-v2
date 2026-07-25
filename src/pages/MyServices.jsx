@@ -136,7 +136,7 @@ export default function MyServices() {
             <span style={{display:'block',marginBottom:'12px',opacity:0.25}}>
               {tab === 'Completados' ? <CheckCircle size={44} /> : tab === 'Próximos' ? <Calendar size={44} /> : <ClipboardList size={44} />}
             </span>
-            <strong style={{fontSize:'16px',color:'var(--ink-primary)',letterSpacing:'-0.2px'}}>
+            <strong style={{fontSize:'var(--text-base)',color:'var(--ink-primary)',letterSpacing:'-0.2px'}}>
               {tab === 'Todos' ? 'Aún no has contratado nada'
                : tab === 'Próximos' ? 'No tienes servicios próximos'
                : 'Sin servicios completados'}

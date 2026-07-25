@@ -72,6 +72,12 @@ prohibido el `ease-out` genérico.
   el texto conversacional respeta `max-width: 80%` (aire), mientras tarjetas
   y filtros respiran a ancho completo (evita comprimir información).
 
+- **La Escala manda (tipografía)**: `--text-xs 11 · sm 13 · base 15 · md 17 ·
+  heading 20 · lg 22 · xl 28 · num 32`. **Prohibido escribir un tamaño de
+  letra a mano** en un componente: si ninguno encaja, se discute el token,
+  no se inventa el px. (Antes de esta ley convivían 15 tamaños distintos
+  para una escala de 8.)
+
 ## 2. Componentes base
 
 ### Tarjeta Vertical (la Recomendación)

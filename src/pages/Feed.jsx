@@ -51,7 +51,7 @@ export default function Feed() {
           Comunidad
         </h1>
         <div className="hilo" style={{ width: '64px', margin: '8px 0 10px' }} />
-        <p style={{ fontSize: '13px', color: 'var(--ink-secondary)', margin: 0, lineHeight: 1.5 }}>
+        <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)', margin: 0, lineHeight: 1.5 }}>
           Esta semana en tu zona: <strong style={{ color: 'var(--ink)' }}>{pulso.conexiones} conexiones ✓</strong>
           {' '}· <strong style={{ color: 'var(--ink)' }}>{pulso.citas} citas acordadas</strong>
         </p>
@@ -61,7 +61,7 @@ export default function Feed() {
               style={{ background: modo === m ? 'var(--purple)' : 'white',
                 color: modo === m ? 'white' : 'var(--ink)',
                 border: '1px solid ' + (modo === m ? 'var(--purple)' : 'var(--ink-border)'),
-                borderRadius: '99px', padding: '6px 14px', fontSize: '12px',
+                borderRadius: '99px', padding: '6px 14px', fontSize: 'var(--text-xs)',
                 fontWeight: 700, cursor: 'pointer' }}>
               {m === 'todos' ? 'Todos' : 'Siguiendo'}
             </button>
@@ -72,13 +72,13 @@ export default function Feed() {
       <div style={{ padding: '0 16px' }}>
         {mia && (
           <div style={{ margin: '6px 0 22px' }}>
-            <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--purple)',
+            <div style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--purple)',
               letterSpacing: '0.6px', textTransform: 'uppercase', marginBottom: '8px' }}>
               Tu conexión
             </div>
             <div style={{ background: 'white', border: '1px solid var(--purple-20)',
               borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-md)', padding: '14px' }}>
-              <p style={{ fontFamily: 'var(--font-voice)', fontSize: '14.5px',
+              <p style={{ fontFamily: 'var(--font-voice)', fontSize: 'var(--text-base)',
                 lineHeight: 1.55, color: 'var(--ink)', margin: '0 0 12px' }}>
                 {mia.text}
               </p>
@@ -87,13 +87,13 @@ export default function Feed() {
           </div>
         )}
 
-        <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--ink-tertiary)',
+        <div style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--ink-tertiary)',
           letterSpacing: '0.6px', textTransform: 'uppercase', margin: '0 0 10px' }}>
           La obra del barrio
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
           {modo === 'siguiendo' && obras.length === 0 && rioF.length === 0 ? (
-            <p style={{ fontSize: '13.5px', color: 'var(--ink-secondary)', lineHeight: 1.55, padding: '6px 2px' }}>
+            <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)', lineHeight: 1.55, padding: '6px 2px' }}>
               Aún no sigues a nadie. Toca ♡ en un perfil para seguir su evolución profesional.
             </p>
           ) : (() => {
@@ -110,12 +110,12 @@ export default function Feed() {
                   <ObraCard post={m.it} />
                 ) : (
                   <>
-                    <p style={{ fontFamily: 'var(--font-voice)', fontSize: '14px',
+                    <p style={{ fontFamily: 'var(--font-voice)', fontSize: 'var(--text-sm)',
                       lineHeight: 1.55, color: 'var(--ink)', margin: '0 0 8px' }}>
                       {m.it.text}
                     </p>
                     <HelperCard helper={m.it.helper} />
-                    <div style={{ fontSize: '11px', color: 'var(--ink-tertiary)', marginTop: '5px' }}>
+                    <div style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)', marginTop: '5px' }}>
                       {m.it.seconds != null ? <>⚡ encontrado en {m.it.seconds}s · </> : <>✓ conexión real · </>}{m.it.timeAgo}
                     </div>
                   </>
@@ -127,7 +127,7 @@ export default function Feed() {
 
         {destacados.length > 0 && (
           <>
-            <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--ink-tertiary)',
+            <div style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--ink-tertiary)',
               letterSpacing: '0.6px', textTransform: 'uppercase', margin: '28px 0 10px' }}>
               Cerca de ti, esta semana
             </div>
@@ -138,7 +138,7 @@ export default function Feed() {
         )}
 
         <div style={{ margin: '30px 0 8px', textAlign: 'center' }}>
-          <p style={{ fontFamily: 'var(--font-voice)', fontSize: '17px', color: 'var(--ink)',
+          <p style={{ fontFamily: 'var(--font-voice)', fontSize: 'var(--text-md)', color: 'var(--ink)',
             letterSpacing: '-0.3px', margin: '0 0 10px' }}>
             ¿Y tú? Cuéntale a Nüra qué necesitas.
           </p>
@@ -146,7 +146,7 @@ export default function Feed() {
             aria-label="Ir a buscar"
             style={{ background: 'var(--purple)', color: 'white', border: 'none',
               borderRadius: 'var(--radius-full)', padding: '11px 22px',
-              fontSize: '13px', fontWeight: 700, cursor: 'pointer',
+              fontSize: 'var(--text-sm)', fontWeight: 700, cursor: 'pointer',
               boxShadow: '0 4px 14px rgba(123,47,255,0.3)' }}>
             Buscar a mi persona
           </button>

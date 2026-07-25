@@ -17,8 +17,8 @@ export function Badge({ variant = 'neutral', size = 'sm', children, style }) {
   const v = BADGE_VARIANTS[variant] || BADGE_VARIANTS.neutral
   const sizes = {
     xs: { fontSize: '9px',  padding: '1px 5px' },
-    sm: { fontSize: '10px', padding: '2px 8px' },
-    md: { fontSize: '10px', padding: '3px 10px' },
+    sm: { fontSize: 'var(--text-xs)', padding: '2px 8px' },
+    md: { fontSize: 'var(--text-xs)', padding: '3px 10px' },
   }
   return (
     <span style={{
@@ -58,7 +58,7 @@ export function Bubble({ text, author, index = 0, style }) {
         width: '32px', height: '32px', borderRadius: '50%',
         background: BUBBLE_COLORS[index % BUBBLE_COLORS.length], flexShrink: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: '11px', fontWeight: 700, color: 'white',
+        fontSize: 'var(--text-xs)', fontWeight: 700, color: 'white',
       }}>{initials}</div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{
@@ -73,7 +73,7 @@ export function Bubble({ text, author, index = 0, style }) {
         </div>
         {author && (
           <span style={{
-            fontSize: '10px', color: 'var(--ink-tertiary)',
+            fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)',
             fontWeight: 500, paddingLeft: '4px',
           }}>— {author}</span>
         )}
@@ -99,11 +99,11 @@ export function StatBar({ stats, style }) {
           borderRight: i < items.length - 1 ? '1px solid var(--ink-border)' : 'none',
         }}>
           <div style={{
-            fontSize: '16px', fontWeight: 800,
+            fontSize: 'var(--text-base)', fontWeight: 800,
             color: s.color || 'var(--ink)', letterSpacing: '-0.4px',
           }}>{s.value}</div>
           <div style={{
-            fontSize: '10px', color: 'var(--ink-tertiary)',
+            fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)',
             marginTop: '1px', fontWeight: 500,
           }}>{s.label}</div>
         </div>

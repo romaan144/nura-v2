@@ -167,11 +167,11 @@ export default function Chats() {
       <div className={styles.list}>
         {allChats.length === 0 && (
           <div style={{textAlign:'center', padding:'72px 32px 0'}}>
-            <p style={{fontFamily:'var(--font-voice)', fontSize:'19px', color:'var(--ink)',
+            <p style={{fontFamily:'var(--font-voice)', fontSize:'var(--text-heading)', color:'var(--ink)',
               lineHeight:1.45, letterSpacing:'-0.3px', margin:'0 0 8px'}}>
               Cuando conectes con alguien, vuestra conversación vivirá aquí.
             </p>
-            <p style={{fontSize:'13px', color:'var(--ink-tertiary)', margin:0, lineHeight:1.5}}>
+            <p style={{fontSize:'var(--text-sm)', color:'var(--ink-tertiary)', margin:0, lineHeight:1.5}}>
               Cuéntale a Nüra qué necesitas y ella encontrará a la persona.
             </p>
           </div>
@@ -235,8 +235,8 @@ export default function Chats() {
                   if (!lp && !ok && !citaViva) return null
                   return (
                     <div style={{display:'flex', alignItems:'center', gap:'5px', margin:'1px 0 2px', flexWrap:'wrap'}}>
-                      {lp && <span style={{fontSize:'10px', color:'var(--ink-tertiary)', fontWeight:500}}>Te ayuda con {lp.label}</span>}
-                      {citaViva && <span style={{fontSize:'10px', color:'var(--purple)', fontWeight:600}}>📅 {ci.label}</span>}
+                      {lp && <span style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', fontWeight:500}}>Te ayuda con {lp.label}</span>}
+                      {citaViva && <span style={{fontSize:'var(--text-xs)', color:'var(--purple)', fontWeight:600}}>📅 {ci.label}</span>}
                       {ok && <Badge variant="success" size="xs">✓ funcionó</Badge>}
                     </div>
                   )

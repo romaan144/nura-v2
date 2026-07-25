@@ -76,7 +76,7 @@ function ResultsBlock({ results }) {
       <div className="hilo" style={{margin:'12px 6px 2px'}} />
       {alts.length > 0 && (
         <>
-          <div style={{fontSize:'12px', color:'var(--ink-secondary)', margin:'14px 0 8px', lineHeight:1.5}}>
+          <div style={{fontSize:'var(--text-xs)', color:'var(--ink-secondary)', margin:'14px 0 8px', lineHeight:1.5}}>
             Si prefieres comparar, también encajarían:
           </div>
           <div style={{display:'grid', gridTemplateColumns:`repeat(${Math.min(alts.length, 3)}, 1fr)`, gap:'8px', alignItems:'start'}}>

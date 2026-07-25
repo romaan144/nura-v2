@@ -173,13 +173,13 @@ export default function RegisterHelper() {
             background:'rgba(123,47,255,0.06)', borderRadius:'14px',
             border:'1px solid rgba(123,47,255,0.12)'
           }}>
-            <div style={{fontSize:'11px',fontWeight:700,color:'var(--purple)',marginBottom:'6px',letterSpacing:'0.3px',textTransform:'uppercase'}}>
+            <div style={{fontSize:'var(--text-xs)',fontWeight:700,color:'var(--purple)',marginBottom:'6px',letterSpacing:'0.3px',textTransform:'uppercase'}}>
               ¿Sabías que?
             </div>
-            <div style={{fontSize:'13px',color:'var(--ink)',lineHeight:1.5,letterSpacing:'-0.1px'}}>
+            <div style={{fontSize:'var(--text-sm)',color:'var(--ink)',lineHeight:1.5,letterSpacing:'-0.1px'}}>
               Los profesionales de Nüra en Barcelona reciben una media de <strong>8 contactos al mes</strong> desde el primer día.
             </div>
-            <div style={{fontSize:'11px',color:'rgba(0,0,0,0.38)',marginTop:'6px'}}>
+            <div style={{fontSize:'var(--text-xs)',color:'rgba(0,0,0,0.38)',marginTop:'6px'}}>
               Tu perfil tarda menos de 3 minutos en estar publicado.
             </div>
           </div>

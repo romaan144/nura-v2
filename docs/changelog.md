@@ -26,6 +26,22 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — La Escala: el sistema manda sobre el componente (Nura diseno)
+
+- Diagnostico: la app tenia una escala de 8 pasos y 15 tamanos en uso; 110
+  px sueltos escritos a mano frente a 65 usos de token. Cada componente
+  elegia su tamano a ojo — justo lo que la regla NURA DISENO prohibe.
+- Aplicado: 109 sustituciones a token (39 ya coincidian exactamente: cero
+  efecto visual; el resto se mueve 0,5-1px, imperceptible pieza a pieza).
+  Los 7 discolos (>1px de salto) quedan INTACTOS y listados para decision
+  del fundador. Hallazgo: --text-num (32px) existia y nadie lo usaba.
+- Disciplina: patron acotado (jamas \\s*), recuento antes/despues, y
+  verificacion de que 0 lineas sin fontSize fueron eliminadas. La diferencia
+  109 vs 102 previstas eran segundas ramas de ternarios, no contables por el
+  patron de la prevision.
+- Ley nueva en design-system: prohibido escribir un tamano de letra a mano.
+- Sello NURA_BUILD 2026.07.04-ch.
+
 ## 2026-07-04 — La Carta: Nura escribe el primer mensaje (Nura Copilot)
 
 - Hallazgo del recon: la pantalla IntroLetter (/intro/:id) esta construida

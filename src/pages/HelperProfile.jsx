@@ -79,7 +79,7 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
               <span style={{position:'absolute',bottom:-2,right:-2,width:'22px',height:'22px',background:'var(--green-dot)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center'}}><svg width='12' height='12' viewBox='0 0 12 12' fill='none'><path d='M2 6l3 3 5-5' stroke='white' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round'/></svg></span>
             </div>
             <div>
-              <h3 style={{fontSize:'19px',fontWeight:800,margin:'0 0 4px',color:'rgba(0,0,0,0.85)',letterSpacing:'-0.3px'}}>
+              <h3 style={{fontSize:'var(--text-heading)',fontWeight:800,margin:'0 0 4px',color:'rgba(0,0,0,0.85)',letterSpacing:'-0.3px'}}>
                 ¡Solicitud enviada!
               </h3>
               <p style={{fontSize:'var(--text-sm)',color:'rgba(0,0,0,0.5)',margin:0,lineHeight:1.6}}>
@@ -273,7 +273,7 @@ function HelperProfileInner() {
                     width:'96px', height:'96px', borderRadius:'50%',
                     background: enrichedH.avatarColor || 'var(--purple)',
                     display:'flex', alignItems:'center', justifyContent:'center',
-                    fontSize:'32px', fontWeight:700, color:'white',
+                    fontSize:'var(--text-num)', fontWeight:700, color:'white',
                     boxShadow:'0 4px 20px rgba(0,0,0,0.15)',
                     animation:'popIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards'
                   }}>
@@ -287,13 +287,13 @@ function HelperProfileInner() {
 
             {/* Nombre grande */}
             <h1 style={{
-              fontFamily:'var(--font-voice)', fontSize:'27px', fontWeight:700, letterSpacing:'-0.8px', color:'var(--ink)',
+              fontFamily:'var(--font-voice)', fontSize:'var(--text-xl)', fontWeight:700, letterSpacing:'-0.8px', color:'var(--ink)',
               letterSpacing:'-0.5px', margin:'0 0 4px', textAlign:'center'
             }}>{enrichedH.name}</h1>
 
             {/* Especialidad */}
             <div style={{
-              fontSize:'14px', color:'rgba(0,0,0,0.45)', fontWeight:500,
+              fontSize:'var(--text-sm)', color:'rgba(0,0,0,0.45)', fontWeight:500,
               textAlign:'center', marginBottom:'10px'
             }}>
               {enrichedH.specialty}
@@ -324,11 +324,11 @@ function HelperProfileInner() {
               animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both'
             }}>
               <div style={{
-                fontSize:'11px', fontWeight:700, color:'var(--purple)',
+                fontSize:'var(--text-xs)', fontWeight:700, color:'var(--purple)',
                 letterSpacing:'1px', textTransform:'uppercase', marginBottom:'10px'
               }}>En sus propias palabras</div>
               <p style={{
-                fontSize:'17px', fontWeight:500, color:'var(--ink)',
+                fontSize:'var(--text-md)', fontWeight:500, color:'var(--ink)',
                 lineHeight:1.55, letterSpacing:'-0.2px', margin:0,
                 fontFamily:'var(--font-voice)'
               }}>"{enrichedH.quote}"</p>
@@ -338,7 +338,7 @@ function HelperProfileInner() {
           {/* Bio */}
           {enrichedH.bio && (
             <p style={{
-              fontSize:'14px', color:'rgba(0,0,0,0.6)', lineHeight:1.65,
+              fontSize:'var(--text-sm)', color:'rgba(0,0,0,0.6)', lineHeight:1.65,
               letterSpacing:'-0.1px', margin:'0 0 20px',
               animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both'
             }}>{enrichedH.bio}</p>
@@ -347,7 +347,7 @@ function HelperProfileInner() {
           {/* Señales de actividad local */}
           {enrichedH.reviews >= 30 && (
             <div style={{
-              fontSize:'12px', color:'rgba(0,0,0,0.4)',
+              fontSize:'var(--text-xs)', color:'rgba(0,0,0,0.4)',
               marginBottom:'16px', textAlign:'center',
               animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both'
             }}>
@@ -382,7 +382,7 @@ function HelperProfileInner() {
           }}>
             <img src="/logo-iso.png" alt="Nüra" style={{width:'18px',height:'18px',flexShrink:0,marginTop:'1px',opacity:0.7}} />
             <p style={{
-              fontSize:'12px', color:'rgba(0,0,0,0.5)', lineHeight:1.5,
+              fontSize:'var(--text-xs)', color:'rgba(0,0,0,0.5)', lineHeight:1.5,
               margin:0
             }}>
               {location.state?.matchReason

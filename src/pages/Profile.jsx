@@ -198,14 +198,14 @@ export default function Profile() {
           return pct < 100 ? (
             <div style={{margin:'0 16px 12px',padding:'14px 16px',background:'white',borderRadius:'16px',boxShadow:'0 1px 8px rgba(0,0,0,0.06)',border:'1px solid rgba(0,0,0,0.07)'}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'8px'}}>
-                <span style={{fontSize:'13px',fontWeight:700,color:'var(--ink)',letterSpacing:'-0.2px'}}>Tu perfil está al {pct}%</span>
-                <span style={{fontSize:'11px',color:'rgba(0,0,0,0.38)'}}>Mejora tus matches</span>
+                <span style={{fontSize:'var(--text-sm)',fontWeight:700,color:'var(--ink)',letterSpacing:'-0.2px'}}>Tu perfil está al {pct}%</span>
+                <span style={{fontSize:'var(--text-xs)',color:'rgba(0,0,0,0.38)'}}>Mejora tus matches</span>
               </div>
               <div style={{height:'6px',background:'rgba(0,0,0,0.07)',borderRadius:'99px',overflow:'hidden'}}>
                 <div style={{height:'100%',width:`${pct}%`,background:'var(--purple)',borderRadius:'99px',transition:'width 0.6s ease'}} />
               </div>
               {missing.length > 0 && (
-                <p style={{fontSize:'12px',color:'rgba(0,0,0,0.45)',marginTop:'8px',lineHeight:1.4}}>
+                <p style={{fontSize:'var(--text-xs)',color:'rgba(0,0,0,0.45)',marginTop:'8px',lineHeight:1.4}}>
                   Añade: {missing.join(' · ')}
                 </p>
               )}
@@ -217,7 +217,7 @@ export default function Profile() {
         {(personas || []).length > 0 && (
           <div style={{margin:'0 0 20px', animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 60ms both'}}>
             <div style={{
-              fontSize:'11px', fontWeight:700, color:'var(--purple)',
+              fontSize:'var(--text-xs)', fontWeight:700, color:'var(--purple)',
               letterSpacing:'0.8px', textTransform:'uppercase', marginBottom:'10px'
             }}>Las personas de tu vida</div>
             <div style={{display:'flex', flexDirection:'column', gap:'8px'}}>
@@ -242,7 +242,7 @@ export default function Profile() {
                         </div>
                       )}
                       {helperNames.length > 0 && (
-                        <div style={{fontSize:'11px', color:'var(--green)', fontWeight:500}}>
+                        <div style={{fontSize:'var(--text-xs)', color:'var(--green)', fontWeight:500}}>
                           ✓ {helperNames.join(', ')} {helperNames.length === 1 ? 'ayuda' : 'ayudan'} con esto
                         </div>
                       )}
@@ -257,7 +257,7 @@ export default function Profile() {
                 )
               })}
             </div>
-            <p style={{fontSize:'10px', color:'var(--ink-tertiary)', marginTop:'8px', lineHeight:1.4}}>
+            <p style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', marginTop:'8px', lineHeight:1.4}}>
               Nüra recuerda esto para ayudarte mejor. Puedes borrar cualquier persona cuando quieras.
             </p>
           </div>
@@ -271,25 +271,25 @@ export default function Profile() {
             <div style={{margin:'0 0 20px', padding:'16px', background:'white',
               border:'1px solid var(--purple-20)', borderRadius:'var(--radius-md)',
               boxShadow:'var(--shadow-md)', animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 200ms both'}}>
-              <div style={{fontSize:'11px', fontWeight:700, color:'var(--purple)',
+              <div style={{fontSize:'var(--text-xs)', fontWeight:700, color:'var(--purple)',
                 letterSpacing:'0.8px', textTransform:'uppercase', marginBottom:'8px'}}>
                 Tu semana
               </div>
-              <p style={{fontFamily:'var(--font-voice)', fontSize:'16px', fontWeight:600,
+              <p style={{fontFamily:'var(--font-voice)', fontSize:'var(--text-base)', fontWeight:600,
                 letterSpacing:'-0.4px', lineHeight:1.4, color:'var(--ink)', margin:'0 0 12px'}}
                 dangerouslySetInnerHTML={{__html: sem.frase.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')}} />
               <div style={{display:'flex', gap:'18px', marginBottom:'12px'}}>
                 {[[sem.abiertas, 'abiertas'], [sem.citas, 'citas'], [sem.piezas, 'publicaciones']].map(([n, l]) => (
                   <div key={l}>
-                    <div style={{fontSize:'19px', fontWeight:700, color:'var(--ink)', lineHeight:1}}>{n}</div>
-                    <div style={{fontSize:'10.5px', color:'var(--ink-tertiary)', marginTop:'3px'}}>{l}</div>
+                    <div style={{fontSize:'var(--text-heading)', fontWeight:700, color:'var(--ink)', lineHeight:1}}>{n}</div>
+                    <div style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', marginTop:'3px'}}>{l}</div>
                   </div>
                 ))}
               </div>
               <button onClick={() => sem.accion.to ? navigate(sem.accion.to) : setComposerOpen(true)}
                 style={{width:'100%', background:'var(--purple-10)', color:'var(--purple)',
                   border:'none', borderRadius:'var(--radius-full)', padding:'11px',
-                  fontSize:'12.5px', fontWeight:700, cursor:'pointer'}}>
+                  fontSize:'var(--text-sm)', fontWeight:700, cursor:'pointer'}}>
                 {sem.accion.txt} →
               </button>
             </div>
@@ -298,13 +298,13 @@ export default function Profile() {
 
         {user.isHelper && (
           <div style={{margin:'0 0 20px', animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 240ms both'}}>
-            <div style={{fontSize:'11px', fontWeight:700, color:'var(--purple)',
+            <div style={{fontSize:'var(--text-xs)', fontWeight:700, color:'var(--purple)',
               letterSpacing:'0.8px', textTransform:'uppercase', marginBottom:'10px'}}>
               Así te ven quienes te necesitan
             </div>
             <button onClick={() => setComposerOpen(true)}
               style={{width:'100%', background:'var(--purple)', color:'white', border:'none',
-                borderRadius:'var(--radius-full)', padding:'12px', fontSize:'13px',
+                borderRadius:'var(--radius-full)', padding:'12px', fontSize:'var(--text-sm)',
                 fontWeight:700, cursor:'pointer', margin:'12px 0 10px'}}>
               ✍️ Publicar en tu obra
             </button>
@@ -327,10 +327,10 @@ export default function Profile() {
             {!proQuote ? (
               <div style={{marginTop:'12px', background:'var(--purple-10)',
                 border:'1px solid var(--purple-20)', borderRadius:'var(--radius-md)', padding:'14px'}}>
-                <div style={{fontSize:'13px', fontWeight:700, color:'var(--ink)', marginBottom:'4px'}}>
+                <div style={{fontSize:'var(--text-sm)', fontWeight:700, color:'var(--ink)', marginBottom:'4px'}}>
                   Tu primer paso
                 </div>
-                <p style={{fontSize:'12px', color:'var(--ink-secondary)', margin:'0 0 10px', lineHeight:1.5}}>
+                <p style={{fontSize:'var(--text-xs)', color:'var(--ink-secondary)', margin:'0 0 10px', lineHeight:1.5}}>
                   Añade tu cita personal — es lo primero que leen, con tu voz.
                   Los perfiles con cita generan mucha más confianza.
                 </p>
@@ -338,17 +338,17 @@ export default function Profile() {
                   placeholder="Ej: Cuido a cada persona como cuidaría a mi propia familia."
                   aria-label="Tu cita personal"
                   style={{width:'100%', minHeight:'64px', border:'1px solid var(--ink-border)',
-                    borderRadius:'10px', padding:'10px', fontSize:'14px',
+                    borderRadius:'10px', padding:'10px', fontSize:'var(--text-sm)',
                     fontFamily:'var(--font-voice)', resize:'none', background:'white'}} />
                 <button onClick={saveQuote} disabled={!quoteDraft.trim()}
                   style={{marginTop:'8px', background: quoteDraft.trim() ? 'var(--purple)' : 'rgba(0,0,0,0.15)',
                     color:'white', border:'none', borderRadius:'99px', padding:'9px 16px',
-                    fontSize:'12px', fontWeight:700}}>
+                    fontSize:'var(--text-xs)', fontWeight:700}}>
                   Guardar mi cita
                 </button>
               </div>
             ) : (
-              <div style={{marginTop:'12px', fontSize:'11px', color:'var(--ink-tertiary)',
+              <div style={{marginTop:'12px', fontSize:'var(--text-xs)', color:'var(--ink-tertiary)',
                 display:'flex', alignItems:'center', flexWrap:'wrap', gap:'6px'}}>
                 <Badge variant="success" size="xs">✓ Cita añadida</Badge>
                 <span>Tu primera conexión verificada aparecerá aquí cuando ocurra.</span>
@@ -369,8 +369,8 @@ export default function Profile() {
             <div style={{margin:'0 0 20px', padding:'14px 16px', background:'white',
               border:'1px solid var(--ink-border)', borderRadius:'var(--radius-md)',
               boxShadow:'var(--shadow-sm)', display:'flex', alignItems:'center', gap:'10px'}}>
-              <span style={{fontSize:'18px'}}>📅</span>
-              <div style={{fontSize:'13px', color:'var(--ink)', lineHeight:1.45}}>
+              <span style={{fontSize:'var(--text-md)'}}>📅</span>
+              <div style={{fontSize:'var(--text-sm)', color:'var(--ink)', lineHeight:1.45}}>
                 El {cp.label}, <strong>{hf}</strong>{cp.personaLabel ? <> está con {cp.personaLabel}</> : <> — vuestra primera cita</>}. Todo listo 💜
               </div>
             </div>
@@ -441,18 +441,18 @@ export default function Profile() {
           borderRadius:'16px', border:'1px solid rgba(123,47,255,0.12)'
         }}>
           <div style={{display:'flex',alignItems:'center',gap:'8px',marginBottom:'8px'}}>
-            <span style={{fontSize:'10px',fontWeight:700,color:'var(--purple)',letterSpacing:'0.8px',textTransform:'uppercase'}}>Próximamente</span>
+            <span style={{fontSize:'var(--text-xs)',fontWeight:700,color:'var(--purple)',letterSpacing:'0.8px',textTransform:'uppercase'}}>Próximamente</span>
           </div>
-          <p style={{fontSize:'14px',fontWeight:700,color:'var(--ink)',letterSpacing:'-0.2px',marginBottom:'4px'}}>
+          <p style={{fontSize:'var(--text-sm)',fontWeight:700,color:'var(--ink)',letterSpacing:'-0.2px',marginBottom:'4px'}}>
             Tu reputación profesional verificada
           </p>
-          <p style={{fontSize:'12px',color:'rgba(0,0,0,0.45)',lineHeight:1.5}}>
+          <p style={{fontSize:'var(--text-xs)',color:'rgba(0,0,0,0.45)',lineHeight:1.5}}>
             Nüra construirá tu currículum vivo basado en las ayudas reales que ofrezcas — verificadas y reconocidas por las personas que ayudaste.
           </p>
         </div>
 
         {/* ── ZONA 5: CONFIGURACIÓN DISCRETA ────────────── */}
-        <div style={{textAlign:'center', fontSize:'10px', color:'var(--ink-disabled, rgba(0,0,0,0.25))', margin:'2px 0 10px'}}>
+        <div style={{textAlign:'center', fontSize:'var(--text-xs)', color:'var(--ink-disabled, rgba(0,0,0,0.25))', margin:'2px 0 10px'}}>
           Nüra 2 · {NURA_BUILD}
         </div>
         <button className={styles.logoutBtn} onClick={() => { logout(); navigate('/') }}>
