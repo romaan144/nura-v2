@@ -45,7 +45,7 @@ export default function HelperCardTall({ helper, small = false }) {
     <div onClick={handleTap} role="button" aria-label={`Ver perfil de ${helper.name}`}
       style={{
         background: 'white', border: '1px solid var(--ink-border)',
-        borderRadius: small ? 'var(--radius-card)' : 'var(--radius-md)', boxShadow: small ? 'var(--shadow-sm)' : 'var(--shadow-md)',
+        borderRadius: 'var(--radius-md)', boxShadow: small ? 'var(--shadow-sm)' : 'var(--shadow-md)',
         padding: small ? '14px 10px 12px' : '22px 18px 18px',
         display: 'flex', flexDirection: 'column', alignItems: 'center',
         textAlign: 'center', cursor: 'pointer', width: '100%',

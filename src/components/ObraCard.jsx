@@ -29,7 +29,7 @@ export default function ObraCard({ post }) {
 
   return (
     <article style={{ background: 'white', border: '1px solid var(--ink-border)',
-      borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-sm)', padding: 'var(--space-14) 15px' }}>
+      borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-sm)', padding: 'var(--space-14) var(--space-16)' }}>
       <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px',
         background: 'var(--purple-10)', color: 'var(--purple)', borderRadius: 'var(--radius-full)',
         padding: 'var(--space-3) var(--space-10)', fontSize: 'var(--text-xs)', fontWeight: 700, letterSpacing: '0.4px',

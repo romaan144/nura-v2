@@ -101,6 +101,13 @@ prohibido el `ease-out` genérico.
 
 ## 2. Componentes base
 
+### La Superficie (la piel de toda tarjeta)
+Receta unica: **curva `--radius-md` (18px)**, suave pero compuesta;
+`--radius-card` (14) queda para lo que vive DENTRO de una tarjeta —
+jerarquia de curvas, no accidentes. **Borde `--ink-border`**, **relleno
+`--space-14 --space-16`**, **sombra con jerarquia**: `sm` en reposo
+(listas, rios) y `md` reservada al protagonista (la recomendacion).
+
 ### Button (primitiva)
 `<Button variant="primary|secondary|ghost" full disabled onClick>`.
 **`minHeight: 44px` cocido dentro**: el area tactil deja de ser una

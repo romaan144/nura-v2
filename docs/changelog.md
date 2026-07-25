@@ -26,6 +26,21 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — La Superficie: una sola piel (Nura diseno)
+
+- Tres tarjetas, tres pieles: HelperCard curvaba 30px con sombra md y borde
+  rgba a mano; ObraCard 18 con sm; HelperCardTall 14/18. En el rio de
+  Comunidad aparecen una sobre otra — se veia sin buscarlo.
+- **La curva de Nura es 18px**: los 30 se leian blandos y competian con los
+  botones (que si son pildoras); los 14, secos. Receta unica: curva 18,
+  borde --ink-border, relleno --space-14/16 (muere el 15px fuera de escala)
+  y **sombra con jerarquia** — sm en reposo, md solo para el protagonista.
+  Antes era al reves: la tarjeta de lista flotaba mas que la recomendacion.
+- **Hallazgo colateral**: .card conservaba `animation: cardIn` — una
+  animacion de entrada que violaba la ley de -ar (las listas no animan;
+  aparecen). Retirada.
+- Sello NURA_BUILD 2026.07.04-cm.
+
 ## 2026-07-04 — El Boton: la primitiva que faltaba (Nura diseno)
 
 - Hallazgo: **138 botones en la app y 0 componentes compartidos**. En

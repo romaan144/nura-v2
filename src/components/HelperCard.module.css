@@ -4,14 +4,13 @@
 
 .card {
   background: #FFFFFF;
-  border: 1px solid rgba(33,29,51,0.07);
-  border-radius: var(--radius-xl);
-  padding: 14px 16px;
+  border: 1px solid var(--ink-border);
+  border-radius: var(--radius-md);   /* La Superficie: 18px, la curva de Nüra */
+  padding: var(--space-14) var(--space-16);
   cursor: pointer;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);      /* reposo; la md se reserva al protagonista */
   transition: box-shadow 0.15s ease, transform 0.15s ease, opacity 0.15s;
   -webkit-tap-highlight-color: transparent;
-  animation: cardIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .card:active {
