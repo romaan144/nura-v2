@@ -72,7 +72,7 @@ export default function RegisterGate({ onClose, reason = 'contact' }) {
 
         {/* Benefits */}
         <div style={{display:'flex',flexDirection:'column',gap:'10px',marginBottom:'24px',
-          background:'rgba(0,0,0,0.03)',borderRadius:'16px',padding:'14px 16px'}}>
+          background:'rgba(0,0,0,0.03)',borderRadius:'var(--radius-card)',padding:'14px 16px'}}>
           {BENEFITS.map((b, i) => (
             <div key={i} style={{display:'flex',alignItems:'center',gap:'10px'}}>
               {b.icon}
@@ -89,7 +89,7 @@ export default function RegisterGate({ onClose, reason = 'contact' }) {
               display:'flex',alignItems:'center',justifyContent:'center',gap:'8px',
               width:'100%',padding:'15px',
               background:'var(--purple)',color:'white',
-              border:'none',borderRadius:'100px',
+              border:'none',borderRadius:'var(--radius-full)',
               fontSize:'var(--text-base)',fontWeight:700,
               cursor:'pointer',letterSpacing:'-0.2px',
             }}>
@@ -100,7 +100,7 @@ export default function RegisterGate({ onClose, reason = 'contact' }) {
             style={{
               width:'100%',padding:'13px',
               background:'rgba(0,0,0,0.05)',color:'rgba(0,0,0,0.55)',
-              border:'none',borderRadius:'100px',
+              border:'none',borderRadius:'var(--radius-full)',
               fontSize:'var(--text-sm)',fontWeight:600,
               cursor:'pointer',
             }}>

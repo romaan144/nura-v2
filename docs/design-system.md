@@ -72,6 +72,13 @@ prohibido el `ease-out` genérico.
   el texto conversacional respeta `max-width: 80%` (aire), mientras tarjetas
   y filtros respiran a ancho completo (evita comprimir información).
 
+- **La Curva manda (radios)**: `--radius-xs 4 · sm 10 · card 14 · md 18 ·
+  lg 22 · xl 30 · full 100`. **Prohibido escribir un radio a mano.** La
+  píldora es `--radius-full`, nunca `99px` ni `100px` (convivían las dos).
+  `--radius-card` nacio porque 18 elementos vivian en la banda 12-16 sin
+  token que los nombrara: cuando el producto pide un paso que la escala no
+  tiene, se amplia la escala — no se doblega el producto.
+
 - **La Escala manda (tipografía)**: `--text-xs 11 · sm 13 · base 15 · md 17 ·
   heading 20 · lg 22 · xl 28 · num 32`. **Prohibido escribir un tamaño de
   letra a mano** en un componente: si ninguno encaja, se discute el token,

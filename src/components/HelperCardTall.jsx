@@ -45,7 +45,7 @@ export default function HelperCardTall({ helper, small = false }) {
     <div onClick={handleTap} role="button" aria-label={`Ver perfil de ${helper.name}`}
       style={{
         background: 'white', border: '1px solid var(--ink-border)',
-        borderRadius: small ? '16px' : '20px', boxShadow: small ? 'var(--shadow-sm)' : 'var(--shadow-md)',
+        borderRadius: small ? 'var(--radius-card)' : 'var(--radius-md)', boxShadow: small ? 'var(--shadow-sm)' : 'var(--shadow-md)',
         padding: small ? '14px 10px 12px' : '22px 18px 18px',
         display: 'flex', flexDirection: 'column', alignItems: 'center',
         textAlign: 'center', cursor: 'pointer', width: '100%',
@@ -102,18 +102,18 @@ export default function HelperCardTall({ helper, small = false }) {
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '6px', marginTop: '12px' }}>
           {helper.responseTime && (
             <span style={{ background: 'var(--paper)', border: '1px solid var(--ink-border)',
-              borderRadius: '99px', padding: '4px 10px', fontSize: 'var(--text-xs)', color: 'var(--ink-secondary)' }}>
+              borderRadius: 'var(--radius-full)', padding: '4px 10px', fontSize: 'var(--text-xs)', color: 'var(--ink-secondary)' }}>
               Responde en {helper.responseTime}
             </span>
           )}
           {helper.experience && (
             <span style={{ background: 'var(--paper)', border: '1px solid var(--ink-border)',
-              borderRadius: '99px', padding: '4px 10px', fontSize: 'var(--text-xs)', color: 'var(--ink-secondary)' }}>
+              borderRadius: 'var(--radius-full)', padding: '4px 10px', fontSize: 'var(--text-xs)', color: 'var(--ink-secondary)' }}>
               {helper.experience}
             </span>
           )}
           {helper.dniVerified && (
-            <span style={{ background: 'var(--purple-10)', borderRadius: '99px', padding: '4px 10px',
+            <span style={{ background: 'var(--purple-10)', borderRadius: 'var(--radius-full)', padding: '4px 10px',
               fontSize: 'var(--text-xs)', color: 'var(--purple)', fontWeight: 600 }}>
               Identidad verificada
             </span>

@@ -54,9 +54,9 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
     overlay: {position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:300,display:'flex',alignItems:'flex-end',justifyContent:'center'},
     sheet: {background:'rgba(255,255,255,0.96)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',borderRadius:'24px 24px 0 0',padding:'24px 20px 36px',width:'100%',maxWidth:'500px'},
     handle: {width:'36px',height:'4px',background:'rgba(0,0,0,0.1)',borderRadius:'2px',margin:'0 auto 20px'},
-    input: {width:'100%',padding:'12px 16px',border:'1px solid rgba(0,0,0,0.1)',borderRadius:'14px',fontSize:'var(--text-base)',outline:'none',fontFamily:'-apple-system,Inter,sans-serif',background:'rgba(0,0,0,0.03)',boxSizing:'border-box'},
-    btnPrimary: {width:'100%',padding:'14px',background:'var(--purple)',color:'white',border:'none',borderRadius:'100px',fontSize:'var(--text-sm)',fontWeight:700,cursor:'pointer',transition:'opacity 0.2s'},
-    btnSecondary: {width:'100%',padding:'12px',background:'rgba(0,0,0,0.05)',color:'rgba(0,0,0,0.55)',border:'none',borderRadius:'100px',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'},
+    input: {width:'100%',padding:'12px 16px',border:'1px solid rgba(0,0,0,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',fontFamily:'-apple-system,Inter,sans-serif',background:'rgba(0,0,0,0.03)',boxSizing:'border-box'},
+    btnPrimary: {width:'100%',padding:'14px',background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:'pointer',transition:'opacity 0.2s'},
+    btnSecondary: {width:'100%',padding:'12px',background:'rgba(0,0,0,0.05)',color:'rgba(0,0,0,0.55)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'},
   }
 
   return (
@@ -89,7 +89,7 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
             {/* Booking summary */}
             {(date || time) && (
               <div style={{background:'rgba(0,0,0,0.03)',border:'1px solid rgba(0,0,0,0.06)',
-                borderRadius:'14px',padding:'12px 16px',width:'100%',textAlign:'left'}}>
+                borderRadius:'var(--radius-card)',padding:'12px 16px',width:'100%',textAlign:'left'}}>
                 {date && <p style={{margin:'0 0 4px',fontSize:'var(--text-sm)',color:'rgba(0,0,0,0.6)'}}>
                   {new Date(date).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})}
                 </p>}
@@ -121,7 +121,7 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
                         flexShrink:0,padding:'8px 14px',
                         background:date===iso?'var(--purple)':'rgba(0,0,0,0.05)',
                         color:date===iso?'white':'rgba(0,0,0,0.6)',
-                        border:'none',borderRadius:'100px',fontSize:'var(--text-xs)',fontWeight:600,
+                        border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
                         cursor:'pointer',fontFamily:'inherit',transition:'all 0.15s',
                         whiteSpace:'nowrap',
                       }}>{lbl}</button>
@@ -138,7 +138,7 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
                       padding:'7px 12px',
                       background:time===t?'var(--purple)':'rgba(0,0,0,0.05)',
                       color:time===t?'white':'rgba(0,0,0,0.6)',
-                      border:'none',borderRadius:'100px',fontSize:'var(--text-xs)',fontWeight:600,
+                      border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
                       cursor:'pointer',fontFamily:'inherit',transition:'all 0.15s',
                     }}>{t}</button>
                   ))}
@@ -320,7 +320,7 @@ function HelperProfileInner() {
             <div style={{
               margin:'0 0 20px', padding:'20px',
               background:'linear-gradient(135deg, rgba(123,47,255,0.06) 0%, rgba(123,47,255,0.02) 100%)',
-              borderRadius:'16px',
+              borderRadius:'var(--radius-card)',
               animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both'
             }}>
               <div style={{
@@ -376,7 +376,7 @@ function HelperProfileInner() {
           {/* Nüra recomienda — justo antes del CTA */}
           <div style={{
             margin:'0 0 14px', padding:'12px 14px',
-            background:'rgba(0,0,0,0.03)', borderRadius:'12px',
+            background:'rgba(0,0,0,0.03)', borderRadius:'var(--radius-card)',
             display:'flex', alignItems:'flex-start', gap:'8px',
             animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both'
           }}>

@@ -89,7 +89,7 @@ export function StatBar({ stats, style }) {
   return (
     <div style={{
       display: 'flex', alignItems: 'stretch',
-      background: 'rgba(0,0,0,0.03)', borderRadius: '14px',
+      background: 'rgba(0,0,0,0.03)', borderRadius: 'var(--radius-card)',
       overflow: 'hidden', border: '1px solid var(--ink-border)',
       width: '100%', maxWidth: '320px', ...style,
     }}>

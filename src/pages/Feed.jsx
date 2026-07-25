@@ -61,7 +61,7 @@ export default function Feed() {
               style={{ background: modo === m ? 'var(--purple)' : 'white',
                 color: modo === m ? 'white' : 'var(--ink)',
                 border: '1px solid ' + (modo === m ? 'var(--purple)' : 'var(--ink-border)'),
-                borderRadius: '99px', padding: '6px 14px', fontSize: 'var(--text-xs)',
+                borderRadius: 'var(--radius-full)', padding: '6px 14px', fontSize: 'var(--text-xs)',
                 fontWeight: 700, cursor: 'pointer' }}>
               {m === 'todos' ? 'Todos' : 'Siguiendo'}
             </button>

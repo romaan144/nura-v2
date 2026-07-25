@@ -35,7 +35,7 @@ export default function ObraComposer({ onClose }) {
             style={{ background: type === k ? 'var(--purple)' : 'white',
               color: type === k ? 'white' : 'var(--ink)',
               border: '1px solid ' + (type === k ? 'var(--purple)' : 'var(--ink-border)'),
-              borderRadius: '99px', padding: '7px 13px', fontSize: 'var(--text-xs)', fontWeight: 600, cursor: 'pointer' }}>
+              borderRadius: 'var(--radius-full)', padding: '7px 13px', fontSize: 'var(--text-xs)', fontWeight: 600, cursor: 'pointer' }}>
             {meta.icon} {meta.label}
           </button>
         ))}

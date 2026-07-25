@@ -102,7 +102,7 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
 
   if (done) return (
     <div style={{position:'fixed',inset:0,background: 'rgba(30,25,40,0.35)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:200,display:'flex',alignItems:'center',justifyContent:'center',padding:'20px'}}>
-      <div style={{background:'rgba(255,255,255,0.95)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',border:'1px solid rgba(255,255,255,0.5)',borderRadius:'24px',padding:'36px 28px',textAlign:'center',maxWidth:'320px',width:'100%',boxShadow:'0 8px 40px rgba(0,0,0,0.12)'}}>
+      <div style={{background:'rgba(255,255,255,0.95)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',border:'1px solid rgba(255,255,255,0.5)',borderRadius:'var(--radius-lg)',padding:'36px 28px',textAlign:'center',maxWidth:'320px',width:'100%',boxShadow:'0 8px 40px rgba(0,0,0,0.12)'}}>
         {/* Avatar with checkmark */}
         <div style={{position:'relative',display:'inline-block',marginBottom:'12px'}}>
           {helper.avatarUrl
@@ -120,7 +120,7 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
             <div className="hilo" style={{width:'56px', margin:'2px auto 10px'}} />
         <p style={{fontSize:'var(--text-sm)',color:'rgba(0,0,0,0.45)',marginBottom:'12px',lineHeight:1.6}}>{name} confirmará disponibilidad en breve.</p>
         {(date || time) && (
-          <div style={{background:'rgba(0,0,0,0.03)',border:'1px solid rgba(0,0,0,0.06)',borderRadius:'12px',
+          <div style={{background:'rgba(0,0,0,0.03)',border:'1px solid rgba(0,0,0,0.06)',borderRadius:'var(--radius-card)',
             padding:'10px 14px',marginBottom:'20px',textAlign:'left'}}>
             {date && <p className={styles.metaXs3}>
               {new Date(date).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})}
@@ -130,7 +130,7 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
         )}
         <div className={styles.colFull}>
           <button onClick={() => { onClose(); navigate('/my-services') }}
-            style={{padding:'13px',background:'var(--purple)',color:'white',border:'none',borderRadius:'100px',fontSize:'var(--text-sm)',fontWeight:700,cursor:'pointer',width:'100%'}}>
+            style={{padding:'13px',background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:'pointer',width:'100%'}}>
             Ver mis servicios
           </button>
           <button onClick={onClose}
@@ -152,7 +152,7 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
         {prefillDate && (
           <div style={{display:'flex',alignItems:'center',gap:'6px',
             background:'rgba(123,47,255,0.06)',border:'1px solid rgba(123,47,255,0.1)',
-            borderRadius:'10px',padding:'8px 12px',marginBottom:'16px',
+            borderRadius:'var(--radius-sm)',padding:'8px 12px',marginBottom:'16px',
           }}>
             <img src="/logo-iso.png" alt="" style={{width:'12px',height:'12px',opacity:0.7}} />
             <span className={styles.purpleLabel}>
@@ -174,7 +174,7 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
                     flexShrink:0,padding:'8px 14px',
                     background:date===iso?'var(--purple)':'rgba(0,0,0,0.05)',
                     color:date===iso?'white':'rgba(0,0,0,0.6)',
-                    border:'none',borderRadius:'100px',fontSize:'var(--text-xs)',fontWeight:600,
+                    border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
                     cursor:'pointer',fontFamily:'inherit',transition:'all 0.15s',whiteSpace:'nowrap',
                   }}>{lbl}</button>
                 )
@@ -190,7 +190,7 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
                   padding:'7px 12px',
                   background:time===t?'var(--purple)':'rgba(0,0,0,0.05)',
                   color:time===t?'white':'rgba(0,0,0,0.6)',
-                  border:'none',borderRadius:'100px',fontSize:'var(--text-xs)',fontWeight:600,
+                  border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
                   cursor:'pointer',fontFamily:'inherit',transition:'all 0.15s',
                 }}>{t}</button>
               ))}
@@ -198,12 +198,12 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
           </div>
           <textarea value={note} onChange={e=>setNote(e.target.value)}
             placeholder="Detalles adicionales (opcional)..." rows={3}
-            style={{padding:'12px 16px',border:'1px solid rgba(0,0,0,0.1)',borderRadius:'14px',fontSize:'var(--text-base)',outline:'none',resize:'none',fontFamily:'-apple-system,Inter,sans-serif',color:'rgba(0,0,0,0.85)',background:'rgba(0,0,0,0.03)'}} />
+            style={{padding:'12px 16px',border:'1px solid rgba(0,0,0,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',resize:'none',fontFamily:'-apple-system,Inter,sans-serif',color:'rgba(0,0,0,0.85)',background:'rgba(0,0,0,0.03)'}} />
         </div>
         <div style={{display:'flex',gap:'10px'}}>
-          <button onClick={onClose} style={{flex:1,padding:'14px',background:'rgba(0,0,0,0.05)',color:'rgba(0,0,0,0.55)',border:'none',borderRadius:'100px',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>Cancelar</button>
+          <button onClick={onClose} style={{flex:1,padding:'14px',background:'rgba(0,0,0,0.05)',color:'rgba(0,0,0,0.55)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>Cancelar</button>
           <button onClick={()=>{ onConfirm?.(date, time, note); setDone(true); notifyServiceConfirmed(helper.name?.split(' ')?.[0] || helper.name); haptic('success') }} disabled={!date}
-            style={{flex:2,padding:'14px',background:date?'var(--purple)':'rgba(0,0,0,0.1)',color:date?'white':'rgba(0,0,0,0.3)',border:'none',borderRadius:'100px',fontSize:'var(--text-sm)',fontWeight:700,cursor:date?'pointer':'default',transition:'all 0.2s'}}>
+            style={{flex:2,padding:'14px',background:date?'var(--purple)':'rgba(0,0,0,0.1)',color:date?'white':'rgba(0,0,0,0.3)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:date?'pointer':'default',transition:'all 0.2s'}}>
             Enviar solicitud
           </button>
         </div>
@@ -575,7 +575,7 @@ export default function Chat() {
               <div style={{
                 background:'linear-gradient(135deg,rgba(123,47,255,0.06),rgba(0,212,200,0.04))',
                 border:'1px solid rgba(123,47,255,0.12)',
-                borderRadius:'14px',padding:'10px 14px',
+                borderRadius:'var(--radius-card)',padding:'10px 14px',
                 marginBottom:'4px',maxWidth:'260px',textAlign:'left',
               }}>
                 <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'var(--purple)',margin:'0 0 4px',
@@ -589,9 +589,9 @@ export default function Chat() {
             <p className={styles.emptyChatDesc}>{helper.specialty} · {helper.zone}</p>
             {helper.price && <p className={styles.emptyChatPrice}>{helper.price}</p>}
             <div style={{display:'flex',gap:'8px',flexWrap:'wrap',justifyContent:'center',marginTop:'4px'}}>
-              {helper.dniVerified && <span style={{fontSize:'var(--text-xs)',color:'var(--green)',background:'var(--green-light)',border:'1px solid rgba(5,150,105,0.15)',borderRadius:'100px',padding:'3px 10px',fontWeight:600}}>Verificado</span>}
-              {helper.available && <span style={{fontSize:'var(--text-xs)',color:'var(--green)',background:'var(--green-light)',border:'1px solid rgba(5,150,105,0.15)',borderRadius:'100px',padding:'3px 10px',fontWeight:600}}>● Disponible</span>}
-              <span style={{fontSize:'var(--text-xs)',color:'rgba(0,0,0,0.4)',background:'rgba(0,0,0,0.04)',borderRadius:'100px',padding:'3px 10px'}}>⭐ {helper.rating} · {helper.reviews} reseñas</span>
+              {helper.dniVerified && <span style={{fontSize:'var(--text-xs)',color:'var(--green)',background:'var(--green-light)',border:'1px solid rgba(5,150,105,0.15)',borderRadius:'var(--radius-full)',padding:'3px 10px',fontWeight:600}}>Verificado</span>}
+              {helper.available && <span style={{fontSize:'var(--text-xs)',color:'var(--green)',background:'var(--green-light)',border:'1px solid rgba(5,150,105,0.15)',borderRadius:'var(--radius-full)',padding:'3px 10px',fontWeight:600}}>● Disponible</span>}
+              <span style={{fontSize:'var(--text-xs)',color:'rgba(0,0,0,0.4)',background:'rgba(0,0,0,0.04)',borderRadius:'var(--radius-full)',padding:'3px 10px'}}>⭐ {helper.rating} · {helper.reviews} reseñas</span>
             </div>
             {/* Conversation starters */}
             <div style={{display:'flex',flexDirection:'column',gap:'8px',marginTop:'20px',width:'100%',maxWidth:'280px'}}>
@@ -607,7 +607,7 @@ export default function Chat() {
                     padding:'11px 16px',
                     background:'rgba(255,255,255,0.85)',
                     border:'1px solid rgba(0,0,0,0.08)',
-                    borderRadius:'14px',
+                    borderRadius:'var(--radius-card)',
                     fontSize:'var(--text-sm)',color:'rgba(0,0,0,0.7)',
                     cursor:'pointer',textAlign:'left',
                     fontFamily:'-apple-system,"Inter",sans-serif',
@@ -643,12 +643,12 @@ export default function Chat() {
                   <div style={{display:'flex', gap:'6px', marginTop:'8px', flexWrap:'wrap'}}>
                     <button onClick={() => answerProposal(msg.id, true, msg.proposal.label)}
                       style={{background:'var(--purple)', color:'white', border:'none',
-                        borderRadius:'99px', padding:'7px 14px', fontSize:'var(--text-xs)', fontWeight:600}}>
+                        borderRadius:'var(--radius-full)', padding:'7px 14px', fontSize:'var(--text-xs)', fontWeight:600}}>
                       ✓ Me va bien
                     </button>
                     <button onClick={() => answerProposal(msg.id, false, msg.proposal.label)}
                       style={{background:'rgba(0,0,0,0.05)', color:'var(--ink)',
-                        border:'1px solid var(--ink-border)', borderRadius:'99px',
+                        border:'1px solid var(--ink-border)', borderRadius:'var(--radius-full)',
                         padding:'7px 14px', fontSize:'var(--text-xs)', fontWeight:600}}>
                       Otro momento
                     </button>
@@ -664,7 +664,7 @@ export default function Chat() {
                           sendMessage(chip)
                         }}
                         style={{
-                          padding:'5px 12px',borderRadius:'100px',fontSize:'var(--text-xs)',fontWeight:600,
+                          padding:'5px 12px',borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
                           cursor:'pointer',border:'none',
                           background: chip === 'Confirmar reserva'
                             ? 'var(--purple)' : 'rgba(0,0,0,0.07)',

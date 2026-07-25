@@ -1096,7 +1096,7 @@ export default function Home() {
                 <div style={{display:'flex',gap:'8px',flexWrap:'wrap',marginTop:'8px'}}>
                   {(msg.quickOptions||[]).map((opt,i) => (
                     <button key={i}
-                      style={{padding:'7px 14px',background:'var(--paper)',border:'1.5px solid var(--rule)',borderRadius:'16px',fontSize:'var(--text-xs)',color:'var(--mid)',cursor:'pointer',transition:'all 0.15s'}}
+                      style={{padding:'7px 14px',background:'var(--paper)',border:'1.5px solid var(--rule)',borderRadius:'var(--radius-card)',fontSize:'var(--text-xs)',color:'var(--mid)',cursor:'pointer',transition:'all 0.15s'}}
                       onClick={() => {
                         setShowSuggestions(false)
                         if (opt.includes('busca')) handleSend(searchHistory[0]?.query)

@@ -13,7 +13,7 @@ export default class AppErrorBoundary extends Component {
           {this.state.error?.stack?.split('\n').slice(0,8).join('\n')}
         </pre>
         <button onClick={() => { localStorage.clear(); window.location.reload() }}
-          style={{marginTop:'16px',padding:'10px 20px',background:'#DC2626',color:'white',border:'none',borderRadius:'8px',cursor:'pointer'}}>
+          style={{marginTop:'16px',padding:'10px 20px',background:'#DC2626',color:'white',border:'none',borderRadius:'var(--radius-sm)',cursor:'pointer'}}>
           Limpiar caché y recargar
         </button>
       </div>

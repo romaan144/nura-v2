@@ -31,7 +31,7 @@ export default function ObraCard({ post }) {
     <article style={{ background: 'white', border: '1px solid var(--ink-border)',
       borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-sm)', padding: '14px 15px' }}>
       <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px',
-        background: 'var(--purple-10)', color: 'var(--purple)', borderRadius: '99px',
+        background: 'var(--purple-10)', color: 'var(--purple)', borderRadius: 'var(--radius-full)',
         padding: '3px 10px', fontSize: 'var(--text-xs)', fontWeight: 700, letterSpacing: '0.4px',
         textTransform: 'uppercase', marginBottom: '9px' }}>
         {meta.icon} {meta.label}
@@ -96,7 +96,7 @@ export default function ObraCard({ post }) {
                 {COMMENT_STARTERS.map(s => (
                   <button key={s} onClick={() => publicar(s)}
                     style={{ background: 'var(--purple-10)', color: 'var(--purple)', border: 'none',
-                      borderRadius: '99px', padding: '5px 11px', fontSize: 'var(--text-xs)', fontWeight: 600, cursor: 'pointer' }}>
+                      borderRadius: 'var(--radius-full)', padding: '5px 11px', fontSize: 'var(--text-xs)', fontWeight: 600, cursor: 'pointer' }}>
                     {s}
                   </button>
                 ))}
@@ -105,7 +105,7 @@ export default function ObraCard({ post }) {
                 <input value={draft} onChange={e => setDraft(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter') publicar(draft) }}
                   placeholder="Escribe un comentario…"
-                  style={{ flex: 1, border: '1px solid var(--ink-border)', borderRadius: '99px',
+                  style={{ flex: 1, border: '1px solid var(--ink-border)', borderRadius: 'var(--radius-full)',
                     padding: '9px 14px', fontSize: 'var(--text-sm)', outline: 'none', background: 'var(--paper)' }} />
                 <button onClick={() => publicar(draft)} aria-label="Publicar comentario"
                   style={{ background: 'var(--purple)', color: 'white', border: 'none', borderRadius: '50%',
@@ -114,7 +114,7 @@ export default function ObraCard({ post }) {
             </>
           ) : (
             <button onClick={() => publicar('x')}
-              style={{ background: 'none', border: '1px dashed var(--ink-border)', borderRadius: '99px',
+              style={{ background: 'none', border: '1px dashed var(--ink-border)', borderRadius: 'var(--radius-full)',
                 padding: '9px 14px', fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)', width: '100%', cursor: 'pointer' }}>
               Crea tu cuenta para comentar
             </button>

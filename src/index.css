@@ -99,6 +99,8 @@ body {
   --shadow-color: 0 8px 32px rgba(123,47,255,0.18);
 
   --radius-sm: 10px;
+  --radius-card: 14px;  /* el radio de las tarjetas: 18 elementos vivian
+                           en esta banda sin token que los nombrara */
   --radius-md: 18px;
   --radius-lg: 22px;
   --radius-xl: 30px;

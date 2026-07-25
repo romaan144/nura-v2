@@ -31,11 +31,11 @@ export default class ErrorBoundary extends Component {
           </div>
           <div style={{display:'flex',gap:'8px',marginTop:'4px'}}>
             <button onClick={() => window.history.back()}
-              style={{padding:'11px 22px',background:'white',color:'var(--ink, #1a1a1a)',border:'1px solid rgba(0,0,0,0.12)',borderRadius:'14px',fontSize:'var(--text-sm)',fontWeight:600}}>
+              style={{padding:'11px 22px',background:'white',color:'var(--ink, #1a1a1a)',border:'1px solid rgba(0,0,0,0.12)',borderRadius:'var(--radius-card)',fontSize:'var(--text-sm)',fontWeight:600}}>
               Volver
             </button>
             <button onClick={() => window.location.reload()}
-              style={{padding:'11px 22px',background:'var(--purple, #7B2FFF)',color:'white',border:'none',borderRadius:'14px',fontSize:'var(--text-sm)',fontWeight:600}}>
+              style={{padding:'11px 22px',background:'var(--purple, #7B2FFF)',color:'white',border:'none',borderRadius:'var(--radius-card)',fontSize:'var(--text-sm)',fontWeight:600}}>
               Reintentar
             </button>
           </div>
@@ -44,7 +44,7 @@ export default class ErrorBoundary extends Component {
             {this.state.showDetail ? 'Ocultar detalle técnico' : 'Detalle técnico'}
           </button>
           {this.state.showDetail && (
-            <p style={{color:'#991B1B',fontSize:'var(--text-xs)',fontFamily:'monospace',background:'white',padding:'12px',borderRadius:'8px',whiteSpace:'pre-wrap',maxWidth:'320px',textAlign:'left'}}>
+            <p style={{color:'#991B1B',fontSize:'var(--text-xs)',fontFamily:'monospace',background:'white',padding:'12px',borderRadius:'var(--radius-sm)',whiteSpace:'pre-wrap',maxWidth:'320px',textAlign:'left'}}>
               {this.state.error.message}
             </p>
           )}

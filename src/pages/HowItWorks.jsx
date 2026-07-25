@@ -111,7 +111,7 @@ export default function HowItWorks() {
         <div id="about" style={{
           background:'rgba(255,255,255,0.7)',
           border:'1px solid rgba(0,0,0,0.06)',
-          borderRadius:'20px', padding:'24px 20px',
+          borderRadius:'var(--radius-md)', padding:'24px 20px',
           marginBottom:'12px',
         }}>
           <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'rgba(123,47,255,0.6)',
@@ -138,7 +138,7 @@ export default function HowItWorks() {
         <div style={{
           background:'linear-gradient(135deg,rgba(123,47,255,0.06),rgba(0,212,200,0.04))',
           border:'1px solid rgba(123,47,255,0.12)',
-          borderRadius:'20px',padding:'24px 20px',
+          borderRadius:'var(--radius-md)',padding:'24px 20px',
           textAlign:'center',display:'flex',flexDirection:'column',
           alignItems:'center',gap:'10px',marginBottom:'12px',
         }}>
@@ -156,7 +156,7 @@ export default function HowItWorks() {
             style={{
               padding:'12px 24px',
               background:'linear-gradient(135deg,#7B2FFF,#00D4C8)',
-              color:'white',border:'none',borderRadius:'100px',
+              color:'white',border:'none',borderRadius:'var(--radius-full)',
               fontSize:'var(--text-sm)',fontWeight:700,cursor:'pointer',
               fontFamily:'-apple-system,"Inter",sans-serif',
             }}>

@@ -170,7 +170,7 @@ export default function RegisterHelper() {
         {messages.length === 1 && (
           <div style={{
             margin:'0 0 12px', padding:'12px 16px',
-            background:'rgba(123,47,255,0.06)', borderRadius:'14px',
+            background:'rgba(123,47,255,0.06)', borderRadius:'var(--radius-card)',
             border:'1px solid rgba(123,47,255,0.12)'
           }}>
             <div style={{fontSize:'var(--text-xs)',fontWeight:700,color:'var(--purple)',marginBottom:'6px',letterSpacing:'0.3px',textTransform:'uppercase'}}>

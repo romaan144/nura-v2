@@ -26,6 +26,23 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — La Curva: el radio como identidad (Nura diseno)
+
+- Diagnostico: 59 radios a mano frente a 18 con token, y la pildora escrita
+  31 veces con DOS numeros distintos (100px x17, 99px x14) — la misma
+  intencion, dos verdades.
+- Hallazgo que cambio el plan: la escala tenia un agujero. 18 elementos
+  vivian en la banda 12-16 y el 14px caia equidistante entre sm(10) y
+  md(18). No era que los componentes desobedecieran: el sistema no nombraba
+  el radio que la app mas usa. Nace **--radius-card: 14px** — cuando el
+  producto pide un paso que la escala no tiene, se amplia la escala.
+- Aplicado: 58 sustituciones (31 de pildora con cero efecto visual; el resto
+  <=2px). 3 discolos de 2px intactos (el salto a xs duplicaria la curva).
+- Disciplina: los +2 sobre las 56 previstas eran segundas ramas de ternarios
+  (no contables por el patron del censo); integridad verificada en 0 lineas
+  eliminadas sin borderRadius.
+- Sello NURA_BUILD 2026.07.04-ci.
+
 ## 2026-07-04 — La Escala: el sistema manda sobre el componente (Nura diseno)
 
 - Diagnostico: la app tenia una escala de 8 pasos y 15 tamanos en uso; 110

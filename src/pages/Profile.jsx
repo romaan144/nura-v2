@@ -196,13 +196,13 @@ export default function Profile() {
           if (!following?.length) missing.push('seguir profesionales')
           if (!searchHistory?.length) missing.push('hacer tu primera búsqueda')
           return pct < 100 ? (
-            <div style={{margin:'0 16px 12px',padding:'14px 16px',background:'white',borderRadius:'16px',boxShadow:'0 1px 8px rgba(0,0,0,0.06)',border:'1px solid rgba(0,0,0,0.07)'}}>
+            <div style={{margin:'0 16px 12px',padding:'14px 16px',background:'white',borderRadius:'var(--radius-card)',boxShadow:'0 1px 8px rgba(0,0,0,0.06)',border:'1px solid rgba(0,0,0,0.07)'}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'8px'}}>
                 <span style={{fontSize:'var(--text-sm)',fontWeight:700,color:'var(--ink)',letterSpacing:'-0.2px'}}>Tu perfil está al {pct}%</span>
                 <span style={{fontSize:'var(--text-xs)',color:'rgba(0,0,0,0.38)'}}>Mejora tus matches</span>
               </div>
-              <div style={{height:'6px',background:'rgba(0,0,0,0.07)',borderRadius:'99px',overflow:'hidden'}}>
-                <div style={{height:'100%',width:`${pct}%`,background:'var(--purple)',borderRadius:'99px',transition:'width 0.6s ease'}} />
+              <div style={{height:'6px',background:'rgba(0,0,0,0.07)',borderRadius:'var(--radius-full)',overflow:'hidden'}}>
+                <div style={{height:'100%',width:`${pct}%`,background:'var(--purple)',borderRadius:'var(--radius-full)',transition:'width 0.6s ease'}} />
               </div>
               {missing.length > 0 && (
                 <p style={{fontSize:'var(--text-xs)',color:'rgba(0,0,0,0.45)',marginTop:'8px',lineHeight:1.4}}>
@@ -338,11 +338,11 @@ export default function Profile() {
                   placeholder="Ej: Cuido a cada persona como cuidaría a mi propia familia."
                   aria-label="Tu cita personal"
                   style={{width:'100%', minHeight:'64px', border:'1px solid var(--ink-border)',
-                    borderRadius:'10px', padding:'10px', fontSize:'var(--text-sm)',
+                    borderRadius:'var(--radius-sm)', padding:'10px', fontSize:'var(--text-sm)',
                     fontFamily:'var(--font-voice)', resize:'none', background:'white'}} />
                 <button onClick={saveQuote} disabled={!quoteDraft.trim()}
                   style={{marginTop:'8px', background: quoteDraft.trim() ? 'var(--purple)' : 'rgba(0,0,0,0.15)',
-                    color:'white', border:'none', borderRadius:'99px', padding:'9px 16px',
+                    color:'white', border:'none', borderRadius:'var(--radius-full)', padding:'9px 16px',
                     fontSize:'var(--text-xs)', fontWeight:700}}>
                   Guardar mi cita
                 </button>
@@ -438,7 +438,7 @@ export default function Profile() {
         <div style={{
           margin:'0 16px 16px', padding:'16px',
           background:'linear-gradient(135deg, rgba(123,47,255,0.06) 0%, rgba(123,47,255,0.02) 100%)',
-          borderRadius:'16px', border:'1px solid rgba(123,47,255,0.12)'
+          borderRadius:'var(--radius-card)', border:'1px solid rgba(123,47,255,0.12)'
         }}>
           <div style={{display:'flex',alignItems:'center',gap:'8px',marginBottom:'8px'}}>
             <span style={{fontSize:'var(--text-xs)',fontWeight:700,color:'var(--purple)',letterSpacing:'0.8px',textTransform:'uppercase'}}>Próximamente</span>

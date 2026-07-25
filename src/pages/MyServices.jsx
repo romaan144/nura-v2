@@ -269,10 +269,10 @@ export default function MyServices() {
                 </div>
                 <textarea value={ratingText} onChange={e=>setRatingText(e.target.value)}
                   placeholder="¿Qué destacarías? (opcional)" rows={3}
-                  style={{width:'100%',padding:'12px 16px',border:'1px solid rgba(0,0,0,0.1)',borderRadius:'14px',fontSize:'var(--text-base)',outline:'none',resize:'none',fontFamily:'inherit',background:'rgba(0,0,0,0.03)',boxSizing:'border-box',marginBottom:'12px'}} />
+                  style={{width:'100%',padding:'12px 16px',border:'1px solid rgba(0,0,0,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',resize:'none',fontFamily:'inherit',background:'rgba(0,0,0,0.03)',boxSizing:'border-box',marginBottom:'12px'}} />
                 <div style={{display:'flex',gap:'8px'}}>
                   <button onClick={() => setRatingModal(null)}
-                    style={{flex:1,padding:'13px',background:'rgba(0,0,0,0.05)',color:'rgba(0,0,0,0.55)',border:'none',borderRadius:'100px',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
+                    style={{flex:1,padding:'13px',background:'rgba(0,0,0,0.05)',color:'rgba(0,0,0,0.55)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
                     Cancelar
                   </button>
                   <button onClick={submitRating}
