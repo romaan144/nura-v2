@@ -26,6 +26,23 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — El Ritmo: la escala de espaciado, viva (Nura diseno)
+
+- Cifra mas extrema de la auditoria: 216 espaciados a mano, **0 usos de
+  token**. Causa encontrada: habia DOS escalas compitiendo en index.css
+  (semantica micro/std/block/section y camiseta xs/sm/md/lg/xl/2xl), con
+  valores solapados. Cuando hay dos sistemas, no hay ninguno.
+- Y el ritmo real las desmentia a ambas: **10px era el valor mas usado de
+  toda la app (53 veces) y ninguna escala lo nombraba**; con 6, 14 y 24
+  sumaban 117 usos huerfanos. La leccion de --radius-card, a mayor escala.
+- Aplicado: escala unica nombrada por su valor (2-32), las dos viejas como
+  alias (nada se rompe), y **333 sustituciones de coincidencia exacta**:
+  cero pixeles movidos, la app se ve identica.
+- Pendiente de decision del fundador: 64 valores fuera de escala (impares y
+  grandes) y la pregunta grande — alinear a reticula de 4px movería 6, 10 y
+  14 (117 elementos), cambio real y visible.
+- Sello NURA_BUILD 2026.07.04-ck.
+
 ## 2026-07-04 — La Tinta Viva, terminada (Nura diseno)
 
 - Hallazgo raiz: la direccion artistica estaba a medias EN LOS PROPIOS

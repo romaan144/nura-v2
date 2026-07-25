@@ -72,6 +72,13 @@ prohibido el `ease-out` genérico.
   el texto conversacional respeta `max-width: 80%` (aire), mientras tarjetas
   y filtros respiran a ancho completo (evita comprimir información).
 
+- **El Ritmo manda (espaciado)**: una sola escala, nombrada por su valor —
+  `--space-2 · 3 · 4 · 6 · 8 · 10 · 12 · 14 · 16 · 20 · 24 · 28 · 32`.
+  Nacio de MEDIR el producto: `10px` era el valor mas usado de la app y
+  ninguna de las dos escalas anteriores lo nombraba. Las escalas viejas
+  (xs/sm/md/lg + micro/std/block/section) sobreviven solo como alias.
+  **Prohibido escribir un espaciado a mano.**
+
 - **La Tinta manda (color)**: Nüra **no usa negro puro**. Toda tinta,
   borde, sombra y veladura es `rgba(33,29,51, α)` — violeta cálido sobre
   papel cálido. El morado de marca solo por token

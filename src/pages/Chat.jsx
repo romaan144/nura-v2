@@ -101,10 +101,10 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
   const name = helper.name?.split(' ')?.[0] || helper.name
 
   if (done) return (
-    <div style={{position:'fixed',inset:0,background: 'rgba(30,25,40,0.35)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:200,display:'flex',alignItems:'center',justifyContent:'center',padding:'20px'}}>
-      <div style={{background:'rgba(255,255,255,0.95)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',border:'1px solid rgba(255,255,255,0.5)',borderRadius:'var(--radius-lg)',padding:'36px 28px',textAlign:'center',maxWidth:'320px',width:'100%',boxShadow:'0 8px 40px rgba(33,29,51,0.12)'}}>
+    <div style={{position:'fixed',inset:0,background: 'rgba(30,25,40,0.35)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:200,display:'flex',alignItems:'center',justifyContent:'center',padding:'var(--space-20)'}}>
+      <div style={{background:'rgba(255,255,255,0.95)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',border:'1px solid rgba(255,255,255,0.5)',borderRadius:'var(--radius-lg)',padding:'36px var(--space-28)',textAlign:'center',maxWidth:'320px',width:'100%',boxShadow:'0 8px 40px rgba(33,29,51,0.12)'}}>
         {/* Avatar with checkmark */}
-        <div style={{position:'relative',display:'inline-block',marginBottom:'12px'}}>
+        <div style={{position:'relative',display:'inline-block',marginBottom:'var(--space-12)'}}>
           {helper.avatarUrl
             ? <img src={helper.avatarUrl} alt={name}
                 style={{width:'64px',height:'64px',borderRadius:'50%',border:'3px solid var(--green-dot)',display:'block'}} />
@@ -117,11 +117,11 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
           <span style={{position:'absolute',bottom:-2,right:-2,width:'20px',height:'20px',background:'var(--green-dot)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center'}}><svg width='11' height='11' viewBox='0 0 12 12' fill='none'><path d='M2 6l3 3 5-5' stroke='white' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round'/></svg></span>
         </div>
         <h3 className={styles.modalTitle}>¡Solicitud enviada!</h3>
-            <div className="hilo" style={{width:'56px', margin:'2px auto 10px'}} />
-        <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.45)',marginBottom:'12px',lineHeight:1.6}}>{name} confirmará disponibilidad en breve.</p>
+            <div className="hilo" style={{width:'56px', margin:'var(--space-2) auto var(--space-10)'}} />
+        <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.45)',marginBottom:'var(--space-12)',lineHeight:1.6}}>{name} confirmará disponibilidad en breve.</p>
         {(date || time) && (
           <div style={{background:'rgba(33,29,51,0.03)',border:'1px solid rgba(33,29,51,0.06)',borderRadius:'var(--radius-card)',
-            padding:'10px 14px',marginBottom:'20px',textAlign:'left'}}>
+            padding:'var(--space-10) var(--space-14)',marginBottom:'var(--space-20)',textAlign:'left'}}>
             {date && <p className={styles.metaXs3}>
               {new Date(date).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})}
             </p>}
@@ -134,7 +134,7 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
             Ver mis servicios
           </button>
           <button onClick={onClose}
-            style={{padding:'12px',background:'transparent',color:'rgba(33,29,51,0.4)',border:'none',fontSize:'var(--text-sm)',cursor:'pointer'}}>
+            style={{padding:'var(--space-12)',background:'transparent',color:'rgba(33,29,51,0.4)',border:'none',fontSize:'var(--text-sm)',cursor:'pointer'}}>
             Volver al chat
           </button>
         </div>
@@ -144,15 +144,15 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
 
   return (
     <div style={{position:'fixed',inset:0,background:'rgba(30,25,40,0.35)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:200,display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
-      <div style={{background:'rgba(255,255,255,0.95)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',border:'1px solid rgba(255,255,255,0.5)',borderRadius:'24px 24px 0 0',padding:'24px 20px 32px',width:'100%',maxWidth:'500px',boxShadow:'0 -8px 40px rgba(33,29,51,0.1)'}}>
-        <div style={{width:'36px',height:'4px',background:'rgba(33,29,51,0.1)',borderRadius:'2px',margin:'0 auto 24px'}} />
-        <h3 style={{fontSize:'var(--text-md)',fontWeight:800,marginBottom:'4px',color:'rgba(33,29,51,0.85)',letterSpacing:'-0.3px'}}>Solicitar servicio</h3>
-        <div className="hilo" style={{width:'56px', margin:'2px 0 10px'}} />
+      <div style={{background:'rgba(255,255,255,0.95)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',border:'1px solid rgba(255,255,255,0.5)',borderRadius:'24px 24px 0 0',padding:'var(--space-24) var(--space-20) var(--space-32)',width:'100%',maxWidth:'500px',boxShadow:'0 -8px 40px rgba(33,29,51,0.1)'}}>
+        <div style={{width:'36px',height:'4px',background:'rgba(33,29,51,0.1)',borderRadius:'2px',margin:'0 auto var(--space-24)'}} />
+        <h3 style={{fontSize:'var(--text-md)',fontWeight:800,marginBottom:'var(--space-4)',color:'rgba(33,29,51,0.85)',letterSpacing:'-0.3px'}}>Solicitar servicio</h3>
+        <div className="hilo" style={{width:'56px', margin:'var(--space-2) 0 var(--space-10)'}} />
         <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.45)',marginBottom: prefillDate ? '12px' : '20px'}}>Con {name} · {helper.price || 'Precio a consultar'}</p>
         {prefillDate && (
-          <div style={{display:'flex',alignItems:'center',gap:'6px',
+          <div style={{display:'flex',alignItems:'center',gap:'var(--space-6)',
             background:'var(--purple-05)',border:'1px solid var(--purple-10)',
-            borderRadius:'var(--radius-sm)',padding:'8px 12px',marginBottom:'16px',
+            borderRadius:'var(--radius-sm)',padding:'var(--space-8) var(--space-12)',marginBottom:'var(--space-16)',
           }}>
             <img src="/logo-iso.png" alt="" style={{width:'12px',height:'12px',opacity:0.7}} />
             <span className={styles.purpleLabel}>
@@ -160,18 +160,18 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
             </span>
           </div>
         )}
-        <div style={{display:'flex',flexDirection:'column',gap:'10px',marginBottom:'20px'}}>
+        <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)',marginBottom:'var(--space-20)'}}>
           {/* Day pills */}
           <div>
-            <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'rgba(33,29,51,0.4)',margin:'0 0 8px',letterSpacing:'0.5px',textTransform:'uppercase'}}>Fecha</p>
-            <div style={{display:'flex',gap:'6px',overflowX:'auto',paddingBottom:'4px'}}>
+            <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'rgba(33,29,51,0.4)',margin:'0 0 var(--space-8)',letterSpacing:'0.5px',textTransform:'uppercase'}}>Fecha</p>
+            <div style={{display:'flex',gap:'var(--space-6)',overflowX:'auto',paddingBottom:'var(--space-4)'}}>
               {Array.from({length:7},(_,i)=>{
                 const d=new Date(); d.setDate(d.getDate()+i)
                 const iso=d.toISOString().split('T')[0]
                 const lbl=i===0?'Hoy':i===1?'Mañana':d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric'})
                 return (
                   <button key={i} onClick={()=>setDate(iso)} style={{
-                    flexShrink:0,padding:'8px 14px',
+                    flexShrink:0,padding:'var(--space-8) var(--space-14)',
                     background:date===iso?'var(--purple)':'rgba(33,29,51,0.05)',
                     color:date===iso?'white':'rgba(33,29,51,0.6)',
                     border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
@@ -183,11 +183,11 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
           </div>
           {/* Time pills */}
           <div>
-            <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'rgba(33,29,51,0.4)',margin:'0 0 8px',letterSpacing:'0.5px',textTransform:'uppercase'}}>Hora</p>
-            <div style={{display:'flex',gap:'6px',flexWrap:'wrap'}}>
+            <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'rgba(33,29,51,0.4)',margin:'0 0 var(--space-8)',letterSpacing:'0.5px',textTransform:'uppercase'}}>Hora</p>
+            <div style={{display:'flex',gap:'var(--space-6)',flexWrap:'wrap'}}>
               {['9:00','10:00','11:00','12:00','16:00','17:00','18:00','19:00'].map(t=>(
                 <button key={t} onClick={()=>setTime(t)} style={{
-                  padding:'7px 12px',
+                  padding:'7px var(--space-12)',
                   background:time===t?'var(--purple)':'rgba(33,29,51,0.05)',
                   color:time===t?'white':'rgba(33,29,51,0.6)',
                   border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
@@ -198,12 +198,12 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
           </div>
           <textarea value={note} onChange={e=>setNote(e.target.value)}
             placeholder="Detalles adicionales (opcional)..." rows={3}
-            style={{padding:'12px 16px',border:'1px solid rgba(33,29,51,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',resize:'none',fontFamily:'-apple-system,Inter,sans-serif',color:'rgba(33,29,51,0.85)',background:'rgba(33,29,51,0.03)'}} />
+            style={{padding:'var(--space-12) var(--space-16)',border:'1px solid rgba(33,29,51,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',resize:'none',fontFamily:'-apple-system,Inter,sans-serif',color:'rgba(33,29,51,0.85)',background:'rgba(33,29,51,0.03)'}} />
         </div>
-        <div style={{display:'flex',gap:'10px'}}>
-          <button onClick={onClose} style={{flex:1,padding:'14px',background:'rgba(33,29,51,0.05)',color:'rgba(33,29,51,0.55)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>Cancelar</button>
+        <div style={{display:'flex',gap:'var(--space-10)'}}>
+          <button onClick={onClose} style={{flex:1,padding:'var(--space-14)',background:'rgba(33,29,51,0.05)',color:'rgba(33,29,51,0.55)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>Cancelar</button>
           <button onClick={()=>{ onConfirm?.(date, time, note); setDone(true); notifyServiceConfirmed(helper.name?.split(' ')?.[0] || helper.name); haptic('success') }} disabled={!date}
-            style={{flex:2,padding:'14px',background:date?'var(--purple)':'rgba(33,29,51,0.1)',color:date?'white':'rgba(33,29,51,0.3)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:date?'pointer':'default',transition:'all 0.2s'}}>
+            style={{flex:2,padding:'var(--space-14)',background:date?'var(--purple)':'rgba(33,29,51,0.1)',color:date?'white':'rgba(33,29,51,0.3)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:date?'pointer':'default',transition:'all 0.2s'}}>
             Enviar solicitud
           </button>
         </div>
@@ -527,10 +527,10 @@ export default function Chat() {
           <div className={styles.helperMeta}>
             <div className={styles.helperName}>
               {chatDisplayName}
-              {helper.founder && <Award size={11} color='#92400E' style={{marginLeft:'3px',verticalAlign:'middle'}} />}
-              {helper.dniVerified && <Shield size={10} color='var(--green)' style={{marginLeft:'3px',verticalAlign:'middle'}} />}
+              {helper.founder && <Award size={11} color='#92400E' style={{marginLeft:'var(--space-3)',verticalAlign:'middle'}} />}
+              {helper.dniVerified && <Shield size={10} color='var(--green)' style={{marginLeft:'var(--space-3)',verticalAlign:'middle'}} />}
             </div>
-            <div className={styles.helperStatus} style={{display:'flex',alignItems:'center',gap:'4px',minWidth:0}}>
+            <div className={styles.helperStatus} style={{display:'flex',alignItems:'center',gap:'var(--space-4)',minWidth:0}}>
               {typing
                 ? <span className={styles.typingStatus}>escribiendo...</span>
                 : <>
@@ -575,10 +575,10 @@ export default function Chat() {
               <div style={{
                 background:'linear-gradient(135deg,var(--purple-05),rgba(0,212,200,0.04))',
                 border:'1px solid var(--purple-10)',
-                borderRadius:'var(--radius-card)',padding:'10px 14px',
-                marginBottom:'4px',maxWidth:'260px',textAlign:'left',
+                borderRadius:'var(--radius-card)',padding:'var(--space-10) var(--space-14)',
+                marginBottom:'var(--space-4)',maxWidth:'260px',textAlign:'left',
               }}>
-                <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'var(--purple)',margin:'0 0 4px',
+                <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'var(--purple)',margin:'0 0 var(--space-4)',
                   letterSpacing:'0.3px',textTransform:'uppercase'}}>Mensaje sugerido</p>
                 <p style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.5)',margin:0,lineHeight:1.6}}>
                   Revisa el mensaje antes de enviarlo.
@@ -588,13 +588,13 @@ export default function Chat() {
             <p className={styles.emptyChatName}>{helper.name}</p>
             <p className={styles.emptyChatDesc}>{helper.specialty} · {helper.zone}</p>
             {helper.price && <p className={styles.emptyChatPrice}>{helper.price}</p>}
-            <div style={{display:'flex',gap:'8px',flexWrap:'wrap',justifyContent:'center',marginTop:'4px'}}>
-              {helper.dniVerified && <span style={{fontSize:'var(--text-xs)',color:'var(--green)',background:'var(--green-light)',border:'1px solid rgba(5,150,105,0.15)',borderRadius:'var(--radius-full)',padding:'3px 10px',fontWeight:600}}>Verificado</span>}
-              {helper.available && <span style={{fontSize:'var(--text-xs)',color:'var(--green)',background:'var(--green-light)',border:'1px solid rgba(5,150,105,0.15)',borderRadius:'var(--radius-full)',padding:'3px 10px',fontWeight:600}}>● Disponible</span>}
-              <span style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.4)',background:'rgba(33,29,51,0.04)',borderRadius:'var(--radius-full)',padding:'3px 10px'}}>⭐ {helper.rating} · {helper.reviews} reseñas</span>
+            <div style={{display:'flex',gap:'var(--space-8)',flexWrap:'wrap',justifyContent:'center',marginTop:'var(--space-4)'}}>
+              {helper.dniVerified && <span style={{fontSize:'var(--text-xs)',color:'var(--green)',background:'var(--green-light)',border:'1px solid rgba(5,150,105,0.15)',borderRadius:'var(--radius-full)',padding:'var(--space-3) var(--space-10)',fontWeight:600}}>Verificado</span>}
+              {helper.available && <span style={{fontSize:'var(--text-xs)',color:'var(--green)',background:'var(--green-light)',border:'1px solid rgba(5,150,105,0.15)',borderRadius:'var(--radius-full)',padding:'var(--space-3) var(--space-10)',fontWeight:600}}>● Disponible</span>}
+              <span style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.4)',background:'rgba(33,29,51,0.04)',borderRadius:'var(--radius-full)',padding:'var(--space-3) var(--space-10)'}}>⭐ {helper.rating} · {helper.reviews} reseñas</span>
             </div>
             {/* Conversation starters */}
-            <div style={{display:'flex',flexDirection:'column',gap:'8px',marginTop:'20px',width:'100%',maxWidth:'280px'}}>
+            <div style={{display:'flex',flexDirection:'column',gap:'var(--space-8)',marginTop:'var(--space-20)',width:'100%',maxWidth:'280px'}}>
               <p style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.4)',textAlign:'center',margin:0}}>Empieza la conversación</p>
               {[
                 `¿Tienes disponibilidad esta semana?`,
@@ -604,7 +604,7 @@ export default function Chat() {
                 <button key={i}
                   onClick={() => sendMessage(q)}
                   style={{
-                    padding:'11px 16px',
+                    padding:'11px var(--space-16)',
                     background:'rgba(255,255,255,0.85)',
                     border:'1px solid rgba(33,29,51,0.08)',
                     borderRadius:'var(--radius-card)',
@@ -640,22 +640,22 @@ export default function Chat() {
               <div className={`${styles.msgBubble} ${isNura ? styles.msgBubbleNura : ''} ${msg.isLetter ? styles.msgLetter : ''}`}>
                 <p>{msg.text}</p>
                 {msg.from === 'helper' && msg.proposal && !msg.proposalAnswered && (
-                  <div style={{display:'flex', gap:'6px', marginTop:'8px', flexWrap:'wrap'}}>
+                  <div style={{display:'flex', gap:'var(--space-6)', marginTop:'var(--space-8)', flexWrap:'wrap'}}>
                     <button onClick={() => answerProposal(msg.id, true, msg.proposal.label)}
                       style={{background:'var(--purple)', color:'white', border:'none',
-                        borderRadius:'var(--radius-full)', padding:'7px 14px', fontSize:'var(--text-xs)', fontWeight:600}}>
+                        borderRadius:'var(--radius-full)', padding:'7px var(--space-14)', fontSize:'var(--text-xs)', fontWeight:600}}>
                       ✓ Me va bien
                     </button>
                     <button onClick={() => answerProposal(msg.id, false, msg.proposal.label)}
                       style={{background:'rgba(33,29,51,0.05)', color:'var(--ink)',
                         border:'1px solid var(--ink-border)', borderRadius:'var(--radius-full)',
-                        padding:'7px 14px', fontSize:'var(--text-xs)', fontWeight:600}}>
+                        padding:'7px var(--space-14)', fontSize:'var(--text-xs)', fontWeight:600}}>
                       Otro momento
                     </button>
                   </div>
                 )}
                 {isNura && msg.chips && (
-                  <div style={{display:'flex',gap:'6px',marginTop:'8px',flexWrap:'wrap'}}>
+                  <div style={{display:'flex',gap:'var(--space-6)',marginTop:'var(--space-8)',flexWrap:'wrap'}}>
                     {msg.chips.map((chip, ci) => (
                       <button key={ci}
                         onClick={() => {
@@ -664,7 +664,7 @@ export default function Chat() {
                           sendMessage(chip)
                         }}
                         style={{
-                          padding:'5px 12px',borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
+                          padding:'5px var(--space-12)',borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
                           cursor:'pointer',border:'none',
                           background: chip === 'Confirmar reserva'
                             ? 'var(--purple)' : 'rgba(33,29,51,0.07)',

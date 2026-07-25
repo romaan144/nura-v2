@@ -29,10 +29,10 @@ export default function ObraCard({ post }) {
 
   return (
     <article style={{ background: 'white', border: '1px solid var(--ink-border)',
-      borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-sm)', padding: '14px 15px' }}>
+      borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-sm)', padding: 'var(--space-14) 15px' }}>
       <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px',
         background: 'var(--purple-10)', color: 'var(--purple)', borderRadius: 'var(--radius-full)',
-        padding: '3px 10px', fontSize: 'var(--text-xs)', fontWeight: 700, letterSpacing: '0.4px',
+        padding: 'var(--space-3) var(--space-10)', fontSize: 'var(--text-xs)', fontWeight: 700, letterSpacing: '0.4px',
         textTransform: 'uppercase', marginBottom: '9px' }}>
         {meta.icon} {meta.label}
       </div>
@@ -46,7 +46,7 @@ export default function ObraCard({ post }) {
       </p>
       {long && !open && (
         <button onClick={() => setOpen(true)} style={{ background: 'none', border: 'none',
-          color: 'var(--purple)', fontSize: 'var(--text-sm)', fontWeight: 600, padding: '4px 0 0', cursor: 'pointer' }}>
+          color: 'var(--purple)', fontSize: 'var(--text-sm)', fontWeight: 600, padding: 'var(--space-4) 0 0', cursor: 'pointer' }}>
           ver más
         </button>
       )}
@@ -59,7 +59,7 @@ export default function ObraCard({ post }) {
         aria-label={`Ver perfil de ${post.who?.name}`}
         style={{ display: 'flex', alignItems: 'center', gap: '9px', width: '100%',
           background: 'none', border: 'none', borderTop: '1px solid var(--ink-border)',
-          margin: '12px 0 0', padding: '10px 0 0', cursor: 'pointer', textAlign: 'left' }}>
+          margin: 'var(--space-12) 0 0', padding: 'var(--space-10) 0 0', cursor: 'pointer', textAlign: 'left' }}>
         <span style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--purple-20)',
           color: 'var(--purple)', display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: 11.5, fontWeight: 700 }}>
@@ -76,23 +76,23 @@ export default function ObraCard({ post }) {
         </span>
       <button onClick={() => setOpenThread(v => !v)}
         aria-label={`${comments.length} comentarios`}
-        style={{ background: 'none', border: 'none', padding: '8px 0 0', cursor: 'pointer',
+        style={{ background: 'none', border: 'none', padding: 'var(--space-8) 0 0', cursor: 'pointer',
           fontSize: 'var(--text-xs)', color: openThread ? 'var(--purple)' : 'var(--ink-tertiary)', fontWeight: 600 }}>
         💬 {comments.length > 0 ? comments.length : 'Comentar'}
       </button>
       </button>
     {openThread && (
-        <div style={{ borderTop: '1px solid var(--ink-border)', marginTop: '10px', paddingTop: '10px' }}>
+        <div style={{ borderTop: '1px solid var(--ink-border)', marginTop: 'var(--space-10)', paddingTop: 'var(--space-10)' }}>
           {comments.map(c => (
-            <div key={c.id} style={{ marginBottom: '10px', animation: 'popIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both' }}>
+            <div key={c.id} style={{ marginBottom: 'var(--space-10)', animation: 'popIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both' }}>
               <span style={{ fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--ink)' }}>{c.author}</span>
               <span style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)' }}> · {c.ago}</span>
-              <p style={{ fontSize: 'var(--text-sm)', lineHeight: 1.5, color: 'var(--ink-secondary)', margin: '2px 0 0' }}>{c.text}</p>
+              <p style={{ fontSize: 'var(--text-sm)', lineHeight: 1.5, color: 'var(--ink-secondary)', margin: 'var(--space-2) 0 0' }}>{c.text}</p>
             </div>
           ))}
           {user ? (
             <>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', margin: '10px 0 8px' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-6)', margin: 'var(--space-10) 0 var(--space-8)' }}>
                 {COMMENT_STARTERS.map(s => (
                   <button key={s} onClick={() => publicar(s)}
                     style={{ background: 'var(--purple-10)', color: 'var(--purple)', border: 'none',
@@ -101,12 +101,12 @@ export default function ObraCard({ post }) {
                   </button>
                 ))}
               </div>
-              <div style={{ display: 'flex', gap: '8px' }}>
+              <div style={{ display: 'flex', gap: 'var(--space-8)' }}>
                 <input value={draft} onChange={e => setDraft(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter') publicar(draft) }}
                   placeholder="Escribe un comentario…"
                   style={{ flex: 1, border: '1px solid var(--ink-border)', borderRadius: 'var(--radius-full)',
-                    padding: '9px 14px', fontSize: 'var(--text-sm)', outline: 'none', background: 'var(--paper)' }} />
+                    padding: '9px var(--space-14)', fontSize: 'var(--text-sm)', outline: 'none', background: 'var(--paper)' }} />
                 <button onClick={() => publicar(draft)} aria-label="Publicar comentario"
                   style={{ background: 'var(--purple)', color: 'white', border: 'none', borderRadius: '50%',
                     width: '36px', height: '36px', fontSize: 'var(--text-base)', cursor: 'pointer', flexShrink: 0 }}>→</button>
@@ -115,7 +115,7 @@ export default function ObraCard({ post }) {
           ) : (
             <button onClick={() => publicar('x')}
               style={{ background: 'none', border: '1px dashed var(--ink-border)', borderRadius: 'var(--radius-full)',
-                padding: '9px 14px', fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)', width: '100%', cursor: 'pointer' }}>
+                padding: '9px var(--space-14)', fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)', width: '100%', cursor: 'pointer' }}>
               Crea tu cuenta para comentar
             </button>
           )}

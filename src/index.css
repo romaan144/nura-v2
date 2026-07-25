@@ -40,10 +40,10 @@ body {
   --nav-h:    calc(max(env(safe-area-inset-bottom, 0px), 8px) + 65px);
 
 
-  --space-micro:   8px;   /* micro: between inline elements */
-  --space-std:    16px;   /* standard: padding, small gaps */
-  --space-block:  24px;   /* block: between content blocks */
-  --space-section:32px;   /* section: between major sections */
+  --space-micro:   var(--space-8);   /* micro: between inline elements */
+  --space-std:    var(--space-16);   /* standard: padding, small gaps */
+  --space-block:  var(--space-24);   /* block: between content blocks */
+  --space-section:var(--space-32);   /* section: between major sections */
 
   /* ── RADIUS SCALE ───────────────────────────────────── */
   --radius-xs:   4px;
@@ -109,12 +109,32 @@ body {
   --radius-xl: 30px;
 
   /* Spacing system — use these everywhere */
-  --space-xs:  4px;
-  --space-sm:  8px;
-  --space-md:  12px;
-  --space-lg:  16px;
-  --space-xl:  20px;
-  --space-2xl: 28px;
+  /* ── EL RITMO — escala única de espaciado ─────────────────────
+     Nombrada por su valor: no hay ambigüedad sobre qué es "md".
+     Nace de medir el producto: 10px era el valor más usado de la app
+     (53 veces) y ninguna de las dos escalas anteriores lo nombraba. */
+  --space-2:   2px;
+  --space-3:   3px;
+  --space-4:   4px;
+  --space-6:   6px;
+  --space-8:   8px;
+  --space-10: 10px;
+  --space-12: 12px;
+  --space-14: 14px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-28: 28px;
+  --space-32: 32px;
+
+  /* Alias heredados: las dos escalas anteriores apuntan aquí, así nada
+     de lo que ya las usa en los .module.css se rompe. */
+  --space-xs:  var(--space-4);
+  --space-sm:  var(--space-8);
+  --space-md:  var(--space-12);
+  --space-lg:  var(--space-16);
+  --space-xl:  var(--space-20);
+  --space-2xl: var(--space-28);
 
   /* Card standard */
   --card-padding: 16px;

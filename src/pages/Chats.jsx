@@ -166,9 +166,9 @@ export default function Chats() {
 
       <div className={styles.list}>
         {allChats.length === 0 && (
-          <div style={{textAlign:'center', padding:'72px 32px 0'}}>
+          <div style={{textAlign:'center', padding:'72px var(--space-32) 0'}}>
             <p style={{fontFamily:'var(--font-voice)', fontSize:'var(--text-heading)', color:'var(--ink)',
-              lineHeight:1.45, letterSpacing:'-0.3px', margin:'0 0 8px'}}>
+              lineHeight:1.45, letterSpacing:'-0.3px', margin:'0 0 var(--space-8)'}}>
               Cuando conectes con alguien, vuestra conversación vivirá aquí.
             </p>
             <p style={{fontSize:'var(--text-sm)', color:'var(--ink-tertiary)', margin:0, lineHeight:1.5}}>
@@ -178,10 +178,10 @@ export default function Chats() {
         )}
 
         {filtered.length === 0 && search.trim() && (
-          <div style={{textAlign:'center',padding:'48px 24px',color:'var(--ink-tertiary)'}}>
-            <Search size={36} color='rgba(33,29,51,0.12)' strokeWidth={1.3} style={{marginBottom:'12px'}}/>
+          <div style={{textAlign:'center',padding:'48px var(--space-24)',color:'var(--ink-tertiary)'}}>
+            <Search size={36} color='rgba(33,29,51,0.12)' strokeWidth={1.3} style={{marginBottom:'var(--space-12)'}}/>
             <p style={{fontSize:'var(--text-sm)',fontWeight:500}}>Sin resultados para "{search}"</p>
-            <p style={{fontSize:'var(--text-xs)',marginTop:'4px'}}>Prueba con el nombre del profesional</p>
+            <p style={{fontSize:'var(--text-xs)',marginTop:'var(--space-4)'}}>Prueba con el nombre del profesional</p>
           </div>
         )}
         {filtered.map((chat, i) => {
@@ -234,7 +234,7 @@ export default function Chats() {
                   const citaViva = ci && contacto?.confirmed === undefined
                   if (!lp && !ok && !citaViva) return null
                   return (
-                    <div style={{display:'flex', alignItems:'center', gap:'5px', margin:'1px 0 2px', flexWrap:'wrap'}}>
+                    <div style={{display:'flex', alignItems:'center', gap:'5px', margin:'1px 0 var(--space-2)', flexWrap:'wrap'}}>
                       {lp && <span style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', fontWeight:500}}>Te ayuda con {lp.label}</span>}
                       {citaViva && <span style={{fontSize:'var(--text-xs)', color:'var(--purple)', fontWeight:600}}>📅 {ci.label}</span>}
                       {ok && <Badge variant="success" size="xs">✓ funcionó</Badge>}

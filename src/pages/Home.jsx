@@ -73,13 +73,13 @@ function ResultsBlock({ results }) {
   return (
     <div>
       <HelperCardTall helper={top} />
-      <div className="hilo" style={{margin:'12px 6px 2px'}} />
+      <div className="hilo" style={{margin:'var(--space-12) var(--space-6) var(--space-2)'}} />
       {alts.length > 0 && (
         <>
-          <div style={{fontSize:'var(--text-xs)', color:'var(--ink-secondary)', margin:'14px 0 8px', lineHeight:1.5}}>
+          <div style={{fontSize:'var(--text-xs)', color:'var(--ink-secondary)', margin:'var(--space-14) 0 var(--space-8)', lineHeight:1.5}}>
             Si prefieres comparar, también encajarían:
           </div>
-          <div style={{display:'grid', gridTemplateColumns:`repeat(${Math.min(alts.length, 3)}, 1fr)`, gap:'8px', alignItems:'start'}}>
+          <div style={{display:'grid', gridTemplateColumns:`repeat(${Math.min(alts.length, 3)}, 1fr)`, gap:'var(--space-8)', alignItems:'start'}}>
             {alts.map((a, i) => <HelperCardTall key={a.id || i} helper={a} small />)}
           </div>
         </>
@@ -1043,7 +1043,7 @@ export default function Home() {
         <div className={styles.logoBubble}>
           <img src="/logo-text.png" alt="Nüra" className={styles.headerLogo} />
         </div>
-        <div style={{display:'flex',alignItems:'center',justifyContent:'flex-end',gap:'8px',pointerEvents:'all'}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'flex-end',gap:'var(--space-8)',pointerEvents:'all'}}>
           {messages.length > 1 && (
             <button
               className={styles.resetBubble}
@@ -1093,10 +1093,10 @@ export default function Home() {
                 {msg.loading && <div className={styles.typingDots}><span /><span /><span /></div>}
 
               {msg.quickOptions && (
-                <div style={{display:'flex',gap:'8px',flexWrap:'wrap',marginTop:'8px'}}>
+                <div style={{display:'flex',gap:'var(--space-8)',flexWrap:'wrap',marginTop:'var(--space-8)'}}>
                   {(msg.quickOptions||[]).map((opt,i) => (
                     <button key={i}
-                      style={{padding:'7px 14px',background:'var(--paper)',border:'1.5px solid var(--rule)',borderRadius:'var(--radius-card)',fontSize:'var(--text-xs)',color:'var(--mid)',cursor:'pointer',transition:'all 0.15s'}}
+                      style={{padding:'7px var(--space-14)',background:'var(--paper)',border:'1.5px solid var(--rule)',borderRadius:'var(--radius-card)',fontSize:'var(--text-xs)',color:'var(--mid)',cursor:'pointer',transition:'all 0.15s'}}
                       onClick={() => {
                         setShowSuggestions(false)
                         if (opt.includes('busca')) handleSend(searchHistory[0]?.query)

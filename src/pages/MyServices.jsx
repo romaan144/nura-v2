@@ -133,7 +133,7 @@ export default function MyServices() {
         {/* Empty state */}
         {filtered.length === 0 && (
           <div className={styles.empty}>
-            <span style={{display:'block',marginBottom:'12px',opacity:0.25}}>
+            <span style={{display:'block',marginBottom:'var(--space-12)',opacity:0.25}}>
               {tab === 'Completados' ? <CheckCircle size={44} /> : tab === 'Próximos' ? <Calendar size={44} /> : <ClipboardList size={44} />}
             </span>
             <strong style={{fontSize:'var(--text-base)',color:'var(--ink-primary)',letterSpacing:'-0.2px'}}>
@@ -141,7 +141,7 @@ export default function MyServices() {
                : tab === 'Próximos' ? 'No tienes servicios próximos'
                : 'Sin servicios completados'}
             </strong>
-            <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:'4px 0 16px',lineHeight:1.6,textAlign:'center',maxWidth:'220px'}}>
+            <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:'var(--space-4) 0 var(--space-16)',lineHeight:1.6,textAlign:'center',maxWidth:'220px'}}>
               {tab === 'Todos'
                 ? 'Cuando contrates a un profesional y concretéis una cita, aparecerá aquí.'
                 : tab === 'Próximos'
@@ -245,21 +245,21 @@ export default function MyServices() {
       {/* Rating modal */}
       {ratingModal && (
         <div style={{position:'fixed',inset:0,background:'rgba(33,29,51,0.5)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:300,display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
-          <div style={{background:'rgba(255,255,255,0.96)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',borderRadius:'24px 24px 0 0',padding:'24px 20px 36px',width:'100%',maxWidth:'500px'}}>
-            <div style={{width:'36px',height:'4px',background:'rgba(33,29,51,0.1)',borderRadius:'2px',margin:'0 auto 20px'}} />
+          <div style={{background:'rgba(255,255,255,0.96)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',borderRadius:'24px 24px 0 0',padding:'var(--space-24) var(--space-20) 36px',width:'100%',maxWidth:'500px'}}>
+            <div style={{width:'36px',height:'4px',background:'rgba(33,29,51,0.1)',borderRadius:'2px',margin:'0 auto var(--space-20)'}} />
             {ratingSent ? (
-              <div style={{textAlign:'center',padding:'20px 0',display:'flex',flexDirection:'column',alignItems:'center',gap:'12px'}}>
+              <div style={{textAlign:'center',padding:'var(--space-20) 0',display:'flex',flexDirection:'column',alignItems:'center',gap:'var(--space-12)'}}>
                 <Star size={44} color='var(--amber)' fill='var(--amber)' strokeWidth={1.5} />
                 <h3 style={{fontSize:'var(--text-md)',fontWeight:800,color:'rgba(33,29,51,0.85)',margin:0,letterSpacing:'-0.3px'}}>¡Gracias por valorar!</h3>
                 <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.45)',margin:0}}>Tu valoración ayuda a toda la comunidad.</p>
               </div>
             ) : (
               <>
-                <h3 style={{fontSize:'var(--text-md)',fontWeight:800,margin:'0 0 4px',color:'rgba(33,29,51,0.85)',letterSpacing:'-0.3px'}}>
+                <h3 style={{fontSize:'var(--text-md)',fontWeight:800,margin:'0 0 var(--space-4)',color:'rgba(33,29,51,0.85)',letterSpacing:'-0.3px'}}>
                   Valorar a {ratingModal.helperName?.split(' ')?.[0]}
                 </h3>
-                <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.4)',margin:'0 0 20px'}}>{ratingModal.specialty}</p>
-                <div style={{display:'flex',gap:'6px',justifyContent:'center',marginBottom:'16px'}}>
+                <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.4)',margin:'0 0 var(--space-20)'}}>{ratingModal.specialty}</p>
+                <div style={{display:'flex',gap:'var(--space-6)',justifyContent:'center',marginBottom:'var(--space-16)'}}>
                   {[1,2,3,4,5].map(n => (
                     <button key={n} onClick={() => setRatingVal(n)}
                       style={{fontSize:'34px',background:'none',border:'none',cursor:'pointer',opacity:n<=ratingVal?1:0.25,transition:'opacity 0.15s'}}>
@@ -269,8 +269,8 @@ export default function MyServices() {
                 </div>
                 <textarea value={ratingText} onChange={e=>setRatingText(e.target.value)}
                   placeholder="¿Qué destacarías? (opcional)" rows={3}
-                  style={{width:'100%',padding:'12px 16px',border:'1px solid rgba(33,29,51,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',resize:'none',fontFamily:'inherit',background:'rgba(33,29,51,0.03)',boxSizing:'border-box',marginBottom:'12px'}} />
-                <div style={{display:'flex',gap:'8px'}}>
+                  style={{width:'100%',padding:'var(--space-12) var(--space-16)',border:'1px solid rgba(33,29,51,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',resize:'none',fontFamily:'inherit',background:'rgba(33,29,51,0.03)',boxSizing:'border-box',marginBottom:'var(--space-12)'}} />
+                <div style={{display:'flex',gap:'var(--space-8)'}}>
                   <button onClick={() => setRatingModal(null)}
                     style={{flex:1,padding:'13px',background:'rgba(33,29,51,0.05)',color:'rgba(33,29,51,0.55)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
                     Cancelar

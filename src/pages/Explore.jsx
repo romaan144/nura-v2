@@ -384,7 +384,7 @@ export default function Explore() {
 
         {/* ── LOADING ─────────────────────────────────────── */}
         {isLoading && (
-          <div style={{display:'flex',flexDirection:'column',gap:'10px',padding:'0 16px'}}>
+          <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)',padding:'0 var(--space-16)'}}>
             {[0,1,2,3,4].map(i => (
               <div key={i} className="skeleton-card">
                 <div className="skeleton skeleton-avatar" />

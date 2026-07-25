@@ -56,8 +56,8 @@ export default function HowItWorks() {
 
         {/* Philosophy statement */}
       <div style={{
-        textAlign:'center', padding:'0 20px 8px',
-        borderBottom:'1px solid rgba(33,29,51,0.06)', marginBottom:'4px',
+        textAlign:'center', padding:'0 var(--space-20) var(--space-8)',
+        borderBottom:'1px solid rgba(33,29,51,0.06)', marginBottom:'var(--space-4)',
       }}>
         <p style={{
           fontSize:'var(--text-md)', fontWeight:800, color:'rgba(33,29,51,0.8)',
@@ -111,25 +111,25 @@ export default function HowItWorks() {
         <div id="about" style={{
           background:'rgba(255,255,255,0.7)',
           border:'1px solid rgba(33,29,51,0.06)',
-          borderRadius:'var(--radius-md)', padding:'24px 20px',
-          marginBottom:'12px',
+          borderRadius:'var(--radius-md)', padding:'var(--space-24) var(--space-20)',
+          marginBottom:'var(--space-12)',
         }}>
           <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'var(--purple-60)',
-            letterSpacing:'0.5px',textTransform:'uppercase',margin:'0 0 10px'}}>
+            letterSpacing:'0.5px',textTransform:'uppercase',margin:'0 0 var(--space-10)'}}>
             Sobre Nüra
           </p>
           <h3 style={{fontSize:'var(--text-md)',fontWeight:800,color:'rgba(33,29,51,0.85)',
-            letterSpacing:'-0.4px',margin:'0 0 10px',lineHeight:1.3}}>
+            letterSpacing:'-0.4px',margin:'0 0 var(--space-10)',lineHeight:1.3}}>
             Construida para conectar personas reales
           </h3>
-          <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.55)',lineHeight:1.7,margin:'0 0 12px'}}>
+          <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.55)',lineHeight:1.7,margin:'0 0 var(--space-12)'}}>
             Nüra nació de una pregunta simple: ¿por qué es tan difícil encontrar a la persona adecuada cuando más la necesitas?
           </p>
-          <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.55)',lineHeight:1.7,margin:'0 0 12px'}}>
+          <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.55)',lineHeight:1.7,margin:'0 0 var(--space-12)'}}>
             No creemos que la IA deba reemplazar el contacto humano. Creemos que debe facilitar que dos personas se encuentren — la que necesita ayuda y la que puede darla.
           </p>
           <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.55)',lineHeight:1.7,margin:0,
-            borderLeft:'3px solid var(--purple-20)',paddingLeft:'12px'}}>
+            borderLeft:'3px solid var(--purple-20)',paddingLeft:'var(--space-12)'}}>
             "La tecnología más poderosa es la que pone en contacto a personas."
           </p>
         </div>
@@ -138,9 +138,9 @@ export default function HowItWorks() {
         <div style={{
           background:'linear-gradient(135deg,var(--purple-05),rgba(0,212,200,0.04))',
           border:'1px solid var(--purple-10)',
-          borderRadius:'var(--radius-md)',padding:'24px 20px',
+          borderRadius:'var(--radius-md)',padding:'var(--space-24) var(--space-20)',
           textAlign:'center',display:'flex',flexDirection:'column',
-          alignItems:'center',gap:'10px',marginBottom:'12px',
+          alignItems:'center',gap:'var(--space-10)',marginBottom:'var(--space-12)',
         }}>
           <UserCheck size={28} color='var(--purple)' strokeWidth={1.6} />
           <h3 style={{fontSize:'var(--text-md)',fontWeight:800,margin:0,
@@ -154,7 +154,7 @@ export default function HowItWorks() {
           <button
             onClick={() => navigate('/register-helper')}
             style={{
-              padding:'12px 24px',
+              padding:'var(--space-12) var(--space-24)',
               background:'linear-gradient(135deg,var(--purple),#00D4C8)',
               color:'white',border:'none',borderRadius:'var(--radius-full)',
               fontSize:'var(--text-sm)',fontWeight:700,cursor:'pointer',

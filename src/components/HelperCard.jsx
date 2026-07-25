@@ -59,8 +59,8 @@ export default function HelperCard({ helper, onContact, showContact = true, show
       style={{
         background: 'white', border: '1px solid var(--ink-border)',
         borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-sm)',
-        padding: '14px', cursor: 'pointer', width: '100%',
-        display: 'flex', alignItems: 'center', gap: '12px',
+        padding: 'var(--space-14)', cursor: 'pointer', width: '100%',
+        display: 'flex', alignItems: 'center', gap: 'var(--space-12)',
       }}>
       <div style={{ position: 'relative', flexShrink: 0 }}>
         {helper.avatarUrl
@@ -76,7 +76,7 @@ export default function HelperCard({ helper, onContact, showContact = true, show
       </div>
 
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-6)' }}>
           <span style={{
             fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.2px',
             whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
@@ -84,15 +84,15 @@ export default function HelperCard({ helper, onContact, showContact = true, show
           {helper.verified && <Badge variant="success" size="xs">✓</Badge>}
         </div>
         <div style={{
-          fontSize: 'var(--text-xs)', color: 'var(--ink-secondary)', marginTop: '2px',
+          fontSize: 'var(--text-xs)', color: 'var(--ink-secondary)', marginTop: 'var(--space-2)',
           whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
         }}>
           {helper.specialty}{helper.zone ? ` · ${helper.zone}` : ''}
         </div>
         {metaParts.length > 0 && (
-          <div style={{ fontSize: 'var(--text-xs)', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
+          <div style={{ fontSize: 'var(--text-xs)', marginTop: 'var(--space-4)', display: 'flex', alignItems: 'center', gap: 'var(--space-4)', flexWrap: 'wrap' }}>
             {metaParts.map((part, i) => (
-              <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-4)' }}>
                 {i > 0 && <span style={{ color: 'var(--ink-disabled, rgba(33,29,51,0.2))' }}>·</span>}
                 {part}
               </span>
@@ -106,7 +106,7 @@ export default function HelperCard({ helper, onContact, showContact = true, show
           style={{
             flexShrink: 0, background: 'var(--purple-10)', color: 'var(--purple)',
             border: '1px solid var(--purple-20)', borderRadius: 'var(--radius-full)',
-            padding: '8px 14px', fontSize: 'var(--text-xs)', fontWeight: 700, cursor: 'pointer',
+            padding: 'var(--space-8) var(--space-14)', fontSize: 'var(--text-xs)', fontWeight: 700, cursor: 'pointer',
           }}>
           Escribir
         </button>

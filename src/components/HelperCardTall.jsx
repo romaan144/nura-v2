@@ -63,11 +63,11 @@ export default function HelperCardTall({ helper, small = false }) {
       <div style={{ fontSize: small ? 'var(--text-sm)' : 'var(--text-heading)', fontWeight: 700, color: 'var(--ink)',
         letterSpacing: '-0.4px', lineHeight: 1.2 }}>
         {firstName}{lastInitial ? ` ${lastInitial}.` : ''}
-        {helper.verified && <span style={{ color: 'var(--purple)', marginLeft: '4px' }}>✓</span>}
+        {helper.verified && <span style={{ color: 'var(--purple)', marginLeft: 'var(--space-4)' }}>✓</span>}
       </div>
 
       <div style={{ fontSize: small ? 'var(--text-xs)' : 'var(--text-sm)', color: 'var(--ink-secondary)',
-        marginTop: '3px', lineHeight: 1.35 }}>
+        marginTop: 'var(--space-3)', lineHeight: 1.35 }}>
         {helper.specialty}
       </div>
 
@@ -85,7 +85,7 @@ export default function HelperCardTall({ helper, small = false }) {
       </div>
 
       {!small && (helper.quote || helper.bio) && (
-        <div style={{ marginTop: '14px', paddingTop: '14px', borderTop: '1px solid var(--ink-border)', width: '100%' }}>
+        <div style={{ marginTop: 'var(--space-14)', paddingTop: 'var(--space-14)', borderTop: '1px solid var(--ink-border)', width: '100%' }}>
           <div style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--purple)',
             letterSpacing: '0.7px', textTransform: 'uppercase', marginBottom: '7px' }}>
             En sus propias palabras
@@ -99,21 +99,21 @@ export default function HelperCardTall({ helper, small = false }) {
       )}
 
       {!small && (helper.responseTime || helper.experience || helper.dniVerified) && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '6px', marginTop: '12px' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 'var(--space-6)', marginTop: 'var(--space-12)' }}>
           {helper.responseTime && (
             <span style={{ background: 'var(--paper)', border: '1px solid var(--ink-border)',
-              borderRadius: 'var(--radius-full)', padding: '4px 10px', fontSize: 'var(--text-xs)', color: 'var(--ink-secondary)' }}>
+              borderRadius: 'var(--radius-full)', padding: 'var(--space-4) var(--space-10)', fontSize: 'var(--text-xs)', color: 'var(--ink-secondary)' }}>
               Responde en {helper.responseTime}
             </span>
           )}
           {helper.experience && (
             <span style={{ background: 'var(--paper)', border: '1px solid var(--ink-border)',
-              borderRadius: 'var(--radius-full)', padding: '4px 10px', fontSize: 'var(--text-xs)', color: 'var(--ink-secondary)' }}>
+              borderRadius: 'var(--radius-full)', padding: 'var(--space-4) var(--space-10)', fontSize: 'var(--text-xs)', color: 'var(--ink-secondary)' }}>
               {helper.experience}
             </span>
           )}
           {helper.dniVerified && (
-            <span style={{ background: 'var(--purple-10)', borderRadius: 'var(--radius-full)', padding: '4px 10px',
+            <span style={{ background: 'var(--purple-10)', borderRadius: 'var(--radius-full)', padding: 'var(--space-4) var(--space-10)',
               fontSize: 'var(--text-xs)', color: 'var(--purple)', fontWeight: 600 }}>
               Identidad verificada
             </span>
@@ -123,7 +123,7 @@ export default function HelperCardTall({ helper, small = false }) {
 
       {!small && (
         <button onClick={handleContact}
-          style={{ width: '100%', marginTop: '16px', background: 'var(--purple)', color: 'white',
+          style={{ width: '100%', marginTop: 'var(--space-16)', background: 'var(--purple)', color: 'white',
             border: 'none', borderRadius: 'var(--radius-full)', padding: '13px',
             fontSize: 'var(--text-sm)', fontWeight: 700, cursor: 'pointer' }}>
           Escribir a {firstName}

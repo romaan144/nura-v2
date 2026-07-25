@@ -82,14 +82,14 @@ export default function Profile() {
         <img src="/logo-iso.png" alt="Nüra" className={styles.noUserLogo} />
         <h2 className={styles.noUserTitle}>Crea tu cuenta gratis</h2>
         <p className={styles.noUserDesc}>Solo tarda 30 segundos.</p>
-        <div style={{display:'flex',flexDirection:'column',gap:'12px',width:'100%',maxWidth:'280px',margin:'20px 0'}}>
+        <div style={{display:'flex',flexDirection:'column',gap:'var(--space-12)',width:'100%',maxWidth:'280px',margin:'var(--space-20) 0'}}>
           {[
             [MessageCircle, 'Escribe a cualquier profesional'],
             [UserPlus,       'Sigue a tus profesionales favoritos'],
             [ClipboardList, 'Consulta tu historial de búsquedas'],
             [Star,          'Valora a los profesionales que contratas'],
           ].map(([Icon, text]) => (
-            <div key={text} style={{display:'flex',alignItems:'center',gap:'12px'}}>
+            <div key={text} style={{display:'flex',alignItems:'center',gap:'var(--space-12)'}}>
               <Icon size={16} color="var(--purple)" strokeWidth={1.8} style={{flexShrink:0}} />
               <span style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.65)',fontWeight:500}}>{text}</span>
             </div>
@@ -196,8 +196,8 @@ export default function Profile() {
           if (!following?.length) missing.push('seguir profesionales')
           if (!searchHistory?.length) missing.push('hacer tu primera búsqueda')
           return pct < 100 ? (
-            <div style={{margin:'0 16px 12px',padding:'14px 16px',background:'white',borderRadius:'var(--radius-card)',boxShadow:'0 1px 8px rgba(33,29,51,0.06)',border:'1px solid rgba(33,29,51,0.07)'}}>
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'8px'}}>
+            <div style={{margin:'0 var(--space-16) var(--space-12)',padding:'var(--space-14) var(--space-16)',background:'white',borderRadius:'var(--radius-card)',boxShadow:'0 1px 8px rgba(33,29,51,0.06)',border:'1px solid rgba(33,29,51,0.07)'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'var(--space-8)'}}>
                 <span style={{fontSize:'var(--text-sm)',fontWeight:700,color:'var(--ink)',letterSpacing:'-0.2px'}}>Tu perfil está al {pct}%</span>
                 <span style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.38)'}}>Mejora tus matches</span>
               </div>
@@ -205,7 +205,7 @@ export default function Profile() {
                 <div style={{height:'100%',width:`${pct}%`,background:'var(--purple)',borderRadius:'var(--radius-full)',transition:'width 0.6s ease'}} />
               </div>
               {missing.length > 0 && (
-                <p style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.45)',marginTop:'8px',lineHeight:1.4}}>
+                <p style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.45)',marginTop:'var(--space-8)',lineHeight:1.4}}>
                   Añade: {missing.join(' · ')}
                 </p>
               )}
@@ -215,12 +215,12 @@ export default function Profile() {
 
         {/* ── EL ESPEJO: LAS PERSONAS DE TU VIDA ────────── */}
         {(personas || []).length > 0 && (
-          <div style={{margin:'0 0 20px', animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 60ms both'}}>
+          <div style={{margin:'0 0 var(--space-20)', animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 60ms both'}}>
             <div style={{
               fontSize:'var(--text-xs)', fontWeight:700, color:'var(--purple)',
-              letterSpacing:'0.8px', textTransform:'uppercase', marginBottom:'10px'
+              letterSpacing:'0.8px', textTransform:'uppercase', marginBottom:'var(--space-10)'
             }}>Las personas de tu vida</div>
-            <div style={{display:'flex', flexDirection:'column', gap:'8px'}}>
+            <div style={{display:'flex', flexDirection:'column', gap:'var(--space-8)'}}>
               {personas.map(p => {
                 const helperNames = (p.contactedHelperIds || [])
                   .map(id => helpersCache?.[id]?.name?.split(' ')?.[0] || helpersCache?.[String(id)]?.name?.split(' ')?.[0])
@@ -228,16 +228,16 @@ export default function Profile() {
                 return (
                   <div key={p.id} style={{
                     background:'white', borderRadius:'var(--radius-md)',
-                    border:'1px solid var(--ink-border)', padding:'12px 14px',
-                    display:'flex', alignItems:'flex-start', gap:'10px'
+                    border:'1px solid var(--ink-border)', padding:'var(--space-12) var(--space-14)',
+                    display:'flex', alignItems:'flex-start', gap:'var(--space-10)'
                   }}>
                     <div style={{flex:1, minWidth:0}}>
                       <div style={{
                         fontSize:'var(--text-sm)', fontWeight:700, color:'var(--ink)',
-                        letterSpacing:'-0.1px', marginBottom:'4px', textTransform:'capitalize'
+                        letterSpacing:'-0.1px', marginBottom:'var(--space-4)', textTransform:'capitalize'
                       }}>{p.label.replace('tu ', '')}</div>
                       {(p.atributos || []).length > 0 && (
-                        <div style={{display:'flex', gap:'4px', flexWrap:'wrap', marginBottom: helperNames.length ? '6px' : 0}}>
+                        <div style={{display:'flex', gap:'var(--space-4)', flexWrap:'wrap', marginBottom: helperNames.length ? '6px' : 0}}>
                           {p.atributos.map(a => <Badge key={a} variant="neutral">{a}</Badge>)}
                         </div>
                       )}
@@ -248,7 +248,7 @@ export default function Profile() {
                       )}
                     </div>
                     <button onClick={() => removePersona(p.id)} style={{
-                      background:'none', border:'none', padding:'2px',
+                      background:'none', border:'none', padding:'var(--space-2)',
                       color:'var(--ink-disabled)', flexShrink:0, cursor:'pointer'
                     }} aria-label={`Olvidar a ${p.label}`}>
                       <X size={13} />
@@ -257,7 +257,7 @@ export default function Profile() {
                 )
               })}
             </div>
-            <p style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', marginTop:'8px', lineHeight:1.4}}>
+            <p style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', marginTop:'var(--space-8)', lineHeight:1.4}}>
               Nüra recuerda esto para ayudarte mejor. Puedes borrar cualquier persona cuando quieras.
             </p>
           </div>
@@ -268,21 +268,21 @@ export default function Profile() {
           const sem = buildSemana({ contactedHelpers, citas, misObras,
             obraPropia: getObraDeHelper(user.helperId || user.id, 9).filter(o => !o.mine).length })
           return (
-            <div style={{margin:'0 0 20px', padding:'16px', background:'white',
+            <div style={{margin:'0 0 var(--space-20)', padding:'var(--space-16)', background:'white',
               border:'1px solid var(--purple-20)', borderRadius:'var(--radius-md)',
               boxShadow:'var(--shadow-md)', animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 200ms both'}}>
               <div style={{fontSize:'var(--text-xs)', fontWeight:700, color:'var(--purple)',
-                letterSpacing:'0.8px', textTransform:'uppercase', marginBottom:'8px'}}>
+                letterSpacing:'0.8px', textTransform:'uppercase', marginBottom:'var(--space-8)'}}>
                 Tu semana
               </div>
               <p style={{fontFamily:'var(--font-voice)', fontSize:'var(--text-base)', fontWeight:600,
-                letterSpacing:'-0.4px', lineHeight:1.4, color:'var(--ink)', margin:'0 0 12px'}}
+                letterSpacing:'-0.4px', lineHeight:1.4, color:'var(--ink)', margin:'0 0 var(--space-12)'}}
                 dangerouslySetInnerHTML={{__html: sem.frase.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')}} />
-              <div style={{display:'flex', gap:'18px', marginBottom:'12px'}}>
+              <div style={{display:'flex', gap:'18px', marginBottom:'var(--space-12)'}}>
                 {[[sem.abiertas, 'abiertas'], [sem.citas, 'citas'], [sem.piezas, 'publicaciones']].map(([n, l]) => (
                   <div key={l}>
                     <div style={{fontSize:'var(--text-heading)', fontWeight:700, color:'var(--ink)', lineHeight:1}}>{n}</div>
-                    <div style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', marginTop:'3px'}}>{l}</div>
+                    <div style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', marginTop:'var(--space-3)'}}>{l}</div>
                   </div>
                 ))}
               </div>
@@ -297,19 +297,19 @@ export default function Profile() {
         })()}
 
         {user.isHelper && (
-          <div style={{margin:'0 0 20px', animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 240ms both'}}>
+          <div style={{margin:'0 0 var(--space-20)', animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 240ms both'}}>
             <div style={{fontSize:'var(--text-xs)', fontWeight:700, color:'var(--purple)',
-              letterSpacing:'0.8px', textTransform:'uppercase', marginBottom:'10px'}}>
+              letterSpacing:'0.8px', textTransform:'uppercase', marginBottom:'var(--space-10)'}}>
               Así te ven quienes te necesitan
             </div>
             <button onClick={() => setComposerOpen(true)}
               style={{width:'100%', background:'var(--purple)', color:'white', border:'none',
-                borderRadius:'var(--radius-full)', padding:'12px', fontSize:'var(--text-sm)',
-                fontWeight:700, cursor:'pointer', margin:'12px 0 10px'}}>
+                borderRadius:'var(--radius-full)', padding:'var(--space-12)', fontSize:'var(--text-sm)',
+                fontWeight:700, cursor:'pointer', margin:'var(--space-12) 0 var(--space-10)'}}>
               ✍️ Publicar en tu obra
             </button>
             {getObraDeHelper(user.helperId || user.id, 2).length > 0 && (
-              <div style={{display:'flex', flexDirection:'column', gap:'10px', marginBottom:'12px'}}>
+              <div style={{display:'flex', flexDirection:'column', gap:'var(--space-10)', marginBottom:'var(--space-12)'}}>
                 {getObraDeHelper(user.helperId || user.id, 2).map(post => <ObraCard key={post.id} post={post} />)}
               </div>
             )}
@@ -317,7 +317,7 @@ export default function Profile() {
             <div style={{pointerEvents:'none'}}>
               <HelperCard helper={proPreview} showPrice />
             </div>
-            <div style={{marginTop:'12px', display:'flex', justifyContent:'center'}}>
+            <div style={{marginTop:'var(--space-12)', display:'flex', justifyContent:'center'}}>
               <StatBar stats={[
                 { value: proSig.vistasHoy, label: 'vistas hoy' },
                 { value: proSig.busquedasSemana, label: 'búsquedas en tu zona' },
@@ -325,12 +325,12 @@ export default function Profile() {
               ]} />
             </div>
             {!proQuote ? (
-              <div style={{marginTop:'12px', background:'var(--purple-10)',
-                border:'1px solid var(--purple-20)', borderRadius:'var(--radius-md)', padding:'14px'}}>
-                <div style={{fontSize:'var(--text-sm)', fontWeight:700, color:'var(--ink)', marginBottom:'4px'}}>
+              <div style={{marginTop:'var(--space-12)', background:'var(--purple-10)',
+                border:'1px solid var(--purple-20)', borderRadius:'var(--radius-md)', padding:'var(--space-14)'}}>
+                <div style={{fontSize:'var(--text-sm)', fontWeight:700, color:'var(--ink)', marginBottom:'var(--space-4)'}}>
                   Tu primer paso
                 </div>
-                <p style={{fontSize:'var(--text-xs)', color:'var(--ink-secondary)', margin:'0 0 10px', lineHeight:1.5}}>
+                <p style={{fontSize:'var(--text-xs)', color:'var(--ink-secondary)', margin:'0 0 var(--space-10)', lineHeight:1.5}}>
                   Añade tu cita personal — es lo primero que leen, con tu voz.
                   Los perfiles con cita generan mucha más confianza.
                 </p>
@@ -338,18 +338,18 @@ export default function Profile() {
                   placeholder="Ej: Cuido a cada persona como cuidaría a mi propia familia."
                   aria-label="Tu cita personal"
                   style={{width:'100%', minHeight:'64px', border:'1px solid var(--ink-border)',
-                    borderRadius:'var(--radius-sm)', padding:'10px', fontSize:'var(--text-sm)',
+                    borderRadius:'var(--radius-sm)', padding:'var(--space-10)', fontSize:'var(--text-sm)',
                     fontFamily:'var(--font-voice)', resize:'none', background:'white'}} />
                 <button onClick={saveQuote} disabled={!quoteDraft.trim()}
-                  style={{marginTop:'8px', background: quoteDraft.trim() ? 'var(--purple)' : 'rgba(33,29,51,0.15)',
-                    color:'white', border:'none', borderRadius:'var(--radius-full)', padding:'9px 16px',
+                  style={{marginTop:'var(--space-8)', background: quoteDraft.trim() ? 'var(--purple)' : 'rgba(33,29,51,0.15)',
+                    color:'white', border:'none', borderRadius:'var(--radius-full)', padding:'9px var(--space-16)',
                     fontSize:'var(--text-xs)', fontWeight:700}}>
                   Guardar mi cita
                 </button>
               </div>
             ) : (
-              <div style={{marginTop:'12px', fontSize:'var(--text-xs)', color:'var(--ink-tertiary)',
-                display:'flex', alignItems:'center', flexWrap:'wrap', gap:'6px'}}>
+              <div style={{marginTop:'var(--space-12)', fontSize:'var(--text-xs)', color:'var(--ink-tertiary)',
+                display:'flex', alignItems:'center', flexWrap:'wrap', gap:'var(--space-6)'}}>
                 <Badge variant="success" size="xs">✓ Cita añadida</Badge>
                 <span>Tu primera conexión verificada aparecerá aquí cuando ocurra.</span>
               </div>
@@ -366,9 +366,9 @@ export default function Profile() {
           if (!cp) return null
           const hf = cp.helperName?.split(' ')?.[0] || cp.helperName
           return (
-            <div style={{margin:'0 0 20px', padding:'14px 16px', background:'white',
+            <div style={{margin:'0 0 var(--space-20)', padding:'var(--space-14) var(--space-16)', background:'white',
               border:'1px solid var(--ink-border)', borderRadius:'var(--radius-md)',
-              boxShadow:'var(--shadow-sm)', display:'flex', alignItems:'center', gap:'10px'}}>
+              boxShadow:'var(--shadow-sm)', display:'flex', alignItems:'center', gap:'var(--space-10)'}}>
               <span style={{fontSize:'var(--text-md)'}}>📅</span>
               <div style={{fontSize:'var(--text-sm)', color:'var(--ink)', lineHeight:1.45}}>
                 El {cp.label}, <strong>{hf}</strong>{cp.personaLabel ? <> está con {cp.personaLabel}</> : <> — vuestra primera cita</>}. Todo listo 💜
@@ -436,14 +436,14 @@ export default function Profile() {
 
         {/* ── PRÓXIMAMENTE ────────────────────────────────── */}
         <div style={{
-          margin:'0 16px 16px', padding:'16px',
+          margin:'0 var(--space-16) var(--space-16)', padding:'var(--space-16)',
           background:'linear-gradient(135deg, var(--purple-05) 0%, var(--purple-05) 100%)',
           borderRadius:'var(--radius-card)', border:'1px solid var(--purple-10)'
         }}>
-          <div style={{display:'flex',alignItems:'center',gap:'8px',marginBottom:'8px'}}>
+          <div style={{display:'flex',alignItems:'center',gap:'var(--space-8)',marginBottom:'var(--space-8)'}}>
             <span style={{fontSize:'var(--text-xs)',fontWeight:700,color:'var(--purple)',letterSpacing:'0.8px',textTransform:'uppercase'}}>Próximamente</span>
           </div>
-          <p style={{fontSize:'var(--text-sm)',fontWeight:700,color:'var(--ink)',letterSpacing:'-0.2px',marginBottom:'4px'}}>
+          <p style={{fontSize:'var(--text-sm)',fontWeight:700,color:'var(--ink)',letterSpacing:'-0.2px',marginBottom:'var(--space-4)'}}>
             Tu reputación profesional verificada
           </p>
           <p style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.45)',lineHeight:1.5}}>
@@ -452,7 +452,7 @@ export default function Profile() {
         </div>
 
         {/* ── ZONA 5: CONFIGURACIÓN DISCRETA ────────────── */}
-        <div style={{textAlign:'center', fontSize:'var(--text-xs)', color:'var(--ink-disabled, rgba(33,29,51,0.25))', margin:'2px 0 10px'}}>
+        <div style={{textAlign:'center', fontSize:'var(--text-xs)', color:'var(--ink-disabled, rgba(33,29,51,0.25))', margin:'var(--space-2) 0 var(--space-10)'}}>
           Nüra 2 · {NURA_BUILD}
         </div>
         <button className={styles.logoutBtn} onClick={() => { logout(); navigate('/') }}>

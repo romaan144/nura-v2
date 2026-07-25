@@ -16,13 +16,13 @@ export default function ObraComposer({ onClose }) {
 
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 900, background: 'var(--paper)',
-      overflowY: 'auto', padding: '54px 20px 40px' }}>
+      overflowY: 'auto', padding: '54px var(--space-20) 40px' }}>
       <button onClick={onClose} aria-label="Cerrar"
         style={{ position: 'absolute', top: '16px', right: '18px', background: 'none',
           border: 'none', fontSize: 'var(--text-lg)', color: 'var(--ink-tertiary)', cursor: 'pointer' }}>×</button>
 
       <h1 style={{ fontFamily: 'var(--font-voice)', fontWeight: 700, fontSize: '24px',
-        letterSpacing: '-0.8px', color: 'var(--ink)', margin: '0 0 6px' }}>
+        letterSpacing: '-0.8px', color: 'var(--ink)', margin: '0 0 var(--space-6)' }}>
         Publica tu obra
       </h1>
       <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)', margin: '0 0 18px', lineHeight: 1.5 }}>
@@ -44,25 +44,25 @@ export default function ObraComposer({ onClose }) {
       <input value={title} onChange={e => setTitle(e.target.value)}
         placeholder="Título — ej. El caso de la R"
         style={{ width: '100%', border: '1px solid var(--ink-border)', borderRadius: 'var(--radius-md)',
-          padding: '13px 15px', fontSize: 'var(--text-base)', marginBottom: '10px', outline: 'none', background: 'white' }} />
+          padding: '13px 15px', fontSize: 'var(--text-base)', marginBottom: 'var(--space-10)', outline: 'none', background: 'white' }} />
 
       <textarea value={body} onChange={e => setBody(e.target.value)} rows={6}
         placeholder="Qué necesitaba la persona, qué hiciste y cómo lo abordaste."
         style={{ width: '100%', border: '1px solid var(--ink-border)', borderRadius: 'var(--radius-md)',
-          padding: '13px 15px', fontSize: 'var(--text-base)', marginBottom: '10px', outline: 'none',
+          padding: '13px 15px', fontSize: 'var(--text-base)', marginBottom: 'var(--space-10)', outline: 'none',
           background: 'white', resize: 'vertical', fontFamily: 'inherit', lineHeight: 1.5 }} />
 
       {needsResult && (
         <input value={result} onChange={e => setResult(e.target.value)}
           placeholder="Resultado — qué cambió al final"
           style={{ width: '100%', border: '1px solid var(--purple-20)', borderRadius: 'var(--radius-md)',
-            padding: '13px 15px', fontSize: 'var(--text-base)', marginBottom: '10px', outline: 'none', background: 'white' }} />
+            padding: '13px 15px', fontSize: 'var(--text-base)', marginBottom: 'var(--space-10)', outline: 'none', background: 'white' }} />
       )}
 
       <button onClick={() => { addObra({ type, title, body, result }); onClose?.() }} disabled={!listo}
         style={{ width: '100%', background: listo ? 'var(--purple)' : 'var(--ink-border)',
-          color: 'white', border: 'none', borderRadius: 'var(--radius-full)', padding: '14px',
-          fontSize: 'var(--text-sm)', fontWeight: 700, cursor: listo ? 'pointer' : 'default', marginTop: '6px' }}>
+          color: 'white', border: 'none', borderRadius: 'var(--radius-full)', padding: 'var(--space-14)',
+          fontSize: 'var(--text-sm)', fontWeight: 700, cursor: listo ? 'pointer' : 'default', marginTop: 'var(--space-6)' }}>
         Publicar
       </button>
     </div>

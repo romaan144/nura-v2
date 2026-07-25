@@ -17,12 +17,12 @@ export function Badge({ variant = 'neutral', size = 'sm', children, style }) {
   const v = BADGE_VARIANTS[variant] || BADGE_VARIANTS.neutral
   const sizes = {
     xs: { fontSize: '9px',  padding: '1px 5px' },
-    sm: { fontSize: 'var(--text-xs)', padding: '2px 8px' },
-    md: { fontSize: 'var(--text-xs)', padding: '3px 10px' },
+    sm: { fontSize: 'var(--text-xs)', padding: 'var(--space-2) var(--space-8)' },
+    md: { fontSize: 'var(--text-xs)', padding: 'var(--space-3) var(--space-10)' },
   }
   return (
     <span style={{
-      display: 'inline-flex', alignItems: 'center', gap: '3px',
+      display: 'inline-flex', alignItems: 'center', gap: 'var(--space-3)',
       fontWeight: 600, borderRadius: 'var(--radius-full)',
       whiteSpace: 'nowrap', letterSpacing: '0.1px',
       ...(sizes[size] || sizes.sm), ...v, ...style,
@@ -53,7 +53,7 @@ export function Bubble({ text, author, index = 0, style }) {
     ? author.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
     : '?'
   return (
-    <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', ...style }}>
+    <div style={{ display: 'flex', gap: 'var(--space-10)', alignItems: 'flex-start', ...style }}>
       <div style={{
         width: '32px', height: '32px', borderRadius: '50%',
         background: BUBBLE_COLORS[index % BUBBLE_COLORS.length], flexShrink: 0,
@@ -63,7 +63,7 @@ export function Bubble({ text, author, index = 0, style }) {
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{
           background: 'rgba(33,29,51,0.04)', borderRadius: '0 12px 12px 12px',
-          padding: '10px 12px', marginBottom: '4px',
+          padding: 'var(--space-10) var(--space-12)', marginBottom: 'var(--space-4)',
         }}>
           <p style={{
             fontSize: 'var(--text-sm)', color: 'var(--ink)', lineHeight: 1.5,
@@ -74,7 +74,7 @@ export function Bubble({ text, author, index = 0, style }) {
         {author && (
           <span style={{
             fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)',
-            fontWeight: 500, paddingLeft: '4px',
+            fontWeight: 500, paddingLeft: 'var(--space-4)',
           }}>— {author}</span>
         )}
       </div>
@@ -95,7 +95,7 @@ export function StatBar({ stats, style }) {
     }}>
       {items.map((s, i) => (
         <div key={i} style={{
-          flex: 1, padding: '10px 8px', textAlign: 'center',
+          flex: 1, padding: 'var(--space-10) var(--space-8)', textAlign: 'center',
           borderRight: i < items.length - 1 ? '1px solid var(--ink-border)' : 'none',
         }}>
           <div style={{

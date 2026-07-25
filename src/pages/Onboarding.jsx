@@ -85,7 +85,7 @@ export default function OnboardingPage() {
         {s.isIntentCapture && (
           <textarea
             style={{
-              marginTop:'16px', width:'100%', padding:'14px 16px',
+              marginTop:'var(--space-16)', width:'100%', padding:'var(--space-14) var(--space-16)',
               borderRadius:'var(--radius-card)', border:'1.5px solid var(--purple)',
               fontSize:'var(--text-base)', fontFamily:'inherit', resize:'none',
               background:'var(--purple-05)', color:'var(--ink)',

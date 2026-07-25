@@ -52,11 +52,11 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
 
   const style = {
     overlay: {position:'fixed',inset:0,background:'rgba(33,29,51,0.5)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:300,display:'flex',alignItems:'flex-end',justifyContent:'center'},
-    sheet: {background:'rgba(255,255,255,0.96)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',borderRadius:'24px 24px 0 0',padding:'24px 20px 36px',width:'100%',maxWidth:'500px'},
-    handle: {width:'36px',height:'4px',background:'rgba(33,29,51,0.1)',borderRadius:'2px',margin:'0 auto 20px'},
-    input: {width:'100%',padding:'12px 16px',border:'1px solid rgba(33,29,51,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',fontFamily:'-apple-system,Inter,sans-serif',background:'rgba(33,29,51,0.03)',boxSizing:'border-box'},
-    btnPrimary: {width:'100%',padding:'14px',background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:'pointer',transition:'opacity 0.2s'},
-    btnSecondary: {width:'100%',padding:'12px',background:'rgba(33,29,51,0.05)',color:'rgba(33,29,51,0.55)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'},
+    sheet: {background:'rgba(255,255,255,0.96)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',borderRadius:'24px 24px 0 0',padding:'var(--space-24) var(--space-20) 36px',width:'100%',maxWidth:'500px'},
+    handle: {width:'36px',height:'4px',background:'rgba(33,29,51,0.1)',borderRadius:'2px',margin:'0 auto var(--space-20)'},
+    input: {width:'100%',padding:'var(--space-12) var(--space-16)',border:'1px solid rgba(33,29,51,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',fontFamily:'-apple-system,Inter,sans-serif',background:'rgba(33,29,51,0.03)',boxSizing:'border-box'},
+    btnPrimary: {width:'100%',padding:'var(--space-14)',background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:'pointer',transition:'opacity 0.2s'},
+    btnSecondary: {width:'100%',padding:'var(--space-12)',background:'rgba(33,29,51,0.05)',color:'rgba(33,29,51,0.55)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'},
   }
 
   return (
@@ -64,7 +64,7 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
       <div style={style.sheet}>
         <div style={style.handle} />
         {done ? (
-          <div style={{textAlign:'center',display:'flex',flexDirection:'column',alignItems:'center',gap:'12px',padding:'16px 0'}}>
+          <div style={{textAlign:'center',display:'flex',flexDirection:'column',alignItems:'center',gap:'var(--space-12)',padding:'var(--space-16) 0'}}>
             {/* Helper avatar */}
             <div style={{position:'relative'}}>
               {helper?.avatarUrl
@@ -79,7 +79,7 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
               <span style={{position:'absolute',bottom:-2,right:-2,width:'22px',height:'22px',background:'var(--green-dot)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center'}}><svg width='12' height='12' viewBox='0 0 12 12' fill='none'><path d='M2 6l3 3 5-5' stroke='white' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round'/></svg></span>
             </div>
             <div>
-              <h3 style={{fontSize:'var(--text-heading)',fontWeight:800,margin:'0 0 4px',color:'rgba(33,29,51,0.85)',letterSpacing:'-0.3px'}}>
+              <h3 style={{fontSize:'var(--text-heading)',fontWeight:800,margin:'0 0 var(--space-4)',color:'rgba(33,29,51,0.85)',letterSpacing:'-0.3px'}}>
                 ¡Solicitud enviada!
               </h3>
               <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.5)',margin:0,lineHeight:1.6}}>
@@ -89,14 +89,14 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
             {/* Booking summary */}
             {(date || time) && (
               <div style={{background:'rgba(33,29,51,0.03)',border:'1px solid rgba(33,29,51,0.06)',
-                borderRadius:'var(--radius-card)',padding:'12px 16px',width:'100%',textAlign:'left'}}>
-                {date && <p style={{margin:'0 0 4px',fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.6)'}}>
+                borderRadius:'var(--radius-card)',padding:'var(--space-12) var(--space-16)',width:'100%',textAlign:'left'}}>
+                {date && <p style={{margin:'0 0 var(--space-4)',fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.6)'}}>
                   {new Date(date).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})}
                 </p>}
-                {time && <p style={{margin:0,fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.6)'}}><Clock size={12} style={{marginRight:'4px',verticalAlign:'middle'}}/>{time}h</p>}
+                {time && <p style={{margin:0,fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.6)'}}><Clock size={12} style={{marginRight:'var(--space-4)',verticalAlign:'middle'}}/>{time}h</p>}
               </div>
             )}
-            <div style={{display:'flex',flexDirection:'column',gap:'8px',width:'100%',marginTop:'4px'}}>
+            <div style={{display:'flex',flexDirection:'column',gap:'var(--space-8)',width:'100%',marginTop:'var(--space-4)'}}>
               <button onClick={() => { onClose(); onNavigate('/my-services') }} style={style.btnPrimary}>
                 Ver Mis servicios
               </button>
@@ -105,12 +105,12 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
           </div>
         ) : (
           <>
-            <h3 style={{fontSize:'var(--text-md)',fontWeight:800,margin:'0 0 4px',color:'rgba(33,29,51,0.85)',letterSpacing:'-0.3px'}}>Solicitar servicio</h3>
-            <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.4)',margin:'0 0 20px'}}>{name} · {helper?.price || 'Precio a consultar'}</p>
-            <div style={{display:'flex',flexDirection:'column',gap:'10px',marginBottom:'20px'}}>
+            <h3 style={{fontSize:'var(--text-md)',fontWeight:800,margin:'0 0 var(--space-4)',color:'rgba(33,29,51,0.85)',letterSpacing:'-0.3px'}}>Solicitar servicio</h3>
+            <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.4)',margin:'0 0 var(--space-20)'}}>{name} · {helper?.price || 'Precio a consultar'}</p>
+            <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)',marginBottom:'var(--space-20)'}}>
               {/* Day pills */}
               <div>
-                <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'rgba(33,29,51,0.4)',margin:'0 0 8px',letterSpacing:'0.5px',textTransform:'uppercase'}}>Fecha</p>
+                <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'rgba(33,29,51,0.4)',margin:'0 0 var(--space-8)',letterSpacing:'0.5px',textTransform:'uppercase'}}>Fecha</p>
                 <div className={styles.rowScroll}>
                   {Array.from({length:7},(_,i)=>{
                     const d=new Date(); d.setDate(d.getDate()+i)
@@ -118,7 +118,7 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
                     const lbl=i===0?'Hoy':i===1?'Mañana':d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric'})
                     return (
                       <button key={i} onClick={()=>setDate(iso)} style={{
-                        flexShrink:0,padding:'8px 14px',
+                        flexShrink:0,padding:'var(--space-8) var(--space-14)',
                         background:date===iso?'var(--purple)':'rgba(33,29,51,0.05)',
                         color:date===iso?'white':'rgba(33,29,51,0.6)',
                         border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
@@ -131,11 +131,11 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
               </div>
               {/* Time pills */}
               <div>
-                <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'rgba(33,29,51,0.4)',margin:'0 0 8px',letterSpacing:'0.5px',textTransform:'uppercase'}}>Hora</p>
-                <div style={{display:'flex',gap:'6px',flexWrap:'wrap'}}>
+                <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'rgba(33,29,51,0.4)',margin:'0 0 var(--space-8)',letterSpacing:'0.5px',textTransform:'uppercase'}}>Hora</p>
+                <div style={{display:'flex',gap:'var(--space-6)',flexWrap:'wrap'}}>
                   {['9:00','10:00','11:00','12:00','16:00','17:00','18:00','19:00'].map(t=>(
                     <button key={t} onClick={()=>setTime(t)} style={{
-                      padding:'7px 12px',
+                      padding:'7px var(--space-12)',
                       background:time===t?'var(--purple)':'rgba(33,29,51,0.05)',
                       color:time===t?'white':'rgba(33,29,51,0.6)',
                       border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
@@ -242,7 +242,7 @@ function HelperProfileInner() {
       <PageHeader showBack rightEl={
         <button className={styles.shareBtn} onClick={handleShare} aria-label="Compartir perfil">
           {shared
-            ? <span style={{display:'flex',alignItems:'center',gap:'4px',color:'var(--green)',fontSize:'var(--text-xs)',fontWeight:700}}><Check size={11} color='var(--green)' strokeWidth={3}/> Copiado</span>
+            ? <span style={{display:'flex',alignItems:'center',gap:'var(--space-4)',color:'var(--green)',fontSize:'var(--text-xs)',fontWeight:700}}><Check size={11} color='var(--green)' strokeWidth={3}/> Copiado</span>
             : <Share2 size={17} color="rgba(33,29,51,0.55)" />}
         </button>
       } />
@@ -257,11 +257,11 @@ function HelperProfileInner() {
           {/* Avatar grande — protagonista */}
           <div style={{
             display:'flex', flexDirection:'column', alignItems:'center',
-            paddingTop:'8px', paddingBottom:'20px',
+            paddingTop:'var(--space-8)', paddingBottom:'var(--space-20)',
             borderBottom:'1px solid rgba(33,29,51,0.06)',
-            marginBottom:'20px'
+            marginBottom:'var(--space-20)'
           }}>
-            <div style={{position:'relative', marginBottom:'14px'}}>
+            <div style={{position:'relative', marginBottom:'var(--space-14)'}}>
               {enrichedH.avatarUrl
                 ? <img src={enrichedH.avatarUrl} alt={enrichedH.name}
                     style={{
@@ -288,17 +288,17 @@ function HelperProfileInner() {
             {/* Nombre grande */}
             <h1 style={{
               fontFamily:'var(--font-voice)', fontSize:'var(--text-xl)', fontWeight:700, letterSpacing:'-0.8px', color:'var(--ink)',
-              letterSpacing:'-0.5px', margin:'0 0 4px', textAlign:'center'
+              letterSpacing:'-0.5px', margin:'0 0 var(--space-4)', textAlign:'center'
             }}>{enrichedH.name}</h1>
 
             {/* Especialidad */}
             <div style={{
               fontSize:'var(--text-sm)', color:'rgba(33,29,51,0.45)', fontWeight:500,
-              textAlign:'center', marginBottom:'10px'
+              textAlign:'center', marginBottom:'var(--space-10)'
             }}>
               {enrichedH.specialty}
               {enrichedH.dniVerified && (
-                <Badge variant="success" size="md" style={{marginLeft:'8px', fontWeight:700}}>
+                <Badge variant="success" size="md" style={{marginLeft:'var(--space-8)', fontWeight:700}}>
                   <Shield size={9} color='#065f46' /> Verificado
                 </Badge>
               )}
@@ -318,14 +318,14 @@ function HelperProfileInner() {
           {/* La cita — protagonismo editorial */}
           {enrichedH.quote && (
             <div style={{
-              margin:'0 0 20px', padding:'20px',
+              margin:'0 0 var(--space-20)', padding:'var(--space-20)',
               background:'linear-gradient(135deg, var(--purple-05) 0%, var(--purple-05) 100%)',
               borderRadius:'var(--radius-card)',
               animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both'
             }}>
               <div style={{
                 fontSize:'var(--text-xs)', fontWeight:700, color:'var(--purple)',
-                letterSpacing:'1px', textTransform:'uppercase', marginBottom:'10px'
+                letterSpacing:'1px', textTransform:'uppercase', marginBottom:'var(--space-10)'
               }}>En sus propias palabras</div>
               <p style={{
                 fontSize:'var(--text-md)', fontWeight:500, color:'var(--ink)',
@@ -339,7 +339,7 @@ function HelperProfileInner() {
           {enrichedH.bio && (
             <p style={{
               fontSize:'var(--text-sm)', color:'rgba(33,29,51,0.6)', lineHeight:1.65,
-              letterSpacing:'-0.1px', margin:'0 0 20px',
+              letterSpacing:'-0.1px', margin:'0 0 var(--space-20)',
               animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both'
             }}>{enrichedH.bio}</p>
           )}
@@ -348,20 +348,20 @@ function HelperProfileInner() {
           {enrichedH.reviews >= 30 && (
             <div style={{
               fontSize:'var(--text-xs)', color:'rgba(33,29,51,0.4)',
-              marginBottom:'16px', textAlign:'center',
+              marginBottom:'var(--space-16)', textAlign:'center',
               animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both'
             }}>
               {Math.floor(enrichedH.reviews * 0.08 + 2)} personas cerca de ti contactaron con {firstName} este mes
               {enrichedH.reviews >= 100 && (
-                <Badge variant="warning" style={{marginLeft:'8px'}}>🔥 Muy solicitado</Badge>
+                <Badge variant="warning" style={{marginLeft:'var(--space-8)'}}>🔥 Muy solicitado</Badge>
               )}
             </div>
           )}
 
           {/* Trust badges */}
           <div style={{
-            display:'flex', gap:'6px', flexWrap:'wrap',
-            justifyContent:'center', marginBottom:'14px',
+            display:'flex', gap:'var(--space-6)', flexWrap:'wrap',
+            justifyContent:'center', marginBottom:'var(--space-14)',
             animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both'
           }}>
             {[
@@ -375,9 +375,9 @@ function HelperProfileInner() {
 
           {/* Nüra recomienda — justo antes del CTA */}
           <div style={{
-            margin:'0 0 14px', padding:'12px 14px',
+            margin:'0 0 var(--space-14)', padding:'var(--space-12) var(--space-14)',
             background:'rgba(33,29,51,0.03)', borderRadius:'var(--radius-card)',
-            display:'flex', alignItems:'flex-start', gap:'8px',
+            display:'flex', alignItems:'flex-start', gap:'var(--space-8)',
             animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both'
           }}>
             <img src="/logo-iso.png" alt="Nüra" style={{width:'18px',height:'18px',flexShrink:0,marginTop:'1px',opacity:0.7}} />
@@ -415,7 +415,7 @@ function HelperProfileInner() {
         {getObraDeHelper(enrichedH.id, 2).length > 0 && (
           <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0ms forwards`}} className={styles.section}>
             <h2 className={styles.sectionHeading}>Su obra</h2>
-            <div style={{display:'flex', flexDirection:'column', gap:'10px'}}>
+            <div style={{display:'flex', flexDirection:'column', gap:'var(--space-10)'}}>
               {getObraDeHelper(enrichedH.id, 2).map(post => <ObraCard key={post.id} post={post} />)}
             </div>
           </section>
@@ -488,7 +488,7 @@ function HelperProfileInner() {
               </div>
             </div>
             {enrichedH.qualitativeComments?.length > 0 && (
-              <div style={{display:'flex',flexDirection:'column',gap:'10px',marginTop:'4px'}}>
+              <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)',marginTop:'var(--space-4)'}}>
                 {enrichedH.qualitativeComments.slice(0,3).map((c, i) => (
                   <Bubble
                     key={i}
