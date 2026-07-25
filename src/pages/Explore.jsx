@@ -11,7 +11,7 @@ import { analyzeNeed, matchHelpers } from '../utils/matching'
 import { useUser } from '../context/UserContext'
 import HelperCard from '../components/HelperCard'
 import styles from './Explore.module.css'
-import { LiveDot, EmptyState } from '../components/ui'
+import { LiveDot, EmptyState, Skeleton } from '../components/ui'
 
 // ── Escaparate Vivo — señales de actividad reciente ──────────────────────
 const ACTIVITY_SIGNALS = [
@@ -385,16 +385,7 @@ export default function Explore() {
         {/* ── LOADING ─────────────────────────────────────── */}
         {isLoading && (
           <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)',padding:'0 var(--space-16)'}}>
-            {[0,1,2,3,4].map(i => (
-              <div key={i} className="skeleton-card">
-                <div className="skeleton skeleton-avatar" />
-                <div className="skeleton-body">
-                  <div className="skeleton skeleton-line-lg" />
-                  <div className="skeleton skeleton-line-md" />
-                  <div className="skeleton skeleton-line-sm" />
-                </div>
-              </div>
-            ))}
+            <Skeleton variant="card" count={5} />
           </div>
         )}
 

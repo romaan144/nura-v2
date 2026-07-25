@@ -1,6 +1,6 @@
 import PageHeader from '../components/PageHeader'
 import ObraCard from '../components/ObraCard'
-import { Button, SectionLabel } from '../components/ui'
+import { Button, SectionLabel, Skeleton } from '../components/ui'
 import { getObraDeHelper } from '../data/obraPosts'
 import ErrorBoundary from '../components/ErrorBoundary'
 import { useState, useEffect } from 'react'
@@ -196,7 +196,11 @@ function HelperProfileInner() {
   if (loading) return (
     <div className={styles.page}>
       <PageHeader showBack />
-      <div className={styles.loadingWrap}><div className={styles.loadingPulse} /></div>
+      <div style={{padding:'var(--space-24) var(--space-16)'}}>
+        <Skeleton variant="card" />
+        <Skeleton variant="block" style={{marginTop:'var(--space-24)'}} />
+        <Skeleton variant="block" />
+      </div>
     </div>
   )
   if (!h) return (

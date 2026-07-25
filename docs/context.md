@@ -124,6 +124,12 @@ cuando la conexión responde. Detalle técnico en `architecture.md`.
   visible en el Perfil. Resta solo la comprobación visual en dispositivo.
 - [PENDIENTE] Las listas de subcategorías de Explore (datos conservados en
   CATEGORIES) valen oro como keywords futuras del matching.
+- [LEY PARA EL BACKEND] Cuando Supabase sea real, Chats y Comunidad DEBEN
+  ganar estado de carga antes de mostrar su EmptyState: hoy sus datos vienen
+  del contexto ya montado (no hay espera que mostrar, y fabricarla seria
+  teatro), pero con latencia real el vacio mentiria — enseñaria "no tienes
+  conversaciones" a alguien que si las tiene, cargando.
+  **Primero se sabe, despues se dice.**
 - [PENDIENTE] Decidir si la pantalla `/intro/:id` (IntroLetter) se retira:
   sigue sin enlaces desde que el chat redacta su propia carta.
 - [PENDIENTE] Extraer `runSearch(id)` del monolito handleSend — el Contrato

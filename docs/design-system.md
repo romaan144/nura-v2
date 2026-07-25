@@ -123,6 +123,13 @@ mayusculas lo sano es 0,05-0,08em, asi que es calibrado, no promedio
 **Prohibido dibujar un rotulo a mano.** Las insignias (con fondo y
 pildora) son otra familia: les corresponde `Badge`.
 
+### Skeleton (primitiva)
+La espera dibuja **la forma de lo que viene**, no un simbolo abstracto de
+que algo pasa: el ojo sabe donde aterrizara el contenido y la espera se
+siente mas corta. Variantes `card` (retrato + tres lineas) y `block`.
+**Prohibido inventar un indicador de carga**: antes convivian esqueleto en
+Explorar y un circulo latiendo en el perfil, el destino mas visitado.
+
 ### EmptyState (primitiva)
 Un vacio **no es un error**: es la mejor ocasion de explicar que hace el
 producto. Patron unico: **frase en la Voz de Nura** (humana, jamas

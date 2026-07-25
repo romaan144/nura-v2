@@ -205,3 +205,27 @@ export function EmptyState({ title, hint, actionLabel, onAction, style }) {
     </div>
   )
 }
+
+// ═══════════════════════════════════════════════════════════════
+// Skeleton — la espera dibuja la FORMA de lo que viene, no un
+// simbolo abstracto de que algo pasa: el ojo ya sabe donde aterrizara
+// el contenido y la espera se siente mas corta.
+// ═══════════════════════════════════════════════════════════════
+export function Skeleton({ variant = 'card', count = 1, style }) {
+  const uno = i => variant === 'block' ? (
+    <div key={i} style={{ padding: 'var(--space-12) 0' }}>
+      <div className="skeleton skeleton-line-lg" />
+      <div className="skeleton skeleton-line-sm" style={{ marginTop: 'var(--space-8)' }} />
+    </div>
+  ) : (
+    <div key={i} className="skeleton-card">
+      <div className="skeleton skeleton-avatar" />
+      <div className="skeleton-body">
+        <div className="skeleton skeleton-line-lg" />
+        <div className="skeleton skeleton-line-md" />
+        <div className="skeleton skeleton-line-sm" />
+      </div>
+    </div>
+  )
+  return <div style={style}>{Array.from({ length: count }, (_, i) => uno(i))}</div>
+}

@@ -26,6 +26,21 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — La Espera: un solo lenguaje para el tiempo en blanco
+
+- Tres lenguajes para lo mismo: esqueleto en Explorar, un circulo morado
+  latiendo en el perfil (el destino mas visitado de la app) y nada en
+  Chats/Comunidad.
+- Alcance reducido tras el recon, por honestidad: **Chats y Comunidad no
+  tienen espera** — sus datos vienen del contexto ya montado. Fabricarles un
+  esqueleto seria teatro. Queda LEY en context.md para el dia del backend.
+- Nace `Skeleton` (card / block) extraida de lo que ya funcionaba; Explorar
+  deja de escribir el marcado a mano y el perfil cambia el pulso abstracto
+  por el esqueleto de su propio contenido.
+- Verificado antes de borrar: @keyframes pulse lo usan varios logos, se
+  queda; solo muere la clase .loadingPulse, huerfana.
+- Sello NURA_BUILD 2026.07.04-cr.
+
 ## 2026-07-04 — El Vacio: la pantalla que mas se ve el primer dia
 
 - Auditoria del primer dia: en la primera sesion de Nura casi todo esta
