@@ -72,6 +72,13 @@ prohibido el `ease-out` genérico.
   el texto conversacional respeta `max-width: 80%` (aire), mientras tarjetas
   y filtros respiran a ancho completo (evita comprimir información).
 
+- **La Tinta manda (color)**: Nüra **no usa negro puro**. Toda tinta,
+  borde, sombra y veladura es `rgba(33,29,51, α)` — violeta cálido sobre
+  papel cálido. El morado de marca solo por token
+  (`--purple · 05 · 10 · 20 · 30 · 40 · 60`), jamás `#7B2FFF` a mano.
+  Excepciones: el blanco es blanco, y las paletas de datos (avatares,
+  portadas) no son tokens de diseño.
+
 - **La Curva manda (radios)**: `--radius-xs 4 · sm 10 · card 14 · md 18 ·
   lg 22 · xl 30 · full 100`. **Prohibido escribir un radio a mano.** La
   píldora es `--radius-full`, nunca `99px` ni `100px` (convivían las dos).

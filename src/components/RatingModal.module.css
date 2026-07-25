@@ -19,7 +19,7 @@
 .textarea:focus { border-color: var(--purple); background: var(--white); }
 .textarea::placeholder { color: var(--soft); }
 
-.btn { width: 100%; padding: 14px; background: var(--grad-main); color: white; border: none; border-radius: 14px; font-size: var(--text-base); font-weight: 700; transition: all 0.2s; box-shadow: 0 6px 20px rgba(123,47,255,0.3); }
+.btn { width: 100%; padding: 14px; background: var(--grad-main); color: white; border: none; border-radius: 14px; font-size: var(--text-base); font-weight: 700; transition: all 0.2s; box-shadow: 0 6px 20px var(--purple-30); }
 .btn:hover:not(:disabled) { transform: translateY(-1px); }
 .btn:disabled { background: var(--rule); color: var(--soft); box-shadow: none; }
 

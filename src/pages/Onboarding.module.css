@@ -13,7 +13,7 @@
 }
 
 .skip { display: flex; justify-content: flex-end; padding: 8px 0 0; }
-.skipBtn { background: none; border: none; font-size: var(--text-sm); color: rgba(0,0,0,0.35); padding: 6px 0; font-weight: 500; }
+.skipBtn { background: none; border: none; font-size: var(--text-sm); color: rgba(33,29,51,0.35); padding: 6px 0; font-weight: 500; }
 
 .content {
   flex: 1; display: flex; flex-direction: column;
@@ -29,17 +29,17 @@
 .visual { font-size: 80px; line-height: 1; margin-bottom: 8px; }
 .eyebrow { font-size: var(--text-xs); font-weight: 700; color: var(--purple); letter-spacing: 1.5px; }
 .title {
-  font-size: 30px; font-weight: 800; color: rgba(0,0,0,0.85);
+  font-size: 30px; font-weight: 800; color: rgba(33,29,51,0.85);
   letter-spacing: -0.8px; line-height: 1.15; margin: 0;
   white-space: pre-line;
 }
-.desc { font-size: var(--text-base); color: rgba(0,0,0,0.45); line-height: 1.65; margin: 0; max-width: 280px; font-weight: 400; }
+.desc { font-size: var(--text-base); color: rgba(33,29,51,0.45); line-height: 1.65; margin: 0; max-width: 280px; font-weight: 400; }
 
 .bottom { display: flex; flex-direction: column; gap: 16px; }
 .dots { display: flex; gap: 6px; justify-content: center; }
-.dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(0,0,0,0.12); transition: all 0.3s; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(33,29,51,0.12); transition: all 0.3s; }
 .dotActive { width: 22px; border-radius: 3px; background: var(--purple); }
-.dotDone { background: rgba(0,0,0,0.3); }
+.dotDone { background: rgba(33,29,51,0.3); }
 
 .primary {
   display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -54,11 +54,11 @@
 .namePage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; text-align: center; animation: fadeUp 0.4s both; }
 .nameIso { width: 56px; height: 56px; object-fit: contain; animation: pulse 3s ease-in-out infinite; }
 @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
-.nameTitle { font-size: var(--text-xl); font-weight: 800; color: rgba(0,0,0,0.85); letter-spacing: -0.5px; margin: 0; }
-.nameDesc { font-size: var(--text-sm); color: rgba(0,0,0,0.4); margin: 0; }
+.nameTitle { font-size: var(--text-xl); font-weight: 800; color: rgba(33,29,51,0.85); letter-spacing: -0.5px; margin: 0; }
+.nameDesc { font-size: var(--text-sm); color: rgba(33,29,51,0.4); margin: 0; }
 .nameInput {
   width: 100%; padding: 16px 20px; font-size: var(--text-md); font-weight: 500;
-  color: rgba(0,0,0,0.85); font-family: -apple-system,'Inter',sans-serif;
+  color: rgba(33,29,51,0.85); font-family: -apple-system,'Inter',sans-serif;
   background: rgba(255,255,255,0.72);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   backdrop-filter: blur(24px) saturate(180%);
@@ -67,5 +67,5 @@
   box-shadow: var(--shadow-sm);
   box-sizing: border-box;
 }
-.nameInput::placeholder { color: rgba(0,0,0,0.25); font-weight: 300; }
+.nameInput::placeholder { color: rgba(33,29,51,0.25); font-weight: 300; }
 .helperCta { background: none; border: none; font-size: var(--text-sm); color: var(--purple); font-weight: 600; padding: 8px; text-align: center; }

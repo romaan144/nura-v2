@@ -26,6 +26,24 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — La Tinta Viva, terminada (Nura diseno)
+
+- Hallazgo raiz: la direccion artistica estaba a medias EN LOS PROPIOS
+  TOKENS. --ink-secondary y --ink-tertiary eran violeta calido, pero
+  --ink-primary (0.85), --ink-disabled (0.25) y **--ink-border (0.06)**
+  seguian en negro puro: cada borde de cada tarjeta de la app estaba
+  trazado en frio. Tres lineas corrigieron cientos de elementos.
+- Barrido: **313 negros puros** convertidos a tinta calida a la misma
+  opacidad (299 en componentes y modulos + 14 en index.css: sombras, borde
+  de tarjeta, scrollbar y degradado del esqueleto). **49 morados** a token.
+  Nacen --purple-05/30/60, pasos que el producto ya usaba sin nombre.
+- Excepciones declaradas: el blanco no se toca; #7B2FFF sobrevive solo como
+  definicion del token y en paletas de DATOS (avatares, portadas), que no
+  son tokens de diseno.
+- Riesgo de layout: cero (solo pigmento). Integridad: 0 lineas eliminadas
+  sin color.
+- Sello NURA_BUILD 2026.07.04-cj.
+
 ## 2026-07-04 — La Curva: el radio como identidad (Nura diseno)
 
 - Diagnostico: 59 radios a mano frente a 18 con token, y la pildora escrita

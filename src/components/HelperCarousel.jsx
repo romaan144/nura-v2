@@ -55,7 +55,7 @@ function CarouselCard({ helper, isTopPick, matchReason }) {
         }
         {helper.available && <span className={styles.availDot} />}
         <button className={`${styles.favBtn} ${following ? styles.favBtnActive : ''}`} onClick={handleFollow}>
-          {following ? <UserCheck size={12} color='var(--purple)' strokeWidth={2} /> : <UserPlus size={12} color='rgba(0,0,0,0.3)' strokeWidth={1.8} />}
+          {following ? <UserCheck size={12} color='var(--purple)' strokeWidth={2} /> : <UserPlus size={12} color='rgba(33,29,51,0.3)' strokeWidth={1.8} />}
         </button>
       </div>
 
@@ -78,7 +78,7 @@ function CarouselCard({ helper, isTopPick, matchReason }) {
           <span className={styles.metaDot}>({helper.reviews})</span>
         )}
         <span className={styles.metaDot}>·</span>
-        <MapPin size={8} color="rgba(0,0,0,0.3)" />
+        <MapPin size={8} color="rgba(33,29,51,0.3)" />
         <span>{helper.distance || 1.2}km</span>
       </div>
 

@@ -16,7 +16,7 @@
 .title { font-size: var(--text-lg); font-weight: 800; color: var(--ink); margin-bottom: 4px; letter-spacing: -0.5px; }
 .sub { font-size: var(--text-sm); color: var(--soft); margin-bottom: 20px; }
 .list { display: flex; flex-direction: column; gap: 10px; }
-.card { animation: fadeUp 0.22s cubic-bezier(0.22, 1, 0.36, 1) forwards; background: white; border: 1px solid rgba(0,0,0,0.05); border-radius: var(--radius-lg); padding: var(--card-padding); display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow-xs); cursor: pointer; transition: all 0.15s; }
+.card { animation: fadeUp 0.22s cubic-bezier(0.22, 1, 0.36, 1) forwards; background: white; border: 1px solid rgba(33,29,51,0.05); border-radius: var(--radius-lg); padding: var(--card-padding); display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow-xs); cursor: pointer; transition: all 0.15s; }
 .card:active { opacity: 0.75; }
 .cardLeft { display: flex; align-items: center; gap: 12px; }
 .avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
@@ -40,10 +40,10 @@
   
 }
 
-.emptyTitle { font-size: var(--text-md); font-weight: 800; color: rgba(0,0,0,0.75); margin: 0; letter-spacing: -0.3px; }
-.emptyDesc { font-size: var(--text-sm); color: rgba(0,0,0,0.4); margin: 0; line-height: 1.65; max-width: 240px; text-align: center; }
+.emptyTitle { font-size: var(--text-md); font-weight: 800; color: rgba(33,29,51,0.75); margin: 0; letter-spacing: -0.3px; }
+.emptyDesc { font-size: var(--text-sm); color: rgba(33,29,51,0.4); margin: 0; line-height: 1.65; max-width: 240px; text-align: center; }
 .emptyBtn:active { opacity: 0.75; }
-.emptyBtnSecondary { padding: 12px 28px; background: rgba(0,0,0,0.05); color: rgba(0,0,0,0.55); border: none; border-radius: var(--radius-full); font-size: var(--text-sm); font-weight: 600; cursor: pointer; width: 100%; max-width: 280px; font-family: inherit; }
+.emptyBtnSecondary { padding: 12px 28px; background: rgba(33,29,51,0.05); color: rgba(33,29,51,0.55); border: none; border-radius: var(--radius-full); font-size: var(--text-sm); font-weight: 600; cursor: pointer; width: 100%; max-width: 280px; font-family: inherit; }
 
 /* ── EMPTY STATE ─────────────────────────────────────────────────────── */
 

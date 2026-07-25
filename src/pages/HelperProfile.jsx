@@ -30,7 +30,7 @@ function PostCard({ post }) {
         <button className={`${styles.postLike} ${liked ? styles.postLikeActive : ''}`}
           onClick={() => { setLiked(l => !l); setLikes(n => liked ? n-1 : n+1) }}>
           <UserPlus size={12}
-            color={liked ? 'var(--red)' : 'rgba(0,0,0,0.3)'} />
+            color={liked ? 'var(--red)' : 'rgba(33,29,51,0.3)'} />
           <span>{likes}</span>
         </button>
       </div>
@@ -51,12 +51,12 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
   }
 
   const style = {
-    overlay: {position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:300,display:'flex',alignItems:'flex-end',justifyContent:'center'},
+    overlay: {position:'fixed',inset:0,background:'rgba(33,29,51,0.5)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:300,display:'flex',alignItems:'flex-end',justifyContent:'center'},
     sheet: {background:'rgba(255,255,255,0.96)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',borderRadius:'24px 24px 0 0',padding:'24px 20px 36px',width:'100%',maxWidth:'500px'},
-    handle: {width:'36px',height:'4px',background:'rgba(0,0,0,0.1)',borderRadius:'2px',margin:'0 auto 20px'},
-    input: {width:'100%',padding:'12px 16px',border:'1px solid rgba(0,0,0,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',fontFamily:'-apple-system,Inter,sans-serif',background:'rgba(0,0,0,0.03)',boxSizing:'border-box'},
+    handle: {width:'36px',height:'4px',background:'rgba(33,29,51,0.1)',borderRadius:'2px',margin:'0 auto 20px'},
+    input: {width:'100%',padding:'12px 16px',border:'1px solid rgba(33,29,51,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',fontFamily:'-apple-system,Inter,sans-serif',background:'rgba(33,29,51,0.03)',boxSizing:'border-box'},
     btnPrimary: {width:'100%',padding:'14px',background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:'pointer',transition:'opacity 0.2s'},
-    btnSecondary: {width:'100%',padding:'12px',background:'rgba(0,0,0,0.05)',color:'rgba(0,0,0,0.55)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'},
+    btnSecondary: {width:'100%',padding:'12px',background:'rgba(33,29,51,0.05)',color:'rgba(33,29,51,0.55)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'},
   }
 
   return (
@@ -70,7 +70,7 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
               {helper?.avatarUrl
                 ? <img src={helper.avatarUrl} alt={name}
                     style={{width:'68px',height:'68px',borderRadius:'50%',border:'3px solid var(--green-dot)'}} />
-                : <div style={{width:'68px',height:'68px',borderRadius:'50%',background:helper?.avatarColor||'#7B2FFF',
+                : <div style={{width:'68px',height:'68px',borderRadius:'50%',background:helper?.avatarColor||'var(--purple)',
                     display:'flex',alignItems:'center',justifyContent:'center',color:'white',fontSize:'24px',fontWeight:700,
                     border:'3px solid var(--green-dot)'}}>
                     {helper?.avatar||name?.[0]}
@@ -79,21 +79,21 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
               <span style={{position:'absolute',bottom:-2,right:-2,width:'22px',height:'22px',background:'var(--green-dot)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center'}}><svg width='12' height='12' viewBox='0 0 12 12' fill='none'><path d='M2 6l3 3 5-5' stroke='white' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round'/></svg></span>
             </div>
             <div>
-              <h3 style={{fontSize:'var(--text-heading)',fontWeight:800,margin:'0 0 4px',color:'rgba(0,0,0,0.85)',letterSpacing:'-0.3px'}}>
+              <h3 style={{fontSize:'var(--text-heading)',fontWeight:800,margin:'0 0 4px',color:'rgba(33,29,51,0.85)',letterSpacing:'-0.3px'}}>
                 ¡Solicitud enviada!
               </h3>
-              <p style={{fontSize:'var(--text-sm)',color:'rgba(0,0,0,0.5)',margin:0,lineHeight:1.6}}>
+              <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.5)',margin:0,lineHeight:1.6}}>
                 {name} recibirá tu solicitud y confirmará en breve.
               </p>
             </div>
             {/* Booking summary */}
             {(date || time) && (
-              <div style={{background:'rgba(0,0,0,0.03)',border:'1px solid rgba(0,0,0,0.06)',
+              <div style={{background:'rgba(33,29,51,0.03)',border:'1px solid rgba(33,29,51,0.06)',
                 borderRadius:'var(--radius-card)',padding:'12px 16px',width:'100%',textAlign:'left'}}>
-                {date && <p style={{margin:'0 0 4px',fontSize:'var(--text-sm)',color:'rgba(0,0,0,0.6)'}}>
+                {date && <p style={{margin:'0 0 4px',fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.6)'}}>
                   {new Date(date).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})}
                 </p>}
-                {time && <p style={{margin:0,fontSize:'var(--text-sm)',color:'rgba(0,0,0,0.6)'}}><Clock size={12} style={{marginRight:'4px',verticalAlign:'middle'}}/>{time}h</p>}
+                {time && <p style={{margin:0,fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.6)'}}><Clock size={12} style={{marginRight:'4px',verticalAlign:'middle'}}/>{time}h</p>}
               </div>
             )}
             <div style={{display:'flex',flexDirection:'column',gap:'8px',width:'100%',marginTop:'4px'}}>
@@ -105,12 +105,12 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
           </div>
         ) : (
           <>
-            <h3 style={{fontSize:'var(--text-md)',fontWeight:800,margin:'0 0 4px',color:'rgba(0,0,0,0.85)',letterSpacing:'-0.3px'}}>Solicitar servicio</h3>
-            <p style={{fontSize:'var(--text-sm)',color:'rgba(0,0,0,0.4)',margin:'0 0 20px'}}>{name} · {helper?.price || 'Precio a consultar'}</p>
+            <h3 style={{fontSize:'var(--text-md)',fontWeight:800,margin:'0 0 4px',color:'rgba(33,29,51,0.85)',letterSpacing:'-0.3px'}}>Solicitar servicio</h3>
+            <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.4)',margin:'0 0 20px'}}>{name} · {helper?.price || 'Precio a consultar'}</p>
             <div style={{display:'flex',flexDirection:'column',gap:'10px',marginBottom:'20px'}}>
               {/* Day pills */}
               <div>
-                <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'rgba(0,0,0,0.4)',margin:'0 0 8px',letterSpacing:'0.5px',textTransform:'uppercase'}}>Fecha</p>
+                <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'rgba(33,29,51,0.4)',margin:'0 0 8px',letterSpacing:'0.5px',textTransform:'uppercase'}}>Fecha</p>
                 <div className={styles.rowScroll}>
                   {Array.from({length:7},(_,i)=>{
                     const d=new Date(); d.setDate(d.getDate()+i)
@@ -119,8 +119,8 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
                     return (
                       <button key={i} onClick={()=>setDate(iso)} style={{
                         flexShrink:0,padding:'8px 14px',
-                        background:date===iso?'var(--purple)':'rgba(0,0,0,0.05)',
-                        color:date===iso?'white':'rgba(0,0,0,0.6)',
+                        background:date===iso?'var(--purple)':'rgba(33,29,51,0.05)',
+                        color:date===iso?'white':'rgba(33,29,51,0.6)',
                         border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
                         cursor:'pointer',fontFamily:'inherit',transition:'all 0.15s',
                         whiteSpace:'nowrap',
@@ -131,13 +131,13 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
               </div>
               {/* Time pills */}
               <div>
-                <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'rgba(0,0,0,0.4)',margin:'0 0 8px',letterSpacing:'0.5px',textTransform:'uppercase'}}>Hora</p>
+                <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'rgba(33,29,51,0.4)',margin:'0 0 8px',letterSpacing:'0.5px',textTransform:'uppercase'}}>Hora</p>
                 <div style={{display:'flex',gap:'6px',flexWrap:'wrap'}}>
                   {['9:00','10:00','11:00','12:00','16:00','17:00','18:00','19:00'].map(t=>(
                     <button key={t} onClick={()=>setTime(t)} style={{
                       padding:'7px 12px',
-                      background:time===t?'var(--purple)':'rgba(0,0,0,0.05)',
-                      color:time===t?'white':'rgba(0,0,0,0.6)',
+                      background:time===t?'var(--purple)':'rgba(33,29,51,0.05)',
+                      color:time===t?'white':'rgba(33,29,51,0.6)',
                       border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
                       cursor:'pointer',fontFamily:'inherit',transition:'all 0.15s',
                     }}>{t}</button>
@@ -243,7 +243,7 @@ function HelperProfileInner() {
         <button className={styles.shareBtn} onClick={handleShare} aria-label="Compartir perfil">
           {shared
             ? <span style={{display:'flex',alignItems:'center',gap:'4px',color:'var(--green)',fontSize:'var(--text-xs)',fontWeight:700}}><Check size={11} color='var(--green)' strokeWidth={3}/> Copiado</span>
-            : <Share2 size={17} color="rgba(0,0,0,0.55)" />}
+            : <Share2 size={17} color="rgba(33,29,51,0.55)" />}
         </button>
       } />
 
@@ -258,7 +258,7 @@ function HelperProfileInner() {
           <div style={{
             display:'flex', flexDirection:'column', alignItems:'center',
             paddingTop:'8px', paddingBottom:'20px',
-            borderBottom:'1px solid rgba(0,0,0,0.06)',
+            borderBottom:'1px solid rgba(33,29,51,0.06)',
             marginBottom:'20px'
           }}>
             <div style={{position:'relative', marginBottom:'14px'}}>
@@ -266,7 +266,7 @@ function HelperProfileInner() {
                 ? <img src={enrichedH.avatarUrl} alt={enrichedH.name}
                     style={{
                       width:'96px', height:'96px', borderRadius:'50%', objectFit:'cover',
-                      boxShadow:'0 4px 20px rgba(0,0,0,0.12)',
+                      boxShadow:'0 4px 20px rgba(33,29,51,0.12)',
                       opacity:0, animation:'popIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards'
                     }} />
                 : <div style={{
@@ -274,7 +274,7 @@ function HelperProfileInner() {
                     background: enrichedH.avatarColor || 'var(--purple)',
                     display:'flex', alignItems:'center', justifyContent:'center',
                     fontSize:'var(--text-num)', fontWeight:700, color:'white',
-                    boxShadow:'0 4px 20px rgba(0,0,0,0.15)',
+                    boxShadow:'0 4px 20px rgba(33,29,51,0.15)',
                     animation:'popIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards'
                   }}>
                     {enrichedH.name?.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase() || enrichedH.avatar}
@@ -293,7 +293,7 @@ function HelperProfileInner() {
 
             {/* Especialidad */}
             <div style={{
-              fontSize:'var(--text-sm)', color:'rgba(0,0,0,0.45)', fontWeight:500,
+              fontSize:'var(--text-sm)', color:'rgba(33,29,51,0.45)', fontWeight:500,
               textAlign:'center', marginBottom:'10px'
             }}>
               {enrichedH.specialty}
@@ -319,7 +319,7 @@ function HelperProfileInner() {
           {enrichedH.quote && (
             <div style={{
               margin:'0 0 20px', padding:'20px',
-              background:'linear-gradient(135deg, rgba(123,47,255,0.06) 0%, rgba(123,47,255,0.02) 100%)',
+              background:'linear-gradient(135deg, var(--purple-05) 0%, var(--purple-05) 100%)',
               borderRadius:'var(--radius-card)',
               animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both'
             }}>
@@ -338,7 +338,7 @@ function HelperProfileInner() {
           {/* Bio */}
           {enrichedH.bio && (
             <p style={{
-              fontSize:'var(--text-sm)', color:'rgba(0,0,0,0.6)', lineHeight:1.65,
+              fontSize:'var(--text-sm)', color:'rgba(33,29,51,0.6)', lineHeight:1.65,
               letterSpacing:'-0.1px', margin:'0 0 20px',
               animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both'
             }}>{enrichedH.bio}</p>
@@ -347,7 +347,7 @@ function HelperProfileInner() {
           {/* Señales de actividad local */}
           {enrichedH.reviews >= 30 && (
             <div style={{
-              fontSize:'var(--text-xs)', color:'rgba(0,0,0,0.4)',
+              fontSize:'var(--text-xs)', color:'rgba(33,29,51,0.4)',
               marginBottom:'16px', textAlign:'center',
               animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both'
             }}>
@@ -376,13 +376,13 @@ function HelperProfileInner() {
           {/* Nüra recomienda — justo antes del CTA */}
           <div style={{
             margin:'0 0 14px', padding:'12px 14px',
-            background:'rgba(0,0,0,0.03)', borderRadius:'var(--radius-card)',
+            background:'rgba(33,29,51,0.03)', borderRadius:'var(--radius-card)',
             display:'flex', alignItems:'flex-start', gap:'8px',
             animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both'
           }}>
             <img src="/logo-iso.png" alt="Nüra" style={{width:'18px',height:'18px',flexShrink:0,marginTop:'1px',opacity:0.7}} />
             <p style={{
-              fontSize:'var(--text-xs)', color:'rgba(0,0,0,0.5)', lineHeight:1.5,
+              fontSize:'var(--text-xs)', color:'rgba(33,29,51,0.5)', lineHeight:1.5,
               margin:0
             }}>
               {location.state?.matchReason
@@ -480,8 +480,8 @@ function HelperProfileInner() {
                 <div className={styles.ratingStars}>
                   {[1,2,3,4,5].map(n => (
                     <Star key={n} size={13}
-                      fill={n <= Math.round(enrichedH.rating) ? 'var(--amber)' : 'rgba(0,0,0,0.1)'}
-                      color={n <= Math.round(enrichedH.rating) ? 'var(--amber)' : 'rgba(0,0,0,0.1)'} />
+                      fill={n <= Math.round(enrichedH.rating) ? 'var(--amber)' : 'rgba(33,29,51,0.1)'}
+                      color={n <= Math.round(enrichedH.rating) ? 'var(--amber)' : 'rgba(33,29,51,0.1)'} />
                   ))}
                 </div>
                 <span className={styles.ratingCount}>{enrichedH.reviews} valoraciones</span>

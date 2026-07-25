@@ -108,7 +108,7 @@ export default function OnboardingOverlay({ onComplete }) {
 
         {/* Card 1 — Buscador (primary) */}
         <button className={styles.chooseCard} onClick={chooseSeeker}>
-          <div className={styles.chooseCardIcon} style={{background:'rgba(123,47,255,0.08)'}}>
+          <div className={styles.chooseCardIcon} style={{background:'var(--purple-10)'}}>
             <Search size={22} color="var(--purple)" strokeWidth={2} />
           </div>
           <div className={styles.chooseCardText}>
@@ -120,14 +120,14 @@ export default function OnboardingOverlay({ onComplete }) {
 
         {/* Card 2 — Profesional */}
         <button className={`${styles.chooseCard} ${styles.chooseCardPro}`} onClick={choosePro}>
-          <div className={styles.chooseCardIcon} style={{background:'rgba(0,0,0,0.04)'}}>
-            <Briefcase size={22} color="rgba(0,0,0,0.5)" strokeWidth={1.8} />
+          <div className={styles.chooseCardIcon} style={{background:'rgba(33,29,51,0.04)'}}>
+            <Briefcase size={22} color="rgba(33,29,51,0.5)" strokeWidth={1.8} />
           </div>
           <div className={styles.chooseCardText}>
-            <span className={styles.chooseCardTitle} style={{color:'rgba(0,0,0,0.75)'}}>Quiero ofrecer mis servicios</span>
+            <span className={styles.chooseCardTitle} style={{color:'rgba(33,29,51,0.75)'}}>Quiero ofrecer mis servicios</span>
             <span className={styles.chooseCardSub}>Crea tu perfil profesional gratis</span>
           </div>
-          <ArrowRight size={16} color="rgba(0,0,0,0.3)" />
+          <ArrowRight size={16} color="rgba(33,29,51,0.3)" />
         </button>
       </div>
     </div>

@@ -9,7 +9,7 @@ const STEPS = [
     title: 'Cuéntale qué necesitas',
     desc: 'Escribe en lenguaje natural. "Necesito una cuidadora para mi madre con Alzheimer en el Eixample" — Nüra entiende el contexto completo.',
     example: '"Mi hijo de 5 años tiene problemas con la pronunciación, busco logopeda esta semana"',
-    color: '#7B2FFF',
+    color: 'var(--purple)',
   },
   {
     n: '02',
@@ -57,10 +57,10 @@ export default function HowItWorks() {
         {/* Philosophy statement */}
       <div style={{
         textAlign:'center', padding:'0 20px 8px',
-        borderBottom:'1px solid rgba(0,0,0,0.06)', marginBottom:'4px',
+        borderBottom:'1px solid rgba(33,29,51,0.06)', marginBottom:'4px',
       }}>
         <p style={{
-          fontSize:'var(--text-md)', fontWeight:800, color:'rgba(0,0,0,0.8)',
+          fontSize:'var(--text-md)', fontWeight:800, color:'rgba(33,29,51,0.8)',
           letterSpacing:'-0.4px', lineHeight:1.5, margin:0,
           
         }}>
@@ -110,44 +110,44 @@ export default function HowItWorks() {
         {/* Sobre Nüra */}
         <div id="about" style={{
           background:'rgba(255,255,255,0.7)',
-          border:'1px solid rgba(0,0,0,0.06)',
+          border:'1px solid rgba(33,29,51,0.06)',
           borderRadius:'var(--radius-md)', padding:'24px 20px',
           marginBottom:'12px',
         }}>
-          <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'rgba(123,47,255,0.6)',
+          <p style={{fontSize:'var(--text-xs)',fontWeight:700,color:'var(--purple-60)',
             letterSpacing:'0.5px',textTransform:'uppercase',margin:'0 0 10px'}}>
             Sobre Nüra
           </p>
-          <h3 style={{fontSize:'var(--text-md)',fontWeight:800,color:'rgba(0,0,0,0.85)',
+          <h3 style={{fontSize:'var(--text-md)',fontWeight:800,color:'rgba(33,29,51,0.85)',
             letterSpacing:'-0.4px',margin:'0 0 10px',lineHeight:1.3}}>
             Construida para conectar personas reales
           </h3>
-          <p style={{fontSize:'var(--text-sm)',color:'rgba(0,0,0,0.55)',lineHeight:1.7,margin:'0 0 12px'}}>
+          <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.55)',lineHeight:1.7,margin:'0 0 12px'}}>
             Nüra nació de una pregunta simple: ¿por qué es tan difícil encontrar a la persona adecuada cuando más la necesitas?
           </p>
-          <p style={{fontSize:'var(--text-sm)',color:'rgba(0,0,0,0.55)',lineHeight:1.7,margin:'0 0 12px'}}>
+          <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.55)',lineHeight:1.7,margin:'0 0 12px'}}>
             No creemos que la IA deba reemplazar el contacto humano. Creemos que debe facilitar que dos personas se encuentren — la que necesita ayuda y la que puede darla.
           </p>
-          <p style={{fontSize:'var(--text-sm)',color:'rgba(0,0,0,0.55)',lineHeight:1.7,margin:0,
-            borderLeft:'3px solid rgba(123,47,255,0.2)',paddingLeft:'12px'}}>
+          <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.55)',lineHeight:1.7,margin:0,
+            borderLeft:'3px solid var(--purple-20)',paddingLeft:'12px'}}>
             "La tecnología más poderosa es la que pone en contacto a personas."
           </p>
         </div>
 
         {/* Helper CTA */}
         <div style={{
-          background:'linear-gradient(135deg,rgba(123,47,255,0.06),rgba(0,212,200,0.04))',
-          border:'1px solid rgba(123,47,255,0.12)',
+          background:'linear-gradient(135deg,var(--purple-05),rgba(0,212,200,0.04))',
+          border:'1px solid var(--purple-10)',
           borderRadius:'var(--radius-md)',padding:'24px 20px',
           textAlign:'center',display:'flex',flexDirection:'column',
           alignItems:'center',gap:'10px',marginBottom:'12px',
         }}>
           <UserCheck size={28} color='var(--purple)' strokeWidth={1.6} />
           <h3 style={{fontSize:'var(--text-md)',fontWeight:800,margin:0,
-            color:'rgba(0,0,0,0.8)',letterSpacing:'-0.3px'}}>
+            color:'rgba(33,29,51,0.8)',letterSpacing:'-0.3px'}}>
             ¿Eres profesional?
           </h3>
-          <p style={{fontSize:'var(--text-sm)',color:'rgba(0,0,0,0.45)',margin:0,
+          <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.45)',margin:0,
             lineHeight:1.6,maxWidth:'260px'}}>
             Ofrece tus servicios. Nüra construye tu perfil automáticamente y te conecta con quienes te necesitan.
           </p>
@@ -155,7 +155,7 @@ export default function HowItWorks() {
             onClick={() => navigate('/register-helper')}
             style={{
               padding:'12px 24px',
-              background:'linear-gradient(135deg,#7B2FFF,#00D4C8)',
+              background:'linear-gradient(135deg,var(--purple),#00D4C8)',
               color:'white',border:'none',borderRadius:'var(--radius-full)',
               fontSize:'var(--text-sm)',fontWeight:700,cursor:'pointer',
               fontFamily:'-apple-system,"Inter",sans-serif',

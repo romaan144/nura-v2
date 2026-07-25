@@ -93,7 +93,7 @@ export default function HelperCard({ helper, onContact, showContact = true, show
           <div style={{ fontSize: 'var(--text-xs)', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
             {metaParts.map((part, i) => (
               <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                {i > 0 && <span style={{ color: 'var(--ink-disabled, rgba(0,0,0,0.2))' }}>·</span>}
+                {i > 0 && <span style={{ color: 'var(--ink-disabled, rgba(33,29,51,0.2))' }}>·</span>}
                 {part}
               </span>
             ))}

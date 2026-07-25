@@ -82,7 +82,7 @@
 }
 .analyzingDots span {
   width: 5px; height: 5px; border-radius: 50%;
-  background: #7B2FFF;
+  background: var(--purple);
   animation: dotPulse 1.2s ease-in-out infinite;
 }
 .analyzingDots span:nth-child(2) { animation-delay: 0.2s; }

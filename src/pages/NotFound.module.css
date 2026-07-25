@@ -12,8 +12,8 @@
 
 .btnSecondary {
   padding: 12px 28px;
-  background: rgba(0,0,0,0.05);
-  color: rgba(0,0,0,0.55);
+  background: rgba(33,29,51,0.05);
+  color: rgba(33,29,51,0.55);
   border: none;
   border-radius: 100px;
   font-size: var(--text-base);

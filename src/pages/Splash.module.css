@@ -1,7 +1,7 @@
 .page {
   position: fixed; inset: 0; z-index: 9999;
   background:
-    radial-gradient(ellipse 120% 60% at 50% -5%, rgba(123,47,255,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 120% 60% at 50% -5%, var(--purple-10) 0%, transparent 60%),
     radial-gradient(ellipse 80% 40% at 90% 110%, rgba(0,212,200,0.06) 0%, transparent 60%),
     var(--paper);
   display: flex; flex-direction: column;
@@ -22,7 +22,7 @@
 
 .footer { opacity: 0; transform: translateY(8px); transition: all 0.4s cubic-bezier(0.25,0.46,0.45,0.94) 0.1s; display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; }
 .footer.show { opacity: 1; transform: translateY(0); }
-.loadBar { width: 200px; height: 2px; background: rgba(0,0,0,0.08); border-radius: 1px; overflow: hidden; }
+.loadBar { width: 200px; height: 2px; background: rgba(33,29,51,0.08); border-radius: 1px; overflow: hidden; }
 .loadFill { height: 100%; background: var(--grad-main); animation: load 2s ease forwards; }
 @keyframes load { from{width:0} to{width:100%} }
-.tagline { font-size: var(--text-sm); color: rgba(0,0,0,0.35); letter-spacing: 0.2px; font-weight: 400; }
+.tagline { font-size: var(--text-sm); color: rgba(33,29,51,0.35); letter-spacing: 0.2px; font-weight: 400; }

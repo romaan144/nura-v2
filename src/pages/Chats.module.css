@@ -17,7 +17,7 @@
 .title { font-size: var(--text-lg); font-weight: 800; color: var(--ink); letter-spacing: -0.5px; }
 .count {
   font-size: var(--text-xs); font-weight: 600; color: var(--purple);
-  background: rgba(123,47,255,0.1); border-radius: 12px; padding: 3px 10px;
+  background: var(--purple-10); border-radius: 12px; padding: 3px 10px;
 }
 
 .searchWrap { padding: 10px 16px 8px; background: var(--paper); }
@@ -41,7 +41,7 @@
   padding: 13px 16px;
   background: #FFFFFF;
   border-radius: var(--radius-xl);
-  border: 1px solid rgba(0,0,0,0.07);
+  border: 1px solid rgba(33,29,51,0.07);
   box-shadow: var(--shadow-md);
   transition: box-shadow 0.15s, opacity 0.15s;
   text-align: left;
@@ -73,11 +73,11 @@
 .chatInfo { flex: 1; min-width: 0; }
 .chatTop { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; gap: 8px; }
 .chatName { font-size: var(--text-base); font-weight: 700; color: var(--ink-primary); letter-spacing: -0.3px; }
-.chatTime { font-size: 10px; color: rgba(0,0,0,0.28); flex-shrink: 0; letter-spacing: 0.1px; }
+.chatTime { font-size: 10px; color: rgba(33,29,51,0.28); flex-shrink: 0; letter-spacing: 0.1px; }
 
 .chatBottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .chatLastMsg {
-  font-size: var(--text-sm); color: rgba(0,0,0,0.38); font-weight: 400;
+  font-size: var(--text-sm); color: rgba(33,29,51,0.38); font-weight: 400;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;
 }
 .chatUnread .chatLastMsg { color: var(--mid); font-weight: 500; }
@@ -115,10 +115,10 @@
 
 /* ── Empty state ── */
 .emptyTitle { font-size: var(--text-md); font-weight: 800; color: var(--ink-primary); margin: 0; letter-spacing: -0.3px; }
-.emptyDesc { font-size: var(--text-sm); color: rgba(0,0,0,0.4); margin: 0; line-height: 1.65; max-width: 240px; text-align: center; }
+.emptyDesc { font-size: var(--text-sm); color: rgba(33,29,51,0.4); margin: 0; line-height: 1.65; max-width: 240px; text-align: center; }
 .emptyBtn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; max-width: 280px; padding: 13px; background: var(--purple); color: white; border: none; border-radius: var(--radius-full); font-size: var(--text-sm); font-weight: 700; cursor: pointer; transition: opacity 0.2s; font-family: inherit; }
 .emptyBtn:active { opacity: 0.75; }
-.emptyBtnSecondary { width: 100%; max-width: 280px; padding: 12px; background: rgba(0,0,0,0.05); color: var(--ink-secondary); border: none; border-radius: 100px; font-size: var(--text-sm); font-weight: 600; cursor: pointer; font-family: inherit; }
+.emptyBtnSecondary { width: 100%; max-width: 280px; padding: 12px; background: rgba(33,29,51,0.05); color: var(--ink-secondary); border: none; border-radius: 100px; font-size: var(--text-sm); font-weight: 600; cursor: pointer; font-family: inherit; }
 
 @keyframes fadeSlideIn {
   from { opacity: 0; transform: translateY(10px); }
@@ -129,7 +129,7 @@
 /* ── SEARCH FOCUS STATE ─────────────────────────────────────────────── */
 .searchBox:focus-within {
   border-color: var(--purple);
-  box-shadow: var(--shadow-sm), 0 0 0 3px rgba(123,47,255,0.10);
+  box-shadow: var(--shadow-sm), 0 0 0 3px var(--purple-10);
   background: rgba(255,255,255,0.98);
   transition: box-shadow 0.18s ease, border-color 0.18s ease;
 }

@@ -25,7 +25,7 @@ export default function Siguiendo() {
 
         {saved.length === 0 ? (
           <div className={styles.empty}>
-            <div className={styles.emptyIcon}><UserPlus size={48} color='rgba(123,47,255,0.2)' strokeWidth={1.3} fill='rgba(123,47,255,0.06)' /></div>
+            <div className={styles.emptyIcon}><UserPlus size={48} color='var(--purple-20)' strokeWidth={1.3} fill='var(--purple-05)' /></div>
             <h3 className={styles.emptyTitle}>Aún no sigues a nadie</h3>
             <p className={styles.emptyDesc}>Cuando encuentres un profesional que te interese, pulsa Seguir para guardarlo aquílo aquí.</p>
             <button className={styles.emptyBtn} onClick={() => navigate('/explore')}>

@@ -154,7 +154,7 @@ export default function Chats() {
 
       <div className={styles.searchWrap}>
         <div className={styles.searchBox}>
-          <Search size={14} color="rgba(0,0,0,0.35)" />
+          <Search size={14} color="rgba(33,29,51,0.35)" />
           <input
             className={styles.searchInput}
             placeholder="Buscar conversaciones..."
@@ -179,7 +179,7 @@ export default function Chats() {
 
         {filtered.length === 0 && search.trim() && (
           <div style={{textAlign:'center',padding:'48px 24px',color:'var(--ink-tertiary)'}}>
-            <Search size={36} color='rgba(0,0,0,0.12)' strokeWidth={1.3} style={{marginBottom:'12px'}}/>
+            <Search size={36} color='rgba(33,29,51,0.12)' strokeWidth={1.3} style={{marginBottom:'12px'}}/>
             <p style={{fontSize:'var(--text-sm)',fontWeight:500}}>Sin resultados para "{search}"</p>
             <p style={{fontSize:'var(--text-xs)',marginTop:'4px'}}>Prueba con el nombre del profesional</p>
           </div>
@@ -217,7 +217,7 @@ export default function Chats() {
                   background: chat.unread > 0 ? 'var(--green-dot)' 
                     : (new Date() - new Date(chat.lastTime)) < 1000*60*60*2 ? 'var(--green-dot)'
                     : (new Date() - new Date(chat.lastTime)) < 1000*60*60*24 ? 'var(--amber)'
-                    : 'rgba(0,0,0,0.2)',
+                    : 'rgba(33,29,51,0.2)',
                 }} />
               </div>
 

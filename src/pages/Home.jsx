@@ -1052,7 +1052,7 @@ export default function Home() {
                 setLastMatches([])
                 setTimeout(() => setMessages([{ id: 1, from: 'nura', lines: getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas) }]), 100)
               }} aria-label="Empezar conversación de nuevo">
-              <RotateCcw size={15} color="rgba(0,0,0,0.6)" />
+              <RotateCcw size={15} color="rgba(33,29,51,0.6)" />
             </button>
           )}
           <button
@@ -1061,7 +1061,7 @@ export default function Home() {
             onClick={() => navigate('/profile')}>
             {user?.name
               ? <img src={`https://api.dicebear.com/9.x/personas/svg?seed=${encodeURIComponent(user.name)}`} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}} />
-              : <UserRound size={20} color="rgba(0,0,0,0.4)" strokeWidth={1.5} />
+              : <UserRound size={20} color="rgba(33,29,51,0.4)" strokeWidth={1.5} />
             }
           </button>
         </div>
@@ -1199,7 +1199,7 @@ export default function Home() {
             <span className={styles.recentLabel}>Recientes</span>
             {searchHistory.slice(0, 3).map((s, i) => (
               <button key={i} className={styles.recentItem} onClick={() => handleSend(s.query)}>
-                <Clock size={12} color='rgba(0,0,0,0.35)' style={{flexShrink:0}} />
+                <Clock size={12} color='rgba(33,29,51,0.35)' style={{flexShrink:0}} />
                 <span className={styles.recentText}>{s.query}</span>
               </button>
             ))}

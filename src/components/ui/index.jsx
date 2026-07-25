@@ -10,7 +10,7 @@ const BADGE_VARIANTS = {
   success: { color: '#065f46', background: 'rgba(16,185,129,0.10)', border: '1px solid rgba(16,185,129,0.20)' },
   warning: { color: '#92400e', background: 'rgba(245,158,11,0.10)', border: '1px solid rgba(245,158,11,0.20)' },
   purple:  { color: 'var(--purple)', background: 'var(--purple-10)', border: '1px solid var(--purple-20)' },
-  neutral: { color: 'var(--ink-secondary)', background: 'rgba(0,0,0,0.04)', border: '1px solid var(--ink-border)' },
+  neutral: { color: 'var(--ink-secondary)', background: 'rgba(33,29,51,0.04)', border: '1px solid var(--ink-border)' },
 }
 
 export function Badge({ variant = 'neutral', size = 'sm', children, style }) {
@@ -62,7 +62,7 @@ export function Bubble({ text, author, index = 0, style }) {
       }}>{initials}</div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{
-          background: 'rgba(0,0,0,0.04)', borderRadius: '0 12px 12px 12px',
+          background: 'rgba(33,29,51,0.04)', borderRadius: '0 12px 12px 12px',
           padding: '10px 12px', marginBottom: '4px',
         }}>
           <p style={{
@@ -89,7 +89,7 @@ export function StatBar({ stats, style }) {
   return (
     <div style={{
       display: 'flex', alignItems: 'stretch',
-      background: 'rgba(0,0,0,0.03)', borderRadius: 'var(--radius-card)',
+      background: 'rgba(33,29,51,0.03)', borderRadius: 'var(--radius-card)',
       overflow: 'hidden', border: '1px solid var(--ink-border)',
       width: '100%', maxWidth: '320px', ...style,
     }}>

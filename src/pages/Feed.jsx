@@ -147,7 +147,7 @@ export default function Feed() {
             style={{ background: 'var(--purple)', color: 'white', border: 'none',
               borderRadius: 'var(--radius-full)', padding: '11px 22px',
               fontSize: 'var(--text-sm)', fontWeight: 700, cursor: 'pointer',
-              boxShadow: '0 4px 14px rgba(123,47,255,0.3)' }}>
+              boxShadow: '0 4px 14px var(--purple-30)' }}>
             Buscar a mi persona
           </button>
         </div>

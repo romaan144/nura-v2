@@ -18,7 +18,7 @@
 .skip {
   align-self: flex-end;
   background: none; border: none;
-  font-size: var(--text-sm); color: rgba(0,0,0,0.35);
+  font-size: var(--text-sm); color: rgba(33,29,51,0.35);
   font-weight: 500; padding: 6px 2px;
   cursor: pointer; font-family: -apple-system,'Inter',sans-serif;
 }
@@ -48,12 +48,12 @@
 }
 .title {
   font-size: 30px; font-weight: 800;
-  color: rgba(0,0,0,0.85); letter-spacing: -0.8px;
+  color: rgba(33,29,51,0.85); letter-spacing: -0.8px;
   line-height: 1.15; margin: 0;
   white-space: pre-line;
 }
 .desc {
-  font-size: var(--text-base); color: rgba(0,0,0,0.45);
+  font-size: var(--text-base); color: rgba(33,29,51,0.45);
   line-height: 1.65; margin: 0;
   max-width: 280px; font-weight: 400;
 }
@@ -69,14 +69,14 @@
 }
 .dot {
   width: 6px; height: 6px; border-radius: 50%;
-  background: rgba(0,0,0,0.12);
+  background: rgba(33,29,51,0.12);
   transition: all 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
 }
 .dotActive {
   width: 22px; border-radius: 3px;
   background: var(--purple);
 }
-.dotDone { background: rgba(0,0,0,0.3); }
+.dotDone { background: rgba(33,29,51,0.3); }
 
 /* Buttons */
 .primary {
@@ -107,17 +107,17 @@
 
 .nameTitle {
   font-size: var(--text-xl); font-weight: 800;
-  color: rgba(0,0,0,0.85); letter-spacing: -0.5px;
+  color: rgba(33,29,51,0.85); letter-spacing: -0.5px;
   margin: 0;
 }
 .nameDesc {
-  font-size: var(--text-sm); color: rgba(0,0,0,0.4);
+  font-size: var(--text-sm); color: rgba(33,29,51,0.4);
   margin: 0;
 }
 .nameInput {
   width: 100%; padding: 16px 20px;
   font-size: var(--text-md); font-weight: 500;
-  color: rgba(0,0,0,0.85);
+  color: rgba(33,29,51,0.85);
   font-family: -apple-system,'Inter',sans-serif;
   background: rgba(255,255,255,0.72);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
@@ -134,7 +134,7 @@
   border-color: rgba(123,47,255,0.25);
 }
 .nameInput::placeholder {
-  color: rgba(0,0,0,0.25); font-weight: 300;
+  color: rgba(33,29,51,0.25); font-weight: 300;
 }
 .helperLink {
   background: none; border: none;
@@ -184,7 +184,7 @@
 .chooseTitle {
   font-size: var(--text-lg);
   font-weight: 800;
-  color: rgba(0,0,0,0.85);
+  color: rgba(33,29,51,0.85);
   letter-spacing: -0.5px;
   line-height: 1.2;
   margin: 0 0 2px;
@@ -193,7 +193,7 @@
 
 .chooseDesc {
   font-size: var(--text-sm);
-  color: rgba(0,0,0,0.35);
+  color: rgba(33,29,51,0.35);
   margin: 0 0 8px;
   text-align: center;
 }
@@ -205,7 +205,7 @@
   gap: 14px;
   padding: 18px 20px;
   background: #FFFFFF;
-  border: 1.5px solid rgba(123,47,255,0.2);
+  border: 1.5px solid var(--purple-20);
   border-radius: var(--radius-lg);
   cursor: pointer;
   text-align: left;
@@ -217,7 +217,7 @@
 .chooseCard:active { opacity: 0.75; transform: scale(0.99); }
 
 .chooseCardPro {
-  border-color: rgba(0,0,0,0.07);
+  border-color: rgba(33,29,51,0.07);
   box-shadow: var(--shadow-xs);
 }
 
@@ -243,6 +243,6 @@
 
 .chooseCardSub {
   font-size: var(--text-xs);
-  color: rgba(0,0,0,0.4);
+  color: rgba(33,29,51,0.4);
   font-weight: 400;
 }

@@ -13,7 +13,7 @@ function getStory() {
       result: 'Primera sesión esta semana. Sergio pudo volver al trabajo tranquilo.',
       timeAgo: 'hace 2 horas',
       avatar: 'EF',
-      color: '#7B2FFF',
+      color: 'var(--purple)',
     },
     {
       need: 'Mi hijo de 5 años no pronuncia bien la R. Necesito un logopeda cerca.',

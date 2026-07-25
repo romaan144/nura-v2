@@ -19,11 +19,11 @@
 .loadingWrap { display:flex; justify-content:center; padding:80px 0; }
 .loadingPulse {
   width:52px; height:52px; border-radius:50%;
-  background:rgba(123,47,255,0.1);
+  background:var(--purple-10);
   animation: pulse 1.2s ease-in-out infinite;
 }
 @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.08);opacity:0.5} }
-.notFound { text-align:center; padding:60px 24px; color:rgba(0,0,0,0.4); font-size:var(--text-sm); }
+.notFound { text-align:center; padding:60px 24px; color:rgba(33,29,51,0.4); font-size:var(--text-sm); }
 
 /* Share btn */
 .shareBtn {
@@ -33,7 +33,7 @@
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid rgba(255,255,255,0.35);
-  box-shadow: var(--shadow-sm), 0 0 0 0.5px rgba(0,0,0,0.06);
+  box-shadow: var(--shadow-sm), 0 0 0 0.5px rgba(33,29,51,0.06);
   display: flex; align-items: center; justify-content: center;
   color: var(--ink-secondary);
   cursor: pointer;
@@ -50,29 +50,29 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-bottom: 1px solid rgba(0,0,0,0.06);
+  border-bottom: 1px solid rgba(33,29,51,0.06);
   }
 
 .avatarWrap { position:relative; margin-bottom:16px; }
 .avatar {   width: 108px; height: 108px;
   border-radius: 50%; object-fit:cover;
   border: 3.5px solid #fff;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+  box-shadow: 0 4px 24px rgba(33,29,51,0.13);
   display: block;
-  background: rgba(0,0,0,0.06);
+  background: rgba(33,29,51,0.06);
   }
 .avatarFallback {
   width:108px; height:108px; border-radius:50%;
   display:flex; align-items:center; justify-content:center;
   color:white; font-weight:700; font-size:38px;
   letter-spacing: -1px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+  box-shadow: 0 4px 24px rgba(33,29,51,0.13);
 }
 .availDot {
   position:absolute; bottom:6px; right:6px;
   width:16px; height:16px; border-radius:50%;
   background: var(--green-dot); border:3px solid #fff;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  box-shadow: 0 1px 4px rgba(33,29,51,0.15);
 }
 
 /* Name — large, clear, the person */
@@ -116,7 +116,7 @@
   align-items: center;
   gap: 5px;
   font-size: var(--text-sm);
-  color: rgba(0,0,0,0.5);
+  color: rgba(33,29,51,0.5);
   font-weight: 500;
   margin-bottom: 5px;
 }
@@ -136,7 +136,7 @@
   color: var(--ink-secondary);
   margin-bottom: 12px;
 }
-.locationDist { color: rgba(0,0,0,0.3); }
+.locationDist { color: rgba(33,29,51,0.3); }
 
 /* Stats row */
 .statsRow {
@@ -155,7 +155,7 @@
   color: var(--ink-secondary);
 }
 .stat strong { font-weight: 700; color: var(--ink-primary); }
-.stat span   { color: rgba(0,0,0,0.4); }
+.stat span   { color: rgba(33,29,51,0.4); }
 .statUrgent { color: var(--purple); font-weight: 600; }
 
 /* Bio */
@@ -191,8 +191,8 @@
 .ctaSecondary {
   display: flex; align-items: center; justify-content: center; gap: 7px;
   width: 100%; padding: 12px;
-  background: rgba(123,47,255,0.06); color: var(--purple);
-  border: 1.5px solid rgba(123,47,255,0.2);
+  background: var(--purple-05); color: var(--purple);
+  border: 1.5px solid var(--purple-20);
   border-radius: var(--radius-full);
   font-size: var(--text-sm); font-weight: 600;
   cursor: pointer; font-family: inherit;
@@ -234,10 +234,10 @@
   flex-shrink: 0;
   width: 10px; height: 10px;
   border-radius: 50%;
-  background: rgba(123,47,255,0.3);
+  background: var(--purple-30);
   border: 2px solid var(--paper);
   margin-top: 5px;
-  box-shadow: 0 0 0 2px rgba(123,47,255,0.12);
+  box-shadow: 0 0 0 2px var(--purple-10);
   z-index: 1;
 }
 
@@ -247,7 +247,7 @@
   top: 15px;
   bottom: 0;
   width: 2px;
-  background: rgba(0,0,0,0.06);
+  background: rgba(33,29,51,0.06);
 }
 
 .expContent {
@@ -312,8 +312,8 @@
 }
 .expTag {
   font-size: 10px;
-  color: rgba(0,0,0,0.5);
-  background: rgba(0,0,0,0.04);
+  color: rgba(33,29,51,0.5);
+  background: rgba(33,29,51,0.04);
   border: 1px solid var(--ink-border);
   border-radius: var(--radius-full);
   padding: 2px 8px;
@@ -351,7 +351,7 @@
   opacity: 0.85;
 }
 .tagIdioma {
-  background: rgba(123,47,255,0.05);
+  background: var(--purple-05);
   border-color: rgba(123,47,255,0.15);
   color: var(--purple);
 }
@@ -371,11 +371,11 @@
   border: 1px solid transparent;
 }
 .dayOn  { background: var(--green-light); border-color: rgba(5,150,105,0.18); }
-.dayOff { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.06); }
+.dayOff { background: rgba(33,29,51,0.03); border-color: rgba(33,29,51,0.06); }
 .dayPill span:first-child { font-size: 10px; font-weight: 600; color: var(--ink-secondary); margin-bottom: 3px; }
 .dayOn  span:last-child { font-size: var(--text-xs); color: var(--green); font-weight: 700; }
-.dayOff span:last-child { font-size: var(--text-xs); color: rgba(0,0,0,0.2); }
-.availNote { font-size: var(--text-xs); color: rgba(0,0,0,0.4); margin-top: 8px; }
+.dayOff span:last-child { font-size: var(--text-xs); color: rgba(33,29,51,0.2); }
+.availNote { font-size: var(--text-xs); color: rgba(33,29,51,0.4); margin-top: 8px; }
 
 /* ── Ratings ── */
 .ratingRow {
@@ -387,14 +387,14 @@
   color: var(--ink); letter-spacing: -1.5px;
 }
 .ratingStars { display: flex; gap: 2px; margin-bottom: 3px; }
-.ratingCount { font-size: var(--text-xs); color: rgba(0,0,0,0.4); }
+.ratingCount { font-size: var(--text-xs); color: rgba(33,29,51,0.4); }
 
 .reviewList { display: flex; flex-direction: column; gap: 8px; }
 .reviewItem {
   padding: 12px 14px;
-  background: rgba(0,0,0,0.02);
+  background: rgba(33,29,51,0.02);
   border-radius: var(--radius-md);
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid rgba(33,29,51,0.05);
 }
 .reviewItem p {
   font-size: var(--text-sm);
@@ -409,19 +409,19 @@
 
 /* ── Posts ── */
 .postCard {
-  background: rgba(0,0,0,0.02);
-  border: 1px solid rgba(0,0,0,0.05);
+  background: rgba(33,29,51,0.02);
+  border: 1px solid rgba(33,29,51,0.05);
   border-radius: var(--radius-md);
   padding: 14px;
   margin-bottom: 8px;
 }
-.postText { font-size: var(--text-sm); color: rgba(0,0,0,0.7); line-height: 1.65; margin: 0 0 10px; }
+.postText { font-size: var(--text-sm); color: rgba(33,29,51,0.7); line-height: 1.65; margin: 0 0 10px; }
 .postMeta { display: flex; align-items: center; justify-content: space-between; }
 .postDate { font-size: var(--text-xs); color: var(--ink-tertiary); }
 .postLike {
   display: flex; align-items: center; gap: 4px;
   background: none; border: none; cursor: pointer;
-  font-size: var(--text-xs); color: rgba(0,0,0,0.4); font-family: inherit;
+  font-size: var(--text-xs); color: rgba(33,29,51,0.4); font-family: inherit;
 }
 .postLikeActive { color: var(--red); }
 

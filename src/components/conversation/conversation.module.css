@@ -63,7 +63,7 @@
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid rgba(255,255,255,0.35);
-  box-shadow: var(--shadow-sm), 0 0 0 0.5px rgba(0,0,0,0.06);
+  box-shadow: var(--shadow-sm), 0 0 0 0.5px rgba(33,29,51,0.06);
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; color: var(--ink-secondary);
   transition: opacity 0.2s; flex-shrink: 0;
@@ -79,14 +79,14 @@
   border: 1px solid rgba(255,255,255,0.35);
   padding: 11px 28px;
   border-radius: var(--radius-full);
-  box-shadow: var(--shadow-sm), 0 0 0 0.5px rgba(0,0,0,0.06);
+  box-shadow: var(--shadow-sm), 0 0 0 0.5px rgba(33,29,51,0.06);
   display: flex; align-items: center; gap: 8px;
   pointer-events: none; white-space: nowrap;
 }
 .headerLogo { height: 22px; width: auto; }
 .headerDivider {
   width: 1px; height: 14px;
-  background: rgba(0,0,0,0.12);
+  background: rgba(33,29,51,0.12);
   flex-shrink: 0;
 }
 .headerSubtitle {
@@ -110,7 +110,7 @@
 }
 .inputCapsule:focus-within {
   background: rgba(255,255,255,0.86);
-  box-shadow: var(--shadow-sm), 0 0 0 0.5px rgba(0,0,0,0.07);
+  box-shadow: var(--shadow-sm), 0 0 0 0.5px rgba(33,29,51,0.07);
 }
 .input {
   flex: 1; border: none; outline: none;
@@ -120,13 +120,13 @@
   font-family: -apple-system, 'Inter', sans-serif;
   letter-spacing: -0.2px; padding: 0;
 }
-.input::placeholder { color: rgba(0,0,0,0.28); font-weight: 300; letter-spacing: -0.1px; }
+.input::placeholder { color: rgba(33,29,51,0.28); font-weight: 300; letter-spacing: -0.1px; }
 .input:disabled { opacity: 0.5; }
 
 .plusBtn {
   width: 34px; height: 34px; border-radius: 50%;
   background: transparent; border: none;
-  color: rgba(0,0,0,0.3);
+  color: rgba(33,29,51,0.3);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; cursor: pointer; transition: opacity 0.15s;
 }
@@ -162,7 +162,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 .suggestion:active { opacity: 0.7; transform: scale(0.98); }
-.suggestionText { font-size: var(--text-sm); color: rgba(0,0,0,0.7); font-weight: 500; }
+.suggestionText { font-size: var(--text-sm); color: rgba(33,29,51,0.7); font-weight: 500; }
 
 /* ── MESSAGES / BUBBLES ─────────────────────────────── */
 .msgRow { display: flex; align-items: flex-end; gap: 10px; }
@@ -178,7 +178,7 @@
 }
 @keyframes nuraGlow {
   0%,100% { box-shadow: var(--shadow-sm), 0 0 0 0 rgba(123,47,255,0); }
-  50%      { box-shadow: var(--shadow-sm), 0 0 0 4px rgba(123,47,255,0.06); }
+  50%      { box-shadow: var(--shadow-sm), 0 0 0 4px var(--purple-05); }
 }
 .nuraAvatarImg {
   width: 34px; height: 34px; object-fit: contain;
@@ -204,7 +204,7 @@
   -webkit-backdrop-filter: blur(20px) saturate(160%);
   backdrop-filter: blur(20px) saturate(160%);
   border: 1px solid rgba(255,255,255,0.6);
-  border-left: 2px solid rgba(123,47,255,0.2);
+  border-left: 2px solid var(--purple-20);
   color: var(--ink-primary);
   border-radius: var(--radius-xs) var(--radius-md) var(--radius-md) var(--radius-md);
   box-shadow: var(--shadow-xs);
@@ -218,7 +218,7 @@
 .typingDots { display: flex; gap: 4px; padding: 2px 0; }
 .typingDots span {
   width: 6px; height: 6px; border-radius: 50%;
-  background: rgba(0,0,0,0.2);
+  background: rgba(33,29,51,0.2);
   animation: tdot 1.4s infinite;
 }
 .typingDots span:nth-child(2) { animation-delay: 0.2s; }

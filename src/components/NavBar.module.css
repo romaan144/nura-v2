@@ -5,7 +5,7 @@
   background: transparent;
   border: none;
   box-shadow: none;
-  color: rgba(0,0,0,0.55);
+  color: rgba(33,29,51,0.55);
   display: flex; align-items: center; justify-content: center;
   transition: opacity 0.2s;
   flex-shrink: 0;
@@ -59,7 +59,7 @@
   display: flex; align-items: center; gap: 12px;
   padding: 14px 16px;
   border-bottom: 1px solid var(--rule);
-  background: rgba(0,0,0,0.04);
+  background: rgba(33,29,51,0.04);
 }
 .drawerAvatar {
   width: 42px; height: 42px; border-radius: 50%;
@@ -85,7 +85,7 @@
   transition: all 0.15s;
   width: 100%; text-align: left;
 }
-.drawerItem:hover { background: rgba(0,0,0,0.04); color: var(--ink); }
+.drawerItem:hover { background: rgba(33,29,51,0.04); color: var(--ink); }
 .drawerItemActive {
   background: rgba(123,47,255,0.09);
   color: var(--purple); font-weight: 700;

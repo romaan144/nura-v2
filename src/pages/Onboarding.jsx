@@ -88,7 +88,7 @@ export default function OnboardingPage() {
               marginTop:'16px', width:'100%', padding:'14px 16px',
               borderRadius:'var(--radius-card)', border:'1.5px solid var(--purple)',
               fontSize:'var(--text-base)', fontFamily:'inherit', resize:'none',
-              background:'rgba(123,47,255,0.05)', color:'var(--ink)',
+              background:'var(--purple-05)', color:'var(--ink)',
               outline:'none', minHeight:'80px', lineHeight:'1.5',
             }}
             placeholder='Ej: Busco una cuidadora para mi padre con Alzheimer...'

@@ -50,7 +50,7 @@
 
 /* ── Card ────────────────────────────────────────────── */
 .card {   background: #FFFFFF;
-  border: 1px solid rgba(0,0,0,0.07);
+  border: 1px solid rgba(33,29,51,0.07);
   border-radius: var(--radius-xl);
   overflow: hidden;
   box-shadow: var(--shadow-md);
@@ -98,7 +98,7 @@
   display: flex; align-items: center;
 }
 .authorSub {
-  font-size: var(--text-xs); color: rgba(0,0,0,0.4);
+  font-size: var(--text-xs); color: rgba(33,29,51,0.4);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
@@ -116,7 +116,7 @@
 .followingBtn {
   display: flex; align-items: center; gap: 4px;
   padding: 6px 12px; border-radius: var(--radius-full);
-  background: rgba(0,0,0,0.06); color: var(--ink-secondary);
+  background: rgba(33,29,51,0.06); color: var(--ink-secondary);
   border: none; font-size: var(--text-xs); font-weight: 600;
   cursor: pointer; flex-shrink: 0;
   transition: opacity 0.15s;
@@ -160,7 +160,7 @@
 .actions {
   display: flex; align-items: center; gap: 4px;
   padding: 2px 8px 8px;
-  border-top: 1px solid rgba(0,0,0,0.04);
+  border-top: 1px solid rgba(33,29,51,0.04);
 }
 .action {
   display: flex; align-items: center; gap: 5px;
@@ -186,7 +186,7 @@
   color: var(--ink-primary); margin: 0; letter-spacing: -0.3px;
 }
 .empty p {
-  font-size: var(--text-sm); color: rgba(0,0,0,0.4);
+  font-size: var(--text-sm); color: rgba(33,29,51,0.4);
   margin: 0; line-height: 1.6; max-width: 240px;
 }
 .emptyBtn {
@@ -250,7 +250,7 @@
 }
 .nuraPickDate {
   font-size: var(--text-xs);
-  color: rgba(0,0,0,0.3);
+  color: rgba(33,29,51,0.3);
 }
 
 .nuraPickCard {
@@ -286,7 +286,7 @@
 .nuraPickReason {
   display: flex; align-items: center; gap: 4px;
   font-size: var(--text-xs);
-  color: rgba(0,0,0,0.4);
+  color: rgba(33,29,51,0.4);
   line-height: 1.4;
 }
 .nuraPickRight {

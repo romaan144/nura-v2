@@ -136,7 +136,7 @@ export default function RegisterHelper() {
         <div className={styles.logoBubble}>
           <img src="/logo-text.png" alt="Nüra" className={styles.headerLogo} />
           <span style={{
-            width: 1, height: 14, background: 'rgba(0,0,0,0.12)',
+            width: 1, height: 14, background: 'rgba(33,29,51,0.12)',
             display: 'inline-block', margin: '0 8px', flexShrink: 0
           }} />
           <span style={{
@@ -170,8 +170,8 @@ export default function RegisterHelper() {
         {messages.length === 1 && (
           <div style={{
             margin:'0 0 12px', padding:'12px 16px',
-            background:'rgba(123,47,255,0.06)', borderRadius:'var(--radius-card)',
-            border:'1px solid rgba(123,47,255,0.12)'
+            background:'var(--purple-05)', borderRadius:'var(--radius-card)',
+            border:'1px solid var(--purple-10)'
           }}>
             <div style={{fontSize:'var(--text-xs)',fontWeight:700,color:'var(--purple)',marginBottom:'6px',letterSpacing:'0.3px',textTransform:'uppercase'}}>
               ¿Sabías que?
@@ -179,7 +179,7 @@ export default function RegisterHelper() {
             <div style={{fontSize:'var(--text-sm)',color:'var(--ink)',lineHeight:1.5,letterSpacing:'-0.1px'}}>
               Los profesionales de Nüra en Barcelona reciben una media de <strong>8 contactos al mes</strong> desde el primer día.
             </div>
-            <div style={{fontSize:'var(--text-xs)',color:'rgba(0,0,0,0.38)',marginTop:'6px'}}>
+            <div style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.38)',marginTop:'6px'}}>
               Tu perfil tarda menos de 3 minutos en estar publicado.
             </div>
           </div>
