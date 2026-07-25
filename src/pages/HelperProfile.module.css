@@ -313,7 +313,7 @@
 .expTag {
   font-size: 10px;
   color: rgba(33,29,51,0.5);
-  background: rgba(33,29,51,0.04);
+  background: var(--surface-subtle);
   border: 1px solid var(--ink-border);
   border-radius: var(--radius-full);
   padding: 2px 8px;
@@ -371,7 +371,7 @@
   border: 1px solid transparent;
 }
 .dayOn  { background: var(--green-light); border-color: rgba(5,150,105,0.18); }
-.dayOff { background: rgba(33,29,51,0.03); border-color: rgba(33,29,51,0.06); }
+.dayOff { background: var(--surface-subtle); border-color: rgba(33,29,51,0.06); }
 .dayPill span:first-child { font-size: 10px; font-weight: 600; color: var(--ink-secondary); margin-bottom: 3px; }
 .dayOn  span:last-child { font-size: var(--text-xs); color: var(--green); font-weight: 700; }
 .dayOff span:last-child { font-size: var(--text-xs); color: rgba(33,29,51,0.2); }

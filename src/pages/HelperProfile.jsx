@@ -52,12 +52,12 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
   }
 
   const style = {
-    overlay: {position:'fixed',inset:0,background:'rgba(33,29,51,0.5)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:300,display:'flex',alignItems:'flex-end',justifyContent:'center'},
+    overlay: {position:'fixed',inset:0,background:'var(--surface-scrim)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:300,display:'flex',alignItems:'flex-end',justifyContent:'center'},
     sheet: {background:'rgba(255,255,255,0.96)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',borderRadius:'24px 24px 0 0',padding:'var(--space-24) var(--space-20) 36px',width:'100%',maxWidth:'500px'},
-    handle: {width:'36px',height:'4px',background:'rgba(33,29,51,0.1)',borderRadius:'2px',margin:'0 auto var(--space-20)'},
-    input: {width:'100%',padding:'var(--space-12) var(--space-16)',border:'1px solid rgba(33,29,51,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',fontFamily:'-apple-system,Inter,sans-serif',background:'rgba(33,29,51,0.03)',boxSizing:'border-box'},
+    handle: {width:'36px',height:'4px',background:'var(--surface-muted)',borderRadius:'2px',margin:'0 auto var(--space-20)'},
+    input: {width:'100%',padding:'var(--space-12) var(--space-16)',border:'1px solid rgba(33,29,51,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',fontFamily:'-apple-system,Inter,sans-serif',background:'var(--surface-subtle)',boxSizing:'border-box'},
     btnPrimary: {width:'100%',padding:'var(--space-14)',background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:'pointer',transition:'opacity 0.2s'},
-    btnSecondary: {width:'100%',padding:'var(--space-12)',background:'rgba(33,29,51,0.05)',color:'rgba(33,29,51,0.55)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'},
+    btnSecondary: {width:'100%',padding:'var(--space-12)',background:'var(--surface-subtle)',color:'rgba(33,29,51,0.55)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'},
   }
 
   return (
@@ -89,7 +89,7 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
             </div>
             {/* Booking summary */}
             {(date || time) && (
-              <div style={{background:'rgba(33,29,51,0.03)',border:'1px solid rgba(33,29,51,0.06)',
+              <div style={{background:'var(--surface-subtle)',border:'1px solid rgba(33,29,51,0.06)',
                 borderRadius:'var(--radius-card)',padding:'var(--space-12) var(--space-16)',width:'100%',textAlign:'left'}}>
                 {date && <p style={{margin:'0 0 var(--space-4)',fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.6)'}}>
                   {new Date(date).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})}
@@ -374,7 +374,7 @@ function HelperProfileInner() {
           {/* Nüra recomienda — justo antes del CTA */}
           <div style={{
             margin:'0 0 var(--space-14)', padding:'var(--space-12) var(--space-14)',
-            background:'rgba(33,29,51,0.03)', borderRadius:'var(--radius-card)',
+            background:'var(--surface-subtle)', borderRadius:'var(--radius-card)',
             display:'flex', alignItems:'flex-start', gap:'var(--space-8)',
             animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.22s both'
           }}>

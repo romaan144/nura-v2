@@ -79,6 +79,13 @@ prohibido el `ease-out` genérico.
   (xs/sm/md/lg + micro/std/block/section) sobreviven solo como alias.
   **Prohibido escribir un espaciado a mano.**
 
+- **El Velo (superficies tenues)**: `--surface-subtle` (campos, bloques
+  secundarios) · `--surface-muted` (chips, railes, inactivos) ·
+  `--surface-scrim` (velo de modales). **Prohibido inventar un relleno
+  tenue.** Ojo: los mismos alfas en sombras y bordes son OTRA familia y no
+  se tocan. Las dos barras fijas de la app (BottomNav y cabecera de Chats)
+  comparten receta: papel a 0.86 con blur 32.
+
 - **La Tinta manda (color)**: Nüra **no usa negro puro**. Toda tinta,
   borde, sombra y veladura es `rgba(33,29,51, α)` — violeta cálido sobre
   papel cálido. El morado de marca solo por token

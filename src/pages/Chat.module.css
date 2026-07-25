@@ -122,7 +122,7 @@
 }
 .systemMsg { text-align: center; }
 .systemMsg .msgBubble {
-  background: rgba(33,29,51,0.05); color: var(--ink-secondary);
+  background: var(--surface-subtle); color: var(--ink-secondary);
   border-radius: var(--radius-sm); font-size: var(--text-xs); max-width: 90%;
   margin: 0 auto; padding: 6px 14px; box-shadow: none;
 }

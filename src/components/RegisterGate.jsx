@@ -57,7 +57,7 @@ export default function RegisterGate({ onClose, reason = 'contact' }) {
         animation: 'slideUp 0.28s cubic-bezier(0.25,0.46,0.45,0.94)',
       }}>
         {/* Handle */}
-        <div style={{width:36,height:4,borderRadius:2,background:'rgba(33,29,51,0.1)',margin:'var(--space-12) auto var(--space-20)'}} />
+        <div style={{width:36,height:4,borderRadius:2,background:'var(--surface-muted)',margin:'var(--space-12) auto var(--space-20)'}} />
 
         {/* Icon + headline */}
         <div style={{textAlign:'center',marginBottom:'var(--space-20)'}}>
@@ -73,7 +73,7 @@ export default function RegisterGate({ onClose, reason = 'contact' }) {
 
         {/* Benefits */}
         <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)',marginBottom:'var(--space-24)',
-          background:'rgba(33,29,51,0.03)',borderRadius:'var(--radius-card)',padding:'var(--space-14) var(--space-16)'}}>
+          background:'var(--surface-subtle)',borderRadius:'var(--radius-card)',padding:'var(--space-14) var(--space-16)'}}>
           {BENEFITS.map((b, i) => (
             <div key={i} style={{display:'flex',alignItems:'center',gap:'var(--space-10)'}}>
               {b.icon}
@@ -93,7 +93,7 @@ export default function RegisterGate({ onClose, reason = 'contact' }) {
             onClick={() => { onClose(); sessionStorage.setItem('nura_return_to', location.pathname + location.search); navigate('/login') }}
             style={{
               width:'100%',padding:'13px',
-              background:'rgba(33,29,51,0.05)',color:'rgba(33,29,51,0.55)',
+              background:'var(--surface-subtle)',color:'rgba(33,29,51,0.55)',
               border:'none',borderRadius:'var(--radius-full)',
               fontSize:'var(--text-sm)',fontWeight:600,
               cursor:'pointer',

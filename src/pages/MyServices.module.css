@@ -86,7 +86,7 @@
   min-width: 0;
   display: flex; align-items: center; justify-content: center; gap: 5px;
   padding: 10px 12px;
-  background: rgba(33,29,51,0.05); color: rgba(33,29,51,0.6);
+  background: var(--surface-subtle); color: rgba(33,29,51,0.6);
   border: none; border-radius: var(--radius-full);
   font-size: var(--text-xs); font-weight: 600;
   cursor: pointer; font-family: inherit;

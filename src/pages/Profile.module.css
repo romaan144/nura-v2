@@ -295,7 +295,7 @@
   width: calc(100% - 28px);
   -webkit-tap-highlight-color: transparent;
 }
-.logoutBtn:active { background: rgba(33,29,51,0.03); }
+.logoutBtn:active { background: var(--surface-subtle); }
 
 .logoutIcon {
   width: 36px; height: 36px;

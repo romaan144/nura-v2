@@ -43,7 +43,7 @@
 .emptyTitle { font-size: var(--text-md); font-weight: 800; color: rgba(33,29,51,0.75); margin: 0; letter-spacing: -0.3px; }
 .emptyDesc { font-size: var(--text-sm); color: rgba(33,29,51,0.4); margin: 0; line-height: 1.65; max-width: 240px; text-align: center; }
 .emptyBtn:active { opacity: 0.75; }
-.emptyBtnSecondary { padding: 12px 28px; background: rgba(33,29,51,0.05); color: rgba(33,29,51,0.55); border: none; border-radius: var(--radius-full); font-size: var(--text-sm); font-weight: 600; cursor: pointer; width: 100%; max-width: 280px; font-family: inherit; }
+.emptyBtnSecondary { padding: 12px 28px; background: var(--surface-subtle); color: rgba(33,29,51,0.55); border: none; border-radius: var(--radius-full); font-size: var(--text-sm); font-weight: 600; cursor: pointer; width: 100%; max-width: 280px; font-family: inherit; }
 
 /* ── EMPTY STATE ─────────────────────────────────────────────────────── */
 

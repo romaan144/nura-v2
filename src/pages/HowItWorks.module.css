@@ -27,7 +27,7 @@
 .stepBody { flex: 1; }
 .stepTitle { font-size: var(--text-base); font-weight: 800; color: rgba(33,29,51,0.85); margin: 0 0 6px; letter-spacing: -0.2px; }
 .stepDesc { font-size: var(--text-sm); color: rgba(33,29,51,0.5); line-height: 1.6; margin: 0 0 10px; }
-.stepExample { font-size: var(--text-xs); color: rgba(33,29,51,0.5); background: rgba(33,29,51,0.03); border-left: 2px solid rgba(33,29,51,0.12); padding: 8px 12px; border-radius: 0 8px 8px 0; line-height: 1.5; }
+.stepExample { font-size: var(--text-xs); color: rgba(33,29,51,0.5); background: var(--surface-subtle); border-left: 2px solid rgba(33,29,51,0.12); padding: 8px 12px; border-radius: 0 8px 8px 0; line-height: 1.5; }
 
 /* Differentiator */
 .diffCard { background: rgba(255,255,255,0.85); border: 1px solid rgba(255,255,255,0.5); border-radius: 18px; padding: 18px 16px; box-shadow: var(--shadow-xs); }

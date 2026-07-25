@@ -120,7 +120,7 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
             <div className="hilo" style={{width:'56px', margin:'var(--space-2) auto var(--space-10)'}} />
         <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.45)',marginBottom:'var(--space-12)',lineHeight:1.6}}>{name} confirmará disponibilidad en breve.</p>
         {(date || time) && (
-          <div style={{background:'rgba(33,29,51,0.03)',border:'1px solid rgba(33,29,51,0.06)',borderRadius:'var(--radius-card)',
+          <div style={{background:'var(--surface-subtle)',border:'1px solid rgba(33,29,51,0.06)',borderRadius:'var(--radius-card)',
             padding:'var(--space-10) var(--space-14)',marginBottom:'var(--space-20)',textAlign:'left'}}>
             {date && <p className={styles.metaXs3}>
               {new Date(date).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})}
@@ -145,7 +145,7 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
   return (
     <div style={{position:'fixed',inset:0,background:'rgba(30,25,40,0.35)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:200,display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
       <div style={{background:'rgba(255,255,255,0.95)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',border:'1px solid rgba(255,255,255,0.5)',borderRadius:'24px 24px 0 0',padding:'var(--space-24) var(--space-20) var(--space-32)',width:'100%',maxWidth:'500px',boxShadow:'0 -8px 40px rgba(33,29,51,0.1)'}}>
-        <div style={{width:'36px',height:'4px',background:'rgba(33,29,51,0.1)',borderRadius:'2px',margin:'0 auto var(--space-24)'}} />
+        <div style={{width:'36px',height:'4px',background:'var(--surface-muted)',borderRadius:'2px',margin:'0 auto var(--space-24)'}} />
         <h3 style={{fontSize:'var(--text-md)',fontWeight:800,marginBottom:'var(--space-4)',color:'rgba(33,29,51,0.85)',letterSpacing:'-0.3px'}}>Solicitar servicio</h3>
         <div className="hilo" style={{width:'56px', margin:'var(--space-2) 0 var(--space-10)'}} />
         <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.45)',marginBottom: prefillDate ? '12px' : '20px'}}>Con {name} · {helper.price || 'Precio a consultar'}</p>
@@ -198,10 +198,10 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
           </div>
           <textarea value={note} onChange={e=>setNote(e.target.value)}
             placeholder="Detalles adicionales (opcional)..." rows={3}
-            style={{padding:'var(--space-12) var(--space-16)',border:'1px solid rgba(33,29,51,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',resize:'none',fontFamily:'-apple-system,Inter,sans-serif',color:'rgba(33,29,51,0.85)',background:'rgba(33,29,51,0.03)'}} />
+            style={{padding:'var(--space-12) var(--space-16)',border:'1px solid rgba(33,29,51,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',resize:'none',fontFamily:'-apple-system,Inter,sans-serif',color:'rgba(33,29,51,0.85)',background:'var(--surface-subtle)'}} />
         </div>
         <div style={{display:'flex',gap:'var(--space-10)'}}>
-          <button onClick={onClose} style={{flex:1,padding:'var(--space-14)',background:'rgba(33,29,51,0.05)',color:'rgba(33,29,51,0.55)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>Cancelar</button>
+          <button onClick={onClose} style={{flex:1,padding:'var(--space-14)',background:'var(--surface-subtle)',color:'rgba(33,29,51,0.55)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>Cancelar</button>
           <button onClick={()=>{ onConfirm?.(date, time, note); setDone(true); notifyServiceConfirmed(helper.name?.split(' ')?.[0] || helper.name); haptic('success') }} disabled={!date}
             style={{flex:2,padding:'var(--space-14)',background:date?'var(--purple)':'rgba(33,29,51,0.1)',color:date?'white':'rgba(33,29,51,0.3)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:date?'pointer':'default',transition:'all 0.2s'}}>
             Enviar solicitud
@@ -590,7 +590,7 @@ export default function Chat() {
             <div style={{display:'flex',gap:'var(--space-8)',flexWrap:'wrap',justifyContent:'center',marginTop:'var(--space-4)'}}>
               {helper.dniVerified && <span style={{fontSize:'var(--text-xs)',color:'var(--green)',background:'var(--green-light)',border:'1px solid rgba(5,150,105,0.15)',borderRadius:'var(--radius-full)',padding:'var(--space-3) var(--space-10)',fontWeight:600}}>Verificado</span>}
               {helper.available && <span style={{fontSize:'var(--text-xs)',color:'var(--green)',background:'var(--green-light)',border:'1px solid rgba(5,150,105,0.15)',borderRadius:'var(--radius-full)',padding:'var(--space-3) var(--space-10)',fontWeight:600}}>● Disponible</span>}
-              <span style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.4)',background:'rgba(33,29,51,0.04)',borderRadius:'var(--radius-full)',padding:'var(--space-3) var(--space-10)'}}>⭐ {helper.rating} · {helper.reviews} reseñas</span>
+              <span style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.4)',background:'var(--surface-subtle)',borderRadius:'var(--radius-full)',padding:'var(--space-3) var(--space-10)'}}>⭐ {helper.rating} · {helper.reviews} reseñas</span>
             </div>
             {/* Conversation starters */}
             <div style={{display:'flex',flexDirection:'column',gap:'var(--space-8)',marginTop:'var(--space-20)',width:'100%',maxWidth:'280px'}}>
@@ -646,7 +646,7 @@ export default function Chat() {
                       ✓ Me va bien
                     </button>
                     <button onClick={() => answerProposal(msg.id, false, msg.proposal.label)}
-                      style={{background:'rgba(33,29,51,0.05)', color:'var(--ink)',
+                      style={{background:'var(--surface-subtle)', color:'var(--ink)',
                         border:'1px solid var(--ink-border)', borderRadius:'var(--radius-full)',
                         padding:'7px var(--space-14)', fontSize:'var(--text-xs)', fontWeight:600}}>
                       Otro momento

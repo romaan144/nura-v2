@@ -104,7 +104,7 @@
   -webkit-tap-highlight-color: transparent;
   animation: fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
 }
-.regenBtn:active { background: rgba(33,29,51,0.03); }
+.regenBtn:active { background: var(--surface-subtle); }
 
 /* ── FLOATING SEND BUTTON ───────────────────────────── */
 .floatBottom {
@@ -150,7 +150,7 @@
 }
 .introText { font-size: 12px; color: var(--ink-tertiary); }
 .regenBtn {
-  background: rgba(33,29,51,0.04);
+  background: var(--surface-subtle);
   color: var(--ink);
   border: 1px solid var(--ink-border);
   border-radius: var(--radius-full);

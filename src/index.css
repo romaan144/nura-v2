@@ -70,6 +70,13 @@ body {
   --ink-tertiary:  rgba(33,29,51,0.55);
   --ink-disabled:  rgba(33,29,51,0.25);
   --ink-border:    rgba(33,29,51,0.06);
+
+  /* ── EL VELO — superficies tenues ───────────────────────────
+     22 sitios pintaban el mismo concepto con cuatro intensidades.
+     Son dos conceptos y tres accidentes. */
+  --surface-subtle: rgba(33,29,51,0.04);   /* campos, bloques secundarios */
+  --surface-muted:  rgba(33,29,51,0.10);   /* chips, railes, inactivos */
+  --surface-scrim:  rgba(33,29,51,0.50);   /* el velo de los modales */
   --mid:      #3D3D5C;
   --soft:     #8888AA;
   --rule:     #E4E4F0;

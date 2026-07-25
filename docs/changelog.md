@@ -26,6 +26,19 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — El Velo: la superficie tenue, con nombre (Nura diseno)
+
+- 22 sitios pintaban el mismo concepto con cuatro intensidades (0.03, 0.04,
+  0.05, 0.10). Al mirar PARA QUE se usaba cada una, no eran cuatro
+  decisiones: eran dos conceptos y tres accidentes. Nacen
+  --surface-subtle / muted / scrim.
+- Sustitucion acotada a `background`: los mismos alfas en sombras y bordes
+  son otra familia y quedan intactos.
+- La cabecera de Chats abandona su gris azulado (rgba(245,245,248,0.95)) y
+  su borde blanco: adopta la receta de la BottomNav. Si la app tiene dos
+  barras fijas, son la misma barra.
+- Sello NURA_BUILD 2026.07.04-co.
+
 ## 2026-07-04 — El Rotulo: la tipografia menuda, bajo control (Nura diseno)
 
 - El rotulo de seccion (TU SEMANA, CERCA DE TI, EN SUS PROPIAS PALABRAS...)

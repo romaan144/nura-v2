@@ -378,7 +378,7 @@
   font-family: inherit;
   -webkit-tap-highlight-color: transparent;
 }
-.quickOption:active { background: rgba(33,29,51,0.1); }
+.quickOption:active { background: var(--surface-muted); }
 
 /* Bottom nav space (mobile only) */
 @media (max-width: 767px) {
