@@ -10,6 +10,7 @@ import { haptic } from '../utils/haptic'
 import RatingModal from '../components/RatingModal'
 import styles from './Chat.module.css'
 import { generateFirstMessage, getHelperReply, getNuraIntervention, buildLivingConversation } from '../utils/chatReplies'
+import { buildChatOpener } from '../utils/introLetter'
 import { DEMO_MODE } from '../config'
 import { Badge } from '../components/ui'
 import RegisterGate from '../components/RegisterGate'
@@ -261,21 +262,14 @@ export default function Chat() {
   const fromSearch = !!userQuery && !hasHistory
 
   // Pre-fill input with contextual message when coming from search
-  const buildPreFill = (helper, query) => {
-    if (!helper || !query) return ''
-    const name = helper.name?.split(' ')?.[0] || ''
-    // Clean up the query — remove trailing punctuation, make it lowercase if it starts as such
-    const q = query.trim().replace(/[.?!]+$/, '')
-    return `Hola ${name}, ${q}. ¿Puedes ayudarme?`
-  }
-
   const [input, setInput] = useState(() =>
     (!!location.state?.userQuery || !!window.__nuraLastQuery) && !hasHistory && !location.state?.introLetterText
-      ? buildPreFill(
-          helpersCache?.[parseInt(id)] || helpersCache?.[id] ||
-          HELPERS.filter(Boolean).find(h => String(h.id) === String(id)),
-          location.state?.userQuery || window.__nuraLastQuery
-        )
+      ? buildChatOpener({
+          helper: helpersCache?.[parseInt(id)] || helpersCache?.[id] ||
+            HELPERS.filter(Boolean).find(h => String(h.id) === String(id)),
+          analysis: location.state?.analysis || window.__nuraLastAnalysis,
+          userQuery: location.state?.userQuery || window.__nuraLastQuery,
+        })
       : ''
   )
   const [suggested, setSuggested] = useState('')

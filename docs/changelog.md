@@ -26,6 +26,21 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — La Carta: Nura escribe el primer mensaje (Nura Copilot)
+
+- Hallazgo del recon: la pantalla IntroLetter (/intro/:id) esta construida
+  pero NADIE navega a ella — codigo muerto. Y el chat prellenaba con
+  buildPreFill, siete lineas que repetian la consulta cruda sin aportar nada.
+- La prueba impresa antes de conectar salvo el ciclo: buildIntroLetter esta
+  escrita en voz de NURA y tercera persona ("soy Nura, te escribo en nombre
+  de Sergio"), correcta para /intro pero absurda en el chat, donde el
+  remitente es el usuario. Ademas la rama de invitado perdia la consulta.
+- Solucion: nueva buildChatOpener — primera persona, las palabras del propio
+  usuario, y el porque que Nura vio ("Nura te ha recomendado por tu
+  experiencia como auxiliar de geriatria"). buildPreFill jubilada;
+  buildIntroLetter intacta para su pantalla.
+- Sello NURA_BUILD 2026.07.04-cg.
+
 ## 2026-07-04 — Tarjetas secundarias: filas alineadas entre si
 
 - El punto de conectado (LiveDot) era inline-block dentro del avatar: se

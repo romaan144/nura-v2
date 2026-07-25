@@ -124,6 +124,8 @@ cuando la conexión responde. Detalle técnico en `architecture.md`.
   visible en el Perfil. Resta solo la comprobación visual en dispositivo.
 - [PENDIENTE] Las listas de subcategorías de Explore (datos conservados en
   CATEGORIES) valen oro como keywords futuras del matching.
+- [PENDIENTE] Decidir si la pantalla `/intro/:id` (IntroLetter) se retira:
+  sigue sin enlaces desde que el chat redacta su propia carta.
 - [PENDIENTE] Extraer `runSearch(id)` del monolito handleSend — el Contrato
   ya rige vía guardas; la extracción es refactor de mantenibilidad.
 - [PENDIENTE] Al lanzar producción: cambiar el interruptor demo en la
