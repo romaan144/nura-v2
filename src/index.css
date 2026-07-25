@@ -74,7 +74,9 @@ body {
   /* ── EL VELO — superficies tenues ───────────────────────────
      22 sitios pintaban el mismo concepto con cuatro intensidades.
      Son dos conceptos y tres accidentes. */
+  --surface-faint:  rgba(33,29,51,0.02);   /* pulsacion, apenas visible */
   --surface-subtle: rgba(33,29,51,0.04);   /* campos, bloques secundarios */
+  --surface-soft:   rgba(33,29,51,0.06);   /* raíles, avatares vacíos */
   --surface-muted:  rgba(33,29,51,0.10);   /* chips, railes, inactivos */
   --surface-scrim:  rgba(33,29,51,0.50);   /* el velo de los modales */
   --mid:      #3D3D5C;

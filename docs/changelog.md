@@ -26,6 +26,16 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — El Velo, completado (fallo de censo corregido)
+
+- Mi censo de Fase 1 solo conto los .jsx, asi que los rellenos que viven en
+  los .module.css usaban alfas que ni aparecian en el cuadro (0.02, 0.06).
+  Familia completada con --surface-faint y --surface-soft, mismo criterio:
+  nombrar lo que existe sin mover un pigmento.
+- Verificado ademas que ninguna sombra ni borde cambio: las lineas que el
+  diff marcaba contenian fondo Y borde juntos; solo cambio el fondo.
+- Sello NURA_BUILD 2026.07.04-cp.
+
 ## 2026-07-04 — El Velo: la superficie tenue, con nombre (Nura diseno)
 
 - 22 sitios pintaban el mismo concepto con cuatro intensidades (0.03, 0.04,

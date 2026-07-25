@@ -227,7 +227,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 .recentItem:first-child { border-top: none; }
-.recentItem:active { background: rgba(33,29,51,0.02); }
+.recentItem:active { background: var(--surface-faint); }
 
 .recentText {
   font-size: var(--text-sm);
