@@ -174,3 +174,34 @@ export function SectionLabel({ tone = 'muted', children, style, ...rest }) {
     </div>
   )
 }
+
+// ═══════════════════════════════════════════════════════════════
+// EmptyState — un vacio no es un error: es la mejor ocasion de
+// explicar que hace el producto. Voz de Nura, apoyo, y SIEMPRE una
+// salida (dos de los cuatro anteriores eran callejones sin salida).
+// Sin icono: la identidad de Nura es su voz, y un pictograma de "no
+// hay nada" refuerza la ausencia en vez de la promesa.
+// ═══════════════════════════════════════════════════════════════
+export function EmptyState({ title, hint, actionLabel, onAction, style }) {
+  return (
+    <div style={{ textAlign: 'center', padding: '64px var(--space-24) var(--space-24)', ...style }}>
+      <p style={{
+        fontFamily: 'var(--font-voice)', fontSize: 'var(--text-heading)', fontWeight: 500,
+        color: 'var(--ink)', lineHeight: 1.45, letterSpacing: '-0.3px',
+        margin: '0 0 var(--space-8)',
+      }}>
+        {title}
+      </p>
+      {hint && (
+        <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)', lineHeight: 1.5, margin: 0 }}>
+          {hint}
+        </p>
+      )}
+      {actionLabel && onAction && (
+        <div style={{ marginTop: 'var(--space-20)', display: 'flex', justifyContent: 'center' }}>
+          <Button variant="secondary" onClick={onAction}>{actionLabel}</Button>
+        </div>
+      )}
+    </div>
+  )
+}

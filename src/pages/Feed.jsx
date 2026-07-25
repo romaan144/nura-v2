@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button, SectionLabel } from '../components/ui'
+import { Button, SectionLabel, EmptyState } from '../components/ui'
 import { useUser } from '../context/UserContext'
 import HelperCard from '../components/HelperCard'
 import { getConnectionStories, getDestacados } from '../data/connectionStories'
@@ -92,9 +92,12 @@ export default function Feed() {
         </SectionLabel>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
           {modo === 'siguiendo' && obras.length === 0 && rioF.length === 0 ? (
-            <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)', lineHeight: 1.55, padding: 'var(--space-6) var(--space-2)' }}>
-              Aún no sigues a nadie. Toca ♡ en un perfil para seguir su evolución profesional.
-            </p>
+            <EmptyState
+              title="Aún no sigues a nadie."
+              hint="Cuando sigas a un profesional, su obra irá apareciendo aquí — su currículum, vivo."
+              actionLabel="Ver a todo el barrio"
+              onAction={() => setModo('todos')}
+            />
           ) : (() => {
             const mixto = []
             let o = 0, c = 0

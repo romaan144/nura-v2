@@ -11,7 +11,7 @@ import { analyzeNeed, matchHelpers } from '../utils/matching'
 import { useUser } from '../context/UserContext'
 import HelperCard from '../components/HelperCard'
 import styles from './Explore.module.css'
-import { LiveDot } from '../components/ui'
+import { LiveDot, EmptyState } from '../components/ui'
 
 // ── Escaparate Vivo — señales de actividad reciente ──────────────────────
 const ACTIVITY_SIGNALS = [
@@ -471,13 +471,12 @@ export default function Explore() {
                 )}
               </>
             ) : (
-              <div className={styles.empty}>
-                <Search size={40} color="var(--ink-border)" strokeWidth={1.3} />
-                <p>No encontramos profesionales en esta categoría.</p>
-                <button className={styles.emptyBtn} onClick={goBack}>
-                  Ver todas las categorías
-                </button>
-              </div>
+              <EmptyState
+                title="En esta categoría todavía no hay nadie cerca de ti."
+                hint="Prueba con otra, o cuéntame qué necesitas y lo busco yo."
+                actionLabel="Ver todas las categorías"
+                onAction={goBack}
+              />
             )}
           </>
         )}

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import PageHeader from '../components/PageHeader'
+import { EmptyState } from '../components/ui'
 import { useNavigate } from 'react-router-dom'
 import { Search, MessageCircle } from 'lucide-react'
 import { useUser } from '../context/UserContext'
@@ -166,15 +167,12 @@ export default function Chats() {
 
       <div className={styles.list}>
         {allChats.length === 0 && (
-          <div style={{textAlign:'center', padding:'72px var(--space-32) 0'}}>
-            <p style={{fontFamily:'var(--font-voice)', fontSize:'var(--text-heading)', color:'var(--ink)',
-              lineHeight:1.45, letterSpacing:'-0.3px', margin:'0 0 var(--space-8)'}}>
-              Cuando conectes con alguien, vuestra conversación vivirá aquí.
-            </p>
-            <p style={{fontSize:'var(--text-sm)', color:'var(--ink-tertiary)', margin:0, lineHeight:1.5}}>
-              Cuéntale a Nüra qué necesitas y ella encontrará a la persona.
-            </p>
-          </div>
+          <EmptyState
+            title="Cuando conectes con alguien, vuestra conversación vivirá aquí."
+            hint="Cuéntale a Nüra qué necesitas y ella encontrará a la persona."
+            actionLabel="Buscar a mi persona"
+            onAction={() => navigate('/')}
+          />
         )}
 
         {filtered.length === 0 && search.trim() && (

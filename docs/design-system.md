@@ -123,6 +123,17 @@ mayusculas lo sano es 0,05-0,08em, asi que es calibrado, no promedio
 **Prohibido dibujar un rotulo a mano.** Las insignias (con fondo y
 pildora) son otra familia: les corresponde `Badge`.
 
+### EmptyState (primitiva)
+Un vacio **no es un error**: es la mejor ocasion de explicar que hace el
+producto. Patron unico: **frase en la Voz de Nura** (humana, jamas
+funcional — muere "No encontramos profesionales"), **linea de apoyo** que
+cuenta que pasara cuando haya algo, y **SIEMPRE una accion** que saque de
+ahi. Dos de los cuatro vacios anteriores eran callejones sin salida.
+**Sin icono**: la identidad de Nura es su voz; un pictograma de "no hay
+nada" refuerza la ausencia en vez de la promesa.
+No confundir con el muro de registro (Perfil sin cuenta): eso no es un
+vacio, es una puerta. Otra familia.
+
 ### Button (primitiva)
 `<Button variant="primary|secondary|ghost" full disabled onClick>`.
 **`minHeight: 44px` cocido dentro**: el area tactil deja de ser una

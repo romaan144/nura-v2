@@ -26,6 +26,20 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — El Vacio: la pantalla que mas se ve el primer dia
+
+- Auditoria del primer dia: en la primera sesion de Nura casi todo esta
+  vacio, y habia cuatro estados vacios que eran cuatro productos distintos
+  (voz de Nura / funcional / plana), con estructuras distintas. **Dos eran
+  callejones sin salida**: el de Chats decia "cuentale a Nura que
+  necesitas"... sin boton para ir a contarselo.
+- Nace `EmptyState`: voz + apoyo + **accion siempre**. Migrados los tres
+  vacios reales; el de Chats conserva su frase (la mejor de las cuatro) y
+  gana la salida; el de Explorar deja de hablar como buscador roto.
+- Excluido por disciplina: el "Perfil sin cuenta" NO es un vacio, es un
+  muro de registro — otra familia, se queda como esta.
+- Sello NURA_BUILD 2026.07.04-cq.
+
 ## 2026-07-04 — El Velo, completado (fallo de censo corregido)
 
 - Mi censo de Fase 1 solo conto los .jsx, asi que los rellenos que viven en
