@@ -257,7 +257,7 @@ function HelperProfileInner() {
         {/* ══════════════════════════════════════════════════
             HERO EDITORIAL — la persona, no el formulario
             ══════════════════════════════════════════════════ */}
-        <div className={`${styles.hero} aurora`} style={{animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards'}}>
+        <div className={`${styles.hero} aurora`}>
 
           {/* Avatar grande — protagonista */}
           <div style={{

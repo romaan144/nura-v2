@@ -4,12 +4,11 @@
   background: var(--paper);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding-top: var(--header-h);
-  padding-bottom: var(--nav-h);
+  padding-top: var(--header-h);   /* sin hero: el contenido no puede subir */
 }
 
 .scroll {
-  padding: 0 0 20px;
+  padding: 0 0 var(--nav-h);   /* la barra, reservada una sola vez */
 }
 
 /* ── ZONA 1: IDENTIDAD ───────────────────────────────────────── */

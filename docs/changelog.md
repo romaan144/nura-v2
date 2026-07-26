@@ -26,6 +26,23 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — El Perfil, de borde a borde (encargo del fundador)
+
+- Dos errores reales de geometria en las paginas de perfil:
+  **① Doble reserva abajo**: .page reservaba var(--nav-h) Y .scroll añadia
+  40px (profesional) o 20px (propio) — 113px y 93px de aire muerto.
+  **② Banda vacia arriba**: la cabecera es transparente y flotante (solo sus
+  botones llevan fondo con blur), pero la pagina reservaba --header-h como
+  si fuera barra solida: 76px de papel desnudo antes del hero blanco.
+- Cura: el hero del profesional sube al borde (asume el --header-h en su
+  propio padding, su blanco y su aurora pasan BAJO la cabecera) y la barra
+  se reserva una sola vez en .scroll. **Tu perfil no tiene hero**, asi que
+  conserva su padding-top: aplicarle lo mismo habria metido el nombre bajo
+  los botones. Verificado antes de tocar.
+- Colateral: el hero arrastraba un fadeInUp en linea — entrada de contenido,
+  prohibida por la ley de -ar. Retirada.
+- Sello NURA_BUILD 2026.07.04-ct.
+
 ## 2026-07-04 — El Acuse: que Nura reconozca lo que consigues
 
 - Auditoria del feedback: de los seis avisos del producto, **cuatro servian
