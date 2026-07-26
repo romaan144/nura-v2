@@ -72,6 +72,12 @@ prohibido el `ease-out` genérico.
   el texto conversacional respeta `max-width: 80%` (aire), mientras tarjetas
   y filtros respiran a ancho completo (evita comprimir información).
 
+- **El Compas (ritmo vertical de las secciones)**: una seccion respira
+  IGUAL por arriba que por abajo. La linea separadora queda a la misma
+  distancia del contenido que termina y del titulo que empieza
+  (`--space-20` a cada lado, `--space-14` bajo el titulo). **Prohibidos los
+  margenes-parche** que fingen un hueco que el padding no da.
+
 - **El Ritmo manda (espaciado)**: una sola escala, nombrada por su valor —
   `--space-2 · 3 · 4 · 6 · 8 · 10 · 12 · 14 · 16 · 20 · 24 · 28 · 32`.
   Nacio de MEDIR el producto: `10px` era el valor mas usado de la app y

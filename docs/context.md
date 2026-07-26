@@ -124,6 +124,11 @@ cuando la conexión responde. Detalle técnico en `architecture.md`.
   visible en el Perfil. Resta solo la comprobación visual en dispositivo.
 - [PENDIENTE] Las listas de subcategorías de Explore (datos conservados en
   CATEGORIES) valen oro como keywords futuras del matching.
+- [DEUDA] `--rule` (#E4E4F0, gris azulado) sobrevive en 18 usos repartidos
+  por 8 archivos de estructura (barra lateral, navegacion, Login, modal de
+  valoracion, Onboarding, Home). Debe morir en favor de `--ink-border`, que
+  ya usa el 73% del producto y respeta la tinta calida.
+
 - [LEY PARA EL BACKEND] Cuando Supabase sea real, Chats y Comunidad DEBEN
   ganar estado de carga antes de mostrar su EmptyState: hoy sus datos vienen
   del contexto ya montado (no hay espera que mostrar, y fabricarla seria

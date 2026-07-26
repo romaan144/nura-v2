@@ -26,6 +26,21 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — El Compas: el ritmo vertical de las secciones
+
+- El fundador señalo que la linea separadora aparecia pegada al contenido
+  (ej. Idiomas). Causa medida: `.section` tenia `padding: 20px 20px 0` —
+  **20px de aire arriba y CERO abajo** — mas un `margin-top: 4px` que fingia
+  el hueco. Asimetria 20 contra 4.
+- Cura: compas simetrico (--space-20 a cada lado de la linea) y muere el
+  margen-parche. El perfil pasa a separar con --ink-border como el resto.
+- **Correccion a mi propio analisis**: en Fase 1 afirme que `.section`
+  estaba definida dos veces. Era falso — habia leido mal mi recon (la otra
+  linea era `.sectionFirst`). Solo hay una definicion.
+- `--rule` sobrevive en 8 archivos de estructura, fuera del encargo: queda
+  como DEUDA censada en context.md.
+- Sello NURA_BUILD 2026.07.04-cu.
+
 ## 2026-07-04 — El Perfil, de borde a borde (encargo del fundador)
 
 - Dos errores reales de geometria en las paginas de perfil:

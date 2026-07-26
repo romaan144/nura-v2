@@ -201,7 +201,6 @@
 
 .sectionFirst {
   border-top: none !important;
-  margin-top: 0 !important;
 }
 
 .sectionHeading {
@@ -473,8 +472,10 @@
 /* ── SECCIONES CASCADA ───────────────────────────────────────────────── */
 
 .section {
-  padding: 20px 20px 0;
-  border-top: 1px solid var(--rule);
-  margin-top: 4px;
+  /* EL COMPAS: la linea queda a la misma distancia de lo que termina y de
+     lo que empieza. Antes: 20px arriba, CERO abajo, y un margin-top:4px
+     que fingia el hueco que el padding no daba. */
+  padding: var(--space-20) var(--space-20) var(--space-20);
+  border-top: 1px solid var(--ink-border);
   }
 
