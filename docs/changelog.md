@@ -34,6 +34,21 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — La Hoja: ningun panel se sale de la pantalla
+
+- El fundador encontro que en el muro de registro el boton "Ya tengo cuenta"
+  quedaba escondido tras el menu inferior. Causa: la hoja **no limitaba su
+  altura** (0 max-height, 0 overflow) y su relleno inferior era de 32px,
+  pensado para una pantalla sin barra — la navegacion ocupa ~73px.
+- Y era **fallo de familia, no de una pantalla**: las TRES hojas del
+  producto estaban igual. La mas expuesta era la de disponibilidad, que
+  acababa de ganar hasta doce horas en la rejilla del tecnico: habriamos
+  entregado el calendario nuevo con su boton de enviar fuera de pantalla.
+- Ley aplicada a las tres: `max-height: 88dvh` (viewport visual, para que el
+  teclado de iOS no la saque) + `overflow-y: auto`, y las ancladas al fondo
+  reservan la barra en su relleno inferior.
+- Sello NURA_BUILD 2026.07.04-cy.
+
 ## 2026-07-04 — La Agenda: disponibilidad real, por horas (Nura Copilot)
 
 - Diagnostico peor que el sintoma: ya habia horas, pero eran de mentira —

@@ -51,7 +51,13 @@ export default function RegisterGate({ onClose, reason = 'contact' }) {
         backdropFilter: 'blur(32px)',
         WebkitBackdropFilter: 'blur(32px)',
         borderRadius: '28px 28px 0 0',
-        padding: 'var(--space-8) 22px var(--space-32)',
+        /* LA HOJA: nunca crece fuera de la pantalla. 88dvh usa el viewport
+           VISUAL (descuenta el teclado en iOS) y el relleno inferior reserva
+           la barra: la ultima accion queda siempre por encima del menu. */
+        maxHeight: '88dvh',
+        overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch',
+        padding: 'var(--space-8) 22px calc(var(--nav-h) + var(--space-12))',
         width: '100%', maxWidth: '500px',
         boxShadow: '0 -8px 40px rgba(33,29,51,0.1)',
         animation: 'slideUp 0.28s cubic-bezier(0.25,0.46,0.45,0.94)',

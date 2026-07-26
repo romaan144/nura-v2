@@ -145,6 +145,14 @@ siente mas corta. Variantes `card` (retrato + tres lineas) y `block`.
 **Prohibido inventar un indicador de carga**: antes convivian esqueleto en
 Explorar y un circulo latiendo en el perfil, el destino mas visitado.
 
+### La Hoja (ley de los paneles)
+**Ninguna hoja crece fuera de la pantalla.** Toda hoja o modal lleva
+`max-height: 88dvh` (viewport VISUAL: con `vh` se saldria al abrir el
+teclado en iOS) y `overflow-y: auto`: el cuerpo se recorre, las acciones
+nunca se van. Las ancladas al fondo reservan ademas la barra en su relleno
+inferior — `calc(var(--nav-h) + var(--space-12))` — para que la ultima
+accion quede por encima del menu y a un pulgar comodo.
+
 ### EmptyState (primitiva)
 Un vacio **no es un error**: es la mejor ocasion de explicar que hace el
 producto. Patron unico: **frase en la Voz de Nura** (humana, jamas
