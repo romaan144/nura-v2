@@ -123,6 +123,15 @@ mayusculas lo sano es 0,05-0,08em, asi que es calibrado, no promedio
 **Prohibido dibujar un rotulo a mano.** Las insignias (con fondo y
 pildora) son otra familia: les corresponde `Badge`.
 
+### El Acuse (ley del feedback)
+**Si la interfaz ya responde a la vista, el aviso sobra. Si la consecuencia
+ocurre fuera de la vista, hay que contarla.** Seguir pinta el corazon y
+comentar hace aparecer el comentario: nada que decir. Publicar obra la manda
+al rio y al motor de recomendacion, y confirmar una conexion crea una
+historia publica en el Muro: eso SI se cuenta, porque el usuario no puede
+verlo. Los avisos hablan en la voz de Nura y **invitan, no bloquean** —
+muere "Inicia sesion para seguir profesionales".
+
 ### Skeleton (primitiva)
 La espera dibuja **la forma de lo que viene**, no un simbolo abstracto de
 que algo pasa: el ojo sabe donde aterrizara el contenido y la espera se

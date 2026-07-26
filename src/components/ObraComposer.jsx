@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useUser } from '../context/UserContext'
+import { showToast } from './Toast'
 import { TYPE_META } from '../data/obraPosts'
 
 const NEEDS_RESULT = ['caso', 'trabajo', 'evolucion']
@@ -59,7 +60,7 @@ export default function ObraComposer({ onClose }) {
             padding: '13px 15px', fontSize: 'var(--text-base)', marginBottom: 'var(--space-10)', outline: 'none', background: 'white' }} />
       )}
 
-      <button onClick={() => { addObra({ type, title, body, result }); onClose?.() }} disabled={!listo}
+      <button onClick={() => { addObra({ type, title, body, result }); showToast('Ya está en el barrio. Cuando alguien busque algo así, tu caso hablará por ti.'); onClose?.() }} disabled={!listo}
         style={{ width: '100%', background: listo ? 'var(--purple)' : 'var(--ink-border)',
           color: 'white', border: 'none', borderRadius: 'var(--radius-full)', padding: 'var(--space-14)',
           fontSize: 'var(--text-sm)', fontWeight: 700, cursor: listo ? 'pointer' : 'default', marginTop: 'var(--space-6)' }}>

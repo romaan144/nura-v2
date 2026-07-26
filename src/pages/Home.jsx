@@ -701,6 +701,7 @@ export default function Home() {
               seconds: null, timeAgo: 'hoy',
               text: `${fn} encontró ${lp ? `ayuda de confianza para ${lp.label}` : 'la ayuda que necesitaba'}${ci ? ` — primera visita, el ${ci.label}` : ''}. ✓ Funcionó.`,
             })
+            showToast('Me alegro mucho. Lo he contado en el barrio — a alguien le va a servir.')
           } catch (e) { console.error('[Nüra] historia:', e) }
         }
       }

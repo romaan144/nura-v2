@@ -26,6 +26,23 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — El Acuse: que Nura reconozca lo que consigues
+
+- Auditoria del feedback: de los seis avisos del producto, **cuatro servian
+  para impedirte algo** y solo dos para celebrar. Y los actos que mas
+  importan ocurrian en silencio.
+- El peor: **confirmar que una conexion funciono** crea una publicacion en
+  el Muro del barrio — el corazon del producto — y ocurria sin decir nada,
+  en otra pestaña. Ahora: "Me alegro mucho. Lo he contado en el barrio — a
+  alguien le va a servir."
+- Publicar obra gana el unico momento en que el producto explica el foso al
+  profesional: "Cuando alguien busque algo asi, tu caso hablara por ti."
+- Los avisos de bloqueo dejan de sonar a portero: "Inicia sesion para seguir
+  profesionales" pasa a "Entra y podras seguir su evolucion."
+- **Ley del acuse** en design-system, para que mas avisos no sea la
+  respuesta a todo: si la vista ya responde, el aviso sobra.
+- Sello NURA_BUILD 2026.07.04-cs.
+
 ## 2026-07-04 — La Espera: un solo lenguaje para el tiempo en blanco
 
 - Tres lenguajes para lo mismo: esqueleto en Explorar, un circulo morado

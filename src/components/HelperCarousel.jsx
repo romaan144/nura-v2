@@ -22,7 +22,7 @@ function CarouselCard({ helper, isTopPick, matchReason }) {
     if (!user) {
       sessionStorage.setItem('nura_return_to', `/chat/${helper.id}`)
       sessionStorage.setItem('nura_pending_helper', JSON.stringify(helper))
-      showToast('Crea tu cuenta para contactar')
+      showToast('Para escribirle necesito saber quién eres. Es un minuto.')
       setTimeout(() => navigate('/login'), 600)
       return
     }
@@ -31,7 +31,7 @@ function CarouselCard({ helper, isTopPick, matchReason }) {
 
   function handleFollow(e) {
     e.stopPropagation()
-    if (!user) { showToast('Inicia sesión para seguir profesionales'); return }
+    if (!user) { showToast('Entra y podrás seguir su evolución.'); return }
     isFollowing(helper.id) ? unfollow(helper.id) : follow(helper.id)
     showToast(following ? 'Has dejado de seguir' : 'Siguiendo')
   }

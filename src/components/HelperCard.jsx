@@ -33,7 +33,7 @@ export default function HelperCard({ helper, onContact, showContact = true, show
     if (!user) {
       sessionStorage.setItem('nura_return_to', `/chat/${helper.id}`)
       sessionStorage.setItem('nura_pending_helper', JSON.stringify(helper))
-      showToast('Crea tu cuenta para contactar con este profesional')
+      showToast('Para escribirle necesito saber quién eres. Es un minuto.')
       setTimeout(() => navigate('/login'), 600)
       return
     }
