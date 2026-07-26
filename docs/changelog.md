@@ -34,6 +34,32 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — El Muro de Conexiones: que la prueba pese
+
+- Lectura completa de manifesto y context antes de tocar nada. El documento
+  ya definia esta pestaña — **"El Muro de Conexiones: prueba social
+  verificada, con las del propio usuario primero"** — y su trabajo:
+  "la confianza se demuestra, no se declara; verificacion visible,
+  resultados confirmados por quien los vivio, prueba social especifica y
+  local".
+- Contraste honesto: un muro social (posts, reacciones) lo copia cualquiera
+  en un mes. El foso que declara el manifiesto es **la reputacion construida
+  ayudando de verdad**. La pestaña debe pesar como prueba, no como feed.
+- **① El sello, en primera linea**: `confirmContact()` ya guardaba
+  `confirmed`/`confirmedAt` desde la Confirmacion Humana y **no se mostraba
+  en ninguna parte**. Ahora cada pieza confirmada lo lleva. Y si no hay
+  confirmacion real, NO se finge: sale sin sello.
+- **② Localidad**: zone y distance vivian en los datos sin usarse. Ahora
+  "Gràcia · a 800 m de ti" — prueba especifica y local, como pide el
+  manifiesto.
+- **③ Regresion propia corregida**: context.md pedia "las del propio usuario
+  primero" y mi reescritura anterior las disolvio en el rio. "Tu conexion"
+  recupera su bloque de honor.
+- **④ El orden pasa a ser jerarquia de prueba**, no cronologia.
+- context.md actualizado: la descripcion de la pestaña vuelve a ser fiel a
+  lo construido.
+- Sello NURA_BUILD 2026.07.04-dc.
+
 ## 2026-07-04 — Unificacion perfil/muro + Comunidad completa
 
 - **Una sola pieza en todas partes**: nace `obraAPost()`, la UNICA

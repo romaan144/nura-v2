@@ -27,13 +27,15 @@ function pulsoReal(posts) {
 
 export default function Feed() {
   const navigate = useNavigate()
-  const { user, myStories, following, utilesDe } = useUser()
+  const { user, myStories, following, utilesDe, contactedHelpers } = useUser()
   const [modo, setModo] = useState('todos')
   const [composerOpen, setComposerOpen] = useState(false)
   const [tema, setTema] = useState(null)
 
   // ── Todo se normaliza a la MISMA unidad ──
   const deObra = getObra().map(obraAPost)
+
+  const confirmadas = new Set((contactedHelpers || []).filter(c => c?.confirmed).map(c => c.id || c))
 
   const deConexion = [...(myStories || []), ...getConnectionStories()].map((s, i) => ({
     id: s.id || 'cx' + i,
@@ -42,6 +44,13 @@ export default function Feed() {
     rol: s.mine ? 'Tu historia' : 'Vecino',
     autorColor: s.mine ? 'var(--purple)' : undefined,
     dateLabel: s.timeAgo,
+    // Prueba social ESPECIFICA Y LOCAL (manifesto): la zona y la distancia
+    // ya viven en los datos del profesional; hasta hoy no se usaban.
+    lugar: s.helper?.zone
+      ? `${s.helper.zone}${s.helper.distance ? ` · a ${Math.round(s.helper.distance * 1000)} m` : ''}`
+      : null,
+    // El sello solo si la confirmacion es real
+    confirmado: s.mine ? confirmadas.has(s.helper?.id) : !!s.confirmed,
     body: s.text,
     mention: s.helper?.name?.split(' ')?.[0],
     kind: 'conexion',
@@ -72,7 +81,16 @@ export default function Feed() {
   const sugeridos = POOL
     .filter(h => deObra.some(o => o.helperId === h.id) && !sigue(h.id))
     .slice(0, 3)
-  const porTema = tema ? todos.filter(p => temaDe(p) === tema) : todos
+  // "con las del propio usuario primero (✓ Tu conexion)" — context.md #13.
+  // Mi reescritura anterior la disolvio en el rio: era una regresion contra
+  // el diseño documentado.
+  const mias = todos.filter(p => p.mine)
+  const delBarrio = todos.filter(p => !p.mine)
+
+  // ④ El orden es jerarquia de PRUEBA, no cronologia: lo que mas demuestra,
+  //    mas arriba.
+  const porPrueba = [...delBarrio].sort((a, b) => (b.confirmado ? 1 : 0) - (a.confirmado ? 1 : 0))
+  const porTema = tema ? porPrueba.filter(p => temaDe(p) === tema) : porPrueba
   const posts = modo === 'siguiendo' ? porTema.filter(p => sigue(p.helperId)) : porTema
   const pulso = pulsoReal(todos)
   const destacados = getDestacados(3)
@@ -137,6 +155,23 @@ export default function Feed() {
             {user?.isHelper ? 'Comparte algo con el barrio…' : 'Cuenta cómo te fue…'}
           </span>
         </button>
+
+        {modo === 'todos' && !tema && mias.length > 0 && (
+          <div style={{ marginBottom: 'var(--space-24)' }}>
+            <SectionLabel tone="brand" style={{ marginBottom: 'var(--space-10)' }}>
+              Tu conexión
+            </SectionLabel>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-12)' }}>
+              {mias.map(p => <PostCard key={p.id} post={p} />)}
+            </div>
+          </div>
+        )}
+
+        {modo === 'todos' && !tema && mias.length > 0 && (
+          <SectionLabel tone="muted" style={{ margin: '0 0 var(--space-10)' }}>
+            Lo que ha pasado en el barrio
+          </SectionLabel>
+        )}
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-12)' }}>
           {posts.length === 0 ? (

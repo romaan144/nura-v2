@@ -67,9 +67,24 @@ export default function PostCard({ post }) {
           </span>
           <span style={{ display: 'block', fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)' }}>
             {post.rol}{post.rol && post.dateLabel ? ' · ' : ''}{post.dateLabel}
+            {post.lugar && <> · {post.lugar}</>}
           </span>
         </span>
       </button>
+
+      {/* El sello del manifiesto: "resultados confirmados por quien los
+          vivio". Si no hay confirmacion real, NO se finge: la pieza sale
+          sin sello. La confianza se demuestra, no se declara. */}
+      {post.confirmado && (
+        <div style={{
+          display: 'inline-flex', alignItems: 'center', gap: 'var(--space-6)',
+          background: 'rgba(16,185,129,0.10)', color: 'var(--green-dot, #10B981)',
+          borderRadius: 'var(--radius-full)', padding: '4px var(--space-10)',
+          fontSize: 'var(--text-xs)', fontWeight: 700, marginTop: 'var(--space-10)',
+        }}>
+          ✓ Confirmado por quien lo vivió
+        </div>
+      )}
 
       {/* ── El contenido ── */}
       {meta && (

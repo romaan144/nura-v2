@@ -88,8 +88,13 @@ Todas en producción. Descripción de producto; mecánica exacta en
     actividad reciente: Nüra se siente viva antes de buscar nada.
 13. **El Muro de Conexiones** — la pestaña de comunidad es prueba social
     verificada: historias reales de conexiones que funcionaron, con las del
-    propio usuario primero ("✓ Tu conexión"). La pestaña Siguiendo conserva los
-    posts de los profesionales seguidos.
+    propio usuario primero ("✓ Tu conexión"). Una sola pieza (`PostCard`) para
+    conexiones y obra, la misma que dibuja el perfil. Cada pieza lleva el
+    **sello de verificación solo si la confirmación es real** — lo no
+    demostrado no se declara — y su **localidad** ("Gràcia · a 800 m"), porque
+    el manifiesto pide prueba específica y local. El orden es jerarquía de
+    prueba, no cronología. Se recorre por temas, destaca **lo que más ha
+    servido** (señal real de "Me sirve") y sugiere **a quién seguir**.
 
 **Lado del profesional**
 14. **El Primer Día del Profesional** — al registrarse, el profesional tiene
