@@ -264,6 +264,19 @@ export function UserProvider({ children }) {
     try { window.__nuraMisObras = updated } catch { /* noop */ }
   }
 
+  // ── La demanda que no supimos atender ──
+  // Hoy vive en el movil de cada persona: el fundador NO la ve hasta que
+  // haya backend. Se registra desde ahora para que, el dia del enchufe,
+  // exista historico en vez de empezar de cero. Le dira que profesionales
+  // fichar y en que zona — un marketplace que no mide su demanda
+  // insatisfecha recluta a ciegas.
+  function registrarDemanda({ categoria, consulta, fecha }) {
+    if (!categoria) return
+    const prev = load('nura_demanda_no_cubierta', [])
+    const updated = [...prev, { categoria, consulta, fecha: fecha || Date.now() }].slice(-100)
+    save('nura_demanda_no_cubierta', updated)
+  }
+
   // ── Me sirve: no mide popularidad, mide utilidad ──
   function toggleUtil(postId) {
     if (!postId) return
@@ -340,6 +353,7 @@ export function UserProvider({ children }) {
       myStories, addStory,
       addComment, commentsFor,
       toggleUtil, utilesDe, meSirve,
+      registrarDemanda,
       misObras, addObra,
       helpersCache, cacheHelpers,
       following, follow, unfollow, isFollowing,

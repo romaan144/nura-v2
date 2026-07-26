@@ -34,6 +34,27 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — Los Dos Silencios (Nura Copilot)
+
+- **74 lineas de codigo muerto**: habia DOS `if (!matches?.length)` seguidos.
+  El primero respondia y hacia return, asi que el segundo — un sistema
+  completo de recuperacion con alternativas por categoria, bien pensado —
+  no podia ejecutarse jamas. Rescatado su mapa antes de borrarlo.
+- **El fallo de producto**: Nura confundia dos silencios que no se parecen.
+  Quien decia "logopeda infantil para mi hijo de 6 años" — con toda
+  claridad — recibia "no estoy segura de haberte entendido, ¿me lo cuentas
+  con otras palabras?" y tres chips ajenos. Es peor que no encontrar:
+  **es culpar al usuario de un vacio de oferta que es del producto**.
+- Ahora se separan por `analysis.categoria === 'otro'` (la misma señal que
+  usa LA PUERTA del matching): si no comprendio, se pide reformular; si
+  comprendio, la verdad va delante — "Te he entendido: buscas apoyo con el
+  habla. Ahora mismo no tengo a nadie asi cerca de ti" — con salidas reales
+  (alternativa por categoria, ampliar zona, avisarme cuando haya alguien).
+- **La demanda insatisfecha se registra** desde ahora. Hoy vive en el movil
+  y el fundador no la ve; su valor llega con el backend, pero si no se
+  empieza a guardar ya, ese dia habra cero historico. Anotado en context.
+- Suite +2 casos. Sello NURA_BUILD 2026.07.04-de.
+
 ## 2026-07-04 — Fuera la palabra "barrio" de la voz de Nura
 
 - Decision de marca del fundador: en español connota baja calidad. Corregidas

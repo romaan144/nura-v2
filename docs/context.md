@@ -134,6 +134,13 @@ cuando la conexión responde. Detalle técnico en `architecture.md`.
   valoracion, Onboarding, Home). Debe morir en favor de `--ink-border`, que
   ya usa el 73% del producto y respeta la tinta calida.
 
+- [SUBIR AL BACKEND] `nura_demanda_no_cubierta` — cada vez que Nura
+  comprende una necesidad y no tiene a nadie compatible, se registra
+  {categoria, consulta, fecha} en el movil de la persona. Es la lista de
+  **que profesionales fichar y en que zona**. Hoy el fundador NO la ve: hay
+  que subirla el dia del enchufe de Supabase. Se registra desde ahora para
+  no llegar con cero historico.
+
 - [LEY PARA EL BACKEND] Cuando Supabase sea real, Chats y Comunidad DEBEN
   ganar estado de carga antes de mostrar su EmptyState: hoy sus datos vienen
   del contexto ya montado (no hay espera que mostrar, y fabricarla seria

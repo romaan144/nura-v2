@@ -138,5 +138,18 @@ for (const t of NEGATIVE) {
   console.log(`${c ? '✓' : '✗'} [agenda] ocupacion real desde los DOS almacenes (citas + services)`)
 }
 
+// ── Los Dos Silencios: no es lo mismo no entender que no tener a nadie ──
+{
+  const a1 = await analyzeNeed('asdfgh qwerty zxcvb')
+  const noComprende = !a1?.categoria || a1.categoria === 'otro'
+  if (!noComprende) failed++
+  console.log(`${noComprende ? '✓' : '✗'} [silencios] lo incomprensible sigue siendo 'otro' (se pide reformular)`)
+
+  const a2 = await analyzeNeed('mi hijo no pronuncia la R')
+  const comprende = a2?.categoria && a2.categoria !== 'otro'
+  if (!comprende) failed++
+  console.log(`${comprende ? '✓' : '✗'} [silencios] lo claro se comprende: nunca se culpa al usuario`)
+}
+
 console.log(failed === 0 ? `\n✅ SUITE v2 VERDE — ${GOLDEN.length + HONESTY.length + NEGATIVE.length}/${GOLDEN.length + HONESTY.length + NEGATIVE.length}` : `\n❌ ${failed} FALLOS`)
 process.exit(failed === 0 ? 0 : 1)

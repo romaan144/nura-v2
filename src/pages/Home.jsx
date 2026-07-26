@@ -321,7 +321,7 @@ const HELPER_SUGGESTIONS = [
 
 export default function Home() {
   const navigate = useNavigate()
-  const { user, addSearch, searchHistory, favorites, helpersCache, nuraChatMessages, setNuraChatMessages, nuraLastMatches, setNuraLastMatches, cacheHelpers, contactedHelpers, confirmContact, following, personas, upsertPersona, citas, addStory } = useUser()
+  const { user, addSearch, searchHistory, favorites, helpersCache, nuraChatMessages, setNuraChatMessages, nuraLastMatches, setNuraLastMatches, cacheHelpers, contactedHelpers, confirmContact, following, personas, upsertPersona, citas, addStory , registrarDemanda } = useUser()
   // messages persisted in context so they survive navigation
   const messages = nuraChatMessages
   const setMessages = setNuraChatMessages
@@ -862,17 +862,13 @@ export default function Home() {
       // Honestidad antes que confianza falsa: sin comprensión no hay tarjetas
       if (!matches?.length) {
         stopThinking()
-        setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
-          lines: ['No estoy segura de haberte entendido del todo — ¿me lo cuentas con otras palabras? Por ejemplo: "entrenador personal cerca de casa" o "alguien que cuide a mi madre".'],
-          chips: ['Entrenador personal', 'Cuidar a un familiar', 'Una reparación en casa'] }])
-        return
-      }
-      stopThinking()
-
-      if (!matches?.length) {
-        // Smart recovery: suggest alternatives based on the analysis
-        const categoria = analysis?.categoria || 'otro'
-        const alternativas = {
+        // ── LOS DOS SILENCIOS ──
+        // No es lo mismo no entender que entender y no tener a nadie. El
+        // segundo caso NO puede pedir que reformule: la persona se explico
+        // bien y el vacio es de oferta, no suyo.
+        const comprendida = analysis?.categoria && analysis.categoria !== 'otro'
+        if (comprendida) {
+          const alternativas = {
           logopeda:    { alt: 'logopeda online', chip1: 'Buscar online', chip2: 'Ampliar zona' },
           tecnico:     { alt: 'técnico de guardia', chip1: 'Urgencias 24h', chip2: 'Ampliar zona' },
           limpieza:    { alt: 'servicio de limpieza online', chip1: 'Ampliar zona', chip2: 'Ver todos' },
@@ -882,29 +878,21 @@ export default function Home() {
           entrenador:  { alt: 'entrenador online', chip1: 'Buscar online', chip2: 'Ampliar zona' },
           otro:        { alt: 'profesional similar', chip1: 'Ampliar zona', chip2: 'Ver todos' },
         }
-        const rec = alternativas[categoria] || alternativas.otro
-
-        setMessages(prev => [...prev, {
-          id: Date.now(), from: 'nura',
-          lines: [
-            `No encontré a nadie para eso en tu zona.`,
-            `¿Pruebo con **${rec.alt}** o amplío el radio?`
-          ],
-          chips: [rec.chip1, rec.chip2, 'Cuéntame más']
-        }])
-
-        // After 2s, proactively suggest Explore
-        setTimeout(() => {
-          setMessages(prev => [...prev, {
-            id: Date.now() + 1, from: 'nura',
-            lines: ['También puedes explorar todos los profesionales disponibles cerca de ti.'],
-            chips: ['Ver Explorar']
-          }])
-        }, 2500)
-
-        setLoading(false)
+          const alt = alternativas[analysis.categoria] || alternativas.otro
+          const queEs = (CAT_HUMANA[analysis.categoria] || 'eso').toLowerCase()
+          registrarDemanda?.({ categoria: analysis.categoria, consulta: text, fecha: Date.now() })
+          setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
+            lines: [`Te he entendido: buscas ${queEs}. Ahora mismo no tengo a nadie así cerca de ti.`],
+            chips: [`Buscar ${alt.alt}`, 'Ampliar la zona', 'Avísame cuando tengas a alguien'] }])
+          return
+        }
+        setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
+          lines: ['No estoy segura de haberte entendido del todo — ¿me lo cuentas con otras palabras? Por ejemplo: "entrenador personal cerca de casa" o "alguien que cuide a mi madre".'],
+          chips: ['Entrenador personal', 'Cuidar a un familiar', 'Una reparación en casa'] }])
         return
       }
+      stopThinking()
+
 
       addSearch?.(msg, analysis?.categoria)
       window.__nuraLastQuery = msg
