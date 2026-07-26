@@ -105,3 +105,19 @@ export function getObra(limit = 20) {
 export function getObraDeHelper(helperId, limit = 3) {
   return getObra(99).filter(p => p.helperId === Number(helperId)).slice(0, limit)
 }
+
+/**
+ * Obra → post. La UNICA traduccion: el perfil y el muro dibujan la misma
+ * pieza porque parten de aqui. Dos mapeos separados acabarian siendo dos
+ * disenos distintos con el tiempo.
+ */
+export function obraAPost(o) {
+  if (!o) return null
+  return {
+    id: o.id, helperId: o.helperId,
+    autor: o.who?.name, rol: o.who?.specialty,
+    verified: o.verified, dateLabel: o.dateLabel,
+    type: o.type, title: o.title, body: o.body, result: o.result,
+    kind: 'obra',
+  }
+}

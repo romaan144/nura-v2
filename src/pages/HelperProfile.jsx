@@ -1,8 +1,8 @@
 import PageHeader from '../components/PageHeader'
-import ObraCard from '../components/ObraCard'
+import PostCard from '../components/PostCard'
 import { slotsDe, tieneHuecos, ocupacionesDe } from '../data/horarios'
 import { Button, SectionLabel, Skeleton } from '../components/ui'
-import { getObraDeHelper } from '../data/obraPosts'
+import { getObraDeHelper, obraAPost } from '../data/obraPosts'
 import ErrorBoundary from '../components/ErrorBoundary'
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
@@ -21,24 +21,6 @@ import { Badge, LiveDot, Bubble, StatBar } from '../components/ui'
 
 // ── HELPERS ─────────────────────────────────────────────────────────────────
 
-function PostCard({ post }) {
-  const [liked, setLiked] = useState(false)
-  const [likes, setLikes] = useState(post.likes || 0)
-  return (
-    <div className={styles.postCard}>
-      <p className={styles.postText}>{post.text}</p>
-      <div className={styles.postMeta}>
-        <span className={styles.postDate}>{post.date}</span>
-        <button className={`${styles.postLike} ${liked ? styles.postLikeActive : ''}`}
-          onClick={() => { setLiked(l => !l); setLikes(n => liked ? n-1 : n+1) }}>
-          <UserPlus size={12}
-            color={liked ? 'var(--red)' : 'rgba(33,29,51,0.3)'} />
-          <span>{likes}</span>
-        </button>
-      </div>
-    </div>
-  )
-}
 
 function BookingModal({ helper, onClose, onBook, onNavigate }) {
   const { citas, services } = useUser()
@@ -186,6 +168,20 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
 }
 
 // ── MAIN PROFILE COMPONENT ──────────────────────────────────
+
+// Todo lo que ha publicado, en UNA sola forma. El perfil tenia dos
+// conceptos de publicacion conviviendo (Su obra + Publicaciones de v1,
+// con componentes y disenos distintos): eso es justo lo que hacia que
+// perfil y muro no se parecieran.
+function publicacionesDe(helper) {
+  const obra = getObraDeHelper(helper?.id, 3).map(obraAPost)
+  const viejos = (helper?.posts || []).map((p, i) => ({
+    id: 'lp' + i, helperId: helper?.id,
+    autor: helper?.name, rol: helper?.specialty, verified: helper?.verified,
+    dateLabel: p.date, body: p.text, kind: 'obra',
+  }))
+  return [...obra, ...viejos].slice(0, 4)
+}
 
 function HelperProfileInner() {
   const { id }     = useParams()
@@ -428,7 +424,7 @@ function HelperProfileInner() {
           <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0ms forwards`}} className={styles.section}>
             <h2 className={styles.sectionHeading}>Su obra</h2>
             <div style={{display:'flex', flexDirection:'column', gap:'var(--space-10)'}}>
-              {getObraDeHelper(enrichedH.id, 2).map(post => <ObraCard key={post.id} post={post} />)}
+              {publicacionesDe(enrichedH).map(p => <PostCard key={p.id} post={p} />)}
             </div>
           </section>
         )}
@@ -611,16 +607,6 @@ function HelperProfileInner() {
                 <span key={i} className={`${styles.tag} ${styles.tagIdioma}`}>{l}</span>
               ))}
             </div>
-          </section>
-        )}
-
-        {/* ── Publicaciones ── */}
-        {enrichedH.posts?.length > 0 && (
-          <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 480ms forwards`}} className={styles.section}>
-            <h2 className={styles.sectionHeading}>Publicaciones</h2>
-            {enrichedH.posts.slice(0,2).map((post, i) => (
-              <PostCard key={i} post={post} />
-            ))}
           </section>
         )}
 

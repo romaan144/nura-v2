@@ -3,8 +3,8 @@ import PageHeader from '../components/PageHeader'
 import { Button, SectionLabel } from '../components/ui'
 import { useState as useStateObra } from 'react'
 import ObraComposer from '../components/ObraComposer'
-import ObraCard from '../components/ObraCard'
-import { getObraDeHelper } from '../data/obraPosts'
+import PostCard from '../components/PostCard'
+import { getObraDeHelper, obraAPost } from '../data/obraPosts'
 import { useNavigate } from 'react-router-dom'
 import { LogOut, Edit2, Check, X, Award, MessageCircle,
          Heart, ClipboardList, User, Phone, Search, Star , UserPlus, UserCheck } from 'lucide-react'
@@ -304,7 +304,7 @@ export default function Profile() {
             </Button>
             {getObraDeHelper(user.helperId || user.id, 2).length > 0 && (
               <div style={{display:'flex', flexDirection:'column', gap:'var(--space-10)', marginBottom:'var(--space-12)'}}>
-                {getObraDeHelper(user.helperId || user.id, 2).map(post => <ObraCard key={post.id} post={post} />)}
+                {getObraDeHelper(user.helperId || user.id, 2).map(o => <PostCard key={o.id} post={obraAPost(o)} />)}
               </div>
             )}
 

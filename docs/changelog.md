@@ -34,6 +34,24 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — Unificacion perfil/muro + Comunidad completa
+
+- **Una sola pieza en todas partes**: nace `obraAPost()`, la UNICA
+  traduccion de obra a post. Perfil y muro parten de ella, asi que dibujan
+  literalmente lo mismo. Dos mapeos separados acabarian siendo dos disenos.
+- **Hallazgo**: el perfil tenia DOS conceptos de publicacion conviviendo —
+  "Su obra" (nuevo) y una seccion "Publicaciones" heredada de v1, con su
+  propio componente local, sus likes y su diseno. Eso era justo lo que hacia
+  que perfil y muro no se parecieran. Fusionados: `publicacionesDe()` reune
+  obra y posts antiguos en una sola forma, y el componente local muere.
+- **CAT_HUMANA extraido** a `src/data/categorias.js`: vivia dentro de Home y
+  Comunidad lo necesitaba. Se extrae en vez de duplicarse.
+- **Comunidad, mas completa**: fila de **temas** (recorrer el barrio por lo
+  que te preocupa), **"Lo que mas ha servido"** (ordenado por la senal real
+  de Me sirve, no por una cifra inventada), **"A quien seguir"**
+  (profesionales con obra a los que aun no sigues) y los destacados.
+- Sello NURA_BUILD 2026.07.04-db.
+
 ## 2026-07-04 — EL MURO: rediseño total de Comunidad (mandato del fundador)
 
 - **La causa real de la fealdad, encontrada**: no era el orden. Eran DOS

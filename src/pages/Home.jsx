@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { CAT_HUMANA } from '../data/categorias'
 import { Send, Mic, MicOff, Plus, Clock, RotateCcw, UserRound } from 'lucide-react'
 import { analyzeNeed, matchHelpers, getPriceContext } from '../utils/matching'
 import { getFirstName } from '../utils/name'
@@ -19,11 +20,6 @@ import { proSignals } from '../utils/proSignals'
 import { HELPERS as LOCAL_FALLBACK_HELPERS } from '../data/helpers'
 
 // ── La Comprensión Visible — lo que Nüra ha entendido, en chips ──
-const CAT_HUMANA = {
-  cuidado:'Compañía y cuidado', salud:'Apoyo de salud', logopedia:'Apoyo con el habla',
-  tecnico:'Arreglo técnico', legal:'Orientación legal', clases:'Clases y apoyo',
-  mascotas:'Cuidado de mascotas', hogar:'Ayuda en el hogar', entrenador:'Entrenamiento',
-}
 const PERSONA_CHIP = {
   madre:'Para tu madre', padre:'Para tu padre', hijo:'Para tu hijo', hija:'Para tu hija',
   abuela:'Para tu abuela', abuelo:'Para tu abuelo', marido:'Para tu marido',

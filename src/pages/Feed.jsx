@@ -6,7 +6,9 @@ import PostCard from '../components/PostCard'
 import ObraComposer from '../components/ObraComposer'
 import HelperCard from '../components/HelperCard'
 import { getConnectionStories, getDestacados } from '../data/connectionStories'
-import { getObra } from '../data/obraPosts'
+import { getObra, obraAPost } from '../data/obraPosts'
+import { HELPERS } from '../data/helpers'
+import { CAT_HUMANA } from '../data/categorias'
 
 // ═══════════════════════════════════════════════════════════════
 // EL MURO — un solo idioma. Antes convivian dos componentes
@@ -25,16 +27,13 @@ function pulsoReal(posts) {
 
 export default function Feed() {
   const navigate = useNavigate()
-  const { user, myStories, following } = useUser()
+  const { user, myStories, following, utilesDe } = useUser()
   const [modo, setModo] = useState('todos')
   const [composerOpen, setComposerOpen] = useState(false)
+  const [tema, setTema] = useState(null)
 
   // ── Todo se normaliza a la MISMA unidad ──
-  const deObra = getObra().map(o => ({
-    id: o.id, helperId: o.helperId, autor: o.who?.name, rol: o.who?.specialty,
-    verified: o.verified, dateLabel: o.dateLabel, type: o.type,
-    title: o.title, body: o.body, result: o.result, kind: 'obra',
-  }))
+  const deObra = getObra().map(obraAPost)
 
   const deConexion = [...(myStories || []), ...getConnectionStories()].map((s, i) => ({
     id: s.id || 'cx' + i,
@@ -59,7 +58,22 @@ export default function Feed() {
   }
 
   const sigue = id => (following || []).includes(id)
-  const posts = modo === 'siguiendo' ? todos.filter(p => sigue(p.helperId)) : todos
+
+  // Temas: el barrio se puede recorrer por lo que te preocupa
+  // HELPERS puede traer huecos nulos: filtrar antes de buscar (lo cazo el smoke)
+  const POOL = HELPERS.filter(Boolean)
+  const temaDe = p => POOL.find(h => h.id === p.helperId)?.category || null
+  const temas = [...new Set(todos.map(temaDe).filter(Boolean))].slice(0, 6)
+
+  // Lo mas util: usa la senal nueva, no una cifra inventada
+  const masUtil = [...todos].sort((a, b) => (utilesDe?.(b.id) || 0) - (utilesDe?.(a.id) || 0)).slice(0, 2)
+
+  // A quien seguir: profesionales con obra a los que aun no sigues
+  const sugeridos = POOL
+    .filter(h => deObra.some(o => o.helperId === h.id) && !sigue(h.id))
+    .slice(0, 3)
+  const porTema = tema ? todos.filter(p => temaDe(p) === tema) : todos
+  const posts = modo === 'siguiendo' ? porTema.filter(p => sigue(p.helperId)) : porTema
   const pulso = pulsoReal(todos)
   const destacados = getDestacados(3)
 
@@ -90,6 +104,23 @@ export default function Feed() {
         </div>
       </div>
 
+      {/* Los temas: el barrio se recorre por lo que te preocupa */}
+      {temas.length > 1 && (
+        <div style={{ display: 'flex', gap: 'var(--space-6)', overflowX: 'auto',
+          padding: '0 var(--space-16) var(--space-4)', margin: 'var(--space-14) 0 0' }}>
+          {[null, ...temas].map(t => (
+            <button key={t || 'all'} onClick={() => setTema(t)}
+              style={{ flexShrink: 0, background: tema === t ? 'var(--ink)' : 'white',
+                color: tema === t ? 'white' : 'var(--ink-secondary)',
+                border: '1px solid ' + (tema === t ? 'var(--ink)' : 'var(--ink-border)'),
+                borderRadius: 'var(--radius-full)', padding: 'var(--space-6) var(--space-12)',
+                fontSize: 'var(--text-xs)', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>
+              {t ? (CAT_HUMANA[t] || t) : 'Todo'}
+            </button>
+          ))}
+        </div>
+      )}
+
       <div style={{ padding: '0 var(--space-16)' }}>
         {/* El gesto de publicar deja de estar escondido en el Perfil */}
         <button onClick={() => user ? (user.isHelper ? setComposerOpen(true) : navigate('/')) : navigate('/login')}
@@ -117,6 +148,28 @@ export default function Feed() {
             />
           ) : posts.map(p => <PostCard key={p.id} post={p} />)}
         </div>
+
+        {modo === 'todos' && !tema && masUtil.length > 0 && (
+          <>
+            <SectionLabel tone="brand" style={{ margin: 'var(--space-28) 0 var(--space-10)' }}>
+              Lo que más ha servido
+            </SectionLabel>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-12)' }}>
+              {masUtil.map(p => <PostCard key={'u' + p.id} post={p} />)}
+            </div>
+          </>
+        )}
+
+        {modo === 'todos' && sugeridos.length > 0 && (
+          <>
+            <SectionLabel tone="muted" style={{ margin: 'var(--space-28) 0 var(--space-10)' }}>
+              A quién seguir
+            </SectionLabel>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-10)' }}>
+              {sugeridos.map(h => <HelperCard key={'s' + h.id} helper={h} />)}
+            </div>
+          </>
+        )}
 
         {modo === 'todos' && (
           <>
