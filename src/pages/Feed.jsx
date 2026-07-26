@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button, SectionLabel, EmptyState } from '../components/ui'
 import { useUser } from '../context/UserContext'
 import HelperCard from '../components/HelperCard'
-import { getConnectionStories, getDestacados } from '../data/connectionStories'
+import { getConnectionStories, getDestacados, historiasDeCategoria } from '../data/connectionStories'
 import ObraCard from '../components/ObraCard'
 import { getObra } from '../data/obraPosts'
 
@@ -15,16 +15,16 @@ import { getObra } from '../data/obraPosts'
 // círculo. Manifiesto puro: conexiones reales generan la siguiente.
 // ═══════════════════════════════════════════════════════════════
 
-function pulsoDelDia(extra = 0) {
-  const day = new Date().toISOString().slice(0, 10)
-  let h = 0
-  for (let i = 0; i < day.length; i++) h = (h * 31 + day.charCodeAt(i)) >>> 0
-  return { conexiones: 2 + (h % 4) + extra, citas: 1 + ((h >> 3) % 3) }
+// EL PULSO HONESTO — un numero solo es honesto si puedes verificarlo
+// bajando por la pantalla. El anterior salia de un hash de la fecha de hoy:
+// no describia nada. Este cuenta lo que la pestaña muestra de verdad.
+function pulsoReal(historias, obras) {
+  return { vecinos: historias.length, profesionales: new Set(obras.map(o => o.helperId)).size }
 }
 
 export default function Feed() {
   const navigate = useNavigate()
-  const { user, myStories, following } = useUser()
+  const { user, myStories, following, searchHistory } = useUser()
   const [modo, setModo] = useState('todos')
 
   const seeds = getConnectionStories()
@@ -42,7 +42,11 @@ export default function Feed() {
   const obras = modo === 'siguiendo' ? obrasAll.filter(o => sigue(o.helperId)) : obrasAll
   const rioF = modo === 'siguiendo' ? rio.filter(s => sigue(s.helper?.id ?? s.helperId)) : rio
   const destacados = getDestacados(3)
-  const pulso = pulsoDelDia((myStories || []).length)
+  const pulso = pulsoReal(stories, obrasAll)
+  // Lo que buscaste: Comunidad deja de hablar en general y responde a tu caso
+  const ultima = (searchHistory || [])[0]
+  const suHistoria = historiasDeCategoria(ultima?.category, 1)[0]
+  const suObra = suHistoria ? obrasAll.find(o => o.helperId === suHistoria.helper?.id) : null
 
   return (
     <div style={{ minHeight: '100dvh', background: 'var(--paper)', paddingBottom: '96px' }}>
@@ -53,8 +57,8 @@ export default function Feed() {
         </h1>
         <div className="hilo" style={{ width: '64px', margin: 'var(--space-8) 0 var(--space-10)' }} />
         <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)', margin: 0, lineHeight: 1.5 }}>
-          Esta semana en tu zona: <strong style={{ color: 'var(--ink)' }}>{pulso.conexiones} conexiones ✓</strong>
-          {' '}· <strong style={{ color: 'var(--ink)' }}>{pulso.citas} citas acordadas</strong>
+          <strong style={{ color: 'var(--ink)' }}>{pulso.vecinos} vecinos</strong> han encontrado a su persona
+          {' '}· <strong style={{ color: 'var(--ink)' }}>{pulso.profesionales} profesionales</strong> han contado su trabajo.{(myStories || []).length > 0 && ' Una de ellas es la tuya.'}
         </p>
         <div style={{ display: 'flex', gap: 'var(--space-8)', marginTop: 'var(--space-12)' }}>
           {['todos', 'siguiendo'].map(m => (
@@ -87,8 +91,29 @@ export default function Feed() {
           </div>
         )}
 
+        {/* PORQUE BUSCASTE X — Comunidad deja de hablar en general y
+            responde a la preocupacion concreta con la que llegaste.
+            Si no hay nada de tu categoria, este bloque no aparece. */}
+        {modo === 'todos' && suHistoria && (
+          <div style={{ marginBottom: 'var(--space-28)' }}>
+            <SectionLabel tone="brand" style={{marginBottom: 'var(--space-8)'}}>
+              Porque buscaste {ultima?.query}
+            </SectionLabel>
+            <p style={{ fontFamily: 'var(--font-voice)', fontSize: 'var(--text-sm)',
+              lineHeight: 1.55, color: 'var(--ink)', margin: '0 0 var(--space-8)' }}>
+              {suHistoria.text}
+            </p>
+            <HelperCard helper={suHistoria.helper} />
+            <div style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)', marginTop: 'var(--space-4)' }}>
+              ✓ conexión real · {suHistoria.timeAgo}
+            </div>
+            {suObra && <div style={{ marginTop: 'var(--space-12)' }}><ObraCard post={suObra} /></div>}
+          </div>
+        )}
+
+
         <SectionLabel tone="muted" style={{margin: '0 0 var(--space-10)'}}>
-          La obra del barrio
+          Lo que se ha resuelto cerca de ti
         </SectionLabel>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
           {modo === 'siguiendo' && obras.length === 0 && rioF.length === 0 ? (
@@ -98,33 +123,33 @@ export default function Feed() {
               actionLabel="Ver a todo el barrio"
               onAction={() => setModo('todos')}
             />
-          ) : (() => {
-            const mixto = []
-            let o = 0, c = 0
-            while (o < obras.length || c < rioF.length) {
-              if (o < obras.length) mixto.push({ kind: 'obra', it: obras[o++] })
-              if (o < obras.length) mixto.push({ kind: 'obra', it: obras[o++] })
-              if (c < rioF.length) mixto.push({ kind: 'conexion', it: rioF[c++] })
-            }
-            return mixto.map((m, i) => (
-              <div key={(m.it.id || i) + m.kind} >
-                {m.kind === 'obra' ? (
-                  <ObraCard post={m.it} />
-                ) : (
-                  <>
-                    <p style={{ fontFamily: 'var(--font-voice)', fontSize: 'var(--text-sm)',
-                      lineHeight: 1.55, color: 'var(--ink)', margin: '0 0 var(--space-8)' }}>
-                      {m.it.text}
-                    </p>
-                    <HelperCard helper={m.it.helper} />
-                    <div style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)', marginTop: '5px' }}>
-                      {m.it.seconds != null ? <>⚡ encontrado en {m.it.seconds}s · </> : <>✓ conexión real · </>}{m.it.timeAgo}
-                    </div>
-                  </>
-                )}
-              </div>
-            ))
-          })()}
+          ) : (
+            <>
+              {/* LA DEMANDA TESTIFICA PRIMERO: quien duda necesita oir a otro
+                  vecino, no a un profesional presentandose. */}
+              {rioF.map((s, i) => (
+                <div key={s.id || 'c' + i}>
+                  <p style={{ fontFamily: 'var(--font-voice)', fontSize: 'var(--text-sm)',
+                    lineHeight: 1.55, color: 'var(--ink)', margin: '0 0 var(--space-8)' }}>
+                    {s.text}
+                  </p>
+                  <HelperCard helper={s.helper} />
+                  <div style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)', marginTop: 'var(--space-4)' }}>
+                    {s.seconds != null ? <>⚡ encontrado en {s.seconds}s · </> : <>✓ conexión real · </>}{s.timeAgo}
+                  </div>
+                </div>
+              ))}
+
+              {obras.length > 0 && (
+                <>
+                  <SectionLabel tone="muted" style={{margin: 'var(--space-20) 0 var(--space-4)'}}>
+                    Quién lo ha demostrado
+                  </SectionLabel>
+                  {obras.map((o, i) => <ObraCard key={o.id || 'o' + i} post={o} />)}
+                </>
+              )}
+            </>
+          )}
         </div>
 
         {destacados.length > 0 && (

@@ -66,3 +66,14 @@ export function getDestacados(n = 3) {
   }
   return out
 }
+
+/**
+ * Las historias de una categoria concreta — para que Comunidad pueda
+ * responder a lo que el vecino buscaba, en vez de hablar en general.
+ */
+export function historiasDeCategoria(categoria, limit = 1) {
+  if (!categoria) return []
+  return getConnectionStories()
+    .filter(s => s.helper?.category === categoria)
+    .slice(0, limit)
+}

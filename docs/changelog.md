@@ -34,6 +34,30 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — Comunidad deja de ser un feed (replanteamiento)
+
+- **La prueba incomoda**: la primera linea de Comunidad eran numeros
+  inventados. `pulsoDelDia` hasheaba la fecha de hoy y devolvia
+  "N conexiones · M citas": no describia nada. En el producto que extirpo el
+  cronometro falso del chat y prefiere cero tarjetas antes que una
+  recomendacion equivocada, **la pantalla cuyo trabajo es dar confianza
+  abria mintiendo**.
+- **El pulso honesto**: un numero solo es honesto si puedes verificarlo
+  bajando por la pantalla. Ahora cuenta lo que la pestaña muestra de verdad
+  — vecinos que encontraron a su persona y profesionales que han
+  documentado su trabajo — y reconoce la tuya si la tienes.
+- **Muere el rio mixto 2:1.** Un feed ordena por novedad y exige caudal: el
+  dia del lanzamiento hay 16 semillas y ningun flujo, y un rio sin agua no
+  parece tranquilo, parece un barrio vacio. Ahora se ordena por EVIDENCIA.
+- **La demanda testifica primero**: quien llega con miedo necesita oir a otro
+  vecino, no a un profesional presentandose. Las conexiones ✓ suben al
+  frente; la obra pasa a respaldarlas ("Quien lo ha demostrado").
+- **Y el giro**: el historial guarda `{query, category}`, asi que Comunidad
+  responde a tu caso — "Porque buscaste una logopeda" abre con una historia
+  resuelta de TU categoria y la obra de quien la resolvio. Si no hay nada de
+  lo tuyo, el bloque no aparece: nunca un hueco vacio.
+- Sello NURA_BUILD 2026.07.04-cz.
+
 ## 2026-07-04 — La Hoja: ningun panel se sale de la pantalla
 
 - El fundador encontro que en el muro de registro el boton "Ya tengo cuenta"
