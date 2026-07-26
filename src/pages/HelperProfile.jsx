@@ -394,16 +394,6 @@ function HelperProfileInner() {
             </p>
           </div>
 
-          {/* CTA principal */}
-          <button className={styles.ctaPrimary} onClick={handleContact}
-            style={{animation:'popIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.25s forwards'}}>
-            <MessageCircle size={15} /> Escribir a {firstName}
-          </button>
-          <button className={styles.ctaSecondary}
-            style={{animation:'popIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards'}}
-            onClick={() => user ? setShowConfirm(true) : setShowGate(true)}>
-            <Calendar size={14} /> Ver disponibilidad
-          </button>
 
         </div>
 
@@ -630,7 +620,19 @@ function HelperProfileInner() {
           onNavigate={navigate}
         />
       )}
-    </div>
+    
+      {/* La Barra de Accion: escribir esta siempre a un pulgar */}
+      <div className={styles.actionBar}>
+        <Button variant="secondary" style={{flex:'0 1 38%'}}
+          onClick={() => user ? setShowConfirm(true) : setShowGate(true)}>
+          <Calendar size={14} /> Disponibilidad
+        </Button>
+        <Button variant="primary" style={{flex:'1 1 62%', boxShadow:'0 4px 16px var(--purple-30)'}}
+          onClick={handleContact}>
+          <MessageCircle size={15} /> Escribir a {firstName}
+        </Button>
+      </div>
+</div>
   )
 }
 

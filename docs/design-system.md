@@ -156,6 +156,14 @@ nada" refuerza la ausencia en vez de la promesa.
 No confundir con el muro de registro (Perfil sin cuenta): eso no es un
 vacio, es una puerta. Otra familia.
 
+### La Barra de Accion (fichas que existen para convertir)
+El perfil del profesional existe **para** que le escribas: la accion se
+ancla sobre la navegacion y el contenido pasa por debajo. Jerarquia
+explicita en el ancho (protagonista ~62%, secundaria ~38%), receta de barra
+de la casa (papel 0.86 + blur 32 + `--ink-border` arriba) y reserva del
+scroll **una sola vez**. Antes vivian al final de la pagina: habia que
+recorrer el perfil entero para escribir.
+
 ### Button (primitiva)
 `<Button variant="primary|secondary|ghost" full disabled onClick>`.
 **`minHeight: 44px` cocido dentro**: el area tactil deja de ser una

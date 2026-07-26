@@ -26,6 +26,22 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — La Barra de Accion (encargo del fundador)
+
+- Medido: los dos CTA del perfil vivian en la linea 398 de 410 — despues del
+  hero, los idiomas, la formacion, la obra y las valoraciones. Para
+  escribirle habia que **recorrer el perfil entero**: la inversion exacta de
+  la jerarquia real.
+- Nace la barra fija sobre la navegacion, con la jerarquia explicita en el
+  ancho (Escribir ~62%, Disponibilidad ~38%). "Ver disponibilidad" pierde el
+  verbo: en una barra cada palabra cuesta ancho al protagonista.
+- Ambas usan la primitiva Button (44px de area tactil heredados). El
+  secundario cede su borde morado: dos tratamientos morados en una barra
+  compiten. El principal conserva su sombra morada, que ahi si lo despega.
+- handleContact intacto (incluye el flujo de invitado). Los CTA del fondo
+  mueren con sus popIn (ley -ar) y sus reglas huerfanas.
+- Sello NURA_BUILD 2026.07.04-cv.
+
 ## 2026-07-04 — El Compas: el ritmo vertical de las secciones
 
 - El fundador señalo que la linea separadora aparecia pegada al contenido

@@ -12,7 +12,7 @@
      transparente) y .scroll reserva la barra una sola vez. */
 }
 
-.scroll {   padding-bottom: var(--nav-h);
+.scroll {   padding-bottom: calc(var(--nav-h) + 72px);   /* la barra de accion + su aire, reservados UNA vez */
   }
 
 /* Loading */
@@ -164,36 +164,9 @@
 }
 
 /* CTAs */
-.ctaPrimary {
-  display: flex; align-items: center; justify-content: center; gap: 7px;
-  width: 100%; padding: 16px;
-  background: var(--purple); color: white;
-  border: none; border-radius: var(--radius-full);
-  font-size: var(--text-base); font-weight: 700;
-  cursor: pointer; font-family: inherit;
-  margin-bottom: 9px;
-  box-shadow: 0 4px 16px rgba(123,47,255,0.28);
-  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.15s;
-  letter-spacing: -0.1px;
-}
 
-.ctaPrimary:active {
-  transform: scale(0.98);
-  box-shadow: 0 2px 8px rgba(123,47,255,0.18);
-}
 .ctaPrimary:active { opacity: 0.8; }
 
-.ctaSecondary {
-  display: flex; align-items: center; justify-content: center; gap: 7px;
-  width: 100%; padding: 12px;
-  background: var(--purple-05); color: var(--purple);
-  border: 1.5px solid var(--purple-20);
-  border-radius: var(--radius-full);
-  font-size: var(--text-sm); font-weight: 600;
-  cursor: pointer; font-family: inherit;
-  transition: opacity 0.15s;
-}
-.ctaSecondary:active { opacity: 0.7; }
 
 /* ══════════════════════════════════════════════════════════
    SECTIONS — continuous scroll, no tabs
@@ -479,3 +452,21 @@
   border-top: 1px solid var(--ink-border);
   }
 
+
+
+/* ── LA BARRA DE ACCION ────────────────────────────────────────
+   El perfil existe PARA que le escribas: la accion se ancla y el
+   contenido pasa por debajo. Misma receta que las otras barras fijas. */
+.actionBar {
+  position: fixed;
+  left: 0; right: 0;
+  bottom: var(--nav-h);
+  z-index: 30;
+  display: flex;
+  gap: var(--space-8);
+  padding: var(--space-10) var(--space-16) var(--space-12);
+  background: rgba(247,246,242,0.86);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border-top: 1px solid var(--ink-border);
+}
