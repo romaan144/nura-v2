@@ -134,6 +134,13 @@ cuando la conexión responde. Detalle técnico en `architecture.md`.
   valoracion, Onboarding, Home). Debe morir en favor de `--ink-border`, que
   ya usa el 73% del producto y respeta la tinta calida.
 
+- [BLOQUEO DE LANZAMIENTO] **Revisar las politicas RLS de Supabase antes de
+  abrir al publico.** `src/utils/claudeApi.js` hace PATCH sobre la tabla
+  `helpers` con la clave ANONIMA: si el rol anon tiene escritura, cualquiera
+  puede reescribir los datos de los profesionales. El pendiente antiguo
+  ("clave anon → env") daba seguridad falsa: el problema no es donde vive la
+  clave, es que permite hacer. Ejecutar `npm run preflight`.
+
 - [SUBIR AL BACKEND] `nura_demanda_no_cubierta` — cada vez que Nura
   comprende una necesidad y no tiene a nadie compatible, se registra
   {categoria, consulta, fecha} en el movil de la persona. Es la lista de

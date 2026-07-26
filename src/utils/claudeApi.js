@@ -4,7 +4,14 @@
 // ──────────────────────────────────────────────────────────────────────────
 
 const SUPABASE_URL = 'https://oxmohciswebonoumghhu.supabase.co'
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94bW9oY2lzd2Vib25vdW1naGh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk2MzE4MTUsImV4cCI6MjA2NTIwNzgxNX0.oJQLSV5UEGjV3f6sPnHJT3nOVHXyaQJGzHKVDQkWCHo'
+// AVISO: mover esta clave a una variable de entorno NO la protege. Una
+// anon key de Supabase esta diseñada para viajar al navegador, y Vite
+// incrusta cualquier VITE_* en el paquete compilado. Vive aqui para poder
+// ROTARLA sin tocar codigo, nada mas.
+// Lo que de verdad protege es el RLS: este archivo hace PATCH sobre la
+// tabla `helpers`, asi que el rol anonimo NO debe tener escritura. Ver
+// context.md antes de abrir al publico.
+const SUPABASE_KEY = import.meta?.env?.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94bW9oY2lzd2Vib25vdW1naGh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk2MzE4MTUsImV4cCI6MjA2NTIwNzgxNX0.oJQLSV5UEGjV3f6sPnHJT3nOVHXyaQJGzHKVDQkWCHo'
 
 const headers = {
   'apikey': SUPABASE_KEY,

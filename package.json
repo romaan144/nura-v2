@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test:matching": "node scripts/test-matching.mjs",
-    "smoke": "node scripts/smoke.mjs"
+    "smoke": "node scripts/smoke.mjs",
+    "preflight": "node scripts/preflight.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.17.0",

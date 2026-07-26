@@ -34,6 +34,25 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — La Puerta de Produccion (Nura Copilot)
+
+- **El interruptor deja de ser manual**: DEMO_MODE deriva de VITE_DEMO con
+  DEFAULT_DEMO de respaldo, para que una compilacion de produccion no pueda
+  salir en modo demo por olvido. **Se deja en true a proposito**: cambiarlo
+  hoy le quitaria al fundador la Confirmacion Humana a los 30s en su
+  dispositivo. El dia del lanzamiento se pone a false.
+- **Correccion de un pendiente que daba seguridad falsa**: el pendiente
+  decia "clave anon Supabase → env". Una anon key esta DISEÑADA para viajar
+  al navegador, y Vite incrusta cualquier VITE_* en el paquete: moverla no
+  esconde nada. El riesgo real es otro y es concreto — claudeApi.js hace
+  PATCH sobre `helpers` con esa clave; si el rol anon tiene escritura,
+  cualquiera reescribe los datos de los profesionales. Anotado como BLOQUEO
+  DE LANZAMIENTO. La clave pasa a .env igualmente, para poder ROTARLA.
+- **Quinta puerta** `npm run preflight`: modo demo, restos de desarrollo y
+  el aviso de RLS. Con excepciones declarables (`// preflight-ok`) — el
+  sello en consola es util y no se borra por complacer a una puerta.
+- Sello NURA_BUILD 2026.07.04-df.
+
 ## 2026-07-04 — Los Dos Silencios (Nura Copilot)
 
 - **74 lineas de codigo muerto**: habia DOS `if (!matches?.length)` seguidos.

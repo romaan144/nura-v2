@@ -125,3 +125,24 @@ jamás debería llegar a ella.
 Cinco iteraciones intentando frenar por JavaScript un desplazamiento que
 causaba `justify-content: flex-end` en el contenedor de chat. Antes de
 iterar sobre efectos y timeouts, **leer el layout del contenedor**.
+
+
+### La Quinta Puerta — preflight (2026-07-04)
+
+`npm run preflight`. **No entra en las cuatro de cada push**: es la puerta
+del DIA DEL LANZAMIENTO. Verifica lo que las otras no pueden ver:
+
+1. **Que la app no salga en modo demostracion.** `DEMO_MODE` ya no es una
+   constante manual: deriva del entorno (`VITE_DEMO`), con `DEFAULT_DEMO`
+   como respaldo. Hoy sigue en `true` a proposito, para no romper la demo
+   del fundador en su dispositivo.
+2. **Restos de desarrollo** (`console.log`). Las excepciones deliberadas se
+   marcan con `// preflight-ok` en la misma linea: una puerta que obliga a
+   romper algo util es una puerta mal escrita.
+3. **Imprime el aviso de RLS**, que ninguna comprobacion automatica puede
+   hacer por ti.
+
+**Sobre la clave anon**: moverla a `.env` NO la protege — una anon key de
+Supabase viaja al navegador por diseño y Vite la incrusta en el paquete
+igual. Vive en `.env` para poder **rotarla** sin tocar codigo. Lo que
+protege es el RLS.

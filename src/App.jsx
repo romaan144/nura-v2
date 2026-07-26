@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { useUser } from './context/UserContext'
 
 import { MOMENTO_CERO_COOLDOWN, NURA_BUILD } from './config'
-console.log('[Nüra] build', NURA_BUILD)
+console.log('[Nüra] build', NURA_BUILD)   // preflight-ok: el sello en consola es deliberado
 import Home from './pages/Home'
 const HelperProfile = lazy(() => import('./pages/HelperProfile'))
 const IntroLetter = lazy(() => import('./pages/IntroLetter'))

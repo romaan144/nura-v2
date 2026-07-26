@@ -3,7 +3,16 @@
 // Un solo lugar para pasar de demo a producción: cambiar DEMO_MODE.
 // ═══════════════════════════════════════════════════════════════
 
-export const DEMO_MODE = true
+// ── EL INTERRUPTOR ──
+// Deriva del entorno para que una compilacion de produccion no pueda salir
+// en modo demo por olvido. Hoy DEFAULT_DEMO sigue en true para no romper la
+// demo del fundador en su dispositivo: el dia del lanzamiento se pone a
+// false (o se define VITE_DEMO=false en Vercel) y `npm run preflight` lo
+// verifica antes de abrir.
+const DEFAULT_DEMO = true
+export const DEMO_MODE = import.meta?.env?.VITE_DEMO !== undefined
+  ? import.meta.env.VITE_DEMO === 'true'
+  : DEFAULT_DEMO
 
 // ── La Confirmación Humana ──
 // Cuánto esperar tras un contacto para preguntar "¿Pudiste resolverlo?"
@@ -22,4 +31,4 @@ export const PULSO_DELAY = DEMO_MODE ? 5000 : 1000
 export const MOMENTO_CERO_COOLDOWN = DEMO_MODE ? 2 * 60 * 60 * 1000 : Infinity
 
 // Sello de build visible — para verificar qué versión corre el dispositivo
-export const NURA_BUILD = '2026.07.04-de'
+export const NURA_BUILD = '2026.07.04-df'
