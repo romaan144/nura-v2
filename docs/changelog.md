@@ -26,6 +26,14 @@
   nada. Reversión inmediata a 97095ae si el límite no encaja.
 - Sello `NURA_BUILD` → `2026.07.04-bn`.
 
+## 2026-07-04 — El avatar del hero deja de animar (riesgo real)
+
+- Al verificar el conteo de popIn tras la barra quedaban 2: el avatar del
+  perfil. Ademas de violar la ley de -ar, el primero llevaba **opacity:0 en
+  linea** con la animacion: si no llegaba a ejecutarse, la foto del
+  profesional no aparecia nunca. Retirados.
+- Sello NURA_BUILD 2026.07.04-cw.
+
 ## 2026-07-04 — La Barra de Accion (encargo del fundador)
 
 - Medido: los dos CTA del perfil vivian en la linea 398 de 410 — despues del

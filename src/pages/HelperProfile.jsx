@@ -272,7 +272,6 @@ function HelperProfileInner() {
                     style={{
                       width:'96px', height:'96px', borderRadius:'50%', objectFit:'cover',
                       boxShadow:'0 4px 20px rgba(33,29,51,0.12)',
-                      opacity:0, animation:'popIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards'
                     }} />
                 : <div style={{
                     width:'96px', height:'96px', borderRadius:'50%',
@@ -280,7 +279,6 @@ function HelperProfileInner() {
                     display:'flex', alignItems:'center', justifyContent:'center',
                     fontSize:'var(--text-num)', fontWeight:700, color:'white',
                     boxShadow:'0 4px 20px rgba(33,29,51,0.15)',
-                    animation:'popIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.1s forwards'
                   }}>
                     {enrichedH.name?.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase() || enrichedH.avatar}
                   </div>
