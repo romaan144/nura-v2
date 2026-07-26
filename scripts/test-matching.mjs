@@ -114,5 +114,29 @@ for (const t of NEGATIVE) {
   console.log(`${ok4 ? '✓' : '✗'} [obra] consulta genérica: orden objetivo, sin distorsión`)
 }
 
+// ── La Agenda: la disponibilidad no puede mentir ──
+{
+  const { slotsDe, tieneHuecos, ocupacionesDe } = await import('../src/data/horarios.js')
+  const logo = { id: 1, category: 'logopedia' }, tec = { id: 3, category: 'tecnico' }
+  const lunes = '2026-07-06', domingo = '2026-07-05'
+
+  const a = slotsDe(logo, lunes, []).length > 0 && slotsDe(logo, domingo, []).length === 0
+  if (!a) failed++
+  console.log(`${a ? '✓' : '✗'} [agenda] la logopeda abre entre semana y cierra el domingo`)
+
+  const b = slotsDe(tec, lunes, []).length > slotsDe(logo, lunes, []).length
+  if (!b) failed++
+  console.log(`${b ? '✓' : '✗'} [agenda] cada oficio tiene su horario (tecnico > logopeda)`)
+
+  const oc = ocupacionesDe([{ helperId: 1, fecha: lunes, hora: '17:00', estado: 'confirmada' }],
+                           [{ helperId: 1, date: lunes, time: '18:00', status: 'pending' }])
+  const sl = slotsDe(logo, lunes, oc)
+  const c = sl.find(x => x.hora === '17:00')?.estado === 'ocupada' &&
+            sl.find(x => x.hora === '18:00')?.estado === 'pendiente' &&
+            sl.find(x => x.hora === '16:00')?.estado === 'libre'
+  if (!c) failed++
+  console.log(`${c ? '✓' : '✗'} [agenda] ocupacion real desde los DOS almacenes (citas + services)`)
+}
+
 console.log(failed === 0 ? `\n✅ SUITE v2 VERDE — ${GOLDEN.length + HONESTY.length + NEGATIVE.length}/${GOLDEN.length + HONESTY.length + NEGATIVE.length}` : `\n❌ ${failed} FALLOS`)
 process.exit(failed === 0 ? 0 : 1)

@@ -285,10 +285,14 @@ export function UserProvider({ children }) {
     save('nura_my_stories', updated)
   }
 
-  function addCita({ helperId, helperName, personaId, personaLabel, label }) {
+  function addCita({ helperId, helperName, personaId, personaLabel, label, fecha, hora, estado }) {
     const nueva = {
       id: 'c_' + Date.now(), helperId, helperName,
       personaId: personaId || null, personaLabel: personaLabel || null,
+      // fecha y hora estructuradas: sin ellas no hay ocupacion posible.
+      // El label se conserva porque tres pantallas ya lo leen (Chats, el
+      // saludo de Inicio y Tu semana): romperlo dejaria a Nura diciendo undefined.
+      fecha: fecha || null, hora: hora || null, estado: estado || 'pendiente',
       label, createdAt: Date.now(),
     }
     const updated = [...citas, nueva]

@@ -1,5 +1,6 @@
 import PageHeader from '../components/PageHeader'
 import ObraCard from '../components/ObraCard'
+import { slotsDe, tieneHuecos, ocupacionesDe } from '../data/horarios'
 import { Button, SectionLabel, Skeleton } from '../components/ui'
 import { getObraDeHelper } from '../data/obraPosts'
 import ErrorBoundary from '../components/ErrorBoundary'
@@ -40,6 +41,8 @@ function PostCard({ post }) {
 }
 
 function BookingModal({ helper, onClose, onBook, onNavigate }) {
+  const { citas, services } = useUser()
+  const ocupadas = ocupacionesDe(citas, services)   // la ocupacion real, de ambos almacenes
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
   const [note, setNote] = useState('')
@@ -47,7 +50,7 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
   const name = helper?.name?.split(' ')?.[0] || helper?.name || ''
 
   function confirm() {
-    onBook?.(helper, date, time, note)
+    onBook?.(helper, date, time, note)   // fecha y hora, ya estructuradas
     setDone(true)
   }
 
@@ -116,12 +119,15 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
                   {Array.from({length:7},(_,i)=>{
                     const d=new Date(); d.setDate(d.getDate()+i)
                     const iso=d.toISOString().split('T')[0]
+                    const abierto = tieneHuecos(helper, iso, ocupadas)
                     const lbl=i===0?'Hoy':i===1?'Mañana':d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric'})
                     return (
-                      <button key={i} onClick={()=>setDate(iso)} style={{
+                      <button key={i} onClick={()=>{ if(abierto){ setDate(iso); setTime(null) } }}
+                        disabled={!abierto} style={{
                         flexShrink:0,padding:'var(--space-8) var(--space-14)',
-                        background:date===iso?'var(--purple)':'rgba(33,29,51,0.05)',
-                        color:date===iso?'white':'rgba(33,29,51,0.6)',
+                        opacity: abierto ? 1 : 0.35,
+                        background:date===iso?'var(--purple)':'var(--surface-subtle)',
+                        color:date===iso?'white':'var(--ink-secondary)',
                         border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
                         cursor:'pointer',fontFamily:'inherit',transition:'all 0.15s',
                         whiteSpace:'nowrap',
@@ -134,15 +140,31 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
               <div>
                 <SectionLabel tone="muted" style={{margin:'0 0 var(--space-8)',color:'rgba(33,29,51,0.4)'}}>Hora</SectionLabel>
                 <div style={{display:'flex',gap:'var(--space-6)',flexWrap:'wrap'}}>
-                  {['9:00','10:00','11:00','12:00','16:00','17:00','18:00','19:00'].map(t=>(
-                    <button key={t} onClick={()=>setTime(t)} style={{
-                      padding:'7px var(--space-12)',
-                      background:time===t?'var(--purple)':'rgba(33,29,51,0.05)',
-                      color:time===t?'white':'rgba(33,29,51,0.6)',
-                      border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
-                      cursor:'pointer',fontFamily:'inherit',transition:'all 0.15s',
-                    }}>{t}</button>
-                  ))}
+                  {(() => {
+                    const slots = slotsDe(helper, date, ocupadas)
+                    if (!slots.length) return (
+                      <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:0}}>
+                        Ese día lo tiene completo.
+                      </p>
+                    )
+                    return slots.map(({hora, estado}) => {
+                      const libre = estado === 'libre'
+                      const sel = time === hora
+                      return (
+                        <button key={hora} onClick={()=>{ if(libre) setTime(hora) }} disabled={!libre}
+                          title={libre ? '' : estado === 'ocupada' ? 'Ocupada' : 'Pendiente de confirmar'}
+                          style={{
+                            padding:'7px var(--space-12)',
+                            background: sel ? 'var(--purple)' : libre ? 'var(--surface-subtle)' : 'transparent',
+                            color: sel ? 'white' : libre ? 'var(--ink-secondary)' : 'var(--ink-tertiary)',
+                            border: libre ? 'none' : '1px dashed var(--ink-border)',
+                            textDecoration: estado === 'ocupada' ? 'line-through' : 'none',
+                            borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
+                            cursor: libre ? 'pointer' : 'default', fontFamily:'inherit',
+                          }}>{hora}</button>
+                      )
+                    })
+                  })()}
                 </div>
               </div>
               <textarea value={note} onChange={e=>setNote(e.target.value)}

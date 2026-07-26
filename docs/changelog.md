@@ -34,6 +34,30 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — La Agenda: disponibilidad real, por horas (Nura Copilot)
+
+- Diagnostico peor que el sintoma: ya habia horas, pero eran de mentira —
+  ocho pildoras fijas escritas a mano (9,10,11,12,16,17,18,19), **iguales
+  para los 123 profesionales y para los siete dias**, sin ningun dato
+  detras. Un cerrajero de urgencias ofrecia el mismo horario que una
+  logopeda infantil, y dos personas podian pedir las 17:00 del martes.
+- `src/data/horarios.js`: horario por categoria (tecnico y hogar con franja
+  amplia y sabados; logopedia y clases por la tarde; salud y legal de
+  mañana; cuidado y mascotas todos los dias), `slotsDe()` con estados
+  **libre / pendiente / ocupada**, y filtro de horas ya pasadas si es hoy.
+- **Hallazgo clave**: la ocupacion vivia en DOS almacenes — `services`
+  (reservas desde el perfil) y `citas` (acuerdos del chat). Mirar solo uno
+  dejaba huecos falsamente libres. `ocupacionesDe()` los normaliza.
+- El modal deja de mentir: dias sin huecos apagados, horas ocupadas
+  tachadas y pendientes con borde punteado (mostrarlas es lo que hace
+  creibles las libres), y "Ese dia lo tiene completo" en su voz.
+- Decision aprobada: una hora pedida y no confirmada **se bloquea como
+  pendiente** — perder un hueco cuesta menos que hacer quedar mal al
+  profesional con dos vecinos.
+- La puerta de lint caza `citas` fuera del ambito del modal antes de que
+  llegara a produccion. Suite +3 casos.
+- Sello NURA_BUILD 2026.07.04-cx.
+
 ## 2026-07-04 — La Barra de Accion (encargo del fundador)
 
 - Medido: los dos CTA del perfil vivian en la linea 398 de 410 — despues del
