@@ -454,7 +454,7 @@
   align-items: center;
   gap: 10px;
   padding: 9px 0;
-  border-bottom: 1px solid var(--rule);
+  border-bottom: 1px solid var(--ink-border);
   font-size: var(--text-sm);
   color: var(--ink-primary);
   font-weight: 500;
