@@ -58,6 +58,13 @@ export const SEED_COMMENTS = {
   ],
 }
 
+// Reacciones semilla: datos de demo escritos a mano (de la misma familia
+// que los comentarios), NO cifras generadas al vuelo. Verificables y
+// editables — la leccion del pulso inventado.
+export const SEED_REACCIONES = {
+  o1: 12, o3: 7, o8: 15, o5: 9, o12: 6, o9: 21, o7: 8, o6: 11, o10: 5, o11: 14, o2: 4, o4: 6,
+}
+
 export const COMMENT_STARTERS = ['Gracias por compartir esto', '¿Cómo lo resolvisteis?', 'Nos pasó algo parecido']
 
 const dias = h => 1 + ((h * 7) % 9)

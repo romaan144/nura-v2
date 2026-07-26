@@ -34,6 +34,31 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — EL MURO: rediseño total de Comunidad (mandato del fundador)
+
+- **La causa real de la fealdad, encontrada**: no era el orden. Eran DOS
+  idiomas visuales en el mismo rio — la obra dibujada como tarjeta blanca
+  con chip y titulo, la conexion como parrafo suelto + tarjeta de persona +
+  linea gris. Dos componentes alternandose nunca se leen como una
+  comunidad. Mientras el rio los mezclaba la alternancia lo disimulaba; al
+  agruparlos quedo a la vista.
+- **PostCard, la unidad unica**: autor arriba, contenido, barra social.
+  Obra y conexion pasan a ser el mismo post con distinto contenido. Las
+  conexiones tienen ahora AUTOR (el vecino, o tu si es tu historia) y citan
+  al profesional como mencion tocable.
+- **Motor social**: reaccion **"Me sirve"** con contador y persistencia,
+  comentarios en primera linea (contador visible, hilo desplegable, los
+  arranques guiados), y **compositor arriba** — el gesto de publicar deja
+  de estar escondido en el Perfil.
+- **"Me sirve" y no un corazon**: no mide popularidad, mide utilidad.
+  Respeta la decision original del fundador (LinkedIn, no Instagram) y le
+  dice algo real a quien publica.
+- Contadores de arranque: **semillas curadas escritas a mano**, no cifras
+  generadas al vuelo — la leccion del pulso inventado, aplicada.
+- El pulso vuelve a ser verificable: historias y personas que se pueden
+  contar bajando por la pantalla.
+- Sello NURA_BUILD 2026.07.04-da.
+
 ## 2026-07-04 — Comunidad deja de ser un feed (replanteamiento)
 
 - **La prueba incomoda**: la primera linea de Comunidad eran numeros

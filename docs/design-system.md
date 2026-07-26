@@ -190,6 +190,18 @@ a X"). Las alternativas son la MISMA tarjeta con `small` (retrato 62, sin
 acción) en rejilla de tres: coherencia por escala, no por invención. La
 Tarjeta canon horizontal sigue rigiendo listas, Explorar, Comunidad y perfil.
 
+### PostCard (la unidad del Muro)
+**Un solo idioma.** Antes convivian dos componentes alternandose en el mismo
+rio — la obra como tarjeta, la conexion como parrafo suelto + tarjeta de
+persona — y por eso Comunidad nunca se leia como una comunidad, sino como
+dos listas peleandose. Ahora obra y conexion son **el mismo post con
+distinto contenido**: autor arriba (retrato, nombre, rol, tiempo), cuerpo,
+resultado si lo hay, y **barra social** (Me sirve · comentarios).
+**"Me sirve", no un corazon**: no mide popularidad, mide utilidad — respeta
+la decision original (LinkedIn, no Instagram) y le dice algo real a quien
+publica.
+ObraCard sobrevive para "Su obra" en los perfiles: alli no hay muro.
+
 ### ObraCard (Nüra Obra)
 Pieza canon de publicación tipada: chip de tipo (morado-10, uppercase) →
 título en Voz 16.5 → cuerpo clamp-4 con "ver más" → **Resultado:** si

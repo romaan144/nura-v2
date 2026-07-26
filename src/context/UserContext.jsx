@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import { SEED_COMMENTS } from '../data/obraPosts'
+import { SEED_COMMENTS, SEED_REACCIONES } from '../data/obraPosts'
 
 const UserContext = createContext(null)
 
@@ -16,6 +16,7 @@ export function UserProvider({ children }) {
   const [citas, setCitas] = useState(() => load('nura_citas', []))
   const [myStories, setMyStories] = useState(() => load('nura_my_stories', []))
   const [obraComments, setObraComments] = useState(() => load('nura_obra_comments', {}))
+  const [utiles, setUtiles] = useState(() => load('nura_utiles', []))
   const [misObras, setMisObras] = useState(() => load('nura_obra_mias', []))
   const [helpersCache, setHelpersCache] = useState({})
   const [following, setFollowing] = useState(() => {
@@ -263,6 +264,21 @@ export function UserProvider({ children }) {
     try { window.__nuraMisObras = updated } catch { /* noop */ }
   }
 
+  // ── Me sirve: no mide popularidad, mide utilidad ──
+  function toggleUtil(postId) {
+    if (!postId) return
+    const yaEsta = (utiles || []).includes(postId)
+    const updated = yaEsta ? utiles.filter(x => x !== postId) : [...utiles, postId]
+    setUtiles(updated)
+    save('nura_utiles', updated)
+  }
+  function utilesDe(postId) {
+    return (SEED_REACCIONES[postId] || 0) + ((utiles || []).includes(postId) ? 1 : 0)
+  }
+  function meSirve(postId) {
+    return (utiles || []).includes(postId)
+  }
+
   // ── Los Comentarios Profesionales ──
   function addComment(postId, text) {
     const t = String(text || '').trim()
@@ -323,6 +339,7 @@ export function UserProvider({ children }) {
       citas, addCita,
       myStories, addStory,
       addComment, commentsFor,
+      toggleUtil, utilesDe, meSirve,
       misObras, addObra,
       helpersCache, cacheHelpers,
       following, follow, unfollow, isFollowing,
