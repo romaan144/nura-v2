@@ -92,6 +92,13 @@ prohibido el `ease-out` genérico.
   se tocan. Las dos barras fijas de la app (BottomNav y cabecera de Chats)
   comparten receta: papel a 0.86 con blur 32.
 
+- **PALABRAS PROHIBIDAS EN LA VOZ DE NURA**: **"barrio"** — en español
+  connota baja calidad y Nura no la dice nunca. Alternativas segun contexto:
+  "cerca de ti", "tu zona", "la comunidad". **Matiz importante**: la palabra
+  sobrevive en el diccionario del MATCHING, porque el usuario si puede
+  escribirla ("alguien en mi barrio") y Nura debe entenderle.
+  **Comprender no es hablar.**
+
 - **La Tinta manda (color)**: Nüra **no usa negro puro**. Toda tinta,
   borde, sombra y veladura es `rgba(33,29,51, α)` — violeta cálido sobre
   papel cálido. El morado de marca solo por token

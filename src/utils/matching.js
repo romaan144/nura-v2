@@ -245,6 +245,10 @@ const CATEGORY_KEYWORDS = {
 const URGENCY_KEYWORDS = ['urgente','urgencia','hoy','ahora','inmediatamente','rápido',
   'no funciona','roto','avería','24h','cuanto antes','lo antes posible']
 const PRESENTIAL_KEYWORDS = ['casa','domicilio','presencial','venir','viene','zona',
+  // NOTA DE MARCA: 'barrio' NO se muestra jamas en la voz de Nura, pero SI
+  // debe entenderse cuando lo escribe el usuario ("busco alguien en mi
+  // barrio"). Comprender no es hablar: esta palabra vive aqui como oido,
+  // nunca como boca.
   'cerca','barrio','a domicilio','en persona']
 const ONLINE_KEYWORDS = ['online','videoconferencia','remoto','internet','videollamada',
   'zoom','google meet','a distancia']

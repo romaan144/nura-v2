@@ -40,7 +40,7 @@ export default function Feed() {
   const deConexion = [...(myStories || []), ...getConnectionStories()].map((s, i) => ({
     id: s.id || 'cx' + i,
     helperId: s.helper?.id,
-    autor: s.mine ? (user?.name || 'Tú') : (s.autor || 'Un vecino del barrio'),
+    autor: s.mine ? (user?.name || 'Tú') : (s.autor || 'Alguien cerca de ti'),
     rol: s.mine ? 'Tu historia' : 'Vecino',
     autorColor: s.mine ? 'var(--purple)' : undefined,
     dateLabel: s.timeAgo,
@@ -68,7 +68,7 @@ export default function Feed() {
 
   const sigue = id => (following || []).includes(id)
 
-  // Temas: el barrio se puede recorrer por lo que te preocupa
+  // Temas: la comunidad se recorre por lo que te preocupa
   // HELPERS puede traer huecos nulos: filtrar antes de buscar (lo cazo el smoke)
   const POOL = HELPERS.filter(Boolean)
   const temaDe = p => POOL.find(h => h.id === p.helperId)?.category || null
@@ -100,7 +100,7 @@ export default function Feed() {
       <div className="aurora" style={{ padding: 'calc(var(--header-h) - var(--space-8)) var(--space-16) var(--space-16)' }}>
         <h1 style={{ fontFamily: 'var(--font-voice)', fontWeight: 700, fontSize: 'var(--text-xl)',
           letterSpacing: '-0.9px', color: 'var(--ink)', margin: 0 }}>
-          El barrio
+          Cerca de ti
         </h1>
         <div className="hilo" style={{ width: '64px', margin: 'var(--space-8) 0 var(--space-10)' }} />
         <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)', margin: 0, lineHeight: 1.5 }}>
@@ -116,13 +116,13 @@ export default function Feed() {
                 border: '1px solid ' + (modo === m ? 'var(--purple)' : 'var(--ink-border)'),
                 borderRadius: 'var(--radius-full)', padding: 'var(--space-6) var(--space-14)',
                 fontSize: 'var(--text-xs)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
-              {m === 'todos' ? 'Todo el barrio' : 'A quien sigues'}
+              {m === 'todos' ? 'Todo' : 'A quien sigues'}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Los temas: el barrio se recorre por lo que te preocupa */}
+      {/* Los temas: la comunidad se recorre por lo que te preocupa */}
       {temas.length > 1 && (
         <div style={{ display: 'flex', gap: 'var(--space-6)', overflowX: 'auto',
           padding: '0 var(--space-16) var(--space-4)', margin: 'var(--space-14) 0 0' }}>
@@ -152,7 +152,7 @@ export default function Feed() {
             {(user?.name || '+')[0]}
           </span>
           <span style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)' }}>
-            {user?.isHelper ? 'Comparte algo con el barrio…' : 'Cuenta cómo te fue…'}
+            {user?.isHelper ? 'Comparte algo con la comunidad…' : 'Cuenta cómo te fue…'}
           </span>
         </button>
 
@@ -169,7 +169,7 @@ export default function Feed() {
 
         {modo === 'todos' && !tema && mias.length > 0 && (
           <SectionLabel tone="muted" style={{ margin: '0 0 var(--space-10)' }}>
-            Lo que ha pasado en el barrio
+            Lo que ha pasado cerca de ti
           </SectionLabel>
         )}
 
@@ -178,7 +178,7 @@ export default function Feed() {
             <EmptyState
               title="Aún no sigues a nadie."
               hint="Cuando sigas a un profesional, lo que publique aparecerá aquí."
-              actionLabel="Ver a todo el barrio"
+              actionLabel="Ver toda la comunidad"
               onAction={() => setModo('todos')}
             />
           ) : posts.map(p => <PostCard key={p.id} post={p} />)}

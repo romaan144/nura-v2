@@ -54,7 +54,7 @@ export function getConnectionStories() {
 }
 
 
-// Personas destacadas del barrio (deterministas por día, diversas por categoría)
+// Personas destacadas de la zona (deterministas por día, diversas por categoría)
 export function getDestacados(n = 3) {
   const day = new Date().getDate()
   const pool = (HELPERS || []).filter(h => h && h.rating >= 4.7)

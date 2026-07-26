@@ -1784,7 +1784,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     name: "Tomàs Mas Ferrer",
     specialty: "adiestrador canino",
     category: "mascotas",
-    bio: "Adiestrador canino con certificación CCPDT y 10 años de experiencia. Obediencia básica y avanzada, corrección de problemas de comportamiento, socialización y adiestramiento en positivo. Sesiones en tu barrio.",
+    bio: "Adiestrador canino con certificación CCPDT y 10 años de experiencia. Obediencia básica y avanzada, corrección de problemas de comportamiento, socialización y adiestramiento en positivo. Sesiones en tu zona.",
     quote: "Los animales no mienten. Si confían en ti, es porque lo mereces. Me lo gano cada día.",
     rating: 4.9,
     reviews: 118,

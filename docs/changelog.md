@@ -34,6 +34,18 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — Fuera la palabra "barrio" de la voz de Nura
+
+- Decision de marca del fundador: en español connota baja calidad. Corregidas
+  las 9 apariciones visibles (titulo de Comunidad, filtro, compositor,
+  rotulo, estado vacio, autor de las historias, dos avisos y la ficha de un
+  profesional) con la alternativa que pedia cada contexto: "cerca de ti",
+  "tu zona", "la comunidad" — no un buscar-y-reemplazar ciego.
+- **Se conserva a proposito en el diccionario del matching**: el usuario si
+  puede escribir "busco alguien en mi barrio" y Nura debe entenderle.
+  **Comprender no es hablar.** Documentado en el propio codigo y en la ley.
+- Sello NURA_BUILD 2026.07.04-dd.
+
 ## 2026-07-04 — El Muro de Conexiones: que la prueba pese
 
 - Lectura completa de manifesto y context antes de tocar nada. El documento
