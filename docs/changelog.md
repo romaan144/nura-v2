@@ -34,6 +34,16 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — El sello, donde se puede ver
+
+- Circulo cerrado descubierto: el sello solo se mostraba en el Perfil **con
+  sesion iniciada**. El fundador no puede iniciar sesion (Login falla) y por
+  tanto no puede ver que version esta ejecutando — el unico dato que
+  distingue "el arreglo no funciona" de "el arreglo no ha llegado".
+- El sello pasa a verse tambien en **Login** y en el **Perfil de invitado**.
+  Un diagnostico que solo funciona cuando todo va bien no sirve de nada.
+- Sello NURA_BUILD 2026.07.04-du.
+
 ## 2026-07-04 — Verificado en el bundle + NotFound
 
 - **Comprobado en el CSS compilado** (no en el fuente): la regla de Login

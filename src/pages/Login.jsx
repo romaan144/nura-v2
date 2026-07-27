@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import { requestNotificationPermission, scheduleRetentionNotifications } from '../utils/notifications'
 import styles from './Login.module.css'
+import { NURA_BUILD } from '../config'
 
 export default function Login() {
   const [step, setStep] = useState('phone')
@@ -57,6 +58,13 @@ export default function Login() {
       {/* Background blobs */}
       <div className={styles.blob1} />
       <div className={styles.blob2} />
+
+      {/* El sello, aqui: sin sesion no se puede llegar al Perfil, que es
+          donde vivia — y sin el no hay forma de saber que version se ve. */}
+      <div style={{position:'absolute', top:'8px', right:'12px', zIndex:2,
+        fontSize:'10px', color:'var(--ink-tertiary)', letterSpacing:'0.3px'}}>
+        {NURA_BUILD}
+      </div>
 
       <div className={styles.top}>
         <img src="/logo-iso.png" alt="Nüra" className={styles.iso} />

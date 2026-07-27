@@ -318,6 +318,7 @@
    empujando todo hacia abajo. Y reserva la barra inferior, que esa rama no
    recibia de ningun padre. */
 .pageGuest {
+  position: relative;
   height: 100%;
   background: var(--paper);
   overflow-y: auto;

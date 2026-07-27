@@ -79,6 +79,8 @@ export default function Profile() {
   /* ── Guest ─────────────────────────────────────────────── */
   if (!user) return (
     <div className={styles.pageGuest}>
+      <div style={{position:'absolute', top:'10px', right:'14px',
+        fontSize:'10px', color:'var(--ink-tertiary)'}}>{NURA_BUILD}</div>
       <div className={styles.noUser}>
         <img src="/logo-iso.png" alt="Nüra" className={styles.noUserLogo} />
         <h2 className={styles.noUserTitle}>Crea tu cuenta gratis</h2>
