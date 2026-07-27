@@ -34,6 +34,25 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — Login: el teclado, y el contenedor que no existia
+
+- **El eslabon que faltaba**: `AppShell` tiene `SELF_LAYOUT` con `/login`
+  dentro, y para esas rutas **devuelve los hijos sin el contenedor .shell**.
+  Toda mi cadena de contenedores (shell → desktopMain → wrap) **no existe en
+  Login**. Por eso ninguna deduccion sobre ella valia, y por eso
+  `min-height: 100%` no resolvia: el padre no tiene altura definida.
+- **La causa del sintoma**: el campo del telefono tiene `autoFocus`. En iOS
+  eso abre el teclado nada mas entrar; el teclado ocupa casi media pantalla
+  y el contenido estaba **centrado en la altura completa del viewport**, asi
+  que el centro caia detras del teclado y arriba solo quedaba el degradado.
+  Con `overflow: hidden`, sin forma de alcanzarlo.
+- Cura doble: altura determinista (`100dvh`, sin depender de ancestros que
+  en esta ruta no existen) y **fuera el autoFocus del telefono** — abrir el
+  teclado antes de que nadie haya visto la pantalla es hostil ademas de
+  romper el layout. Los pasos de codigo y nombre lo conservan: alli el
+  usuario ya viene escribiendo.
+- Sello NURA_BUILD 2026.07.04-dr.
+
 ## 2026-07-04 — Login: la regla duplicada que anulaba el arreglo
 
 - Login.module.css tenia **DOS reglas `.page`**: la base y otra dentro de

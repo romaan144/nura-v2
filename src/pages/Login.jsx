@@ -88,7 +88,8 @@ export default function Login() {
               <div className={styles.flag}>+34</div>
               <input className={styles.input} type="tel" placeholder="612 345 678"
                 value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g,''))}
-                maxLength={9} autoFocus
+                maxLength={9}   /* sin autoFocus: en iOS abria el teclado al
+                    entrar, antes de que nadie hubiera visto la pantalla */
                 onKeyDown={e => e.key === 'Enter' && handlePhone()} />
             </div>
             <button className={styles.btn} onClick={handlePhone}
