@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, Send, Shield, Award, Calendar, Plus, Mic, MicOff } from 'lucide-react'
+import { ArrowLeft, Send, Shield, Award, Calendar, Mic, MicOff } from 'lucide-react'
 import { HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
 import { getHelperById } from '../utils/supabase'
@@ -717,7 +717,6 @@ export default function Chat() {
       {/* Floating input */}
       <div className={styles.inputWrap}>
         <div className={styles.inputBar}>
-          <button className={styles.plusBtn} aria-label="Adjuntar"><Plus size={18} /></button>
           <input className={styles.input} aria-label="Escribe tu mensaje"
             placeholder="Escribe un mensaje..."
             value={input} onChange={e => setInput(e.target.value)} onKeyDown={handleKey} />

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CAT_HUMANA } from '../data/categorias'
-import { Send, Mic, MicOff, Plus, Clock, RotateCcw, UserRound } from 'lucide-react'
+import { Send, Mic, MicOff, Clock, RotateCcw, UserRound } from 'lucide-react'
 import { analyzeNeed, matchHelpers, getPriceContext } from '../utils/matching'
 import { getFirstName } from '../utils/name'
 import { useUser } from '../context/UserContext'
@@ -1198,9 +1198,8 @@ export default function Home() {
 
 
         <div className={styles.inputCapsule}>
-          <button className={styles.plusBtn} aria-label="Adjuntar"><Plus size={18} /></button>
           <input ref={inputRef} className={styles.input} aria-label="Cuéntale a Nüra qué necesitas"
-            placeholder={forWhom === 'familia' ? 'Cuéntame qué le pasa...' : forWhom === 'hogar' ? 'Cuéntame qué necesita tu hogar...' : 'Cuéntame qué necesitas...'}
+            placeholder={forWhom === 'familia' ? 'Cuéntame qué le pasa...' : forWhom === 'hogar' ? 'Cuéntame qué necesita tu hogar...' : (searchHistory?.length ? 'Cuéntame qué necesitas...' : 'Cuéntale a Nüra qué necesitas…')}
             value={input} onChange={e => setInput(e.target.value)}
             onKeyDown={handleKey} readOnly={false}
             onFocus={() => setInputFocused(true)}

@@ -34,6 +34,24 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — El Umbral: que la puerta de entrada no mienta
+
+- **Un boton que no hacia nada**: el `+` de la barra decia
+  `aria-label="Adjuntar"` y **no tenia onClick**. Ocupaba 34px del sitio mas
+  valioso de la app, prometia adjuntar archivos y al pulsarlo no pasaba
+  nada. Verificado antes de tocar: estaba en **tres pantallas** (Inicio,
+  Chat y RegisterHelper) y **ninguno** tenia funcion. Retirados los tres.
+  Un control que no responde daña mas que la ausencia de una funcion que
+  nadie ha pedido.
+- **El boton de enviar estaba por debajo del area tactil**: 38px, cuando la
+  primitiva Button cuece 44px precisamente para no depender de que alguien
+  se acuerde. Es el boton mas pulsado del producto. Corregido.
+- La caja de entrada **nombra a Nura en la primera visita**: quien abre por
+  primera vez no sabe con quien habla.
+- De paso: import huerfano preexistente en DesktopSidebar, destapado al
+  revisar (no lo habia tocado este ciclo).
+- Sello NURA_BUILD 2026.07.04-dk.
+
 ## 2026-07-04 — El logo vuelve al centro (correccion)
 
 - Al retirar la columna vacia de la cabecera, el logo quedo descentrado. Esa

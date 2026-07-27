@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, Send, Plus, Mic, MicOff } from 'lucide-react'
+import { ArrowLeft, Send, Mic, MicOff } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import BottomNav from '../components/BottomNav'
 import styles from './Home.module.css'
@@ -221,7 +221,6 @@ export default function RegisterHelper() {
       {!done && (
         <div className={styles.floatBottom}>
           <div className={styles.inputCapsule}>
-            <button className={styles.plusBtn}><Plus size={18} /></button>
             <input
               ref={inputRef}
               className={styles.input}

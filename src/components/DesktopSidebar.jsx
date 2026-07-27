@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Search, Compass, MessageCircle, User, Rss, UserCheck, UserPlus } from 'lucide-react'
+import { Search, Compass, MessageCircle, User, Rss, UserCheck } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import styles from './DesktopSidebar.module.css'
 
