@@ -34,6 +34,17 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — Verificado en el bundle + NotFound
+
+- **Comprobado en el CSS compilado** (no en el fuente): la regla de Login
+  sale correcta del build —
+  `._page_17c29_6{padding:...;background:var(--paper);position:relative}` —
+  sin flex, sin min-height y sin centrado. El arreglo ESTA en el paquete.
+- Inspeccionando el bundle aparecio **otra `.page` con el patron roto
+  intacto** (`justify-content:center` + `min-height:100dvh` + `overflow`):
+  era **NotFound**. Mismo defecto, misma cura.
+- Sello NURA_BUILD 2026.07.04-dt.
+
 ## 2026-07-04 — Login: el layout mas simple que existe
 
 - Cinco intentos fallidos deduciendo sobre codigo sin poder ver la pantalla.
