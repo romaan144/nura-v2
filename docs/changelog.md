@@ -34,6 +34,25 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — Login: disposicion a prueba de fallos
+
+- **Dos ciclos arreglando la pantalla equivocada.** El fundador describio
+  "logo, Nura, encuentra a la persona adecuada" — eso NO es el Perfil de
+  invitado (que dice "Crea tu cuenta gratis"), es **Login**, la pantalla a
+  la que lleva ese boton. Lo entendi al leer su descripcion del contenido,
+  no antes.
+- Login tenia `min-height: 100dvh` + `justify-content: center` +
+  `overflow: hidden`. Ese trio **solo funciona si el contenedor mide
+  exactamente el viewport**: si mide de mas, el centro cae fuera de la
+  pantalla y overflow hidden impide llegar a el. Encaja con el sintoma
+  (contenido abajo, degradado vacio arriba).
+- No pude identificar POR QUE el contenedor mide de mas sin poder medir en
+  dispositivo. Asi que en vez de seguir adivinando: **disposicion que no
+  puede fallar** — alineada arriba, ocupando lo que le den (`100%`, no
+  `100dvh`), con scroll y reservando la barra. Peor caso posible: hacer
+  scroll. Nunca contenido inalcanzable.
+- Sello NURA_BUILD 2026.07.04-dp.
+
 ## 2026-07-04 — La Puerta de Registro: la causa real
 
 - El arreglo anterior (vh→dvh) era correcto pero **no era la causa**. La
