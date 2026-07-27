@@ -62,7 +62,7 @@
   right: 16px;
   z-index: 30;
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: auto 1fr;   /* logo a la izquierda, acciones a la derecha */
   align-items: center;
   pointer-events: none;
 }
@@ -147,7 +147,7 @@
 .suggestions {
   display: flex;
   flex-direction: row;
-  gap: 6px;
+  gap: var(--space-8);
   overflow-x: auto;
   padding-bottom: 2px;
   -webkit-overflow-scrolling: touch;
@@ -157,7 +157,7 @@
 .suggestion {
   display: flex;
   align-items: center;
-  padding: 7px 14px;
+  padding: var(--space-10) var(--space-16);
   background: rgba(255,255,255,0.92);
   border: 1px solid var(--ink-border);
   border-radius: var(--radius-full);

@@ -34,6 +34,27 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — La Primera Pantalla: la promesa deja de depender del reloj
+
+- **Tercera correccion seguida a mi propio analisis**: en Fase 1 afirme que
+  la primera pantalla "no promete nada". Falso — el saludo ya decia
+  "Cuentame que necesitas y lo encontramos", exactamente la frase que yo
+  iba a proponer como novedad. Habia leido el saludo del PROFESIONAL y
+  asumido el del visitante sin verificarlo.
+- **Lo que si era real y pesa**: esa frase solo aparecia **por la tarde**.
+  Quien abria por la mañana leia "¿En que puedo ayudarte esta mañana?", una
+  pregunta educada que no explica a que viene el producto. La unica linea
+  que convierte a un desconocido estaba condicionada al reloj.
+- Ahora la promesa es fija para quien no conoce Nura, y a quien ya ha
+  buscado antes se le saluda sin explicarle la casa. La variacion horaria se
+  queda donde aporta: en "Buenos dias / Buenas tardes".
+- La cabecera dejaba **una columna vacia** (`<div />`) para centrar el logo:
+  el sitio de mas valor de la pantalla, gastado en decoracion. Logo a la
+  izquierda, rejilla de 2 columnas.
+- Las sugerencias respiran (7px→escala): el generador dinamico cruza hora,
+  dia e historial, y la presentacion no lo acompañaba.
+- Sello NURA_BUILD 2026.07.04-di.
+
 ## 2026-07-04 — La Burbuja: el ultimo metro, a la altura (Nura diseño)
 
 - **Correccion a mi propio analisis, la segunda seguida**: en Fase 1 afirme

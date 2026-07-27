@@ -182,11 +182,17 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
     }
   } catch { /* silencioso */ }
 
+  // LA PROMESA no puede depender de la hora. "Cuentame que necesitas y te
+  // encuentro a la persona" es la unica frase que explica el producto a
+  // quien no lo conoce, y solo aparecia por la tarde: por la mañana leia
+  // "¿en que puedo ayudarte?", que no dice a que viene Nura.
+  // A quien ya conoce la casa no hace falta explicarsela.
+  const yaTeConoce = (searchHistory || []).length > 0
   return [
     `${greeting}, **${firstName}**.`,
-    hour < 12 ? `¿En qué puedo ayudarte esta mañana?`
-    : hour < 18 ? `Cuéntame qué necesitas y lo encontramos.`
-    : `¿Qué necesitas esta noche?`
+    yaTeConoce
+      ? (hour < 12 ? '¿En qué puedo ayudarte esta mañana?' : hour < 18 ? '¿Qué necesitas hoy?' : '¿Qué necesitas esta noche?')
+      : 'Cuéntame qué necesitas y te encuentro a la persona.',
   ].concat(susurro ? [susurro] : [])
 }
 
@@ -1022,9 +1028,6 @@ export default function Home() {
 
       {/* Floating top — three independent bubbles */}
       <div className={styles.floatTop} ref={topRef}>
-        
-        <div />
-
         <div className={styles.logoBubble}>
           <img src="/logo-text.png" alt="Nüra" className={styles.headerLogo} />
         </div>

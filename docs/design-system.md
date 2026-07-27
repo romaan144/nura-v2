@@ -92,6 +92,12 @@ prohibido el `ease-out` genérico.
   se tocan. Las dos barras fijas de la app (BottomNav y cabecera de Chats)
   comparten receta: papel a 0.86 con blur 32.
 
+- **La Promesa (primera pantalla)**: la segunda linea del saludo **no puede
+  depender de la hora**. A quien no conoce Nura hay que decirle que hace —
+  "Cuentame que necesitas y te encuentro a la persona" — cada vez que abre,
+  no solo por la tarde. A quien ya ha buscado antes se le saluda y punto:
+  explicarle la casa a quien ya vive en ella es ruido.
+
 - **PALABRAS PROHIBIDAS EN LA VOZ DE NURA**: **"barrio"** — en español
   connota baja calidad y Nura no la dice nunca. Alternativas segun contexto:
   "cerca de ti", "tu zona", "la comunidad". **Matiz importante**: la palabra
