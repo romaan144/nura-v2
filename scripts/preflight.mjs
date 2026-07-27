@@ -41,6 +41,25 @@ if (conLogs.length) {
   conLogs.slice(0, 6).forEach(f => console.log(`   · ${f}`))
 } else bien('sin restos de console.log')
 
+// ── 3. `vh` en vez de `dvh` ──
+// Nos ha mordido dos veces (las hojas y la puerta de registro): en iOS
+// saca el contenido de la pantalla. Merece vigilancia, no confianza.
+const cssFiles = jsFiles('src').concat(
+  (function css(dir, acc = []) {
+    for (const f of readdirSync(dir)) {
+      const p = join(dir, f)
+      if (statSync(p).isDirectory()) css(p, acc)
+      else if (/\.css$/.test(f)) acc.push(p)
+    }
+    return acc
+  })('src')
+)
+const conVh = cssFiles.filter(f => /\b\d+vh\b/.test(readFileSync(f, 'utf8')))
+if (conVh.length) {
+  mal(`${conVh.length} archivo(s) usan vh en vez de dvh:`)
+  conVh.slice(0, 6).forEach(f => console.log(`   · ${f}`))
+} else bien('sin `vh` (siempre dvh)')
+
 // ── 3. El aviso que ninguna puerta automatica puede comprobar ──
 console.log('\n⚠ REVISION MANUAL OBLIGATORIA antes de abrir:')
 console.log('   Las politicas RLS de Supabase. src/utils/claudeApi.js hace')

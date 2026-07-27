@@ -34,6 +34,24 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — La Puerta de Registro no se sale de la pantalla
+
+- El fundador reporto que al entrar en Perfil sin cuenta, todo se desplazaba
+  hacia abajo y desaparecia. Causa: `.noUser` usaba
+  `min-height: calc(100vh - ...)`. **En Safari iOS `vh` mide el viewport de
+  LAYOUT** — incluye la franja del navegador — asi que la caja salia mas
+  alta que la pantalla y, con `justify-content: center`, el centro caia
+  fuera. Era el UNICO `100vh` de toda la app: por eso solo pasaba ahi.
+- Es el mismo mal que curamos en La Hoja; este bloque quedo fuera de aquel
+  barrido porque entonces mire modales y hojas, no pantallas de contenido.
+- Comprobado antes de tocar (y volvio limpio): la rama de invitado devuelve
+  `.page > .noUser` sin pasar por `.scroll`, asi que **no hay doble reserva**
+  — el bloque resta la barra el mismo y la aritmetica era correcta.
+- **La ley se extiende**: `vh` prohibido en toda la app, no solo en paneles.
+  Y `npm run preflight` lo vigila: nos ha mordido dos veces, merece
+  verificacion automatica y no confianza.
+- Sello NURA_BUILD 2026.07.04-dn.
+
 ## 2026-07-04 — La Simetria: el input invadia la pantalla (Nura diseño)
 
 - El fundador señalo que las sugerencias estaban mas pegadas al input que al

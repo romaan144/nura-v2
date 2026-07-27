@@ -162,6 +162,14 @@ siente mas corta. Variantes `card` (retrato + tres lineas) y `block`.
 **Prohibido inventar un indicador de carga**: antes convivian esqueleto en
 Explorar y un circulo latiendo en el perfil, el destino mas visitado.
 
+### `vh` PROHIBIDO EN TODA LA APP
+Siempre `dvh`. En Safari iOS, `vh` mide el viewport de LAYOUT — incluye la
+franja que ocupa la barra del navegador — asi que cualquier caja
+dimensionada con `vh` sale mas alta que la pantalla visible. Si ademas su
+contenido esta centrado, el centro cae fuera y el usuario ve todo desplazado
+hacia abajo. Nos ha mordido dos veces: las hojas (`max-height`) y la puerta
+de registro (`min-height`). Verificado por `npm run preflight`.
+
 ### La Hoja (ley de los paneles)
 **Ninguna hoja crece fuera de la pantalla.** Toda hoja o modal lleva
 `max-height: 88dvh` (viewport VISUAL: con `vh` se saldria al abrir el
