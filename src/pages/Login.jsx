@@ -86,10 +86,11 @@ export default function Login() {
             <p className={styles.stepDesc}>Para contactar profesionales y guardar tu historial necesitas una cuenta. Es gratis y tarda 30 segundos.</p>
             <div className={styles.phoneRow}>
               <div className={styles.flag}>+34</div>
+              {/* Sin autoFocus: en iOS abria el teclado al entrar y el
+                  contenido, centrado en el viewport completo, caia detras. */}
               <input className={styles.input} type="tel" placeholder="612 345 678"
                 value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g,''))}
-                maxLength={9}   /* sin autoFocus: en iOS abria el teclado al
-                    entrar, antes de que nadie hubiera visto la pantalla */
+                maxLength={9}
                 onKeyDown={e => e.key === 'Enter' && handlePhone()} />
             </div>
             <button className={styles.btn} onClick={handlePhone}
