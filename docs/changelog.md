@@ -34,6 +34,17 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — Login: el layout mas simple que existe
+
+- Cinco intentos fallidos deduciendo sobre codigo sin poder ver la pantalla.
+  Se abandona el diagnostico y se elimina la clase entera de fallo: Login
+  pasa a **flujo normal** — sin flex, sin min-height, sin centrado vertical,
+  sin overflow. Los hijos se apilan de arriba abajo.
+- Con este layout es **imposible** que el contenido acabe al fondo de la
+  pantalla. Si el sintoma persiste, la causa NO esta en Login, y eso ya es
+  informacion: habra que buscar en lo que renderiza por encima.
+- Sello NURA_BUILD 2026.07.04-ds.
+
 ## 2026-07-04 — Login: el teclado, y el contenedor que no existia
 
 - **El eslabon que faltaba**: `AppShell` tiene `SELF_LAYOUT` con `/login`

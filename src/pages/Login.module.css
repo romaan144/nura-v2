@@ -4,20 +4,13 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 .page {
-  /* DISPOSICION A PRUEBA DE FALLOS. Antes: min-height 100dvh + centrado
-     vertical + overflow hidden. Ese trio solo funciona si el contenedor mide
-     EXACTAMENTE el viewport; si mide de mas, el centro cae fuera de la
-     pantalla y — con overflow hidden — no hay forma de llegar a el.
-     Ahora: se alinea arriba, ocupa lo que le den, y si no cabe se desplaza.
-     Peor caso posible: hacer scroll. Nunca contenido inalcanzable. */
-  min-height: 100dvh;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: flex-start;
+  /* EL LAYOUT MAS SIMPLE QUE EXISTE. Sin flex, sin min-height, sin
+     centrado, sin overflow. Los hijos se apilan en flujo normal de arriba
+     abajo: es imposible que el contenido acabe al fondo de la pantalla.
+     Si aun asi aparece desplazado, la causa NO esta en Login. */
   padding: var(--space-32) var(--space-20) calc(var(--nav-h) + var(--space-24));
   background: var(--paper);
   position: relative;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }
 /* Background blobs */
 .blob1 {
@@ -33,7 +26,7 @@
   pointer-events: none;
 }
 /* Top */
-.top { text-align: center; margin-bottom: 32px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.top { text-align: center; margin-left: auto; margin-right: auto; margin-bottom: 32px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .iso { width: 56px; height: 56px; object-fit: contain; animation: pulse 3s ease-in-out infinite; }
 @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
 .wordmark { height: 24px; width: auto; }
@@ -41,7 +34,7 @@
 
 /* Card */
 .card {
-  width: 100%; max-width: 360px;
+  width: 100%; max-width: 360px; margin: 0 auto;
   background: rgba(255,255,255,0.78);
   -webkit-backdrop-filter: blur(32px) saturate(200%);
   backdrop-filter: blur(32px) saturate(200%);
@@ -92,9 +85,6 @@
 
 @media (min-width: 768px) {
   .page {
-    /* Reintroducia el min-height del viewport que la regla base ya no usa:
-       en pantalla ancha anulaba el arreglo. 100% del contenedor, como abajo. */
-    min-height: 100%;
     padding: 60px 40px calc(var(--nav-h) + var(--space-24));
   }
   .blob1, .blob2 { position: absolute; } /* absolute within .page, not fixed */
