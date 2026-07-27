@@ -177,8 +177,6 @@ export default function Explore() {
   }, [location.key])
   const [categoryResults, setCategoryResults] = useState([])
   const [loadingCat,      setLoadingCat]     = useState(false)
-  const [aiResults,       setAiResults]      = useState(null)
-  const [aiSearching,     setAiSearching]    = useState(false)
   const [visibleCount,    setVisibleCount]   = useState(20)
   const [filterAvailable,   setFilterAvailable]   = useState(false)
   const [filterRating,      setFilterRating]      = useState(false)
@@ -186,40 +184,21 @@ export default function Explore() {
   const [activeSubcategory, setActiveSubcategory] = useState('Todos')
 
   // ── AI Search ─────────────────────────────────────────────────
-  async function runAiSearch(query) {
-    if (!query.trim()) return
-    setAiSearching(true)
-    setAiResults(null)
-    setActiveCategory(null)
-    addSearch?.(query)
-    try {
-      const need    = analyzeNeed(query)
-      const remote  = await searchHelpers(need.category, need.keywords)
-      if (remote?.length > 0) { setAiResults(remote); setAiSearching(false); return }
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 200,
-          messages: [{ role: 'user', content: `Clasifica esta búsqueda en una categoría: "${query}". Categorías: logopedia, tecnico, limpieza, cuidado, mascotas, matematicas, entrenador, salud, legal, hogar. Responde solo la categoría.` }]
-        })
-      })
-      const aiCat = (await res.json())?.content?.[0]?.text?.trim().toLowerCase() || need.category
-      const fallback = await searchHelpers(aiCat, need.keywords)
-      setAiResults(fallback || [])
-    } catch { setAiResults([]) }
-    setAiSearching(false)
-  }
 
+  // EL UMBRAL: Explorar ya no busca por su cuenta. Tenia un motor PARALELO
+  // (analisis propio + llamada a la API) que servia una version pobre del
+  // producto: sin la voz de Nura, sin el porque, sin el silencio honesto,
+  // sin la carta. Ahora entrega la frase a Nura, que es quien sabe.
   function handleSearch(e) {
     e.preventDefault()
-    if (searchText.trim()) runAiSearch(searchText)
+    const q = searchText.trim()
+    if (!q) return
+    setSearchText('')
+    navigate('/', { state: { q } })
   }
 
   function clearSearch() {
     setSearchText('')
-    setAiResults(null)
     setActiveCategory(null)
     setVisibleCount(20)
   }
@@ -227,7 +206,6 @@ export default function Explore() {
   // ── Category navigation ───────────────────────────────────────
   async function openCategory(cat) {
     setActiveCategory(cat)
-    setAiResults(null)
     setSearchText('')
     setVisibleCount(20)
     setFilterAvailable(false)
@@ -279,7 +257,7 @@ export default function Explore() {
   }
 
   // ── Display list ──────────────────────────────────────────────
-  const baseList = aiResults ?? categoryResults
+  const baseList = categoryResults
   const displayList = baseList.filter(h => {
     if (filterAvailable && !h.available) return false
     if (filterRating && (h.rating || 0) < 4) return false
@@ -323,8 +301,8 @@ export default function Explore() {
   })
   const pagedList   = displayList.slice(0, visibleCount)
   const hasMore     = displayList.length > visibleCount
-  const isLoading   = aiSearching || loadingCat
-  const isListView  = activeCategory !== null || aiResults !== null
+  const isLoading   = loadingCat
+  const isListView  = activeCategory !== null
 
   /* ── RENDER ─────────────────────────────────────────────────── */
   return (
@@ -339,14 +317,11 @@ export default function Explore() {
         {/* ── SEARCH BAR ──────────────────────────────────── */}
         <div className={styles.searchWrap}>
           <form className={styles.searchBar} onSubmit={handleSearch}>
-            {aiSearching
-              ? <Loader2 size={16} color="var(--purple)" style={{animation:'spin 1.2s linear infinite', flexShrink:0}} />
-              : <Search size={16} color="var(--ink-tertiary)" style={{flexShrink:0}} />
-            }
+            <Search size={16} color="var(--ink-tertiary)" style={{flexShrink:0}} />
             <input
               ref={inputRef}
               className={styles.searchInput}
-              placeholder="¿Qué necesitas?"
+              placeholder="Cuéntale a Nüra qué necesitas…"
               value={searchText}
               onChange={e => setSearchText(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSearch(e)}

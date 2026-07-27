@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { CAT_HUMANA } from '../data/categorias'
 import { Send, Mic, MicOff, Clock, RotateCcw, UserRound } from 'lucide-react'
 import { analyzeNeed, matchHelpers, getPriceContext } from '../utils/matching'
@@ -327,6 +327,7 @@ const HELPER_SUGGESTIONS = [
 
 export default function Home() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { user, addSearch, searchHistory, favorites, helpersCache, nuraChatMessages, setNuraChatMessages, nuraLastMatches, setNuraLastMatches, cacheHelpers, contactedHelpers, confirmContact, following, personas, upsertPersona, citas, addStory , registrarDemanda } = useUser()
   // messages persisted in context so they survive navigation
   const messages = nuraChatMessages
@@ -608,6 +609,20 @@ export default function Home() {
       if (el && el.blur) { el.blur() }
     } catch { /* noop */ }
   }
+
+  // ── EL UMBRAL ──
+  // Explorar ya no busca por su cuenta: manda aqui la frase y Nura la
+  // contesta con SU motor (comprension, el porque, el silencio honesto,
+  // la carta). Antes habia dos motores y el segundo era el pobre.
+  const entranteRef = useRef(null)
+  useEffect(() => {
+    const q = location.state?.q
+    if (!q || entranteRef.current === q) return
+    entranteRef.current = q
+    window.history.replaceState({}, '')
+    const t = setTimeout(() => handleSend(q), 260)
+    return () => clearTimeout(t)
+  }, [location.state?.q])   // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleSend(text) {
     blurSinSalto()

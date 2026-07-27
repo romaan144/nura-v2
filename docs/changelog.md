@@ -34,6 +34,21 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — Una sola puerta a la IA (pregunta del fundador)
+
+- El fundador pregunto si el buscador de Explorar era necesario. Al mirarlo:
+  **no filtraba la lista — llamaba a `runAiSearch`, un motor PARALELO** con
+  su propio analisis y su propia llamada a la API.
+- Habia dos puertas al corazon del producto y la segunda servia su version
+  pobre: sin comprension, sin "creo que ya tengo a la persona", sin el
+  porque, sin el silencio honesto, sin la carta. Solo una lista. Quien
+  entraba por ahi podia concluir que Nura es un buscador con filtros.
+- **Convertido en umbral** (opcion elegida por el fundador): la frase viaja
+  a Inicio y responde Nura con su motor. Se conserva el habito de quien usa
+  ese buscador sin traicionar la voz del producto. Retiradas las 25 lineas
+  del motor paralelo y su estado huerfano.
+- Sello NURA_BUILD 2026.07.04-dl.
+
 ## 2026-07-04 — El Umbral: que la puerta de entrada no mienta
 
 - **Un boton que no hacia nada**: el `+` de la barra decia

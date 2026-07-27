@@ -208,3 +208,14 @@ el mecanismo oficial para verificar qué build corre un dispositivo (caché).
 `Splash` → `MomentoCero` (según cooldown en localStorage/config) → app con
 `PageTransition` global, `BottomNav` (oculta en `/login`, `/onboarding`,
 `/chat/`) y `ErrorBoundary` amable (detalle técnico plegado).
+
+
+### UNA SOLA PUERTA A LA IA (2026-07-04)
+
+Explorar tenia su propio `runAiSearch`: analisis propio y llamada directa a
+la API, **en paralelo al motor de Inicio**. Servia una version pobre del
+producto — sin la voz de Nura, sin el porque, sin el silencio honesto, sin
+la carta — y quien entraba por ahi podia concluir que Nura es un buscador
+con filtros, justo lo que el manifiesto dice que no es.
+**Ahora Explorar es un umbral**: entrega la frase a Inicio (`state.q`) y
+responde Nura. Un solo motor, una sola voz.
