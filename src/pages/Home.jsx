@@ -1028,6 +1028,8 @@ export default function Home() {
 
       {/* Floating top — three independent bubbles */}
       <div className={styles.floatTop} ref={topRef}>
+        <div />
+
         <div className={styles.logoBubble}>
           <img src="/logo-text.png" alt="Nüra" className={styles.headerLogo} />
         </div>

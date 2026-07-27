@@ -92,6 +92,10 @@ prohibido el `ease-out` genérico.
   se tocan. Las dos barras fijas de la app (BottomNav y cabecera de Chats)
   comparten receta: papel a 0.86 con blur 32.
 
+- **El logo de Nura va CENTRADO** en la cabecera de Inicio. La columna
+  izquierda vacia no es desperdicio: es lo que lo mantiene en el eje.
+  Retirarla lo descentra.
+
 - **La Promesa (primera pantalla)**: la segunda linea del saludo **no puede
   depender de la hora**. A quien no conoce Nura hay que decirle que hace —
   "Cuentame que necesitas y te encuentro a la persona" — cada vez que abre,

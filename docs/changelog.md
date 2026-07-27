@@ -34,6 +34,13 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — El logo vuelve al centro (correccion)
+
+- Al retirar la columna vacia de la cabecera, el logo quedo descentrado. Esa
+  columna no era desperdicio: era el contrapeso que lo mantenia en el eje.
+  Restaurada. Anotado en design-system para no repetirlo.
+- Sello NURA_BUILD 2026.07.04-dj.
+
 ## 2026-07-04 — La Primera Pantalla: la promesa deja de depender del reloj
 
 - **Tercera correccion seguida a mi propio analisis**: en Fase 1 afirme que
