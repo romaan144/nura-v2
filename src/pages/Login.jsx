@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { useUser } from '../context/UserContext'
@@ -7,6 +7,15 @@ import styles from './Login.module.css'
 import { NURA_BUILD } from '../config'
 
 export default function Login() {
+  // Defensivo: si se llega con la vista desplazada (restauracion de scroll
+  // del navegador o del contenedor anterior), subirla al montar.
+  useEffect(() => {
+    try {
+      window.scrollTo(0, 0)
+      document.scrollingElement && (document.scrollingElement.scrollTop = 0)
+    } catch { /* noop */ }
+  }, [])
+
   const [step, setStep] = useState('phone')
   const [phone, setPhone] = useState('')
   const [code, setCode] = useState('')
