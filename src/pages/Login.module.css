@@ -92,8 +92,10 @@
 
 @media (min-width: 768px) {
   .page {
-    min-height: 100dvh;
-    padding: 60px 40px;
+    /* Reintroducia el min-height del viewport que la regla base ya no usa:
+       en pantalla ancha anulaba el arreglo. 100% del contenedor, como abajo. */
+    min-height: 100%;
+    padding: 60px 40px calc(var(--nav-h) + var(--space-24));
   }
   .blob1, .blob2 { position: absolute; } /* absolute within .page, not fixed */
   .card { max-width: 400px; }

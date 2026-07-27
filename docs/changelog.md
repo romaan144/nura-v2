@@ -34,6 +34,17 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — Login: la regla duplicada que anulaba el arreglo
+
+- Login.module.css tenia **DOS reglas `.page`**: la base y otra dentro de
+  `@media (min-width: 768px)` que **reintroducia `min-height: 100dvh`**,
+  justo lo que el ciclo anterior habia quitado. En pantalla ancha, el
+  arreglo quedaba anulado por la cascada.
+- Corregida tambien. Leccion repetida (ya paso con `.section` del perfil):
+  **al cambiar una regla, comprobar si existe otra con el mismo selector**
+  mas abajo o dentro de una media query.
+- Sello NURA_BUILD 2026.07.04-dq.
+
 ## 2026-07-04 — Login: disposicion a prueba de fallos
 
 - **Dos ciclos arreglando la pantalla equivocada.** El fundador describio
