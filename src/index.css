@@ -147,7 +147,10 @@ body {
 
   /* Card standard */
   --card-padding: 16px;
-  --card-radius:  18px;
+  /* HEREDADO: convivia con --radius-card (14px) — nombres casi identicos
+     y valores distintos, una trampa. Apunta a la curva de la app; usar
+     --radius-md en codigo nuevo. */
+  --card-radius:  var(--radius-md);
   --card-shadow:  0 2px 8px rgba(33,29,51,0.08), 0 1px 3px rgba(33,29,51,0.05);
 
   /* Page horizontal margin */

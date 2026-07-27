@@ -34,6 +34,25 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — La Burbuja: el ultimo metro, a la altura (Nura diseño)
+
+- **Correccion a mi propio analisis, la segunda seguida**: en Fase 1 afirme
+  que la burbuja del usuario estaba rota porque `--card-radius` no existia.
+  **Falso** — existe en index.css:150. Busque el token con el nombre nuevo
+  (`--radius-card`) y no encontre el viejo. La burbuja funcionaba.
+- **Lo que si era real**: convivian `--card-radius` (18px) y `--radius-card`
+  (14px) — nombres casi identicos, valores distintos. Una trampa para quien
+  escriba uno esperando el otro. El heredado pasa a apuntar a `--radius-md`
+  y queda marcado; `--radius-card` conserva su significado (lo anidado).
+- **La hora del mensaje era ilegible**: 10px con opacidad 0.28 sobre blanco
+  y 0.45 sobre morado — el mismo caso del Badge de ayer. En un chat sobre
+  cuando viene alguien a tu casa, la hora importa. Siete sitios a
+  `--text-xs` y opacidades subidas.
+- Barrido de rellenos y curvas literales a sistema. **No se tocan** las tres
+  reglas con `!important` (sobreescrituras de un componente ajeno): tocarlas
+  sin ver el resultado es pedir una regresion.
+- Sello NURA_BUILD 2026.07.04-dh.
+
 ## 2026-07-04 — La Conversacion: Chats entra en la ley (Nura diseño)
 
 - `.chatRow` — la fila que el usuario abrira cada vez que vuelva a Nura —
