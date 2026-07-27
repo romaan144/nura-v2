@@ -34,6 +34,25 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — La Simetria: el input invadia la pantalla (Nura diseño)
+
+- El fundador señalo que las sugerencias estaban mas pegadas al input que al
+  texto. Medido: no era falta de aire, era **solapamiento**. La barra ocupa
+  12 + 60 + 12 = **84px** y `--float-bottom-h` reservaba **76**: el input se
+  comia 8px de lo que hubiera encima. El error venia de antes (con el boton
+  a 38px ya faltaban 6), pero subirlo a 44 lo agravo.
+- **Daño colateral que esto explica**: `.chatSpacer` usa la misma variable,
+  asi que **la ultima tarjeta de cualquier conversacion quedaba tapada**.
+  Corregir la variable arregla las dos pantallas.
+- Compas simetrico en bienvenida: saludo → space-20 → sugerencias →
+  space-20 → input.
+- **El input no estaba alineado con nada**: inset de 20px cuando la cabecera
+  y el contenido usan 16. La capsula caia 4px por dentro de la linea
+  vertical de la pantalla. Al gutter de la app.
+- Se conserva a proposito la asimetria interna de la capsula (8/8/8/20): el
+  texto necesita sangria y el boton no. Es una asimetria con razon.
+- Sello NURA_BUILD 2026.07.04-dm.
+
 ## 2026-07-04 — Una sola puerta a la IA (pregunta del fundador)
 
 - El fundador pregunto si el buscador de Explorar era necesario. Al mirarlo:

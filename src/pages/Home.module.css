@@ -73,7 +73,7 @@
   position: absolute;
   bottom: var(--nav-h);
   left: 0; right: 0;
-  padding: var(--chat-gap) 20px var(--chat-gap);
+  padding: var(--chat-gap) var(--space-16) var(--chat-gap);   /* gutter de la app: 16, como cabecera y contenido */
   z-index: 30;
   display: flex;
   flex-direction: column;
@@ -145,6 +145,8 @@
 
 /* ── SUGGESTIONS — floating pills ──────────────────── */
 .suggestions {
+  /* EL COMPAS: mismo aire al saludo que al input. */
+  margin-top: var(--space-20);
   display: flex;
   flex-direction: row;
   gap: var(--space-8);
@@ -473,7 +475,7 @@
   flex-shrink: 0;
   /* Solo la burbuja del input: en bienvenida el saludo asienta justo encima
      del input flotante (que ya va sobre la barra). */
-  height: var(--float-bottom-h);
+  height: calc(var(--float-bottom-h) + var(--space-20));   /* la barra + el mismo aire que arriba */
 }
 .chatSpacer {
   flex-shrink: 0;

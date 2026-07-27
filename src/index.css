@@ -160,7 +160,11 @@ body {
 :root {
   --chat-gap:             12px;
   --chat-gap-md:          20px;
-  --float-bottom-h:       76px;
+  /* La suma REAL de la barra: 12 (relleno) + 60 (capsula: 8+44+8) + 12.
+     Estaba en 76 — el input invadia 8px de lo que hubiera encima, asi que
+     las sugerencias quedaban DEBAJO de el en bienvenida y la ultima tarjeta
+     quedaba tapada en conversacion (.chatSpacer usa esta misma variable). */
+  --float-bottom-h:       84px;
   --float-bottom-h-chips: 133px;
 }
 
