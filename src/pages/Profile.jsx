@@ -78,7 +78,7 @@ export default function Profile() {
 
   /* ── Guest ─────────────────────────────────────────────── */
   if (!user) return (
-    <div className={styles.page}>
+    <div className={styles.pageGuest}>
       <div className={styles.noUser}>
         <img src="/logo-iso.png" alt="Nüra" className={styles.noUserLogo} />
         <h2 className={styles.noUserTitle}>Crea tu cuenta gratis</h2>

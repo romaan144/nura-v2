@@ -313,6 +313,18 @@
 }
 
 /* ── GUEST ───────────────────────────────────────────────────── */
+/* La pantalla de invitado NO dibuja cabecera (la rama con sesion si), asi
+   que no puede heredar el padding-top de --header-h: eran 76px de vacio
+   empujando todo hacia abajo. Y reserva la barra inferior, que esa rama no
+   recibia de ningun padre. */
+.pageGuest {
+  height: 100%;
+  background: var(--paper);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--nav-h);
+}
+
 .noUser {
   display: flex; flex-direction: column; align-items: center;
   justify-content: center;
@@ -320,7 +332,9 @@
   /* dvh, no vh: en Safari iOS `vh` incluye la franja del navegador, asi
      que la caja se hacia mas alta que la pantalla y, con el contenido
      centrado, el centro caia fuera. */
-  min-height: calc(100dvh - var(--header-h) - var(--nav-h));
+  /* Sin cabecera que restar: solo la barra, que ya reserva .pageGuest.
+     100% del contenedor, no del viewport: el padre ya sabe cuanto mide. */
+  min-height: 100%;
 }
 .noUserLogo { width: 56px; height: 56px; margin-bottom: 4px; }
 .noUserTitle { font-size: var(--text-lg); font-weight: 700; color: var(--ink-primary); margin: 0; }

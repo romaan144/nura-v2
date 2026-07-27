@@ -34,6 +34,21 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — La Puerta de Registro: la causa real
+
+- El arreglo anterior (vh→dvh) era correcto pero **no era la causa**. La
+  verdadera, verificada en las dos ramas del archivo: la rama con sesion
+  dibuja `<PageHeader />` (L129) y la de invitado **no** (L81), pero **las
+  dos compartian `.page`**, que lleva `padding-top: var(--header-h)`.
+- En la rama de invitado eran **76px de vacio empujando todo hacia abajo**,
+  reservados para una cabecera que nunca se pinta. Y esa rama tampoco
+  reservaba la barra inferior (no pasa por `.scroll`), asi que el ultimo
+  boton se iba por debajo.
+- Cura: `.pageGuest` propio — sin reserva de cabecera, con reserva de barra
+  — y `min-height: 100%` en vez de restar al viewport una cabecera que no
+  existe. El contenedor ya sabe cuanto mide.
+- Sello NURA_BUILD 2026.07.04-do.
+
 ## 2026-07-04 — La Puerta de Registro no se sale de la pantalla
 
 - El fundador reporto que al entrar en Perfil sin cuenta, todo se desplazaba
