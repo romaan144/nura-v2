@@ -16,7 +16,10 @@ const BADGE_VARIANTS = {
 export function Badge({ variant = 'neutral', size = 'sm', children, style }) {
   const v = BADGE_VARIANTS[variant] || BADGE_VARIANTS.neutral
   const sizes = {
-    xs: { fontSize: '9px',  padding: '1px 5px' },
+    // 9px estaba por debajo del minimo legible (discolo reportado en La
+    // Escala) y es justo el tamaño de '✓ funciono': el sello de confianza
+    // no puede ser lo mas pequeño de la pantalla.
+    xs: { fontSize: 'var(--text-xs)', padding: 'var(--space-2) var(--space-6)' },
     sm: { fontSize: 'var(--text-xs)', padding: 'var(--space-2) var(--space-8)' },
     md: { fontSize: 'var(--text-xs)', padding: 'var(--space-3) var(--space-10)' },
   }

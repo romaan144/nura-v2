@@ -34,6 +34,28 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — La Conversacion: Chats entra en la ley (Nura diseño)
+
+- `.chatRow` — la fila que el usuario abrira cada vez que vuelva a Nura —
+  **incumplia cuatro leyes a la vez**: curva 30px (la ley dice 18), sombra
+  `md` (la `md` se reserva al protagonista; una lista va en `sm`), borde
+  `rgba(...,0.07)` a mano y relleno `13px` (valor que no existe en la
+  escala). Quedo fuera del censo de La Superficie porque aquel dia mire las
+  tarjetas de persona y de obra, no las de conversacion.
+- Barrido del modulo entero para no dejar la mitad arreglada (el error de
+  `--rule`): curva del chip, rellenos de cabecera y buscador.
+- **Correccion a mi propio analisis**: en Fase 1 afirme que Chats era "la
+  unica superficie que no muestra la Confirmacion". **Falso** — la fila ya
+  mostraba "✓ funciono", la persona a quien ayudaba y la cita viva. Lei la
+  anatomia de la fila pero no su interior antes de afirmarlo.
+- **Hallazgo real en su lugar**: el `Badge` size `xs` usaba **9px** — el
+  discolo por debajo del minimo legible que reporte en La Escala — y es
+  justo el tamaño de "✓ funciono". El sello de confianza no puede ser lo
+  mas pequeño de la pantalla. Corregido a `--text-xs`.
+- Verificado: el verde de `Badge success` coincide exactamente con el del
+  sello del Muro. Confirmar significa lo mismo en las dos pantallas.
+- Sello NURA_BUILD 2026.07.04-dg.
+
 ## 2026-07-04 — La Puerta de Produccion (Nura Copilot)
 
 - **El interruptor deja de ser manual**: DEMO_MODE deriva de VITE_DEMO con
