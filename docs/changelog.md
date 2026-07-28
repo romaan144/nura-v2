@@ -34,6 +34,22 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — NO ERA LAYOUT, ERA SCROLL
+
+- Siete intentos corrigiendo el CSS de Login. La pregunta correcta
+  ("¿subiendo con el dedo aparece bien?") lo resolvio en un mensaje: **si**.
+  Es posicion de scroll, no layout — el CSS llevaba dias correcto.
+- Mecanismo: las pestañas renderizan dentro de un contenedor `fixed` (el
+  documento no se desplaza) y Login esta en `SELF_LAYOUT` de AppShell, asi
+  que renderiza fuera (el documento SI se desplaza). Al navegar de una a
+  otro, el navegador **restauraba la posicion anterior** y la pantalla
+  llegaba ya desplazada.
+- Cura: `history.scrollRestoration = 'manual'` y ScrollToTop con dos pasadas
+  (la segunda tras el layout tardio de imagenes y fuentes).
+- Leccion grabada en engineering: ante "se ve desplazado", preguntar SIEMPRE
+  si se recupera con scroll antes de tocar una linea de CSS.
+- Sello NURA_BUILD 2026.07.04-dw.
+
 ## 2026-07-04 — El sello, donde se puede ver
 
 - Circulo cerrado descubierto: el sello solo se mostraba en el Perfil **con

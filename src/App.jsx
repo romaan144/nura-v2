@@ -3,7 +3,12 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { useUser } from './context/UserContext'
 
 import { MOMENTO_CERO_COOLDOWN, NURA_BUILD } from './config'
-console.log('[Nüra] build', NURA_BUILD)   // preflight-ok: el sello en consola es deliberado
+console.log('[Nüra] build', NURA_BUILD)
+// El navegador restauraba la posicion de scroll al navegar. Con rutas que
+// alternan entre contenedor fijo (pestañas) y documento desplazable
+// (Login, overlays), esa restauracion dejaba la pantalla llegando ya
+// desplazada hacia abajo. La gestionamos nosotros.
+try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual' } catch { /* noop */ }   // preflight-ok: el sello en consola es deliberado
 import Home from './pages/Home'
 const HelperProfile = lazy(() => import('./pages/HelperProfile'))
 const IntroLetter = lazy(() => import('./pages/IntroLetter'))

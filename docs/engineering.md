@@ -146,3 +146,22 @@ del DIA DEL LANZAMIENTO. Verifica lo que las otras no pueden ver:
 Supabase viaja al navegador por diseño y Vite la incrusta en el paquete
 igual. Vive en `.env` para poder **rotarla** sin tocar codigo. Lo que
 protege es el RLS.
+
+
+### Leccion: siete intentos por no preguntar si se podia hacer scroll
+
+El fundador reportaba que Login "aparecia desplazado hacia abajo". Siete
+ciclos corrigiendo CSS de layout — centrado vertical, min-height, vh/dvh,
+reglas duplicadas, autoFocus — todos partiendo de la hipotesis equivocada.
+
+La pregunta que lo resolvio en un mensaje: **"¿subiendo con el dedo aparece
+bien?"**. Si la respuesta es si, **no es layout: es posicion de scroll**, y
+ninguna correccion de CSS podia arreglarlo.
+
+Causa real: las pestañas viven dentro de un contenedor `position: fixed`
+(el documento no se desplaza) pero Login esta en `SELF_LAYOUT` de AppShell
+y renderiza fuera de el (el documento SI se desplaza). Al navegar entre
+ambos mundos, el navegador restauraba la posicion anterior.
+
+**Regla**: ante "se ve desplazado", preguntar SIEMPRE si se puede recuperar
+con scroll antes de tocar una sola linea de CSS.
