@@ -34,6 +34,16 @@
   profesional no aparecia nunca. Retirados.
 - Sello NURA_BUILD 2026.07.04-cw.
 
+## 2026-07-04 — El scroller no era el documento
+
+- `window.scrollTo(0,0)` no corregia nada porque **el elemento que se
+  desplaza no es el documento**: segun la ruta puede serlo un contenedor
+  interno (las pestañas viven dentro de un contenedor fijo, los overlays
+  no). En vez de seguir adivinando cual, ScrollToTop resetea el
+  desplazamiento de **cualquier** elemento que lo tenga. Corre solo al
+  cambiar de ruta.
+- Sello NURA_BUILD 2026.07.04-dx.
+
 ## 2026-07-04 — NO ERA LAYOUT, ERA SCROLL
 
 - Siete intentos corrigiendo el CSS de Login. La pregunta correcta
