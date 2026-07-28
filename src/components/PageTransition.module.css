@@ -1,4 +1,4 @@
-.wrap { flex: 1; min-height: 0; }
+.wrap { flex: 1; min-height: 0; height: 100%; }   /* altura definida, igual que el envoltorio de las pestañas */
 
 .animIn {
   animation: pageIn 0.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;

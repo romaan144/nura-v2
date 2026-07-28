@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { useUser } from '../context/UserContext'
@@ -10,22 +10,6 @@ export default function Login() {
 
   // Defensivo: si se llega con la vista desplazada (restauracion de scroll
   // del navegador o del contenedor anterior), subirla al montar.
-  // No hace falta saber POR QUE queda hueco encima: se lleva el contenido a
-  // la vista y punto. Funciona con cualquier causa. Dos pasadas, la segunda
-  // cuando ya han cargado logo y fuentes.
-  const topRef = useRef(null)
-  useEffect(() => {
-    const traer = () => {
-      try {
-        window.scrollTo(0, 0)
-        topRef.current?.scrollIntoView({ block: 'start', behavior: 'auto' })
-      } catch { /* noop */ }
-    }
-    traer()
-    const t1 = setTimeout(traer, 150)
-    const t2 = setTimeout(traer, 600)
-    return () => { clearTimeout(t1); clearTimeout(t2) }
-  }, [])
 
   const [step, setStep] = useState('phone')
   const [phone, setPhone] = useState('')
@@ -84,7 +68,7 @@ export default function Login() {
       <div style={{position:'absolute', top:'8px', right:'12px', zIndex:2,
         fontSize:'10px', color:'var(--ink-tertiary)'}}>{NURA_BUILD}</div>
 
-      <div className={styles.top} ref={topRef}>
+      <div className={styles.top}>
         <img src="/logo-iso.png" alt="Nüra" className={styles.iso} />
         <img src="/logo-text.png" alt="Nüra" className={styles.wordmark} />
         <p className={styles.tagline}>Encuentra a la persona adecuada</p>

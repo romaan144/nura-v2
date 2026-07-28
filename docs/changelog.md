@@ -44,6 +44,24 @@
   cambiar de ruta.
 - Sello NURA_BUILD 2026.07.04-dx.
 
+## 2026-07-05 — Login, escrita como las demas (la causa de todo)
+
+- Nueve intentos parcheando. El fundador zanjo la discusion: "¿tan dificil
+  es hacer una pagina normal, como todas las demas?". Tenia razon, y al
+  buscar POR QUE Login no era normal aparecio la causa raiz de los nueve:
+- **`AppShell` tenia `/login` en `SELF_LAYOUT`** — la lista de pantallas que
+  se renderizan **sin el contenedor de la app**. Explorar, Perfil, Chats y
+  Comunidad si lo reciben (de ahi que funcionen); Login no, asi que flotaba
+  sin altura de referencia. Todo lo demas —los centrados, los vh, los
+  min-height, los scrollIntoView— eran intentos de recrear a mano lo que el
+  contenedor da gratis.
+- Cura: Login sale de la excepcion, el envoltorio de rutas gana altura
+  definida (como ya tenia el de las pestañas) y `.page` pasa a la receta
+  estandar: `height: 100%`, scroll propio, relleno normal. **Sin centrados,
+  sin medidas de viewport, sin parches.**
+- Retirados los nueve apaños acumulados.
+- Sello NURA_BUILD 2026.07.05-a.
+
 ## 2026-07-04 — NO ERA LAYOUT, ERA SCROLL
 
 - Siete intentos corrigiendo el CSS de Login. La pregunta correcta

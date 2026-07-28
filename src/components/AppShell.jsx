@@ -2,7 +2,9 @@ import { useLocation } from 'react-router-dom'
 import styles from './AppShell.module.css'
 
 // Pages that manage their own full-screen layout
-const SELF_LAYOUT = ['/', '/login', '/onboarding', '/register-helper', '/chat/']
+// '/login' salio de aqui: era la unica pantalla de formulario sin el
+// contenedor de la app, y por eso flotaba sin altura de referencia.
+const SELF_LAYOUT = ['/', '/onboarding', '/register-helper', '/chat/']
 
 export default function AppShell({ children }) {
   const location = useLocation()
