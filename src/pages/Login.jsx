@@ -7,6 +7,33 @@ import styles from './Login.module.css'
 import { NURA_BUILD } from '../config'
 
 export default function Login() {
+  // ── DIAGNOSTICO TEMPORAL ──
+  // Ocho intentos deduciendo sobre codigo. Estas cifras vienen del
+  // dispositivo del fundador: dicen donde esta cada caja de verdad.
+  const [diag, setDiag] = useState('midiendo…')
+  useEffect(() => {
+    const medir = () => {
+      try {
+        const page = document.querySelector('[class*="_page_"]')
+        const top = document.querySelector('[class*="_top_"]')
+        const vv = window.visualViewport
+        setDiag([
+          `vh=${window.innerHeight}`,
+          vv ? `vv=${Math.round(vv.height)}` : 'vv=-',
+          `scrollY=${Math.round(window.scrollY)}`,
+          page ? `page.top=${Math.round(page.getBoundingClientRect().top)}` : 'page=?',
+          page ? `page.h=${page.offsetHeight}` : '',
+          top ? `logo.top=${Math.round(top.getBoundingClientRect().top)}` : 'logo=?',
+          `body.h=${document.body.scrollHeight}`,
+        ].filter(Boolean).join(' · '))
+      } catch (e) { setDiag('err: ' + e.message) }
+    }
+    medir()
+    const t = setTimeout(medir, 600)
+    const i = setInterval(medir, 1500)
+    return () => { clearTimeout(t); clearInterval(i) }
+  }, [])
+
   // Defensivo: si se llega con la vista desplazada (restauracion de scroll
   // del navegador o del contenedor anterior), subirla al montar.
   useEffect(() => {
@@ -70,9 +97,10 @@ export default function Login() {
 
       {/* El sello, aqui: sin sesion no se puede llegar al Perfil, que es
           donde vivia — y sin el no hay forma de saber que version se ve. */}
-      <div style={{position:'absolute', top:'8px', right:'12px', zIndex:2,
-        fontSize:'10px', color:'var(--ink-tertiary)', letterSpacing:'0.3px'}}>
-        {NURA_BUILD}
+      <div style={{position:'fixed', top:'4px', left:'4px', right:'4px', zIndex:9999,
+        fontSize:'10px', lineHeight:1.35, color:'#fff', background:'rgba(0,0,0,0.82)',
+        padding:'6px 8px', borderRadius:'6px', fontFamily:'monospace'}}>
+        {NURA_BUILD} · {diag}
       </div>
 
       <div className={styles.top}>
