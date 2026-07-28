@@ -44,6 +44,22 @@
   cambiar de ruta.
 - Sello NURA_BUILD 2026.07.04-dx.
 
+## 2026-07-05 — Login, reescrita desde cero
+
+- Diez ciclos de parches sobre el mismo archivo. El fundador: "hazla desde
+  0 si hace falta". Hecho, de verdad esta vez.
+- La nueva no hereda NADA: sin CSS de modulo (eliminado), sin blobs
+  decorativos, sin aurora, sin centrado vertical, sin medidas de viewport,
+  sin scrollIntoView, sin reglas duplicadas en media queries. Un contenedor
+  que ocupa lo que le dan y desplaza si hace falta, con el contenido
+  apilado de arriba abajo.
+- Se conserva la logica intacta (telefono → codigo → nombre, el retorno a
+  nura_return_to, las notificaciones) y gana la primitiva Button, asi que
+  hereda los 44px de area tactil.
+- Detalle de iOS: los campos a 16px. Por debajo, Safari hace zoom al
+  enfocar y descoloca la pantalla — posible sospechoso de la saga.
+- Sello NURA_BUILD 2026.07.05-b.
+
 ## 2026-07-05 — Login, escrita como las demas (la causa de todo)
 
 - Nueve intentos parcheando. El fundador zanjo la discusion: "¿tan dificil

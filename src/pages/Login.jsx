@@ -1,16 +1,55 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowRight } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import { requestNotificationPermission, scheduleRetentionNotifications } from '../utils/notifications'
-import styles from './Login.module.css'
+import { Button } from '../components/ui'
 import { NURA_BUILD } from '../config'
 
+// ═══════════════════════════════════════════════════════════════
+// LOGIN — reescrita desde cero.
+// La anterior arrastraba diez ciclos de parches: centrado vertical,
+// medidas de viewport, blobs decorativos, scrollIntoView, reglas
+// duplicadas en media queries. Nada de eso vuelve.
+// Aqui solo hay un contenedor que ocupa lo que le dan y desplaza si
+// hace falta, con el contenido apilado de arriba abajo.
+// ═══════════════════════════════════════════════════════════════
+
+const S = {
+  page: {
+    height: '100%', overflowY: 'auto', WebkitOverflowScrolling: 'touch',
+    background: 'var(--paper)',
+    padding: 'var(--space-24) var(--space-20) calc(var(--nav-h) + var(--space-24))',
+  },
+  inner: { maxWidth: '380px', margin: '0 auto' },
+  logo: { width: '52px', height: '52px', display: 'block', margin: '0 auto' },
+  marca: {
+    fontFamily: 'var(--font-voice)', fontSize: 'var(--text-xl)', fontWeight: 700,
+    letterSpacing: '-0.8px', color: 'var(--ink)', textAlign: 'center',
+    margin: 'var(--space-12) 0 var(--space-4)',
+  },
+  lema: {
+    fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)',
+    textAlign: 'center', margin: '0 0 var(--space-28)',
+  },
+  titulo: { fontSize: 'var(--text-md)', fontWeight: 700, color: 'var(--ink)', margin: '0 0 var(--space-6)' },
+  ayuda: { fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)', margin: '0 0 var(--space-16)', lineHeight: 1.5 },
+  campo: {
+    width: '100%', boxSizing: 'border-box',
+    border: '1px solid var(--ink-border)', borderRadius: 'var(--radius-card)',
+    padding: 'var(--space-14) var(--space-16)',
+    fontSize: '16px',
+    fontFamily: 'inherit', color: 'var(--ink)',
+    background: 'white', outline: 'none', marginBottom: 'var(--space-12)',
+  },
+  volver: {
+    background: 'none', border: 'none', color: 'var(--ink-tertiary)',
+    fontSize: 'var(--text-sm)', fontFamily: 'inherit',
+    padding: 'var(--space-12) 0 0', cursor: 'pointer', width: '100%',
+  },
+  sello: { textAlign: 'center', fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)', marginTop: 'var(--space-24)' },
+}
+
 export default function Login() {
-
-  // Defensivo: si se llega con la vista desplazada (restauracion de scroll
-  // del navegador o del contenedor anterior), subirla al montar.
-
   const [step, setStep] = useState('phone')
   const [phone, setPhone] = useState('')
   const [code, setCode] = useState('')
@@ -19,138 +58,95 @@ export default function Login() {
   const { login } = useUser()
   const navigate = useNavigate()
 
-  function handlePhone() {
-    if (phone.length < 9) return
-    setLoading(true)
-    setTimeout(() => { setLoading(false); setStep('code') }, 900)
-  }
-  function handleCode() {
-    if (code.length < 4) return
-    setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
-      // Check if we have a name from onboarding
-      const savedUser = JSON.parse(localStorage.getItem('nura_user') || 'null')
-      if (savedUser?.name && savedUser.name !== 'Usuario') {
-        login({ ...savedUser, phone, verified: true })
-        requestNotificationPermission().then(g => { if(g) scheduleRetentionNotifications(savedUser.name) })
-        const returnTo = sessionStorage.getItem('nura_return_to')
-        sessionStorage.removeItem('nura_return_to')
-        navigate(returnTo || '/')
-      } else {
-        setStep('name')
-      }
-    }, 700)
-  }
-  function handleName() {
-    if (!name.trim()) return
-    login({ name: name.trim(), phone, joined: new Date().toISOString() })
-    sessionStorage.setItem('nura_just_registered', '1')
-    requestNotificationPermission().then(granted => {
-      if (granted) scheduleRetentionNotifications(name.trim())
-    })
+  const salir = () => {
     const returnTo = sessionStorage.getItem('nura_return_to')
     sessionStorage.removeItem('nura_return_to')
     navigate(returnTo || '/')
   }
 
-  const steps = ['phone', 'code', 'name']
-  const progress = ((steps.indexOf(step) + 1) / steps.length) * 100
+  function handlePhone() {
+    if (phone.length < 9) return
+    setLoading(true)
+    setTimeout(() => { setLoading(false); setStep('code') }, 900)
+  }
+
+  function handleCode() {
+    if (code.length < 4) return
+    setLoading(true)
+    setTimeout(() => {
+      setLoading(false)
+      const savedUser = JSON.parse(localStorage.getItem('nura_user') || 'null')
+      if (savedUser?.name && savedUser.name !== 'Usuario') {
+        login({ ...savedUser, phone, verified: true })
+        requestNotificationPermission().then(g => { if (g) scheduleRetentionNotifications(savedUser.name) })
+        salir()
+      } else {
+        setStep('name')
+      }
+    }, 700)
+  }
+
+  function handleName() {
+    if (!name.trim()) return
+    login({ name: name.trim(), phone, joined: new Date().toISOString() })
+    sessionStorage.setItem('nura_just_registered', '1')
+    requestNotificationPermission().then(g => { if (g) scheduleRetentionNotifications(name.trim()) })
+    salir()
+  }
 
   return (
-    <div className={`${styles.page} aurora`}>
-      {/* Background blobs */}
-      <div className={styles.blob1} />
-      <div className={styles.blob2} />
-
-      {/* El sello, aqui: sin sesion no se puede llegar al Perfil, que es
-          donde vivia — y sin el no hay forma de saber que version se ve. */}
-      <div style={{position:'absolute', top:'8px', right:'12px', zIndex:2,
-        fontSize:'10px', color:'var(--ink-tertiary)'}}>{NURA_BUILD}</div>
-
-      <div className={styles.top}>
-        <img src="/logo-iso.png" alt="Nüra" className={styles.iso} />
-        <img src="/logo-text.png" alt="Nüra" className={styles.wordmark} />
-        <p className={styles.tagline}>Encuentra a la persona adecuada</p>
-      </div>
-
-      <div className={styles.card}>
-        {/* Progress */}
-        <div className={styles.progress}>
-          <div className={styles.progressFill} style={{width:`${progress}%`}} />
-        </div>
+    <div style={S.page}>
+      <div style={S.inner}>
+        <img src="/logo-iso.png" alt="" style={S.logo} />
+        <div style={S.marca}>Nüra</div>
+        <p style={S.lema}>Encuentra a la persona adecuada</p>
 
         {step === 'phone' && (
-          <div className={styles.step}>
-            <h2 className={styles.stepTitle}>Accede a Nüra</h2>
-            {(() => {
-              try {
-                const p = JSON.parse(sessionStorage.getItem('nura_pending_helper') || 'null')
-                return p ? (
-                  <p className={styles.pendingLine}>
-                    Para escribir a <strong>{p.name?.split(' ')?.[0]}</strong> ✨
-                  </p>
-                ) : null
-              } catch { return null }
-            })()}
-            <p className={styles.stepDesc}>Para contactar profesionales y guardar tu historial necesitas una cuenta. Es gratis y tarda 30 segundos.</p>
-            <div className={styles.phoneRow}>
-              <div className={styles.flag}>+34</div>
-              {/* Sin autoFocus: en iOS abria el teclado al entrar y el
-                  contenido, centrado en el viewport completo, caia detras. */}
-              <input className={styles.input} type="tel" placeholder="612 345 678"
-                value={phone} onChange={e => setPhone(e.target.value.replace(/\D/g,''))}
-                maxLength={9}
-                onKeyDown={e => e.key === 'Enter' && handlePhone()} />
-            </div>
-            <button className={styles.btn} onClick={handlePhone}
-              disabled={phone.length < 9 || loading}>
-              {loading ? <span className={styles.spinner} /> : <><ArrowRight size={17} /> Continuar</>}
-            </button>
-          </div>
+          <>
+            <h1 style={S.titulo}>Tu teléfono</h1>
+            <p style={S.ayuda}>Te enviamos un código para confirmar que eres tú.</p>
+            <input style={S.campo} type="tel" inputMode="numeric" placeholder="612 345 678"
+              value={phone} maxLength={9}
+              onChange={e => setPhone(e.target.value.replace(/\D/g, ''))}
+              onKeyDown={e => { if (e.key === 'Enter') handlePhone() }} />
+            <Button variant="primary" full onClick={handlePhone} disabled={phone.length < 9 || loading}>
+              {loading ? 'Enviando…' : 'Continuar'}
+            </Button>
+          </>
         )}
 
         {step === 'code' && (
-          <div className={styles.step}>
-            <h2 className={styles.stepTitle}>Código de verificación</h2>
-            <p className={styles.stepDesc}>Enviado al +34 {phone}. Puede tardar hasta 30 segundos.</p>
-            <div className={styles.codeWrap}>
-              {[0,1,2,3].map(i => (
-                <div key={i} className={`${styles.codeBox} ${code.length > i ? styles.codeBoxFilled : ''}`}>
-                  {code[i] || ''}
-                </div>
-              ))}
-              <input className={styles.codeHidden} type="tel" value={code}
-                onChange={e => setCode(e.target.value.replace(/\D/g,'').slice(0,4))}
-                autoFocus />
-            </div>
-            <button className={styles.btn} onClick={handleCode}
-              disabled={code.length < 4 || loading}>
-              {loading ? <span className={styles.spinner} /> : <><ArrowRight size={17} /> Verificar</>}
+          <>
+            <h1 style={S.titulo}>Tu código</h1>
+            <p style={S.ayuda}>Te lo hemos enviado al {phone}.</p>
+            <input style={{ ...S.campo, letterSpacing: '8px', textAlign: 'center', fontSize: '22px' }}
+              type="tel" inputMode="numeric" placeholder="0000" value={code} maxLength={4}
+              onChange={e => setCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
+              onKeyDown={e => { if (e.key === 'Enter') handleCode() }} />
+            <Button variant="primary" full onClick={handleCode} disabled={code.length < 4 || loading}>
+              {loading ? 'Comprobando…' : 'Entrar'}
+            </Button>
+            <button style={S.volver} onClick={() => { setStep('phone'); setCode('') }}>
+              Cambiar de número
             </button>
-            <button className={styles.link} onClick={() => { setStep('phone'); setCode('') }}>
-              ← Cambiar número
-            </button>
-          </div>
+          </>
         )}
 
         {step === 'name' && (
-          <div className={styles.step}>
-            <h2 className={styles.stepTitle}>¿Cómo te llamas?</h2>
-            <p className={styles.stepDesc}>Para que los profesionales sepan quién les contacta.</p>
-            <input className={styles.input} placeholder="Tu nombre completo"
-              value={name} onChange={e => setName(e.target.value)} autoFocus
-              onKeyDown={e => e.key === 'Enter' && handleName()} />
-            <button className={styles.btn} onClick={handleName} disabled={!name.trim()}>
-              <ArrowRight size={17} /> Crear cuenta gratis
-            </button>
-          </div>
+          <>
+            <h1 style={S.titulo}>¿Cómo te llamas?</h1>
+            <p style={S.ayuda}>Así sabrán quién les escribe.</p>
+            <input style={S.campo} placeholder="Tu nombre" value={name}
+              onChange={e => setName(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') handleName() }} />
+            <Button variant="primary" full onClick={handleName} disabled={!name.trim()}>
+              Entrar en Nüra
+            </Button>
+          </>
         )}
-      </div>
 
-      <p className={styles.terms}>
-        Al continuar aceptas los <button className={styles.termsLink}>Términos de uso</button> y la <button className={styles.termsLink}>Privacidad</button> de Nüra
-      </p>
+        <div style={S.sello}>{NURA_BUILD}</div>
+      </div>
     </div>
   )
 }
