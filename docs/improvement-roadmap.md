@@ -101,21 +101,68 @@ confirmación en el iPhone del fundador**, no dado por bueno.
 
 ---
 
+### Tarea 2 — Auditoría de fiabilidad técnica · **Terminada** · 2026-07-05
+
+Lectura estática (ESLint con reglas de hooks) **más** ejecución real en
+Chromium con captura de consola, excepciones y red en las 8 rutas.
+**Cero archivos de `src/` modificados.**
+
+#### Lo que está bien
+
+- **Cero excepciones de JavaScript** en las 8 rutas, con carga y scroll.
+- **Cero listeners sin limpiar** (0 `addEventListener` en componentes).
+
+#### Discrepancias
+
+**T1 · Se descarga una fuente que no se usa.** `index.html:44` pide
+**Fraunces** a Google —con ejes de itálica y tamaño óptico, pesada— y
+tiene **0 usos en el CSS**: murió en el ciclo de La Voz Moderna pero el
+`<link>` nunca se retiró. Petición que bloquea el render, para nada.
+*Impacto: alto · arreglo trivial.*
+
+**T2 · Google Fonts desde el CDN de Google.** Dos peticiones externas
+(`index.html` + `@import` en `index.css`). Además del coste, hay
+**consideración legal**: servir Google Fonts desde su CDN envía la IP del
+visitante a un tercero y hay sentencias en la UE que lo consideran
+incompatible con el RGPD. Nüra es un producto español. *Impacto: alto
+para lanzar · decisión del fundador: autoalojar o usar fuentes del
+sistema.*
+
+**T3 · 55 `setTimeout` frente a 5 `clearTimeout`.** Cincuenta
+temporizadores sin cancelar al desmontar. Con pestañas vivas —todas
+montadas a la vez— puede provocar actualizaciones sobre componentes ya
+invisibles. *Impacto: medio · produce parpadeos y estados fantasma.*
+
+**T4 · 25 errores silenciados** (`catch` vacío). Muchos deliberados y
+correctos (acceso a `localStorage` en SSR), pero entre ellos puede haber
+fallos reales que nunca se ven. *Impacto: medio.*
+
+**T5 · 18 avisos de React**: 9 de dependencias de efectos, 7 de
+`setState` dentro de efectos y **2 de pureza de render**
+(`Chat.jsx:391` y `:399`). Los de pureza son los únicos que pueden causar
+comportamiento incorrecto real. *Impacto: medio-alto en esos 2.*
+
+**T6 · `JSON.parse(localStorage…)` sin proteger** en `Login.jsx`. Dato
+corrupto = revienta la verificación del código. *Impacto: bajo ·
+probabilidad baja, consecuencia alta.*
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
 |---|---|---|
 | 0 | 1 · Inventario medido de geometría | **Terminada** |
-| 0 | 2 · Auditoría de fiabilidad técnica | Pendiente |
+| 0 | 2 · Auditoría de fiabilidad técnica | **Terminada** |
 | 0 | 3 · Auditoría del sistema de diseño (cierre de deudas) | Pendiente |
 | 0 | 4 · Auditoría de flujos, datos reales vs demo | Pendiente |
 | 1 | Modelo de layout común (basado en D1–D7) | Pendiente |
 
-**Siguiente paso exacto:** Fase 0 · Tarea 2 — auditoría de fiabilidad
-técnica: errores de React, dependencias de efectos, condiciones de
-carrera, listeners sin limpiar, dobles ejecuciones y errores silenciosos.
-Sin modificar código. Empezar por `src/pages/Home.jsx` (el archivo más
-grande y con más estado) y `src/context/UserContext.jsx`.
+**Siguiente paso exacto:** Fase 0 · Tarea 3 — auditoría del sistema de
+diseño: componentes existentes vs necesarios, cierre de deudas censadas
+(7 tamaños y 3 radios díscolos, `--rule` en 18 usos) y patrones repetidos
+que deberían ser componente (`AppHeader`, `StickyActionBar`, `InfoRow`,
+`Stat`, `RatingSummary`, `IconButton`). Sin modificar código.
 
 ---
 
