@@ -1073,7 +1073,7 @@ export default function Home() {
       </div>
 
       <div className={styles.messages} ref={scrollerRef}
-        style={{paddingTop: topH + 'px', justifyContent: messages.length <= 1 ? 'flex-end' : 'flex-start'}}>
+        style={{paddingTop: topH + 'px'}}>
         {messages.map((msg, msgIdx) => {
           const prevMsg = messages[msgIdx - 1]
           const prevHadResults = prevMsg?.results?.length > 0
