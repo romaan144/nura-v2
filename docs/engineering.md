@@ -165,3 +165,22 @@ ambos mundos, el navegador restauraba la posicion anterior.
 
 **Regla**: ante "se ve desplazado", preguntar SIEMPRE si se puede recuperar
 con scroll antes de tocar una sola linea de CSS.
+
+
+### Medir el DOM renderizado, no las variables (2026-07-05)
+
+Tres ciclos calculando espaciados leyendo variables CSS dieron 8px donde el
+dispositivo tenia **86**. El error: mirar la regla base de `.page` sin ver
+que en `@media (max-width: 767px)` habia un `padding-bottom: var(--nav-h)`
+— la barra se reservaba DOS veces.
+
+**Se puede medir de verdad en este entorno**: Chromium llega por el registro
+de npm (`npm i -D puppeteer-core @sparticuz/chromium`; el binario viene
+comprimido en brotli en `bin/chromium.br`, se extrae con `brotli -d`). Se
+sirve el build con `vite preview --host 127.0.0.1` y se leen los
+`getBoundingClientRect()` reales. Las dependencias se retiran despues para
+no cargar el despliegue.
+
+**Regla**: ante cualquier queja de espaciado, medir el DOM renderizado antes
+de tocar una linea. Un calculo teorico que ignora una media query es una
+respuesta segura y equivocada.

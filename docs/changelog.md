@@ -44,6 +44,24 @@
   cambiar de ruta.
 - Sello NURA_BUILD 2026.07.04-dx.
 
+## 2026-07-05 — La barra, contada dos veces (medido en navegador real)
+
+- El fundador exigio diagnostico en runtime tras tres arreglos fallidos.
+  Instalado Chromium por el registro de npm, servido el build y medido el
+  DOM renderizado con getBoundingClientRect().
+- **Medida real: 86px de separacion**, no los 8 del calculo teorico.
+- **Causa**: `@media (max-width: 767px) { .page { padding-bottom: var(--nav-h) } }`
+  — solo en movil, por eso no aparecia leyendo la regla base. El contenedor
+  scrollable ya terminaba donde empieza la barra y `.chatSpacer` volvia a
+  restar `--nav-h`: **la barra contada dos veces**.
+  86 = 66 (barra duplicada) + 20 (la separacion deseada).
+- **Por que el ajuste anterior no hizo nada**: solo movia el sumando de 20px
+  sobre un hueco de 86 — 12px imperceptibles.
+- Cura de una linea: `calc(64px + 20px)`. **Verificado midiendo**: 18px en
+  busquedas con muchos y con pocos resultados, sin contenido oculto, input y
+  barra en su sitio.
+- Sello NURA_BUILD 2026.07.05-n.
+
 ## 2026-07-05 — El espaciador, con calculo explicito
 
 - Encargo detallado del fundador sobre el hueco al final del scroll. Medido
