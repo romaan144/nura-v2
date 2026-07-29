@@ -46,9 +46,9 @@
      encima (fixed). El contenido reserva su espacio con .chatSpacer. */
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* el contenido crece hacia ABAJO: la respuesta
-     queda donde nace y el usuario baja cuando quiere. El flex-end anterior
-     anclaba todo al fondo y empujaba la recomendación fuera de pantalla. */
+  /* Sin justify-content: lo gobierna el margin-top:auto del primer
+     mensaje. El flex-end que vivia aqui saco el contenido de la pantalla
+     durante cinco ciclos. */
   gap: 0;
   -webkit-overflow-scrolling: touch;
   min-height: 0;

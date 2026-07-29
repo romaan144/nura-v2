@@ -44,6 +44,25 @@
   cambiar de ruta.
 - Sello NURA_BUILD 2026.07.04-dx.
 
+## 2026-07-05 — La Conversacion se asienta (Nura diseño)
+
+- Tras una busqueda corta quedaban ~200px de vacio entre los filtros y el
+  input: el contenido ocupaba unos 400px de 750, se apilaba desde arriba y
+  el input estaba anclado abajo. Todos los saltos de la conversacion son de
+  12-20px y de pronto habia uno de 200 — no se lee como aire, se lee como
+  que falta algo.
+- Comprobado antes de tocar: el espaciador esta bien calculado (84 del input
+  + 73 de la barra) y con conversacion larga los filtros quedan justo sobre
+  el input. El problema era solo el caso corto.
+- Cura de una linea: **`margin-top: auto` en el primer mensaje** — absorbe
+  el sobrante cuando el contenido no llena la pantalla (la conversacion se
+  apoya en el input, como cualquier chat) y pasa a cero cuando crece.
+- **Muere el conmutador `justify-content: flex-end / flex-start`**:
+  bienvenida y conversacion pasan al MISMO mecanismo. Y con el desaparece de
+  Home el `flex-end`, que fue lo que saco el contenido de la pantalla
+  durante cinco ciclos.
+- Sello NURA_BUILD 2026.07.05-j.
+
 ## 2026-07-05 — La Barra que se ve (Nura diseño)
 
 - El fundador: la barra inferior esta apagada y no se sabe donde empieza,

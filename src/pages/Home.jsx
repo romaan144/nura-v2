@@ -1081,7 +1081,7 @@ export default function Home() {
           // Spacing: 16px between messages, 24px after carousel, 20px for user replies
           const spacingClass = prevHadResults ? styles.afterCarousel : ''
           return (
-          <div key={msg.id} style={{marginTop: msgIdx === 0 ? 0 : msg.from === 'user' ? 'var(--chat-gap-md)' : 'var(--chat-gap)'}} ref={msg.results?.length ? resultRef : undefined}>
+          <div key={msg.id} style={{marginTop: msgIdx === 0 ? 'auto' : msg.from === 'user' ? 'var(--chat-gap-md)' : 'var(--chat-gap)'}} ref={msg.results?.length ? resultRef : undefined}>
             <div className={`${styles.msgRow} ${msg.from === 'user' ? styles.msgRowUser : ''} ${spacingClass}`}>
               {msg.from === 'nura' && (
                 firstOfNuraRun ? (
