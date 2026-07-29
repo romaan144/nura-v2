@@ -356,9 +356,12 @@ function HelperProfileInner() {
           {/* Bio */}
           {enrichedH.bio && (
             <p style={{
-              fontSize:'var(--text-sm)', color:'rgba(33,29,51,0.6)', lineHeight:1.65,
-              letterSpacing:'-0.1px', margin:'0 0 var(--space-20)',
-              animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both'
+              /* Misma receta que "En sus propias palabras": cuerpo, tinta plena,
+                 la Voz y linea holgada. Es la presentacion del profesional:
+                 estaba a 13px y en gris al 60%. */
+              fontSize:'var(--text-base)', color:'var(--ink)', lineHeight:1.55,
+              letterSpacing:'-0.2px', margin:'0 0 var(--space-20)',
+              fontFamily:'var(--font-voice)'
             }}>{enrichedH.bio}</p>
           )}
 

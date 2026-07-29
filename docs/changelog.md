@@ -44,6 +44,21 @@
   cambiar de ruta.
 - Sello NURA_BUILD 2026.07.04-dx.
 
+## 2026-07-05 — El perfil, con la voz de su mejor seccion
+
+- El fundador señalo que "En sus propias palabras" se ve mucho mejor que el
+  resto del perfil. Medido: esa seccion usa 17px con tinta plena y la Voz;
+  **el resto tenia 14 usos de 11px y 15 de 20 colores en gris**.
+- Su receta —cuerpo + tinta plena + Voz + linea 1.55— aplicada a lo que se
+  LEE: la presentacion (de 13px gris al 60% a 15px tinta plena), las
+  valoraciones, las publicaciones, el puesto de la trayectoria; y a 13px lo
+  que estaba a 11 (descripcion de cada trabajo, logros, citas, nota de
+  disponibilidad).
+- **Lo que SEÑALA se queda pequeño**: fechas, etiquetas, pildoras de dias,
+  contadores y metadatos. Verificado midiendo que siguen a 11px.
+- Colateral: la bio arrastraba un fadeInUp, prohibido por la ley de -ar.
+- Sello NURA_BUILD 2026.07.05-q.
+
 ## 2026-07-05 — Fuera el desplegable de busquedas recientes
 
 - El fundador: al enfocar el input aparecian las busquedas recientes y eso

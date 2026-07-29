@@ -131,6 +131,13 @@ prohibido el `ease-out` genérico.
 
 ## 2. Componentes base
 
+### La Voz del contenido (perfiles)
+Lo que se LEE lleva cuerpo y tinta plena: `--text-base`, `--ink`,
+`line-height 1.55`, `--font-voice`, tracking -0.2. Es la receta de "En sus
+propias palabras", que el fundador señalo como la mejor de la pantalla.
+Lo que SEÑALA — fechas, etiquetas, contadores, metadatos — se queda en
+`--text-xs`: si crece todo se pierde la jerarquia y deja de leerse.
+
 ### La Superficie (la piel de toda tarjeta)
 Receta unica: **curva `--radius-md` (18px)**, suave pero compuesta;
 `--radius-card` (14) queda para lo que vive DENTRO de una tarjeta —
