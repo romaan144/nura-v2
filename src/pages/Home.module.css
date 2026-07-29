@@ -73,7 +73,7 @@
   position: absolute;
   bottom: var(--nav-h);
   left: 0; right: 0;
-  padding: var(--chat-gap) var(--space-16) var(--chat-gap);   /* gutter de la app: 16, como cabecera y contenido */
+  padding: var(--space-8) var(--space-16) var(--space-8);   /* gutter de la app: 16, como cabecera y contenido */
   z-index: 30;
   display: flex;
   flex-direction: column;
@@ -184,7 +184,7 @@
   backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid var(--ink-border);
   border-radius: var(--radius-full);
-  padding: var(--space-8) var(--space-8) var(--space-8) var(--space-20);
+  padding: var(--space-6) var(--space-6) var(--space-6) var(--space-20);
   box-shadow: var(--shadow-sm);
   transition: all 0.25s cubic-bezier(0.25,0.46,0.45,0.94);
 }

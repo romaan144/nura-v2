@@ -44,6 +44,19 @@
   cambiar de ruta.
 - Sello NURA_BUILD 2026.07.04-dx.
 
+## 2026-07-05 — La zona inferior, mas compacta
+
+- Medida la geometria: el hueco entre los filtros y el input es de **12px
+  por construccion** — el espaciador (float-bottom-h + nav-h) equivale
+  exactamente al borde superior del input, asi que recortarlo esconderia
+  contenido detras.
+- Lo que si ocupaba mucho era **toda la zona inferior**: 84 del input + 99
+  de la barra = 183px en un iPhone con indicador, buena parte aire.
+  Comprimida a 158px sin tocar el hueco: relleno de la barra del input
+  12→8, capsula 8→6 (float-bottom-h 84→72) y contenido de la navegacion
+  65→58. El area tactil de 44px se mantiene intacta.
+- Sello NURA_BUILD 2026.07.05-l.
+
 ## 2026-07-05 — La Conversacion se asienta (Nura diseño)
 
 - Tras una busqueda corta quedaban ~200px de vacio entre los filtros y el
