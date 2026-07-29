@@ -44,6 +44,20 @@
   cambiar de ruta.
 - Sello NURA_BUILD 2026.07.04-dx.
 
+## 2026-07-05 — El espaciador, con calculo explicito
+
+- Encargo detallado del fundador sobre el hueco al final del scroll. Medido
+  pieza a pieza: nav 92px (34 safe + 58), capsula 56, relleno 8+8,
+  --float-bottom-h 72, espaciador 164. **No hay acumulacion doble** — cada
+  altura entra una sola vez, y la separacion resultante era de 8px, por
+  DEBAJO de los 16-24 pedidos.
+- El espaciador deja de ser una suma de variables y pasa a expresar la
+  intencion: `calc(var(--nav-h) + 64px + 20px)` = barra + borde superior de
+  la capsula + separacion deseada. **Distancia final: 20px.**
+- Restricciones respetadas: input sin mover, altura de la nav intacta, sin
+  margenes negativos, sin overflow:hidden, sin reestructurar.
+- Sello NURA_BUILD 2026.07.05-m.
+
 ## 2026-07-05 — La zona inferior, mas compacta
 
 - Medida la geometria: el hueco entre los filtros y el input es de **12px

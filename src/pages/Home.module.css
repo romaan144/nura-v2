@@ -481,7 +481,14 @@
   flex-shrink: 0;
   /* input flotante (76) + barra (65+safe): el último contenido sube por
      encima de ambos, mientras el fondo scrollea por detrás. */
-  height: calc(var(--float-bottom-h) + var(--nav-h));
+  /* CALCULO EXPLICITO, no una suma de variables:
+       --nav-h  : la barra de navegacion
+       + 64px   : borde superior de la capsula del input
+                  (8 de relleno inferior de .floatBottom + 56 de capsula)
+       + 20px   : la separacion que queremos ver
+     Cada altura entra UNA sola vez. Distancia final: 20px entre el ultimo
+     contenido y el borde superior del input. */
+  height: calc(var(--nav-h) + 64px + 20px);
 }
 
 /* ── INPUT FOCUS STATE ───────────────────────────────────────────────── */
