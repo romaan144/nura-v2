@@ -20,13 +20,17 @@ const S = {
   // de la version original vuelve como SUPERFICIE, no como colocacion.
   page: {
     height: '100%', overflowY: 'auto', WebkitOverflowScrolling: 'touch',
+    // Centrado SEGURO: flex + margin:auto en el hijo. A diferencia de
+    // justify-content:center, cuando el contenido no cabe el margen se
+    // reduce a cero y vuelve al flujo normal — nunca corta por arriba.
+    display: 'flex', flexDirection: 'column',
     background: `radial-gradient(420px 320px at 88% -4%, rgba(255,59,92,0.10), transparent 64%),
                  radial-gradient(520px 360px at 6% 4%, rgba(123,47,255,0.11), transparent 66%),
                  radial-gradient(460px 300px at 50% 104%, rgba(0,212,200,0.08), transparent 62%),
                  var(--paper)`,
     padding: 'var(--space-32) var(--space-20) calc(var(--nav-h) + var(--space-24))',
   },
-  inner: { maxWidth: '360px', margin: '0 auto' },
+  inner: { maxWidth: '360px', width: '100%', margin: 'auto' },
 
   logo: {
     width: '60px', height: '60px', display: 'block', margin: '0 auto',

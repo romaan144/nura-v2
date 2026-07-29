@@ -44,6 +44,18 @@
   cambiar de ruta.
 - Sello NURA_BUILD 2026.07.04-dx.
 
+## 2026-07-05 — Las dos, centradas (sin repetir el fallo)
+
+- El fundador las quiere mas centradas. Se hace con **margin: auto** sobre
+  el hijo de un contenedor flex, **no** con justify-content:center.
+- La diferencia importa y es la del fallo de once ciclos:
+  `justify-content: center` **corta el contenido por arriba** cuando no cabe
+  y lo deja inalcanzable; `margin: auto` cede el centrado y vuelve al flujo
+  normal en cuanto el contenido crece. Mismo resultado visual, imposible
+  reproducir el problema.
+- Aplicado identico en Login y en el Perfil de invitado.
+- Sello NURA_BUILD 2026.07.05-f.
+
 ## 2026-07-05 — Union de diseño: registro y Login, la misma pantalla
 
 - El fundador: las dos pantallas del registro no estaban a la misma altura y

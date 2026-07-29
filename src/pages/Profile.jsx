@@ -83,13 +83,14 @@ export default function Profile() {
     // del padre, flujo normal), auroras como fondo, tarjeta de cristal.
     <div style={{
       height: '100%', overflowY: 'auto', WebkitOverflowScrolling: 'touch',
+      display: 'flex', flexDirection: 'column',
       background: `radial-gradient(420px 320px at 88% -4%, rgba(255,59,92,0.10), transparent 64%),
                    radial-gradient(520px 360px at 6% 4%, rgba(123,47,255,0.11), transparent 66%),
                    radial-gradient(460px 300px at 50% 104%, rgba(0,212,200,0.08), transparent 62%),
                    var(--paper)`,
       padding: 'var(--space-32) var(--space-20) calc(var(--nav-h) + var(--space-24))',
     }}>
-      <div style={{maxWidth:'360px', margin:'0 auto'}}>
+      <div style={{maxWidth:'360px', width:'100%', margin:'auto'}}>
         <img src="/logo-iso.png" alt="" style={{width:'60px', height:'60px', display:'block',
           margin:'0 auto', animation:'pulse 3s ease-in-out infinite'}} />
         <img src="/logo-text.png" alt="Nüra" style={{height:'26px', display:'block',
