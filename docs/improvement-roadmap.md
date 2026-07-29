@@ -1,0 +1,132 @@
+# Nüra 2 — Roadmap de mejora
+
+> Registro operativo. Se actualiza al cerrar una tarea o ante una decisión
+> estructural. No es un documento narrativo.
+
+**Objetivo general:** que Nüra se sienta una sola aplicación coherente —
+más clara, fiable, cómoda y humana — sin rehacer lo que funciona.
+
+**Estado del proyecto al abrir el roadmap:** sello `2026.07.05-q`,
+cuatro puertas verdes (build · lint · suite 32/32 · smoke 16/16).
+
+---
+
+## FASE 0 — Auditoría medida
+
+### Tarea 1 — Inventario medido de geometría · **Terminada** · 2026-07-05
+
+Medido con Chromium real (390×844, viewport de iPhone) sobre el build,
+recorriendo cada pantalla y haciendo scroll hasta el fondo.
+**Cero archivos de `src/` modificados.**
+
+#### Tabla de contratos de layout (valores REALES, no calculados)
+
+| Pantalla | Contenedor raíz | Quién scrollea | Reserva de barra |
+|---|---|---|---|
+| Inicio | `.page` **fixed** h=844 | `.messages` (hijo) | en `.page` (66px) |
+| Profesionales | `.page` static | `_body` (nieto) | en el scroller (66px) |
+| Comunidad | **ninguno** | **`desktopMain`** (¡global!) | inline en su raíz |
+| Chats | `.page` static | no scrollea aún | en `.page` (66px) |
+| Perfil (invitado) | ninguno (inline) | no scrollea | inline |
+| Perfil profesional | `.page` static | **el propio `.page`** | en `.scroll` |
+| Login | ninguno (inline) | no scrollea | inline — **sobra** |
+
+#### Elementos fijos medidos
+
+| Pantalla | Cabecera | Barra inferior | Otros |
+|---|---|---|---|
+| Inicio | `.floatTop` **absoluto** 46px @t=12 | nav 66px @778 | `.floatBottom` abs 74px @704 |
+| Profesionales | header **fijo** 68px @0 | nav 66px | — |
+| Comunidad | **ninguna** | nav 66px | — |
+| Chats | header fijo 68px | nav 66px | — |
+| Perfil profesional | header fijo 68px | nav 66px | `.actionBar` 67px @711 |
+| Login | ninguna | **ninguna** | — |
+
+#### Hueco entre el último contenido y el primer elemento fijo
+
+| Pantalla | medido |
+|---|---|
+| Inicio (resultados) | **14px** |
+| Comunidad | **39px** |
+| Perfil profesional | **40px** |
+| Profesionales | **45px** |
+
+---
+
+### Discrepancias detectadas (evidencia para la Fase 1)
+
+**D1 · Cinco contratos de layout distintos.** Ninguna pantalla comparte
+modelo con otra: raíz fixed vs static vs inexistente; scroller hijo vs
+nieto vs el propio raíz vs el contenedor global. *Impacto: alto — es la
+causa raíz de todos los problemas de geometría de las últimas semanas.*
+
+**D2 · Comunidad scrollea `desktopMain`**, el contenedor global que
+envuelve TODAS las pestañas (montadas simultáneamente por las pestañas
+vivas). Su scroll no está aislado. *Impacto: alto — riesgo de
+interferencia entre pestañas.* Archivo: `src/pages/Feed.jsx` (raíz sin
+contenedor propio).
+
+**D3 · La reserva de la barra vive en cuatro sitios distintos**: en el
+raíz (Inicio, Chats), en el scroller (Profesionales), en un hijo
+(`.scroll` del perfil) o inline (Comunidad, Login). Ningún sitio es
+"el" sitio. *Impacto: alto — es el origen de las reservas duplicadas
+corregidas en `-n` y `-o`.*
+
+**D4 · Login reserva sitio para una barra que no existe.**
+`BottomNav.jsx:14` la oculta en `/login`, pero `Login.jsx:32` reserva
+`calc(var(--nav-h) + var(--space-24))` ≈ 90px de relleno inferior
+muerto. *Impacto: medio · Prioridad: alta (arreglo trivial).*
+
+**D5 · Huecos inconsistentes al final del scroll**: 14 / 39 / 40 / 45px
+para el mismo concepto. *Impacto: medio.*
+
+**D6 · Tres modelos de cabecera**: absoluta de 46px (Inicio), fija de
+68px (Profesionales, Chats, Perfil profesional), ninguna (Comunidad,
+Perfil invitado, Login). *Impacto: medio — explica que "la barra
+superior no se integra igual en todas las vistas".*
+
+**D7 · `--float-bottom-h` dice 72px; medido: 74px.** Número mágico que
+no coincide con la realidad. *Impacto: bajo.*
+
+**D8 · Chats no scrollea con datos demo.** Con datos reales sí lo hará y
+su contrato de layout no está verificado. *Pendiente de medir con
+volumen.*
+
+#### Limitación declarada
+
+El entorno de medición es Chromium sin notch: **no reproduce safe-area,
+teclado de iOS ni barra de Safari**. Todo lo anterior es independiente
+del dispositivo. Lo específico de Safari queda **pendiente de
+confirmación en el iPhone del fundador**, no dado por bueno.
+
+---
+
+## Próximos pasos
+
+| Fase | Tarea | Estado |
+|---|---|---|
+| 0 | 1 · Inventario medido de geometría | **Terminada** |
+| 0 | 2 · Auditoría de fiabilidad técnica | Pendiente |
+| 0 | 3 · Auditoría del sistema de diseño (cierre de deudas) | Pendiente |
+| 0 | 4 · Auditoría de flujos, datos reales vs demo | Pendiente |
+| 1 | Modelo de layout común (basado en D1–D7) | Pendiente |
+
+**Siguiente paso exacto:** Fase 0 · Tarea 2 — auditoría de fiabilidad
+técnica: errores de React, dependencias de efectos, condiciones de
+carrera, listeners sin limpiar, dobles ejecuciones y errores silenciosos.
+Sin modificar código. Empezar por `src/pages/Home.jsx` (el archivo más
+grande y con más estado) y `src/context/UserContext.jsx`.
+
+---
+
+## Deudas heredadas (censadas antes de este roadmap)
+
+- **[BLOQUEO DE LANZAMIENTO]** RLS de Supabase: el rol anónimo puede
+  escribir en la tabla `helpers` (`claudeApi.js` hace PATCH con la clave
+  anon). Revisar antes de abrir al público.
+- `DEMO_MODE` sigue activo por defecto (`npm run preflight` lo verifica).
+- Token `--rule` en 18 usos, debe morir en favor de `--ink-border`.
+- 7 tamaños tipográficos y 3 radios díscolos, censados.
+- Pantalla `/intro/:id` huérfana: decidir si se retira.
+- `nura_demanda_no_cubierta` debe subirse al backend el día del enchufe.
+- Chats y Comunidad necesitarán estado de carga cuando haya backend.
