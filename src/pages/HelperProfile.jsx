@@ -611,7 +611,9 @@ function HelperProfileInner() {
         )}
 
         {/* Bottom padding */}
-        <div style={{height: '80px'}} />
+        {/* El espaciador de 80px a mano murio: .scroll ya reserva el fondo
+            con su padding-bottom. Sumaba la reserva DOS veces (medido: 105px
+            de hueco entre el ultimo contenido y la barra de accion). */}
 
       </div>
 

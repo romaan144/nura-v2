@@ -44,6 +44,22 @@
   cambiar de ruta.
 - Sello NURA_BUILD 2026.07.04-dx.
 
+## 2026-07-05 — El mismo hueco, en el perfil (medido)
+
+- Reporte del fundador: el mismo espacio muerto al final de cada perfil.
+  Medido con navegador real antes de tocar nada.
+- **Reserva duplicada otra vez, con otra forma**: el perfil tenia un
+  `<div style={{height: '80px'}} />` **escrito a mano** al final del scroll,
+  ADEMAS del `padding-bottom` del contenedor. Separacion medida entre el
+  ultimo contenido real (los idiomas, bottom 606) y la barra de accion
+  (top 711): **105px**.
+- Cura: fuera el espaciador a mano, y el padding expresa la intencion —
+  `calc(var(--nav-h) + 67px + 20px)`.
+- **Verificado midiendo: 20px exactos.**
+- Patron que ya llevamos dos veces: una reserva escrita a mano conviviendo
+  con la del contenedor. Merece revisarse en el resto de pantallas.
+- Sello NURA_BUILD 2026.07.05-o.
+
 ## 2026-07-05 — La barra, contada dos veces (medido en navegador real)
 
 - El fundador exigio diagnostico en runtime tras tres arreglos fallidos.

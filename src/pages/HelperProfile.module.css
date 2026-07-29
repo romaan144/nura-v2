@@ -13,7 +13,8 @@
      transparente) y .scroll reserva la barra una sola vez. */
 }
 
-.scroll {   padding-bottom: calc(var(--nav-h) + 72px);   /* la barra de accion + su aire, reservados UNA vez */
+.scroll {   padding-bottom: calc(var(--nav-h) + 67px + 20px);   /* barra de navegacion
+     + alto de la barra de accion + la separacion que queremos ver */   /* la barra de accion + su aire, reservados UNA vez */
   }
 
 /* Loading */
