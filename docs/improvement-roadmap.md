@@ -148,21 +148,71 @@ probabilidad baja, consecuencia alta.*
 
 ---
 
+### Tarea 3 — Auditoría del sistema de diseño · **Terminada** · 2026-07-05
+
+Inventario de primitivas, deudas censadas y patrones repetidos.
+**Cero archivos de `src/` modificados.**
+
+#### Lo que ya existe (el sistema está más cerrado de lo que parecía)
+
+**8 primitivas**: `Badge`, `LiveDot`, `Bubble`, `StatBar`, `Button`,
+`SectionLabel`, `EmptyState`, `Skeleton`.
+**21 componentes** con archivo propio.
+
+Los cinco ejes del sistema están cerrados y con ley escrita: escala
+tipográfica, radios, tinta/color, ritmo de espaciado y superficie de
+tarjeta.
+
+**Corrección al plan inicial:** `AppHeader` **no hace falta** —
+`PageHeader` ya existe y lo usan 8 pantallas. `StickyActionBar` tampoco:
+solo hay una barra de acción en toda la app (el perfil profesional), y
+un componente para un solo uso es abstracción prematura.
+
+#### Discrepancias
+
+**S1 · Tres componentes huérfanos**: `ObraCard`, `NavBar` y
+`OnboardingOverlay` — **nadie los importa**. `ObraCard` quedó sin uso al
+nacer `PostCard`; los otros dos son herencia de v1. *Impacto: bajo en
+runtime, medio en mantenimiento — código muerto que confunde.*
+
+**S2 · `--rule` sobrevive en 14 usos** (censado en 18; bajó al corregir
+el perfil). Token duplicado de `--ink-border`, con valor distinto
+(#E4E4F0 frío vs violeta cálido). *Impacto: medio.*
+
+**S3 · 8 tamaños de letra fuera de escala**: 16px (×2), 24px (×3),
+26px, 34px, 44px. Los grandes son piezas de impacto deliberado; los
+16px y 24px deberían caer a token. *Impacto: bajo.*
+
+**S4 · 4 radios fuera de escala**: 2px (×3) y un 99px superviviente que
+debería ser `--radius-full`. *Impacto: bajo.*
+
+**S5 · Patrón `InfoRow` repetido 8 veces** (fila de icono + texto con
+el mismo flex, centrado y separación). Candidato claro a primitiva.
+*Impacto: medio — es el patrón más repetido sin componente.*
+
+**S6 · Cinco componentes de tarjeta conviven**: `HelperCard`,
+`HelperCardTall`, `ObraCard` (huérfano), `PostCard`, `HelperCarousel`.
+Cuatro vivos para representar personas y publicaciones. *Impacto: medio
+— revisar si `HelperCarousel` sigue aportando o es la sexta forma de
+dibujar lo mismo.*
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
 |---|---|---|
 | 0 | 1 · Inventario medido de geometría | **Terminada** |
 | 0 | 2 · Auditoría de fiabilidad técnica | **Terminada** |
-| 0 | 3 · Auditoría del sistema de diseño (cierre de deudas) | Pendiente |
+| 0 | 3 · Auditoría del sistema de diseño | **Terminada** |
 | 0 | 4 · Auditoría de flujos, datos reales vs demo | Pendiente |
 | 1 | Modelo de layout común (basado en D1–D7) | Pendiente |
 
-**Siguiente paso exacto:** Fase 0 · Tarea 3 — auditoría del sistema de
-diseño: componentes existentes vs necesarios, cierre de deudas censadas
-(7 tamaños y 3 radios díscolos, `--rule` en 18 usos) y patrones repetidos
-que deberían ser componente (`AppHeader`, `StickyActionBar`, `InfoRow`,
-`Stat`, `RatingSummary`, `IconButton`). Sin modificar código.
+**Siguiente paso exacto:** Fase 0 · Tarea 4 — auditoría de flujos y
+datos: recorrer los caminos completos (buscar → conectar → confirmar →
+publicar; registro; profesional), detectar callejones sin salida, estados
+imposibles y dónde el dato es de demostración frente a real. Sin
+modificar código.
 
 ---
 
