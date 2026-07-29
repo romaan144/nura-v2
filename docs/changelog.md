@@ -44,6 +44,18 @@
   cambiar de ruta.
 - Sello NURA_BUILD 2026.07.04-dx.
 
+## 2026-07-05 — El centrado, de verdad
+
+- El contenido seguia arriba con hueco debajo: sintoma de que `height: 100%`
+  no resolvia, asi que no habia espacio libre que repartir y `margin: auto`
+  no tenia nada que centrar.
+- Añadido `minHeight: 100dvh`: altura garantizada sin depender de la cadena
+  de padres. **Seguro junto a margin:auto** — lo peligroso era 100dvh CON
+  justify-content:center y overflow hidden, que dejaba contenido
+  inalcanzable; con margin:auto el margen se reduce a cero en cuanto el
+  contenido crece y vuelve al flujo normal.
+- Sello NURA_BUILD 2026.07.05-g.
+
 ## 2026-07-05 — Las dos, centradas (sin repetir el fallo)
 
 - El fundador las quiere mas centradas. Se hace con **margin: auto** sobre

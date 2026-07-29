@@ -82,7 +82,8 @@ export default function Profile() {
     // salto entre las dos pantallas no se nota. Estructura simple (altura
     // del padre, flujo normal), auroras como fondo, tarjeta de cristal.
     <div style={{
-      height: '100%', overflowY: 'auto', WebkitOverflowScrolling: 'touch',
+      height: '100%', minHeight: '100dvh',
+      overflowY: 'auto', WebkitOverflowScrolling: 'touch',
       display: 'flex', flexDirection: 'column',
       background: `radial-gradient(420px 320px at 88% -4%, rgba(255,59,92,0.10), transparent 64%),
                    radial-gradient(520px 360px at 6% 4%, rgba(123,47,255,0.11), transparent 66%),
