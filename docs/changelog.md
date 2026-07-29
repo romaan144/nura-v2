@@ -44,6 +44,25 @@
   cambiar de ruta.
 - Sello NURA_BUILD 2026.07.04-dx.
 
+## 2026-07-05 — La Barra que se ve (Nura diseño)
+
+- El fundador: la barra inferior esta apagada y no se sabe donde empieza,
+  porque mucho contenido tiene su mismo color. Medido y confirmado: la linea
+  separadora era **0.5px al 5% de opacidad** — por debajo del umbral de
+  percepcion, mas tenue incluso que `--ink-border` (6%) — el fondo era el
+  **mismo papel que el contenido** al 86%, y **no habia sombra**.
+- **Tres capas de separacion**, porque cada una falla en un caso distinto:
+  la linea sobre fondos claros, la sombra sobre fondos oscuros y el
+  contraste de superficie cuando el contenido es del mismo tono (el caso del
+  fundador). Linea a 1px/12%, sombra ascendente 0 -2px 16px al 7%, papel al
+  93%.
+- **Iconos y etiquetas inactivos**: estaban al 35% y **30%** — a 11px eso no
+  se lee, se adivina. Pasan a `--ink-tertiary`. La barra habia quedado fuera
+  del ciclo que subio los grises del sistema.
+- Intactos a proposito: altura, posicion, safe-area y desenfoque. La
+  geometria de esta barra costo demasiado como para rozarla.
+- Sello NURA_BUILD 2026.07.05-i.
+
 ## 2026-07-05 — El desplazamiento lateral (el falso zoom)
 
 - El fundador noto que el perfil del profesional se podia mover de lado a
