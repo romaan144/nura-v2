@@ -44,6 +44,21 @@
   cambiar de ruta.
 - Sello NURA_BUILD 2026.07.04-dx.
 
+## 2026-07-05 — Union de diseño: registro y Login, la misma pantalla
+
+- El fundador: las dos pantallas del registro no estaban a la misma altura y
+  el salto se notaba. Ahora el Perfil de invitado usa **la receta exacta de
+  Login**: mismo contenedor, mismo relleno, mismas auroras de fondo, misma
+  tarjeta de cristal, mismo maxWidth. **El logo cae en el mismo pixel**, asi
+  que al pulsar "Crear cuenta gratis" la cabecera no se mueve — solo cambia
+  el contenido de la tarjeta.
+- De paso, la pantalla gana la piel de la app: titulo en la Voz, ventajas
+  dentro de la tarjeta, los dos botones con la primitiva Button (44px de
+  area tactil heredados) y la misma linea de confianza.
+- Retiradas 7 reglas CSS que quedaron huerfanas (.pageGuest, .noUser y las
+  suyas): la pantalla ya no usa CSS de modulo.
+- Sello NURA_BUILD 2026.07.05-e.
+
 ## 2026-07-05 — Login recupera su belleza (sobre la estructura buena)
 
 - Via libre del fundador: "hazla mucho mas bonita, parecida a como estaba

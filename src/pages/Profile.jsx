@@ -78,35 +78,76 @@ export default function Profile() {
 
   /* ── Guest ─────────────────────────────────────────────── */
   if (!user) return (
-    <div className={styles.pageGuest}>
-      <div style={{position:'absolute', top:'10px', right:'14px',
-        fontSize:'10px', color:'var(--ink-tertiary)'}}>{NURA_BUILD}</div>
-      <div className={styles.noUser}>
-        <img src="/logo-iso.png" alt="Nüra" className={styles.noUserLogo} />
-        <h2 className={styles.noUserTitle}>Crea tu cuenta gratis</h2>
-        <p className={styles.noUserDesc}>Solo tarda 30 segundos.</p>
-        <div style={{display:'flex',flexDirection:'column',gap:'var(--space-12)',width:'100%',maxWidth:'280px',margin:'var(--space-20) 0'}}>
-          {[
-            [MessageCircle, 'Escribe a cualquier profesional'],
-            [UserPlus,       'Sigue a tus profesionales favoritos'],
-            [ClipboardList, 'Consulta tu historial de búsquedas'],
-            [Star,          'Valora a los profesionales que contratas'],
-          ].map(([Icon, text]) => (
-            <div key={text} style={{display:'flex',alignItems:'center',gap:'var(--space-12)'}}>
-              <Icon size={16} color="var(--purple)" strokeWidth={1.8} style={{flexShrink:0}} />
-              <span style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.65)',fontWeight:500}}>{text}</span>
-            </div>
-          ))}
+    // MISMA RECETA QUE LOGIN, al pixel: el logo cae en el mismo sitio y el
+    // salto entre las dos pantallas no se nota. Estructura simple (altura
+    // del padre, flujo normal), auroras como fondo, tarjeta de cristal.
+    <div style={{
+      height: '100%', overflowY: 'auto', WebkitOverflowScrolling: 'touch',
+      background: `radial-gradient(420px 320px at 88% -4%, rgba(255,59,92,0.10), transparent 64%),
+                   radial-gradient(520px 360px at 6% 4%, rgba(123,47,255,0.11), transparent 66%),
+                   radial-gradient(460px 300px at 50% 104%, rgba(0,212,200,0.08), transparent 62%),
+                   var(--paper)`,
+      padding: 'var(--space-32) var(--space-20) calc(var(--nav-h) + var(--space-24))',
+    }}>
+      <div style={{maxWidth:'360px', margin:'0 auto'}}>
+        <img src="/logo-iso.png" alt="" style={{width:'60px', height:'60px', display:'block',
+          margin:'0 auto', animation:'pulse 3s ease-in-out infinite'}} />
+        <img src="/logo-text.png" alt="Nüra" style={{height:'26px', display:'block',
+          margin:'var(--space-14) auto var(--space-6)'}} />
+        <p style={{fontSize:'var(--text-sm)', color:'var(--ink-secondary)', textAlign:'center',
+          margin:'0 0 var(--space-28)', letterSpacing:'-0.1px'}}>
+          Encuentra a la persona adecuada
+        </p>
+
+        <div style={{
+          background:'rgba(255,255,255,0.86)',
+          WebkitBackdropFilter:'blur(24px) saturate(180%)', backdropFilter:'blur(24px) saturate(180%)',
+          border:'1px solid var(--ink-border)', borderRadius:'var(--radius-md)',
+          boxShadow:'0 8px 32px rgba(33,29,51,0.07)', padding:'var(--space-24) var(--space-20)',
+        }}>
+          <h2 style={{fontFamily:'var(--font-voice)', fontSize:'var(--text-heading)', fontWeight:700,
+            letterSpacing:'-0.6px', color:'var(--ink)', margin:'0 0 var(--space-6)', textAlign:'center'}}>
+            Crea tu cuenta gratis
+          </h2>
+          <p style={{fontSize:'var(--text-sm)', color:'var(--ink-secondary)', textAlign:'center',
+            margin:'0 0 var(--space-20)', lineHeight:1.5}}>
+            Solo tarda 30 segundos.
+          </p>
+
+          <div style={{display:'flex', flexDirection:'column', gap:'var(--space-12)',
+            marginBottom:'var(--space-24)'}}>
+            {[
+              [MessageCircle, 'Escribe a cualquier profesional'],
+              [UserPlus,      'Sigue a tus profesionales favoritos'],
+              [ClipboardList, 'Consulta tu historial de búsquedas'],
+              [Star,          'Valora a los profesionales que contratas'],
+            ].map(([Icon, text]) => (
+              <div key={text} style={{display:'flex', alignItems:'center', gap:'var(--space-12)'}}>
+                <Icon size={16} color="var(--purple)" strokeWidth={1.8} style={{flexShrink:0}} />
+                <span style={{fontSize:'var(--text-sm)', color:'var(--ink-secondary)'}}>{text}</span>
+              </div>
+            ))}
+          </div>
+
+          <Button variant="primary" full onClick={() => navigate('/login')}>
+            Crear cuenta gratis
+          </Button>
+          <div style={{height:'var(--space-10)'}} />
+          <Button variant="secondary" full onClick={() => navigate('/register-helper')}>
+            Quiero ser Profesional
+          </Button>
         </div>
-        <button className={styles.loginBtn} onClick={() => navigate('/login')}>
-          Crear cuenta gratis
-        </button>
-        <button className={styles.helperBtn} onClick={() => navigate('/register-helper')}>
-          Quiero ser Profesional
-        </button>
+
+        <p style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', textAlign:'center',
+          margin:'var(--space-20) 0 0', lineHeight:1.5}}>
+          Tu teléfono no se muestra a nadie.<br />Solo sirve para entrar.
+        </p>
+        <div style={{textAlign:'center', fontSize:'var(--text-xs)', color:'var(--ink-tertiary)',
+          marginTop:'var(--space-16)', opacity:0.6}}>{NURA_BUILD}</div>
       </div>
     </div>
   )
+
 
   /* ── Helpers ────────────────────────────────────────────── */
   function saveName()  { if (nameInput.trim())  updateUser({ name: nameInput.trim() });  setEditingName(false) }

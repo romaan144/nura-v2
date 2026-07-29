@@ -317,39 +317,7 @@
    que no puede heredar el padding-top de --header-h: eran 76px de vacio
    empujando todo hacia abajo. Y reserva la barra inferior, que esa rama no
    recibia de ningun padre. */
-.pageGuest {
-  position: relative;
-  height: 100%;
-  background: var(--paper);
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: var(--nav-h);
-}
 
-.noUser {
-  display: flex; flex-direction: column; align-items: center;
-  justify-content: center;
-  gap: 14px; padding: 24px; text-align: center;
-  /* dvh, no vh: en Safari iOS `vh` incluye la franja del navegador, asi
-     que la caja se hacia mas alta que la pantalla y, con el contenido
-     centrado, el centro caia fuera. */
-  /* Sin cabecera que restar: solo la barra, que ya reserva .pageGuest.
-     100% del contenedor, no del viewport: el padre ya sabe cuanto mide. */
-  min-height: 100%;
-}
-.noUserLogo { width: 56px; height: 56px; margin-bottom: 4px; }
-.noUserTitle { font-size: var(--text-lg); font-weight: 700; color: var(--ink-primary); margin: 0; }
-.noUserDesc { font-size: var(--text-sm); color: var(--ink-secondary); margin: 0; }
-.loginBtn {
-  padding: 14px; background: var(--purple); color: white;
-  border: none; border-radius: var(--radius-full);
-  font-size: var(--text-sm); font-weight: 600;
-  cursor: pointer; width: 100%; max-width: 280px; font-family: inherit;
-}
-.helperBtn {
-  background: none; border: none; font-size: var(--text-sm);
-  color: var(--purple); cursor: pointer; font-family: inherit;
-}
 
 /* ── PROFILE ENTRANCE ────────────────────────────────────────────────── */
 @keyframes profileAvatarIn {
