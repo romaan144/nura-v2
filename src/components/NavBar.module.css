@@ -76,6 +76,7 @@
   padding: var(--space-md) var(--space-sm);
   gap: 2px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 .drawerItem {
   display: flex; align-items: center; gap: 14px;

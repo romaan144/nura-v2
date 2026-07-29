@@ -44,6 +44,21 @@
   cambiar de ruta.
 - Sello NURA_BUILD 2026.07.04-dx.
 
+## 2026-07-05 — El desplazamiento lateral (el falso zoom)
+
+- El fundador noto que el perfil del profesional se podia mover de lado a
+  lado, no solo arriba y abajo. Causa: **`.aurora::before` sangraba 24px por
+  cada lado** (`inset: -24px -24px auto`) y desbordaba el ancho.
+- El detonante es una regla de CSS poco conocida: **un contenedor con
+  `overflow-y: auto` convierte el eje X de `visible` a `auto`**, asi que
+  cualquier desbordamiento horizontal se vuelve desplazable. Por eso pasaba
+  en las paginas con scroll propio y no en otras.
+- Doble cura: fuera el sangrado lateral del aurora (causa raiz, sistemica —
+  el aurora vive en Inicio, el hero del profesional, Comunidad y la Carta) y
+  **18 contenedores con scroll vertical blindados** con `overflow-x: hidden`,
+  para que ningun desbordamiento futuro vuelva a hacerse desplazable.
+- Sello NURA_BUILD 2026.07.05-h.
+
 ## 2026-07-05 — El centrado, de verdad
 
 - El contenido seguia arriba con hueco debajo: sintoma de que `height: 100%`

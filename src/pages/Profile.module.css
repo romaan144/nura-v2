@@ -3,6 +3,7 @@
   height: 100%;
   background: var(--paper);
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   padding-top: var(--header-h);   /* sin hero: el contenido no puede subir */
 }

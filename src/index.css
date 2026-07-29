@@ -536,7 +536,10 @@ textarea:active {
 /* ── El Alma Visible ─────────────────────────────────────────── */
 .aurora { position: relative; }
 .aurora::before {
-  content: ''; position: absolute; inset: -24px -24px auto; height: 230px;
+  /* Sin sangrado horizontal: los -24px laterales desbordaban el ancho y,
+     en contenedores con overflow-y:auto, el navegador convierte el eje X en
+     desplazable — de ahi el 'zoom' que se movia a los lados. */
+  content: ''; position: absolute; inset: -24px 0 auto; height: 230px;
   pointer-events: none; z-index: 0;
   background:
     radial-gradient(420px 200px at 16% 0%, rgba(255,59,92,0.08), transparent 62%),

@@ -20,7 +20,7 @@ const S = {
   // de la version original vuelve como SUPERFICIE, no como colocacion.
   page: {
     height: '100%', minHeight: '100dvh',
-    overflowY: 'auto', WebkitOverflowScrolling: 'touch',
+    overflowY: 'auto', overflowX: 'hidden', WebkitOverflowScrolling: 'touch',
     // Centrado SEGURO: flex + margin:auto en el hijo. A diferencia de
     // justify-content:center, cuando el contenido no cabe el margen se
     // reduce a cero y vuelve al flujo normal — nunca corta por arriba.
