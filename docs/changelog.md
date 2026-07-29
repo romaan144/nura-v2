@@ -44,6 +44,17 @@
   cambiar de ruta.
 - Sello NURA_BUILD 2026.07.04-dx.
 
+## 2026-07-05 — Fuera el desplegable de busquedas recientes
+
+- El fundador: al enfocar el input aparecian las busquedas recientes y eso
+  ensucia la experiencia. Retirado por completo — el bloque, el estado
+  `inputFocused` que solo lo gobernaba a el, el icono Clock que solo usaba
+  el, y sus cuatro reglas CSS.
+- El historial se conserva en el contexto: lo usan el saludo, el bloque
+  "Porque buscaste..." de Comunidad y la promesa de la primera pantalla.
+  Lo que muere es su aparicion sobre el teclado, no el dato.
+- Sello NURA_BUILD 2026.07.05-p.
+
 ## 2026-07-05 — El mismo hueco, en el perfil (medido)
 
 - Reporte del fundador: el mismo espacio muerto al final de cada perfil.

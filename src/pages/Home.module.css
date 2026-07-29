@@ -344,11 +344,7 @@
 .resultDist { color: #888; }
 
 /* ── RECENT SEARCHES ────────────────────────────────── */
-.recentSearches { display: flex; flex-direction: column; gap: 4px; padding: 0 2px; }
-.recentLabel { font-size: var(--text-xs); font-weight: 600; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; padding: 4px 8px; }
-.recentItem {  display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: white; border: none; border-radius: var(--radius-lg); text-align: left; cursor: pointer; box-shadow: var(--shadow-xs);   }
 .recentIcon { font-size: var(--text-sm); flex-shrink: 0; }
-.recentText { font-size: var(--text-sm); color: #555; }
 
 /* ── GRADIENT TEXT ──────────────────────────────────── */
 .gradText { background: var(--grad-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; }

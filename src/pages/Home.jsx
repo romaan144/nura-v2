@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { CAT_HUMANA } from '../data/categorias'
-import { Send, Mic, MicOff, Clock, RotateCcw, UserRound } from 'lucide-react'
+import { Send, Mic, MicOff, RotateCcw, UserRound } from 'lucide-react'
 import { analyzeNeed, matchHelpers, getPriceContext } from '../utils/matching'
 import { getFirstName } from '../utils/name'
 import { useUser } from '../context/UserContext'
@@ -345,7 +345,6 @@ export default function Home() {
   // showSuggestions: hide once user has chatted
   const showSuggestions = nuraChatMessages.length <= 1
   const setShowSuggestions = () => {} // no-op, derived from messages
-  const [inputFocused, setInputFocused] = useState(false)
   const lastMatches = nuraLastMatches
   const setLastMatches = setNuraLastMatches
   const bottomRef  = useRef(null)
@@ -1199,26 +1198,13 @@ export default function Home() {
 
       {/* Floating bottom — suggestions + input capsule only */}
       <div className={styles.floatBottom}>
-        {inputFocused && messages.length <= 1 && !input && searchHistory?.length > 0 && (
-          <div className={styles.recentSearches}>
-            <span className={styles.recentLabel}>Recientes</span>
-            {searchHistory.slice(0, 3).map((s, i) => (
-              <button key={i} className={styles.recentItem} onClick={() => handleSend(s.query)}>
-                <Clock size={12} color='rgba(33,29,51,0.35)' style={{flexShrink:0}} />
-                <span className={styles.recentText}>{s.query}</span>
-              </button>
-            ))}
-          </div>
-        )}
 
 
         <div className={styles.inputCapsule}>
           <input ref={inputRef} className={styles.input} aria-label="Cuéntale a Nüra qué necesitas"
             placeholder={forWhom === 'familia' ? 'Cuéntame qué le pasa...' : forWhom === 'hogar' ? 'Cuéntame qué necesita tu hogar...' : (searchHistory?.length ? 'Cuéntame qué necesitas...' : 'Cuéntale a Nüra qué necesitas…')}
             value={input} onChange={e => setInput(e.target.value)}
-            onKeyDown={handleKey} readOnly={false}
-            onFocus={() => setInputFocused(true)}
-            onBlur={() => setTimeout(() => setInputFocused(false), 200)} />
+            onKeyDown={handleKey} readOnly={false} />
           {input.trim()
             ? <button className={styles.sendBtn} onClick={() => handleSend()} aria-label="Enviar mensaje"><Send size={16} /></button>
             : <button className={`${styles.sendBtn} ${listening ? styles.micActive : styles.micBtn}`} onClick={toggleMic} aria-label={listening ? 'Detener dictado' : 'Dictar por voz'}>
