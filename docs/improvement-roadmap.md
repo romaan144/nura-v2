@@ -198,6 +198,49 @@ dibujar lo mismo.*
 
 ---
 
+### Tarea 4 — Auditoría de flujos y datos · **Terminada** · 2026-07-05
+
+**Cero archivos de `src/` modificados.**
+
+#### Lo que está bien
+
+- **El bucle del producto cierra**: buscar → conectar → confirmar →
+  publicar → mejorar el matching. `confirmContact`, `addStory`, `addObra`
+  y `obraSignal` están todos conectados y en uso.
+- **Ninguna pantalla es un callejón sin salida**, salvo una huérfana.
+
+#### Discrepancias
+
+**F1 · Todo el estado vive en el navegador.** **33 claves de
+localStorage** sostienen la app entera: usuario, chats, citas, contactos,
+obra, comentarios, reacciones, historial, demanda no cubierta. **No hay
+backend para los datos propios.** Consecuencias: nada se comparte entre
+dispositivos, el fundador no ve ningún dato de sus usuarios, y borrar los
+datos del navegador borra la cuenta. *Impacto: bloqueante para lanzar.*
+
+**F2 · El código de verificación no se verifica.** `Login.jsx` solo
+comprueba que tenga 4 dígitos: **cualquier número entra con cualquier
+código**. No hay autenticación real ni envío de SMS. Correcto para una
+demo; **inaceptable al abrir**, porque cualquiera entra como cualquiera.
+*Impacto: bloqueante para lanzar.*
+
+**F3 · 138 peticiones externas para los avatares** (`api.dicebear.com`).
+Cada foto de profesional es una llamada a un tercero: coste de red en
+cada pantalla, dependencia de un servicio ajeno y la misma consideración
+de privacidad que las fuentes (T2). *Impacto: medio-alto.*
+
+**F4 · `/onboarding` no tiene salida.** Ruta huérfana de v1: si alguien
+llega, no puede volver. *Impacto: bajo — no es alcanzable desde la
+navegación normal, pero existe.*
+
+**F5 · Todo el contenido es de demostración**: 123 profesionales
+semilla, historias de conexión, obra, comentarios y reacciones. **No hay
+oferta real.** Es el problema de negocio, no técnico: sin profesionales
+de verdad no hay producto que abrir. *Impacto: bloqueante para lanzar ·
+no se resuelve con código.*
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
@@ -205,14 +248,15 @@ dibujar lo mismo.*
 | 0 | 1 · Inventario medido de geometría | **Terminada** |
 | 0 | 2 · Auditoría de fiabilidad técnica | **Terminada** |
 | 0 | 3 · Auditoría del sistema de diseño | **Terminada** |
-| 0 | 4 · Auditoría de flujos, datos reales vs demo | Pendiente |
+| 0 | 4 · Auditoría de flujos y datos | **Terminada** |
 | 1 | Modelo de layout común (basado en D1–D7) | Pendiente |
 
-**Siguiente paso exacto:** Fase 0 · Tarea 4 — auditoría de flujos y
-datos: recorrer los caminos completos (buscar → conectar → confirmar →
-publicar; registro; profesional), detectar callejones sin salida, estados
-imposibles y dónde el dato es de demostración frente a real. Sin
-modificar código.
+**FASE 0 COMPLETA.** 20 discrepancias registradas (D1–D8 geometría,
+T1–T6 fiabilidad, S1–S6 sistema de diseño, F1–F5 flujos y datos).
+
+**Siguiente paso exacto:** presentar al fundador el resumen de la Fase 0
+y la propuesta de Fase 1 (modelo de layout común, basado en D1–D7), y
+**esperar su aprobación explícita** antes de tocar código.
 
 ---
 
