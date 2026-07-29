@@ -44,6 +44,23 @@
   cambiar de ruta.
 - Sello NURA_BUILD 2026.07.04-dx.
 
+## 2026-07-05 — Login recupera su belleza (sobre la estructura buena)
+
+- Via libre del fundador: "hazla mucho mas bonita, parecida a como estaba
+  antes". Vuelve lo que la hacia bonita, pero como SUPERFICIE sobre la
+  estructura simple que por fin funciona — nunca como colocacion.
+- **El logotipo real** (logo-text.png) en vez de texto, y el isotipo con su
+  respiracion (pulse 3s), como en la original.
+- **Las casillas del codigo**: cuatro cajas de 54x62 que se encienden en
+  morado al rellenarse, con el campo real invisible encima. Se lee como un
+  codigo, no como un formulario.
+- **Tarjeta de cristal**: papel translucido con desenfoque y sombra suave,
+  la misma receta que las barras de la app.
+- **Las tres auroras** (rojo, morado, cian) vuelven como `background-image`
+  del contenedor. Los blobs originales eran `<div>` posicionados; estos no
+  pueden afectar al layout.
+- Sello NURA_BUILD 2026.07.05-d.
+
 ## 2026-07-05 — Login, vestida (sin tocar la estructura)
 
 - La altura quedo bien con la reescritura, asi que este ciclo es solo piel:

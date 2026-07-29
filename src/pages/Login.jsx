@@ -15,75 +15,94 @@ import { NURA_BUILD } from '../config'
 // ═══════════════════════════════════════════════════════════════
 
 const S = {
-  // La estructura no se toca: contenedor con altura del padre y flujo
-  // normal. Todo lo que sigue es superficie, no colocacion.
+  // La estructura sigue siendo la simple que funciona: altura del padre,
+  // flujo normal, cero elementos posicionados a nivel de pagina. Lo bonito
+  // de la version original vuelve como SUPERFICIE, no como colocacion.
   page: {
     height: '100%', overflowY: 'auto', WebkitOverflowScrolling: 'touch',
-    // El degradado va en el FONDO, no en un elemento posicionado: cero
-    // riesgo para el layout.
-    background: `radial-gradient(680px 320px at 80% -6%, rgba(123,47,255,0.10), transparent 62%),
-                 radial-gradient(560px 280px at 10% 2%, rgba(255,59,92,0.07), transparent 60%),
+    background: `radial-gradient(420px 320px at 88% -4%, rgba(255,59,92,0.10), transparent 64%),
+                 radial-gradient(520px 360px at 6% 4%, rgba(123,47,255,0.11), transparent 66%),
+                 radial-gradient(460px 300px at 50% 104%, rgba(0,212,200,0.08), transparent 62%),
                  var(--paper)`,
-    padding: 'var(--space-28) var(--space-20) calc(var(--nav-h) + var(--space-24))',
+    padding: 'var(--space-32) var(--space-20) calc(var(--nav-h) + var(--space-24))',
   },
-  inner: { maxWidth: '380px', margin: '0 auto' },
+  inner: { maxWidth: '360px', margin: '0 auto' },
 
-  logo: { width: '54px', height: '54px', display: 'block', margin: '0 auto' },
-  marca: {
-    fontFamily: 'var(--font-voice)', fontSize: 'var(--text-xl)', fontWeight: 700,
-    letterSpacing: '-0.9px', color: 'var(--ink)', textAlign: 'center',
-    margin: 'var(--space-12) 0 var(--space-4)',
+  logo: {
+    width: '60px', height: '60px', display: 'block', margin: '0 auto',
+    animation: 'pulse 3s ease-in-out infinite',
   },
+  wordmark: { height: '26px', display: 'block', margin: 'var(--space-14) auto var(--space-6)' },
   lema: {
     fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)',
-    textAlign: 'center', margin: '0 0 var(--space-24)', letterSpacing: '-0.1px',
+    textAlign: 'center', margin: '0 0 var(--space-28)', letterSpacing: '-0.1px',
   },
 
-  // La tarjeta: la piel canon de la app (curva 18, sombra de reposo)
   card: {
-    background: 'white', border: '1px solid var(--ink-border)',
-    borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-sm)',
-    padding: 'var(--space-20) var(--space-20) var(--space-24)',
+    background: 'rgba(255,255,255,0.86)',
+    WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+    backdropFilter: 'blur(24px) saturate(180%)',
+    border: '1px solid var(--ink-border)',
+    borderRadius: 'var(--radius-md)',
+    boxShadow: '0 8px 32px rgba(33,29,51,0.07)',
+    padding: 'var(--space-24) var(--space-20)',
   },
-  pasos: { display: 'flex', gap: 'var(--space-6)', marginBottom: 'var(--space-20)' },
+  pasos: { display: 'flex', gap: 'var(--space-6)', marginBottom: 'var(--space-24)' },
   paso: hecho => ({
     height: '3px', flex: 1, borderRadius: '99px',
     background: hecho ? 'var(--purple)' : 'var(--surface-muted)',
-    transition: 'background 0.3s cubic-bezier(0.22, 1, 0.36, 1)',
+    transition: 'background 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
   }),
 
   titulo: {
     fontFamily: 'var(--font-voice)', fontSize: 'var(--text-heading)', fontWeight: 700,
     letterSpacing: '-0.6px', color: 'var(--ink)', margin: '0 0 var(--space-6)',
+    textAlign: 'center',
   },
   ayuda: {
     fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)',
-    margin: '0 0 var(--space-16)', lineHeight: 1.5,
+    margin: '0 0 var(--space-20)', lineHeight: 1.5, textAlign: 'center',
   },
   campo: {
     width: '100%', boxSizing: 'border-box',
     border: '1px solid var(--ink-border)', borderRadius: 'var(--radius-card)',
     padding: 'var(--space-14) var(--space-16)',
-    fontSize: '16px',   // 16px: por debajo, iOS hace zoom al enfocar
-    fontFamily: 'inherit', color: 'var(--ink)',
+    fontSize: '16px',
+    fontFamily: 'inherit', color: 'var(--ink)', textAlign: 'center',
     background: 'var(--paper)', outline: 'none',
-    marginBottom: 'var(--space-12)',
+    marginBottom: 'var(--space-14)', letterSpacing: '0.4px',
   },
+
+  // Las casillas del codigo, de la version original
+  codeWrap: { position: 'relative', marginBottom: 'var(--space-16)' },
+  codeRow: { display: 'flex', gap: 'var(--space-10)', justifyContent: 'center' },
+  codeBox: lleno => ({
+    width: '54px', height: '62px', borderRadius: 'var(--radius-card)',
+    background: lleno ? 'var(--purple-05)' : 'var(--paper)',
+    border: '1.5px solid ' + (lleno ? 'var(--purple)' : 'var(--ink-border)'),
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    fontSize: '26px', fontWeight: 700, color: 'var(--ink)',
+    transition: 'all 0.2s cubic-bezier(0.22, 1, 0.36, 1)',
+  }),
+  codeHidden: {
+    position: 'absolute', inset: 0, width: '100%', height: '100%',
+    opacity: 0, border: 'none', background: 'transparent',
+    fontSize: '16px', cursor: 'pointer',
+  },
+
   volver: {
     background: 'none', border: 'none', color: 'var(--ink-tertiary)',
     fontSize: 'var(--text-sm)', fontFamily: 'inherit',
     padding: 'var(--space-14) 0 0', cursor: 'pointer', width: '100%',
   },
-
-  // La confianza, donde mas se duda: antes de dar el telefono
   confianza: {
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    gap: 'var(--space-6)', margin: 'var(--space-16) 0 0',
-    fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)', textAlign: 'center',
+    display: 'block', margin: 'var(--space-20) 0 0',
+    fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)',
+    textAlign: 'center', lineHeight: 1.5,
   },
   sello: {
     textAlign: 'center', fontSize: 'var(--text-xs)',
-    color: 'var(--ink-tertiary)', marginTop: 'var(--space-20)', opacity: 0.7,
+    color: 'var(--ink-tertiary)', marginTop: 'var(--space-16)', opacity: 0.6,
   },
 }
 
@@ -138,7 +157,7 @@ export default function Login() {
     <div style={S.page}>
       <div style={S.inner}>
         <img src="/logo-iso.png" alt="" style={S.logo} />
-        <div style={S.marca}>Nüra</div>
+        <img src="/logo-text.png" alt="Nüra" style={S.wordmark} />
         <p style={S.lema}>Encuentra a la persona adecuada</p>
 
         <div style={S.card}>
@@ -164,10 +183,17 @@ export default function Login() {
             <>
               <h1 style={S.titulo}>Tu código</h1>
               <p style={S.ayuda}>Te lo hemos enviado al {phone}.</p>
-              <input style={{ ...S.campo, letterSpacing: '10px', textAlign: 'center', fontSize: '24px', fontWeight: 700 }}
-                type="tel" inputMode="numeric" placeholder="0000" value={code} maxLength={4}
-                onChange={e => setCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                onKeyDown={e => { if (e.key === 'Enter') handleCode() }} />
+              <div style={S.codeWrap}>
+                <div style={S.codeRow}>
+                  {[0, 1, 2, 3].map(i => (
+                    <div key={i} style={S.codeBox(!!code[i])}>{code[i] || ''}</div>
+                  ))}
+                </div>
+                <input style={S.codeHidden} type="tel" inputMode="numeric" value={code} maxLength={4}
+                  aria-label="Código de verificación"
+                  onChange={e => setCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                  onKeyDown={e => { if (e.key === 'Enter') handleCode() }} />
+              </div>
               <Button variant="primary" full onClick={handleCode} disabled={code.length < 4 || loading}>
                 {loading ? 'Comprobando…' : 'Entrar'}
               </Button>
@@ -192,7 +218,7 @@ export default function Login() {
         </div>
 
         <p style={S.confianza}>
-          🔒 Tu teléfono no se muestra a nadie. Solo sirve para entrar.
+          Tu teléfono no se muestra a nadie.<br />Solo sirve para entrar.
         </p>
 
         <div style={S.sello}>{NURA_BUILD}</div>
