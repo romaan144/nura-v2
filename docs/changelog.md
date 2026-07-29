@@ -44,6 +44,23 @@
   cambiar de ruta.
 - Sello NURA_BUILD 2026.07.04-dx.
 
+## 2026-07-05 — Login, vestida (sin tocar la estructura)
+
+- La altura quedo bien con la reescritura, asi que este ciclo es solo piel:
+  **la estructura no se toca** (contenedor con altura del padre, flujo
+  normal, cero elementos posicionados). Todo lo añadido es superficie.
+- **Tarjeta canon** para el formulario (curva 18, sombra de reposo, borde
+  del sistema): el registro deja de ser texto suelto sobre papel.
+- **Indicador de tres pasos** sobre la tarjeta — telefono, codigo, nombre —
+  para que se vea cuanto queda.
+- **El degradado vuelve, pero como FONDO**, no como elemento posicionado
+  (los blobs de la version anterior eran divs; estos son background-image).
+  Cero riesgo para el layout.
+- **La confianza donde mas se duda**: una linea antes de dar el telefono —
+  "no se muestra a nadie, solo sirve para entrar".
+- Codigo de verificacion a 24px con separacion: se lee como un codigo.
+- Sello NURA_BUILD 2026.07.05-c.
+
 ## 2026-07-05 — Login, reescrita desde cero
 
 - Diez ciclos de parches sobre el mismo archivo. El fundador: "hazla desde
