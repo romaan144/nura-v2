@@ -705,6 +705,26 @@ Pruebas: cuatro puertas verdes + medicion antes/despues con sesion.
 
 ---
 
+### Tarea 5 — Los bloques inferiores, al canon · **Terminada** · 2026-07-05
+
+Sello `2026.07.06-g`. Un solo archivo: `Profile.module.css`.
+
+Queja del fundador: "bloques inferiores separados de manera poco natural",
+"acciones que no parecen pertenecer a una estructura unica".
+
+**Causa encontrada**: estaban **fuera del canon de La Superficie**. Radio
+`--radius-lg` en vez de la curva de la casa (18px), **sin borde y sin
+sombra**. Por eso flotaban como piezas sueltas en vez de leerse como un
+grupo: no compartian piel con ninguna otra tarjeta de la app.
+
+Aplicada la receta: curva `--radius-md`, borde `--ink-border`, sombra de
+reposo, rellenos a la escala. Y la zona de evolucion pasa del margen de
+14px al gutter de 16 de la app.
+
+Pruebas: cuatro puertas verdes.
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
@@ -729,13 +749,12 @@ pantallas cumplen el contrato: D1, D2, D3, D4, D5, D7 resueltos. Quedan
 abiertos D6 (tres modelos de cabecera — no se toco, no molesta) y D8
 (Chats sin verificar con volumen).
 
-**Siguiente paso exacto:** Fase 4 · Tarea 5 — **agrupar los bloques
-inferiores**. El fundador: "bloques inferiores separados de manera poco
-natural", "acciones que no parecen pertenecer a una estructura unica". Hoy
-son piezas sueltas: favoritos, "Mis servicios e historial", zona de
-evolucion, cerrar sesion. Agruparlos en una lista con la receta de
-superficie de la app, en vez de botones flotando. Archivos:
-`Profile.jsx` y su modulo CSS.
+**Siguiente paso exacto:** pedir al fundador que confirme el perfil en el
+iPhone (avatar a la izquierda, bloques con borde y sombra). Si esta bien,
+la Fase 4 queda cerrada en lo visible y toca decidir: **(a)** S2-S6, las
+deudas del sistema visual; **(b)** las pantallas que el prompt maestro
+marca como debiles y aun no se han tocado (registro, chats); **(c)** los
+bloqueantes de lanzamiento (F1 backend, F2 autenticacion real, RLS).
 
 ---
 
