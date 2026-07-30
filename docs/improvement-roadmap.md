@@ -517,6 +517,46 @@ resolver nada.
 
 ---
 
+### Tarea 4 — T4: los catch vacios · **Terminada** · 2026-07-05
+
+Sello `2026.07.06-a`. **FASE 2 CERRADA.**
+
+**Tercera correccion a mi propia auditoria.** Los 25 `catch` vacios
+protegen, sin excepcion, **APIs del navegador**: sessionStorage (15),
+window (11), localStorage (3), document (2). Son guardas **deliberadas y
+necesarias** — el smoke corre en SSR, donde esas APIs no existen, asi que
+el silencio es lo correcto. Añadirles registro habria sido ruido.
+
+Y los fallos que SI importan **ya se registraban**: la busqueda
+(`Home.jsx:998`), Supabase (`matching.js:466,471`), la historia
+(`Home.jsx:721`) y el contexto de persona (`Home.jsx:867`).
+
+**Una sola excepcion legitima**, encontrada al revisar uno por uno: el
+registro del chat en Supabase (`claudeApi.js:82`) fallaba en **absoluto
+silencio**, con el comentario "never block the UI". La decision de no
+bloquear es correcta; lo que no lo era es que **nadie sabria nunca que esa
+persistencia esta rota**. Ahora avisa en consola sin cambiar el
+comportamiento.
+
+---
+
+## FASE 2 CERRADA — resumen
+
+| hallazgo | resultado |
+|---|---|
+| **T2** Google Fonts / RGPD | **resuelto** — autoalojadas, cero dominios externos |
+| **T6** parseo sin proteger | **resuelto** |
+| **T3** temporizadores | **resuelto** en lo que era real (3 navegaciones diferidas no cancelables); el resto, sobrevalorado |
+| **T5** violaciones de pureza | **descartado** — falsos positivos |
+| **T4** catch vacios | **descartado** — guardas correctas; una excepcion arreglada |
+
+**Leccion de metodo:** tres de los seis hallazgos de fiabilidad estaban
+sobrevalorados o eran falsos. La auditoria se hizo **contando patrones**,
+y contar no distingue el contexto. Las cifras de la Fase 0 son un punto de
+partida, no un veredicto: cada una hay que verificarla antes de tocar.
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
@@ -541,10 +581,12 @@ pantallas cumplen el contrato: D1, D2, D3, D4, D5, D7 resueltos. Quedan
 abiertos D6 (tres modelos de cabecera — no se toco, no molesta) y D8
 (Chats sin verificar con volumen).
 
-**Siguiente paso exacto:** Fase 2 · Tarea 4 — **T4, los 25 `catch`
-vacios**. Revisar cuales silencian fallos reales y cuales son deliberados
-y correctos (acceso a `localStorage` en SSR, por ejemplo). Dar registro
-solo a los primeros. Es la ultima tarea de la Fase 2.
+**Siguiente paso exacto:** proponer la **Fase 3** al fundador y esperar su
+aprobacion. Candidata: cerrar el sistema de diseño (S2-S6), que es lo que
+queda antes de entrar en pantallas concretas. Alternativa de mas valor:
+**F3**, los avatares desde `api.dicebear.com` (138 peticiones a un
+tercero) — mismo problema de privacidad que las fuentes, ya resuelto para
+estas.
 
 ---
 

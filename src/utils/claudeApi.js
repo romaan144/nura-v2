@@ -80,7 +80,10 @@ export async function appendHelperChatLog(helperId, userMsg, helperReply) {
       }
     )
   } catch (e) {
-    // Silent fail — never block the UI
+    // No bloquear la interfaz: si el registro del chat falla, al usuario le
+    // da igual. Pero SE AVISA en consola — fallaba en absoluto silencio y
+    // nadie sabria nunca que esta persistencia esta rota.
+    console.warn('[Nüra] registro del chat no guardado:', e?.message || e)
   }
 }
 
