@@ -17,19 +17,21 @@
 .identity {   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 32px 16px 28px;
+  /* Medido: el bloque ocupaba 246px, el 29% de la pantalla, para cuatro
+     datos. Aire recortado sin tocar la estructura. */
+  padding: var(--space-20) var(--space-16) var(--space-16);
   background: white;
   gap: 6px;
   }
 
 .avatarWrap {
   position: relative;
-  width: 96px; height: 96px;
+  width: 76px; height: 76px;
   margin-bottom: 8px;
 }
 
 .avatar {
-  width: 96px; height: 96px;
+  width: 76px; height: 76px;
   border-radius: 50%;
   display: block;
   box-shadow: 0 4px 24px rgba(33,29,51,0.10);

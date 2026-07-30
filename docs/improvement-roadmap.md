@@ -623,6 +623,33 @@ Pruebas: cuatro puertas verdes.
 
 ---
 
+### Tarea 2 — La identidad, mas compacta · **Terminada (parcial)** · 2026-07-05
+
+Sello `2026.07.06-d`. Un solo archivo: `Profile.module.css`.
+
+**Medido antes**: el bloque de identidad ocupaba **246px — el 29% de la
+pantalla** para cuatro datos (avatar, nombre, fecha de alta, telefono).
+Eso es el "demasiada superficie vacia" del fundador, cuantificado.
+
+**Hecho**: relleno de 32/28 a la escala y avatar de 96 a 76px.
+**Medido despues: 202px** (−44px, −18%).
+
+**NO hecho, y a proposito**: reorganizar la identidad en horizontal (avatar
+al lado del nombre) — que es lo que de verdad resuelve el "avatar
+aislado". Implica tocar ~50 lineas de JSX con ramas de edicion
+condicional, y se decidio no arriesgarlo sin contexto suficiente para
+verificarlo bien. **Queda como tarea propia.**
+
+**Hallazgo nuevo (P1)**: entre la identidad y la zona de actividad hay
+**98px de hueco** que ninguna de las dos ocupa. Entre ellas viven tres
+bloques condicionales (panel del profesional, personas, y uno mas) que
+para un usuario normal no renderizan — el hueco son probablemente sus
+margenes. **Es el mayor desperdicio de la pantalla y no se ha tocado.**
+
+Pruebas: cuatro puertas verdes + medicion antes/despues con sesion.
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
@@ -647,12 +674,12 @@ pantallas cumplen el contrato: D1, D2, D3, D4, D5, D7 resueltos. Quedan
 abiertos D6 (tres modelos de cabecera — no se toco, no molesta) y D8
 (Chats sin verificar con volumen).
 
-**Siguiente paso exacto:** Fase 4 · Tarea 2 — la **identidad** del perfil.
-El fundador señalo "avatar aislado" e "informacion personal con poca
-jerarquia". Revisar el bloque `identity` (avatar, nombre editable, fecha de
-alta, telefono): medir cuanto espacio ocupa, decidir si la fecha de alta
-aporta y darle la jerarquia que hoy no tiene. Archivo:
-`src/pages/Profile.jsx` y su modulo CSS.
+**Siguiente paso exacto:** Fase 4 · Tarea 3 — **P1, los 98px de hueco**
+entre la identidad y la zona de actividad. Medir con sesion cual de los
+tres bloques condicionales que viven entre ellas deja margen sin
+renderizar contenido (estan alrededor de las lineas 268, 320 y 346 de
+`Profile.jsx`, cada uno con su `SectionLabel`), y quitar el margen del que
+no pinta nada. Es el mayor desperdicio de espacio de la pantalla.
 
 ---
 
