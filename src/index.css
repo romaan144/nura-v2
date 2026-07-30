@@ -1,4 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
+/* Fuentes AUTOALOJADAS (via @fontsource, desde el registro de npm).
+   Antes venian del CDN de Google, lo que envia la IP de cada visitante a
+   un tercero — con sentencias en la UE en contra y Nura siendo un producto
+   español. Ademas elimina dos conexiones externas que bloqueaban el render.
+   Variables: un solo archivo cubre los pesos 300-800 que usa la app. */
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/plus-jakarta-sans';
 
 :root {
   color-scheme: light only;
@@ -179,7 +185,7 @@ body {
 
 
 
-h1, h2, h3 { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; }
+h1, h2, h3 { font-family: 'Plus Jakarta Sans Variable', 'Plus Jakarta Sans', 'Inter Variable', 'Inter', sans-serif; }
 button { cursor: pointer; font-family: inherit; border: none; background: none; }
 input, textarea { font-family: inherit; }
 a { text-decoration: none; color: inherit; }
@@ -199,7 +205,7 @@ a { text-decoration: none; color: inherit; }
 
 body {
   background: #F7F7F9;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: clamp(13px, 3.8vw, 16px);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
@@ -332,7 +338,7 @@ body {
 ::selection { background: rgba(123,47,255,0.15); color: inherit; }
 
 /* ── BUTTON RESET ── */
-button { font-family: -apple-system, 'Inter', sans-serif; cursor: pointer; }
+button { font-family: -apple-system, 'Inter Variable', 'Inter', sans-serif; cursor: pointer; }
 
 /* ── SMOOTH RENDERING ── */
 * { -webkit-tap-highlight-color: transparent; }

@@ -451,6 +451,38 @@ Pruebas: cuatro puertas verdes.
 
 ---
 
+### Tarea 2 — T2: fuentes autoalojadas · **Terminada** · 2026-07-05
+
+Sello `2026.07.05-y`. El fundador delego la decision.
+
+**Elegido: autoalojar**, no fuentes del sistema. Razon: su restriccion
+numero uno era no tocar la identidad de marca, e Inter aparece en 22
+reglas — es la voz visual de Nura. Autoalojar conserva el aspecto exacto,
+cumple el RGPD y **encima carga mas rapido** que el CDN, porque elimina
+dos conexiones externas que bloqueaban el render.
+
+Via `@fontsource-variable` desde el registro de npm (el unico permitido en
+este entorno). **Fuentes variables**: un solo archivo cubre los pesos
+300-800 que usa la app, en vez de seis archivos estaticos.
+
+**Verificado en navegador real: CERO dominios externos contactados.**
+Antes: `fonts.googleapis.com` + `fonts.gstatic.com` en cada carga.
+
+| | antes | despues |
+|---|---|---|
+| Peticiones a Google | 2 (preconnect + link + @import) | **0** |
+| IP del visitante a un tercero | si | **no** |
+| Familias | Inter + Plus Jakarta (+ Fraunces sin usar) | Inter Variable + Plus Jakarta Variable |
+
+**Dependencias nuevas justificadas**: `@fontsource-variable/inter` y
+`@fontsource-variable/plus-jakarta-sans`. Es el mecanismo estandar para
+autoalojar y la unica via posible aqui.
+
+*Queda abierto F3*: los avatares siguen viniendo de `api.dicebear.com`
+(138 usos) — mismo problema de privacidad, distinta solucion.
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
@@ -475,12 +507,10 @@ pantallas cumplen el contrato: D1, D2, D3, D4, D5, D7 resueltos. Quedan
 abiertos D6 (tres modelos de cabecera — no se toco, no molesta) y D8
 (Chats sin verificar con volumen).
 
-**Siguiente paso exacto:** Fase 2 · Tarea 2 — **T3, los temporizadores
-sin cancelar**. 55 `setTimeout` frente a 5 `clearTimeout`. Empezar por los
-que cambian estado (`setX` dentro del callback), que son los que pueden
-actualizar componentes ya invisibles con las pestañas vivas. Inventariar
-primero cuales cambian estado y cuales son inocuos (animaciones, avisos),
-y cancelar solo los primeros. Sin tocar los inocuos.
+**Siguiente paso exacto:** Fase 2 · Tarea 3 — **T3, los temporizadores
+sin cancelar** (55 `setTimeout` frente a 5 `clearTimeout`). Inventariar
+primero cuales cambian estado en su callback —los peligrosos con pestañas
+vivas— y cuales son inocuos. Cancelar solo los primeros.
 
 ---
 
