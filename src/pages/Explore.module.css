@@ -13,7 +13,10 @@
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   padding-top: var(--header-h);
-  padding-bottom: var(--nav-h);
+  /* CONTRATO: la reserva inferior en el token medido, que ya incluye el
+     hueco final de --space-20. Antes era var(--nav-h) a secas: el
+     contenido terminaba justo en la linea de la barra, sin respiro. */
+  padding-bottom: var(--reserva-nav);
 }
 
 /* ── SEARCH ──────────────────────────────────────────────────────────── */

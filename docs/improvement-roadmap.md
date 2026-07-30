@@ -315,6 +315,32 @@ contenido si termina a 20px exactos (844 − 86 = 758; barra en 778).
 
 ---
 
+### Tarea 4 — Profesionales migrada al contrato · **Terminada** · 2026-07-05
+
+Sello `2026.07.05-t`. Un solo archivo: `src/pages/Explore.module.css`.
+
+Su estructura es `.page` (armazon que no scrollea) → `.body` (scroller).
+**Se conserva a proposito**: el armazon existe porque la cabecera vive
+fuera del scroll, y colapsarlo seria una refactorizacion sin beneficio.
+*Refinamiento honesto de la regla 1 del contrato: el patron de dos capas
+—armazon + cuerpo desplazable— es valido cuando hay mobiliario fuera del
+scroll. Lo que la regla prohibe es que scrollee un contenedor AJENO a la
+pantalla (el caso de Comunidad).*
+
+**El defecto real era otro**: la reserva era `var(--nav-h)` a secas, sin
+hueco final — el contenido terminaba justo en la linea de la barra.
+Cambiada al token `--reserva-nav`, que ya lo incluye.
+
+| | antes | despues |
+|---|---|---|
+| Reserva inferior | `var(--nav-h)` (66px) | `--reserva-nav` (86px) |
+| Caja de contenido → barra | 0px | **20px** |
+
+Pruebas: cuatro puertas verdes + medicion (`padding-bottom: 86px`, caja
+termina en 758, barra en 778).
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
@@ -326,17 +352,19 @@ contenido si termina a 20px exactos (844 − 86 = 758; barra en 778).
 | 1 | 1 · Los tres arreglos triviales | **Terminada** |
 | 1 | 2 · El contrato de layout (ley + tokens) | **Terminada** |
 | 1 | 3 · Migrar Comunidad (D2) | **Terminada** |
-| 1 | 4 · Migrar Profesionales (scroller nieto) | Pendiente |
+| 1 | 4 · Migrar Profesionales | **Terminada** |
+| 1 | 5 · Migrar Chats y Perfil | Pendiente |
+| 1 | 6 · Migrar Inicio (la mas delicada) + D7 | Pendiente |
 
 **FASE 0 COMPLETA** · 20 discrepancias (D1–D8, T1–T6, S1–S6, F1–F5).
 **FASE 1 en curso** · Tarea 1 terminada (T1, D4, S1 resueltos).
 
-**Siguiente paso exacto:** Fase 1 · Tarea 4 — migrar **Profesionales**
-al contrato. Hoy su `.page` es static y el scroller es un nieto (`_body`)
-que lleva la reserva de la barra (66px) en su propio padding: la reserva
-no esta donde manda el contrato. Mover la reserva al `.page`, hacerlo el
-scroller y medir antes/despues — su hueco final hoy es de 45px, el mayor
-de la app. Archivos: `src/pages/Explore.jsx` y su modulo CSS.
+**Siguiente paso exacto:** Fase 1 · Tarea 5 — migrar **Chats y Perfil**,
+que comparten el mismo defecto: `.page` static con la reserva en
+`var(--nav-h)` a secas (sin hueco final). Cambiar a `--reserva-nav` en
+`Chats.module.css` y `Profile.module.css`, y medir. Nota: Chats no
+scrollea con datos demo (D8), asi que su contrato queda **sin verificar
+con volumen** — anotarlo como pendiente en vez de darlo por bueno.
 
 ---
 
