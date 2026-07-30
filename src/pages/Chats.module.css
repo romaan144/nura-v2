@@ -6,7 +6,7 @@
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   padding-top: var(--header-h);
-  padding-bottom: var(--nav-h);
+  padding-bottom: var(--reserva-nav);   /* CONTRATO: token medido, incluye el hueco final */
 }
 
 .header {

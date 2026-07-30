@@ -360,6 +360,38 @@ Sello `2026.07.05-u`. Pruebas: cuatro puertas verdes.
 
 ---
 
+### Tarea 5 — Chats y Perfil migrados · **Terminada** · 2026-07-05
+
+Sello `2026.07.05-v`. Archivos: `Chats.module.css`, `Profile.module.css`,
+`Profile.jsx`.
+
+Mismo defecto que tenia Explore: la reserva era `var(--nav-h)` a secas,
+sin hueco final. Ambas al token `--reserva-nav`.
+
+**Hallazgo durante la medicion**: Perfil daba **90px** en vez de 86,
+porque la pantalla de invitado reservaba **en linea** con `--space-24` —
+fuera del contrato. Corregida tambien. *La medicion volvio a cazar lo que
+la lectura del CSS de modulo no podia ver: el estilo en linea de otra
+rama del mismo archivo.*
+
+| | antes | despues |
+|---|---|---|
+| Chats | `var(--nav-h)` 66px | **86px** (token) |
+| Perfil (con sesion) | `var(--nav-h)` 66px | **86px** (token) |
+| Perfil (invitado) | inline, 90px | **86px** (token) |
+
+Verificado: las tres con `overscroll-behavior-y: contain`.
+
+**Pendiente (D8):** Chats no scrollea con datos de demostracion, asi que
+su contrato **no esta verificado con volumen real**. No se da por bueno.
+
+**Nota menor:** aparece un scroller con `padding-bottom: 2px` y
+`overscroll-behavior-y: auto` en ambas pantallas (probablemente una fila
+horizontal de chips). Sin contencion vertical, pero no scrollea en Y.
+Anotado, sin tocar.
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
@@ -372,18 +404,19 @@ Sello `2026.07.05-u`. Pruebas: cuatro puertas verdes.
 | 1 | 2 · El contrato de layout (ley + tokens) | **Terminada** |
 | 1 | 3 · Migrar Comunidad (D2) | **Terminada** |
 | 1 | 4 · Migrar Profesionales | **Terminada** |
-| 1 | 5 · Migrar Chats y Perfil | Pendiente |
+| 1 | 5 · Migrar Chats y Perfil | **Terminada** |
 | 1 | 6 · Migrar Inicio (la mas delicada) + D7 | Pendiente |
 
 **FASE 0 COMPLETA** · 20 discrepancias (D1–D8, T1–T6, S1–S6, F1–F5).
 **FASE 1 en curso** · Tarea 1 terminada (T1, D4, S1 resueltos).
 
-**Siguiente paso exacto:** Fase 1 · Tarea 5 — migrar **Chats y Perfil**,
-que comparten el mismo defecto: `.page` static con la reserva en
-`var(--nav-h)` a secas (sin hueco final). Cambiar a `--reserva-nav` en
-`Chats.module.css` y `Profile.module.css`, y medir. Nota: Chats no
-scrollea con datos demo (D8), asi que su contrato queda **sin verificar
-con volumen** — anotarlo como pendiente en vez de darlo por bueno.
+**Siguiente paso exacto:** Fase 1 · Tarea 6 — migrar **Inicio**, la mas
+delicada (es la unica con `.page` fixed, input flotante y la reserva en
+dos capas), y resolver D7 de paso (`--float-bottom-h` declara 72px y mide
+74). Aplicar `--reserva-input` y medir antes/despues con busqueda real.
+Archivos: `Home.module.css`, `src/index.css`. **Riesgo alto**: es la
+pantalla que mas veces se rompio. Medir, y confirmar en el iPhone antes
+de cerrar la fase.
 
 ---
 

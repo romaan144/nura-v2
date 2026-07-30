@@ -10,7 +10,7 @@
 }
 
 .scroll {
-  padding: 0 0 var(--nav-h);   /* la barra, reservada una sola vez */
+  padding: 0 0 var(--reserva-nav);   /* CONTRATO: token medido, incluye el hueco final */
 }
 
 /* ── ZONA 1: IDENTIDAD ───────────────────────────────────────── */
