@@ -96,7 +96,16 @@ export default function Feed() {
   const destacados = getDestacados(3)
 
   return (
-    <div style={{ minHeight: '100dvh', background: 'var(--paper)', paddingBottom: 'calc(var(--nav-h) + var(--space-24))' }}>
+    // EL CONTRATO DE LAYOUT: esta pantalla es su propio scroller. Antes no
+    // tenia contenedor y scrolleaba `desktopMain`, el elemento que envuelve
+    // TODAS las pestañas (montadas a la vez): su scroll no estaba aislado.
+    // La reserva inferior vive solo aqui, en un token medido.
+    <div style={{
+      height: '100%', overflowY: 'auto', overflowX: 'hidden',
+      WebkitOverflowScrolling: 'touch',
+      background: 'var(--paper)',
+      paddingBottom: 'var(--reserva-nav)',
+    }}>
       <div className="aurora" style={{ padding: 'calc(var(--header-h) - var(--space-8)) var(--space-16) var(--space-16)' }}>
         <h1 style={{ fontFamily: 'var(--font-voice)', fontWeight: 700, fontSize: 'var(--text-xl)',
           letterSpacing: '-0.9px', color: 'var(--ink)', margin: 0 }}>

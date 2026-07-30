@@ -286,6 +286,35 @@ Pruebas: cuatro puertas verdes.
 
 ---
 
+### Tarea 3 — Comunidad migrada al contrato · **Terminada** · 2026-07-05
+
+Sello `2026.07.05-s`. Un solo archivo: `src/pages/Feed.jsx`.
+
+**Antes (medido):** sin contenedor propio; scrolleaba `desktopMain`, el
+elemento que envuelve TODAS las pestañas (montadas simultaneamente).
+`minHeight: 100dvh` y `paddingBottom` inline.
+
+**Despues (medido):** contenedor propio con `height: 100%`,
+`overflow-y: auto`, `overflow-x: hidden` y `padding-bottom:
+var(--reserva-nav)`.
+
+| | antes | despues |
+|---|---|---|
+| Quien scrollea | `desktopMain` (global) | su propio contenedor |
+| Scroll aislado | **no** | **si** (`esGlobal: false`) |
+| Reserva inferior | inline, `nav + space-24` | token `--reserva-nav` (86px) |
+| Caja de contenido → barra | 39px | **20px** |
+
+*Nota de medicion:* la sonda leyo 35px porque mide un nodo de texto
+dentro de la ultima tarjeta; los 15px de diferencia son el relleno
+interno de esa tarjeta, correcto y ajeno al contrato. La caja de
+contenido si termina a 20px exactos (844 − 86 = 758; barra en 778).
+
+**D2 resuelto.** Pruebas: cuatro puertas verdes + medicion antes/despues.
+**Pendiente de confirmacion en el iPhone del fundador.**
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
@@ -296,19 +325,18 @@ Pruebas: cuatro puertas verdes.
 | 0 | 4 · Auditoría de flujos y datos | **Terminada** |
 | 1 | 1 · Los tres arreglos triviales | **Terminada** |
 | 1 | 2 · El contrato de layout (ley + tokens) | **Terminada** |
-| 1 | 3 · Migrar Comunidad (D2: scrollea el contenedor global) | Pendiente |
+| 1 | 3 · Migrar Comunidad (D2) | **Terminada** |
+| 1 | 4 · Migrar Profesionales (scroller nieto) | Pendiente |
 
 **FASE 0 COMPLETA** · 20 discrepancias (D1–D8, T1–T6, S1–S6, F1–F5).
 **FASE 1 en curso** · Tarea 1 terminada (T1, D4, S1 resueltos).
 
-**Siguiente paso exacto:** Fase 1 · Tarea 3 — migrar **Comunidad** al
-contrato. Es la peor infraccion (D2: no tiene `.page` propio y scrollea
-`desktopMain`, el contenedor global que envuelve todas las pestañas
-montadas a la vez). Darle contenedor propio con `height: 100%`,
-`overflow-y: auto`, `overflow-x: hidden` y `padding-bottom:
-var(--reserva-nav)`, retirando el `paddingBottom` inline de su raiz.
-Medir antes y despues: hoy su hueco final es de 39px. Archivo:
-`src/pages/Feed.jsx`.
+**Siguiente paso exacto:** Fase 1 · Tarea 4 — migrar **Profesionales**
+al contrato. Hoy su `.page` es static y el scroller es un nieto (`_body`)
+que lleva la reserva de la barra (66px) en su propio padding: la reserva
+no esta donde manda el contrato. Mover la reserva al `.page`, hacerlo el
+scroller y medir antes/despues — su hueco final hoy es de 45px, el mayor
+de la app. Archivos: `src/pages/Explore.jsx` y su modulo CSS.
 
 ---
 
