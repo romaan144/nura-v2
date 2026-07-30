@@ -354,3 +354,65 @@ actual la invoca.
 - Decorativos con `aria-hidden` (LiveDot, desde el componente).
 - `prefers-reduced-motion` respetado globalmente.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
+---
+
+## EL CONTRATO DE LAYOUT (ley, 2026-07-05)
+
+Nace de la auditoria medida de la Fase 0: se encontraron **cinco modelos
+de layout distintos** y ninguna pantalla compartia modelo con otra. Esa
+era la causa raiz de todos los fallos de geometria (contenido oculto,
+huecos enormes, reservas duplicadas, scroll dentro de scroll).
+
+**A partir de ahora, TODA pantalla cumple estas siete reglas.**
+
+### 1. El `.page` de cada pantalla ES su scroller
+No un hijo, no un nieto, y **jamas el contenedor global**. Comunidad
+scrolleaba `desktopMain` —el elemento que envuelve todas las pestañas,
+montadas simultaneamente— asi que su scroll no estaba aislado.
+
+```css
+.page {
+  height: 100%;          /* el envoltorio de pestaña y .wrap ya dan altura definida */
+  overflow-y: auto;
+  overflow-x: hidden;    /* obligatorio: overflow-y:auto convierte el eje X en desplazable */
+  padding-top: var(--header-h);
+  padding-bottom: <token de reserva>;
+}
+```
+
+### 2. La reserva inferior vive en UN solo sitio
+El `padding-bottom` del `.page`. **En ningun otro.** Se encontro repartida
+en cuatro sitios distintos (el raiz, el scroller, un hijo, inline), y de
+ahi salieron las reservas duplicadas de `-n` y `-o`.
+
+| Pantalla tiene… | token |
+|---|---|
+| solo la barra inferior | `--reserva-nav` |
+| barra de accion fija | `--reserva-accion` |
+| input flotante | `--reserva-input` |
+| nada fijo abajo (Login) | `--space-32` |
+
+### 3. Ningun hijo reserva nada
+**Prohibidos**: espaciadores con altura a mano, `<div style={{height}}/>`,
+`padding-bottom` en contenedores internos, pseudo-elementos con altura.
+El perfil tenia un `div` de 80px a mano *ademas* del padding del
+contenedor: 105px de hueco en vez de 20.
+
+### 4. El hueco final es siempre `--space-20`
+Va **dentro** del token de reserva, no se suma aparte. Se midieron
+14 / 39 / 40 / 45px para el mismo concepto.
+
+### 5. Los tokens dicen la verdad
+Cada valor debe coincidir con lo medido en el navegador. `--float-bottom-h`
+declaraba 72px y medía 74. **Un token que miente es peor que un numero
+magico**, porque parece fiable.
+
+### 6. `vh` prohibido — siempre `dvh`
+(Ya era ley; se incorpora aqui por pertenecer al contrato.)
+
+### 7. Ante cualquier queja de espaciado, MEDIR primero
+El DOM renderizado, con navegador real. Tres ciclos calculando sobre
+variables CSS dieron 8px donde el dispositivo tenia 86: el error estaba
+en una media query que solo aplica en movil. Un calculo teorico que
+ignora una regla condicional es una respuesta segura y equivocada.
+Instrucciones en `engineering.md`.
