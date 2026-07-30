@@ -439,20 +439,22 @@ riesgo (leccion ya grabada: jamas regex de excision en CSS).
 | 1 | 4 · Migrar Profesionales | **Terminada** |
 | 1 | 5 · Migrar Chats y Perfil | **Terminada** |
 | 1 | 6 · Migrar Inicio + D7 | **Terminada** |
+| **1** | **FASE 1 CERRADA** — D1,D2,D3,D4,D5,D7 resueltos | **Terminada** |
 
 **FASE 0 COMPLETA** · 20 discrepancias (D1–D8, T1–T6, S1–S6, F1–F5).
 **FASE 1 en curso** · Tarea 1 terminada (T1, D4, S1 resueltos).
 
-**FASE 1 COMPLETA a falta de confirmacion en dispositivo.** Las cinco
+**FASE 1 CERRADA.** Las cinco
 pantallas cumplen el contrato: D1, D2, D3, D4, D5, D7 resueltos. Quedan
 abiertos D6 (tres modelos de cabecera — no se toco, no molesta) y D8
 (Chats sin verificar con volumen).
 
-**Siguiente paso exacto:** esperar la confirmacion del fundador en el
-iPhone sobre Inicio (bienvenida y con resultados). Si esta bien, cerrar
-la Fase 1 y proponer la Fase 2. Si falla, revertir con
-`git revert` del commit de la Tarea 6 — la geometria anterior daba 18px
-y funcionaba.
+**Siguiente paso exacto:** Fase 2 propuesta al fundador — **Estabilizacion
+tecnica** (T3, T5, T6, T4), pendiente de su aprobacion. Cambio de orden
+respecto al roadmap inicial, justificado: el prompt maestro pone
+"estabilidad y ausencia de errores" en prioridad 2, por delante del
+sistema de diseno, y la auditoria confirmo que el sistema visual esta casi
+cerrado mientras la fiabilidad tiene seis hallazgos abiertos.
 
 ---
 
