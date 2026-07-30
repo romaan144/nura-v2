@@ -97,6 +97,10 @@ const S = {
     fontSize: '16px', cursor: 'pointer',
   },
 
+  pista: {
+    fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)',
+    margin: '0 0 var(--space-12)', textAlign: 'center',
+  },
   volver: {
     background: 'none', border: 'none', color: 'var(--ink-tertiary)',
     fontSize: 'var(--text-sm)', fontFamily: 'inherit',
@@ -184,7 +188,12 @@ export default function Login() {
                 value={phone} maxLength={9}
                 onChange={e => setPhone(e.target.value.replace(/\D/g, ''))}
                 onKeyDown={e => { if (e.key === 'Enter') handlePhone() }} />
-              <Button variant="primary" full onClick={handlePhone} disabled={phone.length < 9 || loading}>
+              {/* La pista aparece solo si ya empezaste: explicar antes de que
+                nadie lo intente es regañar de entrada. */}
+            {phone.length > 0 && phone.length < 9 && (
+              <p style={S.pista}>Faltan {9 - phone.length} cifras</p>
+            )}
+            <Button variant="primary" full onClick={handlePhone} disabled={phone.length < 9 || loading}>
                 {loading ? 'Enviando…' : 'Continuar'}
               </Button>
             </>
@@ -205,7 +214,10 @@ export default function Login() {
                   onChange={e => setCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
                   onKeyDown={e => { if (e.key === 'Enter') handleCode() }} />
               </div>
-              <Button variant="primary" full onClick={handleCode} disabled={code.length < 4 || loading}>
+              {code.length > 0 && code.length < 4 && (
+              <p style={S.pista}>Faltan {4 - code.length} cifras</p>
+            )}
+            <Button variant="primary" full onClick={handleCode} disabled={code.length < 4 || loading}>
                 {loading ? 'Comprobando…' : 'Entrar'}
               </Button>
               <button style={S.volver} onClick={() => { setStep('phone'); setCode('') }}>

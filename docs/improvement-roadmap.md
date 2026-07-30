@@ -725,6 +725,25 @@ Pruebas: cuatro puertas verdes.
 
 ---
 
+## FASE 5 — El registro
+
+### Tarea 1 — Los botones desactivados dicen que falta · **Terminada** · 2026-07-05
+
+Sello `2026.07.06-h`. Un solo archivo: `src/pages/Login.jsx`.
+
+Queja del prompt maestro: *"botones desactivados que no explican por que"*.
+Confirmado: los tres botones del registro se desactivaban en silencio
+(`phone.length < 9`, `code.length < 4`, `!name.trim()`).
+
+Ahora aparece una pista — "Faltan 3 cifras" — **solo cuando ya has
+empezado a escribir**. Explicarlo antes de que nadie lo intente seria
+regañar de entrada; el nombre no la lleva porque ahi no hay nada que
+contar.
+
+Pruebas: cuatro puertas verdes.
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
@@ -749,12 +768,11 @@ pantallas cumplen el contrato: D1, D2, D3, D4, D5, D7 resueltos. Quedan
 abiertos D6 (tres modelos de cabecera — no se toco, no molesta) y D8
 (Chats sin verificar con volumen).
 
-**Siguiente paso exacto:** pedir al fundador que confirme el perfil en el
-iPhone (avatar a la izquierda, bloques con borde y sombra). Si esta bien,
-la Fase 4 queda cerrada en lo visible y toca decidir: **(a)** S2-S6, las
-deudas del sistema visual; **(b)** las pantallas que el prompt maestro
-marca como debiles y aun no se han tocado (registro, chats); **(c)** los
-bloqueantes de lanzamiento (F1 backend, F2 autenticacion real, RLS).
+**Siguiente paso exacto:** Fase 5 · Tarea 2 — la **separacion entre
+usuario y profesional**. El prompt maestro: "el alta profesional requiere
+mas informacion y no debe mezclarse con el registro basico". Revisar
+`RegisterHelper.jsx` y como se llega a el desde el perfil de invitado, que
+hoy ofrece los dos caminos con el mismo peso visual.
 
 ---
 
