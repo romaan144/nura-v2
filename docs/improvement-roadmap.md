@@ -650,6 +650,34 @@ Pruebas: cuatro puertas verdes + medicion antes/despues con sesion.
 
 ---
 
+### Tarea 3 — El indicador de perfil, honesto · **Terminada** · 2026-07-05
+
+Sello `2026.07.06-e`. Un solo archivo: `src/pages/Profile.jsx`.
+
+**P1 era un hallazgo FALSO y queda corregido.** No habia 98px de hueco: hay
+un **bloque real de 87px con contenido** que no habia identificado al
+contar clases. Medido hijo por hijo, aparecio.
+
+Y es justo el que el fundador llamo provisional:
+> "Tu perfil está al 60% · Mejora tus matches · Añade: hacer tu primera búsqueda"
+
+**Dos problemas de fondo:**
+
+1. **Mezclaba datos con actividad.** Los cinco campos del porcentaje eran
+   nombre, telefono, **haber buscado**, **seguir a alguien** y foto. "Haz una
+   busqueda" no es un dato del perfil que rellenar — por eso se sentia
+   arbitrario y provisional.
+2. **Duplicaba lo que yo mismo añadi en la Tarea 1.** El estado vacio de la
+   zona de actividad ya invita a buscar, y encima con un boton. Dos bloques
+   diciendo lo mismo, uno de ellos peor.
+
+**Cura**: el indicador cuenta **solo datos del perfil** (nombre, telefono,
+foto). La actividad la cubre el estado vacio, que para eso esta.
+
+Pruebas: cuatro puertas verdes.
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
@@ -674,12 +702,13 @@ pantallas cumplen el contrato: D1, D2, D3, D4, D5, D7 resueltos. Quedan
 abiertos D6 (tres modelos de cabecera — no se toco, no molesta) y D8
 (Chats sin verificar con volumen).
 
-**Siguiente paso exacto:** Fase 4 · Tarea 3 — **P1, los 98px de hueco**
-entre la identidad y la zona de actividad. Medir con sesion cual de los
-tres bloques condicionales que viven entre ellas deja margen sin
-renderizar contenido (estan alrededor de las lineas 268, 320 y 346 de
-`Profile.jsx`, cada uno con su `SectionLabel`), y quitar el margen del que
-no pinta nada. Es el mayor desperdicio de espacio de la pantalla.
+**Siguiente paso exacto:** Fase 4 · Tarea 4 — **la identidad en
+horizontal**. Es lo que queda para resolver el "avatar aislado": envolver
+en un contenedor columna todo lo que sigue a `.avatarWrap` (nombre
+editable, fecha de alta, telefono) y poner `.identity` en fila. Son ~50
+lineas de JSX con ramas de edicion condicional en `Profile.jsx` (lineas
+186-235). **Requiere contexto fresco**: hacerlo a medias en esta pantalla
+es pedir una regresion.
 
 ---
 

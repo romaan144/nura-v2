@@ -235,15 +235,16 @@ export default function Profile() {
 
         {/* ── PROFILE COMPLETION ─────────────────────────── */}
         {user && (() => {
-          const fields = [
-            !!user.name, !!user.phone, (searchHistory?.length > 0),
-            (following?.length > 0), !!user.avatar
-          ]
+          // Solo DATOS DEL PERFIL. Antes contaba actividad ("hacer tu
+          // primera busqueda", "seguir profesionales") como si fueran campos
+          // que rellenar: eso es lo que hacia el indicador confuso y
+          // provisional. Y duplicaba el estado vacio de la zona de actividad,
+          // que ya invita a buscar y encima con un boton.
+          const fields = [!!user.name, !!user.phone, !!user.avatar]
           const pct = Math.round((fields.filter(Boolean).length / fields.length) * 100)
           const missing = []
           if (!user.phone) missing.push('teléfono')
-          if (!following?.length) missing.push('seguir profesionales')
-          if (!searchHistory?.length) missing.push('hacer tu primera búsqueda')
+          if (!user.avatar) missing.push('una foto')
           return pct < 100 ? (
             <div style={{margin:'0 var(--space-16) var(--space-12)',padding:'var(--space-14) var(--space-16)',background:'white',borderRadius:'var(--radius-card)',boxShadow:'0 1px 8px rgba(33,29,51,0.06)',border:'1px solid rgba(33,29,51,0.07)'}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'var(--space-8)'}}>
