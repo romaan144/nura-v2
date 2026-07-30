@@ -744,6 +744,38 @@ Pruebas: cuatro puertas verdes.
 
 ---
 
+### Tarea 6 — El perfil personal adopta el lenguaje del profesional · **Terminada** · 2026-07-05
+
+Sello `2026.07.06-i`. Un solo archivo: `Profile.module.css`.
+
+**El fundador: "no tiene el mismo nivel estetico que el perfil de los
+profesionales".** Su comparacion era el diagnostico exacto.
+
+**Medido:**
+
+| | perfil profesional | perfil personal |
+|---|---|---|
+| Secciones con ritmo (`.section`) | **14** | **0** |
+| Rotulos | `SectionLabel` | uno propio duplicado |
+
+El profesional tiene un **sistema de secciones**: planas sobre el papel,
+ritmo simetrico de `--space-20` y **una linea fina de separacion**. El
+personal era una **pila de bloques sueltos**, cada uno con su tratamiento.
+
+**Y un error de criterio mio, reconocido:** en la Tarea 5 les di a esos
+bloques **tarjetas blancas con borde y sombra**. Eso los alejaba del
+lenguaje que al fundador le gusta, en vez de acercarlos — el perfil
+profesional NO usa tarjetas flotantes, usa secciones planas.
+
+**Cura:** filas y zonas planas sobre el papel, separadas por linea fina,
+con el gutter de 16 (estaban a 14) y el ritmo de `--space-20`. Las dos
+cifras de actividad pasan a superficie tenue, que ahi si son piezas.
+El rotulo propio se alinea con `SectionLabel`.
+
+Pruebas: cuatro puertas verdes.
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |

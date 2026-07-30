@@ -123,17 +123,21 @@
 }
 
 /* ── ZONA 2: ACTIVIDAD ───────────────────────────────────────── */
-.activityZone {   margin-top: 12px;
-  padding: 0 14px;
+.activityZone {   margin-top: 0;
+  /* Seccion como las del perfil profesional: gutter de la app y linea
+     separadora arriba. Estaba a 14px, fuera del margen unificado. */
+  padding: var(--space-20) var(--space-16);
+  border-top: 1px solid var(--ink-border);
   }
 
 .zoneLabel {
-  font-size: var(--text-xxs);
+  /* Alineado con SectionLabel: el personal tenia un rotulo paralelo. */
+  font-size: var(--text-xs);
   font-weight: 600;
   color: var(--ink-tertiary);
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  margin: 0 0 10px 2px;
+  margin: 0 0 var(--space-12) 0;
 }
 
 .activityGrid {
@@ -144,9 +148,9 @@
 }
 
 .activityCard {
-  background: white;
-  border-radius: var(--radius-lg);
-  padding: 16px 14px 14px;
+  background: var(--surface-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-16) var(--space-14) var(--space-14);
   border: none;
   cursor: pointer;
   text-align: left;
@@ -180,14 +184,16 @@
 }
 
 .favRow {
-  /* LA SUPERFICIE de la casa: curva 18, borde del sistema y sombra de
-     reposo. Antes con radio lg, sin borde y sin sombra, estas filas
-     flotaban sueltas en vez de leerse como un grupo. */
-  background: white;
-  border-radius: var(--radius-md);
-  padding: var(--space-14) var(--space-16);
-  border: 1px solid var(--ink-border);
-  box-shadow: var(--shadow-sm);
+  /* EL MISMO LENGUAJE QUE EL PERFIL PROFESIONAL: seccion PLANA sobre el
+     papel, separada por una linea fina. Nada de tarjeta flotante — darles
+     borde y sombra las alejaba del perfil que el fundador señala como el
+     bonito, en vez de acercarlas. */
+  background: transparent;
+  border-radius: 0;
+  padding: var(--space-16) var(--space-4);
+  border: none;
+  border-top: 1px solid var(--ink-border);
+  box-shadow: none;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -259,12 +265,13 @@
 }
 
 /* ── ZONA 4: EVOLUCIÓN ───────────────────────────────────────── */
-.evolutionZone {   margin: var(--space-12) var(--space-16) 0;
-  background: white;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--ink-border);
-  box-shadow: var(--shadow-sm);
-  padding: var(--space-20) var(--space-16);
+.evolutionZone {   margin: 0 var(--space-16);
+  background: transparent;
+  border-radius: 0;
+  border: none;
+  border-top: 1px solid var(--ink-border);
+  box-shadow: none;
+  padding: var(--space-20) var(--space-4);
   box-shadow: 0 1px 3px rgba(33,29,51,0.05);
   }
 
