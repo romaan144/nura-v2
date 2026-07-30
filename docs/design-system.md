@@ -410,7 +410,16 @@ magico**, porque parece fiable.
 ### 6. `vh` prohibido — siempre `dvh`
 (Ya era ley; se incorpora aqui por pertenecer al contrato.)
 
-### 7. Ante cualquier queja de espaciado, MEDIR primero
+### 7. Todo scroller contiene su sobredesplazamiento
+`overscroll-behavior-y: contain` en cada contenedor que scrollea, y
+`overscroll-behavior: none` en el `body`. Sin esto, al llegar al limite el
+arrastre se propaga al documento y **el rebote de iOS mueve visualmente
+los elementos fijos**: la barra inferior parecia poder desplazarse.
+Solo Inicio lo tenia; los otros 20 scrollers, no. Aparecio al dar a
+Comunidad su propio scroller — antes el rebote no se notaba porque
+scrolleaba el contenedor global.
+
+### 8. Ante cualquier queja de espaciado, MEDIR primero
 El DOM renderizado, con navegador real. Tres ciclos calculando sobre
 variables CSS dieron 8px donde el dispositivo tenia 86: el error estaba
 en una media query que solo aplica en movil. Un calculo teorico que

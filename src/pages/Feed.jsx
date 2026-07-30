@@ -101,7 +101,7 @@ export default function Feed() {
     // TODAS las pestañas (montadas a la vez): su scroll no estaba aislado.
     // La reserva inferior vive solo aqui, en un token medido.
     <div style={{
-      height: '100%', overflowY: 'auto', overflowX: 'hidden',
+      height: '100%', overflowY: 'auto', overflowX: 'hidden', overscrollBehaviorY: 'contain',
       WebkitOverflowScrolling: 'touch',
       background: 'var(--paper)',
       paddingBottom: 'var(--reserva-nav)',

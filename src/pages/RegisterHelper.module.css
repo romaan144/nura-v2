@@ -18,6 +18,7 @@
 
 /* Messages */
 .messages { position: absolute; inset: 0; overflow-y: auto;
+  overscroll-behavior-y: contain;
   overflow-x: hidden; padding: 88px 14px calc(var(--nav-h) + 72px); display: flex; flex-direction: column; gap: 10px; -webkit-overflow-scrolling: touch; }
 .msgRow { display: flex; align-items: flex-end; gap: 8px; }
 .msgRowUser { flex-direction: row-reverse; }

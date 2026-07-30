@@ -55,7 +55,7 @@ export default function RegisterGate({ onClose, reason = 'contact' }) {
            VISUAL (descuenta el teclado en iOS) y el relleno inferior reserva
            la barra: la ultima accion queda siempre por encima del menu. */
         maxHeight: '88dvh',
-        overflowY: 'auto', overflowX: 'hidden',
+        overflowY: 'auto', overflowX: 'hidden', overscrollBehaviorY: 'contain',
         WebkitOverflowScrolling: 'touch',
         padding: 'var(--space-8) 22px calc(var(--nav-h) + var(--space-12))',
         width: '100%', maxWidth: '500px',

@@ -17,7 +17,7 @@ export default function ObraComposer({ onClose }) {
 
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 900, background: 'var(--paper)',
-      overflowY: 'auto', overflowX: 'hidden', padding: '54px var(--space-20) 40px' }}>
+      overflowY: 'auto', overflowX: 'hidden', overscrollBehaviorY: 'contain', padding: '54px var(--space-20) 40px' }}>
       <button onClick={onClose} aria-label="Cerrar"
         style={{ position: 'absolute', top: '16px', right: '18px', background: 'none',
           border: 'none', fontSize: 'var(--text-lg)', color: 'var(--ink-tertiary)', cursor: 'pointer' }}>×</button>

@@ -74,7 +74,8 @@
 /* ── MESSAGES ───────────────────────────────────────── */
 .messages {
   position: absolute; inset: 0;
-  overflow-y: auto; overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain; overflow-x: hidden;
   padding: 88px 14px 110px;
   display: flex; flex-direction: column; gap: 2px;
   -webkit-overflow-scrolling: touch;

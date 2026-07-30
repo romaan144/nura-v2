@@ -16,6 +16,7 @@
 .messages {
   flex: 1;
   overflow-y: auto;
+  overscroll-behavior-y: contain;
   overflow-x: hidden;
   padding: 80px 14px calc(var(--nav-h) + 76px);
   display: flex;

@@ -341,6 +341,25 @@ termina en 758, barra en 778).
 
 ---
 
+### Correccion — El rebote movia la barra fija · **Terminada** · 2026-07-05
+
+Reportado por el fundador tras la Tarea 4: la barra inferior parecia poder
+desplazarse verticalmente. **Regresion propia**, y con causa clara.
+
+`overscroll-behavior` solo estaba en Inicio. Los otros **20 scrollers**
+propagaban el arrastre al documento al llegar a su limite, y el rebote de
+iOS mueve visualmente los elementos fijos. No se notaba antes porque
+Comunidad scrolleaba el contenedor global; al darle scroller propio
+(Tarea 3), el rebote quedo a la vista.
+
+Cura sistemica: `overscroll-behavior: none` en el `body` y
+`overscroll-behavior-y: contain` en los 20 scrollers (15 de modulo + 5 en
+linea). **Nueva regla 7 del contrato.**
+
+Sello `2026.07.05-u`. Pruebas: cuatro puertas verdes.
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
