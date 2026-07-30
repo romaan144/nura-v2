@@ -141,7 +141,11 @@ export default function Login() {
     setLoading(true)
     setTimeout(() => {
       setLoading(false)
-      const savedUser = JSON.parse(localStorage.getItem('nura_user') || 'null')
+      // Protegido: un dato corrupto reventaba la verificacion del codigo y
+      // dejaba al usuario encerrado sin poder entrar.
+      let savedUser = null
+      try { savedUser = JSON.parse(localStorage.getItem('nura_user') || 'null') }
+      catch { savedUser = null }
       if (savedUser?.name && savedUser.name !== 'Usuario') {
         login({ ...savedUser, phone, verified: true })
         requestNotificationPermission().then(g => { if (g) scheduleRetentionNotifications(savedUser.name) })

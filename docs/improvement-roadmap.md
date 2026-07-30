@@ -425,6 +425,32 @@ riesgo (leccion ya grabada: jamas regex de excision en CSS).
 
 ---
 
+## FASE 2 — Estabilizacion tecnica
+
+### Tarea 1 — Los dos fallos puntuales de runtime · **Terminada** · 2026-07-05
+
+Sello `2026.07.05-x`.
+
+**T6 resuelto**: `JSON.parse(localStorage…)` de `Login.jsx` protegido con
+try/catch. Un dato corrupto reventaba la verificacion del codigo y dejaba
+al usuario **encerrado sin poder entrar** — probabilidad baja,
+consecuencia alta.
+
+**T5 DESCARTADO — correccion a mi propia auditoria.** Las dos "violaciones
+de pureza" de `Chat.jsx:390` y `:398` (`Date.now()` y `Math.random()`) son
+**falsos positivos**. Verificado: viven dentro de `sendMessage`, que se
+invoca desde un `onClick` — **es un manejador de evento, no render**. Ahi
+esas llamadas son correctas. La regla `react-hooks/purity` es experimental
+y no distingue el contexto.
+
+*Decision: no se cambia codigo correcto para complacer a un linter.* En la
+auditoria los habia marcado como "los unicos que pueden causar
+comportamiento incorrecto real": era falso, y queda corregido aqui.
+
+Pruebas: cuatro puertas verdes.
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
@@ -449,12 +475,12 @@ pantallas cumplen el contrato: D1, D2, D3, D4, D5, D7 resueltos. Quedan
 abiertos D6 (tres modelos de cabecera — no se toco, no molesta) y D8
 (Chats sin verificar con volumen).
 
-**Siguiente paso exacto:** Fase 2 propuesta al fundador — **Estabilizacion
-tecnica** (T3, T5, T6, T4), pendiente de su aprobacion. Cambio de orden
-respecto al roadmap inicial, justificado: el prompt maestro pone
-"estabilidad y ausencia de errores" en prioridad 2, por delante del
-sistema de diseno, y la auditoria confirmo que el sistema visual esta casi
-cerrado mientras la fiabilidad tiene seis hallazgos abiertos.
+**Siguiente paso exacto:** Fase 2 · Tarea 2 — **T3, los temporizadores
+sin cancelar**. 55 `setTimeout` frente a 5 `clearTimeout`. Empezar por los
+que cambian estado (`setX` dentro del callback), que son los que pueden
+actualizar componentes ya invisibles con las pestañas vivas. Inventariar
+primero cuales cambian estado y cuales son inocuos (animaciones, avisos),
+y cancelar solo los primeros. Sin tocar los inocuos.
 
 ---
 
