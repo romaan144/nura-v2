@@ -422,6 +422,34 @@ export default function Profile() {
         {/* ── ZONA 2: ACTIVIDAD HUMANA ──────────────────── */}
         <div className={styles.activityZone} style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 80ms forwards`}}>
           <p className={styles.zoneLabel}>Tu actividad</p>
+
+          {/* Sin actividad NO se muestran ceros: un cero grande no informa,
+              solo rellena. Se dice que hacer, que es lo que falta cuando
+              alguien acaba de entrar y no sabe por donde empezar. */}
+          {searchCount === 0 && chatCount === 0 ? (
+            <div style={{
+              background: 'var(--surface-subtle)', borderRadius: 'var(--radius-md)',
+              padding: 'var(--space-20) var(--space-16)', textAlign: 'center',
+            }}>
+              <p style={{
+                fontFamily: 'var(--font-voice)', fontSize: 'var(--text-base)',
+                color: 'var(--ink)', lineHeight: 1.55, letterSpacing: '-0.2px',
+                margin: '0 0 var(--space-6)',
+              }}>
+                Aún no has buscado a nadie.
+              </p>
+              <p style={{
+                fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)',
+                lineHeight: 1.5, margin: '0 0 var(--space-16)',
+              }}>
+                Cuéntame qué necesitas y te busco a la persona. Aquí irá quedando
+                lo que hagas.
+              </p>
+              <Button variant="primary" onClick={() => navigate('/')}>
+                Buscar a alguien
+              </Button>
+            </div>
+          ) : (
           <div className={styles.activityGrid}>
             <button className={styles.activityCard} onClick={() => navigate('/')}>
               <span className={styles.activityNum}>{searchCount}</span>
@@ -438,6 +466,7 @@ export default function Profile() {
               <MessageCircle size={16} className={styles.activityIcon} strokeWidth={1.5} />
             </button>
           </div>
+          )}
 
           <button className={styles.favRow} onClick={() => navigate('/my-services')}>
             <ClipboardList size={15} color="var(--purple)" strokeWidth={1.8} />

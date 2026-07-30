@@ -590,6 +590,39 @@ escenario — la Tercera Puerta lo cazo.
 
 ---
 
+## FASE 4 — El perfil personal
+
+### Tarea 1 — Los ceros dejan paso a un siguiente paso · **Terminada** · 2026-07-05
+
+Sello `2026.07.06-c`. Un solo archivo: `src/pages/Profile.jsx`.
+
+Mapa del perfil con sesion: identidad → **zona de actividad (2 cifras)** →
+favoritos → zona de evolucion → salir.
+
+**El problema que señalo el fundador**, confirmado en el codigo: la zona de
+actividad muestra `searchCount` y `chatCount`. Para quien acaba de
+registrarse son **dos ceros grandes rellenando pantalla** — exactamente su
+queja de "sensacion de dashboard vacio" y "falta de un siguiente paso
+claro". Y su propia instruccion: *"No muestres ceros enormes unicamente
+para rellenar la pantalla."*
+
+**Cura**: sin actividad, las cifras no se muestran. En su lugar, un bloque
+con voz, explicacion y **una accion**:
+
+> Aún no has buscado a nadie.
+> Cuéntame qué necesitas y te busco a la persona. Aquí irá quedando lo que
+> hagas.
+> [Buscar a alguien]
+
+Con actividad, las cifras vuelven — ahi si informan.
+
+**Nota para la siguiente tarea:** `Profile.jsx` importa dos veces de
+`components/ui` (lineas 4 y 13). Anotado, sin tocar: no es de esta tarea.
+
+Pruebas: cuatro puertas verdes.
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
@@ -614,12 +647,12 @@ pantallas cumplen el contrato: D1, D2, D3, D4, D5, D7 resueltos. Quedan
 abiertos D6 (tres modelos de cabecera — no se toco, no molesta) y D8
 (Chats sin verificar con volumen).
 
-**Siguiente paso exacto:** proponer al fundador la siguiente fase. Con F3
-cerrado, **la app ya no contacta ningun dominio externo**. Lo que queda:
-**(a)** cerrar el sistema de diseño (S2-S6); **(b)** las pantallas
-concretas del prompt maestro (perfil personal, registro, chats); **(c)**
-los bloqueantes de lanzamiento (F1 backend, F2 autenticacion real, RLS),
-que son decisiones de negocio y no solo de codigo.
+**Siguiente paso exacto:** Fase 4 · Tarea 2 — la **identidad** del perfil.
+El fundador señalo "avatar aislado" e "informacion personal con poca
+jerarquia". Revisar el bloque `identity` (avatar, nombre editable, fecha de
+alta, telefono): medir cuanto espacio ocupa, decidir si la fecha de alta
+aporta y darle la jerarquia que hoy no tiene. Archivo:
+`src/pages/Profile.jsx` y su modulo CSS.
 
 ---
 
