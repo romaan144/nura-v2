@@ -392,6 +392,39 @@ Anotado, sin tocar.
 
 ---
 
+### Tarea 6 — Inicio migrada · **Terminada** · 2026-07-05
+
+Sello `2026.07.05-w`. La pantalla mas delicada, medida antes y despues.
+
+**Antes (medido):** la reserva vivia en DOS sitios — `.page` con 66px en
+la media query de movil, mas un espaciador hijo de 84px. Funcionaba
+(18px de hueco), pero era **la trampa exacta que costo tres ciclos**.
+
+**Despues:** la reserva vive **solo** en el `padding-bottom` del scroller
+(`--reserva-input`, 152px) y los dos espaciadores hijos han muerto.
+
+| | antes | despues |
+|---|---|---|
+| Reserva en `.page` | 66px | **0** |
+| Reserva en el scroller | 0 | **152px** (token) |
+| Espaciadores hijos | 2 (84px y 92px) | **0** |
+| Hueco, estado bienvenida | — | **20px** |
+| Hueco, estado resultados | 18px | **20px** |
+| Contenido tapado | no | **no** |
+
+**D7 resuelto**: `--float-bottom-h` pasa de 72 a los **74px medidos**, y
+`--reserva-input` se recalibra a `nav + 66 + 20` con las alturas reales
+(8 de relleno + 58 de capsula), no estimadas.
+
+**Incidencia durante la tarea:** al retirar las reglas CSS huerfanas de
+los espaciadores, una expresion regular corto una regla vecina por la
+mitad y rompio la compilacion. **La Cuarta Puerta lo cazo.** Repuesto el
+archivo desde git y rehechos solo los dos cambios necesarios. Las dos
+reglas huerfanas se conservan: son inocuas y borrarlas no compensa el
+riesgo (leccion ya grabada: jamas regex de excision en CSS).
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
@@ -405,18 +438,21 @@ Anotado, sin tocar.
 | 1 | 3 · Migrar Comunidad (D2) | **Terminada** |
 | 1 | 4 · Migrar Profesionales | **Terminada** |
 | 1 | 5 · Migrar Chats y Perfil | **Terminada** |
-| 1 | 6 · Migrar Inicio (la mas delicada) + D7 | Pendiente |
+| 1 | 6 · Migrar Inicio + D7 | **Terminada** |
 
 **FASE 0 COMPLETA** · 20 discrepancias (D1–D8, T1–T6, S1–S6, F1–F5).
 **FASE 1 en curso** · Tarea 1 terminada (T1, D4, S1 resueltos).
 
-**Siguiente paso exacto:** Fase 1 · Tarea 6 — migrar **Inicio**, la mas
-delicada (es la unica con `.page` fixed, input flotante y la reserva en
-dos capas), y resolver D7 de paso (`--float-bottom-h` declara 72px y mide
-74). Aplicar `--reserva-input` y medir antes/despues con busqueda real.
-Archivos: `Home.module.css`, `src/index.css`. **Riesgo alto**: es la
-pantalla que mas veces se rompio. Medir, y confirmar en el iPhone antes
-de cerrar la fase.
+**FASE 1 COMPLETA a falta de confirmacion en dispositivo.** Las cinco
+pantallas cumplen el contrato: D1, D2, D3, D4, D5, D7 resueltos. Quedan
+abiertos D6 (tres modelos de cabecera — no se toco, no molesta) y D8
+(Chats sin verificar con volumen).
+
+**Siguiente paso exacto:** esperar la confirmacion del fundador en el
+iPhone sobre Inicio (bienvenida y con resultados). Si esta bien, cerrar
+la Fase 1 y proponer la Fase 2. Si falla, revertir con
+`git revert` del commit de la Tarea 6 — la geometria anterior daba 18px
+y funcionaba.
 
 ---
 

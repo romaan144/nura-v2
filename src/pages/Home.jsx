@@ -1190,9 +1190,8 @@ export default function Home() {
           </div>
           )
         })}
-                {messages.length > 1
-          ? <div className={styles.chatSpacer} />
-          : <div className={styles.welcomeSpacer} />}
+        {/* Espaciadores retirados: la reserva vive en el padding del
+            scroller (CONTRATO regla 3: ningun hijo reserva nada). */}
         <div ref={bottomRef} />
       </div>
 

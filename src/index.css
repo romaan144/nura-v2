@@ -46,7 +46,7 @@ body {
      Ningun hijo reserva nada — ver design-system.md, El Contrato. */
   --reserva-nav:    calc(var(--nav-h) + var(--space-20));
   --reserva-accion: calc(var(--nav-h) + 67px + var(--space-20));   /* barra de accion: 67px medidos */
-  --reserva-input:  calc(var(--nav-h) + 74px + var(--space-20));   /* input flotante: 74px medidos */
+  --reserva-input:  calc(var(--nav-h) + 66px + var(--space-20));   /* medido: 8 de relleno + 58 de capsula */
 
 
   --space-micro:   var(--space-8);   /* micro: between inline elements */
@@ -173,7 +173,7 @@ body {
      Estaba en 76 — el input invadia 8px de lo que hubiera encima, asi que
      las sugerencias quedaban DEBAJO de el en bienvenida y la ultima tarjeta
      quedaba tapada en conversacion (.chatSpacer usa esta misma variable). */
-  --float-bottom-h:       72px;   /* 8 + 56 + 8: la barra del input, mas compacta */
+  --float-bottom-h:       74px;   /* MEDIDO (declaraba 72: un token que miente) */   /* 8 + 56 + 8: la barra del input, mas compacta */
   --float-bottom-h-chips: 133px;
 }
 

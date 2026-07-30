@@ -37,7 +37,8 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: var(--header-h) 16px 0;  /* margen superior unificado (--header-h,
+  /* CONTRATO: la reserva inferior vive AQUI y solo aqui. */
+  padding: var(--header-h) 16px var(--reserva-input);  /* margen superior unificado (--header-h,
      respeta el notch) y lateral 16px, como el resto de la app */
   /* El fondo llega hasta la barra: el contenido scrollea POR DETRÁS del
      input flotante. El hueco de la burbuja lo reserva .chatSpacer, no un
@@ -382,7 +383,8 @@
 
 /* Bottom nav space (mobile only) */
 @media (max-width: 767px) {
-  .page { padding-bottom: var(--nav-h); }
+  /* Sin reserva aqui: el CONTRATO la pone en el scroller (.messages).
+     Tenerla en los dos sitios era la trampa que costo tres ciclos. */
 
 }
 
