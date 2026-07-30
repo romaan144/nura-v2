@@ -1,3 +1,4 @@
+import { avatarDe } from '../utils/avatar'
 import { useState } from 'react'
 import PageHeader from '../components/PageHeader'
 import { Button, SectionLabel } from '../components/ui'
@@ -60,7 +61,7 @@ export default function Profile() {
     zone: hp.zone || hp.city || 'Barcelona',
     quote: proQuote || undefined,
     verified: true,
-    avatarUrl: `https://api.dicebear.com/9.x/personas/svg?seed=${encodeURIComponent(user.name || 'pro')}`,
+    avatarUrl: avatarDe(encodeURIComponent(user.name || 'pro')),
   } : null
   function saveQuote() {
     const v = quoteDraft.trim()
@@ -185,7 +186,7 @@ export default function Profile() {
         <div className={styles.identity} style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0ms forwards`}}>
           <div className={styles.avatarWrap}>
             <img
-              src={`https://api.dicebear.com/9.x/personas/svg?seed=${encodeURIComponent(user.name || 'user')}`}
+              src={avatarDe(encodeURIComponent(user.name || 'user'))}
               alt={user.name} className={styles.avatar}
             />
             {user.isHelper && (

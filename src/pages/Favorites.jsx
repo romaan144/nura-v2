@@ -1,3 +1,4 @@
+import { avatarDe } from '../utils/avatar'
 import { useNavigate } from 'react-router-dom'
 import { Heart, Star, MapPin } from 'lucide-react'
 import { HELPERS } from '../data/helpers'
@@ -40,7 +41,7 @@ export default function Favorites() {
             {(saved||[]).map(h => (
               <div key={h.id} className={styles.card} onClick={() => navigate(`/helper/${h.id}`, { state: { helper: h } })}>
                 <div className={styles.cardLeft}>
-                  <img src={h.avatarUrl || `https://api.dicebear.com/9.x/personas/svg?seed=${h.name}`}
+                  <img src={h.avatarUrl || avatarDe(h.name)}
                     alt={h.name} className={styles.avatar} />
                   <div>
                     <div className={styles.name}>{h.name}</div>

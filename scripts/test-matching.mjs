@@ -16,6 +16,12 @@ mkdirSync(join(stage, 'utils'), { recursive: true })
 mkdirSync(join(stage, 'data'), { recursive: true })
 cpSync(join(root, 'src/utils'), join(stage, 'utils'), { recursive: true })
 cpSync(join(root, 'src/data'), join(stage, 'data'), { recursive: true })
+// Los modulos reales (dicebear para los avatares locales) viven en el
+// node_modules del proyecto: se enlaza para que el escenario los resuelva.
+try {
+  const { symlinkSync } = await import('fs')
+  symlinkSync(join(root, 'node_modules'), join(stage, 'node_modules'), 'dir')
+} catch { /* ya existe */ }
 for (const dir of ['utils', 'data']) {
   for (const f of readdirSync(join(stage, dir))) {
     if (!f.endsWith('.js')) continue

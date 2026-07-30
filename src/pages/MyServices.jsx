@@ -1,3 +1,4 @@
+import { avatarDe } from '../utils/avatar'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/ui'
@@ -13,7 +14,7 @@ const DEMO_SERVICES = [
     helperId: 5,
     helperName: 'Elena Fernández Ros',
     specialty: 'Auxiliar de geriatría',
-    avatarUrl: 'https://api.dicebear.com/9.x/personas/svg?seed=ElenaFernandez',
+    avatarUrl: avatarDe('ElenaFernandez'),
     avatarColor: 'var(--green)',
     avatar: 'EF',
     date: (() => { const d = new Date(); d.setDate(d.getDate()+1); return d.toISOString().split('T')[0] })(),
@@ -28,7 +29,7 @@ const DEMO_SERVICES = [
     helperId: 1,
     helperName: 'Carlos Martínez Vidal',
     specialty: 'Logopeda',
-    avatarUrl: 'https://api.dicebear.com/9.x/personas/svg?seed=CarlosMartinez',
+    avatarUrl: avatarDe('CarlosMartinez'),
     avatarColor: '#1A56DB',
     avatar: 'CM',
     date: (() => { const d = new Date(); d.setDate(d.getDate()+3); return d.toISOString().split('T')[0] })(),
@@ -43,7 +44,7 @@ const DEMO_SERVICES = [
     helperId: 3,
     helperName: 'Roberto Sánchez Ferrer',
     specialty: 'Técnico de calderas',
-    avatarUrl: 'https://api.dicebear.com/9.x/personas/svg?seed=RobertoSanchez',
+    avatarUrl: avatarDe('RobertoSanchez'),
     avatarColor: '#1E40AF',
     avatar: 'RS',
     date: (() => { const d = new Date(); d.setDate(d.getDate()-2); return d.toISOString().split('T')[0] })(),

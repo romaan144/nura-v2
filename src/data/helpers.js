@@ -1,10 +1,11 @@
+import { avatarDe } from '../utils/avatar'
 export const HELPERS = [
   {
     id: 1,
     name: "Carlos Martínez Vidal",
     avatar: "CM",
     avatarColor: "#1A56DB",
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=carlos",
+    avatarUrl: avatarDe('carlos'),
     specialty: "Logopeda infantil",
     category: "logopedia",
     tags: ["logopeda infantil", "niños 3-10 años", "dislalia", "presencial"],
@@ -63,7 +64,7 @@ managerOpinion: { name:"Dra. Marta Puig", role:"Directora clínica", text:"Carlo
   },
   {
     id: 2, name: "Sara Gómez Puig", avatar: "SG", avatarColor: "#0891B2",
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=sara",
+    avatarUrl: avatarDe('sara'),
     specialty: "Logopeda", category: "logopedia",
     tags: ["logopedia", "a domicilio", "infantil", "adultos"],
     rating: 4.6, reviews: 34, distance: 1.2, zone: "Gràcia", city: "Barcelona",
@@ -104,7 +105,7 @@ colleagueOpinions: [{ name:"Núria Mas", role:"Fisioterapeuta", text:"Colaborar 
   },
   {
     id: 3, name: "Roberto Sánchez Ferrer", avatar: "RS", avatarColor: "#1E40AF",
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=roberto",
+    avatarUrl: avatarDe('roberto'),
     specialty: "Técnico de calderas y calefacción", category: "tecnico",
     tags: ["calderas", "calefacción", "urgencias", "gas natural"],
     rating: 4.8, reviews: 112, distance: 1.5, zone: "Sant Martí", city: "Barcelona",
@@ -150,7 +151,7 @@ colleagueOpinions: [{ name:"Paco Llopis", role:"Técnico", text:"El mejor compa�
   },
   {
     id: 4, name: "María López Castillo", avatar: "ML", avatarColor: "#7C3AED",
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=maria",
+    avatarUrl: avatarDe('maria'),
     specialty: "Limpiadora de hogar", category: "hogar",
     tags: ["limpieza hogar", "ecológico", "recurrente", "referencias"],
     rating: 4.4, reviews: 58, distance: 0.6, zone: "Eixample", city: "Barcelona",
@@ -199,7 +200,7 @@ managerOpinion: { name:"Carles Font", role:"Coordinador de servicios", text:"Con
 
   {
     id: 5, name: "Elena Fernández Ros", avatar: "EF", avatarColor: "var(--green)",
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=elena",
+    avatarUrl: avatarDe('elena'),
     specialty: "Auxiliar de geriatría", category: "cuidado",
     tags: ["Alzheimer", "geriatría", "movilidad reducida", "acompañamiento"],
     rating: 4.9, reviews: 89, distance: 0.9, zone: "Gràcia", city: "Barcelona",
@@ -248,7 +249,7 @@ managerOpinion: { name:"Carles Font", role:"Coordinador de servicios", text:"Con
   },
   {
     id: 6, name: "Marta Puig Sala", avatar: "MP", avatarColor: "#D97706",
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=marta",
+    avatarUrl: avatarDe('marta'),
     specialty: "Cuidadora de animales", category: "mascotas",
     tags: ["cuidado perros", "paseos", "certificada", "fin de semana"],
     rating: 4.5, reviews: 43, distance: 2.0, zone: "Les Corts", city: "Barcelona",
@@ -289,7 +290,7 @@ managerOpinion: { name:"Dr. Pau Roca", role:"Veterinario titular", text:"Marta t
   },
   {
     id: 7, name: "Lucía Vidal Torres", avatar: "LV", avatarColor: "#DB2777",
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=lucia",
+    avatarUrl: avatarDe('lucia'),
     specialty: "Profesora particular", category: "clases",
     tags: ["matemáticas", "bachillerato", "ESO", "selectividad"],
     rating: 4.9, reviews: 28, distance: 1.1, zone: "Sarrià", city: "Barcelona",
@@ -328,7 +329,7 @@ managerOpinion: { name:"Dr. Pau Roca", role:"Veterinario titular", text:"Marta t
   },
   {
     id: 8, name: "David Moreno Llopis", avatar: "DM", avatarColor: "#EA580C",
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=david",
+    avatarUrl: avatarDe('david'),
     specialty: "Entrenador personal", category: "entrenador",
     tags: ["entrenador personal", "NSCA", "domicilio", "primera gratis"],
     rating: 4.3, reviews: 51, distance: 1.8, zone: "Sant Gervasi", city: "Barcelona",
@@ -370,7 +371,7 @@ colleagueOpinions: [{ name:"Marc Alonso", role:"Entrenador de running", text:"Un
   },
   {
     id: 9, name: "Dra. Carme Solà Puig", avatar: "CS", avatarColor: "#7C3AED",
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=carme",
+    avatarUrl: avatarDe('carme'),
     specialty: "Psicóloga clínica y neuropsicóloga", category: "salud",
     tags: ["psicología clínica","neuropsicología","ansiedad","trauma","EMDR"],
     rating: 4.9, reviews: 127, distance: 0.7,
@@ -421,7 +422,7 @@ managerOpinion: { name:"Dr. Francesc Vilar", role:"Director clínico", text:"La 
   },
   {
     id: 10, name: "Jordi Prat Vidal", avatar: "JP", avatarColor: "#1E40AF",
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=jordi",
+    avatarUrl: avatarDe('jordi'),
     specialty: "Abogado mercantil y startups", category: "legal",
     tags: ["derecho mercantil","startups","inversión","contratos","M&A"],
     rating: 4.6, reviews: 43, distance: 0.4,
@@ -470,7 +471,7 @@ managerOpinion: { name:"Marta Alonso", role:"Socia directora — Garrigues BCN",
   },
   {
     id: 11, name: "Dra. Laia Mercadé Font", avatar: "LM", avatarColor: "var(--green)",
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=laia",
+    avatarUrl: avatarDe('laia'),
     specialty: "Médica internista y medicina preventiva", category: "salud",
     tags: ["medicina interna","preventiva","segunda opinión","salud ejecutivos","nutrición clínica"],
     rating: 4.9, reviews: 89, distance: 1.1,
@@ -520,7 +521,7 @@ managerOpinion: { name:"Dr. Antoni Mas", role:"Jefe de servicio — Medicina Int
   },
   {
     id: 12, name: "Marc Tort Alemany", avatar: "MT", avatarColor: "#0891B2",
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=marc",
+    avatarUrl: avatarDe('marc'),
     specialty: "Arquitecto y diseño sostenible", category: "hogar",
     tags: ["arquitectura","reforma integral","diseño sostenible","interiorismo","Barcelona"],
     rating: 4.7, reviews: 34, distance: 1.8,
@@ -581,7 +582,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 1.2,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=sara-psico",
+    avatarUrl: avatarDe('sara-psico'),
     tags: ["psicóloga", "ansiedad", "depresión", "TCC", "EMDR", "terapia pareja"],
   },
   {
@@ -599,7 +600,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.1,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=natalia-neuro",
+    avatarUrl: avatarDe('natalia-neuro'),
     tags: ["neuropsicóloga", "cognitivo", "TDAH", "daño cerebral", "evaluación"],
   },
   {
@@ -617,7 +618,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 0.8,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=carlos",
+    avatarUrl: avatarDe('carlos'),
     tags: ["logopeda", "infantil", "habla", "lenguaje", "dislalia", "niños"],
   },
   {
@@ -635,7 +636,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 1.5,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=marc-fisio",
+    avatarUrl: avatarDe('marc-fisio'),
     tags: ["fisioterapeuta", "lesiones deportivas", "columna", "punción seca", "rehabilitación"],
   },
   {
@@ -653,7 +654,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.3,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=laura-nutri",
+    avatarUrl: avatarDe('laura-nutri'),
     tags: ["nutricionista", "dieta", "pérdida de peso", "deporte", "digestivo"],
   },
   {
@@ -671,7 +672,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 3.1,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=irene-dieta",
+    avatarUrl: avatarDe('irene-dieta'),
     tags: ["dietista", "alimentación intuitiva", "intolerancia", "SII", "trastornos"],
   },
   {
@@ -689,7 +690,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 1.9,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=ana-pilates",
+    avatarUrl: avatarDe('ana-pilates'),
     tags: ["pilates", "lumbar", "embarazo", "postparto", "clínico"],
   },
   {
@@ -707,7 +708,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.7,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=priya-yoga",
+    avatarUrl: avatarDe('priya-yoga'),
     tags: ["yoga", "hatha", "vinyasa", "yin", "meditación", "todos los niveles"],
   },
   {
@@ -725,7 +726,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 3.4,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=jordi-osteo",
+    avatarUrl: avatarDe('jordi-osteo'),
     tags: ["osteopatía", "dolor", "postura", "cefaleas", "digestivo", "holístico"],
   },
   {
@@ -743,7 +744,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 1.6,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=clara-masaje",
+    avatarUrl: avatarDe('clara-masaje'),
     tags: ["masajista", "deportivo", "relajación", "prenatal", "linfático", "domicilio"],
   },
   {
@@ -761,7 +762,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.2,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=elena-mindful",
+    avatarUrl: avatarDe('elena-mindful'),
     tags: ["mindfulness", "meditación", "MBSR", "estrés", "ansiedad", "MBSR"],
   },
   {
@@ -780,7 +781,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     presential: true,
     urgent: true,
     distance: 1.1,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=antoni-font",
+    avatarUrl: avatarDe('antoni-font'),
     tags: ["fontanero", "urgencias", "fugas", "tuberías", "grifería"],
   },
   {
@@ -799,7 +800,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     presential: true,
     urgent: true,
     distance: 1.8,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=david-elec",
+    avatarUrl: avatarDe('david-elec'),
     tags: ["electricista", "instalaciones", "cuadro eléctrico", "coche eléctrico"],
   },
   {
@@ -817,7 +818,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 2.4,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=roberto-alba",
+    avatarUrl: avatarDe('roberto-alba'),
     tags: ["albañil", "reformas", "alicatado", "solería", "tabiques"],
   },
   {
@@ -835,7 +836,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 1.7,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=miquel-pintor",
+    avatarUrl: avatarDe('miquel-pintor'),
     tags: ["pintor", "interiores", "exteriores", "estuco", "decorativo"],
   },
   {
@@ -853,7 +854,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 3.2,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=josep-carp",
+    avatarUrl: avatarDe('josep-carp'),
     tags: ["carpintero", "medida", "armarios", "cocinas", "muebles", "puertas"],
   },
   {
@@ -872,7 +873,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     presential: true,
     urgent: true,
     distance: 0.9,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=javier-cerr",
+    avatarUrl: avatarDe('javier-cerr'),
     tags: ["cerrajero", "urgencias", "apertura", "cerraduras", "acorazada"],
   },
   {
@@ -890,7 +891,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 2.1,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=pau-aire",
+    avatarUrl: avatarDe('pau-aire'),
     tags: ["aire acondicionado", "climatización", "split", "gases fluorados"],
   },
   {
@@ -909,7 +910,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     presential: true,
     urgent: true,
     distance: 1.4,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=tomas-calef",
+    avatarUrl: avatarDe('tomas-calef'),
     tags: ["calefacción", "caldera", "radiadores", "gas", "suelo radiante"],
   },
   {
@@ -928,7 +929,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     presential: true,
     urgent: true,
     distance: 2.6,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=ferran-gas",
+    avatarUrl: avatarDe('ferran-gas'),
     tags: ["gas natural", "instalación", "boletín", "revisión", "urgencias"],
   },
   {
@@ -946,7 +947,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 1.3,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=sergi-eldom",
+    avatarUrl: avatarDe('sergi-eldom'),
     tags: ["electrodomésticos", "lavadora", "frigorífico", "lavavajillas", "reparación"],
   },
   {
@@ -965,7 +966,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     presential: true,
     urgent: true,
     distance: 0.7,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=alex-movil",
+    avatarUrl: avatarDe('alex-movil'),
     tags: ["móviles", "iPhone", "Samsung", "pantalla", "reparación rápida"],
   },
   {
@@ -983,7 +984,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.1,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=james-english",
+    avatarUrl: avatarDe('james-english'),
     tags: ["inglés", "nativo", "CELTA", "IELTS", "Cambridge", "negocios"],
   },
   {
@@ -1001,7 +1002,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 1.8,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=sophie-french",
+    avatarUrl: avatarDe('sophie-french'),
     tags: ["francés", "nativa", "DELF", "DALF", "negocios"],
   },
   {
@@ -1019,7 +1020,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 3.4,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=klaus-german",
+    avatarUrl: avatarDe('klaus-german'),
     tags: ["alemán", "nativo", "Goethe", "negocios", "técnico"],
   },
   {
@@ -1037,7 +1038,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.9,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=liwei-chinese",
+    avatarUrl: avatarDe('liwei-chinese'),
     tags: ["chino", "mandarín", "HSK", "negocios", "nativa"],
   },
   {
@@ -1055,7 +1056,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 1.6,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=marta-mates",
+    avatarUrl: avatarDe('marta-mates'),
     tags: ["matemáticas", "ESO", "Bachillerato", "EBAU", "álgebra", "cálculo"],
   },
   {
@@ -1073,7 +1074,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.3,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=arnau-fisica",
+    avatarUrl: avatarDe('arnau-fisica'),
     tags: ["física", "química", "ESO", "bachillerato", "selectividad"],
   },
   {
@@ -1091,7 +1092,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 1.9,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=julia-bio",
+    avatarUrl: avatarDe('julia-bio'),
     tags: ["biología", "geología", "ESO", "bachillerato", "EBAU"],
   },
   {
@@ -1109,7 +1110,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.7,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=rosa-historia",
+    avatarUrl: avatarDe('rosa-historia'),
     tags: ["historia", "ciencias sociales", "ESO", "bachillerato"],
   },
   {
@@ -1127,7 +1128,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 1.4,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=laia-lengua",
+    avatarUrl: avatarDe('laia-lengua'),
     tags: ["lengua española", "literatura", "ESO", "bachillerato", "redacción"],
   },
   {
@@ -1145,7 +1146,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 1.7,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=pau-dibujo",
+    avatarUrl: avatarDe('pau-dibujo'),
     tags: ["dibujo artístico", "ilustración", "acuarela", "óleo", "arte"],
   },
   {
@@ -1163,7 +1164,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.1,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=marina-piano",
+    avatarUrl: avatarDe('marina-piano'),
     tags: ["piano", "solfeo", "conservatorio", "música clásica", "todos los niveles"],
   },
   {
@@ -1181,7 +1182,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 1.8,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=nil-guitarra",
+    avatarUrl: avatarDe('nil-guitarra'),
     tags: ["guitarra", "clásica", "moderna", "jazz", "pop", "partituras"],
   },
   {
@@ -1199,7 +1200,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.4,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=alex-prog",
+    avatarUrl: avatarDe('alex-prog'),
     tags: ["programación", "Python", "JavaScript", "React", "web"],
   },
   {
@@ -1217,7 +1218,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 1.2,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=carla-ebau",
+    avatarUrl: avatarDe('carla-ebau'),
     tags: ["EBAU", "selectividad", "acceso", "bachillerato", "examen"],
   },
   {
@@ -1235,7 +1236,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.1,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=joan-laboral",
+    avatarUrl: avatarDe('joan-laboral'),
     tags: ["abogado", "laboral", "despido", "ERE", "salarios", "trabajo"],
   },
   {
@@ -1253,7 +1254,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 1.9,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=pau-penal",
+    avatarUrl: avatarDe('pau-penal'),
     tags: ["abogado penal", "defensa", "juicio", "recurso", "urgente"],
   },
   {
@@ -1271,7 +1272,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.4,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=marta-familia",
+    avatarUrl: avatarDe('marta-familia'),
     tags: ["abogada", "familia", "divorcio", "custodia", "herencias"],
   },
   {
@@ -1289,7 +1290,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 1.6,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=oriol-mercantil",
+    avatarUrl: avatarDe('oriol-mercantil'),
     tags: ["abogado", "mercantil", "startups", "inversión", "contratos", "RGPD"],
   },
   {
@@ -1307,7 +1308,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.8,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=ibrahim-extr",
+    avatarUrl: avatarDe('ibrahim-extr'),
     tags: ["extranjería", "inmigración", "residencia", "visado", "nacionalidad"],
   },
   {
@@ -1325,7 +1326,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.2,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=anna-herencias",
+    avatarUrl: avatarDe('anna-herencias'),
     tags: ["herencias", "testamento", "sucesiones", "impugnación"],
   },
   {
@@ -1343,7 +1344,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 1.7,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=carles-arren",
+    avatarUrl: avatarDe('carles-arren'),
     tags: ["arrendamientos", "propiedad", "alquiler", "desahucio", "inmobiliario"],
   },
   {
@@ -1361,7 +1362,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 3.1,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=laia-admin",
+    avatarUrl: avatarDe('laia-admin'),
     tags: ["administrativo", "recursos", "licencias", "sanciones", "Administración"],
   },
   {
@@ -1379,7 +1380,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 1.5,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=rafael-fiscal",
+    avatarUrl: avatarDe('rafael-fiscal'),
     tags: ["fiscal", "IRPF", "IVA", "Hacienda", "autónomos", "empresas"],
   },
   {
@@ -1397,7 +1398,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.3,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=neus-contable",
+    avatarUrl: avatarDe('neus-contable'),
     tags: ["contable", "contabilidad", "cuentas anuales", "autónomos", "pymes"],
   },
   {
@@ -1415,7 +1416,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.8,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=jordi-financiero",
+    avatarUrl: avatarDe('jordi-financiero'),
     tags: ["asesor financiero", "EFA", "inversiones", "fondos", "pensiones"],
   },
   {
@@ -1433,7 +1434,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 1.1,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=alba-gestora",
+    avatarUrl: avatarDe('alba-gestora'),
     tags: ["gestora", "administrativa", "NIE", "empadronamiento", "trámites"],
   },
   {
@@ -1451,7 +1452,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 1.3,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=fatima-limpieza",
+    avatarUrl: avatarDe('fatima-limpieza'),
     tags: ["limpieza", "doméstica", "hogar", "ecológica", "referencias"],
   },
   {
@@ -1469,7 +1470,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 2.1,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=maria-limpieza-prof",
+    avatarUrl: avatarDe('maria-limpieza-prof'),
     tags: ["limpieza profunda", "fin de alquiler", "electrodomésticos", "cocina"],
   },
   {
@@ -1487,7 +1488,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 1.7,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=consuelo-plancha",
+    avatarUrl: avatarDe('consuelo-plancha'),
     tags: ["planchado", "domicilio", "ropa", "camisas", "hogar"],
   },
   {
@@ -1505,7 +1506,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.4,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=clara-org",
+    avatarUrl: avatarDe('clara-org'),
     tags: ["organización", "KonMari", "hogar", "trastero", "armarios"],
   },
   {
@@ -1523,7 +1524,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 2.7,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=angel-chef",
+    avatarUrl: avatarDe('angel-chef'),
     tags: ["cocinero", "chef", "domicilio", "cenas", "batch cooking"],
   },
   {
@@ -1541,7 +1542,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 0.9,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=pedro-manitas",
+    avatarUrl: avatarDe('pedro-manitas'),
     tags: ["manitas", "reparaciones", "montaje", "hogar", "polivalente"],
   },
   {
@@ -1559,7 +1560,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 1.2,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=raul-ikea",
+    avatarUrl: avatarDe('raul-ikea'),
     tags: ["IKEA", "montaje", "muebles", "Leroy Merlin", "desmontaje"],
   },
   {
@@ -1577,7 +1578,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 1.8,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=omar-pintor",
+    avatarUrl: avatarDe('omar-pintor'),
     tags: ["pintor", "interiores", "materiales incluidos", "presupuesto gratis"],
   },
   {
@@ -1596,7 +1597,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     presential: true,
     urgent: true,
     distance: 1.1,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=enric-elec-hogar",
+    avatarUrl: avatarDe('enric-elec-hogar'),
     tags: ["electricista", "urgencias", "domicilio", "cortocircuito", "cuadro"],
   },
   {
@@ -1614,7 +1615,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 2.3,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=francesc-alba-reform",
+    avatarUrl: avatarDe('francesc-alba-reform'),
     tags: ["albañil", "reformas", "baño", "cocina", "parcial"],
   },
   {
@@ -1632,7 +1633,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 3.1,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=isaac-carp-med",
+    avatarUrl: avatarDe('isaac-carp-med'),
     tags: ["carpintero", "medida", "puertas", "tarima", "restauración"],
   },
   {
@@ -1650,7 +1651,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 2.6,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=miquel-jardinero",
+    avatarUrl: avatarDe('miquel-jardinero'),
     tags: ["jardinero", "terraza", "jardín", "poda", "mediterráneo"],
   },
   {
@@ -1668,7 +1669,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.9,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=sandra-interiores",
+    avatarUrl: avatarDe('sandra-interiores'),
     tags: ["diseño de interiores", "reforma", "3D", "mediterráneo", "proyecto"],
   },
   {
@@ -1686,7 +1687,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 3.4,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=marc-arquitecto",
+    avatarUrl: avatarDe('marc-arquitecto'),
     tags: ["arquitecto", "reforma", "proyecto", "licencia", "dirección de obra"],
   },
   {
@@ -1704,7 +1705,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 0.7,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=julia-perros",
+    avatarUrl: avatarDe('julia-perros'),
     tags: ["paseadora", "perros", "paseos", "fotos", "GPS"],
   },
   {
@@ -1722,7 +1723,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 1.4,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=marta-dogs",
+    avatarUrl: avatarDe('marta-dogs'),
     tags: ["cuidadora", "perros", "domicilio", "fotos", "sin jaulas"],
   },
   {
@@ -1740,7 +1741,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 1.9,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=gemma-gatos",
+    avatarUrl: avatarDe('gemma-gatos'),
     tags: ["gatos", "felinos", "cuidadora", "visitas", "comportamiento"],
   },
   {
@@ -1758,7 +1759,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 1.6,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=paula-petsitter",
+    avatarUrl: avatarDe('paula-petsitter'),
     tags: ["pet sitter", "vacaciones", "perros", "gatos", "fotos", "vídeos"],
   },
   {
@@ -1776,7 +1777,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 1.1,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=silvia-grooming",
+    avatarUrl: avatarDe('silvia-grooming'),
     tags: ["grooming", "peluquera canina", "corte", "baño", "sin jaulas"],
   },
   {
@@ -1794,7 +1795,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.2,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=tomas-adiestrador",
+    avatarUrl: avatarDe('tomas-adiestrador'),
     tags: ["adiestrador", "obediencia", "comportamiento", "positivo", "socialización"],
   },
   {
@@ -1812,7 +1813,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 1.7,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=nora-cachorros",
+    avatarUrl: avatarDe('nora-cachorros'),
     tags: ["cachorros", "educación", "socialización", "órdenes", "grupos"],
   },
   {
@@ -1831,7 +1832,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     presential: true,
     urgent: true,
     distance: 2.1,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=pau-vet",
+    avatarUrl: avatarDe('pau-vet'),
     tags: ["veterinario", "domicilio", "vacunas", "análisis", "perros", "gatos"],
   },
   {
@@ -1849,7 +1850,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 1.4,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=adrian-trainer",
+    avatarUrl: avatarDe('adrian-trainer'),
     tags: ["entrenador personal", "NSCA", "pérdida de grasa", "músculo", "lesiones"],
   },
   {
@@ -1867,7 +1868,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 1.8,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=mia-yoga-inst",
+    avatarUrl: avatarDe('mia-yoga-inst'),
     tags: ["yoga", "instructor", "hatha", "vinyasa", "restaurativo"],
   },
   {
@@ -1885,7 +1886,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.1,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=alba-pilates-inst",
+    avatarUrl: avatarDe('alba-pilates-inst'),
     tags: ["pilates", "instructora", "reformer", "embarazo", "postparto"],
   },
   {
@@ -1903,7 +1904,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.6,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=pol-running",
+    avatarUrl: avatarDe('pol-running'),
     tags: ["running", "maratón", "coach", "biomecánica", "plan"],
   },
   {
@@ -1921,7 +1922,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 2.3,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=edu-padel",
+    avatarUrl: avatarDe('edu-padel'),
     tags: ["pádel", "monitor", "federado", "técnica", "táctica"],
   },
   {
@@ -1939,7 +1940,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 1.9,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=laia-natacion",
+    avatarUrl: avatarDe('laia-natacion'),
     tags: ["natación", "profesora", "niños", "adultos", "terapéutica"],
   },
   {
@@ -1957,7 +1958,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 1.2,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=elena-cuidadora",
+    avatarUrl: avatarDe('elena-cuidadora'),
     tags: ["cuidadora", "mayores", "Alzheimer", "Parkinson", "domicilio"],
   },
   {
@@ -1975,7 +1976,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 2.1,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=carmen-nocturna",
+    avatarUrl: avatarDe('carmen-nocturna'),
     tags: ["cuidadora nocturna", "mayores", "turnos noche", "emergencias"],
   },
   {
@@ -1993,7 +1994,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 1.8,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=pilar-alzheimer",
+    avatarUrl: avatarDe('pilar-alzheimer'),
     tags: ["Alzheimer", "demencia", "cuidadora", "rutinas", "comunicación"],
   },
   {
@@ -2012,7 +2013,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     presential: true,
     urgent: true,
     distance: 1.5,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=rosa-postop",
+    avatarUrl: avatarDe('rosa-postop'),
     tags: ["post-operatorio", "curas", "medicación", "alta hospitalaria"],
   },
   {
@@ -2030,7 +2031,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 1.3,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=marta-auxger",
+    avatarUrl: avatarDe('marta-auxger'),
     tags: ["auxiliar geriátrica", "higiene", "estimulación", "compañía"],
   },
   {
@@ -2048,7 +2049,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 2.4,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=sandra-discap",
+    avatarUrl: avatarDe('sandra-discap'),
     tags: ["discapacidad", "auxiliar", "acompañamiento", "comunicación aumentativa"],
   },
   {
@@ -2066,7 +2067,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 1.0,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=lucia-ayuda-dom",
+    avatarUrl: avatarDe('lucia-ayuda-dom'),
     tags: ["ayuda a domicilio", "limpieza", "cocina", "acompañamiento", "recados"],
   },
   {
@@ -2085,7 +2086,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     presential: true,
     urgent: true,
     distance: 1.7,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=isabel-enfermera",
+    avatarUrl: avatarDe('isabel-enfermera'),
     tags: ["enfermera", "domicilio", "curas", "IV", "crónicas", "urgencias"],
   },
   {
@@ -2103,7 +2104,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 0.8,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=vanessa-ninera",
+    avatarUrl: avatarDe('vanessa-ninera'),
     tags: ["niñera", "infancia", "educación", "deberes", "referencias"],
   },
   {
@@ -2121,7 +2122,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 1.1,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=patricia-canguro",
+    avatarUrl: avatarDe('patricia-canguro'),
     tags: ["canguro", "niños", "tardes", "fines de semana", "carné"],
   },
   {
@@ -2139,7 +2140,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 2.2,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=amalia-asistente",
+    avatarUrl: avatarDe('amalia-asistente'),
     tags: ["asistente personal", "dependencia", "gestiones", "médico", "compras"],
   },
   {
@@ -2158,7 +2159,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     presential: true,
     urgent: true,
     distance: 0.9,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=pau-tecnico-info",
+    avatarUrl: avatarDe('pau-tecnico-info'),
     tags: ["informático", "Windows", "Mac", "virus", "red", "datos"],
   },
   {
@@ -2176,7 +2177,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 1.3,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=roger-ordenadores",
+    avatarUrl: avatarDe('roger-ordenadores'),
     tags: ["ordenadores", "portátiles", "pantalla", "batería", "disco duro"],
   },
   {
@@ -2195,7 +2196,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     presential: true,
     urgent: true,
     distance: 0.8,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=ivan-moviles",
+    avatarUrl: avatarDe('ivan-moviles'),
     tags: ["móviles", "iPhone", "Samsung", "pantalla", "batería"],
   },
   {
@@ -2213,7 +2214,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 1.6,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=carles-wifi",
+    avatarUrl: avatarDe('carles-wifi'),
     tags: ["WiFi", "redes", "Mesh", "router", "cobertura", "seguridad"],
   },
   {
@@ -2231,7 +2232,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.4,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=cristina-webdesign",
+    avatarUrl: avatarDe('cristina-webdesign'),
     tags: ["diseño web", "WordPress", "Webflow", "Figma", "SEO", "responsive"],
   },
   {
@@ -2249,7 +2250,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 3.1,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=mikel-devweb",
+    avatarUrl: avatarDe('mikel-devweb'),
     tags: ["desarrollador web", "React", "Node.js", "Python", "API"],
   },
   {
@@ -2267,7 +2268,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.8,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=oriol-apps",
+    avatarUrl: avatarDe('oriol-apps'),
     tags: ["apps", "iOS", "Android", "React Native", "App Store"],
   },
   {
@@ -2285,7 +2286,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 3.4,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=nadia-ia",
+    avatarUrl: avatarDe('nadia-ia'),
     tags: ["inteligencia artificial", "IA", "chatbots", "Python", "LLM", "automatización"],
   },
   {
@@ -2303,7 +2304,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.1,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=vera-grafica",
+    avatarUrl: avatarDe('vera-grafica'),
     tags: ["diseño gráfico", "branding", "logo", "identidad visual", "editorial"],
   },
   {
@@ -2321,7 +2322,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 1.8,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=manel-uxui",
+    avatarUrl: avatarDe('manel-uxui'),
     tags: ["UX", "UI", "Figma", "wireframes", "prototipos", "investigación"],
   },
   {
@@ -2339,7 +2340,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 2.3,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=laura-foto",
+    avatarUrl: avatarDe('laura-foto'),
     tags: ["fotógrafa", "retrato", "producto", "eventos", "edición"],
   },
   {
@@ -2357,7 +2358,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 2.7,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=xavi-video",
+    avatarUrl: avatarDe('xavi-video'),
     tags: ["videógrafo", "4K", "dron", "Premiere", "After Effects"],
   },
   {
@@ -2375,7 +2376,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 1.9,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=aina-video-edit",
+    avatarUrl: avatarDe('aina-video-edit'),
     tags: ["edición de vídeo", "YouTube", "Instagram", "TikTok", "motion graphics"],
   },
   {
@@ -2393,7 +2394,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.2,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=julia-cm",
+    avatarUrl: avatarDe('julia-cm'),
     tags: ["community manager", "Instagram", "LinkedIn", "TikTok", "contenido"],
   },
   {
@@ -2411,7 +2412,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 1.6,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=neus-copy",
+    avatarUrl: avatarDe('neus-copy'),
     tags: ["copywriter", "textos", "web", "emails", "publicidad", "e-commerce"],
   },
   {
@@ -2429,7 +2430,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 2.1,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=toni-mecanico",
+    avatarUrl: avatarDe('toni-mecanico'),
     tags: ["mecánico", "diagnóstico", "frenos", "distribución", "revisión"],
   },
   {
@@ -2447,7 +2448,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 2.8,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=santi-elec-auto",
+    avatarUrl: avatarDe('santi-elec-auto'),
     tags: ["electricista", "automóvil", "híbrido", "eléctrico", "alarmas"],
   },
   {
@@ -2465,7 +2466,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 1.4,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=biel-limpieza-auto",
+    avatarUrl: avatarDe('biel-limpieza-auto'),
     tags: ["limpieza", "vehículos", "domicilio", "tapicería", "cristales"],
   },
   {
@@ -2483,7 +2484,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 3.2,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=adria-detailing",
+    avatarUrl: avatarDe('adria-detailing'),
     tags: ["detailing", "pulido", "coating cerámico", "arañazos", "tintado"],
   },
   {
@@ -2501,7 +2502,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 2.3,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=marc-dj",
+    avatarUrl: avatarDe('marc-dj'),
     tags: ["DJ", "bodas", "eventos", "cumpleaños", "sonido", "iluminación"],
   },
   {
@@ -2519,7 +2520,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: false,
     presential: true,
     distance: 1.7,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=tania-animadora",
+    avatarUrl: avatarDe('tania-animadora'),
     tags: ["animadora", "infantil", "payasa", "magia", "manualidades", "niños"],
   },
   {
@@ -2537,7 +2538,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.6,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=cristina-wedding",
+    avatarUrl: avatarDe('cristina-wedding'),
     tags: ["wedding planner", "bodas", "civil", "religiosa", "proveedores"],
   },
   {
@@ -2555,7 +2556,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     online: true,
     presential: true,
     distance: 2.1,
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=erika-deco",
+    avatarUrl: avatarDe('erika-deco'),
     tags: ["decoración", "eventos", "floral", "temático", "bodas", "cumpleaños"],
   }
 ]

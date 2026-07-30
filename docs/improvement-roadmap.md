@@ -557,6 +557,39 @@ partida, no un veredicto: cada una hay que verificarla antes de tocar.
 
 ---
 
+## FASE 3 — F3: los avatares en local
+
+### Tarea 1 — 138 peticiones a un tercero, eliminadas · **Terminada** · 2026-07-05
+
+Sello `2026.07.06-b`.
+
+Los avatares venian de `api.dicebear.com`: **138 peticiones**, una por foto
+de profesional. Mismo problema que las fuentes (la IP del visitante viaja
+a un tercero), mas latencia y dependencia de que ese servicio siga en pie.
+
+**Medido antes de decidir**: generar los 123 avatares en local cuesta
+**12ms en total** (0.10ms cada uno), 6KB por avatar. Coste despreciable,
+asi que se generan aqui.
+
+`src/utils/avatar.js` con `avatarDe(seed)`, cache incluida. **Mismo estilo
+('personas') y mismas semillas: los avatares NO cambian.** 138 URLs
+sustituidas en 10 archivos.
+
+**Verificado en navegador real**: cero dominios externos; el avatar del
+perfil es un data URI local.
+
+*Incidencia:* la suite corre desde un escenario en `/tmp` que solo recibia
+`utils` y `data`, sin los paquetes. Al importar dicebear desde
+`matching.js` dejo de resolver. Corregido enlazando `node_modules` en el
+escenario — la Tercera Puerta lo cazo.
+
+**Dependencias nuevas justificadas**: `@dicebear/core` y
+`@dicebear/collection`. Son el generador de los mismos avatares, en local.
+
+**Con esto, Nura no contacta ningun dominio externo en su uso normal.**
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
@@ -581,12 +614,12 @@ pantallas cumplen el contrato: D1, D2, D3, D4, D5, D7 resueltos. Quedan
 abiertos D6 (tres modelos de cabecera — no se toco, no molesta) y D8
 (Chats sin verificar con volumen).
 
-**Siguiente paso exacto:** proponer la **Fase 3** al fundador y esperar su
-aprobacion. Candidata: cerrar el sistema de diseño (S2-S6), que es lo que
-queda antes de entrar en pantallas concretas. Alternativa de mas valor:
-**F3**, los avatares desde `api.dicebear.com` (138 peticiones a un
-tercero) — mismo problema de privacidad que las fuentes, ya resuelto para
-estas.
+**Siguiente paso exacto:** proponer al fundador la siguiente fase. Con F3
+cerrado, **la app ya no contacta ningun dominio externo**. Lo que queda:
+**(a)** cerrar el sistema de diseño (S2-S6); **(b)** las pantallas
+concretas del prompt maestro (perfil personal, registro, chats); **(c)**
+los bloqueantes de lanzamiento (F1 backend, F2 autenticacion real, RLS),
+que son decisiones de negocio y no solo de codigo.
 
 ---
 

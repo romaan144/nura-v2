@@ -1,3 +1,4 @@
+import { avatarDe } from '../utils/avatar'
 import { useState } from 'react'
 import PageHeader from '../components/PageHeader'
 import { EmptyState } from '../components/ui'
@@ -15,7 +16,7 @@ const DEMO_CHATS = [
   {
     helperId: 5,
     helperName: "Elena Fernández Ros",
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=ElenaFernandez",
+    avatarUrl: avatarDe('ElenaFernandez'),
     helperColor: "var(--green)",
     helperAvatar: "EF",
     lastMsg: "Mañana a las 9:30 en su domicilio entonces. Le mando la ubicación por aquí.",
@@ -25,7 +26,7 @@ const DEMO_CHATS = [
   {
     helperId: 1,
     helperName: "Carlos Martínez Vidal",
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=CarlosMartinez",
+    avatarUrl: avatarDe('CarlosMartinez'),
     helperColor: "#1A56DB",
     helperAvatar: "CM",
     lastMsg: "Perfecto, el jueves a las 17h para la primera sesión. La niña no necesita traer nada.",
@@ -35,7 +36,7 @@ const DEMO_CHATS = [
   {
     helperId: 3,
     helperName: "Roberto Sánchez Ferrer",
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=RobertoSanchez",
+    avatarUrl: avatarDe('RobertoSanchez'),
     helperColor: "#1E40AF",
     helperAvatar: "RS",
     lastMsg: "Ya está revisada. Era la válvula de expansión. Le dejo factura en el buzón.",
@@ -45,7 +46,7 @@ const DEMO_CHATS = [
   {
     helperId: 7,
     helperName: "Lucía Vidal Torres",
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=LuciaVidal",
+    avatarUrl: avatarDe('LuciaVidal'),
     helperColor: "#DB2777",
     helperAvatar: "LV",
     lastMsg: "Esta semana repasamos álgebra, que es donde más le cuesta. Avanzando bien.",
@@ -55,7 +56,7 @@ const DEMO_CHATS = [
   {
     helperId: 9,
     helperName: "Dra. Carme Solà Puig",
-    avatarUrl: "https://api.dicebear.com/9.x/personas/svg?seed=CarmeSola",
+    avatarUrl: avatarDe('CarmeSola'),
     helperColor: "#7C3AED",
     helperAvatar: "CS",
     lastMsg: "Para la próxima sesión intente el ejercicio de diario que comentamos. Hasta el viernes.",

@@ -1,3 +1,4 @@
+import { avatarDe } from '../utils/avatar'
 
 // ── Contexto de precio por categoría (mercado Barcelona) ──────────────────
 // Usado por Nüra para contextualizar el precio de cada helper al usuario
@@ -422,7 +423,7 @@ function normalizeHelper(h) {
   return {
     ...h,
     avatarColor: h.avatar_color || h.avatarColor || '#1A56DB',
-    avatarUrl: h.avatarUrl || `https://api.dicebear.com/9.x/personas/svg?seed=${encodeURIComponent((h.name || '').split(' ')[0])}`,
+    avatarUrl: h.avatarUrl || avatarDe(encodeURIComponent((h.name || '').split(' ')[0])),
     avatar: (h.name || 'H').split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase(),
     responseTime: h.response_time || h.responseTime || '< 1 hora',
     completionRate: h.completion_rate || h.completionRate || 95,

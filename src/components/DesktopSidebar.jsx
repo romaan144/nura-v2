@@ -1,3 +1,4 @@
+import { avatarDe } from '../utils/avatar'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Search, Compass, MessageCircle, User, Rss, UserCheck } from 'lucide-react'
 import { useUser } from '../context/UserContext'
@@ -48,7 +49,7 @@ export default function DesktopSidebar() {
       {user && (
         <div className={styles.user} onClick={() => navigate('/profile')}>
           <img
-            src={`https://api.dicebear.com/9.x/personas/svg?seed=${encodeURIComponent(user.name)}`}
+            src={avatarDe(encodeURIComponent(user.name))}
             alt="" className={styles.userAvatar} />
           <div className={styles.userInfo}>
             <div className={styles.userName}>{user.name}</div>

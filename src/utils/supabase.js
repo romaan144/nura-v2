@@ -1,3 +1,4 @@
+import { avatarDe } from '../utils/avatar'
 const SUPABASE_URL = 'https://oxmohciswebonoumghhu.supabase.co'
 const SUPABASE_KEY = 'sb_publishable_-_N1S0ni6t27kX41oPBw0g_nBlu9jcQ'
 const headers = {
@@ -119,7 +120,7 @@ function genPersonality(rating) {
 function normalize(h) {
   const name = h.name || 'Profesional'
   const specialty = h.speciality || h.specialty || h.category || 'Profesional'
-  const avatarUrl = h.avatarUrl || h.avatar_url || `https://api.dicebear.com/9.x/personas/svg?seed=${encodeURIComponent(name)}`
+  const avatarUrl = h.avatarUrl || h.avatar_url || avatarDe(encodeURIComponent(name))
 
   return {
     id: h.id,

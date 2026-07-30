@@ -1,3 +1,4 @@
+import { avatarDe } from '../utils/avatar'
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { CAT_HUMANA } from '../data/categorias'
@@ -1064,7 +1065,7 @@ export default function Home() {
             style={{position:'static',transform:'none',padding:'0',width:'42px',height:'42px',borderRadius:'50%',overflow:'hidden',display:'flex',alignItems:'center',justifyContent:'center',pointerEvents:'all'}}
             onClick={() => navigate('/profile')}>
             {user?.name
-              ? <img src={`https://api.dicebear.com/9.x/personas/svg?seed=${encodeURIComponent(user.name)}`} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+              ? <img src={avatarDe(encodeURIComponent(user.name))} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}} />
               : <UserRound size={20} color="rgba(33,29,51,0.4)" strokeWidth={1.5} />
             }
           </button>
