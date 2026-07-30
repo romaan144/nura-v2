@@ -241,6 +241,31 @@ no se resuelve con código.*
 
 ---
 
+## FASE 1 — El contrato de layout
+
+### Tarea 1 — Los tres arreglos triviales · **Terminada** · 2026-07-05
+
+Aprobada por el fundador. Sello `2026.07.05-r`.
+
+- **T1 resuelto**: retirado el `<link>` a Fraunces de `index.html`.
+  Verificado midiendo con Chromium: **ya no se pide**. Queda solo la
+  peticion de Inter (T2 sigue abierto: decision de autoalojar o no).
+- **D4 resuelto**: `Login.jsx` dejaba ~90px de relleno inferior
+  reservando una barra que `BottomNav.jsx:14` oculta en su ruta. Efecto
+  colateral positivo: el bloque queda **opticamente centrado** — el
+  relleno asimetrico (32 arriba / 90 abajo) lo empujaba ~29px hacia
+  arriba del centro real.
+- **S1 resuelto**: borrados `ObraCard`, `NavBar` y `OnboardingOverlay`
+  con sus modulos CSS. Verificadas **0 importaciones** de cada uno antes
+  de borrar.
+
+Archivos: `index.html`, `src/pages/Login.jsx`, `src/config.js`,
+y 5 archivos borrados.
+Pruebas: cuatro puertas verdes + medicion de Login en Chromium real.
+**Pendiente de confirmacion en el iPhone del fundador.**
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
@@ -249,14 +274,19 @@ no se resuelve con código.*
 | 0 | 2 · Auditoría de fiabilidad técnica | **Terminada** |
 | 0 | 3 · Auditoría del sistema de diseño | **Terminada** |
 | 0 | 4 · Auditoría de flujos y datos | **Terminada** |
-| 1 | Modelo de layout común (basado en D1–D7) | Pendiente |
+| 1 | 1 · Los tres arreglos triviales | **Terminada** |
+| 1 | 2 · Definir el contrato de layout (ley, sin tocar pantallas) | Pendiente |
+| 1 | 3 · Migrar Comunidad (D2: scrollea el contenedor global) | Pendiente |
 
-**FASE 0 COMPLETA.** 20 discrepancias registradas (D1–D8 geometría,
-T1–T6 fiabilidad, S1–S6 sistema de diseño, F1–F5 flujos y datos).
+**FASE 0 COMPLETA** · 20 discrepancias (D1–D8, T1–T6, S1–S6, F1–F5).
+**FASE 1 en curso** · Tarea 1 terminada (T1, D4, S1 resueltos).
 
-**Siguiente paso exacto:** presentar al fundador el resumen de la Fase 0
-y la propuesta de Fase 1 (modelo de layout común, basado en D1–D7), y
-**esperar su aprobación explícita** antes de tocar código.
+**Siguiente paso exacto:** Fase 1 · Tarea 2 — definir el contrato de
+layout unico y escribirlo como ley en `docs/design-system.md`, **sin
+tocar todavia ninguna pantalla**. Debe fijar: quien es el contenedor
+raiz, quien scrollea, donde vive la reserva de la barra (UN solo sitio)
+y cual es el hueco final homogeneo. Base de evidencia: D1-D7 de la
+Tarea 1 de Fase 0.
 
 ---
 
