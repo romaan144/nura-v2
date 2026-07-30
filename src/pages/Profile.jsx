@@ -195,6 +195,7 @@ export default function Profile() {
               </div>
             )}
           </div>
+          <div className={styles.identityText}>
 
           {editingName ? (
             <div className={styles.editRow}>
@@ -231,6 +232,7 @@ export default function Profile() {
               {user.phone ? user.phone : 'Añadir teléfono'}
             </button>
           )}
+          </div>
         </div>
 
         {/* ── PROFILE COMPLETION ─────────────────────────── */}

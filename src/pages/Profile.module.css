@@ -15,8 +15,13 @@
 
 /* ── ZONA 1: IDENTIDAD ───────────────────────────────────────── */
 .identity {   display: flex;
-  flex-direction: column;
+  /* EN FILA: el avatar al lado del nombre. Antes en columna y centrado, el
+     avatar quedaba aislado arriba y el bloque comia 246px — el 29% de la
+     pantalla para cuatro datos. */
+  flex-direction: row;
   align-items: center;
+  gap: var(--space-16);
+  text-align: left;
   /* Medido: el bloque ocupaba 246px, el 29% de la pantalla, para cuatro
      datos. Aire recortado sin tocar la estructura. */
   padding: var(--space-20) var(--space-16) var(--space-16);
@@ -24,10 +29,19 @@
   gap: 6px;
   }
 
+.identityText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
 .avatarWrap {
   position: relative;
   width: 76px; height: 76px;
-  margin-bottom: 8px;
+  margin-bottom: 0;
 }
 
 .avatar {

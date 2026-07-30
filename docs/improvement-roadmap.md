@@ -678,6 +678,33 @@ Pruebas: cuatro puertas verdes.
 
 ---
 
+### Tarea 4 — La identidad en horizontal · **Terminada** · 2026-07-05
+
+Sello `2026.07.06-f`. Archivos: `Profile.jsx` (2 lineas insertadas),
+`Profile.module.css`.
+
+**Es el primer cambio de esta fase que el fundador va a notar de verdad.**
+
+El avatar estaba centrado y solo arriba, con el nombre, la fecha y el
+telefono apilados debajo: el "avatar aislado" que señalo. Ahora el avatar
+va a la izquierda y el texto a su lado, en columna.
+
+| | original | ahora |
+|---|---|---|
+| Alto del bloque | **246px** (29% de la pantalla) | **112px** |
+| Recorte | — | **−134px, −54%** |
+| Inicio de la zona de actividad | 420 | **287** |
+
+Los 133px recuperados hacen que quepa mucho mas contenido sin desplazar.
+
+Ejecucion: envolver el texto en `.identityText` fueron **dos lineas
+insertadas por numero de linea** (no regex), verificando antes que los
+cierres estaban donde se esperaba. El JSX compilo a la primera.
+
+Pruebas: cuatro puertas verdes + medicion antes/despues con sesion.
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
@@ -702,13 +729,13 @@ pantallas cumplen el contrato: D1, D2, D3, D4, D5, D7 resueltos. Quedan
 abiertos D6 (tres modelos de cabecera — no se toco, no molesta) y D8
 (Chats sin verificar con volumen).
 
-**Siguiente paso exacto:** Fase 4 · Tarea 4 — **la identidad en
-horizontal**. Es lo que queda para resolver el "avatar aislado": envolver
-en un contenedor columna todo lo que sigue a `.avatarWrap` (nombre
-editable, fecha de alta, telefono) y poner `.identity` en fila. Son ~50
-lineas de JSX con ramas de edicion condicional en `Profile.jsx` (lineas
-186-235). **Requiere contexto fresco**: hacerlo a medias en esta pantalla
-es pedir una regresion.
+**Siguiente paso exacto:** Fase 4 · Tarea 5 — **agrupar los bloques
+inferiores**. El fundador: "bloques inferiores separados de manera poco
+natural", "acciones que no parecen pertenecer a una estructura unica". Hoy
+son piezas sueltas: favoritos, "Mis servicios e historial", zona de
+evolucion, cerrar sesion. Agruparlos en una lista con la receta de
+superficie de la app, en vez de botones flotando. Archivos:
+`Profile.jsx` y su modulo CSS.
 
 ---
 
