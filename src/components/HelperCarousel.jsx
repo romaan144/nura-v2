@@ -1,3 +1,4 @@
+import { useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Star, Shield, MessageCircle, UserPlus, UserCheck, MapPin, Sparkles } from 'lucide-react'
 import { useUser } from '../context/UserContext'
@@ -12,6 +13,11 @@ import { haptic } from '../utils/haptic'
  * Compact format: avatar, name, specialty, rating, price, one CTA.
  */
 function CarouselCard({ helper, isTopPick, matchReason }) {
+  // Navegacion diferida cancelable: si el componente se va antes de los
+  // 600ms, el usuario NO acaba en Login sin haberlo pedido.
+  const irLuego = useRef(null)
+  useEffect(() => () => clearTimeout(irLuego.current), [])
+
   const navigate = useNavigate()
   const { user, follow, unfollow, isFollowing } = useUser()
   const following = isFollowing(helper.id)
@@ -23,7 +29,7 @@ function CarouselCard({ helper, isTopPick, matchReason }) {
       sessionStorage.setItem('nura_return_to', `/chat/${helper.id}`)
       sessionStorage.setItem('nura_pending_helper', JSON.stringify(helper))
       showToast('Para escribirle necesito saber quién eres. Es un minuto.')
-      setTimeout(() => navigate('/login'), 600)
+      irLuego.current = setTimeout(() => navigate('/login'), 600)
       return
     }
     navigate(`/chat/${helper.id}`, { state: { helper, userQuery: window.__nuraLastQuery, analysis: window.__nuraLastAnalysis } })

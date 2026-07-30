@@ -483,6 +483,40 @@ autoalojar y la unica via posible aqui.
 
 ---
 
+### Tarea 3 — T3: los temporizadores · **Terminada** · 2026-07-05
+
+Sello `2026.07.05-z`.
+
+**Correccion de severidad a mi propia auditoria.** Dije "55 setTimeout
+frente a 5 clearTimeout, cincuenta temporizadores sin cancelar". Al
+inventariarlos, la mayoria **no son fuga**:
+
+- **Home tiene 22**, pero es una pestaña que **nunca se desmonta** (las
+  pestañas viven montadas). Sus temporizadores no dejan nada colgando.
+- En React 18, `setState` sobre un componente desmontado es una operacion
+  vacia: ni avisa ni rompe. La mayoria son inocuos de verdad.
+
+**El riesgo real era otro, y mas concreto**: cinco temporizadores con
+**efecto secundario** — navegacion o persistencia. En particular, tres
+componentes de tarjeta compartian este patron:
+
+```js
+setTimeout(() => navigate('/login'), 600)
+```
+
+Una **navegacion diferida que no se puede cancelar**: si el usuario toca
+otra cosa en esos 600ms, la app le lleva a Login igual, sin haberlo
+pedido. Corregido en `HelperCard`, `HelperCardTall` y `HelperCarousel`
+con un ref cancelado al desmontar.
+
+*Incidencia:* en `HelperCarousel` el ref cayo en el componente equivocado
+del archivo (hay dos) y la puerta de lint lo cazo con `no-undef`.
+
+**No se tocan los inocuos**: cancelar por cancelar añade codigo sin
+resolver nada.
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
@@ -507,10 +541,10 @@ pantallas cumplen el contrato: D1, D2, D3, D4, D5, D7 resueltos. Quedan
 abiertos D6 (tres modelos de cabecera — no se toco, no molesta) y D8
 (Chats sin verificar con volumen).
 
-**Siguiente paso exacto:** Fase 2 · Tarea 3 — **T3, los temporizadores
-sin cancelar** (55 `setTimeout` frente a 5 `clearTimeout`). Inventariar
-primero cuales cambian estado en su callback —los peligrosos con pestañas
-vivas— y cuales son inocuos. Cancelar solo los primeros.
+**Siguiente paso exacto:** Fase 2 · Tarea 4 — **T4, los 25 `catch`
+vacios**. Revisar cuales silencian fallos reales y cuales son deliberados
+y correctos (acceso a `localStorage` en SSR, por ejemplo). Dar registro
+solo a los primeros. Es la ultima tarea de la Fase 2.
 
 ---
 

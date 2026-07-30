@@ -1,3 +1,4 @@
+import { useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import { showToast } from './Toast'
@@ -12,6 +13,11 @@ import { Badge, LiveDot } from './ui'
 // una señal de confianza, una sola acción.
 // ═══════════════════════════════════════════════════════════════
 export default function HelperCard({ helper, onContact, showContact = true, showPrice = false }) {
+  // Navegacion diferida cancelable: si el componente se va antes de los
+  // 600ms, el usuario NO acaba en Login sin haberlo pedido.
+  const irLuego = useRef(null)
+  useEffect(() => () => clearTimeout(irLuego.current), [])
+
   const navigate = useNavigate()
   const { user } = useUser()
   if (!helper) return null
@@ -34,7 +40,7 @@ export default function HelperCard({ helper, onContact, showContact = true, show
       sessionStorage.setItem('nura_return_to', `/chat/${helper.id}`)
       sessionStorage.setItem('nura_pending_helper', JSON.stringify(helper))
       showToast('Para escribirle necesito saber quién eres. Es un minuto.')
-      setTimeout(() => navigate('/login'), 600)
+      irLuego.current = setTimeout(() => navigate('/login'), 600)
       return
     }
     navigate(`/chat/${helper.id}`, { state: { helper, userQuery: window.__nuraLastQuery, analysis: window.__nuraLastAnalysis } })
