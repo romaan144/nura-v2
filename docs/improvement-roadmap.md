@@ -266,6 +266,26 @@ Pruebas: cuatro puertas verdes + medicion de Login en Chromium real.
 
 ---
 
+### Tarea 2 — El contrato de layout · **Terminada** · 2026-07-05
+
+**Ninguna pantalla modificada.** Solo la ley y sus tokens.
+
+- **Siete reglas** escritas en `docs/design-system.md` → *El Contrato de
+  Layout*: el `.page` de cada pantalla es su scroller (nunca el contenedor
+  global); la reserva inferior vive en UN solo sitio; ningun hijo reserva
+  nada; el hueco final es siempre `--space-20` e **incluido** en el token;
+  los tokens deben coincidir con lo medido; `vh` prohibido; medir antes de
+  tocar.
+- **Tres tokens nuevos** en `index.css` con alturas MEDIDAS en navegador
+  real: `--reserva-nav`, `--reserva-accion` (67px de barra de accion),
+  `--reserva-input` (74px de input flotante).
+- Verificado: **nadie los usa todavia** — riesgo cero. Se aplicaran una
+  pantalla por tarea, midiendo antes y despues.
+
+Pruebas: cuatro puertas verdes.
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
@@ -275,18 +295,20 @@ Pruebas: cuatro puertas verdes + medicion de Login en Chromium real.
 | 0 | 3 · Auditoría del sistema de diseño | **Terminada** |
 | 0 | 4 · Auditoría de flujos y datos | **Terminada** |
 | 1 | 1 · Los tres arreglos triviales | **Terminada** |
-| 1 | 2 · Definir el contrato de layout (ley, sin tocar pantallas) | Pendiente |
+| 1 | 2 · El contrato de layout (ley + tokens) | **Terminada** |
 | 1 | 3 · Migrar Comunidad (D2: scrollea el contenedor global) | Pendiente |
 
 **FASE 0 COMPLETA** · 20 discrepancias (D1–D8, T1–T6, S1–S6, F1–F5).
 **FASE 1 en curso** · Tarea 1 terminada (T1, D4, S1 resueltos).
 
-**Siguiente paso exacto:** Fase 1 · Tarea 2 — definir el contrato de
-layout unico y escribirlo como ley en `docs/design-system.md`, **sin
-tocar todavia ninguna pantalla**. Debe fijar: quien es el contenedor
-raiz, quien scrollea, donde vive la reserva de la barra (UN solo sitio)
-y cual es el hueco final homogeneo. Base de evidencia: D1-D7 de la
-Tarea 1 de Fase 0.
+**Siguiente paso exacto:** Fase 1 · Tarea 3 — migrar **Comunidad** al
+contrato. Es la peor infraccion (D2: no tiene `.page` propio y scrollea
+`desktopMain`, el contenedor global que envuelve todas las pestañas
+montadas a la vez). Darle contenedor propio con `height: 100%`,
+`overflow-y: auto`, `overflow-x: hidden` y `padding-bottom:
+var(--reserva-nav)`, retirando el `paddingBottom` inline de su raiz.
+Medir antes y despues: hoy su hueco final es de 39px. Archivo:
+`src/pages/Feed.jsx`.
 
 ---
 

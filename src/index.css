@@ -39,6 +39,15 @@ body {
   --header-h: calc(max(env(safe-area-inset-top, 0px), 12px) + 64px);
   --nav-h:    calc(max(env(safe-area-inset-bottom, 0px), 8px) + 58px);
 
+  /* ── RESERVA INFERIOR (contrato de layout) ──
+     El UNICO sitio donde una pantalla reserva su mobiliario fijo de abajo:
+     el padding-bottom de su .page. Alturas MEDIDAS en navegador real, no
+     estimadas. El hueco final de --space-20 va incluido: no se suma aparte.
+     Ningun hijo reserva nada — ver design-system.md, El Contrato. */
+  --reserva-nav:    calc(var(--nav-h) + var(--space-20));
+  --reserva-accion: calc(var(--nav-h) + 67px + var(--space-20));   /* barra de accion: 67px medidos */
+  --reserva-input:  calc(var(--nav-h) + 74px + var(--space-20));   /* input flotante: 74px medidos */
+
 
   --space-micro:   var(--space-8);   /* micro: between inline elements */
   --space-std:    var(--space-16);   /* standard: padding, small gaps */
