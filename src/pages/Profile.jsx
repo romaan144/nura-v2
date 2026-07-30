@@ -248,7 +248,7 @@ export default function Profile() {
           if (!user.phone) missing.push('teléfono')
           if (!user.avatar) missing.push('una foto')
           return pct < 100 ? (
-            <div style={{margin:'0 var(--space-16) var(--space-12)',padding:'var(--space-14) var(--space-16)',background:'white',borderRadius:'var(--radius-card)',boxShadow:'0 1px 8px rgba(33,29,51,0.06)',border:'1px solid rgba(33,29,51,0.07)'}}>
+            <div style={{padding:'var(--space-16)',background:'white',borderRadius:'var(--radius-card)',boxShadow:'0 1px 8px rgba(33,29,51,0.06)',border:'1px solid rgba(33,29,51,0.07)'}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'var(--space-8)'}}>
                 <span style={{fontSize:'var(--text-sm)',fontWeight:700,color:'var(--ink)',letterSpacing:'-0.2px'}}>Tu perfil está al {pct}%</span>
                 <span style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.38)'}}>Mejora tus matches</span>
@@ -267,7 +267,7 @@ export default function Profile() {
 
         {/* ── EL ESPEJO: LAS PERSONAS DE TU VIDA ────────── */}
         {(personas || []).length > 0 && (
-          <div style={{margin:'0 0 var(--space-20)', animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 60ms both'}}>
+          <div style={{animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 60ms both'}}>
             <SectionLabel tone="brand" style={{marginBottom:'var(--space-10)'}}>Las personas de tu vida</SectionLabel>
             <div style={{display:'flex', flexDirection:'column', gap:'var(--space-8)'}}>
               {personas.map(p => {
@@ -317,7 +317,7 @@ export default function Profile() {
           const sem = buildSemana({ contactedHelpers, citas, misObras,
             obraPropia: getObraDeHelper(user.helperId || user.id, 9).filter(o => !o.mine).length })
           return (
-            <div style={{margin:'0 0 var(--space-20)', padding:'var(--space-16)', background:'white',
+            <div style={{padding:'var(--space-16)', background:'white',
               border:'1px solid var(--purple-20)', borderRadius:'var(--radius-md)',
               boxShadow:'var(--shadow-md)', animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 200ms both'}}>
               <SectionLabel tone="brand" style={{marginBottom:'var(--space-8)'}}>
@@ -345,7 +345,7 @@ export default function Profile() {
         })()}
 
         {user.isHelper && (
-          <div style={{margin:'0 0 var(--space-20)', animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 240ms both'}}>
+          <div style={{animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 240ms both'}}>
             <SectionLabel tone="brand" style={{marginBottom:'var(--space-10)'}}>
               Así te ven quienes te necesitan
             </SectionLabel>
@@ -411,7 +411,7 @@ export default function Profile() {
           if (!cp) return null
           const hf = cp.helperName?.split(' ')?.[0] || cp.helperName
           return (
-            <div style={{margin:'0 0 var(--space-20)', padding:'var(--space-14) var(--space-16)', background:'white',
+            <div style={{padding:'var(--space-14) var(--space-16)', background:'white',
               border:'1px solid var(--ink-border)', borderRadius:'var(--radius-md)',
               boxShadow:'var(--shadow-sm)', display:'flex', alignItems:'center', gap:'var(--space-10)'}}>
               <span style={{fontSize:'var(--text-md)'}}>📅</span>

@@ -776,6 +776,34 @@ Pruebas: cuatro puertas verdes.
 
 ---
 
+### Tarea 7 — El compas del perfil personal · **Terminada** · 2026-07-05
+
+Sello `2026.07.06-j`.
+
+**El fundador: "separaciones mas pequeñas que otras, secciones pegadas sin
+separacion, no hay orden ni logica".** Medido contra el profesional:
+
+| | profesional (el que gusta) | personal (antes) |
+|---|---|---|
+| Relleno por seccion | **20/20 en TODAS** | 14, 16, 20, 13, **0** |
+| Huecos entre secciones | **0 en todas** | 12, 16, 20 |
+| Simetria | perfecta | una con 14 arriba / 8 abajo |
+
+**Causa**: varios hijos traian margen y relleno **en estilo en linea**, que
+gana siempre al CSS. Por eso el compas del ciclo anterior no basto: se
+aplicaba, pero los estilos en linea lo pisaban.
+
+**Cura**: una sola regla sobre los hijos directos del scroll, con
+`!important` a proposito — porque el compas debe gobernar a todos por
+igual. Mas cinco margenes en linea retirados del JSX.
+
+**Medido despues: 20/20 en las ocho secciones, cero huecos, linea en cada
+separacion. Identico al perfil profesional.**
+
+Pruebas: cuatro puertas verdes + medicion comparada de los dos perfiles.
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |

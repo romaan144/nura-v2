@@ -359,3 +359,25 @@
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ── EL COMPAS DEL PERFIL ────────────────────────────────────────────
+   Medido contra el perfil profesional, que el fundador señala como el
+   bonito: alli TODAS las secciones tienen 20/20 de relleno, CERO hueco
+   entre ellas y una linea fina de separacion. Aqui habia cinco rellenos
+   distintos (14, 16, 20, 13, 0), tres huecos sin explicacion (12, 16, 20)
+   y una seccion asimetrica (14 arriba / 8 abajo).
+   Una sola regla para todas: el mismo ritmo, sin excepciones. */
+.scroll > * {
+  /* !important a proposito: varios hijos traen margen y relleno en estilo
+     en linea, que gana siempre al CSS. El compas debe gobernar a todos por
+     igual — es justo lo que faltaba: cinco rellenos distintos y tres huecos
+     sin logica. */
+  margin: 0 !important;
+  padding: var(--space-20) var(--space-16) !important;
+  border-top: 1px solid var(--ink-border);
+}
+
+/* La identidad abre la pagina: no lleva linea encima. */
+.scroll > .identity {
+  border-top: none;
+}
