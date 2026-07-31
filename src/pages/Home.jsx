@@ -901,7 +901,7 @@ export default function Home() {
         }
           const alt = alternativas[analysis.categoria] || alternativas.otro
           const queEs = (CAT_HUMANA[analysis.categoria] || 'eso').toLowerCase()
-          registrarDemanda?.({ categoria: analysis.categoria, consulta: text, fecha: Date.now() })
+          registrarDemanda?.({ categoria: analysis.categoria, consulta: msg, fecha: Date.now() })
           setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
             lines: [`Te he entendido: buscas ${queEs}. Ahora mismo no tengo a nadie así cerca de ti.`],
             chips: [`Buscar ${alt.alt}`, 'Ampliar la zona', 'Avísame cuando tengas a alguien'] }])
@@ -1004,9 +1004,71 @@ export default function Home() {
         lines: (!navigator.onLine || /fetch|network|load failed/i.test(String(err?.message || err)))
           ? ['Parece que te has quedado sin conexión. Cuando vuelvas, lo intento otra vez.']
           : ['Se me ha atascado la búsqueda. No es culpa tuya — inténtalo otra vez.'],
-        chips: text ? [text] : undefined }])
+        chips: [msg] }])
     }
     setLoading(false)
+  }
+
+  // ── Los chips tienen destino ────────────────────────────────────────
+  // Todo chip caia en handleSend, que lo trata como una BUSQUEDA. Para los
+  // que son accion ("Escribir a Marta", "Avisame cuando tengas a alguien")
+  // eso era un callejon: Nura ofrecia algo y al tocarlo buscaba otra cosa.
+  // Los que son respuesta a una pregunta suya siguen yendo a handleSend,
+  // que ya los intercepta por cadena exacta.
+  function handleChip(chip) {
+    const responde = (lines, chips) =>
+      setMessages(prev => [...prev, { id: Date.now(), from: 'nura', lines, chips }])
+
+    if (chip.startsWith('Escribir a')) {
+      const h = lastMatches?.[0]
+      if (!h) return
+      haptic('medium')
+      if (!user) {
+        try {
+          sessionStorage.setItem('nura_return_to', `/chat/${h.id}`)
+          sessionStorage.setItem('nura_pending_helper', JSON.stringify(h))
+        } catch { /* almacenamiento bloqueado: se sigue igual */ }
+        navigate('/login')
+        return
+      }
+      navigate(`/chat/${h.id}`, { state: { helper: h, userQuery: window.__nuraLastQuery, analysis: window.__nuraLastAnalysis } })
+      return
+    }
+
+    if (chip === 'Ampliar la zona') {
+      // Honestidad: el vacio no es de zona, es de oferta. Prometer que
+      // ampliando aparecera alguien seria mentir dos veces.
+      haptic('light')
+      responde(
+        ['He mirado en toda Barcelona, no solo en tu barrio — todavia no tengo a nadie asi.'],
+        ['Avisame cuando tengas a alguien']
+      )
+      return
+    }
+
+    if (chip === 'Avisame cuando tengas a alguien' || chip === 'Avísame cuando tengas a alguien') {
+      // La demanda ya quedo anotada al producirse el silencio.
+      haptic('light')
+      responde(['Anotado. Te aviso en cuanto tenga a alguien asi cerca de ti.'])
+      return
+    }
+
+    if (chip === 'Si, busca otra persona' || chip === 'Sí, busca otra persona') {
+      let q = window.__nuraLastQuery
+      if (!q) { try { q = sessionStorage.getItem('nura_last_query') } catch { /* sin memoria */ } }
+      if (q) { handleSend(q); return }
+      haptic('light')
+      responde(['Cuentame otra vez que necesitas y te busco a alguien distinto.'])
+      return
+    }
+
+    if (chip === 'Ya lo resolvi de otra forma' || chip === 'Ya lo resolví de otra forma') {
+      haptic('light')
+      responde(['Me alegro de que se resolviera. Aqui estare cuando vuelvas a necesitarme.'])
+      return
+    }
+
+    handleSend(chip)
   }
 
   function handleKey(e) {
@@ -1129,6 +1191,19 @@ export default function Home() {
 
         {(() => {
           const lastMsg = msg
+          // Los chips de conversacion: la respuesta a lo que Nura acaba de
+          // preguntar. Se producian en NUEVE sitios y no se pintaban en
+          // ninguno — la pregunta llegaba sin forma de contestarla. Van
+          // antes que las sugerencias: quien tiene una pregunta delante no
+          // necesita ademas tres ejemplos genericos.
+          if (lastMsg?.chips?.length) return (
+            <div className={styles.refineRow}>
+              {lastMsg.chips.map((chip, i) => (
+                <button key={i} className={styles.refineChip}
+                  onClick={() => handleChip(chip)}>{chip}</button>
+              ))}
+            </div>
+          )
           const activeChips = lastMsg?.refineChips
           if (activeChips) return (
             <div className={styles.refineRow}>

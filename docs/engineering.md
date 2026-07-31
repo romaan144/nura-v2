@@ -167,6 +167,34 @@ ambos mundos, el navegador restauraba la posicion anterior.
 con scroll antes de tocar una sola linea de CSS.
 
 
+### Un dato con dos formas tumba la pantalla (2026-08-01)
+
+`experience` llegaba como **texto** en unos perfiles y como **array de
+puestos** en otros. La tarjeta lo pintaba con `{helper.experience}` y React
+caia entero (#31) en toda la categoria de logopedia.
+
+**Regla**: antes de pintar un campo que viene de datos, comprobar que su
+forma es UNA. Si el dataset tiene dos generaciones de un campo, derivar el
+valor seguro una vez (`typeof x === 'string' ? … : ''`) y usar ese en la
+condicion Y en el cuerpo — no solo en el cuerpo, o el contenedor renderiza
+vacio.
+
+**Y lo que enseña sobre las puertas**: las cuatro estaban verdes. El smoke
+monta las pantallas con SSR pero **no ejecuta una busqueda**, asi que el
+fallo vivia detras de una interaccion. Un render que solo ocurre tras
+interactuar no lo ve ninguna puerta actual.
+
+### Lo que se produce y no se pinta no existe (2026-08-01)
+
+Home producia `msg.chips` en **nueve** sitios y no los renderizaba en
+ninguno; el unico lector estaba en otra pantalla. Nura hacia preguntas sin
+forma de contestarlas, y features enteras (Los Dos Silencios, La Pregunta,
+el reintento) estaban escritas y eran invisibles.
+
+**Regla**: al dar por terminada una feature conversacional, verificar el
+**productor Y el lector**. Un `grep` del campo en TODO `src/` cuesta diez
+segundos. Y contar botones reales en el navegador, no clases en el CSS.
+
 ### Medir el DOM renderizado, no las variables (2026-07-05)
 
 Tres ciclos calculando espaciados leyendo variables CSS dieron 8px donde el

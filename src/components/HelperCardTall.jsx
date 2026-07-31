@@ -26,6 +26,11 @@ export default function HelperCardTall({ helper, small = false }) {
   const firstName = getFirstName(helper.name)
   const lastInitial = helper.name?.split(' ')[1]?.[0]
   const av = small ? 62 : 96
+  // `experience` llega en DOS formas segun el perfil: texto ("10 años") en
+  // unos y trayectoria (array de puestos) en otros. Pintar el array como
+  // texto tumbaba la pantalla entera (React #31) — y con ella toda la
+  // categoria de logopedia, que es la unica cuyos perfiles la traen asi.
+  const experienciaTexto = typeof helper.experience === 'string' ? helper.experience.trim() : ''
 
   function handleTap() {
     const reason = window.__nuraMatchReasons?.[String(helper.id)]
@@ -103,7 +108,7 @@ export default function HelperCardTall({ helper, small = false }) {
         </div>
       )}
 
-      {!small && (helper.responseTime || helper.experience || helper.dniVerified) && (
+      {!small && (helper.responseTime || experienciaTexto || helper.dniVerified) && (
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 'var(--space-6)', marginTop: 'var(--space-12)' }}>
           {helper.responseTime && (
             <span style={{ background: 'var(--paper)', border: '1px solid var(--ink-border)',
@@ -111,10 +116,10 @@ export default function HelperCardTall({ helper, small = false }) {
               Responde en {helper.responseTime}
             </span>
           )}
-          {helper.experience && (
+          {experienciaTexto && (
             <span style={{ background: 'var(--paper)', border: '1px solid var(--ink-border)',
               borderRadius: 'var(--radius-full)', padding: 'var(--space-4) var(--space-10)', fontSize: 'var(--text-xs)', color: 'var(--ink-secondary)' }}>
-              {helper.experience}
+              {experienciaTexto}
             </span>
           )}
           {helper.dniVerified && (

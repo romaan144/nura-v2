@@ -837,6 +837,96 @@ resultados.
 
 ---
 
+### Tarea 2a — La tarjeta que tumbaba la pantalla · **Terminada** · 2026-08-01
+
+Sello `2026.07.06-l`. Un solo archivo: `src/components/HelperCardTall.jsx`.
+
+**Encontrado midiendo, no leyendo.** Al preparar la Tarea 2 se midio el DOM
+con Chromium real y la busqueda de *"logopeda infantil"* devolvia
+**`Error de la aplicacion · React error #31`**: la pantalla entera caida.
+
+**Causa**: `experience` llega en **dos formas** segun el perfil — texto
+("10 años") en unos y **trayectoria (array de puestos)** en otros. La
+tarjeta lo pintaba como texto. React no renderiza un objeto.
+
+| consulta | `experience` del primero |
+|---|---|
+| logopeda infantil | **ARRAY[2]** ← caia |
+| fontanero urgente | `undefined` |
+| cuidar a mi madre | `undefined` |
+
+Los dos unicos perfiles afectados (`id=1`, `id=2`) son **toda la categoria
+de logopedia** — y "Logopeda para mi hijo" es una de las tres sugerencias
+que la propia app ofrece al entrar.
+
+**Cura**: `experienciaTexto` se deriva una vez y solo se pinta si es texto.
+Es el unico sitio de la app con este patron (grep verificado).
+
+**Por que ninguna puerta lo vio**: el smoke monta las pantallas con SSR
+pero **no ejecuta una busqueda**. El fallo vivia detras de una interaccion.
+
+---
+
+### Tarea 2b — Los chips que nunca se pintaron · **Terminada** · 2026-08-01
+
+Sello `2026.07.06-l`. Un solo archivo: `src/pages/Home.jsx`.
+
+**El hallazgo mas grande del roadmap hasta ahora, y estaba a plena vista.**
+
+Home **producia chips en nueve sitios y no los pintaba en ninguno**. El
+unico que renderizaba `msg.chips` era `Chat.jsx` — otra pantalla.
+
+Medido en navegador antes de tocar nada:
+
+| caso | lo que decia Nura | botones reales |
+|---|---|---|
+| invitado nuevo | "¿Para quien necesitas ayuda?" | **ninguna respuesta** |
+| consulta incomprensible | "¿me lo cuentas con otras palabras?" | **ninguno** |
+
+Nura hacia preguntas que **no se podian contestar**. Quedaban invisibles:
+La Pregunta, Los Dos Silencios, El Pulso, La Confirmacion Humana, los
+ejemplos del onboarding y **el chip de reintento de la Tarea 1** — que por
+tanto nunca llego a existir en pantalla. `comprehensionChips` y
+`handleComprehensionChip` (La Comprension Visible) son codigo muerto:
+quedan censados, no se tocan en esta tarea.
+
+**Indicio de que se perdio en un refactor**: la autocuracion que retira los
+chips viejos al empezar un turno nuevo ya estaba escrita.
+
+**Tres piezas inseparables:**
+
+1. **La rama que faltaba**, con `.refineRow` / `.refineChip` — la pildora
+   que Home ya tenia. Cero CSS nuevo. Va **antes** que las sugerencias:
+   quien tiene una pregunta delante no necesita ademas tres ejemplos
+   genericos (evita los seis botones apilados).
+2. **Destino real para cada chip.** Todos caian en `handleSend`, que los
+   trata como BUSQUEDA. Verificado que cinco no los interceptaba nadie:
+   `Escribir a X`, `Ampliar la zona`, `Avisame cuando tengas a alguien`,
+   `Si, busca otra persona`, `Ya lo resolvi de otra forma`. Encenderlos sin
+   esto habria creado callejones nuevos. `Ampliar la zona` responde con
+   honestidad — el vacio no es de zona, es de oferta.
+3. **`text` → `msg`**: el chip de reintento solo existia si la busqueda
+   venia de otro chip; al escribir a mano, `text` era `undefined`. La misma
+   variable metia `undefined` en `nura_demanda_no_cubierta`.
+
+**Medido despues, con toque real:**
+
+| caso | pantalla | chips | al tocarlos |
+|---|---|---|---|
+| invitado · La Pregunta | viva | 3 | responde y continua |
+| incomprensible · Dos Silencios | viva | 3 | **lanza una busqueda real** |
+| logopedia (antes caida) | **viva** | ok | — |
+| fontanero · 4 resultados | viva | sin regresion | — |
+
+Pruebas: cuatro puertas verdes + medicion en Chromium antes y despues.
+
+**Hallazgo abierto para la 2d**: con 2 resultados, la rejilla de
+alternativas mide **358px con un solo hijo** — una tarjeta estirada a todo
+el ancho donde deberian ir tres. Es el caso de resultados parciales, ya
+medible ahora que la pantalla no se cae.
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
@@ -861,7 +951,13 @@ pantallas cumplen el contrato: D1, D2, D3, D4, D5, D7 resueltos. Quedan
 abiertos D6 (tres modelos de cabecera — no se toco, no molesta) y D8
 (Chats sin verificar con volumen).
 
-**Siguiente paso exacto:** Fase 5 · Tarea 2 — la **separacion entre
+**Siguiente paso exacto:** Fase 6 · Tarea 2c — la **busqueda cancelada**
+(el reinicio no cancela: no incrementa `searchSeqRef` ni libera `loading`,
+y enviar durante la carga se traga el mensaje en silencio) y **2d** — los
+**resultados parciales** (rejilla de 358px con un solo hijo; chips que
+prometen ordenar una lista de dos).
+
+**Siguiente paso anterior, aun pendiente:** Fase 5 · Tarea 2 — la **separacion entre
 usuario y profesional**. El prompt maestro: "el alta profesional requiere
 mas informacion y no debe mezclarse con el registro basico". Revisar
 `RegisterHelper.jsx` y como se llega a el desde el perfil de invitado, que
