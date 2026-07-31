@@ -998,7 +998,13 @@ export default function Home() {
       stopThinking()
       console.error('[Nüra] búsqueda:', err)
       setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-        lines: ['Algo fue mal. Inténtalo de nuevo.', `⚙️ ${err?.message || err}`] }])
+        // Ni tecnicismos ni callejon sin salida: se distingue la falta de
+        // conexion de un fallo nuestro, y el reintento se ofrece como chip
+        // con la consulta original — el usuario no la reescribe.
+        lines: (!navigator.onLine || /fetch|network|load failed/i.test(String(err?.message || err)))
+          ? ['Parece que te has quedado sin conexión. Cuando vuelvas, lo intento otra vez.']
+          : ['Se me ha atascado la búsqueda. No es culpa tuya — inténtalo otra vez.'],
+        chips: text ? [text] : undefined }])
     }
     setLoading(false)
   }

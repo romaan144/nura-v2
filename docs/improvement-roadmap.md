@@ -804,6 +804,39 @@ Pruebas: cuatro puertas verdes + medicion comparada de los dos perfiles.
 
 ---
 
+## FASE 6 — Los estados de la conversacion (seccion 2 del prompt maestro)
+
+### Tarea 1 — El error de red · **Terminada** · 2026-07-05
+
+Sello `2026.07.06-k`. Un solo archivo: `src/pages/Home.jsx`.
+
+**Antes**, si fallaba la busqueda:
+> "Algo fue mal. Inténtalo de nuevo."
+> "⚠️ Failed to fetch"
+
+Dos problemas, ambos contra las reglas del prompt maestro:
+1. **Mostraba el error tecnico al usuario** (`err.message`) — "evita
+   tecnicismos".
+2. **Decia "intentalo de nuevo" sin dar forma de hacerlo**: habia que
+   reescribir la consulta entera.
+
+**Ahora**: se distingue la falta de conexion de un fallo del sistema, el
+mensaje habla en la voz de Nura, y **el reintento se ofrece como chip con
+la consulta original** — un toque y se repite, sin reescribir nada.
+
+> Sin red: "Parece que te has quedado sin conexión. Cuando vuelvas, lo
+> intento otra vez."
+> Fallo nuestro: "Se me ha atascado la búsqueda. No es culpa tuya —
+> inténtalo otra vez."
+
+Pruebas: cuatro puertas verdes.
+
+**Pendientes de la seccion 2**: busqueda cancelada, resultados parciales,
+repeticion de una busqueda anterior, y el estado de carga tras mostrar
+resultados.
+
+---
+
 ## Próximos pasos
 
 | Fase | Tarea | Estado |
