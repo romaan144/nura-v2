@@ -483,7 +483,13 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
   // Score helpers
   const scored = pool.map(h => {
     let score = 0
-    // Demo helpers (id >= 2000) get priority boost — rich profiles, verified data
+    // OJO — este comentario decia "rich profiles". MEDIDO, es al reves:
+    // los perfiles manuales (id < 2000) tienen 37 campos de media y son los
+    // UNICOS con trayectoria; los de demo tienen 16 y ninguna. El boost va
+    // al grupo mas pobre. Impacto real medido sobre las consultas doradas:
+    // solo cambia el primer recomendado en 3 de 24 (los otros terminos
+    // deciden), asi que NO es un veto — pero el peso es el doble que
+    // acertar la categoria (+40). Pendiente de decision del fundador.
     if (h.id >= 2000) score += 80
     if (toApp(h.category) === analysis.categoria) score += 40
     const keywords = analysis.palabrasClave || []

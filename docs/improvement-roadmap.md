@@ -1152,6 +1152,45 @@ hoy ofrece los dos caminos con el mismo peso visual.
 
 ---
 
+## El titular de la trayectoria · **Terminada** · 2026-08-01
+
+Sello `2026.07.06-q`. `src/components/HelperCardTall.jsx`, `src/utils/matching.js`.
+
+Consecuencia directa del censo. Al arreglar el crash deje la pildora de
+experiencia sin pintar para nadie — correcto, pero desperdiciado: **12
+perfiles llevan trayectoria real dentro** y la tarjeta no decia nada.
+
+La ficha (`/helper/:id`) ya pinta la trayectoria entera en linea de tiempo
+(comprobado — mi sospecha de que era invisible era falsa). Lo que faltaba
+era **su titular en la tarjeta**: los periodos son uniformes
+(`"2015–presente"`), asi que el año mas antiguo da los años de oficio.
+
+Medido antes de escribirlo, los 12 valores derivados: de 4 a 19 años,
+ninguno absurdo. Verificado en navegador: *"7 años"* en la logopeda, y los
+perfiles sin trayectoria siguen mostrando *"Responde en < 1 hora"* sin
+cambios.
+
+### Y un comentario que mentia en el corazon del motor
+
+`matching.js` decia: *"Demo helpers (id >= 2000) get priority boost — rich
+profiles, verified data"*. **Medido, es al reves:**
+
+| grupo | n | campos | trayectoria |
+|---|---|---|---|
+| manuales (`id < 2000`) | 12 | **37.1** | **1.7** |
+| demo (`id >= 2000`) | 110 | 16.1 | **0** |
+
+El boost de **+80** va al grupo mas pobre, y pesa **el doble que acertar la
+categoria** (+40). Comentario corregido con lo medido.
+
+**No se toca el ranking.** Medido el impacto real con un motor paralelo sin
+el boost: solo cambia el primer recomendado en **3 de 24** consultas
+doradas — no es un veto, los demas terminos deciden. Perfil rico como
+primero: 1 de 24 con boost, 4 de 24 sin el. Es una mejora modesta y toca el
+corazon del producto y de la demo: **decision del fundador**, no mia.
+
+---
+
 ## Deudas heredadas (censadas antes de este roadmap)
 
 - **[BLOQUEO DE LANZAMIENTO]** RLS de Supabase: el rol anónimo puede

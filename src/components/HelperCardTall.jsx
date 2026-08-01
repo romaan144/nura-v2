@@ -26,11 +26,23 @@ export default function HelperCardTall({ helper, small = false }) {
   const firstName = getFirstName(helper.name)
   const lastInitial = helper.name?.split(' ')[1]?.[0]
   const av = small ? 62 : 96
-  // `experience` llega en DOS formas segun el perfil: texto ("10 años") en
-  // unos y trayectoria (array de puestos) en otros. Pintar el array como
-  // texto tumbaba la pantalla entera (React #31) — y con ella toda la
-  // categoria de logopedia, que es la unica cuyos perfiles la traen asi.
-  const experienciaTexto = typeof helper.experience === 'string' ? helper.experience.trim() : ''
+  // MEDIDO sobre los 123 perfiles: `experience` es SIEMPRE trayectoria
+  // (array de puestos) o no esta. Ninguno la trae como texto. Pintarla
+  // directa tumbaba la pantalla (React #31) en los 12 perfiles que la
+  // tienen, repartidos por 9 categorias.
+  // La ficha ya cuenta la trayectoria entera; la tarjeta solo necesita su
+  // titular. Los periodos son uniformes ("2015–presente"), asi que el año
+  // mas antiguo da los años de oficio: la señal de confianza mas corta
+  // que existe.
+  const experienciaTexto = (() => {
+    const t = helper.experience
+    if (typeof t === 'string') return t.trim()
+    if (!Array.isArray(t) || !t.length) return ''
+    const años = t.map(e => parseInt(String(e?.period || '').match(/\d{4}/)?.[0], 10)).filter(Boolean)
+    if (!años.length) return ''
+    const n = new Date().getFullYear() - Math.min(...años)
+    return n >= 1 ? `${n} años` : ''
+  })()
 
   function handleTap() {
     const reason = window.__nuraMatchReasons?.[String(helper.id)]
