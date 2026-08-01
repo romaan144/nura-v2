@@ -1492,6 +1492,71 @@ instrumentar habria "arreglado" lo que ya estaba bien.
 
 ---
 
+## Un `await` que hacia invisible a cada profesional · **Terminada** · 2026-08-01
+
+Sello `2026.07.06-x`. `RegisterHelper.jsx`, `scripts/smoke.mjs`.
+
+**El peor fallo de negocio encontrado hasta ahora**, y era una palabra.
+
+```js
+const specialtyAnalysis = analyzeNeed(answers.specialty || '')   // sin await
+const inferredCategory = specialtyAnalysis.categoria !== 'otro' ? … : 'otro'
+```
+
+`analyzeNeed` devuelve una **promesa**. Sin `await`:
+
+| paso | valor |
+|---|---|
+| `specialtyAnalysis` | `Promise` |
+| `.categoria` | `undefined` |
+| `inferredCategory` | `undefined` (porque `undefined !== 'otro'` es **cierto**) |
+| `JSON.stringify({category: undefined})` | **`{}`** — la clave desaparece |
+
+El alta viajaba a Supabase **sin categoria**. Y el emparejador filtra por
+categoria exacta:
+
+```js
+compatibles = finalPool.filter(h => toApp(h?.category) === analysis.categoria)
+```
+
+Resultado: **todo profesional dado de alta desde la app quedaba invisible
+en todas las busquedas, para siempre.** Respondia seis preguntas, obtenia
+su perfil, y no recibia un solo contacto — sin error en consola, sin aviso,
+y con las cuatro puertas verdes. En un marketplace es el fallo mas caro
+posible: se rompe el lado escaso, la oferta, justo despues de captarla.
+
+**Cura**: `await`, y `specialtyAnalysis?.categoria || 'otro'` (que ademas
+corrige la logica invertida). Verificado: *Logopeda infantil* → `logopedia`,
+*Fontanero* → `tecnico`, *Abogada laboralista* → `legal`, *Malabarista* →
+`otro`.
+
+**Y la formacion, que tampoco se veia**: se preguntaba en el alta y solo
+viajaba a `ai_data`. Es la credencial que gana la confianza — ahora entra
+en la bio publica junto al diferencial.
+
+### Guardia permanente: la promesa cruda
+
+Añadido a la Cuarta Puerta: ninguna llamada a `analyzeNeed` sin `await`.
+**Probado devolviendo el bug a proposito** — lo caza, lo señala con archivo
+y linea, y sale con codigo 1. (Primer intento: falso positivo en un
+comentario JSDoc; se excluyen lineas de comentario.)
+
+### Dos cosas que decidi NO tocar
+
+- **La rama de refinamiento** del interceptor, que deje señalada ayer.
+  Medida: **0 de 24** consultas doradas la disparan — el arreglo de
+  `palabra()` ya la habia cerrado, y las subcadenas de dentro son
+  inalcanzables sin que `isRefinement` sea cierto primero. Sin cambios.
+- **La preferencia de sexo** ("mejor si es mujer"). El dataset **no tiene
+  campo de sexo** (39 campos, ninguno) y el analizador no lee la
+  preferencia. Implementarla exigiria inferir el sexo del nombre de pila
+  — poco fiable con "Fátima Benali" o "Antoni" — y **filtrar profesionales
+  por sexo inferido es una decision de producto y legal**, no un arreglo
+  silencioso. Requiere: (a) campo autodeclarado por el profesional, (b)
+  decision del fundador sobre si ofrecerlo y en que categorias.
+
+---
+
 ## Deudas heredadas (censadas antes de este roadmap)
 
 - **[BLOQUEO DE LANZAMIENTO]** RLS de Supabase: el rol anónimo puede

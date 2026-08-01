@@ -167,6 +167,20 @@ ambos mundos, el navegador restauraba la posicion anterior.
 con scroll antes de tocar una sola linea de CSS.
 
 
+### Una promesa sin await no falla: MIENTE en silencio (2026-08-01)
+
+`analyzeNeed(x)` sin `await` devuelve una Promise. `.categoria` da
+`undefined`, no error. Peor: **`JSON.stringify` borra las claves
+`undefined`**, asi que el campo no viaja y el backend no se queja.
+
+Cadena completa: sin await → undefined → clave borrada → profesional sin
+categoria → invisible en todas las busquedas. Cero errores en consola.
+
+**Regla**: toda funcion async debe esperarse aunque el resultado parezca un
+objeto sencillo — y desconfiar de `!== 'valor'` como comprobacion, porque
+`undefined !== 'valor'` es **cierto** y deja pasar el caso roto. Preferir
+`x?.campo || defecto`. Guardia en la Cuarta Puerta.
+
 ### `includes` sobre lenguaje natural es una trampa (2026-08-01)
 
 `t.includes('si')` se disparaba con *necesito*, *psicologa*,

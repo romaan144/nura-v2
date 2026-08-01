@@ -4,7 +4,7 @@
 // Límite honesto: SSR no ejecuta useEffect — caza render, no efectos.
 // ═══════════════════════════════════════════════════════════════
 import { build } from 'vite'
-import { writeFileSync, mkdirSync, rmSync } from 'fs'
+import { writeFileSync, mkdirSync, rmSync, readdirSync, readFileSync } from 'fs'
 import { join } from 'path'
 
 const SCREENS = [
@@ -123,6 +123,34 @@ try {
     resolve: { alias: { '/logo-iso.png': censo } },
   })
   await import('file://' + join(dir, 'Censo.mjs') + '?t=' + Date.now())
+  // ── La promesa usada como objeto ──
+  // `analyzeNeed` es async. Llamarla sin await devuelve una Promise cuyo
+  // `.categoria` es undefined — y `JSON.stringify` BORRA las claves
+  // undefined. El alta profesional viajaba sin categoria y el emparejador
+  // filtra por categoria exacta: cada profesional dado de alta desde la app
+  // quedaba invisible en todas las busquedas. Un solo `await` de diferencia,
+  // sin error en consola y con las cuatro puertas verdes.
+  {
+    const sospechosas = []
+    for (const f of readdirSync('src', { recursive: true })) {
+      const ruta = join('src', String(f))
+      if (!/\.(jsx?|mjs)$/.test(ruta)) continue
+      let txt; try { txt = readFileSync(ruta, 'utf8') } catch { continue }
+      txt.split('\n').forEach((linea, i) => {
+        if (!/\banalyzeNeed\s*\(/.test(linea)) return
+        const limpia = linea.trim()
+        if (limpia.startsWith('*') || limpia.startsWith('//') || limpia.startsWith('/*')) return
+        if (/\bawait\b|\.then\s*\(|function analyzeNeed|import|export/.test(linea)) return
+        sospechosas.push(`${ruta}:${i + 1}  ${linea.trim().slice(0, 62)}`)
+      })
+    }
+    if (sospechosas.length) {
+      console.log(`✗ ${'Promesa cruda'.padEnd(14)} — ${sospechosas.length} llamada(s) a analyzeNeed sin await`)
+      sospechosas.slice(0, 5).forEach(x => console.log(`    ${x}`))
+      failed += sospechosas.length
+    } else console.log(`✓ ${'Promesa cruda'.padEnd(14)} [analyzeNeed siempre esperada]`)
+  }
+
   const helpers = globalThis.__helpers || []
   // Un array DISPERSO es invisible: `filter`, `map` y `forEach` saltan los
   // agujeros; `find` los pisa y devuelve undefined. Una coma suelta en el

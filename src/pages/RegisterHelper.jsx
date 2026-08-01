@@ -11,12 +11,20 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 async function saveHelperToSupabase(answers) {
   try {
     const { analyzeNeed } = await import('../utils/matching')
-    const specialtyAnalysis = analyzeNeed(answers.specialty || '')
-    const inferredCategory = specialtyAnalysis.categoria !== 'otro' ? specialtyAnalysis.categoria : 'otro'
+    // `analyzeNeed` devuelve una PROMESA. Sin await, `.categoria` era
+    // undefined, `inferredCategory` quedaba undefined y JSON.stringify
+    // BORRA las claves undefined: el alta viajaba SIN categoria. Y el
+    // emparejador filtra por categoria exacta, asi que todo profesional
+    // dado de alta desde la app quedaba invisible en cada busqueda, para
+    // siempre. Respondia seis preguntas y no recibia un solo contacto.
+    const specialtyAnalysis = await analyzeNeed(answers.specialty || '')
+    const inferredCategory = specialtyAnalysis?.categoria || 'otro'
     const payload = {
       name: answers.name || 'Profesional',
       specialty: answers.specialty || '',
-      bio: (answers.differentiator || '').trim(),   // `experience` no se pregunta: referenciarlo era codigo muerto
+      // La formacion se preguntaba y solo viajaba a `ai_data`: invisible.
+      // Es la credencial que gana la confianza — va en la bio publica.
+      bio: [answers.formation, answers.differentiator].map(x => (x || '').trim()).filter(Boolean).join('. '),
       zone: answers.zone || 'Barcelona', city: 'Barcelona',
       price: answers.price || null, category: inferredCategory,
       presential: true, online: (answers.modality || '').toLowerCase().includes('online'),
