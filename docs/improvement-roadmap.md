@@ -1423,6 +1423,75 @@ sigue siendo interactivo — decision de diseño, no de arreglo.
 
 ---
 
+## "necesito" contenia un "si" · **Terminada** · 2026-08-01
+
+Sello `2026.07.06-w`. `src/pages/Home.jsx`.
+
+Buscando **caminos de ida sin vuelta** (el patron que compartian tres
+fallos de la jornada) aparecio el peor defecto de uso de todo el dia.
+
+### El interceptor que se tragaba una de cada cinco peticiones
+
+```js
+if (t.includes('sí') || t.includes('si') || … || t.includes('ese') || t.includes('bien'))
+```
+
+**Subcadena, no palabra.** `'si'` esta dentro de *nece**si**to*,
+*p**si**cologa*, *fi**si**oterapeuta*, ***si**on*. `'ese'` dentro de
+*m**ese**s*. `'bien'` dentro de *tam**bien***.
+
+Como la rama solo vive tras una primera busqueda, el efecto era: **pides
+otra cosa y Nura responde "es una muy buena eleccion"** sobre la persona
+anterior. La busqueda no llegaba a ejecutarse.
+
+**Medido sobre las consultas doradas: 21%** se lo tragaba.
+
+| consulta | por que |
+|---|---|
+| Necesito un cerrajero urgente | nece**si**to |
+| mi madre tiene alzheimer y vive sola, necesito ayuda… | nece**si**to |
+| Psicóloga cerca de mí | p**si**cologa |
+| fisioterapeuta a domicilio | fi**si**oterapeuta |
+| Sesión de entrenamiento personal | **si**on |
+
+Las dos primeras son las mas graves del catalogo: una urgencia y la
+consulta mas delicada de la suite.
+
+**Cura**: `palabra(...)` con limite de letra Unicode (`\p{L}`, flag `u`) y
+la regla de que **un asentimiento es corto** (≤ 6 palabras). Una peticion
+de doce palabras no es un "si". `/\bno\b/` ya usaba limite de palabra —
+la tecnica estaba en el archivo, sin aplicar al resto.
+
+**Verificado**: 21% → **0%** en las doradas, y en navegador 5/5 —
+"Necesito un cerrajero urgente" busca; "Sí, perfecto" y "vale" confirman.
+
+### Y la correccion que yo mismo deje de un solo sentido
+
+`startCorrection` (Tarea 2e, de esta misma jornada) era **un modo
+invisible**: el campo tenia aspecto normal y llevaba la consulta anterior
+pegada por delante, sin señal y **sin salida**.
+
+Reproducido: buscas *"clases de inglés"*, tocas `No es lo que buscaba`,
+escribes *"necesito un fontanero urgente"* — y la consulta real pasaba a
+ser *"clases de inglés. necesito un fontanero urgente"*, que el analizador
+clasifica como **clases**. Pedias un fontanero y te daban un profesor.
+
+**Tres capas de cura:**
+
+1. **Visible**: el campo pasa a decir *"Dime qué he entendido mal…"*.
+2. **Con salida**: chip `Era otra cosa`, que apaga el modo.
+3. **Sin secuestro**: una enmienda *afina* ("mejor por la tarde" → `otro`,
+   se fusiona); una **categoria distinta** es una pregunta nueva y se deja
+   intacta. Comprobado en navegador con `cambiaDeOficio: true`.
+
+**Nota de metodo**: al verificar la capa 3 la pantalla seguia dando un
+profesor de ingles y estuve a punto de dar la cura por rota. La
+instrumentacion demostro que la guarda SI funcionaba — lo que fallaba era
+el interceptor del `si`, un fallo distinto y mayor escondido detras. Sin
+instrumentar habria "arreglado" lo que ya estaba bien.
+
+---
+
 ## Deudas heredadas (censadas antes de este roadmap)
 
 - **[BLOQUEO DE LANZAMIENTO]** RLS de Supabase: el rol anónimo puede

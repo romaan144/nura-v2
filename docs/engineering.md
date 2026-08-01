@@ -167,6 +167,22 @@ ambos mundos, el navegador restauraba la posicion anterior.
 con scroll antes de tocar una sola linea de CSS.
 
 
+### `includes` sobre lenguaje natural es una trampa (2026-08-01)
+
+`t.includes('si')` se disparaba con *necesito*, *psicologa*,
+*fisioterapeuta*, *sesion*. Medido: **el 21% de las consultas doradas**.
+
+**Regla**: para detectar intencion en castellano, nunca subcadena. Palabra
+completa con limite de letra Unicode:
+
+```js
+new RegExp(`(^|[^\\p{L}])${palabra}($|[^\\p{L}])`, 'iu')
+```
+
+`\\b` no basta: falla con acentos y con la ñ. Y añadir una condicion de
+**longitud** cuando la intencion implica brevedad — un asentimiento no
+ocupa doce palabras.
+
 ### Una puerta debe distinguir "bien" de "no lo se" (2026-08-01)
 
 La sonda de RLS dio verde sin llegar a Supabase: el 403 venia del proxy de

@@ -328,6 +328,11 @@ export default function Home() {
     try { return sessionStorage.getItem('nura_for_whom') || '' } catch { return '' }
   })
   const correctionRef = useRef(null)
+  // La correccion era un modo INVISIBLE: el usuario escribia en un campo de
+  // aspecto normal con una consulta anterior pegada por delante sin saberlo.
+  // Reproducido: pidio "necesito un fontanero urgente" y Nura le ofrecio a
+  // James, profesor de ingles. Un modo oculto es un camino de ida.
+  const [corrigiendo, setCorrigiendo] = useState(false)
   const searchSeqRef = useRef(0)  // El Contrato: solo la búsqueda activa toca la interfaz
   // El filtro Online pisaba `lastMatches` con el subconjunto: no habia
   // vuelta atras. Un filtro de un solo sentido es la misma trampa que
@@ -559,9 +564,16 @@ export default function Home() {
 
   function startCorrection(originalQuery) {
     correctionRef.current = originalQuery || window.__nuraLastQuery || ''
+    setCorrigiendo(true)
     setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-      lines: ['Vale — dime qué he entendido mal y ajusto la búsqueda.'] }])
+      lines: ['Vale — dime qué he entendido mal y ajusto la búsqueda.'],
+      chips: ['Era otra cosa'] }])
     setTimeout(() => inputRef.current?.focus?.(), 200)
+  }
+
+  function cancelCorrection() {
+    correctionRef.current = null
+    setCorrigiendo(false)
   }
 
   // ── Una sola autoridad del estado "pensando" ──
@@ -619,8 +631,15 @@ export default function Home() {
 
     // ── Comprensión Visible: si hay corrección pendiente, combinar con la consulta original ──
     if (correctionRef.current) {
-      msg = `${correctionRef.current}. ${msg}`
+      const previo = correctionRef.current
       correctionRef.current = null
+      setCorrigiendo(false)
+      // Una enmienda AFINA lo anterior ("mejor por la tarde"); una categoria
+      // distinta es una pregunta nueva y pegarle la anterior la secuestra.
+      const [aNuevo, aPrevio] = await Promise.all([analyzeNeed(msg), analyzeNeed(previo)])
+      const cambiaDeOficio = aNuevo?.categoria && aNuevo.categoria !== 'otro'
+        && aPrevio?.categoria && aNuevo.categoria !== aPrevio.categoria
+      if (!cambiaDeOficio) msg = `${previo}. ${msg}`
     }
 
     // ── La Pregunta — interceptar selección ─────────────────────────
@@ -726,9 +745,20 @@ export default function Home() {
 
     // Context-aware responses
     const t = msg.toLowerCase()
+    // PALABRA COMPLETA, no subcadena. `t.includes('si')` se disparaba con
+    // "nece-si-to", "p-si-cologa", "fi-si-oterapeuta", "se-si-on"; 'ese' con
+    // "m-ese-s"; 'bien' con "tam-bien". MEDIDO sobre las consultas doradas:
+    // el interceptor se tragaba el 21% — incluidas "Necesito un cerrajero
+    // urgente" y "mi madre tiene alzheimer y vive sola". Nura respondia
+    // "es una muy buena eleccion" a quien acababa de pedir otra cosa.
+    const palabra = (...ps) => ps.some(pp =>
+      new RegExp(`(^|[^\\p{L}])${pp}($|[^\\p{L}])`, 'iu').test(t))
+    // Y un asentimiento es CORTO. Una peticion de doce palabras no es un "si".
+    const esBreve = msg.trim().split(/\s+/).length <= 6
+
     if (lastMatches?.length > 0) {
       // User confirms — guide to profile
-      if (t.includes('sí') || t.includes('si') || t.includes('me convence') || t.includes('perfecto') || t.includes('ese') || t.includes('bien')) {
+      if (esBreve && (palabra('sí','si','vale','ok','ese','esa','bien','genial','perfecto') || t.includes('me convence'))) {
         const topMatch = lastMatches?.[0]
         const firstName = topMatch?.name?.split(' ')?.[0] || ''
         setTimeout(() => {
@@ -747,9 +777,9 @@ export default function Home() {
         return
       }
       // Smart refinement based on chip
-      const isRefinement = /\bno\b/.test(t) || t.includes('otro') || t.includes('diferente') ||
+      const isRefinement = /\bno\b/.test(t) || palabra('otro','otra','otros','diferente') ||
         t.includes('más barato') || t.includes('más cerca') || t.includes('mejor valorado') ||
-        t.includes('ajusta') || t.includes('filtra') || t.includes('urgencias')
+        palabra('ajusta','filtra','urgencias')
 
       if (isRefinement && lastMatches?.length > 0) {
         let refined = [...lastMatches]
@@ -1105,6 +1135,7 @@ export default function Home() {
                 searchSeqRef.current++
                 stopThinking()
                 correctionRef.current = null
+                setCorrigiendo(false)
                 setMessages([])
                 setLastMatches([])
                 setTimeout(() => setMessages([{ id: 1, from: 'nura', lines: getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas) }]), 100)
@@ -1204,6 +1235,10 @@ export default function Home() {
                     // "X es el mas economico" sobre el unico que hay. Los
                     // chips de orden solo aparecen si hay algo que comparar.
                     const ordenar = (n, propios) => n >= 2 ? propios : []
+                    if (chip === 'Era otra cosa') { haptic('light'); cancelCorrection()
+                      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+                        lines: ['Sin problema. Cuéntame qué necesitas.'] }])
+                      setTimeout(() => inputRef.current?.focus?.(), 200); return }
                     if (chip === 'Ver todos') {
                       const todos = todosRef.current || []
                       if (!todos.length) return
@@ -1288,7 +1323,7 @@ export default function Home() {
 
         <div className={styles.inputCapsule}>
           <input ref={inputRef} className={styles.input} aria-label="Cuéntale a Nüra qué necesitas"
-            placeholder={forWhom === 'familia' ? 'Cuéntame qué le pasa...' : forWhom === 'hogar' ? 'Cuéntame qué necesita tu hogar...' : (searchHistory?.length ? 'Cuéntame qué necesitas...' : 'Cuéntale a Nüra qué necesitas…')}
+            placeholder={corrigiendo ? 'Dime qué he entendido mal…' : forWhom === 'familia' ? 'Cuéntame qué le pasa...' : forWhom === 'hogar' ? 'Cuéntame qué necesita tu hogar...' : (searchHistory?.length ? 'Cuéntame qué necesitas...' : 'Cuéntale a Nüra qué necesitas…')}
             value={input} onChange={e => setInput(e.target.value)}
             onKeyDown={handleKey} readOnly={false} />
           {input.trim()
