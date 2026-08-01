@@ -1323,6 +1323,58 @@ decision del fundador.
 
 ---
 
+## El bloqueo de lanzamiento deja de ser un aviso · **Terminada** · 2026-08-01
+
+Sello `2026.07.06-u`. `scripts/preflight.mjs`.
+
+El unico punto marcado **[BLOQUEO DE LANZAMIENTO]** llevaba desde su censo
+siendo un parrafo en prosa: *"REVISION MANUAL OBLIGATORIA"*. Un aviso se
+lee y se sigue adelante. Y ademas se quedaba corto.
+
+**La exposicion completa, auditada:**
+
+| via | quien | que puede hacer |
+|---|---|---|
+| `PATCH /helpers` (`claudeApi.js` ×2) | cualquiera con la clave publica | reescribir `ai_data` y `chat_log` de cualquier profesional |
+| `POST /helpers` (`RegisterHelper.jsx`) | idem | dar de alta **profesionales falsos** |
+| `GET /helpers?select=*` (×3) | idem | leerse `chat_log` — **las conversaciones de los usuarios** |
+
+Lo tercero no estaba censado y es lo que mas me preocupa: `normalize()`
+**nunca lee `chat_log`**, pero `select=*` se lo descarga igual al navegador
+de cada visitante. En Nura esas frases no son metadatos — son *"mi madre
+vive sola"*, *"mi hijo no pronuncia la R"*.
+
+**Curado:** el aviso pasa a **sonda real** en la quinta puerta. Inofensiva:
+`PATCH` sobre `id=-1`, que no existe. Si el RLS bloquea, 401/403; si esta
+abierto, 204 tocando cero filas. Nunca modifica un dato. Y el fallo trae
+**el SQL listo para pegar**, no una tarea de investigacion.
+
+### El falso verde, que casi se queda dentro
+
+La primera version dio **`✓ RLS: el rol anonimo NO puede escribir`**. Mentira:
+el 403 venia del proxy de egress de la maquina
+(`x-deny-reason: host_not_allowed`), y la peticion **no llego a salir**.
+
+Un verde que no significa nada es peor que no tener sonda: crea confianza
+falsa justo en el unico punto que bloquea el lanzamiento. Ahora la sonda
+exige **prueba positiva de que la respuesta viene de Supabase** (sin
+cabecera de denegacion del proxy, y cuerpo con forma de error de PostgREST).
+Si no puede probarlo dice **SIN COMPROBAR**, con el motivo:
+
+```
+~ RLS: SIN COMPROBAR — la respuesta (HTTP 403) no viene de Supabase.
+   Motivo probable: host_not_allowed.
+```
+
+Añadido tambien un aviso de `select=*` y una nota manual sobre el INSERT,
+que la sonda no puede probar sin crear una fila.
+
+**Leccion**: una puerta debe distinguir *"he comprobado y esta bien"* de
+*"no he podido comprobar"*. Colapsar las dos en un tick verde es el peor
+fallo posible en un gate.
+
+---
+
 ## Deudas heredadas (censadas antes de este roadmap)
 
 - **[BLOQUEO DE LANZAMIENTO]** RLS de Supabase: el rol anónimo puede

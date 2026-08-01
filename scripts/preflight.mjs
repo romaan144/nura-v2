@@ -61,12 +61,86 @@ if (conVh.length) {
 } else bien('sin `vh` (siempre dvh)')
 
 // ── 3. El aviso que ninguna puerta automatica puede comprobar ──
-console.log('\n⚠ REVISION MANUAL OBLIGATORIA antes de abrir:')
-console.log('   Las politicas RLS de Supabase. src/utils/claudeApi.js hace')
-console.log('   PATCH sobre la tabla `helpers` con la clave ANONIMA: si el')
-console.log('   rol anon tiene escritura, cualquiera puede reescribir los')
-console.log('   datos de tus profesionales. Mover la clave a .env NO')
-console.log('   protege nada — una anon key viaja al navegador siempre.')
+// ── 5. El RLS, COMPROBADO (no advertido) ──
+// Un aviso en prosa se lee y se sigue adelante. Esto lo intenta de verdad.
+// La sonda es inofensiva: PATCH sobre id=-1, que no existe. Si el RLS
+// bloquea al rol anon devuelve 401/403; si permite escribir devuelve 204
+// habiendo tocado cero filas. Nunca modifica un dato real.
+{
+  const env = readFileSync('src/utils/supabase.js', 'utf8')
+  const url = (env.match(/SUPABASE_URL\s*=\s*['"`]([^'"`]+)/) || [])[1]
+  const key = (env.match(/SUPABASE_(?:ANON_)?KEY\s*=\s*['"`]([^'"`]+)/) || [])[1]
+  if (!url || !key) {
+    console.log('~ RLS: no localizo URL/clave en supabase.js — comprobar a mano')
+  } else {
+    try {
+      const r = await fetch(`${url}/rest/v1/helpers?id=eq.-1`, {
+        method: 'PATCH',
+        headers: { apikey: key, Authorization: `Bearer ${key}`,
+          'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify({ ai_analyzed_at: new Date().toISOString() }),
+        signal: AbortSignal.timeout(8000),
+      })
+      // NO fiarse del codigo a secas. Un 403 puede venir de un proxy, una
+      // VPN o un cortafuegos que ni llego a Supabase — y entonces la puerta
+      // daria VERDE sin haber comprobado nada. Un verde que no significa
+      // nada es peor que no tener sonda: crea confianza falsa justo en el
+      // unico punto marcado como bloqueo de lanzamiento.
+      // (Comprobado: en un entorno con egress restringido esta sonda daba
+      //  "RLS correcto" cuando la peticion ni salia de la maquina.)
+      const cuerpo = await r.text()
+      const deSupabase = !r.headers.get('x-deny-reason') && (() => {
+        if (r.status === 204 || cuerpo === '') return true
+        try { const j = JSON.parse(cuerpo); return !!(j && (j.message || j.code || j.hint || j.details)) }
+        catch { return false }
+      })()
+      if (!deSupabase) {
+        console.log(`~ RLS: SIN COMPROBAR — la respuesta (HTTP ${r.status}) no viene de Supabase.`)
+        console.log(`   Motivo probable: ${r.headers.get('x-deny-reason') || 'proxy, VPN o cortafuegos'}.`)
+        console.log('   Repetir el preflight desde una red con salida a Supabase.')
+      }
+      else if (r.status === 401 || r.status === 403) bien('RLS: el rol anonimo NO puede escribir en `helpers`')
+      else if (r.ok || r.status === 204) {
+        mal(`RLS ABIERTO — el rol anonimo puede ESCRIBIR en \`helpers\` (HTTP ${r.status}).`)
+        console.log('   Cualquiera con la clave publica puede reescribir a tus')
+        console.log('   profesionales. Mover la clave a .env NO protege nada:')
+        console.log('   una anon key viaja al navegador siempre.')
+        console.log('   → Politicas minimas, en el editor SQL de Supabase:')
+        console.log('')
+        console.log('     alter table helpers enable row level security;')
+        console.log('     drop policy if exists helpers_anon_read on helpers;')
+        console.log('     create policy helpers_anon_read on helpers')
+        console.log('       for select to anon using (true);')
+        console.log('     -- sin policy de insert/update/delete para anon:')
+        console.log('     -- lo que no se concede, queda denegado.')
+        console.log('')
+        console.log('   Y las escrituras que hoy hace el cliente (ai_data,')
+        console.log('   chat_log en claudeApi.js; el alta en RegisterHelper.jsx)')
+        console.log('   deben pasar a una Edge Function con la service key.')
+      } else console.log(`~ RLS: respuesta inesperada (HTTP ${r.status}) — comprobar a mano`)
+    } catch (e) {
+      console.log(`~ RLS: no he podido comprobarlo (${String(e.message).slice(0, 60)}) — comprobar a mano`)
+    }
+  }
+}
+
+// ── 6. Lo que el cliente se descarga de mas ──
+{
+  const sb = readFileSync('src/utils/supabase.js', 'utf8')
+  const usaChatLog = /chat_log/.test(sb.replace(/\/\/.*$/gm, ''))
+  if (/select=\*/.test(sb) && !usaChatLog) {
+    console.log('~ `select=*` sobre `helpers`: el cliente se descarga tambien')
+    console.log('   `chat_log` — las conversaciones de los usuarios — y NO lo usa.')
+    console.log('   En Nura esas frases son intimas ("mi madre vive sola").')
+    console.log('   → acotar el select a las columnas que normalize() lee.')
+  }
+}
+
+console.log('\n⚠ REVISION MANUAL que la sonda no cubre:')
+console.log('   El INSERT. RegisterHelper.jsx hace POST a `helpers` con la')
+console.log('   clave anonima: sin policy de insert, cualquiera puede dar de')
+console.log('   alta profesionales falsos. Comprobarlo a mano tras aplicar')
+console.log('   las politicas de arriba.')
 
 console.log(fallos === 0
   ? '\n✅ PREFLIGHT VERDE — listo para produccion (tras revisar el RLS)'

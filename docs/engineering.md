@@ -167,6 +167,18 @@ ambos mundos, el navegador restauraba la posicion anterior.
 con scroll antes de tocar una sola linea de CSS.
 
 
+### Una puerta debe distinguir "bien" de "no lo se" (2026-08-01)
+
+La sonda de RLS dio verde sin llegar a Supabase: el 403 venia del proxy de
+egress de la maquina, no del servidor. Un tick verde que en realidad
+significa "no he podido comprobarlo" es peor que no tener sonda.
+
+**Regla**: toda comprobacion contra un servicio externo necesita **prueba
+positiva de haber hablado con ese servicio** (forma del cuerpo, cabecera
+caracteristica, ausencia de cabecera de denegacion del proxy). Sin esa
+prueba, el resultado es TERCER ESTADO: *sin comprobar*, con el motivo — ni
+pasa ni falla.
+
 ### Un array disperso es invisible hasta que usas find (2026-08-01)
 
 Una coma suelta en `helpers.js` dejo un agujero en el indice 12.
