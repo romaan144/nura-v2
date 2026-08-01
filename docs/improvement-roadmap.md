@@ -1611,6 +1611,69 @@ Era el flujo menos recorrido de la app y el que decide la oferta.
 
 ---
 
+## Las conversaciones que nadie tuvo · **Terminada** · 2026-08-01
+
+Sello `2026.07.06-z`. `Chats.jsx`, `Siguiendo.jsx`, `MyServices.jsx`,
+`scripts/preflight.mjs`.
+
+Recorrido el dia uno del profesional: dada de alta, cero actividad.
+
+**`/profile` y `/my-services` aguantan**: *"Tu perfil está al 86%"*, *"TU
+SEMANA — Semana tranquila"*, *"Aún no has contratado nada"*. Los arreglos
+de los sellos `-o` y `-y` se sostienen.
+
+**Pero `/chats` mostraba CINCO conversaciones que Marta nunca tuvo**, con
+nombres y citas concretas:
+
+> *"Elena Fernández Ros · 12m · Mañana a las 9:30 en su domicilio entonces.
+> Le mando la ubicación por aquí."*
+
+Y `/siguiendo`, dos profesionales que nunca siguio.
+
+**Lo grave no es que existan** —son datos de demostracion legitimos— sino
+que **no miraban `DEMO_MODE`**. Apagar `DEFAULT_DEMO`, que es justo lo que
+la quinta puerta exige antes de abrir, **no las quitaba**. Habrian salido
+en produccion el primer dia.
+
+Y solo caben dos lecturas para quien abre la app y ve eso, las dos
+demoledoras para un producto cuya tesis es la confianza: o la app le esta
+enseñando **los chats de otra persona**, o **ha reservado algo sin
+enterarse**.
+
+**Cura**: las tres atadas a `DEMO_MODE`. Verificado en las dos ramas — en
+produccion salen los estados vacios reales, en demo sigue todo rico y la
+demostracion no pierde nada.
+
+**Detalle revelador**: el estado vacio de Siguiendo **no se habia podido
+ver nunca**. Por eso su texto roto (*"guardarlo aquílo aquí"*, corregido en
+el sello `-t`) sobrevivio tanto tiempo: nadie podia leerlo.
+
+`MyServices` servia el escaparate solo a invitados —defendible como
+escaparate— pero presentado como *"Mis servicios"* con sello *Confirmado*
+es una invencion. En demo se conserva; en produccion el invitado ve la
+verdad.
+
+### Guardia permanente en la quinta puerta
+
+Cualquier pantalla **enrutada** con constantes `DEMO_*` debe importar
+`DEMO_MODE`. Limitado a las enrutadas a proposito: `Favorites.jsx` es
+huerfana y una puerta siempre roja enseña a ignorarse — la misma leccion
+que el sello de build.
+
+### Nota de metodo: el cuarto instrumento roto del dia
+
+El primer barrido dijo que `/profile` mostraba **el muro de invitado** a una
+profesional. Falso: use `waitUntil:'domcontentloaded'`, asi que escribia en
+`localStorage` **antes de que la app arrancara**, y el efecto de
+`UserContext` (`useEffect(..., [user])`, que corre tambien al montar) lo
+sobrescribia. Barri toda la app como invitada creyendo ser profesional.
+
+Cuarta vez en la jornada que el instrumento miente y no el codigo. La regla
+del sello `-t` se confirma: **una medicion que acusa a todo a la vez suele
+estar acusando al medidor**.
+
+---
+
 ## Deudas heredadas (censadas antes de este roadmap)
 
 - **[BLOQUEO DE LANZAMIENTO]** RLS de Supabase: el rol anónimo puede

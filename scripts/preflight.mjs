@@ -136,6 +136,31 @@ if (conVh.length) {
   }
 }
 
+// ── 7. Contenido de demostracion sin puerta ──
+// Chats servia CINCO conversaciones inventadas a todo el mundo y Siguiendo
+// dos seguidos falsos, sin mirar DEMO_MODE. Apagar DEFAULT_DEMO —lo que
+// esta misma puerta pide— no las quitaba. Quien abriera la app el primer
+// dia veia citas concretas con nombres que nunca habia contactado.
+{
+  const sinPuerta = []
+  const rutas = readFileSync('src/App.jsx', 'utf8')
+  for (const f of archivos) {
+    if (!/src\/(pages|components)\//.test(f)) continue
+    // Solo lo que tiene ruta: una pantalla huerfana no llega a nadie, y una
+    // puerta siempre roja enseña a ignorarla.
+    const nombre = f.split('/').pop().replace(/\.jsx?$/, '')
+    if (!new RegExp(`\\b${nombre}\\b`).test(rutas)) continue
+    const txt = readFileSync(f, 'utf8')
+    if (!/const\s+DEMO_[A-Z_]+\s*=/.test(txt)) continue
+    if (!/\bDEMO_MODE\b/.test(txt)) sinPuerta.push(f)
+  }
+  if (sinPuerta.length) {
+    mal(`${sinPuerta.length} pantalla(s) con datos de demostracion SIN puerta DEMO_MODE:`)
+    sinPuerta.forEach(f => console.log(`   · ${f}`))
+    console.log('   Apagar DEFAULT_DEMO no los quita: se sirven siempre.')
+  } else bien('todo el contenido de demostracion pasa por DEMO_MODE')
+}
+
 console.log('\n⚠ REVISION MANUAL que la sonda no cubre:')
 console.log('   El INSERT. RegisterHelper.jsx hace POST a `helpers` con la')
 console.log('   clave anonima: sin policy de insert, cualquiera puede dar de')

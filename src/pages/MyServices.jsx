@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/ui'
 import { Calendar, CheckCircle, ChevronRight, Star, ClipboardList, MessageCircle, RotateCcw } from 'lucide-react'
 import { useUser } from '../context/UserContext'
+import { DEMO_MODE } from '../config'
 import PageHeader from '../components/PageHeader'
 import styles from './MyServices.module.css'
 
@@ -78,7 +79,10 @@ export default function MyServices() {
   // Merge real + demo (real take priority by helperId)
   const realIds = new Set((services||[]).map(s => String(s.helperId)))
   // Show demo services only to guests — authenticated users see only real data
-  const demosToShow = !user ? DEMO_SERVICES.filter(d => !realIds.has(String(d.helperId))) : []
+  // Al invitado se le enseñaba un escaparate con citas "Confirmado" que nunca
+  // habia pedido. Como escaparate se entiende; como "Mis servicios", es una
+  // invencion. En demo se conserva; en produccion el invitado ve la verdad.
+  const demosToShow = (DEMO_MODE && !user) ? DEMO_SERVICES.filter(d => !realIds.has(String(d.helperId))) : []
   const allServices = [...(services||[]), ...demosToShow]
 
   const filtered = allServices.filter(s => {

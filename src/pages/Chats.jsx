@@ -7,6 +7,7 @@ import { Search, MessageCircle } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import { HELPERS } from '../data/helpers'
 import styles from './Chats.module.css'
+import { DEMO_MODE } from '../config'
 import { Badge } from '../components/ui'
 
 // ── REALISTIC DEMO CONVERSATIONS ─────────────────────────────────────────
@@ -135,9 +136,15 @@ export default function Chats() {
       || HELPERS.filter(Boolean).find(h => String(h.id) === String(id))
   }
 
-  // Merge: real chats take priority, demo fills the rest
+  // Merge: real chats take priority, demo fills the rest.
+  // ATADO A DEMO_MODE. Sin esta puerta, cualquiera abria Chats el primer dia
+  // y encontraba CINCO conversaciones que nunca tuvo, con nombres y citas
+  // concretas ("mañana a las 9:30 en su domicilio"). Solo caben dos lecturas
+  // y las dos hunden la confianza: o la app le enseña los chats de otra
+  // persona, o ha reservado algo sin enterarse. Y apagar DEFAULT_DEMO —
+  // que es lo que el preflight pide antes de abrir — NO las quitaba.
   const realIds = new Set((chats||[]).map(c => String(c.helperId)))
-  const demosToShow = DEMO_CHATS.filter(d => !realIds.has(String(d.helperId)))
+  const demosToShow = DEMO_MODE ? DEMO_CHATS.filter(d => !realIds.has(String(d.helperId))) : []
   const allChats = [
     ...(chats||[]).filter(Boolean),
     ...demosToShow,
