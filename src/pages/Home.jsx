@@ -329,6 +329,10 @@ export default function Home() {
   })
   const correctionRef = useRef(null)
   const searchSeqRef = useRef(0)  // El Contrato: solo la búsqueda activa toca la interfaz
+  // El filtro Online pisaba `lastMatches` con el subconjunto: no habia
+  // vuelta atras. Un filtro de un solo sentido es la misma trampa que
+  // retiramos en La Comprension Visible.
+  const todosRef = useRef([])
   const [loading, setLoading] = useState(false)
   const [listening, setListening] = useState(false)
   const [showGate, setShowGate] = useState(false)
@@ -890,6 +894,7 @@ export default function Home() {
       addSearch?.(msg, analysis?.categoria)
       window.__nuraLastQuery = msg
       try { sessionStorage.setItem('nura_last_query', msg) } catch {}
+      todosRef.current = matches
       setLastMatches(matches)
       // Schedule reminder if user doesn't contact
       scheduleLocalNotification(
@@ -1195,6 +1200,19 @@ export default function Home() {
                     // mal". Los otros chips reordenan lo mismo; este admite
                     // que lo mismo no sirve.
                     if (chip === 'No es lo que buscaba') { haptic('light'); startCorrection(window.__nuraLastQuery); return }
+                    // Ordenar una lista de UNO es teatro: la respuesta seria
+                    // "X es el mas economico" sobre el unico que hay. Los
+                    // chips de orden solo aparecen si hay algo que comparar.
+                    const ordenar = (n, propios) => n >= 2 ? propios : []
+                    if (chip === 'Ver todos') {
+                      const todos = todosRef.current || []
+                      if (!todos.length) return
+                      haptic('light')
+                      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+                        lines: ['Aquí los tienes todos otra vez.'],
+                        results: todos, refineChips: [...ordenar(todos.length, ['Más barato','Más cerca','Mejor valorado']), 'No es lo que buscaba'] }])
+                      setLastMatches(todos); return
+                    }
                     if (chip === 'Más barato' && lastMatches?.length > 0) {
                       const sorted = [...lastMatches].sort((a,b) => {
                         const pa = parseFloat((a.price||'').replace(/[^0-9.]/g,'')) || 9999
@@ -1224,18 +1242,22 @@ export default function Home() {
                       const online = lastMatches.filter(h => h.online)
                       if (online.length > 0) {
                         setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-                          lines: [`${online.length} de ellos ofrecen sesiones online.`],
-                          results: online, refineChips: ['Más barato','Más cerca','Mejor valorado'] }])
+                          lines: [online.length === 1
+                            ? 'Solo uno de ellos ofrece sesiones online.'
+                            : `${online.length} de ellos ofrecen sesiones online.`],
+                          results: online,
+                          refineChips: [...ordenar(online.length, ['Más barato','Más cerca','Mejor valorado']), 'Ver todos'] }])
                         setLastMatches(online)
                       } else {
                         setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-                          lines: ['Ninguno de estos profesionales ofrece sesiones online.'] }])
+                          lines: ['Ninguno de estos profesionales ofrece sesiones online.'],
+                          refineChips: ['No es lo que buscaba'] }])
                       }
                       return
                     }
                     handleSend(chip)
                   }}>
-                  {chip === 'Más cerca' ? '📍' : chip === 'Más barato' ? '💰' : chip === 'Mejor valorado' ? '★' : chip === 'Online' ? '💻' : chip === 'No es lo que buscaba' ? '↺' : '✦'} {chip}
+                  {chip === 'Más cerca' ? '📍' : chip === 'Más barato' ? '💰' : chip === 'Mejor valorado' ? '★' : chip === 'Online' ? '💻' : chip === 'No es lo que buscaba' ? '↺' : chip === 'Ver todos' ? '👥' : '✦'} {chip}
                 </button>
               ))}
             </div>

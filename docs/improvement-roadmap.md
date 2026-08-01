@@ -1375,6 +1375,54 @@ fallo posible en un gate.
 
 ---
 
+## El filtro Online, de ida y vuelta · **Terminada** · 2026-08-01
+
+Sello `2026.07.06-v`. `src/pages/Home.jsx`, `src/App.jsx`.
+
+Deuda que yo mismo habia anotado ("ordenar una lista de uno es teatro").
+Al abrirla, la rama tenia **cuatro** fallos, no uno:
+
+1. **Sin vuelta atras.** `setLastMatches(online)` pisaba el conjunto con el
+   subconjunto: filtrar por Online era irreversible. Es la misma trampa de
+   un solo sentido que retiramos en La Comprension Visible.
+2. **Concordancia rota.** Con un resultado decia *"1 de ellos **ofrecen**
+   sesiones online"*. Tercer error de castellano de la jornada, misma
+   familia que *"profesionals"* y *"hace 1 horas"*.
+3. **Teatro de ordenacion.** Con uno o cero, los chips seguian ofreciendo
+   "Más barato / Más cerca / Mejor valorado". Ordenar una lista de uno
+   responde *"X es el mas economico"* sobre el unico que hay.
+4. **Callejon sin salida.** *"Ninguno de estos profesionales ofrece sesiones
+   online."* se emitia **sin chips**: fin del camino.
+
+**Curado:** un `todosRef` guarda el conjunto sin filtrar; nace el chip
+**`👥 Ver todos`**; los chips de orden solo aparecen con **dos o mas**
+(`ordenar(n, propios)`); y el vacio recibe salida (`No es lo que buscaba`).
+
+**Verificado en navegador, ida y vuelta completa:**
+
+```
+buscar → ordenar → Online   → "4 de ellos ofrecen sesiones online."  + Ver todos
+                 → Ver todos → "Aquí los tienes todos otra vez."
+```
+
+### Y el sello de build deja de bloquear el lanzamiento
+
+La quinta puerta marcaba `console.log('[Nüra] build', NURA_BUILD)` en
+`App.jsx` como resto de desarrollo. **No lo es**: el sello es como se sabe
+que hay desplegado, y no lleva dato de nadie. La puerta ya tenia su via
+declarada (`preflight-ok` en la misma linea); al sello nunca se le puso.
+Una puerta que grita por algo intencionado enseña a ignorarla.
+
+Preflight queda con **un solo bloqueo, y es el correcto**: `DEMO_MODE`,
+que debe seguir rojo hasta que el fundador lo apague.
+
+**Anotado, sin tocar**: los chips de turnos anteriores siguen activos en el
+historial (cada mensaje pinta su propia fila). Es coherente con un chat,
+pero se acumulan. Tocar eso es decidir si el pasado de la conversacion
+sigue siendo interactivo — decision de diseño, no de arreglo.
+
+---
+
 ## Deudas heredadas (censadas antes de este roadmap)
 
 - **[BLOQUEO DE LANZAMIENTO]** RLS de Supabase: el rol anónimo puede
