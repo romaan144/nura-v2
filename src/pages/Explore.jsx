@@ -17,7 +17,7 @@ import { LiveDot, EmptyState, Skeleton } from '../components/ui'
 const ACTIVITY_SIGNALS = [
   () => `respondió a un mensaje hace ${Math.floor(Math.random()*50)+5} minutos`,
   () => `completó una sesión esta mañana`,
-  () => `aceptó una consulta hace ${Math.floor(Math.random()*3)+1} hora${Math.floor(Math.random()*3)+1 > 1 ? 's' : ''}`,
+  () => { const h = Math.floor(Math.random()*3)+1; return `aceptó una consulta hace ${h} ${h === 1 ? 'hora' : 'horas'}` },
   () => `está disponible ahora mismo`,
   () => `recibió una valoración de 5★ hoy`,
 ]

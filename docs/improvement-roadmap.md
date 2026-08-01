@@ -1283,6 +1283,46 @@ sin consumidores — marcador muerto, inofensivo.
 
 ---
 
+## El español de la propia app · **Terminada** · 2026-08-01
+
+Sello `2026.07.06-t`. `Siguiendo.jsx`, `Explore.jsx`.
+
+Buscando botones mudos aparecieron **tres errores de castellano visibles**
+en producto en español:
+
+1. **`profesionals`** (Siguiendo). `profesional{n !== 1 ? 's' : ''}` —
+   en castellano la palabra acabada en consonante hace plural en **-es**.
+   Con dos seguidos, la pantalla decia *"2 profesionals guardados"*.
+2. **`guardarlo aquílo aquí.`** (Siguiendo, estado vacio). Texto roto de un
+   pegado a medias. `Favorites.jsx` tiene la frase **correcta** — las dos
+   pantallas ya han divergido.
+3. **`hace 1 horas`** (Explore). El numero y su plural salian de **dos
+   tiradas de dado distintas**: `${rand()} hora${rand() > 1 ? 's' : ''}`.
+   Verificado tras la cura: **0 concordancias rotas en 30 recargas**.
+
+Censadas las cuatro pluralizaciones ingenuas del codigo (`? 's' : ''`): las
+de `notifications.js` son correctas (palabras acabadas en vocal).
+
+### Sobre el metodo: tres falsos positivos mios antes de acertar
+
+El detector de botones mudos marco `Para mí | Para alguien de mi familia |
+Para mi hogar o negocio` como muertos en **las cinco pantallas**. Falso:
+Home queda montado detras de cada pantalla con `display:none`, y sus
+botones miden 0×0 — ni clicables ni enfocables. Luego `offsetParent` fallo
+con `position:fixed`, y despues un filtro de longitud (`<40`) descarto
+todos los botones reales de Explorar, cuyas etiquetas son largas.
+
+Tres veces el instrumento estaba mal, no la app. Queda anotado porque el
+patron del dia se repite: **una medicion que acusa a todo a la vez suele
+estar acusando al medidor**.
+
+**Anotado, sin tocar**: `Favorites.jsx` **no esta enrutada** — pantalla
+huerfana que duplica Siguiendo con otro almacen. Ya han divergido (una
+tiene el plural roto, la otra el texto roto). Retirarla o darle puerta es
+decision del fundador.
+
+---
+
 ## Deudas heredadas (censadas antes de este roadmap)
 
 - **[BLOQUEO DE LANZAMIENTO]** RLS de Supabase: el rol anónimo puede

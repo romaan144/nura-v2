@@ -22,13 +22,13 @@ export default function Siguiendo() {
       <PageHeader showBack />
       <div className={styles.content}>
         <h2 className={styles.title} style={{animation:"fadeInUp 0.25s cubic-bezier(0.22, 1, 0.36, 1) forwards"}}>Siguiendo</h2>
-        <p className={styles.sub}>{saved.length} profesional{saved.length !== 1 ? 's' : ''} guardado{saved.length !== 1 ? 's' : ''}</p>
+        <p className={styles.sub}>{saved.length} {saved.length === 1 ? 'profesional guardado' : 'profesionales guardados'}</p>
 
         {saved.length === 0 ? (
           <div className={styles.empty}>
             <div className={styles.emptyIcon}><UserPlus size={48} color='var(--purple-20)' strokeWidth={1.3} fill='var(--purple-05)' /></div>
             <h3 className={styles.emptyTitle}>Aún no sigues a nadie</h3>
-            <p className={styles.emptyDesc}>Cuando encuentres un profesional que te interese, pulsa Seguir para guardarlo aquílo aquí.</p>
+            <p className={styles.emptyDesc}>Cuando encuentres un profesional que te interese, pulsa Seguir para guardarlo aquí.</p>
             <button className={styles.emptyBtn} onClick={() => navigate('/explore')}>
               Explorar profesionales
             </button>
