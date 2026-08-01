@@ -1557,6 +1557,60 @@ comentario JSDoc; se excluyen lineas de comentario.)
 
 ---
 
+## La demo escribia en produccion, y el alta mentia · **Terminada** · 2026-08-01
+
+Sello `2026.07.06-y`. `src/pages/RegisterHelper.jsx`.
+
+Recorriendo el ciclo completo del profesional autodado de alta — de donde
+ya habian salido tres fallos — aparecieron los dos ultimos, encadenados.
+
+### 1 · Cada demo creaba un profesional real y permanente
+
+`saveHelperToSupabase(newAnswers)` se llamaba **sin puerta de `DEMO_MODE`**.
+Cada recorrido del alta escribia una fila en la base de datos viva.
+
+Y lo urgente: **hasta el sello `-x` esas filas eran inofensivas porque
+viajaban sin categoria** y el emparejador nunca las devolvia. Al arreglar
+el `await`, todos esos perfiles de prueba **pasaron a salir en las
+busquedas de gente real**. La cura de ayer activo una contaminacion que
+llevaba dormida desde siempre.
+
+**Cura**: en demo no se escribe. La cuenta local se crea igual, asi que la
+demostracion no pierde nada.
+
+**Accion pendiente del fundador**: revisar la tabla `helpers` y borrar las
+filas de prueba con `ai_data->>'self_registered' = 'true'` que no
+correspondan a profesionales reales.
+
+### 2 · "¡Ya formas parte de la red!" se decia aunque no fuera verdad
+
+El guardado era **fuego y olvido**: no se esperaba el resultado, no se
+miraba `res.ok`, y el mensaje de exito se emitia siempre. Si Supabase
+fallaba, o si el insert era rechazado, la persona quedaba **fuera de la
+red y convencida de estar dentro**.
+
+Esto se agrava justo con el trabajo del sello `-u`: **en cuanto se cierren
+las politicas RLS, el insert anonimo empezara a devolver 401/403** — y sin
+esta cura, cada alta profesional fallaria en silencio dando la enhorabuena.
+
+**Cura**: se espera el guardado, se comprueba `res.ok`, y el mensaje final
+depende del resultado. Verificado en navegador con build de produccion
+(red sin salida a Supabase, que reproduce exactamente un insert
+rechazado):
+
+> *"Perfecto, Marta Ferrer. Tu perfil está guardado aquí, pero todavía no
+> he podido publicarlo para que te encuentren. Lo reintento; si mañana no
+> apareces en las búsquedas, vuelve a entrar y avísame."*
+
+Y en modo demo: **cero escrituras a Supabase**, cuenta local creada.
+
+**Balance del alta profesional**: cinco fallos en un solo flujo — el
+medidor con regla ajena, la cuenta pisada, el `await` que hacia invisible
+a todos, la demo contaminando produccion y el exito que se anunciaba solo.
+Era el flujo menos recorrido de la app y el que decide la oferta.
+
+---
+
 ## Deudas heredadas (censadas antes de este roadmap)
 
 - **[BLOQUEO DE LANZAMIENTO]** RLS de Supabase: el rol anónimo puede

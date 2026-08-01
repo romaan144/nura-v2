@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Send, Mic, MicOff } from 'lucide-react'
 import { useUser } from '../context/UserContext'
+import { DEMO_MODE } from '../config'
 import BottomNav from '../components/BottomNav'
 import styles from './Home.module.css'
 
@@ -39,9 +40,15 @@ async function saveHelperToSupabase(answers) {
       headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
       body: JSON.stringify(payload)
     })
+    if (!res.ok) {
+      // Importante tras cerrar el RLS: si la politica bloquea el insert,
+      // esto devolvera 401/403 y hay que DECIRLO, no dar el alta por buena.
+      console.warn('[Nüra] alta profesional rechazada:', res.status)
+      return null
+    }
     const data = await res.json()
     return data?.[0] || null
-  } catch (e) { console.warn('Supabase save failed:', e); return null }
+  } catch (e) { console.warn('[Nüra] alta profesional no guardada:', e?.message || e); return null }
 }
 
 const QUESTIONS = [
@@ -104,12 +111,18 @@ export default function RegisterHelper() {
     } else {
       setTyping(true)
       setTimeout(async () => {
+        // En demo NO se escribe en produccion. Cada recorrido del alta creaba
+        // un profesional real y permanente en la base de datos viva; desde que
+        // el alta guarda bien la categoria, ademas, esos perfiles de prueba
+        // SALEN en las busquedas de gente real.
+        const publicado = DEMO_MODE ? true : !!(await saveHelperToSupabase(newAnswers))
         setTyping(false); setDone(true)
         setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-          text: `Perfecto, ${newAnswers.name || val}. Tu perfil está listo. ¡Ya formas parte de la red!` }])
-        setTimeout(() => setMessages(prev => [...prev, { id: Date.now()+1, from: 'nura',
+          text: publicado
+            ? `Perfecto, ${newAnswers.name || val}. Tu perfil está listo. ¡Ya formas parte de la red!`
+            : `Perfecto, ${newAnswers.name || val}. Tu perfil está guardado aquí, pero todavía no he podido publicarlo para que te encuentren. Lo reintento; si mañana no apareces en las búsquedas, vuelve a entrar y avísame.` }])
+        if (publicado) setTimeout(() => setMessages(prev => [...prev, { id: Date.now()+1, from: 'nura',
           text: 'Cada valoración que recibas fortalecerá tu reputación. ¡Mucha suerte!' }]), 1800)
-        saveHelperToSupabase(newAnswers)
         login({ ...(JSON.parse(localStorage.getItem('nura_user') || 'null') || {}), name: newAnswers.name || val, isHelper: true, helperProfile: newAnswers, joined: new Date().toISOString() })
         sessionStorage.setItem('nura_helper_registered', '1')
         sessionStorage.setItem('nura_show_profile_preview', '1')
