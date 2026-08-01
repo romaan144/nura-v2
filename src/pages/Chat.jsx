@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Send, Shield, Award, Calendar, Mic, MicOff } from 'lucide-react'
 import { HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
+import { slotsDe, ocupacionesDe, motivoSinHuecos, FRASE_SIN_HUECOS } from '../data/horarios'
 import { getHelperById } from '../utils/supabase'
 import { appendHelperChatLog } from '../utils/claudeApi'
 import { notifyServiceConfirmed } from '../utils/notifications'
@@ -94,6 +95,14 @@ function extractDateFromMessages(messages) {
 // ── Confirm Service Modal ─────────────────────────────────────────────────
 function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) {
   const navigate = useNavigate()
+  // LA AGENDA, tambien aqui. Esta hoja hardcodeaba las mismas ocho horas
+  // para todo el mundo, sin mirar el oficio, la ocupacion ni el reloj:
+  // medido a las 23:33, ofrecia los ocho huecos de HOY — los ocho ya
+  // pasados. Y podia reservar una hora ya cogida, que es justo el fallo
+  // que `ocupacionesDe` nacio para cerrar. La ficha del profesional si lo
+  // hacia bien: dos hojas de reserva con dos logicas era el problema.
+  const { citas, services } = useUser()
+  const ocupadas = ocupacionesDe(citas, services)
   const [date, setDate] = useState(prefillDate || '')
   const [time, setTime] = useState(prefillTime || '')
   const [note, setNote] = useState('')
@@ -185,15 +194,35 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
           <div>
             <SectionLabel tone="muted" style={{margin:'0 0 var(--space-8)',color:'rgba(33,29,51,0.4)'}}>Hora</SectionLabel>
             <div style={{display:'flex',gap:'var(--space-6)',flexWrap:'wrap'}}>
-              {['9:00','10:00','11:00','12:00','16:00','17:00','18:00','19:00'].map(t=>(
-                <button key={t} onClick={()=>setTime(t)} style={{
-                  padding:'7px var(--space-12)',
-                  background:time===t?'var(--purple)':'rgba(33,29,51,0.05)',
-                  color:time===t?'white':'rgba(33,29,51,0.6)',
-                  border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
-                  cursor:'pointer',fontFamily:'inherit',transition:'all 0.15s',
-                }}>{t}</button>
-              ))}
+              {(() => {
+                if (!date) return (
+                  <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:0}}>
+                    Elige antes un día.
+                  </p>
+                )
+                const slots = slotsDe(helper, date, ocupadas)
+                if (!slots.length) return (
+                  <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:0}}>
+                    {FRASE_SIN_HUECOS[motivoSinHuecos(helper, date)]}
+                  </p>
+                )
+                return slots.map(({hora, estado}) => {
+                  const libre = estado === 'libre'
+                  return (
+                    <button key={hora} onClick={()=>{ if(libre) setTime(hora) }} disabled={!libre}
+                      title={libre ? '' : estado === 'ocupada' ? 'Ocupada' : 'Pendiente de confirmar'}
+                      style={{
+                        padding:'7px var(--space-12)',
+                        background:time===hora?'var(--purple)':libre?'rgba(33,29,51,0.05)':'transparent',
+                        color:time===hora?'white':libre?'rgba(33,29,51,0.6)':'rgba(33,29,51,0.28)',
+                        border:libre?'none':'1px dashed rgba(33,29,51,0.18)',
+                        borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
+                        cursor:libre?'pointer':'not-allowed',fontFamily:'inherit',transition:'all 0.15s',
+                        textDecoration:libre?'none':'line-through',
+                      }}>{hora}</button>
+                  )
+                })
+              })()}
             </div>
           </div>
           <textarea value={note} onChange={e=>setNote(e.target.value)}

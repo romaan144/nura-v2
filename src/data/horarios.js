@@ -55,6 +55,28 @@ export function slotsDe(helper, fechaISO, citas = []) {
 }
 
 /**
+ * `slotsDe` devuelve [] por TRES motivos distintos y la interfaz los contaba
+ * todos como "lo tiene completo". Decirle a alguien que una logopeda esta
+ * llena cuando simplemente no trabaja los domingos la hace parecer mas
+ * ocupada de lo que esta, y le esconde al usuario el dato que necesita para
+ * elegir otro dia. Tres motivos, tres frases.
+ */
+export function motivoSinHuecos(helper, fechaISO) {
+  const h = horarioDe(helper)
+  const dia = new Date(fechaISO + 'T12:00:00').getDay()
+  if (!h.dias.includes(dia)) return 'cerrado'
+  const ahora = new Date()
+  if (fechaISO === ahora.toISOString().split('T')[0]) return 'tarde'
+  return 'completo'
+}
+
+export const FRASE_SIN_HUECOS = {
+  cerrado:  'Ese día no trabaja. Prueba con otro.',
+  tarde:    'Por hoy ya ha terminado. Prueba con mañana.',
+  completo: 'Ese día lo tiene completo.',
+}
+
+/**
  * La ocupacion real vive en DOS almacenes: `services` (reservas hechas
  * desde el perfil) y `citas` (acuerdos nacidos en el chat). Mirar solo uno
  * dejaria huecos falsamente libres. Aqui se normalizan a una sola forma.

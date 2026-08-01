@@ -1,6 +1,6 @@
 import PageHeader from '../components/PageHeader'
 import PostCard from '../components/PostCard'
-import { slotsDe, tieneHuecos, ocupacionesDe } from '../data/horarios'
+import { slotsDe, tieneHuecos, ocupacionesDe, motivoSinHuecos, FRASE_SIN_HUECOS } from '../data/horarios'
 import { Button, SectionLabel, Skeleton } from '../components/ui'
 import { getObraDeHelper, obraAPost } from '../data/obraPosts'
 import ErrorBoundary from '../components/ErrorBoundary'
@@ -126,7 +126,7 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
                     const slots = slotsDe(helper, date, ocupadas)
                     if (!slots.length) return (
                       <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:0}}>
-                        Ese día lo tiene completo.
+                        {FRASE_SIN_HUECOS[motivoSinHuecos(helper, date)]}
                       </p>
                     )
                     return slots.map(({hora, estado}) => {

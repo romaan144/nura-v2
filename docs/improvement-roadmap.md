@@ -1674,6 +1674,64 @@ estar acusando al medidor**.
 
 ---
 
+## Dos hojas de reserva con dos logicas · **Terminada** · 2026-08-01
+
+Sello `2026.07.07-a`. `Chat.jsx`, `HelperProfile.jsx`, `horarios.js`.
+
+Conducido el momento que convierte: buscar → escribir → **reservar**. El
+chat funciona (Carlos responde y ofrece los chips siguientes). La reserva,
+no.
+
+### La Agenda no llegaba al chat
+
+`HelperProfile.jsx` usaba `slotsDe(helper, date, ocupadas)` — horario por
+oficio, horas pasadas filtradas, ocupacion de **los dos almacenes**.
+`Chat.jsx:188` **hardcodeaba** las mismas ocho horas para todo el mundo:
+
+```js
+['9:00','10:00','11:00','12:00','16:00','17:00','18:00','19:00']
+```
+
+Y el chat es el camino mas transitado: la conversacion lleva sola al chip
+*"Me interesa, ¿cómo lo reservamos?"*.
+
+**Medido a las 23:35: ofrecia los ocho huecos de HOY. Los ocho ya pasados.**
+Ademas ignoraba el oficio (una logopeda no trabaja como un tecnico) y la
+ocupacion real — se podia reservar una hora ya cogida, que es **exactamente
+el fallo que `ocupacionesDe` nacio para cerrar**. Toda esa obra estaba
+puenteada por la puerta principal.
+
+**Cura**: el chat usa `slotsDe` + `ocupacionesDe`, con el mismo trato visual
+que la ficha (ocupada = tachada, deshabilitada, con su motivo en el title).
+
+### Y "lo tiene completo" era mentira tres veces de cada tres
+
+`slotsDe` devuelve `[]` por **tres motivos distintos** y las dos pantallas
+los contaban todos como *"Ese día lo tiene completo"*:
+
+| motivo | antes | ahora |
+|---|---|---|
+| no trabaja ese dia | *"lo tiene completo"* | **"Ese día no trabaja. Prueba con otro."** |
+| ya ha pasado su jornada | *"lo tiene completo"* | **"Por hoy ya ha terminado. Prueba con mañana."** |
+| lleno de verdad | *"lo tiene completo"* | *"Ese día lo tiene completo."* |
+
+Decirle a alguien que una logopeda esta llena cuando **simplemente no
+trabaja los domingos** la hace parecer mas ocupada de lo que esta y le
+esconde al usuario el dato con el que elegiria otro dia.
+`motivoSinHuecos()` vive en `horarios.js`: una sola verdad para las dos
+pantallas.
+
+**Verificado en navegador:**
+
+```
+logopeda · domingo → "Ese día no trabaja."
+logopeda · lunes   → 16:00 17:00 18:00 19:00   (su tarde real)
+fontanero · domingo→ "Ese día no trabaja."
+hoy 23:35          → ningun hueco pasado
+```
+
+---
+
 ## Deudas heredadas (censadas antes de este roadmap)
 
 - **[BLOQUEO DE LANZAMIENTO]** RLS de Supabase: el rol anónimo puede
