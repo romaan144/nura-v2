@@ -58,9 +58,15 @@ function ResultsBlock({ results }) {
       {alts.length > 0 && (
         <>
           <div style={{fontSize:'var(--text-xs)', color:'var(--ink-secondary)', margin:'var(--space-14) 0 var(--space-8)', lineHeight:1.5}}>
-            Si prefieres comparar, también encajarían:
+            {alts.length === 1 ? 'También encajaría:' : 'Si prefieres comparar, también encajarían:'}
           </div>
-          <div style={{display:'grid', gridTemplateColumns:`repeat(${Math.min(alts.length, 3)}, 1fr)`, gap:'var(--space-8)', alignItems:'start'}}>
+          {/* SISTEMA, NO PANTALLA: la rejilla es SIEMPRE de tres. Una tarjeta
+              pequeña mide lo mismo tenga tres hermanas o ninguna. Con
+              `repeat(alts.length)` la unica alternativa se estiraba a 358px
+              — un avatar de 62px flotando en una tarjeta del triple de
+              ancho — y le pasaba a TODA la categoria de logopedia, que solo
+              tiene dos profesionales. */}
+          <div style={{display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:'var(--space-8)', alignItems:'start'}}>
             {alts.map((a, i) => <HelperCardTall key={a.id || i} helper={a} small />)}
           </div>
         </>
@@ -588,7 +594,12 @@ export default function Home() {
   async function handleSend(text) {
     blurSinSalto()
     let msg = text || input
-    if (!msg.trim() || loading) return
+    if (!msg.trim()) return
+    // Nura es una conversacion, no un formulario. Si hablas otra vez
+    // mientras busca, te escucha a ti y suelta lo anterior: el guardia de
+    // secuencia (sid/alive) ya estaba construido para esto. Antes el
+    // mensaje se tragaba en silencio, con un boton que ni parecia apagado.
+    if (loading) stopThinking()
     haptic('light')
 
     setInput('')
@@ -1082,6 +1093,13 @@ export default function Home() {
             <button
               className={styles.resetBubble}
               onClick={() => {
+                // Reiniciar es cancelar. Sin esto, la busqueda viva seguia
+                // su curso y volcaba sus resultados bajo el saludo nuevo:
+                // el usuario borraba la conversacion y dos segundos despues
+                // le aparecia una recomendacion que ya no habia pedido.
+                searchSeqRef.current++
+                stopThinking()
+                correctionRef.current = null
                 setMessages([])
                 setLastMatches([])
                 setTimeout(() => setMessages([{ id: 1, from: 'nura', lines: getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas) }]), 100)

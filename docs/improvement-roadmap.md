@@ -920,6 +920,67 @@ chips viejos al empezar un turno nuevo ya estaba escrita.
 
 Pruebas: cuatro puertas verdes + medicion en Chromium antes y despues.
 
+### Tarea 2c — La busqueda cancelada · **Terminada** · 2026-08-01
+
+Sello `2026.07.06-n`. `src/pages/Home.jsx`.
+
+**Reproducido en navegador antes de tocar nada**, los dos caminos:
+
+| | antes | ahora |
+|---|---|---|
+| hablar mientras busca | *"tragado en silencio"* — el texto se quedaba en el input y no pasaba nada | el mensaje entra y el input se limpia |
+| reiniciar a mitad | *"Mi recomendacion es Antoni"* aparecia **bajo el saludo nuevo** | saludo limpio, sin restos |
+
+**El guardia de secuencia (`sid`/`alive`) ya existia y funcionaba.** Solo le
+faltaban dos llamadas:
+
+- **El reinicio no cancelaba**: no incrementaba `searchSeqRef` ni liberaba
+  `loading`. El usuario borraba la conversacion y dos segundos despues le
+  llegaba una recomendacion que ya no habia pedido. Ahora reiniciar
+  incrementa la secuencia, para el pensando y limpia `correctionRef` (una
+  enmienda a medias no debe colarse en la conversacion siguiente).
+- **`if (loading) return` se traga el mensaje**: se cambia por
+  `if (loading) stopThinking()`. Nura es una conversacion, no un
+  formulario: si hablas otra vez mientras busca, te escucha a ti y suelta
+  lo anterior. El guardia ya mataba la busqueda vieja; solo sobraba la
+  burbuja huerfana de "Dame un segundo".
+
+---
+
+### Tarea 2d — Los resultados parciales · **Terminada** · 2026-08-01
+
+Sello `2026.07.06-n`. `src/pages/Home.jsx`.
+
+La rejilla de alternativas se dimensionaba con `repeat(alts.length, 1fr)`:
+**el tamaño de una tarjeta dependia de cuantas hermanas tuviera**.
+
+**Medido en Chromium, 390px:**
+
+| caso | columnas | ancho de la tarjeta | avatar |
+|---|---|---|---|
+| logopedia (1 alt) — antes | `358px` | **358px** | 62px |
+| logopedia (1 alt) — ahora | `114px 114px 114px` | **114px** | 62px |
+| fontanero (3 alts) | `114px 114px 114px` | 114px | 62px |
+
+Un avatar de 62px flotando en una tarjeta del triple de ancho, y le pasaba
+a **toda la categoria de logopedia** — la unica con dos profesionales, y
+una de las tres sugerencias que la app ofrece al entrar.
+
+**Cura (NURA DISEÑO: sistema, no pantalla)**: la rejilla es **siempre de
+tres**. Una tarjeta pequeña mide lo mismo tenga tres hermanas o ninguna.
+El caso lleno no cambia: 114px antes y despues.
+
+**Y la concordancia**: con una sola alternativa decia *"tambien
+encajarian"*. Ahora *"Tambien encajaria:"*. Un plural mal puesto es lo que
+delata que detras hay una maquina.
+
+**Deuda anotada**: con **un solo** resultado los chips siguen ofreciendo
+"Mas cerca / Mejor valorado / Mas barato" — ordenar una lista de uno es
+teatro. Hoy no se alcanza buscando (toda categoria tiene >= 2), pero **si
+filtrando por Online**. Candidata propia, no se toca aqui.
+
+---
+
 ### Tarea 2e — La Comprension Visible se retira; La Correccion se enciende · **Terminada** · 2026-08-01
 
 Sello `2026.07.06-m`. Un solo archivo: `src/pages/Home.jsx`.

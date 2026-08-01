@@ -184,6 +184,16 @@ monta las pantallas con SSR pero **no ejecuta una busqueda**, asi que el
 fallo vivia detras de una interaccion. Un render que solo ocurre tras
 interactuar no lo ve ninguna puerta actual.
 
+### El tamaño de un componente no depende de cuantos hermanos tenga (2026-08-01)
+
+`repeat(${alts.length}, 1fr)` parecia razonable y estiraba la unica
+alternativa a 358px — la misma tarjeta que en el caso lleno mide 114px.
+
+**Regla**: una rejilla de tarjetas se declara con el numero de columnas del
+**sistema**, no con el numero de elementos que hoy toque pintar. Si sobran
+huecos, que sobren: hueco blanco se lee como "solo hay estos"; una tarjeta
+estirada se lee como layout roto.
+
 ### Codigo muerto: mirar si falta la puerta, no solo si sobra (2026-08-01)
 
 Dos features muertas juntas. Una sobraba (La Comprension Visible: chips de
