@@ -229,11 +229,19 @@ export default function Chat() {
   // Clear pending chat from sessionStorage once we're here
   try { sessionStorage.removeItem('nura_pending_chat') } catch {}
 
+  // Sin esto el logo latia PARA SIEMPRE: si la busqueda remota no devolvia
+  // a nadie (o fallaba), nada apagaba la espera. `/chat/9999` era una
+  // pantalla de 0 caracteres, sin cabecera ni salida, prometiendo algo que
+  // no iba a llegar. Un callejon sin puerta es peor que un error.
+  const [buscando, setBuscando] = useState(!helper)
   useEffect(() => {
-    if (!helper) {
-      getHelperById(id).then(h => { if (h) setHelper(h) })
-    }
-  }, [id])
+    if (helper) return
+    let vivo = true
+    getHelperById(id)
+      .then(h => { if (!vivo) return; if (h) setHelper(h); setBuscando(false) })
+      .catch(() => { if (vivo) setBuscando(false) })
+    return () => { vivo = false }
+  }, [id])   // eslint-disable-line react-hooks/exhaustive-deps
 
   const [messages, setMessages] = useState(() => {
     const real = getChatHistory(id)
@@ -375,9 +383,26 @@ export default function Chat() {
     }
   }, [messages])
 
-  if (!helper) return (
+  if (!helper && buscando) return (
     <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100dvh',background:'#F7F7F9'}}>
       <img src="/logo-iso.png" alt="" style={{width:'40px',opacity:0.4,animation:'pulse 1.5s infinite'}} />
+    </div>
+  )
+  if (!helper) return (
+    <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
+      height:'100dvh',background:'#F7F7F9',padding:'var(--space-32)',textAlign:'center',gap:'var(--space-12)'}}>
+      <div style={{fontSize:'var(--text-2xl)'}}>🤍</div>
+      <p style={{fontSize:'var(--text-base)',color:'var(--ink)',lineHeight:1.5,margin:0}}>
+        Esta conversación ya no está disponible.
+      </p>
+      <p style={{fontSize:'var(--text-sm)',color:'var(--ink-secondary)',lineHeight:1.5,margin:0}}>
+        Puede que el enlace sea antiguo. Puedo buscarte a alguien ahora mismo.
+      </p>
+      <button onClick={() => navigate('/')} style={{marginTop:'var(--space-8)',padding:'var(--space-12) var(--space-24)',
+        background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',
+        fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
+        Buscar a alguien
+      </button>
     </div>
   )
 

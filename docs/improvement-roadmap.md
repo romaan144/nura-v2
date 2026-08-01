@@ -1243,6 +1243,46 @@ se cae la casa.
 
 ---
 
+## El enlace antiguo tiene puerta · **Terminada** · 2026-08-01
+
+Sello `2026.07.06-s`. `Chat.jsx`, `HelperProfile.jsx`, `IntroLetter.jsx`.
+
+Barrido en frio de **las 23 rutas** (pestaña nueva, sin visitar Home antes
+— el camino del enlace compartido, que es donde vivia la coma). Con el
+detector de error corregido: el anterior no reconocia el texto real del
+error boundary y por poco pierdo el fallo de las 110 fichas.
+
+**Tres pantallas, una misma situacion, tres tratos distintos:**
+
+| ruta | antes |
+|---|---|
+| `/chat/9999` | **logo latiendo para siempre** — 0 caracteres, sin cabecera ni salida |
+| `/helper/9999` | *"Perfil no encontrado."* a secas |
+| `/intro/9999` | *"Perfil no encontrado."* a secas |
+
+El chat era el peor: `getHelperById` no devolvia a nadie y **nada apagaba
+la espera** (el efecto no tenia `.catch` ni apagaba el estado cuando la
+respuesta llegaba vacia). Prometia algo que no iba a llegar. Un callejon
+sin puerta es peor que un error — es la misma queja que cerro la Fase 6
+Tarea 1 con el error de red.
+
+**Cura (NURA DISEÑO: una situacion, una respuesta, en toda la app):** las
+tres dicen lo mismo, con la voz de Nura y **una salida**:
+
+> 🤍 Esta persona ya no está en Nüra.
+> Puede que el enlace sea antiguo. Puedo buscarte a alguien ahora mismo.
+> **[Buscar a alguien]**
+
+El chat conserva el logo latiendo mientras **de verdad** busca, y solo
+entonces pasa al estado honesto.
+
+**Verificado:** barrido completo, **0 de 23 rutas con problema** (antes 3).
+
+**Anotado, sin tocar**: `ALL_PROFILES` en `companies.js` es un array vacio
+sin consumidores — marcador muerto, inofensivo.
+
+---
+
 ## Deudas heredadas (censadas antes de este roadmap)
 
 - **[BLOQUEO DE LANZAMIENTO]** RLS de Supabase: el rol anónimo puede

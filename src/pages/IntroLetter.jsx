@@ -37,7 +37,22 @@ export default function IntroLetter() {
 
   if (!helper) return (
     <div className={styles.page}>
-      <div className={styles.notFound}>Perfil no encontrado.</div>
+      {/* Tercera pantalla con la misma situacion: mismo trato que la ficha
+          y el chat. Una situacion, una respuesta, en toda la app. */}
+      <div className={styles.notFound} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'var(--space-12)'}}>
+        <div style={{fontSize:'var(--text-2xl)'}}>🤍</div>
+        <p style={{fontSize:'var(--text-base)',color:'var(--ink)',lineHeight:1.5,margin:0}}>
+          Esta persona ya no está en Nüra.
+        </p>
+        <p style={{fontSize:'var(--text-sm)',color:'var(--ink-secondary)',lineHeight:1.5,margin:0}}>
+          Puede que el enlace sea antiguo. Puedo buscarte a alguien ahora mismo.
+        </p>
+        <button onClick={() => navigate('/')} style={{marginTop:'var(--space-8)',padding:'var(--space-12) var(--space-24)',
+          background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',
+          fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
+          Buscar a alguien
+        </button>
+      </div>
     </div>
   )
 
