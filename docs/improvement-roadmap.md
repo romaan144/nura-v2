@@ -1074,6 +1074,65 @@ y enviar durante la carga se traga el mensaje en silencio) y **2d** — los
 **resultados parciales** (rejilla de 358px con un solo hijo; chips que
 prometen ordenar una lista de dos).
 
+### FASE 5 · Tarea 2 — La separacion entre usuario y profesional · **Parcial** · 2026-08-01
+
+Sello `2026.07.06-o`. `src/pages/Profile.jsx`, `src/pages/RegisterHelper.jsx`.
+
+**Recorrida el alta profesional entera en navegador**, respondiendo las seis
+preguntas como una logopeda real. Lo que salio:
+
+| quien | preguntas respondidas | su perfil decia |
+|---|---|---|
+| usuario basico | **2** (nombre, telefono) | **67%** |
+| profesional | **6** (nombre, especialidad, formacion, zona, tarifa, diferencial) | **33%** |
+
+**Al que mas daba se le decia que era el que menos tenia.** El medidor
+contaba `[name, phone, avatar]` — la regla de un usuario aplicada a un
+profesional, que no tiene telefono por ese camino y cuyos seis campos no
+se contaban. Y la coletilla decia *"Mejora tus matches"*: un profesional
+no busca match, **el ES el match**.
+
+**Curado:**
+
+- El medidor tiene **regla propia** para el profesional: sus seis campos
+  mas la foto. Medido despues: **33% → 86%**. El usuario basico no se
+  mueve (67%, verificado). Un alta interrumpida marca 29% y **nombra lo
+  que falta**: "tu formacion · tu zona · tu tarifa · que te diferencia".
+- Coletilla propia: *"Mas completo, mas contactos"*.
+- El alta ya no **pisa** la cuenta previa: `login({...cuenta anterior, ...})`.
+  Antes, un usuario con telefono que se daba de alta como profesional
+  **perdia el telefono**.
+- Se anota `joined`. Antes el profesional no tenia fecha de alta y
+  *"En Nüra desde…"* no le aparecia. Verificado: ahora si.
+- `answers.experience` **no se pregunta en ninguna parte** y la `bio` se
+  construia con el: codigo muerto que se lleva media biografia por delante.
+  Se retira la referencia.
+
+**PENDIENTE — decision de negocio, no tecnica.** Queda la mitad de fondo:
+hoy hay **dos puertas que crean cuentas de forma distinta**. Medidas en el
+perfil de invitado, ambas **308×44**, 54px de separacion, identicas salvo
+el relleno:
+
+- `Crear cuenta gratis` → `{name, phone, joined}`
+- `Quiero ser Profesional` → `{name, isHelper, helperProfile, joined}` — **sin telefono**
+
+El prompt maestro pide que el alta profesional *"no se mezcle con el
+registro basico"*. Dos lecturas, con consecuencias opuestas en el embudo:
+
+- **A · registro basico primero.** Tocar "Quiero ser Profesional" pasa por
+  `/login` y vuelve (`nura_return_to` ya existe, ~5 lineas). Una sola forma
+  de cuenta. Añade friccion **al lado escaso del marketplace**.
+- **B · el alta absorbe el telefono.** Una pregunta mas en el mismo chat
+  calido, sin desvio. Menos friccion, pero se mantienen dos caminos.
+
+No se implementa ninguna sin decision del fundador: afecta a la captacion
+de oferta.
+
+**Deuda anotada**: `formation` se pregunta y solo viaja a `ai_data` — no
+entra en la bio publica. Candidata propia.
+
+---
+
 **Siguiente paso anterior, aun pendiente:** Fase 5 · Tarea 2 — la **separacion entre
 usuario y profesional**. El prompt maestro: "el alta profesional requiere
 mas informacion y no debe mezclarse con el registro basico". Revisar

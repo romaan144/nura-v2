@@ -16,7 +16,7 @@ async function saveHelperToSupabase(answers) {
     const payload = {
       name: answers.name || 'Profesional',
       specialty: answers.specialty || '',
-      bio: `${answers.experience || ''}. ${answers.differentiator || ''}`.trim().replace(/^\. /, ''),
+      bio: (answers.differentiator || '').trim(),   // `experience` no se pregunta: referenciarlo era codigo muerto
       zone: answers.zone || 'Barcelona', city: 'Barcelona',
       price: answers.price || null, category: inferredCategory,
       presential: true, online: (answers.modality || '').toLowerCase().includes('online'),
@@ -102,7 +102,7 @@ export default function RegisterHelper() {
         setTimeout(() => setMessages(prev => [...prev, { id: Date.now()+1, from: 'nura',
           text: 'Cada valoración que recibas fortalecerá tu reputación. ¡Mucha suerte!' }]), 1800)
         saveHelperToSupabase(newAnswers)
-        login({ name: newAnswers.name || val, isHelper: true, helperProfile: newAnswers })
+        login({ ...(JSON.parse(localStorage.getItem('nura_user') || 'null') || {}), name: newAnswers.name || val, isHelper: true, helperProfile: newAnswers, joined: new Date().toISOString() })
         sessionStorage.setItem('nura_helper_registered', '1')
         sessionStorage.setItem('nura_show_profile_preview', '1')
         setTimeout(() => navigate('/'), 3000)

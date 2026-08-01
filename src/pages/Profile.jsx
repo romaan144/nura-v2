@@ -242,16 +242,31 @@ export default function Profile() {
           // que rellenar: eso es lo que hacia el indicador confuso y
           // provisional. Y duplicaba el estado vacio de la zona de actividad,
           // que ya invita a buscar y encima con un boton.
-          const fields = [!!user.name, !!user.phone, !!user.avatar]
+          // Un profesional NO se mide con la regla de un usuario. Medido:
+          // quien respondia 2 preguntas en el registro basico salia al 67%,
+          // y quien respondia las 6 del alta profesional salia al 33% — al
+          // que mas daba se le decia que era el que menos tenia. Y la
+          // coletilla "mejora tus matches" no le habla a un profesional:
+          // el no busca match, el ES el match.
+          const hp = user.helperProfile || {}
+          const fields = user.isHelper
+            ? [!!user.name, !!hp.specialty, !!hp.formation, !!hp.zone, !!hp.price, !!hp.differentiator, !!user.avatar]
+            : [!!user.name, !!user.phone, !!user.avatar]
           const pct = Math.round((fields.filter(Boolean).length / fields.length) * 100)
           const missing = []
-          if (!user.phone) missing.push('teléfono')
+          if (user.isHelper) {
+            if (!hp.specialty) missing.push('tu especialidad')
+            if (!hp.formation) missing.push('tu formación')
+            if (!hp.zone) missing.push('tu zona')
+            if (!hp.price) missing.push('tu tarifa')
+            if (!hp.differentiator) missing.push('qué te diferencia')
+          } else if (!user.phone) missing.push('teléfono')
           if (!user.avatar) missing.push('una foto')
           return pct < 100 ? (
             <div style={{padding:'var(--space-16)',background:'white',borderRadius:'var(--radius-card)',boxShadow:'0 1px 8px rgba(33,29,51,0.06)',border:'1px solid rgba(33,29,51,0.07)'}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'var(--space-8)'}}>
                 <span style={{fontSize:'var(--text-sm)',fontWeight:700,color:'var(--ink)',letterSpacing:'-0.2px'}}>Tu perfil está al {pct}%</span>
-                <span style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.38)'}}>Mejora tus matches</span>
+                <span style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.38)'}}>{user.isHelper ? 'Más completo, más contactos' : 'Mejora tus matches'}</span>
               </div>
               <div style={{height:'6px',background:'rgba(33,29,51,0.07)',borderRadius:'var(--radius-full)',overflow:'hidden'}}>
                 <div style={{height:'100%',width:`${pct}%`,background:'var(--purple)',borderRadius:'var(--radius-full)',transition:'width 0.6s ease'}} />
