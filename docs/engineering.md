@@ -184,6 +184,19 @@ monta las pantallas con SSR pero **no ejecuta una busqueda**, asi que el
 fallo vivia detras de una interaccion. Un render que solo ocurre tras
 interactuar no lo ve ninguna puerta actual.
 
+### Codigo muerto: mirar si falta la puerta, no solo si sobra (2026-08-01)
+
+Dos features muertas juntas. Una sobraba (La Comprension Visible: chips de
+confirmacion cuya correccion era de un solo sentido y que reescribian las
+tarjetas en silencio). La otra **estaba entera menos la entrada**: el motor
+de La Correccion se consumia bien en `handleSend`, pero nadie llamaba a
+`startCorrection`.
+
+**Regla**: ante codigo muerto, separar *lo que no sirve* de *lo que no
+tiene puerta*. Lo segundo suele ser lo mas valioso del archivo — ya esta
+diseñado, probado y escrito, y cuesta una linea encenderlo. Borrar los dos
+juntos por estar igual de muertos habria tirado la mejor feature de Home.
+
 ### Lo que se produce y no se pinta no existe (2026-08-01)
 
 Home producia `msg.chips` en **nueve** sitios y no los renderizaba en

@@ -920,6 +920,62 @@ chips viejos al empezar un turno nuevo ya estaba escrita.
 
 Pruebas: cuatro puertas verdes + medicion en Chromium antes y despues.
 
+### Tarea 2e — La Comprension Visible se retira; La Correccion se enciende · **Terminada** · 2026-08-01
+
+Sello `2026.07.06-m`. Un solo archivo: `src/pages/Home.jsx`.
+
+Al censar el codigo muerto aparecieron **dos** features, no una — y la
+segunda era la buena.
+
+**Retirada · La Comprension Visible.** Chips que mostraban lo entendido
+("Cuidadora", "Para tu madre", "Vive sola") para confirmarlos. Se retira
+por cuatro razones, no por estar muerta:
+
+1. **La correccion era de un solo sentido.** `if (off) return`: destocar un
+   chip no quitaba la palabra del analisis ni devolvia los resultados
+   anteriores. La feature que existia "para corregirme" no se podia
+   corregir.
+2. **Reescribia las tarjetas en silencio.** Tocar un chip relanzaba el
+   match y cambiaba las personas ya en pantalla **sin una linea de prosa
+   que lo explicara** — justo lo que La Gramatica de la Recomendacion
+   prohibe.
+3. **Confirmar lo ya acertado no da nada.** No habia "no es eso": solo
+   "si, eso". El valor estaba en la enmienda, y la enmienda no estaba.
+4. **Densidad.** Cinco botones mas en cada busqueda, recien resuelto el
+   problema de los seis apilados en la 2b.
+
+**Encendida · La Correccion.** El motor **ya funcionaba**: `correctionRef`
+se consume en `handleSend` y fusiona consulta original + enmienda
+(`"fontanero urgente. mejor por la tarde"`). Lo unico que faltaba era
+**como entrar**: nadie llamaba a `startCorrection`.
+
+Se le da su puerta: el chip **`↺ No es lo que buscaba`** en la fila de
+ajuste. Los otros tres chips reordenan lo mismo; este admite que lo mismo
+no sirve. Cubre el hueco real que quedaba: Los Dos Silencios atiende "no
+te he entendido", pero **no habia camino para "te entendi y me equivoque"**
+— que es el fallo mas frecuente de un buscador de personas.
+
+**Medido, no deducido** (Chromium, 390px, control contra real):
+
+| fila de ajuste | alto | lineas |
+|---|---|---|
+| 3 chips (antes) | **103px** | 2 |
+| 4 chips (ahora) | **103px** | 2 |
+
+El cuarto chip ocupa hueco que ya estaba vacio: **cero altura añadida**.
+
+**Bucle completo verificado en navegador**: tocar el chip → Nura responde
+"Vale — dime que he entendido mal" → **el foco salta al input** → se
+escribe la enmienda → busqueda fusionada con resultados reales.
+
+`no-unused-vars` en Home: **19 → 17**. La retirada no deja huerfanos.
+
+**Deuda anotada**: la enmienda "mejor si es mujer" no altera el orden — el
+analisis no lee preferencia de genero. Es calidad de matching, no de
+cableado. Candidata propia.
+
+---
+
 **Hallazgo abierto para la 2d**: con 2 resultados, la rejilla de
 alternativas mide **358px con un solo hijo** — una tarjeta estirada a todo
 el ancho donde deberian ir tres. Es el caso de resultados parciales, ya

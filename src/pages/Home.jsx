@@ -27,22 +27,6 @@ const PERSONA_CHIP = {
   mujer:'Para tu mujer', pareja:'Para tu pareja', hermana:'Para tu hermana',
   hermano:'Para tu hermano', bebe:'Para tu bebé',
 }
-function buildComprehension(analysis) {
-  const chips = []
-  if (analysis?.matchedTerm) chips.push(analysis.matchedTerm.charAt(0).toUpperCase() + analysis.matchedTerm.slice(1))
-  const s = analysis?.complexSignals || {}
-  if (analysis?.persona && PERSONA_CHIP[analysis.persona]) chips.push(PERSONA_CHIP[analysis.persona])
-  else if (analysis?.paraQuien === 'familia') chips.push('Para tu familia')
-  else if (analysis?.paraQuien === 'hogar') chips.push('Para tu hogar')
-  if (CAT_HUMANA[analysis?.categoria]) chips.push(CAT_HUMANA[analysis.categoria])
-  if (s.alzheimer) chips.push('Experiencia en Alzheimer')
-  if (s.infantil) chips.push('Con niños')
-  if (s.sola) chips.push('Vive sola')
-  if (s.nocturno) chips.push('Horario nocturno')
-  if (analysis?.urgente) chips.push('Urgente')
-  chips.push('Cerca de ti')
-  return chips.slice(0, 5)
-}
 
 // ── La Recomendación — una persona primero, con convicción ──
 // ── La Gramática: el porqué humano, ÚNICA fuente (chat + perfil) ──
@@ -578,29 +562,6 @@ export default function Home() {
   }
 
   // ── Chips de comprensión: parámetros del análisis, nunca consultas ──
-  async function handleComprehensionChip(chip, msgId) {
-    const msgC = messages.find(m => m.id === msgId)
-    const set = new Set(msgC?.confirmedChips || [])
-    const off = set.has(chip)
-    if (off) set.delete(chip); else set.add(chip)
-    setMessages(prev => prev.map(m => m.id === msgId ? { ...m, confirmedChips: [...set] } : m))
-    if (off) return
-    const a = window.__nuraLastAnalysis
-    if (!a) return
-    const reforzado = { ...a, palabrasClave: [String(chip).toLowerCase(), ...(a.palabrasClave || [])] }
-    window.__nuraLastAnalysis = reforzado
-    const sid = ++searchSeqRef.current
-    const nuevos = await matchHelpers(reforzado, 4)
-    if (searchSeqRef.current !== sid || !nuevos?.length) return
-    setMessages(prev => {
-      const ridx = [...prev].reverse().findIndex(m => m.results?.length)
-      if (ridx === -1) return prev
-      const idx = prev.length - 1 - ridx
-      const cur = prev[idx]
-      const same = cur.results.length === nuevos.length && cur.results.every((r, i) => r?.id === nuevos[i]?.id)
-      return same ? prev : prev.map((m, i) => i === idx ? { ...m, results: nuevos } : m)
-    })
-  }
 
   // iOS: al enviar, evitar que el cierre del teclado reajuste el viewport
   function blurSinSalto() {
@@ -870,7 +831,7 @@ export default function Home() {
       try { sessionStorage.setItem('nura_last_analysis', JSON.stringify(analysis)) } catch {}
       // Empathy acknowledgment — instant, before searching
       const empathyLine = `Entendido${analysis?.persona && PERSONA_CHIP[analysis.persona] ? ' — ' + PERSONA_CHIP[analysis.persona].charAt(0).toLowerCase() + PERSONA_CHIP[analysis.persona].slice(1) : ''}.`
-      setMessages(prev => [...prev, { id: Date.now() + 0.3, from: 'nura', lines: [empathyLine], comprehensionChips: buildComprehension(analysis), originalQuery: msg }])
+      setMessages(prev => [...prev, { id: Date.now() + 0.3, from: 'nura', lines: [empathyLine] }])
 
       // El pensando sereno — con dueño y cancelación (El Contrato)
       const thinkingTimer = setTimeout(() => {
@@ -988,7 +949,7 @@ export default function Home() {
         lines: [resultLine],
         results: matches,
         refineChips: matches.length > 0
-          ? ['Más cerca', 'Mejor valorado', 'Más barato']
+          ? ['Más cerca', 'Mejor valorado', 'Más barato', 'No es lo que buscaba']
           : ['Ampliar búsqueda', 'Cambiar zona', 'Online también']
       }
       setMessages(prev => [...prev, resultMsg])
@@ -1212,6 +1173,10 @@ export default function Home() {
                 <button key={i} className={styles.refineChip}
                   onClick={() => {
                     if (chip === 'Crear cuenta') { navigate('/login'); return }
+                    // La Correccion: el unico camino para "me entendiste
+                    // mal". Los otros chips reordenan lo mismo; este admite
+                    // que lo mismo no sirve.
+                    if (chip === 'No es lo que buscaba') { haptic('light'); startCorrection(window.__nuraLastQuery); return }
                     if (chip === 'Más barato' && lastMatches?.length > 0) {
                       const sorted = [...lastMatches].sort((a,b) => {
                         const pa = parseFloat((a.price||'').replace(/[^0-9.]/g,'')) || 9999
@@ -1252,7 +1217,7 @@ export default function Home() {
                     }
                     handleSend(chip)
                   }}>
-                  {chip === 'Más cerca' ? '📍' : chip === 'Más barato' ? '💰' : chip === 'Mejor valorado' ? '★' : chip === 'Online' ? '💻' : '✦'} {chip}
+                  {chip === 'Más cerca' ? '📍' : chip === 'Más barato' ? '💰' : chip === 'Mejor valorado' ? '★' : chip === 'Online' ? '💻' : chip === 'No es lo que buscaba' ? '↺' : '✦'} {chip}
                 </button>
               ))}
             </div>
