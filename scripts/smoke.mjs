@@ -124,6 +124,19 @@ try {
   })
   await import('file://' + join(dir, 'Censo.mjs') + '?t=' + Date.now())
   const helpers = globalThis.__helpers || []
+  // Un array DISPERSO es invisible: `filter`, `map` y `forEach` saltan los
+  // agujeros; `find` los pisa y devuelve undefined. Una coma suelta en el
+  // dataset dejo un agujero en el indice 12 y `HELPERS.find(x => x.id...)`
+  // reventaba para los 110 perfiles que hay DESPUES — la ficha entera caida
+  // por enlace directo, con las cuatro puertas verdes.
+  const huecos = []
+  for (let i = 0; i < helpers.length; i++) if (!(i in helpers)) huecos.push(i)
+  if (huecos.length) {
+    console.log(`✗ ${'Dataset denso'.padEnd(14)} — ${huecos.length} agujero(s) en el array: indices ${huecos.slice(0, 8).join(', ')}`)
+    failed += huecos.length
+  } else {
+    console.log(`✓ ${'Dataset denso'.padEnd(14)} [${helpers.length} perfiles, sin agujeros]`)
+  }
   const rotos = []
   for (const h of helpers) {
     for (const small of [false, true]) {

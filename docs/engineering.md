@@ -167,6 +167,21 @@ ambos mundos, el navegador restauraba la posicion anterior.
 con scroll antes de tocar una sola linea de CSS.
 
 
+### Un array disperso es invisible hasta que usas find (2026-08-01)
+
+Una coma suelta en `helpers.js` dejo un agujero en el indice 12.
+`length` decia 123; elementos reales, 122.
+
+**`filter`, `map` y `forEach` SALTAN los agujeros. `find` los PISA** y
+entrega `undefined` al callback. `HELPERS.find(x => String(x.id) === id)`
+reventaba para los 110 perfiles posteriores al hueco: la ficha entera
+caida por enlace directo, con las cuatro puertas verdes.
+
+**Regla**: cualquier dataset que se recorra con `find` necesita
+(a) verificacion de densidad en la puerta y (b) `x && ...` en el callback.
+Y al escribir un censo, no fiarse de `for...of` ni de `filter` para
+recorrer: tambien saltan huecos. Contar con `for (let i...)` y `i in arr`.
+
 ### El censo de las piezas: la Cuarta Puerta monta pantallas vacias (2026-08-01)
 
 Las 8 pantallas del smoke se montan **sin datos**: Home sin resultados

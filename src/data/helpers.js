@@ -566,7 +566,6 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     ],
     evolution: [{ period: "2020", rating: 4.7, services: 6 }, { period: "2021", rating: 4.8, services: 14 }, { period: "2022", rating: 4.8, services: 22 }, { period: "2023", rating: 4.8, services: 34 }],
   },
-,
   {
     id: 2001,
     name: "Dra. Sara Montoya Gil",

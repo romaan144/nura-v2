@@ -204,7 +204,7 @@ function HelperProfileInner() {
 
   useEffect(() => {
     if (!h) {
-      const local = HELPERS.find(x => String(x.id) === String(id))
+      const local = HELPERS.find(x => x && String(x.id) === String(id))
       if (local) { setH(local); setLoading(false); return }
       getHelperById(id).then(r => { if (r) setH(r); setLoading(false) })
         .catch(() => setLoading(false))

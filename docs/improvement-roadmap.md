@@ -1191,6 +1191,58 @@ corazon del producto y de la demo: **decision del fundador**, no mia.
 
 ---
 
+## La coma que rompio 110 fichas · **Terminada** · 2026-08-01
+
+Sello `2026.07.06-r`. `src/data/helpers.js`, `src/pages/HelperProfile.jsx`,
+`scripts/smoke.mjs`.
+
+Encontrada **barriendo en navegador** las pantallas que nadie habia
+conducido esta sesion. `/helper/2020` mostraba 195 caracteres frente a los
+3.355 de `/helper/3`. No era una ficha pobre: era **el error boundary**
+("Algo fue mal por mi lado"). Mi barrido lo habia marcado "ok" porque
+buscaba otro texto de error — corregido el detector, y a mirar.
+
+**La causa, tras aislarla:** una **coma suelta** en `helpers.js`, entre el
+perfil `id=12` y el `id=2001`:
+
+```
+  },
+,        ← una elision: deja un AGUJERO en el array
+  {
+```
+
+`HELPERS` declaraba 123 elementos y tenia **122 reales**, con un agujero en
+el indice 12. Y ahi esta la trampa: **`filter`, `map` y `forEach` saltan los
+agujeros; `find` los pisa** y entrega `undefined`. Como
+`HelperProfile` resuelve con `HELPERS.find(x => String(x.id) === String(id))`:
+
+| ids | posicion | resultado |
+|---|---|---|
+| 1–12 (manuales) | antes del agujero | `find` acierta → **ficha viva** |
+| 2001–2128 (110 perfiles) | despues | `find` pisa el hueco → **pantalla caida** |
+
+**Por que no se veia**: al TOCAR una tarjeta, la ficha recibe el perfil por
+`location.state` y `find` no llega a ejecutarse. Solo rompia por **enlace
+directo en frio** — es decir, exactamente el caso *"comparte tu perfil"*,
+que en un marketplace es como un profesional trae a sus propios clientes.
+
+**Curado en tres capas:**
+
+1. La coma. Ahora: 122 declarados, 122 reales, cero agujeros.
+2. `find(x => x && ...)` — un agujero no debe volver a tumbar una pantalla.
+3. **Guardia permanente** en la Cuarta Puerta: el censo verifica que el
+   dataset sea denso. Verde: *"Dataset denso [122 perfiles, sin agujeros]"*.
+
+Verificado en frio despues: `/helper/2020`, `/helper/2080` y `/helper/2120`
+vivas (1.5-1.7k caracteres cada una).
+
+**Leccion**: ninguna puerta miraba el dataset como estructura. El censo de
+la sesion anterior paso los 123 por la tarjeta con `for...of` — que tambien
+salta agujeros. Un guardia puede estar verde y no ver el hueco por el que
+se cae la casa.
+
+---
+
 ## Deudas heredadas (censadas antes de este roadmap)
 
 - **[BLOQUEO DE LANZAMIENTO]** RLS de Supabase: el rol anónimo puede
