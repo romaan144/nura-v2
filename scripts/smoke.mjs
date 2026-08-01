@@ -92,5 +92,56 @@ globalThis.__render = (route) => renderToString(
     }
   }
 }
-console.log(failed === 0 ? `\n✅ CUARTA PUERTA VERDE — ${SCREENS.length} pantallas × 2 escenarios` : `\n❌ ${failed} fallos de render`)
+// ── EL CENSO DE LAS PIEZAS ─────────────────────────────────────
+// Las pantallas de arriba se montan VACIAS: Home sin resultados nunca le
+// pasa un profesional a la tarjeta. Por ese hueco se colo un crash que
+// tumbaba la pantalla entera en toda la categoria de logopedia (React #31:
+// `experience` llegaba como array en dos perfiles y como texto en el resto)
+// con las cuatro puertas verdes. Aqui pasa el dataset ENTERO por la pieza,
+// en sus dos tamaños. Un dato con dos formas ya no vuelve a pasar.
+const censo = join(dir, 'Censo.jsx')
+writeFileSync(censo, `
+import React from 'react'
+import { renderToString } from 'react-dom/server'
+import { MemoryRouter } from 'react-router-dom'
+import { UserProvider } from '../src/context/UserContext.jsx'
+import Card from '../src/components/HelperCardTall.jsx'
+import { HELPERS } from '../src/data/helpers.js'
+globalThis.__helpers = HELPERS
+globalThis.__card = (helper, small) => renderToString(
+  React.createElement(MemoryRouter, { initialEntries: ['/'] },
+    React.createElement(UserProvider, null,
+      React.createElement(Card, { helper, small })))
+)
+`)
+try {
+  await build({
+    logLevel: 'error',
+    build: { ssr: censo, outDir: dir, emptyOutDir: false, write: true,
+      rollupOptions: { output: { entryFileNames: 'Censo.mjs', format: 'es' } },
+      minify: false, target: 'node18' },
+    resolve: { alias: { '/logo-iso.png': censo } },
+  })
+  await import('file://' + join(dir, 'Censo.mjs') + '?t=' + Date.now())
+  const helpers = globalThis.__helpers || []
+  const rotos = []
+  for (const h of helpers) {
+    for (const small of [false, true]) {
+      try { globalThis.__card(h, small) }
+      catch (e) { rotos.push(`id=${h.id} ${small ? 'small' : 'grande'} → ${String(e.message).split('\n')[0].slice(0, 70)}`) }
+    }
+  }
+  if (rotos.length) {
+    console.log(`✗ ${'Censo tarjeta'.padEnd(14)} — ${rotos.length} de ${helpers.length * 2} renders rotos`)
+    rotos.slice(0, 6).forEach(r => console.log(`    ${r}`))
+    failed += rotos.length
+  } else {
+    console.log(`✓ ${'Censo tarjeta'.padEnd(14)} [${helpers.length} profesionales × 2 tamaños]`)
+  }
+} catch (e) {
+  console.log(`✗ ${'Censo tarjeta'.padEnd(14)} — no compila: ${String(e.message).slice(0, 200)}`)
+  failed++
+}
+
+console.log(failed === 0 ? `\n✅ CUARTA PUERTA VERDE — ${SCREENS.length} pantallas × 2 escenarios + censo de tarjeta` : `\n❌ ${failed} fallos de render`)
 process.exit(failed === 0 ? 0 : 1)

@@ -855,9 +855,20 @@ tarjeta lo pintaba como texto. React no renderiza un objeto.
 | fontanero urgente | `undefined` |
 | cuidar a mi madre | `undefined` |
 
-Los dos unicos perfiles afectados (`id=1`, `id=2`) son **toda la categoria
-de logopedia** — y "Logopeda para mi hijo" es una de las tres sugerencias
-que la propia app ofrece al entrar.
+**CORRECCION (2026-08-01, al construir el censo de la Cuarta Puerta):**
+esta cifra estaba mal. No eran dos perfiles: son **12 de 123**, ids 1-12,
+repartidos por **9 categorias** — practicamente todo el marketplace. Y
+**ninguno** trae `experience` como texto: o es array o no esta.
+
+Lo medi a traves de busquedas y por eso solo vi logopedia: los perfiles de
+demo (`id >= 2000`) ganan al ranking en todas las categorias salvo en
+logopedia, donde solo existen esos dos. **El crash estaba latente en toda
+la app**; en logopedia estaba garantizado. Medir por el camino del usuario
+encuentra lo que se ve; medir el dato encuentra lo que hay.
+
+Consecuencia honesta de la cura: la pildora de experiencia **no se pinta
+para nadie**, porque nunca tuvo una fuente valida. Antes se pintaba mal o
+mataba la pantalla.
 
 **Cura**: `experienciaTexto` se deriva una vez y solo se pinta si es texto.
 Es el unico sitio de la app con este patron (grep verificado).

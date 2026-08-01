@@ -167,6 +167,25 @@ ambos mundos, el navegador restauraba la posicion anterior.
 con scroll antes de tocar una sola linea de CSS.
 
 
+### El censo de las piezas: la Cuarta Puerta monta pantallas vacias (2026-08-01)
+
+Las 8 pantallas del smoke se montan **sin datos**: Home sin resultados
+nunca le pasa un profesional a `HelperCardTall`. Por ese hueco entero se
+colo un crash que tumbaba la pantalla, con las cuatro puertas verdes.
+
+Se añade **el censo**: el dataset completo (123 perfiles × 2 tamaños) pasa
+por la pieza. **Probado devolviendo el bug original a proposito**: el censo
+lo caza y sale con codigo 1. Un guardia que nunca ha fallado no vale nada;
+hay que verlo fallar una vez.
+
+Y encontro mas que la medicion manual: yo habia contado 2 perfiles rotos
+midiendo por el camino del usuario; el censo encontro **12, en 9
+categorias**. Medir el camino encuentra lo que se ve; medir el dato
+encuentra lo que hay.
+
+**Regla**: cuando una pieza recibe datos de un dataset, la puerta debe
+pasarle el dataset ENTERO, no un ejemplar de muestra.
+
 ### Un dato con dos formas tumba la pantalla (2026-08-01)
 
 `experience` llegaba como **texto** en unos perfiles y como **array de
