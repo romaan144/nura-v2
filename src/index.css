@@ -30,7 +30,6 @@ body {
   --text-md:   17px;   /* subheadings, emphasized body */
   --text-lg:   22px;   /* section titles, card headers */
   --text-xl:   28px;
-  --text-hero: 22px;   /* hero names */
   --text-heading: 20px;  /* screen titles, step titles */
   --text-num:  32px;   /* large numbers: ratings, scores */   /* page titles, hero text */
 
@@ -55,8 +54,6 @@ body {
   --reserva-input:  calc(var(--nav-h) + 66px + var(--space-20));   /* medido: 8 de relleno + 58 de capsula */
 
 
-  --space-micro:   var(--space-8);   /* micro: between inline elements */
-  --space-std:    var(--space-16);   /* standard: padding, small gaps */
   --space-block:  var(--space-24);   /* block: between content blocks */
   --space-section:var(--space-32);   /* section: between major sections */
 
@@ -151,14 +148,12 @@ body {
   --space-28: 28px;
   --space-32: 32px;
 
-  /* Alias heredados: las dos escalas anteriores apuntan aquí, así nada
-     de lo que ya las usa en los .module.css se rompe. */
-  --space-xs:  var(--space-4);
-  --space-sm:  var(--space-8);
-  --space-md:  var(--space-12);
-  --space-lg:  var(--space-16);
-  --space-xl:  var(--space-20);
-  --space-2xl: var(--space-28);
+  /* Los alias heredados (--space-xs/sm/md/lg/xl/2xl, --space-micro,
+     --space-std, --text-hero, --card-shadow) se retiran el 2026-08-01:
+     existian para que no se rompiera el CSS que aun los usaba, y MEDIDO,
+     ya no los usa nadie. La migracion a la escala numerica esta completa.
+     Varios ademas valian exactamente lo mismo que otro token con distinto
+     nombre — la trampa que ya documenta --card-radius aqui debajo. */
 
   /* Card standard */
   --card-padding: 16px;
@@ -166,7 +161,6 @@ body {
      y valores distintos, una trampa. Apunta a la curva de la app; usar
      --radius-md en codigo nuevo. */
   --card-radius:  var(--radius-md);
-  --card-shadow:  0 2px 8px rgba(33,29,51,0.08), 0 1px 3px rgba(33,29,51,0.05);
 
   /* Page horizontal margin */
   --page-x: clamp(12px, 4vw, 20px);

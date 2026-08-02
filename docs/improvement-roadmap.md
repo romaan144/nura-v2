@@ -1928,6 +1928,73 @@ ficha   · usuario  → /chat/1 ✓
 
 ---
 
+## Los tokens que mentian y el que no existia · **Terminada** · 2026-08-01
+
+Sello `2026.07.07-e`. `index.css`, tres pantallas, `scripts/smoke.mjs`.
+`src/App.css` retirada.
+
+### Lo que NO se toca: `--rule` no es `--ink-border`
+
+La deuda censada decia "`--rule` en 18 usos → `--ink-border`". **Medido, no
+son lo mismo**: `--rule` es `#E4E4F0` **opaco**; `--ink-border` es
+`rgba(33,29,51,0.06)`, que compuesto sobre el papel da `#EAE9E7`. Distancia
+`Σ|ΔRGB| = 20`: `--rule` es mas oscuro y mas frio.
+
+Cambiarlo **aclararia diez bordes** (barra lateral, onboarding, modal de
+valoracion, Inicio y la barra de scroll). Eso es una decision de diseño,
+no una limpieza. **Sin tocar.**
+
+### Cinco tokens que valian lo mismo que otro y no usaba nadie
+
+| token | valia | usos |
+|---|---|---|
+| `--text-hero` | igual que `--text-lg` (22px) | **0** |
+| `--space-micro` | igual que `--space-8` | **0** |
+| `--space-sm` | igual que `--space-8` | **0** |
+| `--space-std` | igual que `--space-16` | **0** |
+| `--space-lg` | igual que `--space-16` | **0** |
+
+Un nombre que promete algo distinto de lo que vale es una trampa: quien
+ajustara `--text-hero` habria movido todo lo `--text-lg` sin saberlo.
+
+Y al mirar el bloque entero de "alias heredados" —que existia *"para que no
+se rompa lo que ya los usa"*— resulto que **tampoco los usaba nadie**:
+`--space-xs`, `--space-md`, `--space-xl`, `--space-2xl`, `--card-shadow`,
+todos a cero. La migracion que protegian ya habia terminado. Retirado el
+bloque completo. *(Primero borre solo dos y deje la escala coja; corregido
+a retirada entera, que es lo coherente.)*
+
+**Los siete radios, en cambio, estan todos vivos** (de 3 a 83 usos). Que
+sean siete es cuestion de diseño, no codigo muerto. Sin tocar.
+
+### El token que no existia — y lo escribi yo
+
+Censando aparecio que **19 `var()` apuntaban a tokens declarados en ningun
+sitio y sin respaldo**. Eso no da error: la propiedad queda invalida y cae
+al valor heredado, en silencio.
+
+Once venian de **`src/App.css`, una hoja que no importa nadie** — retirada.
+
+Los otros tres eran **mios, de esta misma jornada**: el 🤍 de los tres
+estados vacios de *"esta persona ya no está"* pedia
+`fontSize: var(--text-2xl)`, y la escala llega hasta `--text-xl` (28px).
+El corazon salia del tamaño del texto normal. Corregido en Chat, Ficha y
+Carta.
+
+### Guardia permanente
+
+Nuevo en la Cuarta Puerta: **ningun `var()` sin declarar y sin respaldo**.
+Cuenta como declarado lo fijado en cualquier parte del arbol, incluido
+desde el JSX (`style={{'--cat-bg': x}}` usado desde el `.module.css`).
+**Probado devolviendo mi propio bug**: lo caza con fichero y sale con
+codigo 1.
+
+*(Tres correcciones al guardia antes de que fuera fiable: `archivos` no
+existe en smoke, la declaracion puede estar en otro fichero, y la comilla
+de cierre va ENTRE el nombre y los dos puntos. Sexta vez en la jornada.)*
+
+---
+
 ## Deudas heredadas (censadas antes de este roadmap)
 
 - **[BLOQUEO DE LANZAMIENTO]** RLS de Supabase: el rol anónimo puede

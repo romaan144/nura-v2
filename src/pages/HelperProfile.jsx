@@ -229,7 +229,7 @@ function HelperProfileInner() {
           "Perfil no encontrado." a secas y el chat dejaba un logo latiendo
           para siempre. Dos pantallas, una situacion, una sola respuesta. */}
       <div className={styles.notFound} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'var(--space-12)'}}>
-        <div style={{fontSize:'var(--text-2xl)'}}>🤍</div>
+        <div style={{fontSize:'var(--text-xl)'}}>🤍</div>
         <p style={{fontSize:'var(--text-base)',color:'var(--ink)',lineHeight:1.5,margin:0}}>
           Esta persona ya no está en Nüra.
         </p>

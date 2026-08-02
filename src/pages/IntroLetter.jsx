@@ -40,7 +40,7 @@ export default function IntroLetter() {
       {/* Tercera pantalla con la misma situacion: mismo trato que la ficha
           y el chat. Una situacion, una respuesta, en toda la app. */}
       <div className={styles.notFound} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'var(--space-12)'}}>
-        <div style={{fontSize:'var(--text-2xl)'}}>🤍</div>
+        <div style={{fontSize:'var(--text-xl)'}}>🤍</div>
         <p style={{fontSize:'var(--text-base)',color:'var(--ink)',lineHeight:1.5,margin:0}}>
           Esta persona ya no está en Nüra.
         </p>

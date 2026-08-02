@@ -123,6 +123,43 @@ try {
     resolve: { alias: { '/logo-iso.png': censo } },
   })
   await import('file://' + join(dir, 'Censo.mjs') + '?t=' + Date.now())
+  // ── El token que no existe ──
+  // `var(--text-2xl)` sin declarar y sin respaldo NO da error: la propiedad
+  // queda invalida y cae al valor heredado, en silencio. Los tres estados
+  // vacios de "esta persona ya no esta" pedian un tamaño que no existe y
+  // el corazon salia del tamaño del texto normal. Lo escribi yo y no se
+  // vio hasta censar los tokens.
+  {
+    const todos = [...readdirSync('src', { recursive: true })]
+      .map(f => join('src', String(f)))
+      .filter(f => /\.(css|jsx?)$/.test(f))
+    // Declarado = en cualquier sitio del arbol. Un token puede fijarse desde
+    // el JSX (`style={{'--cat-bg': x}}`) y usarse desde el .module.css: son
+    // ficheros distintos y NO es un fantasma.
+    const declarados = new Set()
+    for (const f of todos) {
+      let t; try { t = readFileSync(f, 'utf8') } catch { continue }
+      // La comilla de cierre va ENTRE el nombre y los dos puntos:
+      //   style={{ '--cat-bg': x }}   →   '--cat-bg':
+      for (const m of t.matchAll(/(--[\w-]+)\s*['"`]?\s*:/g)) declarados.add(m[1])
+    }
+    const fantasmas = new Map()
+    for (const f of todos) {
+      let txt; try { txt = readFileSync(f, 'utf8') } catch { continue }
+      // sin respaldo: `var(--x)` y no `var(--x, algo)`
+      for (const m of txt.matchAll(/var\(\s*(--[\w-]+)\s*\)/g)) {
+        const tok = m[1]
+        if (declarados.has(tok)) continue
+        fantasmas.set(tok, (fantasmas.get(tok) || new Set()).add(f))
+      }
+    }
+    if (fantasmas.size) {
+      console.log(`✗ ${'Token fantasma'.padEnd(14)} — ${fantasmas.size} var() sin declarar y sin respaldo`)
+      ;[...fantasmas].slice(0, 5).forEach(([t, fs]) => console.log(`    ${t} → ${[...fs].slice(0, 2).join(', ')}`))
+      failed += fantasmas.size
+    } else console.log(`✓ ${'Token fantasma'.padEnd(14)} [todo var() resuelve o lleva respaldo]`)
+  }
+
   // ── La promesa usada como objeto ──
   // `analyzeNeed` es async. Llamarla sin await devuelve una Promise cuyo
   // `.categoria` es undefined — y `JSON.stringify` BORRA las claves

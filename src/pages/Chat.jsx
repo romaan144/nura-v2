@@ -420,7 +420,7 @@ export default function Chat() {
   if (!helper) return (
     <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
       height:'100dvh',background:'#F7F7F9',padding:'var(--space-32)',textAlign:'center',gap:'var(--space-12)'}}>
-      <div style={{fontSize:'var(--text-2xl)'}}>🤍</div>
+      <div style={{fontSize:'var(--text-xl)'}}>🤍</div>
       <p style={{fontSize:'var(--text-base)',color:'var(--ink)',lineHeight:1.5,margin:0}}>
         Esta conversación ya no está disponible.
       </p>
