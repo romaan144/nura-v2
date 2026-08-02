@@ -1865,6 +1865,69 @@ coleta.
 
 ---
 
+## `handleContact` × 4 — la puerta del dinero, unificada · **Terminada** · 2026-08-01
+
+Sello `2026.07.07-d`. `utils/contacto.js` (nuevo), las tres tarjetas,
+`HelperProfile.jsx`, `Chat.jsx`, `Home.jsx`.
+
+La duplicacion mas cara que quedaba viva, y la que el censo dejo apuntada
+para tarea propia: **contactar a un profesional estaba escrito cuatro
+veces**.
+
+### Como habian divergido
+
+| | tres tarjetas | la ficha |
+|---|---|---|
+| clave de sessionStorage | `nura_pending_helper` (el **objeto entero**) | `nura_pending_chat` (otra forma) |
+| proteccion | ninguna | `try/catch` |
+| reja de invitado | aviso + `setTimeout(→ /login, 600)` | modal (`setShowGate`) |
+| destino | siempre `/chat/:id` | `/intro/:id` si hay contexto |
+
+**Y las dos claves eran de solo escritura.** Medido: `nura_pending_helper`
+lo escribian **cuatro** sitios y `nura_pending_chat` uno, y **ningun
+fichero de `src` leia ninguna**. Lo que hace funcionar el flujo es
+`nura_return_to`, la unica que `Login.jsx` lee.
+
+Es decir: el objeto completo de un profesional viajaba por sessionStorage
+en cada intento de contacto de un invitado, para nada. Verificado en
+navegador antes de tocar: ahi estaba, con su bio y sus valoraciones.
+
+Ademas, `Chat.jsx` limpiaba `nura_pending_chat` **en el cuerpo del
+componente** — un efecto durante el render, sobre una clave que ya no
+escribia nadie.
+
+### Lo unificado y lo que se deja distinto a proposito
+
+`utils/contacto.js` guarda lo comun: `recordarDestino`, `contextoDeChat`,
+`hayContexto`. Los cuatro sitios lo usan.
+
+**Lo que NO se unifica**: como se pide entrar. La tarjeta avisa y lleva al
+registro; la ficha abre una reja sin sacarte de la pagina que estabas
+leyendo. Esa diferencia es una decision de pantalla razonable — pero ahora
+esta **declarada en el codigo** en vez de ser un accidente de haber escrito
+lo mismo cuatro veces.
+
+### Un fallo que me metí yo y que la medicion cazo
+
+Al extraer, puse `contextoDeChat(helper, extra = {})`. Pero `location.state`
+llega **`null`** al entrar por enlace directo, y **el valor por defecto de
+un parametro solo cubre `undefined`**. Contactar desde la ficha reventaba:
+*"Cannot read properties of null (reading 'userQuery')"*.
+
+Salio en la verificacion posterior, no en la revision. Curado con
+`extra || {}`. **Refactorizar sin medir despues habria cambiado cuatro
+copias que funcionaban por una rota.**
+
+### Verificado en navegador, los cuatro caminos
+
+```
+tarjeta · invitado → /login   con nura_return_to=/chat/1 ✓  (y sin la clave muerta)
+ficha   · invitado → reja, sin salir de /helper/1, con return_to ✓
+ficha   · usuario  → /chat/1 ✓
+```
+
+---
+
 ## Deudas heredadas (censadas antes de este roadmap)
 
 - **[BLOQUEO DE LANZAMIENTO]** RLS de Supabase: el rol anónimo puede

@@ -255,8 +255,8 @@ export default function Chat() {
     helpersCache?.[parseInt(id)] || helpersCache?.[id] || helpersCache?.[String(id)] ||
     HELPERS.filter(Boolean).find(h => String(h.id) === String(id)) || null
   )
-  // Clear pending chat from sessionStorage once we're here
-  try { sessionStorage.removeItem('nura_pending_chat') } catch {}
+  // (Aqui se limpiaba `nura_pending_chat`, que nadie escribia ni leia ya.
+  //  Ademas corria en el CUERPO del componente: efecto durante el render.)
 
   // Sin esto el logo latia PARA SIEMPRE: si la busqueda remota no devolvia
   // a nadie (o fallaba), nada apagaba la espera. `/chat/9999` era una

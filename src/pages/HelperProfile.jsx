@@ -12,6 +12,7 @@ import { Star, Shield, MapPin, MessageCircle, Calendar,
 import { HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
 import RatingModal from '../components/RatingModal'
+import { recordarDestino, contextoDeChat, hayContexto } from '../utils/contacto'
 import styles from './HelperProfile.module.css'
 import { DEMO_ENRICHMENTS } from '../data/demoEnrichments'
 import { showToast } from '../components/Toast'
@@ -251,24 +252,16 @@ function HelperProfileInner() {
 
   function handleContact() {
     if (!user) {
-      try {
-        sessionStorage.setItem('nura_pending_chat', JSON.stringify({ helperId: enrichedH.id, helperName: enrichedH.name }))
-        sessionStorage.setItem('nura_return_to', `/chat/${enrichedH.id}`)
-      } catch {}
+      recordarDestino(enrichedH.id)
+      // La ficha abre una reja en vez de llevarte al registro: aqui la
+      // persona ya esta leyendo un perfil y sacarla de golpe seria peor.
       setShowGate(true); return
     }
-    const hasContext = location.state?.userQuery || location.state?.analysis || window.__nuraLastQuery
-    if (hasContext) {
-      navigate(`/intro/${enrichedH.id}`, {
-        state: {
-          helper: h,
-          userQuery: location.state?.userQuery,
-          analysis: location.state?.analysis || window.__nuraLastAnalysis
-        }
-      })
+    if (hayContexto(location.state)) {
+      navigate(`/intro/${enrichedH.id}`, { state: contextoDeChat(h, location.state) })
       return
     }
-    navigate(`/chat/${enrichedH.id}`, { state: { helper: h, userQuery: location.state?.userQuery } })
+    navigate(`/chat/${enrichedH.id}`, { state: contextoDeChat(h, location.state) })
   }
 
   function handleShare() {

@@ -5,6 +5,7 @@ import { showToast } from './Toast'
 import { haptic } from '../utils/haptic'
 import { getFirstName } from '../utils/name'
 import { Badge, LiveDot } from './ui'
+import { recordarDestino, contextoDeChat } from '../utils/contacto'
 
 // ═══════════════════════════════════════════════════════════════
 // La Tarjeta Persona — representación canónica del profesional
@@ -37,13 +38,12 @@ export default function HelperCard({ helper, onContact, showContact = true, show
     haptic('medium')
     if (onContact) { onContact(helper); return }
     if (!user) {
-      sessionStorage.setItem('nura_return_to', `/chat/${helper.id}`)
-      sessionStorage.setItem('nura_pending_helper', JSON.stringify(helper))
+      recordarDestino(helper.id)
       showToast('Para escribirle necesito saber quién eres. Es un minuto.')
       irLuego.current = setTimeout(() => navigate('/login'), 600)
       return
     }
-    navigate(`/chat/${helper.id}`, { state: { helper, userQuery: window.__nuraLastQuery, analysis: window.__nuraLastAnalysis } })
+    navigate(`/chat/${helper.id}`, { state: contextoDeChat(helper) })
   }
 
   const metaParts = []

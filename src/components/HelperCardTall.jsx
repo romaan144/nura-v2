@@ -5,6 +5,7 @@ import { showToast } from './Toast'
 import { haptic } from '../utils/haptic'
 import { getFirstName } from '../utils/name'
 import { LiveDot, Button, SectionLabel } from './ui'
+import { recordarDestino, contextoDeChat } from '../utils/contacto'
 
 // ═══════════════════════════════════════════════════════════════
 // La Tarjeta Vertical — la recomendación como protagonista.
@@ -55,13 +56,12 @@ export default function HelperCardTall({ helper, small = false }) {
     e.stopPropagation()
     haptic('medium')
     if (!user) {
-      sessionStorage.setItem('nura_return_to', `/chat/${helper.id}`)
-      sessionStorage.setItem('nura_pending_helper', JSON.stringify(helper))
+      recordarDestino(helper.id)
       showToast('Para escribirle necesito saber quién eres. Es un minuto.')
       irLuego.current = setTimeout(() => navigate('/login'), 600)
       return
     }
-    navigate(`/chat/${helper.id}`, { state: { helper, userQuery: window.__nuraLastQuery, analysis: window.__nuraLastAnalysis } })
+    navigate(`/chat/${helper.id}`, { state: contextoDeChat(helper) })
   }
 
   return (

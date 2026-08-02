@@ -167,6 +167,16 @@ ambos mundos, el navegador restauraba la posicion anterior.
 con scroll antes de tocar una sola linea de CSS.
 
 
+### Un parametro por defecto NO cubre `null` (2026-08-01)
+
+`function f(extra = {})` solo aplica el defecto si el argumento es
+`undefined`. `location.state` de react-router llega **`null`** al entrar por
+enlace directo, asi que `extra.userQuery` revienta.
+
+**Regla**: para argumentos que vengan de router, API o almacenamiento, usar
+`const e = extra || {}` dentro. El defecto de parametro es para llamadas
+propias, no para datos de fuera.
+
 ### Lo que existe dos veces diverge (2026-08-01)
 
 Seis casos en una jornada: dos hojas de reserva, dos puertas de cuenta, dos

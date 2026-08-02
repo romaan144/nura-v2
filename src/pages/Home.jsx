@@ -1033,7 +1033,6 @@ export default function Home() {
       if (!user) {
         try {
           sessionStorage.setItem('nura_return_to', `/chat/${h.id}`)
-          sessionStorage.setItem('nura_pending_helper', JSON.stringify(h))
         } catch { /* almacenamiento bloqueado: se sigue igual */ }
         navigate('/login')
         return

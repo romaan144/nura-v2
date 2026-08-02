@@ -5,6 +5,7 @@ import { useUser } from '../context/UserContext'
 import { showToast } from './Toast'
 import styles from './HelperCarousel.module.css'
 import { haptic } from '../utils/haptic'
+import { recordarDestino, contextoDeChat } from '../utils/contacto'
 
 /**
  * HelperCarousel — horizontal scroll of compact helper cards.
@@ -26,13 +27,12 @@ function CarouselCard({ helper, isTopPick, matchReason }) {
     e.stopPropagation()
     haptic('medium')
     if (!user) {
-      sessionStorage.setItem('nura_return_to', `/chat/${helper.id}`)
-      sessionStorage.setItem('nura_pending_helper', JSON.stringify(helper))
+      recordarDestino(helper.id)
       showToast('Para escribirle necesito saber quién eres. Es un minuto.')
       irLuego.current = setTimeout(() => navigate('/login'), 600)
       return
     }
-    navigate(`/chat/${helper.id}`, { state: { helper, userQuery: window.__nuraLastQuery, analysis: window.__nuraLastAnalysis } })
+    navigate(`/chat/${helper.id}`, { state: contextoDeChat(helper) })
   }
 
   function handleFollow(e) {
