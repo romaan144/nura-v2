@@ -1,6 +1,13 @@
 import { avatarDe } from '../utils/avatar'
-const SUPABASE_URL = 'https://oxmohciswebonoumghhu.supabase.co'
-const SUPABASE_KEY = 'sb_publishable_-_N1S0ni6t27kX41oPBw0g_nBlu9jcQ'
+// LA UNICA FUENTE. Estaban declaradas en TRES sitios y ya habian divergido:
+// aqui la clave nueva `sb_publishable_`, y en claudeApi.js y RegisterHelper.jsx
+// el JWT antiguo. Es decir, las LECTURAS iban con una credencial y las
+// ESCRITURAS con otra. Si el JWT viejo se revoca, la app sigue leyendo tan
+// campante y deja de guardar en silencio — justo en el flujo menos
+// recorrido. Y solo uno de los tres leia la variable de entorno, asi que
+// definirla en Vercel arreglaba un tercio del problema.
+export const SUPABASE_URL = import.meta?.env?.VITE_SUPABASE_URL || 'https://oxmohciswebonoumghhu.supabase.co'
+export const SUPABASE_KEY = import.meta?.env?.VITE_SUPABASE_ANON_KEY || 'sb_publishable_-_N1S0ni6t27kX41oPBw0g_nBlu9jcQ'
 const headers = {
   'apikey': SUPABASE_KEY,
   'Authorization': `Bearer ${SUPABASE_KEY}`,

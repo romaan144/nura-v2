@@ -167,6 +167,23 @@ ambos mundos, el navegador restauraba la posicion anterior.
 con scroll antes de tocar una sola linea de CSS.
 
 
+### Lo que existe dos veces diverge (2026-08-01)
+
+Seis casos en una jornada: dos hojas de reserva, dos puertas de cuenta, dos
+pantallas de favoritos, dos medidores de perfil, **tres credenciales de
+Supabase** y **dos `getFirstName`**. En todos, alguien arreglo una copia y
+la otra se quedo atras — y en dos de ellos **la copia buena era la que NO
+era canonica**.
+
+**Regla**: antes de escribir una segunda implementacion de algo, extraer la
+primera. Y al encontrar una duplicacion, no asumir cual es la buena:
+**pasarlas ambas por los datos reales y comparar**. La de `getFirstName`
+se resolvio con 122 nombres; discrepaban en uno, y ganaba la copia.
+
+**Censo barato que merece repetirse**: `difflib` sobre los fuentes
+normalizados para gemelos; y un mapa de nombres de funcion definidos en mas
+de un fichero.
+
 ### Una promesa sin await no falla: MIENTE en silencio (2026-08-01)
 
 `analyzeNeed(x)` sin `await` devuelve una Promise. `.categoria` da

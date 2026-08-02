@@ -3,11 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Send, Mic, MicOff } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import { DEMO_MODE } from '../config'
+import { SUPABASE_URL, SUPABASE_KEY } from '../utils/supabase'   // fuente unica
 import BottomNav from '../components/BottomNav'
 import styles from './Home.module.css'
 
-const SUPABASE_URL = 'https://oxmohciswebonoumghhu.supabase.co'
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94bW9oY2lzd2Vib25vdW1naGh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk2MzE4MTUsImV4cCI6MjA2NTIwNzgxNX0.oJQLSV5UEGjV3f6sPnHJT3nOVHXyaQJGzHKVDQkWCHo'
 
 async function saveHelperToSupabase(answers) {
   try {

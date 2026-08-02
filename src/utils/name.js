@@ -1,5 +1,8 @@
 // ── Name utilities ───────────────────────────────────────────────────────
-const TITLE_PREFIXES = new Set(['Dra.','Dr.','Prof.','Lic.','D.','Dña.','Don','Sr.','Sra.','Mr.','Ms.','Mrs.'])
+// 'DJ' entra por medicion: de los 122 nombres del dataset, era el UNICO en
+// que esta funcion y la copia de introLetter.js discrepaban — y la copia
+// tenia razon. A "DJ Marc Mas" le llamabamos "DJ".
+const TITLE_PREFIXES = new Set(['Dra.','Dr.','Prof.','Lic.','D.','Dña.','Don','Sr.','Sra.','Mr.','Ms.','Mrs.','DJ'])
 
 export function getFirstName(fullName) {
   if (!fullName) return ''

@@ -5,11 +5,7 @@
 // de matching ya sabe sobre la necesidad del usuario.
 
 import { suyoDe } from './personas'
-
-function getFirstName(fullName) {
-  if (!fullName) return ''
-  return fullName.replace(/^(Dr\.|Dra\.|DJ)\s+/i, '').split(' ')[0]
-}
+import { getFirstName } from './name'   // una sola: la copia de aqui discrepaba en 'DJ Marc Mas'
 
 // Frases que describen la situación, basadas en categoría y señales complejas
 function describeSituation(analysis, userQuery) {

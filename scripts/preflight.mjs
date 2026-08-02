@@ -136,6 +136,24 @@ if (conVh.length) {
   }
 }
 
+// ── 6b. Una sola credencial ──
+// Estaban en TRES ficheros y ya habian divergido: lecturas con la clave
+// `sb_publishable_` nueva, escrituras con el JWT viejo. Si el viejo se
+// revoca, la app lee tan campante y deja de guardar en silencio. Y esta
+// misma puerta sondea el RLS leyendo la clave de supabase.js: con tres
+// claves distintas, sondeaba una con la que nadie escribia.
+{
+  const esFuente = f => /utils\/supabase\.js$/.test(f)
+  const declaran = archivos.filter(f => !esFuente(f) && /const\s+SUPABASE_(URL|KEY)\s*=/.test(readFileSync(f, 'utf8')))
+  const sueltas = archivos.filter(f => /['"`]eyJhbGciOi|['"`]sb_publishable_/.test(readFileSync(f, 'utf8'))
+    && !esFuente(f))
+  if (declaran.length || sueltas.length) {
+    mal('la credencial de Supabase vive en mas de un sitio:')
+    ;[...new Set([...declaran, ...sueltas])].forEach(f => console.log(`   · ${f}`))
+    console.log('   Fuente unica: src/utils/supabase.js (exporta URL y KEY).')
+  } else bien('una sola credencial de Supabase (src/utils/supabase.js)')
+}
+
 // ── 7. Contenido de demostracion sin puerta ──
 // Chats servia CINCO conversaciones inventadas a todo el mundo y Siguiendo
 // dos seguidos falsos, sin mirar DEMO_MODE. Apagar DEFAULT_DEMO —lo que

@@ -1796,6 +1796,75 @@ ley de esta casa: una medicion que acusa suele estar acusando al medidor.**
 
 ---
 
+## El censo de la duplicacion · **Terminada** · 2026-08-01
+
+Sello `2026.07.07-c`. `supabase.js`, `claudeApi.js`, `RegisterHelper.jsx`,
+`name.js`, `introLetter.js`, `scripts/preflight.mjs`.
+
+La jornada dejo un patron claro —**lo que existe dos veces diverge**— con
+cuatro casos: dos hojas de reserva, dos puertas de cuenta, dos pantallas de
+favoritos, dos medidores. En todos se arreglo una copia y la otra se
+quedo atras en silencio. En vez de esperar al quinto, se censo.
+
+### 1 · La credencial de Supabase vivia en TRES sitios, y ya habia divergido
+
+| fichero | camino | clave |
+|---|---|---|
+| `supabase.js` | **lecturas** | `sb_publishable_…` (nueva) |
+| `claudeApi.js` | **escrituras** (ai_data, chat_log) | env → *fallback* **JWT antiguo** |
+| `RegisterHelper.jsx` | **alta profesional** | **JWT antiguo**, sin leer env |
+
+Las lecturas iban con una credencial y las escrituras con otra. Si el JWT
+viejo se revoca —cosa que toca hacer al cerrar el RLS— **la app sigue
+leyendo tan campante y deja de guardar en silencio**, justo en el flujo
+menos recorrido. Y como solo uno de los tres leia la variable de entorno,
+definirla en Vercel arreglaba un tercio del problema.
+
+Peor: **la sonda de RLS de la quinta puerta lee la clave de `supabase.js`**,
+asi que sondeaba con una credencial **con la que nadie escribia**. El
+guardia del bloqueo de lanzamiento medía la puerta equivocada.
+
+**Cura**: `supabase.js` es la fuente unica y las exporta; los otros dos
+importan; las tres leen `VITE_SUPABASE_*` con el mismo respaldo. Y guardia
+en la quinta puerta: si la credencial reaparece fuera de ahi, rojo.
+
+### 2 · `getFirstName` estaba escrita dos veces y no coincidian
+
+`name.js` (canonica, con diccionario de tratamientos) e `introLetter.js`
+(copia, con un regex de tres casos). Pasadas por los **122 nombres reales**
+del dataset: discrepan en **uno**.
+
+```
+"DJ Marc Mas"   name.js → "DJ"      introLetter → "Marc"
+```
+
+Y **la canonica era la que se equivocaba**: Nüra llamaba *"DJ"* a Marc en
+la carta de presentacion. La copia, escrita despues y peor, acertaba.
+
+**Cura**: el diccionario canonico aprende `DJ`, la copia desaparece y
+`introLetter.js` importa. Comprobado: Marc, Carme, Antoni y Fátima, bien.
+
+### 3 · Lo que el censo descarto
+
+- **Ficheros gemelos**: solo `Siguiendo.jsx` ≈ `Favorites.jsx` (0,82), que
+  ya estaba anotado y es decision del fundador. El resto, por debajo de
+  0,35 — lenguaje comun, no duplicacion.
+- **`normalize` ×3, `toggleMic` ×3, `handleKey` ×2, `sendMessage` ×2**:
+  mismo nombre, distinta cosa. No se tocan.
+
+### 4 · Lo que queda censado y NO se toca
+
+**`handleContact` definida cuatro veces** (`HelperCard`, `HelperCardTall`,
+`HelperCarousel`, `HelperProfile`): es el camino de contactar a un
+profesional —la puerta del dinero— repetido cuatro veces, con la reja de
+invitado y la navegacion diferida dentro. La Fase 0 ya encontro ahi *"tres
+componentes con navegacion diferida no cancelable"*. Es la duplicacion mas
+cara que queda viva, pero unificarla toca cuatro componentes y el flujo que
+convierte: **merece su propia tarea con medicion antes y despues**, no una
+coleta.
+
+---
+
 ## Deudas heredadas (censadas antes de este roadmap)
 
 - **[BLOQUEO DE LANZAMIENTO]** RLS de Supabase: el rol anónimo puede
