@@ -1075,9 +1075,12 @@ medible ahora que la pantalla no se cae.
 **FASE 1 en curso** · Tarea 1 terminada (T1, D4, S1 resueltos).
 
 **FASE 1 CERRADA.** Las cinco
-pantallas cumplen el contrato: D1, D2, D3, D4, D5, D7 resueltos. Quedan
-abiertos D6 (tres modelos de cabecera — no se toco, no molesta) y D8
-(Chats sin verificar con volumen).
+pantallas cumplen el contrato: D1, D2, D3, D4, D5, D7 resueltos.
+**D6 y D8 cerrados el 2026-08-01** (sello `2026.07.07-b`): D8 verificada
+con 18 conversaciones reales —cumple el contrato, hueco final de 20px
+exactos— y D6 reducida a un modelo (`PageHeader`) con dos excepciones
+declaradas, tras retirar una cabecera fantasma en `Chats.module.css`.
+**Las 20 discrepancias del prompt maestro quedan resueltas o declaradas.**
 
 **Siguiente paso exacto:** Fase 6 · Tarea 2c — la **busqueda cancelada**
 (el reinicio no cancela: no incrementa `searchSeqRef` ni libera `loading`,
@@ -1729,6 +1732,67 @@ logopeda · lunes   → 16:00 17:00 18:00 19:00   (su tarde real)
 fontanero · domingo→ "Ese día no trabaja."
 hoy 23:35          → ningun hueco pasado
 ```
+
+---
+
+## D6 y D8 — las dos discrepancias que quedaban abiertas · **Cerradas** · 2026-08-01
+
+Sello `2026.07.07-b`. `Chats.module.css`, `docs/design-system.md`.
+
+Con esto **las 20 discrepancias del prompt maestro estan resueltas o
+declaradas**. Ninguna queda abierta sin motivo escrito.
+
+### D8 · "Chats no scrollea con datos demo" — **verificada, cumple**
+
+No era un defecto: era un hueco de verificacion. Medido con **18
+conversaciones reales** sembradas (no las de demostracion), con scroll
+hasta el fondo:
+
+| regla del contrato | medido |
+|---|---|
+| 1 · el `.page` es el scroller | ✓ `_page_` con `overflow-y:auto`, scrollH 1730 |
+| 2 · la reserva en un solo sitio | ✓ `padding-bottom: 86px` = `--reserva-nav` |
+| 3 · ningun hijo reserva | ✓ `._list_` con `padding-bottom: 0` |
+| 4 · el hueco final es `--space-20` | ✓ **20px exactos** |
+| 7 · `overscroll-behavior-y: contain` | ✓ |
+
+Se cierra sin tocar codigo. **Un no-defecto verificado vale tanto como un
+arreglo**: retira una duda del inventario.
+
+### D6 · "Tres modelos de cabecera" — **cerrada: uno y dos excepciones**
+
+La Fase 1 ya la habia resuelto casi entera sin que nadie lo anotara.
+Medido hoy en siete pantallas: **cinco comparten `fixed 68px @0`**, y las
+dos que no lo hacen es **por diseño**.
+
+El origen esta en `PageHeader`, componente compartido por ocho pantallas
+que ademas aplica el mismo `max(env(safe-area-inset-top,0px), 12px)` que
+la reserva `--header-h`: cabecera y hueco se mueven juntos con el notch.
+
+**Lo unico que quedaba era un fantasma**: `Chats.module.css` definia una
+cabecera `sticky` propia —un **cuarto** modelo— que **no usaba nadie**
+(`Chats.jsx` renderiza `<PageHeader />`, y `styles.header`, `styles.title`
+y `styles.count` tienen cero referencias). Retirada: una definicion muerta
+engaña a quien lee el archivo, que es como nacen los modelos duplicados.
+
+Y se declara el sistema en `design-system.md` (regla 9), con las dos
+excepciones **escritas y razonadas** en vez de toleradas en silencio:
+Inicio lleva cabecera flotante de 46px porque una pesada compite con la
+conversacion; Comunidad no lleva porque su primer bloque ya se presenta
+solo.
+
+Medido despues: **las siete pantallas idénticas al antes. Cero regresión.**
+
+### Nota de metodo: cinco instrumentos rotos antes de un numero fiable
+
+Para llegar a los 20px de D8 hubo que corregir la medicion **cinco veces**:
+buscaba el `.page` equivocado (encontraba el de Inicio, oculto detras),
+media sin haber hecho scroll al fondo, contaba los botones de la barra
+inferior como conversaciones, filtraba por `<button>` cuando las filas no
+lo son, y usaba `offsetParent` —que falla con `position: fixed`—.
+
+Ninguna de las cinco veces fallaba la app. **La regla del sello `-t` ya es
+ley de esta casa: una medicion que acusa suele estar acusando al medidor.**
 
 ---
 

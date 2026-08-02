@@ -419,6 +419,30 @@ Solo Inicio lo tenia; los otros 20 scrollers, no. Aparecio al dar a
 Comunidad su propio scroller — antes el rebote no se notaba porque
 scrolleaba el contenedor global.
 
+### 9. Una sola cabecera: `PageHeader` (D6, cerrado 2026-08-01)
+
+La Fase 0 encontro **tres modelos de cabecera**. Medido hoy tras la Fase 1,
+quedan **uno y dos excepciones declaradas**:
+
+| pantalla | cabecera | por que |
+|---|---|---|
+| Profesionales, Chats, Perfil, Siguiendo, Mis servicios, Favoritos, Ficha, Como funciona | **`PageHeader`** · fixed 68px @0 | el modelo del sistema |
+| **Inicio** | flotante 46px @12, absoluta | es la pantalla conversacional: una cabecera pesada compite con el mensaje. **Excepcion deliberada.** |
+| **Comunidad** | ninguna | su primer bloque ya se presenta solo ("Cerca de ti · 20 historias"). **Excepcion deliberada.** |
+
+Chat, Carta y Alta profesional tienen cabecera propia **a proposito**: son
+flujos a pantalla completa, no pestañas.
+
+**Reglas:**
+
+1. Una pantalla de pestaña con cabecera usa `PageHeader`. No se escribe otra.
+2. La reserva es `--header-h`, que **incluye** el `safe-area-inset-top`; el
+   componente aplica el mismo `max(env(safe-area-inset-top,0px), 12px)`. Los
+   dos deben moverse juntos o el notch abre un hueco.
+3. Medido: cabecera **68px**, reserva **76px**, respiro **8px**, igual en
+   las cuatro pantallas comprobadas. El token es una **reserva**, no la
+   altura — no confundirlos.
+
 ### 8. Ante cualquier queja de espaciado, MEDIR primero
 El DOM renderizado, con navegador real. Tres ciclos calculando sobre
 variables CSS dieron 8px donde el dispositivo tenia 86: el error estaba

@@ -9,19 +9,10 @@
   padding-bottom: var(--reserva-nav);   /* CONTRATO: token medido, incluye el hueco final */
 }
 
-.header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: var(--space-20) var(--space-16) var(--space-14);
-  /* misma receta que la BottomNav: si hay dos barras fijas, son la misma barra */
-  background: rgba(247,246,242,0.86); backdrop-filter: blur(32px) saturate(200%); -webkit-backdrop-filter: blur(32px) saturate(200%);
-  border-bottom: 1px solid var(--ink-border); box-shadow: var(--shadow-xs);
-  position: sticky; top: 0; z-index: 10;
-}
-.title { font-size: var(--text-lg); font-weight: 800; color: var(--ink); letter-spacing: -0.5px; }
-.count {
-  font-size: var(--text-xs); font-weight: 600; color: var(--purple);
-  background: var(--purple-10); border-radius: var(--radius-card); padding: var(--space-3) var(--space-10);
-}
+/* D6: aqui vivia una cabecera `sticky` propia —un CUARTO modelo— que ya no
+   usaba nadie: Chats.jsx renderiza <PageHeader />. Se retira porque una
+   definicion muerta engaña a quien lee el archivo. La cabecera del sistema
+   vive en un solo sitio: src/components/PageHeader. */
 
 .searchWrap { padding: var(--space-10) var(--space-16) var(--space-8); background: var(--paper); }
 .searchBox {
