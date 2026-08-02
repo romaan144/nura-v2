@@ -179,6 +179,44 @@ if (conVh.length) {
   } else bien('todo el contenido de demostracion pasa por DEMO_MODE')
 }
 
+// ── 8. Pantallas construidas que no ve nadie ──
+// No bloquea: decidir si se enchufan o se retiran es del fundador. Pero
+// deben estar DELANTE, no dormidas. `/onboarding` esta enrutada y funciona
+// entera —lleva la frase de marca y la bifurcacion de profesional— y
+// NADIE navega a ella: solo aparece en listas de "ocultar la barra aqui".
+{
+  const app = readFileSync('src/App.jsx', 'utf8')
+  // Emparejar cada componente con SU ruta real: `HelperProfile` vive en
+  // `/helper/:id`, no en `/helperprofile`. Buscar por nombre daba diez
+  // falsos positivos, y una puerta ruidosa enseña a ignorarse.
+  const rutaDe = new Map()
+  for (const m of app.matchAll(/path="([^"]+)"[^>]*element=\{<(\w+)/g)) rutaDe.set(m[2], m[1])
+  for (const m of app.matchAll(/element=\{<(\w+)[^>]*\}[^>]*path="([^"]+)"/g)) rutaDe.set(m[1], m[2])
+  const codigo = archivos.filter(f => /\.jsx?$/.test(f)).map(f => readFileSync(f, 'utf8')).join('\n')
+  const huerfanas = []
+  for (const f of archivos.filter(f => /src\/pages\/[A-Z]\w*\.jsx$/.test(f))) {
+    const nombre = f.split('/').pop().replace('.jsx', '')
+    // App.jsx carga en diferido: `const Feed = lazy(() => import('./pages/Feed'))`.
+    // Buscar solo `from '...'` daba cinco falsos "sin ruta".
+    const importado = new RegExp(`['"\`][^'"\`]*\\/${nombre}['"\`]`).test(app)
+    if (!importado) { huerfanas.push(`${nombre} — sin ruta`); continue }
+    const ruta = [...rutaDe.entries()].find(([c]) => c === nombre || c === nombre + 'Page')?.[1]
+    if (!ruta || ['/', '*'].includes(ruta)) continue
+    const base = ruta.replace(/\/:.*$/, '')            // `/helper/:id` → `/helper`
+    // Navegacion DE VERDAD, no cualquier aparicion de la cadena: `/onboarding`
+    // sale en tres listas de "ocultar la barra aqui" y eso no lleva a nadie.
+    const llega = new RegExp(`(navigate\\(\\s*|to=|href=)['"\`]${base}[/'"\`]`).test(codigo)
+    if (!llega) {
+      huerfanas.push(`${nombre} — enrutada en ${ruta}, pero nadie navega ahi`)
+    }
+  }
+  if (huerfanas.length) {
+    console.log(`~ ${huerfanas.length} pantalla(s) que un usuario no puede alcanzar:`)
+    huerfanas.forEach(h => console.log(`   · ${h}`))
+    console.log('   Enchufarlas o retirarlas: construido y dormido es lo peor de ambos.')
+  } else bien('todas las pantallas son alcanzables')
+}
+
 console.log('\n⚠ REVISION MANUAL que la sonda no cubre:')
 console.log('   El INSERT. RegisterHelper.jsx hace POST a `helpers` con la')
 console.log('   clave anonima: sin policy de insert, cualquiera puede dar de')

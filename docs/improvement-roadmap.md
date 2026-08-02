@@ -1995,6 +1995,58 @@ de cierre va ENTRE el nombre y los dos puntos. Sexta vez en la jornada.)*
 
 ---
 
+## El onboarding que nadie ve · **Censado** · 2026-08-01
+
+Sello `2026.07.07-f`. `scripts/preflight.mjs`. Retirado
+`components/Onboarding.jsx`.
+
+Conducida la superficie que quedaba sin conducir: **lo primero que ve
+alguien que abre Nüra por primera vez**. En un dispositivo virgen, la app
+entra **directa a Home**. No hay primera experiencia.
+
+Y sin embargo esta construida. Cuatro veces.
+
+| pieza | estado | que contiene |
+|---|---|---|
+| `pages/Onboarding.jsx` | **enrutada, nadie navega** | *"BIENVENIDO · La IA que conecta personas reales"* + nombre + bifurcacion profesional |
+| `components/Onboarding.jsx` | **cero referencias** | version anterior, superada |
+| `pages/MomentoCero.jsx` | sin ruta | escena guionizada ("Sergio, 34 años · Eixample") |
+| `pages/Splash.jsx` | sin ruta | apertura con el isotipo |
+
+**El enrutado funciona entero.** Conducido: pantalla de bienvenida con la
+frase de marca, pregunta el nombre, y ofrece
+*"Soy profesional y quiero ofrecer mis servicios →"* — una **tercera
+puerta al alta profesional**, y mejor que las dos conocidas, porque separa
+los caminos antes de empezar. `/onboarding` solo aparece en tres listas de
+*"ocultar la barra aqui"*: nadie navega ahi.
+
+**Retirado**: `components/Onboarding.jsx` y su CSS. Cero importaciones,
+version superada. Es el patron "existe dos veces" con la puerta ya quitada.
+
+**NO enchufado**: que un usuario nuevo pase por onboarding o caiga directo
+en la conversacion es **decision del fundador**, y hay argumento en las dos
+direcciones. A favor: fija la promesa, captura el nombre —que personaliza
+el saludo— y bifurca al profesional. En contra: la tesis de Nüra es
+*"cuentame y ya"*, y un muro antes de eso la contradice.
+
+*(Y si se enchufa, resuelve de paso media discrepancia de la Fase 5:
+la separacion usuario/profesional ocurriria ANTES del registro, que es
+justo lo que pide el prompt maestro.)*
+
+### Guardia: pantallas que nadie puede alcanzar
+
+Nuevo en la quinta puerta, **informativo, no bloqueante** — decidir es del
+fundador, pero deben estar delante. Censo actual: `Favorites`,
+`HowItWorks`, `MomentoCero`, `Splash` (sin ruta) y `Onboarding` (enrutada
+sin entrada).
+
+*(Cuatro correcciones al guardia antes de ser fiable: emparejaba por nombre
+—`HelperProfile` vive en `/helper/:id`—, no contemplaba `lazy(() =>
+import(...))`, y contaba como navegacion cualquier aparicion de la cadena.
+Septima vez en la jornada que el instrumento miente y no el codigo.)*
+
+---
+
 ## Deudas heredadas (censadas antes de este roadmap)
 
 - **[BLOQUEO DE LANZAMIENTO]** RLS de Supabase: el rol anónimo puede
