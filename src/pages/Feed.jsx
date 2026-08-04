@@ -30,6 +30,7 @@ export default function Feed() {
   const { user, myStories, following, utilesDe, contactedHelpers } = useUser()
   const [modo, setModo] = useState('todos')
   const [composerOpen, setComposerOpen] = useState(false)
+  const [avisoNoPro, setAvisoNoPro] = useState(false)
   const [tema, setTema] = useState(null)
 
   // ── Todo se normaliza a la MISMA unidad ──
@@ -149,8 +150,24 @@ export default function Feed() {
       )}
 
       <div style={{ padding: '0 var(--space-16)' }}>
-        {/* El gesto de publicar deja de estar escondido en el Perfil */}
-        <button onClick={() => user ? (user.isHelper ? setComposerOpen(true) : navigate('/')) : navigate('/login')}
+        {/* El gesto de publicar deja de estar escondido en el Perfil.
+            El usuario NO profesional leia "Cuenta cómo te fue…" y al tocarlo
+            aterrizaba en Inicio, sin una palabra: el boton prometia una cosa
+            y hacia otra. Ahora dice por que no puede todavia, que es lo
+            unico honesto mientras publicar sea solo de profesionales.
+            (Quien puede publicar es decision de producto, sin tomar.) */}
+        {avisoNoPro && (
+          <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)',
+            lineHeight: 1.5, margin: '0 0 var(--space-10)' }}>
+            Por ahora las historias las publican los profesionales. Cuando
+            termines un servicio podrás contar cómo te fue desde el chat.
+          </p>
+        )}
+        <button onClick={() => {
+            if (!user) return navigate('/login')
+            if (user.isHelper) return setComposerOpen(true)
+            setAvisoNoPro(true)
+          }}
           style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-10)', width: '100%',
             background: 'white', border: '1px solid var(--ink-border)', borderRadius: 'var(--radius-md)',
             boxShadow: 'var(--shadow-sm)', padding: 'var(--space-12) var(--space-14)',

@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-02 (accesibilidad auditada)
+**Última actualización:** 2026-08-02 (Comunidad conducida)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -175,5 +175,24 @@ zona tocable: no cambia nada de lo que se ve.
 visibilidad del foco, y navegación por teclado. Requieren decisiones de
 diseño.
 
-Tarea siguiente propuesta: **conducir Comunidad**, la única pantalla sin
-recorrer.
+**Nota sobre la cabecera de Comunidad**: dice *"20 historias de 13
+personas"* aunque el filtro muestre 2. Se calcula sobre el corpus completo.
+Es defendible —describe la comunidad, no la vista— y por eso **no se ha
+tocado**: es copy, no defecto.
+
+**Comunidad conducida el 2026-08-02** — era la única pantalla sin recorrer.
+Reacciones, comentarios, filtros y publicación: **todo funciona**. Un solo
+defecto real y curado: el usuario no profesional leía *"Cuenta cómo te
+fue…"* y al tocarlo aterrizaba en Inicio, sin una palabra. Ahora explica
+que por ahora publican los profesionales.
+
+**Tres falsos positivos míos** antes de dar con él: el contador de reacción
+(mi regex leía otra publicación), el filtro (sí funciona: 22 → 2) y el
+compositor del profesional (sí abre; miraba el texto de arriba).
+
+**Decisión de producto que queda abierta**: si el usuario que recibió la
+ayuda debería poder publicar el resultado. Hoy solo publican profesionales.
+
+Tarea siguiente propuesta: **contraste, foco y navegación por teclado** —
+lo que quedó fuera de la auditoría de accesibilidad por requerir criterio
+de diseño.
