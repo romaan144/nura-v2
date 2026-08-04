@@ -178,9 +178,62 @@ function normalize(h) {
 
 // ── API FUNCTIONS ─────────────────────────────────────────────────────────
 
+// ── Qué columnas pedimos ─────────────────────────────────────────────────
+//
+// `select=*` se descargaba TAMBIÉN `chat_log` —las conversaciones de los
+// usuarios— al navegador de cada visitante, en cada búsqueda, y el cliente
+// no lo usa nunca. En Nüra esas frases no son metadatos: son "mi madre vive
+// sola".
+//
+// No se puede resolver con una lista blanca escrita a mano: PostgREST
+// devuelve 400 si una columna no existe, y el esquema real no se conoce
+// desde aquí (normalize() lee `avatarUrl` Y `avatar_url` justamente porque
+// hay dudas). Una lista inventada rompería TODAS las lecturas.
+//
+// Así que se pregunta. `GET /rest/v1/` devuelve el OpenAPI con las columnas
+// reales de la tabla: una sola petición, CERO filas, ningún dato expuesto.
+// Se cachea para la sesión.
+//
+// Si el descubrimiento falla (sin red, esquema inesperado), se vuelve a `*`:
+// el comportamiento de hoy. Nunca se rompe una lectura por esto.
+const COLUMNAS_OCULTAS = ['chat_log']
+let columnasCache = null
+let descubrimiento = null
+
+async function descubrirColumnas() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/`, { headers, signal: AbortSignal.timeout(2500) })
+    if (!res.ok) return null
+    const spec = await res.json()
+    const props = spec?.definitions?.helpers?.properties
+    if (!props) return null
+    const cols = Object.keys(props).filter(c => !COLUMNAS_OCULTAS.includes(c))
+    // Si no falta ninguna, no hay nada que acotar: mejor `*` que una lista
+    // larga que quedaría obsoleta al añadir una columna.
+    if (!cols.length || cols.length === Object.keys(props).length) return null
+    return cols.join(',')
+  } catch { return null }
+}
+
+// NO BLOQUEA. El descubrimiento se lanza al cargar y quien pregunte recibe
+// lo que haya: `*` hasta que llegue, la lista acotada despues. Esperarlo
+// costaria hasta 2,5 s en la PRIMERA busqueda —la que define el producto— y
+// justo cuando la red va mal. Precio: `chat_log` viaja una vez por sesion en
+// lugar de en todas las lecturas.
+export function columnasHelpers() {
+  return columnasCache || '*'
+}
+
+descubrimiento = descubrirColumnas()
+  .then(c => {
+    columnasCache = c || '*'
+    if (!c) console.warn('[Nüra] esquema no descubierto: se pide select=* (chat_log viaja al navegador)')
+  })
+  .catch(() => { columnasCache = '*' })
+
 export async function searchHelpers(category, keywords = []) {
   try {
-    let url = `${SUPABASE_URL}/rest/v1/helpers?select=*&limit=100&order=rating.desc`
+    let url = `${SUPABASE_URL}/rest/v1/helpers?select=${columnasHelpers()}&limit=100&order=rating.desc`
     if (category && !['otro','general','todos'].includes(category)) {
       // Exact match first, case-insensitive via ilike without wildcards
       url += `&category=ilike.${encodeURIComponent(category)}`
@@ -202,7 +255,7 @@ export async function searchHelpers(category, keywords = []) {
 
 export async function getHelperById(id) {
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/helpers?id=eq.${id}&select=*&limit=1`, { headers, signal: AbortSignal.timeout(2500) })
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/helpers?id=eq.${id}&select=${columnasHelpers()}&limit=1`, { headers, signal: AbortSignal.timeout(2500) })
     if (!res.ok) return null
     const data = await res.json()
     return data?.[0] ? normalize(data[0]) : null
@@ -211,7 +264,7 @@ export async function getHelperById(id) {
 
 export async function getAllHelpers() {
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/helpers?select=*&limit=1000&order=rating.desc`, { headers, signal: AbortSignal.timeout(2500) })
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/helpers?select=${columnasHelpers()}&limit=1000&order=rating.desc`, { headers, signal: AbortSignal.timeout(2500) })
     if (!res.ok) return null
     const data = await res.json()
     return Array.isArray(data) ? data.map(normalize) : null

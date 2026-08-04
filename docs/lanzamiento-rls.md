@@ -81,12 +81,24 @@ where tablename = 'helpers';
 
 ### Y lo que hay que dejar de exponer en la lectura
 
-`chat_log` no lo usa el cliente. Mientras la política de `select` sea
-`using (true)` sobre todas las columnas, sigue viajando. Dos salidas, **a
-decidir por ti** (fuera del alcance de esta tarea):
+**Curado en el cliente el 2026-08-02.** `supabase.js` descubre las columnas
+reales pidiendo el OpenAPI (`GET /rest/v1/`: una petición, **cero filas**) y
+pide todas menos `chat_log`. Si el descubrimiento falla, vuelve a `select=*`
+—el comportamiento anterior— y avisa en consola: nunca rompe una lectura.
 
-- **Vista**: crear `helpers_publicos` sin `chat_log` y apuntar el cliente ahí.
-- **Grants por columna**: `revoke select (chat_log) on helpers from anon;`
+**No bloquea la primera búsqueda**: el descubrimiento se lanza al cargar y
+quien pregunta recibe lo que haya. Esperarlo costaría hasta 2,5 s en la
+búsqueda que define el producto. Precio aceptado: `chat_log` viaja **una vez
+por sesión** en lugar de en todas las lecturas.
+
+**La cura definitiva sigue siendo tuya**, y hace innecesario lo anterior:
+
+```sql
+revoke select (chat_log) on public.helpers from anon;
+```
+
+Con eso `chat_log` no sale de Supabase aunque alguien pida `select=*` a mano
+con la clave pública — que es lo único que el cliente no puede impedir.
 
 ---
 

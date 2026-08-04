@@ -137,13 +137,17 @@ if (conVh.length) {
 
 // ── 6. Lo que el cliente se descarga de mas ──
 {
+  // Antes esta comprobacion buscaba `select=*` a secas. Desde que el cliente
+  // descubre el esquema y acota las columnas, dejaba de saltar POR
+  // COINCIDENCIA (el fichero menciona `chat_log` en el codigo nuevo). Una
+  // puerta que pasa por casualidad no es una puerta.
   const sb = readFileSync('src/utils/supabase.js', 'utf8')
-  const usaChatLog = /chat_log/.test(sb.replace(/\/\/.*$/gm, ''))
-  if (/select=\*/.test(sb) && !usaChatLog) {
-    console.log('~ `select=*` sobre `helpers`: el cliente se descarga tambien')
-    console.log('   `chat_log` — las conversaciones de los usuarios — y NO lo usa.')
-    console.log('   En Nura esas frases son intimas ("mi madre vive sola").')
-    console.log('   → acotar el select a las columnas que normalize() lee.')
+  if (!/COLUMNAS_OCULTAS/.test(sb)) {
+    mal('`select=*` sin acotar: `chat_log` viaja al navegador en cada lectura.')
+  } else {
+    bien('el cliente acota columnas: `chat_log` no se pide (salvo la 1a lectura)')
+    console.log('   Cura definitiva, en Supabase y solo tuya:')
+    console.log('     revoke select (chat_log) on public.helpers from anon;')
   }
 }
 

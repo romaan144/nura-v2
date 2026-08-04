@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-02 (claudeApi.js retirado)
+**Última actualización:** 2026-08-02 (`select` acotado)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -105,8 +105,9 @@ recomendación en la entrega de la tarea de recuperación.
 - **Filas de prueba en producción**: hasta el sello `-y`, cada recorrido del
   alta escribía un profesional real en Supabase. Revisar y limpiar las filas
   con `ai_data->>'self_registered' = 'true'` que no sean reales.
-- `select=*` sobre `helpers` descarga `chat_log` al navegador sin usarlo.
-  **Es el último frente abierto de la superficie de datos.**
+- `chat_log` sigue siendo legible con la clave pública por quien pida
+  `select=*` a mano. El cliente ya no lo pide; cerrarlo del todo requiere el
+  `revoke` en Supabase (tuyo).
 - 5 pantallas construidas y no alcanzables: `Favorites`, `HowItWorks`,
   `MomentoCero`, `Splash`, `Onboarding`.
 - `nura_demanda_no_cubierta` sigue solo en local; requiere backend.
@@ -147,5 +148,11 @@ dos funciones no las llamaba nadie y eran los únicos exports del fichero.
 **Ya no queda ninguna escritura con clave pública en `src/`**: todas pasan
 por `src/utils/escrituras.js`.
 
-Tarea siguiente propuesta (no iniciada): **acotar `select=*`** para que
-`chat_log` deje de viajar al navegador en cada búsqueda.
+**Terminada el 2026-08-02**: el cliente descubre el esquema y pide todas las
+columnas menos `chat_log`, sin bloquear la primera búsqueda y con respaldo a
+`select=*` si el descubrimiento falla. Falta la cura definitiva, que es tuya:
+`revoke select (chat_log) on public.helpers from anon;`
+
+**No hay tarea siguiente propuesta.** La superficie de datos queda cerrada
+por el lado del cliente; lo que resta son tus cinco decisiones y la
+ejecución en Supabase.
