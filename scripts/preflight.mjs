@@ -68,8 +68,18 @@ if (conVh.length) {
 // habiendo tocado cero filas. Nunca modifica un dato real.
 {
   const env = readFileSync('src/utils/supabase.js', 'utf8')
-  const url = (env.match(/SUPABASE_URL\s*=\s*['"`]([^'"`]+)/) || [])[1]
-  const key = (env.match(/SUPABASE_(?:ANON_)?KEY\s*=\s*['"`]([^'"`]+)/) || [])[1]
+  // Coger el ULTIMO literal entrecomillado de la linea, no el primero tras el
+  // `=`: desde la unificacion de credenciales la linea es
+  //   export const SUPABASE_URL = import.meta?.env?.VITE_... || 'https://...'
+  // y el patron anterior (comilla justo tras el `=`) dejo de encontrar nada.
+  // La sonda decia "no localizo URL/clave" en vez de comprobar el RLS.
+  const literal = (nombre) => {
+    const linea = env.split('\n').find(l => new RegExp(`${nombre}\\s*=`).test(l)) || ''
+    const trozos = [...linea.matchAll(/['"`]([^'"`]{8,})['"`]/g)].map(m => m[1])
+    return trozos[trozos.length - 1]
+  }
+  const url = literal('SUPABASE_URL')
+  const key = literal('SUPABASE_(?:ANON_)?KEY')
   if (!url || !key) {
     console.log('~ RLS: no localizo URL/clave en supabase.js — comprobar a mano')
   } else {

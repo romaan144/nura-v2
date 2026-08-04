@@ -1,3 +1,17 @@
+> ## ⚠ Este documento es HISTÓRICO, no operativo
+>
+> **El estado del proyecto vive en [`docs/current-status.md`](./current-status.md).**
+> Ahí están la fase actual, las decisiones pendientes y el siguiente paso.
+>
+> Este archivo conserva el registro completo de hallazgos, mediciones y
+> decisiones (2.060 líneas). Sirve para **consultar por qué se hizo algo**,
+> no para saber dónde está el proyecto. Su cabecera y sus marcas de
+> "siguiente paso" internas pueden estar obsoletas: no fiarse de ellas.
+>
+> *Aviso añadido el 2026-08-02. Último commit al añadirlo: `ad77e13`.*
+
+---
+
 # Nüra 2 — Roadmap de mejora
 
 > Registro operativo. Se actualiza al cerrar una tarea o ante una decisión
