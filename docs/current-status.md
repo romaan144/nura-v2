@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-02 (`select` acotado)
+**Última actualización:** 2026-08-02 (accesibilidad auditada)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -153,6 +153,27 @@ columnas menos `chat_log`, sin bloquear la primera búsqueda y con respaldo a
 `select=*` si el descubrimiento falla. Falta la cura definitiva, que es tuya:
 `revoke select (chat_log) on public.helpers from anon;`
 
-**No hay tarea siguiente propuesta.** La superficie de datos queda cerrada
-por el lado del cliente; lo que resta son tus cinco decisiones y la
-ejecución en Supabase.
+**Accesibilidad auditada y curada el 2026-08-02** — era la única área que la
+matriz marcaba *No iniciada*. Medido en 6 pantallas y 172 elementos
+interactivos:
+
+| | antes | ahora |
+|---|---|---|
+| botones sin nombre accesible | 2 | **0** |
+| incumplimientos táctiles WCAG 2.2 AA (24×24) | 53 | **0** |
+| imágenes sin `alt` | 0 | 0 |
+| campos sin etiqueta | 0 | 0 |
+| `lang` del documento | `es` ✓ | `es` ✓ |
+
+Los dos sin nombre eran el avatar que lleva al perfil desde Inicio y —peor—
+**el botón de cerrar sesión**, sobre el que un lector de pantalla decía solo
+*"botón"*. Y **52 de los 53 fallos táctiles eran el mismo componente**: los
+botones *Me sirve* y *Comentar* de cada publicación, a 22px. Solo creció la
+zona tocable: no cambia nada de lo que se ve.
+
+**Pendiente en accesibilidad, no abordado**: contraste de color, orden y
+visibilidad del foco, y navegación por teclado. Requieren decisiones de
+diseño.
+
+Tarea siguiente propuesta: **conducir Comunidad**, la única pantalla sin
+recorrer.

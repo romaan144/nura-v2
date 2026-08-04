@@ -174,8 +174,12 @@ export default function Profile() {
   return (
     <>
     <div className={styles.page}>
+      {/* El boton de cerrar sesion no tenia nombre accesible: un lector de
+          pantalla decia solo "boton" sobre la accion mas destructiva de la
+          pantalla. El icono no basta. */}
       <PageHeader rightEl={
-        <button className={styles.logoutIcon} onClick={() => { logout(); navigate('/') }}>
+        <button className={styles.logoutIcon} aria-label="Cerrar sesión"
+          onClick={() => { logout(); navigate('/') }}>
           <LogOut size={17} />
         </button>
       } />

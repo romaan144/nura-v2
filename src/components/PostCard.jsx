@@ -129,7 +129,13 @@ export default function PostCard({ post }) {
         </button>
       )}
 
-      {/* ── La barra social: siempre presente, siempre igual ── */}
+      {/* ── La barra social: siempre presente, siempre igual ──
+          Medido: estos dos botones median 22px de alto y eran ELLOS SOLOS
+          52 de los 53 incumplimientos del minimo tactil de WCAG 2.2 AA
+          (24x24) en toda la app — se repiten en cada publicacion de
+          Comunidad y de la ficha. El padding vertical pasa de 4 a 8 y se
+          fija minHeight 24. La pildora no tiene fondo ni borde, asi que
+          crece la zona tocable sin que cambie NADA de lo que se ve. */}
       <div style={{
         display: 'flex', alignItems: 'center', gap: 'var(--space-16)',
         borderTop: '1px solid var(--ink-border)', marginTop: 'var(--space-12)', paddingTop: 'var(--space-8)',
@@ -137,7 +143,7 @@ export default function PostCard({ post }) {
         <button onClick={() => user ? toggleUtil(post.id) : pedirCuenta()}
           aria-pressed={!!marcado}
           style={{
-            background: 'none', border: 'none', padding: 'var(--space-4) 0', cursor: 'pointer',
+            background: 'none', border: 'none', padding: 'var(--space-8) 0', cursor: 'pointer', minHeight: 24,
             fontSize: 'var(--text-xs)', fontWeight: 700,
             color: marcado ? 'var(--purple)' : 'var(--ink-tertiary)',
           }}>
@@ -145,8 +151,8 @@ export default function PostCard({ post }) {
         </button>
         <button onClick={() => setOpenThread(v => !v)}
           style={{
-            background: 'none', border: 'none', padding: 'var(--space-4) 0', cursor: 'pointer',
-            fontSize: 'var(--text-xs)', fontWeight: 600,
+            background: 'none', border: 'none', padding: 'var(--space-8) 0', cursor: 'pointer', minHeight: 24,
+            fontSize: 'var(--text-xs)', fontWeight: 600, minWidth: 24,
             color: openThread ? 'var(--purple)' : 'var(--ink-tertiary)',
           }}>
           💬 {comments.length > 0 ? comments.length : 'Comentar'}

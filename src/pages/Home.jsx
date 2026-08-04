@@ -1142,8 +1142,12 @@ export default function Home() {
               <RotateCcw size={15} color="rgba(33,29,51,0.6)" />
             </button>
           )}
+          {/* Su contenido es una imagen decorativa (alt="") o un icono: sin
+              aria-label, un lector de pantalla solo dice "boton". Y es el
+              unico camino al perfil desde Inicio. */}
           <button
             className={styles.logoBubble}
+            aria-label="Tu perfil"
             style={{position:'static',transform:'none',padding:'0',width:'42px',height:'42px',borderRadius:'50%',overflow:'hidden',display:'flex',alignItems:'center',justifyContent:'center',pointerEvents:'all'}}
             onClick={() => navigate('/profile')}>
             {user?.name

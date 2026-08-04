@@ -91,6 +91,9 @@
   color: var(--ink-tertiary);
   font-family: inherit;
   padding: 2px 0;
+  /* WCAG 2.2 AA (2.5.8): la diana medía 76x18. Solo crece la zona tocable
+     —el boton no tiene fondo— asi que no cambia nada de lo que se ve. */
+  min-height: 24px;
 }
 
 /* Edit inline */
