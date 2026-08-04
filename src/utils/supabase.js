@@ -1,6 +1,6 @@
 import { avatarDe } from '../utils/avatar'
 // LA UNICA FUENTE. Estaban declaradas en TRES sitios y ya habian divergido:
-// aqui la clave nueva `sb_publishable_`, y en claudeApi.js y RegisterHelper.jsx
+// aqui la clave nueva `sb_publishable_`, y en claudeApi.js (retirado) y
 // el JWT antiguo. Es decir, las LECTURAS iban con una credencial y las
 // ESCRITURAS con otra. Si el JWT viejo se revoca, la app sigue leyendo tan
 // campante y deja de guardar en silencio — justo en el flujo menos

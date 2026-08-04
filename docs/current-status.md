@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-02 (escrituras en Edge Function)
+**Última actualización:** 2026-08-02 (claudeApi.js retirado)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -106,6 +106,7 @@ recomendación en la entrega de la tarea de recuperación.
   alta escribía un profesional real en Supabase. Revisar y limpiar las filas
   con `ai_data->>'self_registered' = 'true'` que no sean reales.
 - `select=*` sobre `helpers` descarga `chat_log` al navegador sin usarlo.
+  **Es el último frente abierto de la superficie de datos.**
 - 5 pantallas construidas y no alcanzables: `Favorites`, `HowItWorks`,
   `MomentoCero`, `Splash`, `Onboarding`.
 - `nura_demanda_no_cubierta` sigue solo en local; requiere backend.
@@ -141,6 +142,10 @@ una red con salida a Supabase.
 por defecto**: desplegar no cambia nada hasta que lo enciendas tras
 `supabase functions deploy`. Pasos en `docs/lanzamiento-rls.md`.
 
-Tarea siguiente propuesta (no iniciada): **retirar `writeHelperAiData` y
-`getHelperForAnalysis` de `claudeApi.js`**, sin llamantes y con clave
-pública.
+**Terminada el 2026-08-02**: `src/utils/claudeApi.js` retirado entero. Sus
+dos funciones no las llamaba nadie y eran los únicos exports del fichero.
+**Ya no queda ninguna escritura con clave pública en `src/`**: todas pasan
+por `src/utils/escrituras.js`.
+
+Tarea siguiente propuesta (no iniciada): **acotar `select=*`** para que
+`chat_log` deje de viajar al navegador en cada búsqueda.

@@ -124,9 +124,10 @@ if (conVh.length) {
         console.log('     -- sin policy de insert/update/delete para anon:')
         console.log('     -- lo que no se concede, queda denegado.')
         console.log('')
-        console.log('   Y las escrituras que hoy hace el cliente (ai_data,')
-        console.log('   chat_log en claudeApi.js; el alta en RegisterHelper.jsx)')
-        console.log('   deben pasar a una Edge Function con la service key.')
+        console.log('   Las dos escrituras ya viven en la Edge Function')
+        console.log('   `helpers-write` (service_role). Enciendelas con')
+        console.log('   VITE_EDGE_WRITES=true tras desplegarla — ver')
+        console.log('   docs/lanzamiento-rls.md.')
       } else console.log(`~ RLS: respuesta inesperada (HTTP ${r.status}) — comprobar a mano`)
     } catch (e) {
       console.log(`~ RLS: no he podido comprobarlo (${String(e.message).slice(0, 60)}) — comprobar a mano`)
