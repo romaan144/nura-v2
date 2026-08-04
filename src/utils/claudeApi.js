@@ -60,31 +60,9 @@ export async function writeHelperAiData(helperId, aiDataUpdates) {
 // ── APPEND CHAT LOG ────────────────────────────────────────────────────────
 // Appends a chat exchange to chat_log so Claude can analyze it later.
 
-export async function appendHelperChatLog(helperId, userMsg, helperReply) {
-  try {
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/helpers?id=eq.${helperId}&select=chat_log`,
-      { headers }
-    )
-    const [existing] = await res.json()
-    const entry = `[${new Date().toISOString()}]\nU: ${userMsg}\nH: ${helperReply}\n---\n`
-    const updated = (existing?.chat_log || '') + entry
-
-    await fetch(
-      `${SUPABASE_URL}/rest/v1/helpers?id=eq.${helperId}`,
-      {
-        method: 'PATCH',
-        headers,
-        body: JSON.stringify({ chat_log: updated })
-      }
-    )
-  } catch (e) {
-    // No bloquear la interfaz: si el registro del chat falla, al usuario le
-    // da igual. Pero SE AVISA en consola — fallaba en absoluto silencio y
-    // nadie sabria nunca que esta persistencia esta rota.
-    console.warn('[Nüra] registro del chat no guardado:', e?.message || e)
-  }
-}
+// `appendHelperChatLog` se traslado a utils/escrituras.js el 2026-08-02:
+// las escrituras deben pasar por un solo sitio que decida clave publica o
+// Edge Function. Aqui quedaba ademas sin tope de tamaño para chat_log.
 
 // ── READ FOR CLAUDE ANALYSIS ───────────────────────────────────────────────
 // Claude API calls this to get everything needed to analyze a helper.

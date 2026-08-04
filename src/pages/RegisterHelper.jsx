@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Send, Mic, MicOff } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import { DEMO_MODE } from '../config'
-import { SUPABASE_URL, SUPABASE_KEY } from '../utils/supabase'   // fuente unica
+import { altaProfesional } from '../utils/escrituras'
 import BottomNav from '../components/BottomNav'
 import styles from './Home.module.css'
 
@@ -34,19 +34,9 @@ async function saveHelperToSupabase(answers) {
       tags: [answers.specialty || ''].filter(Boolean),
       ai_data: { formation: answers.formation, self_registered: true, registered_at: new Date().toISOString() }
     }
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/helpers`, {
-      method: 'POST',
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
-      body: JSON.stringify(payload)
-    })
-    if (!res.ok) {
-      // Importante tras cerrar el RLS: si la politica bloquea el insert,
-      // esto devolvera 401/403 y hay que DECIRLO, no dar el alta por buena.
-      console.warn('[Nüra] alta profesional rechazada:', res.status)
-      return null
-    }
-    const data = await res.json()
-    return data?.[0] || null
+    // La escritura vive en utils/escrituras.js: un solo sitio decide si va
+    // por la Edge Function (service_role) o por el camino directo.
+    return await altaProfesional(payload)
   } catch (e) { console.warn('[Nüra] alta profesional no guardada:', e?.message || e); return null }
 }
 

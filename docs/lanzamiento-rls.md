@@ -105,9 +105,55 @@ desde el sello `2026.07.07-a` el alta espera el resultado, comprueba
 Verificado en navegador contra una red sin salida, que reproduce
 exactamente un insert rechazado.
 
-**La solución definitiva** es mover E1 y E2 a una Edge Function con la
-`service_role key` (que nunca viaja al navegador). **Eso es una tarea
-principal propia, no parte de esta.**
+**La solución definitiva ya está construida** (2026-08-02):
+`supabase/functions/helpers-write`, una Edge Function con `service_role`
+que es dueña de las dos escrituras.
+
+### Cómo activarla
+
+El cliente trae un interruptor **apagado por defecto** (`VITE_EDGE_WRITES`).
+Mientras esté apagado se sigue por el camino directo, es decir, el
+comportamiento de hoy. Desplegar el frontend **no cambia nada** hasta que lo
+enciendas. Orden:
+
+```bash
+# 1 · secretos de la funcion (SUPABASE_URL y SERVICE_ROLE_KEY los pone
+#     Supabase solo; NURA_ORIGINS lo pones tu)
+supabase secrets set NURA_ORIGINS="https://nura-v2-two.vercel.app"
+
+# 2 · desplegar
+supabase functions deploy helpers-write
+
+# 3 · probar el alta SIN tocar el frontend
+curl -X POST "https://<tu-proyecto>.functions.supabase.co/helpers-write" \
+  -H "content-type: application/json" \
+  -H "origin: https://nura-v2-two.vercel.app" \
+  -d '{"op":"alta","payload":{"name":"Prueba Borrar","category":"tecnico"}}'
+# → {"ok":true,...}  y despues BORRA esa fila
+```
+
+Y en Vercel:
+
+```
+VITE_EDGE_WRITES = true
+VITE_EDGE_URL    = https://<tu-proyecto>.functions.supabase.co/helpers-write
+```
+
+### Lo que la función NO deja hacer al cliente
+
+El alta llega de un formulario público, así que la función **no confía en su
+forma**: solo pasan campos de una lista blanca y con el tipo esperado, y
+`verified`, `dni_verified` y `available` los fija ella. Un `payload`
+manipulado no puede declararse verificado. El `chat_log` tiene además un
+tope duro de 200 KB por fila: antes crecía sin límite y pesaba en cada
+lectura del catálogo.
+
+### Lo único que queda con clave pública
+
+`writeHelperAiData` en `claudeApi.js` sigue siendo un `PATCH` con la clave
+`anon`, pero **no lo llama nadie** (código muerto censado el 2026-08-01). Al
+cerrar el RLS dejaría de funcionar igualmente. Retirarlo es una tarea
+aparte.
 
 ---
 

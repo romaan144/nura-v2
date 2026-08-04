@@ -16,6 +16,15 @@ export const DEMO_MODE = import.meta?.env?.VITE_DEMO !== undefined
 
 // ── La Confirmación Humana ──
 // Cuánto esperar tras un contacto para preguntar "¿Pudiste resolverlo?"
+// Las dos escrituras sobre `helpers` pasan por la Edge Function
+// `helpers-write` (service_role) en vez de ir con la clave publica.
+// APAGADO por defecto A PROPOSITO: mientras la funcion no este desplegada,
+// activarlo romperia el alta. Se enciende con VITE_EDGE_WRITES=true en
+// Vercel DESPUES de `supabase functions deploy helpers-write`.
+// Ver docs/lanzamiento-rls.md.
+export const EDGE_WRITES = String(import.meta?.env?.VITE_EDGE_WRITES ?? '') === 'true'
+export const EDGE_URL = import.meta?.env?.VITE_EDGE_URL || ''
+
 export const CONFIRMACION_THRESHOLD = DEMO_MODE ? 30 * 1000 : 3 * 24 * 60 * 60 * 1000
 export const CONFIRMACION_DELAY = DEMO_MODE ? 4000 : 500
 

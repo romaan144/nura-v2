@@ -5,7 +5,7 @@ import { HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
 import { slotsDe, ocupacionesDe, motivoSinHuecos, FRASE_SIN_HUECOS } from '../data/horarios'
 import { getHelperById } from '../utils/supabase'
-import { appendHelperChatLog } from '../utils/claudeApi'
+import { registrarConversacion } from '../utils/escrituras'
 import { notifyServiceConfirmed } from '../utils/notifications'
 import { haptic } from '../utils/haptic'
 import RatingModal from '../components/RatingModal'
@@ -456,7 +456,7 @@ export default function Chat() {
       const reply = { id: Date.now() + 1, text: replyText, from: 'helper', time: new Date().toISOString() }
       // Log for future Claude analysis (silently)
       if (helper.isFromSupabase) {
-        appendHelperChatLog(helper.id, msg, replyText).catch(() => {})
+        registrarConversacion(helper.id, msg, replyText)
       }
       setMessages(prev => [...prev, reply])
       const newCount = msgCount + 1

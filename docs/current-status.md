@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-02 (auditoría RLS)
+**Última actualización:** 2026-08-02 (escrituras en Edge Function)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -135,7 +135,12 @@ recomendación en la entrega de la tarea de recuperación.
 Lo que queda de ese frente **es tuyo**: aplicar el SQL y apagar demo desde
 una red con salida a Supabase.
 
-Tarea siguiente propuesta (no iniciada): **mover las dos escrituras
-(`POST /helpers` y el `PATCH` de `chat_log`) a una Edge Function con
-`service_role`**, para que el alta profesional vuelva a publicar con el RLS
-cerrado.
+**Terminada el 2026-08-02**: las dos escrituras viven ya en
+`supabase/functions/helpers-write` (Edge Function con `service_role`) y en
+`src/utils/escrituras.js`. El interruptor `VITE_EDGE_WRITES` está **apagado
+por defecto**: desplegar no cambia nada hasta que lo enciendas tras
+`supabase functions deploy`. Pasos en `docs/lanzamiento-rls.md`.
+
+Tarea siguiente propuesta (no iniciada): **retirar `writeHelperAiData` y
+`getHelperForAnalysis` de `claudeApi.js`**, sin llamantes y con clave
+pública.
