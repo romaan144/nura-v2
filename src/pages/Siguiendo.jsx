@@ -44,7 +44,19 @@ export default function Siguiendo() {
           <div className={styles.list}>
             {(saved||[]).map((h, i) => (
               <div key={h.id} style={{animation:`cardCascade 0.45s cubic-bezier(0.22, 1, 0.36, 1) ${i*80}ms both`}}>
-              <div className={styles.card} onClick={() => navigate(`/helper/${h.id}`, { state: { helper: h } })}>
+              {/* Era un <div onClick>: se podia tocar con el dedo pero NO se
+                  alcanzaba con teclado ni lo anunciaba un lector de pantalla.
+                  role + tabIndex + Enter/Espacio lo hacen operable sin
+                  cambiar una sola linea de lo que se ve. */}
+              <div className={styles.card} role="button" tabIndex={0}
+                aria-label={`Ver perfil de ${h.name}`}
+                onClick={() => navigate(`/helper/${h.id}`, { state: { helper: h } })}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    navigate(`/helper/${h.id}`, { state: { helper: h } })
+                  }
+                }}>
                 <div className={styles.cardLeft}>
                   <img src={h.avatarUrl || avatarDe(h.name)}
                     alt={h.name} className={styles.avatar} />

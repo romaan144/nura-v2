@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-02 (Comunidad conducida)
+**Última actualización:** 2026-08-02 (contraste, foco y teclado)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -171,9 +171,33 @@ Los dos sin nombre eran el avatar que lleva al perfil desde Inicio y —peor—
 botones *Me sirve* y *Comentar* de cada publicación, a 22px. Solo creció la
 zona tocable: no cambia nada de lo que se ve.
 
-**Pendiente en accesibilidad, no abordado**: contraste de color, orden y
-visibilidad del foco, y navegación por teclado. Requieren decisiones de
-diseño.
+**Contraste, foco y teclado auditados el 2026-08-02.** Medido en 7 pantallas:
+
+- **Foco: correcto.** El patrón `*:focus { outline:none }` + `*:focus-visible
+  { outline: 2px }` es el estándar bien aplicado, y los campos indican con
+  `:focus-within` en 5 sitios. **Nada que arreglar.**
+- **Teclado: 2 → 0.** Las tarjetas de Siguiendo eran `<div onClick>`:
+  tocables con el dedo, inalcanzables con teclado y mudas para un lector de
+  pantalla. Ahora `role="button"`, `tabIndex`, `aria-label` y Enter/Espacio.
+  Cero cambios visuales.
+- **Contraste: 9 textos por debajo de AA**, en 2 de 7 pantallas. **No se ha
+  tocado: es decisión de diseño.**
+
+### Decisión pendiente nº 7 · Contraste
+
+`--ink-tertiary` (alfa 0,55) y `--soft` (`#8888AA`) dan **3,16–3,77** sobre
+el papel. El mínimo AA para texto normal es **4,5**.
+
+| alfa | sobre papel | AA |
+|---|---|---|
+| 0,55 (hoy) | 3,64 | falla |
+| **0,62** | **4,54** | pasa |
+| 0,72 (`--ink-secondary`) | 6,21 | pasa |
+
+Subir a 0,62 es el cambio mínimo que cumple. Oscurece el texto secundario
+de toda la app, por eso no se aplica sin tu criterio. Afectados: subtítulo y
+metadatos de Siguiendo, y 4 textos de la ficha (incluido *"Verificado"* a
+**9px**, que además es muy pequeño).
 
 **Nota sobre la cabecera de Comunidad**: dice *"20 historias de 13
 personas"* aunque el filtro muestre 2. Se calcula sobre el corpus completo.
@@ -193,6 +217,5 @@ compositor del profesional (sí abre; miraba el texto de arriba).
 **Decisión de producto que queda abierta**: si el usuario que recibió la
 ayuda debería poder publicar el resultado. Hoy solo publican profesionales.
 
-Tarea siguiente propuesta: **contraste, foco y navegación por teclado** —
-lo que quedó fuera de la auditoría de accesibilidad por requerir criterio
-de diseño.
+**No hay tarea siguiente propuesta.** Las áreas que la matriz marcaba sin
+empezar están cubiertas salvo **analítica**, que no se ha tocado nunca.
