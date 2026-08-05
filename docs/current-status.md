@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-02 (contraste, foco y teclado)
+**Última actualización:** 2026-08-02 (pase de regresión completo)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -115,6 +115,26 @@ recomendación en la entrega de la tarea de recuperación.
 
 ---
 
+## Pase de regresión completo (2026-08-02)
+
+Tras ~25 commits en una jornada, cada uno verificado por separado, se
+comprueba **el conjunto**.
+
+**Rutas × roles: 19 × 3 = 57 combinaciones, 0 fallos.** Ninguna pantalla
+caída, ninguna vacía, cero errores JS — invitado, usuario y profesional.
+
+**Flujos que cruzan pantallas:**
+
+| flujo | resultado |
+|---|---|
+| buscar → ordenar → Online → Ver todos → corregir | ✓ pantalla viva en todo el recorrido |
+| cancelar a mitad de búsqueda | ✓ limpio, no se cuelan resultados |
+| contacto de invitado | ✓ `/login` con `nura_return_to=/chat/1` |
+| reserva desde el chat | ✓ hoy 23:11 → *"Por hoy ya ha terminado"*; mañana y viernes → 4 huecos; domingo → *"Ese día no trabaja"* |
+
+Los arreglos de la jornada se sostienen **en integración**, no solo
+aislados.
+
 ## Verificación (2026-08-02)
 
 | comprobación | resultado |
@@ -217,5 +237,9 @@ compositor del profesional (sí abre; miraba el texto de arriba).
 **Decisión de producto que queda abierta**: si el usuario que recibió la
 ayuda debería poder publicar el resultado. Hoy solo publican profesionales.
 
-**No hay tarea siguiente propuesta.** Las áreas que la matriz marcaba sin
-empezar están cubiertas salvo **analítica**, que no se ha tocado nunca.
+**No hay tarea siguiente propuesta.** Las áreas de la matriz están cubiertas
+salvo **analítica**, que empieza por una decisión tuya: si quieres medir,
+qué, y con qué herramienta.
+
+El código está verificado en conjunto. Lo que queda son **siete decisiones**
+y la ejecución en Supabase y Vercel.
