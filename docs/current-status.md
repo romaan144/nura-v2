@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-02 (`npm run medir`)
+**Última actualización:** 2026-08-02 (qué puede medir Nüra)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -264,9 +264,22 @@ fichero. Es preferible no tener guardia a tener uno ruidoso.
 grande de la jornada. Necesitaría una comprobación en navegador, demasiado
 pesada para el smoke.
 
-**No hay tarea siguiente propuesta.** Las áreas de la matriz están cubiertas
-salvo **analítica**, que empieza por una decisión tuya: si quieres medir,
-qué, y con qué herramienta.
+**Analítica auditada el 2026-08-02** → ver
+[`docs/que-puede-medir-nura.md`](./que-puede-medir-nura.md). El hallazgo:
+Nüra registra mucho —búsquedas, demanda no cubierta, contactos, servicios,
+valoraciones— y **no llega nada**. Todo vive en el `localStorage` del móvil
+de cada persona. **No existe telemetría de ningún tipo.**
+
+De las **siete preguntas** que deciden si Nüra funciona, hoy se pueden
+responder **cero**. Si abres a treinta personas, al mes tendrás la misma
+información que hoy.
+
+El documento propone el **conjunto mínimo de seis eventos** y deja tres
+decisiones abiertas: si medir, con qué, y qué cuenta como "conexión
+completada" —el criterio de graduación del MVP no se puede contar sin
+definirlo primero.
+
+**No hay tarea siguiente propuesta.**
 
 El código está verificado en conjunto. Lo que queda son **siete decisiones**
 y la ejecución en Supabase y Vercel.
