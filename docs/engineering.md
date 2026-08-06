@@ -208,6 +208,27 @@ objeto sencillo — y desconfiar de `!== 'valor'` como comprobacion, porque
 `undefined !== 'valor'` es **cierto** y deja pasar el caso roto. Preferir
 `x?.campo || defecto`. Guardia en la Cuarta Puerta.
 
+### Vigilar la CONDUCTA, no la sintaxis (2026-08-02)
+
+Se intento proteger dos clases de fallo con guardias de forma sobre el
+codigo: campos de mensaje sin lector, y `.includes()` de palabras cortas.
+
+**Los dos se retiraron tras cinco correcciones.** Acusaban a comentarios, a
+prosa dentro de comillas (`'Acordado: …'`), a campos que SI se leen pero
+desde otro fichero, y a comparaciones ya restringidas por `===`. Cada
+arreglo destapaba otro falso positivo.
+
+**Regla**: cuando un guardia de forma necesita mas de dos excepciones, el
+problema no es la regla, es el enfoque. Vigilar la **conducta**: en vez de
+prohibir `.includes('si')`, comprobar que **ninguna consulta dorada se toma
+por un asentimiento**. Esa prueba no puede gritar en falso, porque mide lo
+que de verdad importa. Probada devolviendo el bug: caza 5 de 24 y sale con
+codigo 1.
+
+Corolario incomodo: es preferible **no tener guardia** a tener uno ruidoso.
+Un gate que grita en falso enseña a ignorarlo, y entonces tampoco protege
+del caso real.
+
 ### `includes` sobre lenguaje natural es una trampa (2026-08-01)
 
 `t.includes('si')` se disparaba con *necesito*, *psicologa*,

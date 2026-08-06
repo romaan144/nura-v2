@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-02 (pase de regresión completo)
+**Última actualización:** 2026-08-02 (prueba del interceptor)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -236,6 +236,19 @@ compositor del profesional (sí abre; miraba el texto de arriba).
 
 **Decisión de producto que queda abierta**: si el usuario que recibió la
 ayuda debería poder publicar el resultado. Hoy solo publican profesionales.
+
+**Añadida el 2026-08-02** una prueba de conducta a la suite dorada: ninguna
+consulta real puede tomarse por un asentimiento, y un asentimiento de verdad
+sí se reconoce. Probada devolviendo el bug original — caza 5 de 24.
+
+Se intentaron además dos guardias de forma (campos de mensaje sin lector,
+`.includes()` de palabras cortas) y **se retiraron tras cinco correcciones**:
+acusaban a comentarios, a prosa entre comillas y a campos leídos desde otro
+fichero. Es preferible no tener guardia a tener uno ruidoso.
+
+**Sin guardia todavía**: la clase "se produce y no se pinta" — el fallo más
+grande de la jornada. Necesitaría una comprobación en navegador, demasiado
+pesada para el smoke.
 
 **No hay tarea siguiente propuesta.** Las áreas de la matriz están cubiertas
 salvo **analítica**, que empieza por una decisión tuya: si quieres medir,

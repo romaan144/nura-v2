@@ -157,5 +157,37 @@ for (const t of NEGATIVE) {
   console.log(`${comprende ? '✓' : '✗'} [silencios] lo claro se comprende: nunca se culpa al usuario`)
 }
 
+// ── El interceptor no se traga peticiones ────────────────────────────────
+// `t.includes('si')` se disparaba con "nece-si-to", "p-si-cologa",
+// "fi-si-oterapeuta": el 21% de las consultas doradas quedaban tratadas como
+// un "si, me lo quedo" y la busqueda NO se ejecutaba.
+//
+// Se comprueba la CONDUCTA, no la sintaxis. Un guardia de forma sobre
+// `.includes()` se probo y se retiro: acusaba a comentarios, a prosa dentro
+// de comillas y a comparaciones ya restringidas por `===`. Una puerta que
+// grita en falso enseña a ignorarla; esta no puede.
+{
+  const palabra = (t, ...ps) => ps.some(p =>
+    new RegExp(`(^|[^\\p{L}])${p}($|[^\\p{L}])`, 'iu').test(t))
+  const esAsentimiento = (q) => {
+    const t = q.toLowerCase()
+    const breve = q.trim().split(/\s+/).length <= 6
+    return breve && (palabra(t, 'sí', 'si', 'vale', 'ok', 'ese', 'esa', 'bien', 'genial', 'perfecto')
+      || t.includes('me convence'))
+  }
+  const tragadas = GOLDEN.map(g => g.q).filter(esAsentimiento)
+  const ok = tragadas.length === 0
+  if (!ok) failed++
+  console.log(`${ok ? '✓' : '✗'} [interceptor] ninguna consulta real se toma por un "si" (${tragadas.length} de ${GOLDEN.length})`)
+  if (!ok) tragadas.slice(0, 4).forEach(q => console.log(`    · ${JSON.stringify(q)}`))
+
+  // Y al reves: un asentimiento de verdad SI debe reconocerse.
+  const asentimientos = ['Sí, perfecto', 'vale', 'ok', 'me convence', 'ese mismo']
+  const fallan = asentimientos.filter(a => !esAsentimiento(a))
+  const ok2 = fallan.length === 0
+  if (!ok2) failed++
+  console.log(`${ok2 ? '✓' : '✗'} [interceptor] un "si" de verdad se reconoce (${asentimientos.length - fallan.length}/${asentimientos.length})`)
+}
+
 console.log(failed === 0 ? `\n✅ SUITE v2 VERDE — ${GOLDEN.length + HONESTY.length + NEGATIVE.length}/${GOLDEN.length + HONESTY.length + NEGATIVE.length}` : `\n❌ ${failed} FALLOS`)
 process.exit(failed === 0 ? 0 : 1)
