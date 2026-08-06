@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-02 (prueba del interceptor)
+**Última actualización:** 2026-08-02 (`npm run medir`)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -114,6 +114,20 @@ recomendación en la entrega de la tarea de recuperación.
 - Chats y Comunidad necesitarán estado de carga cuando haya backend.
 
 ---
+
+## Instrumental de medición · `npm run medir` (2026-08-02)
+
+    npm run medir rutas     · 19 rutas × 3 roles: caídas y pantallas vacías
+    npm run medir a11y      · nombres accesibles, dianas 24×24, teclado, contraste
+    npm run medir botones   · botones visibles que no hacen nada
+
+Requiere el preview servido (`npx vite preview --port 4173`) y Chromium en
+`/tmp/chr/chromium`. Variables: `NURA_CHROMIUM`, `NURA_BASE`.
+
+Guarda las **doce piedras** con las que tropezó la medición manual durante
+la auditoría, cada una con el error que la produjo. Reproduce exactamente
+los resultados obtenidos a mano: rutas verdes, y en a11y cero en todo salvo
+los 9 contrastes que esperan tu decisión.
 
 ## Pase de regresión completo (2026-08-02)
 

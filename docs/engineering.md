@@ -208,6 +208,31 @@ objeto sencillo — y desconfiar de `!== 'valor'` como comprobacion, porque
 `undefined !== 'valor'` es **cierto** y deja pasar el caso roto. Preferir
 `x?.campo || defecto`. Guardia en la Cuarta Puerta.
 
+### El instrumental vive en el repo: `npm run medir` (2026-08-02)
+
+En una jornada de auditoria la MEDICION se equivoco doce veces y el codigo
+unas pocas. Cada script se escribia a mano, tropezaba con las mismas
+piedras y se tiraba. `scripts/medir.mjs` guarda las primitivas ya
+corregidas, con el error que las produjo escrito al lado.
+
+    npm run medir rutas     · toda ruta x todo rol
+    npm run medir a11y      · nombres, dianas 24x24, teclado, contraste
+    npm run medir botones   · botones visibles que no hacen nada
+
+Requiere el preview servido y Chromium en `/tmp/chr/chromium`
+(`NURA_CHROMIUM` y `NURA_BASE` lo cambian).
+
+**Las doce piedras** quedan documentadas en la cabecera del archivo. Las
+tres que mas caro salieron: Home queda montado detras de cada pantalla con
+`display:none` y sus botones miden 0x0 (acusa a todo a la vez);
+`waitUntil:'domcontentloaded'` escribe en localStorage antes de que arranque
+la app y se audita como invitado creyendo ser otro rol; y el umbral tactil
+de WCAG 2.2 AA es 24x24, no 44x44 — medir contra 44 da una alarma inflada y
+no accionable.
+
+**Regla**: si una medicion va a repetirse, va al repo con su porque. Un
+script tirado se vuelve a escribir mal.
+
 ### Vigilar la CONDUCTA, no la sintaxis (2026-08-02)
 
 Se intento proteger dos clases de fallo con guardias de forma sobre el

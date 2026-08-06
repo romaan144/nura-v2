@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "test:matching": "node scripts/test-matching.mjs",
     "smoke": "node scripts/smoke.mjs",
-    "preflight": "node scripts/preflight.mjs"
+    "preflight": "node scripts/preflight.mjs",
+    "medir": "node scripts/medir.mjs"
   },
   "dependencies": {
     "@dicebear/collection": "^9.4.2",
