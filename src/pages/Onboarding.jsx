@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import { ArrowRight, MessageCircle, Brain, Users, Sparkles, Shield, Zap } from 'lucide-react'
@@ -40,13 +40,28 @@ export default function OnboardingPage() {
   const navigate = useNavigate()
   const { login } = useUser()
 
+  // Marcar como vista al MOSTRARLA, no al terminarla: si alguien abandona a
+  // medias no debe volver a encontrarsela cada vez que abra la app.
+  useEffect(() => {
+    try { localStorage.setItem('nura_onboarded', '1') } catch { /* sin almacenamiento */ }
+  }, [])
+
   function finish(isHelper) {
     localStorage.setItem('nura_onboarded', '1')
+    // Home LEE `nura_just_onboarded` para dar el saludo con el nombre —el
+    // "primer momento magico"— y nadie lo escribia: el saludo estaba
+    // programado y no se disparaba jamas.
+    try { sessionStorage.setItem('nura_just_onboarded', name.trim() || 'Usuario') } catch { /* sin almacenamiento */ }
     login({ name: name.trim() || 'Usuario', isHelper })
     if (intentQuery.trim()) {
       try { sessionStorage.setItem('nura_intent_query', intentQuery.trim()) } catch {}
     }
-    navigate('/')
+    // Navegacion REAL, no de router. Home vive montado desde el arranque
+    // (pestañas persistentes), asi que su efecto de bienvenida ya corrio
+    // antes de que existieran ni el nombre ni la bandera: con `navigate`
+    // se aterrizaba en el saludo generico. Recargar remonta la app y el
+    // saludo sale con el nombre. Ocurre UNA vez en la vida del usuario.
+    window.location.assign('/')
   }
 
   const s = STEPS[step]

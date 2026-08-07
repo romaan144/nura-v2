@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useUser } from './context/UserContext'
 
 import { MOMENTO_CERO_COOLDOWN, NURA_BUILD } from './config'
@@ -41,6 +41,22 @@ function AppRoutes() {
   }, [])
   const location = useLocation()
   const { user } = useUser()
+  const navigate = useNavigate()
+
+  // ── La primera vez ──
+  // `/onboarding` estaba enrutada, funcionaba entera y NADIE navegaba a
+  // ella: solo aparecia en tres listas de "ocultar la barra aqui". Un
+  // dispositivo virgen entraba directo a Home y la promesa de marca no se
+  // veia nunca.
+  // Solo desde la raiz: un enlace profundo (una ficha compartida, un chat)
+  // no debe secuestrarse. Y solo una vez: se marca al MOSTRARLA, no al
+  // terminarla, para que abandonar a medias no deje a nadie atrapado.
+  useEffect(() => {
+    if (user) return
+    if (location.pathname !== '/') return
+    let visto; try { visto = localStorage.getItem('nura_onboarded') } catch { return }
+    if (!visto) navigate('/onboarding', { replace: true })
+  }, [user, location.pathname])   // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Las pestañas viven ──
   // Montadas siempre tras su primera visita; solo alternan visibilidad.

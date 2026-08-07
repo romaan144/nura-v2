@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-02 (qué puede medir Nüra)
+**Última actualización:** 2026-08-02 (onboarding enchufado)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -68,9 +68,40 @@ Orden recomendado de decisión: **4 → 5 → 1 → 3 → 2**.
 3. **`Favorites.jsx`** — huérfana y ya divergida de `Siguiendo`: retirar o
    dar puerta.
 4. **RLS + `DEMO_MODE`** — el único bloqueo de lanzamiento real.
-5. **Onboarding** — enchufar `/onboarding` o retirarlo.
+5. ~~**Onboarding**~~ — **decidido y hecho el 2026-08-02: enchufado.**
 
 ---
+
+## Onboarding enchufado (2026-08-02)
+
+`/onboarding` estaba enrutada, funcionaba entera y **nadie navegaba a
+ella**. Ahora un dispositivo virgen entra por ahí.
+
+Faltaban **dos** eslabones, no uno:
+
+1. Nadie leía `nura_onboarded` para enrutar.
+2. El onboarding no escribía `nura_just_onboarded`, así que **el saludo
+   personalizado que Home ya tenía programado no se disparaba jamás**.
+
+**Decisiones de cableado:**
+
+- Solo desde la raíz: un enlace profundo (ficha compartida, chat) **no se
+  secuestra**. Verificado.
+- Se marca como vista **al mostrarla**, no al terminarla: abandonar a
+  medias no deja a nadie atrapado.
+- Al terminar se usa `window.location.assign('/')`, **no** `navigate`. Home
+  vive montado desde el arranque (pestañas persistentes), así que su efecto
+  de bienvenida ya corrió antes de que existiera el nombre. Con `navigate`
+  se aterrizaba en el saludo genérico. Ocurre una vez en la vida.
+
+**Verificado**: virgen → onboarding con la frase de marca · al terminar →
+*"Buenos días, Sergio."* · segunda visita → Home directo · `/helper/1` en
+frío → intacto · 19 rutas × 3 roles verdes.
+
+**Defecto de fondo, anotado y no tocado**: la bienvenida de Home **no se
+recalcula cuando alguien inicia sesión a mitad de sesión**. El onboarding lo
+esquiva recargando; quien se registre desde `/login` seguirá viendo el
+saludo genérico hasta recargar. Es tarea propia.
 
 ## Cambios que requieren revisión
 
