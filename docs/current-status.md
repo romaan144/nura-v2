@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-02 (onboarding enchufado)
+**Última actualización:** 2026-08-02 (Favorites retirada)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -65,8 +65,7 @@ Orden recomendado de decisión: **4 → 5 → 1 → 3 → 2**.
 1. **Embudo profesional** — ¿el alta pasa por registro básico, o pide el
    teléfono dentro del chat?
 2. **Boost de +80** — dejarlo, bajarlo o quitarlo.
-3. **`Favorites.jsx`** — huérfana y ya divergida de `Siguiendo`: retirar o
-   dar puerta.
+3. ~~**`Favorites.jsx`**~~ — **decidido y hecho el 2026-08-02: retirada.**
 4. **RLS + `DEMO_MODE`** — el único bloqueo de lanzamiento real.
 5. ~~**Onboarding**~~ — **decidido y hecho el 2026-08-02: enchufado.**
 
@@ -116,6 +115,7 @@ recomendación en la entrega de la tarea de recuperación.
 | Unificación de `handleContact` | `59c14a6` | no |
 | Retirada de `src/App.css` | `5a2d0f5` | no (hoja sin importar) |
 | Retirada de `components/Onboarding.jsx` | `ad77e13` | no (cero referencias) |
+| Retirada de `pages/Favorites.jsx` | 2026-08-02 | no (sin ruta, duplicaba Siguiendo) |
 | Limpieza de tokens muertos | `5a2d0f5` | no |
 | 5 guardias nuevos en smoke/preflight | varios | no |
 | `docs/estrategia-fundacion.md` | `0123354` | no — **ajeno a Nüra 2** |
@@ -139,8 +139,8 @@ recomendación en la entrega de la tarea de recuperación.
 - `chat_log` sigue siendo legible con la clave pública por quien pida
   `select=*` a mano. El cliente ya no lo pide; cerrarlo del todo requiere el
   `revoke` en Supabase (tuyo).
-- 5 pantallas construidas y no alcanzables: `Favorites`, `HowItWorks`,
-  `MomentoCero`, `Splash`, `Onboarding`.
+- **3** pantallas construidas y no alcanzables: `HowItWorks`, `MomentoCero`,
+  `Splash`. (Eran 5: `Favorites` retirada y `Onboarding` enchufada.)
 - `nura_demanda_no_cubierta` sigue solo en local; requiere backend.
 - Chats y Comunidad necesitarán estado de carga cuando haya backend.
 
