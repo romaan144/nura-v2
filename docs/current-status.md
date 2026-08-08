@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-02 (contraste AA)
+**Última actualización:** 2026-08-02 (el onboarding no atrapa)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -96,6 +96,20 @@ Faltaban **dos** eslabones, no uno:
 **Verificado**: virgen → onboarding con la frase de marca · al terminar →
 *"Buenos días, Sergio."* · segunda visita → Home directo · `/helper/1` en
 frío → intacto · 19 rutas × 3 roles verdes.
+
+**CORREGIDO el 2026-08-02 tras un aviso del fundador** ("cuando entro se
+queda en esta pantalla"): la puerta podía **atrapar**. Si el almacenamiento
+no persiste —navegación privada de iOS, algunos contextos embebidos—
+`setItem` **no lanza pero no guarda**, así que `nura_onboarded` nunca queda
+escrito y el onboarding se repite en cada entrada. Y como `login()` tampoco
+persiste, terminarlo no ayudaba: la persona vuelve al primer paso siempre.
+
+Ahora la puerta **comprueba que el almacenamiento persiste de verdad**
+(escribe una sonda y la relee) antes de redirigir. Si no puede garantizar la
+salida, no mete a nadie: se va directo a Home.
+
+Verificado con `setItem` neutralizado: va a Home. Con almacenamiento normal:
+onboarding la primera vez, Home la segunda.
 
 **Defecto de fondo, anotado y no tocado**: la bienvenida de Home **no se
 recalcula cuando alguien inicia sesión a mitad de sesión**. El onboarding lo

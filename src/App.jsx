@@ -54,7 +54,20 @@ function AppRoutes() {
   useEffect(() => {
     if (user) return
     if (location.pathname !== '/') return
-    let visto; try { visto = localStorage.getItem('nura_onboarded') } catch { return }
+    // COMPROBAR QUE EL ALMACENAMIENTO PERSISTE DE VERDAD, no solo que no
+    // lanza. En navegacion privada de iOS y en algunos contextos embebidos,
+    // `setItem` no falla pero no guarda: entonces `nura_onboarded` nunca
+    // queda escrito y el onboarding se repite EN CADA ENTRADA. La persona
+    // se queda atrapada en la primera pantalla para siempre.
+    // Si no podemos garantizar la salida, no metemos a nadie.
+    let visto = null
+    try {
+      const sonda = '__nura_probe'
+      localStorage.setItem(sonda, '1')
+      if (localStorage.getItem(sonda) !== '1') return   // no persiste: no redirigir
+      localStorage.removeItem(sonda)
+      visto = localStorage.getItem('nura_onboarded')
+    } catch { return }
     if (!visto) navigate('/onboarding', { replace: true })
   }, [user, location.pathname])   // eslint-disable-line react-hooks/exhaustive-deps
 
