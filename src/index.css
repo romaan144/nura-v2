@@ -92,14 +92,19 @@ body {
   --surface-muted:  rgba(33,29,51,0.10);   /* chips, railes, inactivos */
   --surface-scrim:  rgba(33,29,51,0.50);   /* el velo de los modales */
   --mid:      #3D3D5C;
-  --soft:     #8888AA;
+  /* WCAG 2.2 AA: #8888AA daba 3,16 sobre papel y 3,42 sobre blanco, con el
+     minimo en 4,5. #6E6E92 es el paso minimo que cumple los dos (4,51 y
+     4,87) sin cambiar de familia de color. */
+  --soft:     #6E6E92;
   --rule:     #E4E4F0;
   --rule2:    #F0F0FA;
   --paper:    #F7F6F2;   /* Aire: papel cálido */
   --white:    #FFFFFF;
 
   /* ── SEMANTIC COLORS ────────────────────────────────── */
-  --green:        #059669;   /* verified, available, success */
+  /* Era #059669: 3,77 como texto sobre blanco y 3,48 sobre papel. Un paso
+     mas oscuro (5,48 y 5,07) cumple AA sin dejar de ser el mismo verde. */
+  --green:        #047857;   /* verified, available, success */
   --green-light:  #ECFDF5;   /* green background tint */
   --green-dot:    #10B981;   /* availability dot — único verde "activo" de la app */
   --red:          #EF4444;   /* error, remove, danger */

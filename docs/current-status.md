@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-02 (Favorites retirada)
+**Última actualización:** 2026-08-02 (contraste AA)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -248,21 +248,29 @@ zona tocable: no cambia nada de lo que se ve.
 - **Contraste: 9 textos por debajo de AA**, en 2 de 7 pantallas. **No se ha
   tocado: es decisión de diseño.**
 
-### Decisión pendiente nº 7 · Contraste
+### Contraste · **decidido y hecho el 2026-08-02**
 
-`--ink-tertiary` (alfa 0,55) y `--soft` (`#8888AA`) dan **3,16–3,77** sobre
-el papel. El mínimo AA para texto normal es **4,5**.
+La prescripción inicial apuntaba al token equivocado. Medido color a color,
+fallaban **tres familias**, no `--ink-tertiary`:
 
-| alfa | sobre papel | AA |
-|---|---|---|
-| 0,55 (hoy) | 3,64 | falla |
-| **0,62** | **4,54** | pasa |
-| 0,72 (`--ink-secondary`) | 6,21 | pasa |
+| qué | antes | ahora | ratio |
+|---|---|---|---|
+| `--soft` (subtítulos, metadatos) | `#8888AA` | **`#6E6E92`** | 3,16 → 4,51 |
+| `--green` (verificado, éxito) | `#059669` | **`#047857`** | 3,48 → 5,07 |
+| avatar verde | `#059669` | `#047857` | 3,77 → 5,48 |
+| avatar ámbar | `#D97706` | **`#B45309`** | 3,19 → 5,02 |
+| avatar cian | `#0891B2` | **`#0E7490`** | 3,68 → 5,36 |
 
-Subir a 0,62 es el cambio mínimo que cumple. Oscurece el texto secundario
-de toda la app, por eso no se aplica sin tu criterio. Afectados: subtítulo y
-metadatos de Siguiendo, y 4 textos de la ficha (incluido *"Verificado"* a
-**9px**, que además es muy pequeño).
+Los tres colores de avatar no admitían texto blanco encima: las iniciales
+eran ilegibles para bastante gente. Afectaba a 3 perfiles del dataset y a la
+paleta que genera colores para los nuevos.
+
+**Resultado: accesibilidad AA limpia en las cuatro dimensiones y en las
+siete pantallas** — nombres, dianas táctiles, teclado y contraste, todo a
+cero.
+
+Cada valor es **el paso mínimo que cumple**, sin cambiar de familia de
+color. Si al verlo no te convence, revertir es una línea por token.
 
 **Nota sobre la cabecera de Comunidad**: dice *"20 historias de 13
 personas"* aunque el filtro muestre 2. Se calcula sobre el corpus completo.

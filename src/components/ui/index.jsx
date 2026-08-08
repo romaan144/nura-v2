@@ -49,7 +49,7 @@ export function LiveDot({ size = 10, ring = true, style }) {
 }
 
 // Burbuja de conversación — reseñas y testimonios como mensajes reales
-const BUBBLE_COLORS = ['var(--purple)', 'var(--green)', '#D97706']
+const BUBBLE_COLORS = ['var(--purple)', 'var(--green)', '#B45309']
 
 export function Bubble({ text, author, index = 0, style }) {
   const initials = author

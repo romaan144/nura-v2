@@ -17,7 +17,7 @@ const headers = {
 // ── GENERATORS — produce rich profile data from basic fields ──────────────
 
 function nameToColor(name) {
-  const colors = ['#1A56DB','#7B2FFF','var(--green)','#D97706','#DC2626','#0891B2','#7C3AED','#DB2777']
+  const colors = ['#1A56DB','#7B2FFF','var(--green)','#B45309','#DC2626','#0E7490','#7C3AED','#DB2777']
   let hash = 0
   for (let i = 0; i < (name||'').length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash)
   return colors[Math.abs(hash) % colors.length]

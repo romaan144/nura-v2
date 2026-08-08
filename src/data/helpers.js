@@ -63,7 +63,7 @@ managerOpinion: { name:"Dra. Marta Puig", role:"Directora clínica", text:"Carlo
     ],
   },
   {
-    id: 2, name: "Sara Gómez Puig", avatar: "SG", avatarColor: "#0891B2",
+    id: 2, name: "Sara Gómez Puig", avatar: "SG", avatarColor: "#0E7490",
     avatarUrl: avatarDe('sara'),
     specialty: "Logopeda", category: "logopedia",
     tags: ["logopedia", "a domicilio", "infantil", "adultos"],
@@ -248,7 +248,7 @@ managerOpinion: { name:"Carles Font", role:"Coordinador de servicios", text:"Con
     aiAnalyzedAt: "2025-06-15T10:00:00Z",
   },
   {
-    id: 6, name: "Marta Puig Sala", avatar: "MP", avatarColor: "#D97706",
+    id: 6, name: "Marta Puig Sala", avatar: "MP", avatarColor: "#B45309",
     avatarUrl: avatarDe('marta'),
     specialty: "Cuidadora de animales", category: "mascotas",
     tags: ["cuidado perros", "paseos", "certificada", "fin de semana"],
@@ -520,7 +520,7 @@ managerOpinion: { name:"Dr. Antoni Mas", role:"Jefe de servicio — Medicina Int
     evolution: [{ period: "2022", rating: 4.8, services: 24 }, { period: "2023", rating: 4.9, services: 56 }, { period: "2024", rating: 4.9, services: 89 }],
   },
   {
-    id: 12, name: "Marc Tort Alemany", avatar: "MT", avatarColor: "#0891B2",
+    id: 12, name: "Marc Tort Alemany", avatar: "MT", avatarColor: "#0E7490",
     avatarUrl: avatarDe('marc'),
     specialty: "Arquitecto y diseño sostenible", category: "hogar",
     tags: ["arquitectura","reforma integral","diseño sostenible","interiorismo","Barcelona"],
