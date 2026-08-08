@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-02 (el onboarding no atrapa)
+**Última actualización:** 2026-08-02 (seis eventos instrumentados)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -331,6 +331,26 @@ El documento propone el **conjunto mínimo de seis eventos** y deja tres
 decisiones abiertas: si medir, con qué, y qué cuenta como "conexión
 completada" —el criterio de graduación del MVP no se puede contar sin
 definirlo primero.
+
+**Seis eventos instrumentados el 2026-08-02** (decisiones 8, 9 y 10):
+
+| evento | dónde |
+|---|---|
+| `busqueda` · `recomendacion_vista` | `Home.jsx` |
+| `sin_cobertura` | `Home.jsx`, junto al registro de demanda |
+| `contacto` | `utils/contacto.js`, **invitado y registrado** |
+| `servicio_confirmado` | `Chat.jsx` |
+| `resultado_registrado` | `RatingModal.jsx` ← **la conexión completada** |
+
+`src/utils/analitica.js` guarda en local y envía por la Edge Function.
+**Nunca el texto de la consulta** — solo categoría. Verificado en navegador.
+
+Con `VITE_EDGE_WRITES` apagado se acumulan en local sin enviarse:
+`__nuraEventos()` en la consola los muestra. SQL de la tabla `eventos` y las
+tres consultas útiles, en `docs/lanzamiento-rls.md`.
+
+**Sin verificar**: `sin_cobertura` no se puede disparar con el dataset
+actual —toda categoría tiene profesionales—; se disparará en producción.
 
 **No hay tarea siguiente propuesta.**
 

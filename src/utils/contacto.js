@@ -1,3 +1,4 @@
+import { registrar } from './analitica'
 // ── Contactar a un profesional: UNA sola verdad ──────────────────────────
 //
 // `handleContact` estaba escrita CUATRO veces (HelperCard, HelperCardTall,
@@ -20,6 +21,9 @@
  * Deja escrito a donde volver despues de entrar. Es lo unico que Login lee.
  */
 export function recordarDestino(helperId) {
+  registrar('contacto', { helperId: String(helperId), invitado: true })
+  // (El caso del invitado. El de quien ya tiene cuenta se registra en
+  //  `contextoDeChat`, que es por donde pasan las cuatro vias de contacto.)
   try {
     sessionStorage.setItem('nura_return_to', `/chat/${helperId}`)
   } catch { /* almacenamiento bloqueado: el flujo sigue, solo pierde el regreso */ }
@@ -31,6 +35,10 @@ export function recordarDestino(helperId) {
  * puede redactar el primer mensaje en las palabras del usuario.
  */
 export function contextoDeChat(helper, extra) {
+  // El contacto de quien YA tiene cuenta — el camino principal. Estaba solo
+  // en `recordarDestino`, que es la reja del invitado: se medía justo al
+  // que no llega a hablar con nadie.
+  if (helper?.id != null) registrar('contacto', { helperId: String(helper.id), invitado: false })
   // `extra || {}` y no un parametro por defecto: `location.state` llega
   // NULL cuando se entra por enlace directo, y el valor por defecto de un
   // parametro solo cubre `undefined`. Reventaba la ficha al contactar.

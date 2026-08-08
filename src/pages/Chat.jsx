@@ -15,6 +15,7 @@ import { buildChatOpener } from '../utils/introLetter'
 import { DEMO_MODE } from '../config'
 import { Badge, SectionLabel } from '../components/ui'
 import RegisterGate from '../components/RegisterGate'
+import { registrar } from '../utils/analitica'
 
 // ── Context-aware first message ───────────────────────────────────────────
 
@@ -328,6 +329,7 @@ export default function Chat() {
         // La Cita — el acuerdo se convierte en un objeto vivo
         try {
           const lp = (personas || []).find(p => (p.contactedHelperIds || []).includes(helper?.id))
+          registrar('servicio_confirmado', { helperId: String(helper?.id), categoria: helper?.category })
           addCita({ helperId: helper?.id, helperName: helper?.name, personaId: lp?.id, personaLabel: lp?.label, label })
         } catch (e) { console.error('[Nüra] cita:', e) }
         setTimeout(() => setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura', text: `✓ Acordado: ${label}`, time: new Date().toISOString() }]), 900)

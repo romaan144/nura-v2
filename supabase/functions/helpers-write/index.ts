@@ -135,5 +135,31 @@ Deno.serve(async (req: Request) => {
     return json({ ok: true }, 200, cors)
   }
 
+  // ── un evento de uso ──
+  // Lista blanca estricta: aqui NUNCA entra el texto de una consulta. Basta
+  // la categoria para saber a quien reclutar, y guardar las frases de la
+  // gente en una tabla de analitica es otra cosa.
+  if (op === 'evento') {
+    const e = (cuerpo.payload || {}) as Record<string, unknown>
+    const TIPOS = ['busqueda', 'sin_cobertura', 'recomendacion_vista', 'contacto', 'servicio_confirmado', 'resultado_registrado']
+    if (!TIPOS.includes(String(e.tipo))) return json({ error: 'tipo desconocido' }, 400, cors)
+    const fila = {
+      tipo: String(e.tipo),
+      dispositivo: String(e.dispositivo ?? '').slice(0, 40),
+      categoria: e.categoria ? String(e.categoria).slice(0, 40) : null,
+      helper_id: e.helperId ? String(e.helperId).slice(0, 40) : null,
+      resultados: typeof e.resultados === 'number' ? e.resultados : null,
+      valoracion: typeof e.valoracion === 'number' ? e.valoracion : null,
+      fecha: e.fecha ? String(e.fecha).slice(0, 40) : new Date().toISOString(),
+    }
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/eventos`, {
+      method: 'POST',
+      headers: { ...rest, Prefer: 'return=minimal' },
+      body: JSON.stringify(fila),
+    })
+    if (!res.ok) return json({ error: 'evento rechazado', estado: res.status }, 502, cors)
+    return json({ ok: true }, 200, cors)
+  }
+
   return json({ error: 'operacion desconocida' }, 400, cors)
 })

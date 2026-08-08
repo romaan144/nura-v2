@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Star, X, CheckCircle } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import styles from './RatingModal.module.css'
+import { registrar } from '../utils/analitica'
 
 export default function RatingModal({ helper, onClose }) {
   const [rating, setRating] = useState(0)
@@ -12,6 +13,9 @@ export default function RatingModal({ helper, onClose }) {
 
   function submit() {
     if (!rating) return
+    // La CONEXION COMPLETADA: cita con resultado. Es el criterio de
+    // graduacion del MVP y no se puede contar sin registrarlo.
+    registrar('resultado_registrado', { helperId: String(helper.id), valoracion: rating, conComentario: Boolean(comment?.trim()) })
     addRating(helper.id, rating, comment)
     setDone(true)
     setTimeout(onClose, 1800)

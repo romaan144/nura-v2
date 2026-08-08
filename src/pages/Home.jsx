@@ -14,6 +14,7 @@ import HelperCarousel from '../components/HelperCarousel'
 import RegisterGate from '../components/RegisterGate'
 import { haptic } from '../utils/haptic'
 import { scheduleLocalNotification, notifySearchAbandoned } from '../utils/notifications'
+import { registrar } from '../utils/analitica'
 import styles from './Home.module.css'
 import { PULSO_THRESHOLD, PULSO_DELAY, CONFIRMACION_THRESHOLD, CONFIRMACION_DELAY } from '../config'
 import { extractPersona } from '../utils/personas'
@@ -908,6 +909,7 @@ export default function Home() {
           const alt = alternativas[analysis.categoria] || alternativas.otro
           const queEs = (CAT_HUMANA[analysis.categoria] || 'eso').toLowerCase()
           registrarDemanda?.({ categoria: analysis.categoria, consulta: msg, fecha: Date.now() })
+          registrar('sin_cobertura', { categoria: analysis.categoria })
           setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
             lines: [`Te he entendido: buscas ${queEs}. Ahora mismo no tengo a nadie así cerca de ti.`],
             chips: [`Buscar ${alt.alt}`, 'Ampliar la zona', 'Avísame cuando tengas a alguien'] }])
@@ -925,6 +927,8 @@ export default function Home() {
       window.__nuraLastQuery = msg
       try { sessionStorage.setItem('nura_last_query', msg) } catch {}
       todosRef.current = matches
+      registrar('busqueda', { categoria: analysis?.categoria || 'otro', resultados: matches.length })
+      if (matches.length) registrar('recomendacion_vista', { categoria: analysis?.categoria, resultados: matches.length })
       setLastMatches(matches)
       // Schedule reminder if user doesn't contact
       scheduleLocalNotification(

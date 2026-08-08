@@ -160,6 +160,44 @@ manipulado no puede declararse verificado. El `chat_log` tiene además un
 tope duro de 200 KB por fila: antes crecía sin límite y pesaba en cada
 lectura del catálogo.
 
+### La tabla de eventos
+
+Los seis eventos de uso (ver `docs/que-puede-medir-nura.md`) viajan por la
+misma función. Crear la tabla antes de encender `VITE_EDGE_WRITES`:
+
+```sql
+create table if not exists public.eventos (
+  id          bigserial primary key,
+  tipo        text not null,
+  dispositivo text,
+  categoria   text,
+  helper_id   text,
+  resultados  int,
+  valoracion  int,
+  fecha       timestamptz default now()
+);
+
+-- Nadie la lee desde el navegador. Solo escribe la funcion, con service_role.
+alter table public.eventos enable row level security;
+-- Sin politicas para `anon`: lo que no se concede, queda denegado.
+
+create index if not exists eventos_tipo_fecha on public.eventos (tipo, fecha desc);
+```
+
+Las tres consultas que responden a las preguntas que importan:
+
+```sql
+-- Embudo
+select tipo, count(*) from eventos group by tipo order by count(*) desc;
+
+-- A quien hay que reclutar
+select categoria, count(*) from eventos
+where tipo = 'sin_cobertura' group by categoria order by count(*) desc;
+
+-- Conexiones completadas (el criterio de graduacion del MVP)
+select count(*) from eventos where tipo = 'resultado_registrado';
+```
+
 ### Lo único que queda con clave pública
 
 `writeHelperAiData` en `claudeApi.js` sigue siendo un `PATCH` con la clave
