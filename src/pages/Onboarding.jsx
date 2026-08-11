@@ -79,7 +79,12 @@ export default function OnboardingPage() {
         <button className={styles.primary} onClick={() => finish(false)}>
           Empezar <ArrowRight size={17} />
         </button>
-        <button className={styles.helperCta} onClick={() => navigate('/register-helper')}>
+        {/* La bifurcacion ocurre ANTES del registro, que es lo que pedia el
+            prompt maestro. Y se lleva el nombre ya escrito: volver a
+            preguntarlo dos pantallas despues es la clase de friccion que
+            se paga en el lado escaso del marketplace. */}
+        <button className={styles.helperCta}
+          onClick={() => navigate('/register-helper', { state: { name: name.trim() } })}>
           Soy profesional y quiero ofrecer mis servicios →
         </button>
       </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Send, Mic, MicOff } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import { DEMO_MODE } from '../config'
@@ -51,11 +51,17 @@ const QUESTIONS = [
 
 export default function RegisterHelper() {
   const navigate   = useNavigate()
+  const location   = useLocation()   // el de react-router, NO el global del navegador
   const { login }  = useUser()
-  const [messages, setMessages]   = useState([{ id: 1, from: 'nura', text: QUESTIONS[0].text }])
+  // Si venimos del onboarding con el nombre escrito, no se vuelve a pedir:
+  // se saluda y se empieza por la pregunta siguiente.
+  const nombrePrevio = (location.state?.name || '').trim()
+  const [messages, setMessages]   = useState(() => nombrePrevio
+    ? [{ id: 1, from: 'nura', text: QUESTIONS[1].text.replace('{name}', nombrePrevio) }]
+    : [{ id: 1, from: 'nura', text: QUESTIONS[0].text }])
   const [input, setInput]         = useState('')
-  const [qIdx, setQIdx]           = useState(0)
-  const [answers, setAnswers]     = useState({})
+  const [qIdx, setQIdx]           = useState(nombrePrevio ? 1 : 0)
+  const [answers, setAnswers]     = useState(nombrePrevio ? { name: nombrePrevio } : {})
   const [typing, setTyping]       = useState(false)
   const [listening, setListening] = useState(false)
   const [done, setDone]           = useState(false)

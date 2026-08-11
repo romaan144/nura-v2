@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-02 (seis eventos instrumentados)
+**Última actualización:** 2026-08-02 (embudo profesional cerrado)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -62,8 +62,13 @@ decidir** (decisión pendiente nº 1).
 Detalladas con pros y contras en la entrega de la tarea de recuperación.
 Orden recomendado de decisión: **4 → 5 → 1 → 3 → 2**.
 
-1. **Embudo profesional** — ¿el alta pasa por registro básico, o pide el
-   teléfono dentro del chat?
+1. ~~**Embudo profesional**~~ — **cerrado el 2026-08-02.** La bifurcación
+   ocurre en el onboarding, **antes del registro**, que es lo que pedía el
+   prompt maestro. Ya no hay que elegir entre "desviar a registro básico" o
+   "pedir el teléfono en el chat": los caminos se separan antes de que
+   exista una cuenta. El nombre escrito viaja con la persona y el alta no lo
+   vuelve a pedir. Verificado: *"Encantada, Marta"* y directo a la
+   especialidad; la entrada directa a `/register-helper` sigue pidiéndolo.
 2. **Boost de +80** — dejarlo, bajarlo o quitarlo.
 3. ~~**`Favorites.jsx`**~~ — **decidido y hecho el 2026-08-02: retirada.**
 4. **RLS + `DEMO_MODE`** — el único bloqueo de lanzamiento real.
