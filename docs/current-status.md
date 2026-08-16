@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-08 (el chat deja de fingir)
+**Última actualización:** 2026-08-08 (el texto del aviso)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -175,6 +175,11 @@ nada. Ahora en producción el chat dice *"le aviso de que le has escrito"*.
 ⚠ **Eso convierte el canal de aviso en una promesa pendiente**: la app ya
 dice "le aviso". Hasta que exista el aviso, es una intención.
 
+**El texto del aviso ya está escrito** (`src/utils/aviso.js`), agnóstico del
+canal, con ocho pruebas. `enlaceDeAviso()` genera `wa.me` o `mailto`, así
+que **la salida A funciona sin backend**. Falta solo decidir quién lo
+dispara.
+
 ## Errores conocidos / problemas pendientes
 
 - **Bloqueo de lanzamiento**: políticas RLS de Supabase sin verificar.
@@ -240,7 +245,7 @@ aislados.
 | `git status` | limpio |
 | `npm run build` | ✓ |
 | `npx eslint src` (no-undef) | 0 |
-| `npm run test:matching` | ✓ 32/32 |
+| `npm run test:matching` | ✓ 51/51 |
 | `npm run smoke` | ✓ |
 | typecheck | no existe en el proyecto |
 | `npm run preflight` | 1 bloqueo: `DEMO_MODE` (esperado) |

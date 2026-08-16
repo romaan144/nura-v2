@@ -133,6 +133,41 @@ llamadas que de una bandeja de entrada construida a ciegas.
 
 ---
 
+## El texto del aviso, ya escrito (2026-08-08)
+
+`src/utils/aviso.js`. **Agnóstico del canal a propósito**: las tres salidas
+necesitan exactamente el mismo texto, así que escribirlo no adelanta la
+decisión.
+
+```
+Hola Marta, soy Nüra.
+Sergio te ha escrito buscando ayuda:
+
+«Hola Marta, mi hijo de 5 años no pronuncia la R. Nüra te ha
+ recomendado por tu experiencia como logopeda infantil. ¿Podrías
+ ayudarme?»
+
+Puedes responderle desde Nüra. Si no te viene bien, no pasa nada —
+dilo y buscamos a otra persona.
+```
+
+Reutiliza `buildChatOpener`, que ya redacta la presentación en las palabras
+del usuario. Tres decisiones dentro:
+
+- **No lleva los datos de contacto del usuario.** Dar el teléfono de una
+  madre a alguien que aún no ha dicho que sí es otra cosa. El profesional
+  responde dentro de Nüra, que es donde queda el registro.
+- **Ofrece decir que no.** Un aviso que solo admite el sí presiona, y la
+  gente que no puede simplemente no contesta — y entonces no sabes si es un
+  no o un descuido.
+- **Si no hay contacto válido, devuelve `null`.** No inventa un aviso que no
+  se puede enviar.
+
+`enlaceDeAviso()` construye `wa.me` o `mailto` con el mensaje ya escrito,
+así que **la salida A funciona sin backend**: la abre quien avisa.
+
+Ocho pruebas en la suite dorada.
+
 ## Recomendación
 
 **A ahora, C mientras tanto, B solo cuando el volumen lo pida.**

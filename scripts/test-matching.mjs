@@ -10,6 +10,12 @@ import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
+// Contador honesto: cuenta las lineas que empiezan por ✓, sea cual sea el
+// bloque que las emita.
+let pasadas = 0
+const __log = console.log
+console.log = (...a) => { if (typeof a[0] === 'string' && a[0].startsWith('✓')) pasadas++; __log(...a) }
+
 const stage = '/tmp/nura-golden'
 rmSync(stage, { recursive: true, force: true })
 mkdirSync(join(stage, 'utils'), { recursive: true })
@@ -189,5 +195,40 @@ for (const t of NEGATIVE) {
   console.log(`${ok2 ? '✓' : '✗'} [interceptor] un "si" de verdad se reconoce (${asentimientos.length - fallan.length}/${asentimientos.length})`)
 }
 
-console.log(failed === 0 ? `\n✅ SUITE v2 VERDE — ${GOLDEN.length + HONESTY.length + NEGATIVE.length}/${GOLDEN.length + HONESTY.length + NEGATIVE.length}` : `\n❌ ${failed} FALLOS`)
+// ── El aviso al profesional ──────────────────────────────────────────────
+// La app le promete al usuario "le aviso de que le has escrito". Si el aviso
+// sale mal, esa promesa se rompe en el unico momento que importa.
+{
+  const { construirAviso, enlaceDeAviso, tipoDeContacto } = await import(join(stage, 'utils/aviso.js'))
+  const prueba = (nombre, cond) => {
+    if (!cond) failed++
+    console.log(`${cond ? '✓' : '✗'} [aviso] ${nombre}`)
+  }
+  prueba('distingue movil de correo',
+    tipoDeContacto('600 111 222') === 'movil' && tipoDeContacto('a@b.cat') === 'email')
+  prueba('sin contacto valido NO inventa un aviso',
+    construirAviso({ helper: { name: 'X', contacto: 'ninguno' }, userQuery: 'algo' }) === null)
+
+  const a = construirAviso({
+    helper: { name: 'Marta Ferrer', specialty: 'Logopeda infantil', contacto: '600 111 222' },
+    analysis: { categoria: 'logopedia' },
+    userQuery: 'Mi hijo de 5 años no pronuncia la R',
+    user: { name: 'Sergio Roman' },
+  })
+  prueba('lleva el problema en las palabras del usuario', /no pronuncia la R/.test(a.cuerpo))
+  prueba('dice quien escribe, por su nombre de pila', /Sergio/.test(a.cuerpo) && !/Roman/.test(a.cuerpo))
+  // Dar el telefono de una madre a alguien que aun no ha dicho que si es otra cosa.
+  prueba('NO filtra datos de contacto del usuario', !/600123456|@/.test(a.cuerpo))
+  prueba('ofrece decir que no', /no te viene bien/i.test(a.cuerpo))
+  prueba('el enlace de WhatsApp lleva prefijo de pais',
+    enlaceDeAviso(a).startsWith('https://wa.me/34600111222?text='))
+  prueba('el correo va como mailto con asunto',
+    enlaceDeAviso({ ...a, via: 'email', destino: 'a@b.cat' }).startsWith('mailto:a%40b.cat?subject='))
+}
+
+// El total se contaba sumando los tres catalogos, asi que se quedo en 32
+// mientras las pruebas reales llegaban a 51: cada bloque añadido despues
+// (obra, agenda, silencios, interceptor, aviso) pasaba sin figurar. Un
+// resumen que no cuenta lo que ejecuta es peor que no tener resumen.
+console.log(failed === 0 ? `\n✅ SUITE v2 VERDE — ${pasadas}/${pasadas}` : `\n❌ ${failed} FALLOS de ${pasadas + failed}`)
 process.exit(failed === 0 ? 0 : 1)
