@@ -36,6 +36,39 @@ y retirada la política `Public read`, redundante con la nueva.
 profesional **no publica** — es lo esperado, y la app lo dice en vez de
 fingir que funcionó.
 
+## ⚠ La columna `id` no tenía autoincremento (2026-08-16)
+
+**El alta profesional fallaba en producción aunque todo lo demás estuviera
+bien.** Sintoma: se completaban las siete preguntas, la cuenta local se
+creaba, y el profesional **no aparecia ni en búsquedas ni en la tabla**.
+
+Diagnostico, midiendo en vez de suponer:
+
+1. `select ... where contacto is not null` → **0 filas**. No llegaba nada.
+2. Invocaciones de la funcion → **HTTP 200**, la app sí llamaba.
+3. Probando la funcion a mano → `{"error":"insert rechazado","estado":400}`.
+4. `information_schema` → **`id` con `is_nullable: NO` y `column_default:
+   NULL`**.
+
+La columna era obligatoria y **sin secuencia**: los 1008 perfiles se habian
+cargado con ids explícitos. PostgREST rechazaba todo insert que no la
+enviara, y la funcion no la envía a propósito —el id lo debe poner la base—.
+
+**Cura aplicada en producción:**
+
+```sql
+create sequence if not exists helpers_id_seq owned by helpers.id;
+select setval('helpers_id_seq', (select coalesce(max(id),0)+1 from helpers), false);
+alter table helpers alter column id set default nextval('helpers_id_seq');
+```
+
+Verificado después: alta de prueba creada con `id: 1104` y `"ok": true`, y
+borrada a continuación.
+
+**Leccion**: el `200` de la invocación no significa que la operación
+funcionara — la función responde 200 al recibir la petición y devuelve el
+error dentro del cuerpo. Hay que leer el cuerpo, no el código HTTP.
+
 ## 0 · El esquema REAL (comprobado el 2026-08-08)
 
 Antes de nada: la tabla `helpers` de producción **no era la que el código
