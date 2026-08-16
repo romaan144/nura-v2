@@ -5,6 +5,33 @@
 
 ---
 
+## 0 · El esquema REAL (comprobado el 2026-08-08)
+
+Antes de nada: la tabla `helpers` de producción **no era la que el código
+suponía**. Comprobado con `information_schema`:
+
+- **1008 profesionales**, no los 122 del dataset local.
+- Las columnas van en **`camelCase`** (`dniVerified`, `responseTime`,
+  `completionRate`, `qualificationLevel`), no en `snake_case`.
+- **No existe `ai_data`.** Tampoco **`chat_log`**.
+
+El código escribía `dni_verified`, `response_time`, `completion_rate` y
+`ai_data`: PostgREST rechaza el insert entero al primer campo desconocido,
+así que **el alta profesional no habría publicado nunca**, ni con el RLS
+abierto. Corregido en `RegisterHelper.jsx` y en la Edge Function.
+
+Dos consecuencias buenas: no hay filas de prueba que borrar (no existe
+`ai_data->>'self_registered'`), y `chat_log` —lo que más preocupaba en
+privacidad— **nunca ha existido**. El registro de conversaciones queda
+apagado tras `VITE_CHAT_LOG`, que exige crear la columna a propósito.
+
+**Lección**: nunca escribir SQL contra un esquema supuesto. Mirar primero:
+
+```sql
+select column_name, data_type from information_schema.columns
+where table_name = 'helpers' order by ordinal_position;
+```
+
 ## 1 · Qué toca la base de datos, exactamente
 
 Una sola tabla: **`helpers`**. Nada más.

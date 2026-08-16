@@ -199,6 +199,8 @@ function normalize(h) {
 // `contacto` es el movil o el correo del profesional: no puede viajar al
 // navegador de cada visitante. Solo lo lee la Edge Function, que es quien
 // tiene que avisarle.
+// (`chat_log` sigue en la lista aunque la tabla real NO lo tenga: si algun
+//  dia se añade, no debe empezar a viajar por olvido.)
 const COLUMNAS_OCULTAS = ['chat_log', 'contacto']
 let columnasCache = null
 let descubrimiento = null

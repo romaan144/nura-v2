@@ -55,8 +55,21 @@ export async function altaProfesional(payload) {
   }
 }
 
-/** Registro de conversacion. No bloquea la interfaz si falla. */
+/**
+ * Registro de conversacion. No bloquea la interfaz si falla.
+ *
+ * APAGADO por defecto: la tabla real de Supabase **no tiene la columna
+ * `chat_log`** (comprobado contra information_schema el 2026-08-08), asi que
+ * cada mensaje lanzaba una peticion que el servidor rechazaba. Fallaba en
+ * silencio —esta envuelta en try/catch— pero era ruido en cada mensaje.
+ *
+ * Y antes de encenderlo hay una decision de producto que tomar: guardar el
+ * contenido de las conversaciones de la gente no es un detalle tecnico.
+ * Para encenderlo: `alter table helpers add column chat_log text;` y poner
+ * VITE_CHAT_LOG=true.
+ */
 export async function registrarConversacion(helperId, userMsg, helperReply) {
+  if (String(import.meta?.env?.VITE_CHAT_LOG ?? '') !== 'true') return
   try {
     if (porLaFuncion()) {
       const r = await llamarFuncion({ op: 'chat-log', helperId, userMsg, helperReply })

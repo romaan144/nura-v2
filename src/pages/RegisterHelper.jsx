@@ -28,14 +28,20 @@ async function saveHelperToSupabase(answers) {
       zone: answers.zone || 'Barcelona', city: 'Barcelona',
       price: answers.price || null, category: inferredCategory,
       presential: true, online: (answers.modality || '').toLowerCase().includes('online'),
-      available: true, verified: false, dni_verified: false, founder: false,
-      rating: 0, reviews: 0, services: 0, response_time: '< 2 horas',
-      completion_rate: 100, qualification_level: 'experienced',
+      // COLUMNAS EN camelCase: la tabla real de Supabase usa `dniVerified`,
+      // `responseTime`, `completionRate`, `qualificationLevel` — no
+      // snake_case. Comprobado contra information_schema el 2026-08-08: el
+      // insert habria fallado entero al primer campo desconocido.
+      available: true, verified: false, dniVerified: false, founder: false,
+      rating: 0, reviews: 0, services: 0, responseTime: '< 2 horas',
+      completionRate: 100, qualificationLevel: 'experienced',
       // Dato personal: NO viaja en las lecturas publicas (ver COLUMNAS_OCULTAS
       // en utils/supabase.js). Solo lo ve quien tiene la clave de servicio.
       contacto: (answers.contacto || '').trim() || null,
       tags: [answers.specialty || ''].filter(Boolean),
-      ai_data: { formation: answers.formation, self_registered: true, registered_at: new Date().toISOString() }
+      // `ai_data` NO existe en la tabla. La formacion ya va en la bio, que
+      // es donde se lee; lo demas era metadato que no se consultaba.
+      criminalRecordClear: false,
     }
     // La escritura vive en utils/escrituras.js: un solo sitio decide si va
     // por la Edge Function (service_role) o por el camino directo.

@@ -50,14 +50,15 @@ const rest = {
 // El alta llega desde un formulario publico: no se confia en su forma. Solo
 // pasan estos campos y con el tipo esperado. Asi un `payload` manipulado no
 // puede escribir `verified: true` ni tocar columnas que no le tocan.
-const CAMPOS_ALTA: Record<string, 'texto' | 'numero' | 'lista' | 'objeto'> = {
+// Nombres EXACTOS de la tabla real (comprobados contra information_schema
+// el 2026-08-08): camelCase, y sin `ai_data` ni `chat_log`, que no existen.
+const CAMPOS_ALTA: Record<string, 'texto' | 'numero' | 'lista' | 'booleano'> = {
   name: 'texto', specialty: 'texto', category: 'texto', bio: 'texto',
-  zone: 'texto', city: 'texto', price: 'texto', avatar_url: 'texto',
-  response_time: 'texto', qualification_level: 'texto',
-  rating: 'numero', reviews: 'numero', completion_rate: 'numero',
+  zone: 'texto', city: 'texto', price: 'texto', avatarUrl: 'texto',
+  responseTime: 'texto', qualificationLevel: 'texto', contacto: 'texto',
+  rating: 'numero', reviews: 'numero', completionRate: 'numero', services: 'numero',
   tags: 'lista', skills: 'lista', languages: 'lista',
-  contacto: 'texto',
-  ai_data: 'objeto',
+  presential: 'booleano', online: 'booleano', founder: 'booleano',
 }
 
 function limpiarAlta(entrada: Record<string, unknown>) {
@@ -68,11 +69,12 @@ function limpiarAlta(entrada: Record<string, unknown>) {
     if (tipo === 'texto' && typeof v === 'string') salida[campo] = v.slice(0, 2000)
     else if (tipo === 'numero' && typeof v === 'number' && Number.isFinite(v)) salida[campo] = v
     else if (tipo === 'lista' && Array.isArray(v)) salida[campo] = v.slice(0, 40)
-    else if (tipo === 'objeto' && typeof v === 'object' && !Array.isArray(v)) salida[campo] = v
+    else if (tipo === 'booleano' && typeof v === 'boolean') salida[campo] = v
   }
   // Estos NO los decide el cliente, nunca.
   salida.verified = false
-  salida.dni_verified = false
+  salida.dniVerified = false
+  salida.criminalRecordClear = false
   salida.available = true
   return salida
 }
