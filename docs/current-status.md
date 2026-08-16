@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-08 (el alta pide contacto)
+**Última actualización:** 2026-08-08 (el chat deja de fingir)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -166,6 +166,14 @@ final, y `contacto` **nunca viaja al navegador** (entra en
 
 Y `/my-services` ya no le dice a un profesional *"cuando contrates a un
 profesional"*: le habla de **sus citas**.
+
+**También corregido**: el chat **fingía que el profesional contestaba**. Las
+respuestas guionizadas de `chatReplies.js` no miraban `DEMO_MODE` y habrían
+corrido en producción, mintiendo sobre una persona real que no ha visto
+nada. Ahora en producción el chat dice *"le aviso de que le has escrito"*.
+
+⚠ **Eso convierte el canal de aviso en una promesa pendiente**: la app ya
+dice "le aviso". Hasta que exista el aviso, es una intención.
 
 ## Errores conocidos / problemas pendientes
 

@@ -393,7 +393,11 @@ export default function Chat() {
       const delay = 800 + Math.random() * 400
       setTimeout(() => {
         setTyping(false)
-        const greeting = getHelperReply(helper, 0, '')
+        // Mismo motivo: sin demo, el saludo lo da Nüra en su nombre, no el
+        // profesional fingiendo estar al otro lado.
+        const greeting = DEMO_MODE
+          ? getHelperReply(helper, 0, '')
+          : `Escríbele a ${helper.name?.split(' ')?.[0] || 'esta persona'}. Le aviso de que le has escrito y te traigo su respuesta aquí.`
         const greetMsg = {
           id: Date.now(),
           from: 'helper',
@@ -448,8 +452,24 @@ export default function Chat() {
     setInput(''); setSuggested('')
     addChat?.(helper.id, helper.name, helper.avatarColor, helper.avatar, msg)
 
-    // After first contact, Nüra will follow up asking for feedback (simulated, 3s after reply)
+    // ── EN PRODUCCION NADIE CONTESTA, Y HAY QUE DECIRLO ──
+    // El profesional respondia al instante con un guion: "¡Hola! Soy Carlos.
+    // ¿En que puedo ayudarte?". Con DEMO_MODE es una demostracion legitima;
+    // sin el seria mentirle a una persona sobre OTRA PERSONA REAL que no ha
+    // visto nada y no va a contestar. En un producto cuya tesis es la
+    // confianza, esa es la mentira mas cara posible.
+    // Mientras no exista el lado del profesional (ver docs/lado-profesional.md),
+    // lo honesto es decir que el mensaje esta enviado y que avisaremos.
     const isFirstContact = msgCount === 0
+    if (!DEMO_MODE) {
+      if (isFirstContact) {
+        setTimeout(() => setMessages(prev => [...prev, {
+          id: Date.now() + 1, from: 'nura', time: new Date().toISOString(),
+          text: `Mensaje enviado. Aviso a ${helper.name?.split(' ')?.[0] || 'la persona'} de que le has escrito; en cuanto responda te llega aquí.`,
+        }]), 700)
+      }
+      return
+    }
     setTyping(true)
     const delay = 1000 + Math.random() * 600
     setTimeout(() => {

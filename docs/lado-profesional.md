@@ -84,6 +84,34 @@ tiene que avisar.
 
 *(Requiere `alter table helpers add column contacto text;` en Supabase.)*
 
+## Y el chat fingía que el profesional contestaba (corregido el 2026-08-08)
+
+Al conducir el contacto real apareció lo más grave de todo. Un usuario
+escribía *"mi hijo de 5 años no pronuncia la R"* y **Carlos respondía al
+instante**: *"¡Hola! Soy Carlos. ¿En qué puedo ayudarte?"*.
+
+Carlos no ha visto nada. Carlos no va a contestar. Las respuestas están
+guionizadas en `chatReplies.js` y **no miraban `DEMO_MODE`**: habrían
+corrido igual en producción.
+
+Con demo es una demostración legítima. Sin demo es **mentirle a una persona
+sobre otra persona real**, y en un producto cuya tesis es la confianza esa
+es la mentira más cara que se puede contar.
+
+**Corregido**: en producción el chat no finge. Dice la verdad:
+
+> *"Escríbele a Carlos. Le aviso de que le has escrito y te traigo su
+> respuesta aquí."*
+> *"Mensaje enviado. Aviso a Carlos de que le has escrito; en cuanto
+> responda te llega aquí."*
+
+Verificado en las dos ramas: en demo, la conversación simulada completa; en
+producción, ninguna respuesta fingida.
+
+**Esto convierte la elección de canal en una promesa pendiente.** La app ya
+dice *"le aviso"*. Hasta que exista el aviso —salida A, B o C— esa frase es
+una intención, no un hecho. Es el argumento más fuerte para elegir A pronto.
+
 ## Las tres salidas
 
 **A · WhatsApp como bandeja de entrada.** Cuando alguien contacta, al
