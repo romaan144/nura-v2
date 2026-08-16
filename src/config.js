@@ -40,4 +40,4 @@ export const PULSO_DELAY = DEMO_MODE ? 5000 : 1000
 export const MOMENTO_CERO_COOLDOWN = DEMO_MODE ? 2 * 60 * 60 * 1000 : Infinity
 
 // Sello de build visible — para verificar qué versión corre el dispositivo
-export const NURA_BUILD = '2026.07.07-u'
+export const NURA_BUILD = '2026.07.07-v'

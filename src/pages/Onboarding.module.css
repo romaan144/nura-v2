@@ -1,22 +1,30 @@
 .page {
-  min-height: 100dvh; background: var(--paper);
+  /* FIJA A LA VENTANA, no al padre. `min-height: 100dvh` no bastaba: la
+     cadena `.desktopMain` → `PageTransition .wrap { height: 100% }` resuelve
+     a CERO porque `.desktopMain` no declara altura. El contenedor colapsaba,
+     los botones caian al borde inferior de la ventana y en pantallas reales
+     quedaban fuera. Medido: `.page` con altura 0 y el boton en y=717 de 800.
+     Con `position: fixed; inset: 0` el onboarding deja de depender de un
+     padre que no le da altura — y es legitimo porque ES una pantalla
+     completa, no una pestaña dentro del armazon. */
+  position: fixed; inset: 0; z-index: 60;
+  background: var(--paper);
   display: flex; flex-direction: column;
   padding: max(env(safe-area-inset-top,0px),20px) 24px max(env(safe-area-inset-bottom,0px),32px);
-  position: relative; overflow: hidden;
+  /* `overflow: hidden` dejaba sin salida a quien no cupiera —tipografia
+     grande, pantalla corta, barra del navegador—. Ahora se puede desplazar. */
+  overflow-y: auto;
 }
 
 /* Background blobs */
-.page::before {
-  content: '';
-  position: fixed; inset: 0; pointer-events: none;
-  background: var(--paper);
-}
+/* El fondo se pinta ya en `.page`. Este pseudo-elemento `fixed` cubria la
+   pantalla entera por encima del contenido y no aportaba nada. */
 
 .skip { display: flex; justify-content: flex-end; padding: 8px 0 0; }
 .skipBtn { background: none; border: none; font-size: var(--text-sm); color: rgba(33,29,51,0.35); padding: 6px 0; font-weight: 500; }
 
 .content {
-  flex: 1; display: flex; flex-direction: column;
+  flex: 1 0 auto; display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   text-align: center; gap: 16px; padding: 32px 0;
   animation: fadeUp 0.4s cubic-bezier(0.25,0.46,0.45,0.94) both;
