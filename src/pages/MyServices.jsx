@@ -143,16 +143,23 @@ export default function MyServices() {
               {tab === 'Completados' ? <CheckCircle size={44} /> : tab === 'Próximos' ? <Calendar size={44} /> : <ClipboardList size={44} />}
             </span>
             <strong style={{fontSize:'var(--text-base)',color:'var(--ink-primary)',letterSpacing:'-0.2px'}}>
-              {tab === 'Todos' ? 'Aún no has contratado nada'
+              {/* Un profesional leia aqui "Aún no has contratado nada" y
+                  "Cuando contrates a un profesional...": la app le hablaba
+                  como al cliente que NO es. */}
+              {tab === 'Todos' ? (user?.isHelper ? 'Todavía no tienes citas' : 'Aún no has contratado nada')
                : tab === 'Próximos' ? 'No tienes servicios próximos'
                : 'Sin servicios completados'}
             </strong>
             <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:'var(--space-4) 0 var(--space-16)',lineHeight:1.6,textAlign:'center',maxWidth:'220px'}}>
               {tab === 'Todos'
-                ? 'Cuando contrates a un profesional y concretéis una cita, aparecerá aquí.'
+                ? (user?.isHelper
+                    ? 'Cuando alguien te contacte y concretéis una cita, aparecerá aquí.'
+                    : 'Cuando contrates a un profesional y concretéis una cita, aparecerá aquí.')
                 : tab === 'Próximos'
                 ? 'Cuando reserves una cita, aparecerá aquí con todos los detalles.'
-                : 'Cuando finalices un servicio podrás valorar al profesional.'}
+                : (user?.isHelper
+                    ? 'Cuando termines un servicio, aparecerá aquí con su resultado.'
+                    : 'Cuando finalices un servicio podrás valorar al profesional.')}
             </p>
             <button className={styles.emptyBtn} onClick={() => navigate('/')}>
               Buscar profesionales

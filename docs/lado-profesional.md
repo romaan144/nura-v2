@@ -63,6 +63,27 @@ profesional real por la app**. Este es el mismo hueco, visto entero.
 
 ---
 
+## Lo que impedía las TRES salidas (corregido el 2026-08-08)
+
+Antes de elegir canal: **el alta profesional no pedía ningún dato de
+contacto**, y ningún perfil del dataset tiene teléfono ni correo.
+
+Un profesional podía completar las seis preguntas, aparecer en las
+búsquedas y ser **inalcanzable para siempre**. Ni A (avisarle), ni B
+(notificarle), ni siquiera C (*"ya le llamas tú"*) eran posibles: no había
+número al que llamar.
+
+**Corregido**: séptima pregunta al final del alta —*"Y lo más importante:
+¿cómo te avisamos cuando alguien te necesite?"*—. Va la última a propósito:
+se pide cuando la persona ya ha invertido en su perfil, no en la puerta.
+
+**Es un dato personal y no viaja al navegador**: `contacto` entra en
+`COLUMNAS_OCULTAS` junto a `chat_log`, así que las lecturas públicas nunca
+lo piden. Solo lo ve quien tiene la clave de servicio — es decir, quien
+tiene que avisar.
+
+*(Requiere `alter table helpers add column contacto text;` en Supabase.)*
+
 ## Las tres salidas
 
 **A · WhatsApp como bandeja de entrada.** Cuando alguien contacta, al

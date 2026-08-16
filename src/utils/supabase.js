@@ -196,7 +196,10 @@ function normalize(h) {
 //
 // Si el descubrimiento falla (sin red, esquema inesperado), se vuelve a `*`:
 // el comportamiento de hoy. Nunca se rompe una lectura por esto.
-const COLUMNAS_OCULTAS = ['chat_log']
+// `contacto` es el movil o el correo del profesional: no puede viajar al
+// navegador de cada visitante. Solo lo lee la Edge Function, que es quien
+// tiene que avisarle.
+const COLUMNAS_OCULTAS = ['chat_log', 'contacto']
 let columnasCache = null
 let descubrimiento = null
 

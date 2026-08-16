@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-08 (el lado del profesional)
+**Última actualización:** 2026-08-08 (el alta pide contacto)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -156,7 +156,16 @@ del usuario**.
 
 No es un fallo que arreglar: es media aplicación que no está. Tres salidas
 —aviso por WhatsApp, bandeja propia, o esperar— con recomendación en el
-documento. **No se ha tocado código**: es decisión de producto.
+documento. **La elección de canal sigue siendo tuya.**
+
+**Sí corregido**: el alta **no pedía ningún dato de contacto**, lo que hacía
+imposibles las tres salidas por igual — un profesional podía darse de alta,
+aparecer en las búsquedas y ser inalcanzable para siempre. Ahora se pide al
+final, y `contacto` **nunca viaja al navegador** (entra en
+`COLUMNAS_OCULTAS`). Requiere `alter table helpers add column contacto text;`.
+
+Y `/my-services` ya no le dice a un profesional *"cuando contrates a un
+profesional"*: le habla de **sus citas**.
 
 ## Errores conocidos / problemas pendientes
 

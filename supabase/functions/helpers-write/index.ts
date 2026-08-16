@@ -56,6 +56,7 @@ const CAMPOS_ALTA: Record<string, 'texto' | 'numero' | 'lista' | 'objeto'> = {
   response_time: 'texto', qualification_level: 'texto',
   rating: 'numero', reviews: 'numero', completion_rate: 'numero',
   tags: 'lista', skills: 'lista', languages: 'lista',
+  contacto: 'texto',
   ai_data: 'objeto',
 }
 

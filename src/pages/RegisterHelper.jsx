@@ -31,6 +31,9 @@ async function saveHelperToSupabase(answers) {
       available: true, verified: false, dni_verified: false, founder: false,
       rating: 0, reviews: 0, services: 0, response_time: '< 2 horas',
       completion_rate: 100, qualification_level: 'experienced',
+      // Dato personal: NO viaja en las lecturas publicas (ver COLUMNAS_OCULTAS
+      // en utils/supabase.js). Solo lo ve quien tiene la clave de servicio.
+      contacto: (answers.contacto || '').trim() || null,
       tags: [answers.specialty || ''].filter(Boolean),
       ai_data: { formation: answers.formation, self_registered: true, registered_at: new Date().toISOString() }
     }
@@ -46,7 +49,14 @@ const QUESTIONS = [
   { id: 'formation',      text: '¿Qué formación o certificaciones tienes?',                           placeholder: 'Ej: Grado en Logopedia, FP Atención Sociosanitaria...' },
   { id: 'zone',           text: '¿En qué zona de Barcelona trabajas? ¿Te desplazas?',                 placeholder: 'Ej: Gràcia y alrededores, toda Barcelona' },
   { id: 'price',          text: '¿Cuál es tu tarifa? Cuanto más claro, más confianza genera.',        placeholder: 'Ej: 50€/sesión de 45 min, 15€/hora' },
-  { id: 'differentiator', text: 'Última pregunta: ¿qué te diferencia de otros profesionales?',        placeholder: 'Lo que te hace único — en una o dos frases' },
+  { id: 'differentiator', text: '¿Qué te diferencia de otros profesionales?',                        placeholder: 'Lo que te hace único — en una o dos frases' },
+  // SIN ESTO NO HAY NEGOCIO. El alta no pedia ningun dato de contacto y
+  // ningun perfil del dataset lo tiene: un profesional podia completar las
+  // seis preguntas, aparecer en las busquedas, y ser INALCANZABLE para
+  // siempre. Nadie —ni Nura ni el fundador— podia avisarle de que alguien
+  // le necesitaba. Es la ultima pregunta a proposito: se pide cuando la
+  // persona ya ha invertido en el perfil, no en la puerta.
+  { id: 'contacto',       text: 'Y lo más importante: ¿cómo te avisamos cuando alguien te necesite?', placeholder: 'Tu móvil o tu email' },
 ]
 
 export default function RegisterHelper() {
