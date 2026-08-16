@@ -162,5 +162,38 @@ Deno.serve(async (req: Request) => {
     return json({ ok: true }, 200, cors)
   }
 
+  // ── el aviso a un profesional ──
+  // El `contacto` NO viaja al navegador (ver COLUMNAS_OCULTAS): un panel
+  // dentro de la app no puede verlo, y esa restriccion es correcta. Asi que
+  // el aviso se arma AQUI, donde esta la clave de servicio, y solo sale el
+  // enlace ya construido — nunca la lista de telefonos.
+  if (op === 'avisar') {
+    const id = cuerpo.helperId
+    const mensaje = String(cuerpo.mensaje ?? '').slice(0, 2000)
+    if (id === undefined || id === null) return json({ error: 'falta helperId' }, 400, cors)
+    if (!mensaje) return json({ error: 'falta mensaje' }, 400, cors)
+
+    const lec = await fetch(
+      `${SUPABASE_URL}/rest/v1/helpers?id=eq.${encodeURIComponent(String(id))}&select=name,contacto`,
+      { headers: rest },
+    )
+    if (!lec.ok) return json({ error: 'lectura rechazada', estado: lec.status }, 502, cors)
+    const [h] = await lec.json()
+    if (!h) return json({ error: 'no existe' }, 404, cors)
+    if (!h.contacto) return json({ ok: false, motivo: 'sin_contacto', nombre: h.name }, 200, cors)
+
+    const c = String(h.contacto).trim()
+    const esCorreo = c.includes('@') && /\.[a-z]{2,}$/i.test(c)
+    const enlace = esCorreo
+      ? `mailto:${encodeURIComponent(c)}?subject=${encodeURIComponent('Alguien te busca en Nüra')}&body=${encodeURIComponent(mensaje)}`
+      : (() => {
+          const n = c.replace(/[^\d+]/g, '').replace(/^00/, '+')
+          const tel = n.startsWith('+') ? n.slice(1) : (n.length === 9 ? '34' + n : n)
+          return `https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`
+        })()
+
+    return json({ ok: true, via: esCorreo ? 'email' : 'movil', nombre: h.name, enlace }, 200, cors)
+  }
+
   return json({ error: 'operacion desconocida' }, 400, cors)
 })

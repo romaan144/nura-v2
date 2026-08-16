@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-08 (el texto del aviso)
+**Última actualización:** 2026-08-08 (`npm run avisar`)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -177,8 +177,13 @@ dice "le aviso". Hasta que exista el aviso, es una intención.
 
 **El texto del aviso ya está escrito** (`src/utils/aviso.js`), agnóstico del
 canal, con ocho pruebas. `enlaceDeAviso()` genera `wa.me` o `mailto`, así
-que **la salida A funciona sin backend**. Falta solo decidir quién lo
-dispara.
+que **la salida A funciona sin backend**.
+
+**Y ya se puede enviar**: `npm run avisar -- --id N --mensaje "..."` devuelve
+el enlace de WhatsApp o correo listo. El aviso se arma en la Edge Function
+(operación `avisar`), que es quien ve el contacto; del navegador nunca sale.
+Es un guion a propósito: con treinta personas, quien cumple la promesa eres
+tú, y cada aviso enseña algo que un panel no da.
 
 ## Errores conocidos / problemas pendientes
 

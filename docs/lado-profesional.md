@@ -168,6 +168,30 @@ así que **la salida A funciona sin backend**: la abre quien avisa.
 
 Ocho pruebas en la suite dorada.
 
+## Y cómo mandarlo hoy: `npm run avisar`
+
+```bash
+NURA_EDGE_URL=https://<tu-proyecto>.functions.supabase.co/helpers-write \
+  npm run avisar -- --id 1 --mensaje "Hola Marta, soy Nüra. Sergio te ha…"
+```
+
+Devuelve un enlace `wa.me` o `mailto` con el mensaje ya escrito. Lo abres y
+lo envías. **Sin backend, sin panel, sin servicio de terceros.**
+
+**Es un guion y no una pantalla por dos razones.** La primera es técnica: el
+`contacto` no viaja al navegador a propósito, así que una pantalla dentro de
+la app no puede verlo. El aviso se arma en la Edge Function (operación
+`avisar`), que tiene la clave de servicio, y de ahí **solo sale el enlace,
+nunca la lista de teléfonos**.
+
+La segunda importa más: con treinta personas, **quien cumple la promesa eres
+tú, a mano**. Eso no es una versión pobre — es la correcta. Cada aviso que
+mandas te enseña quién contesta, en cuánto tiempo y con qué palabras. Un
+panel automático te ahorraría ese trabajo y te quitaría ese aprendizaje.
+
+Si un profesional se dio de alta antes de que el alta pidiera contacto, el
+guion lo dice claro: **aparece en las búsquedas y nadie puede avisarle.**
+
 ## Recomendación
 
 **A ahora, C mientras tanto, B solo cuando el volumen lo pida.**
