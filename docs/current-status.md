@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-08 (`npm run avisar`)
+**Última actualización:** 2026-08-08 (**RLS cerrado en producción**)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -71,7 +71,10 @@ Orden recomendado de decisión: **4 → 5 → 1 → 3 → 2**.
    especialidad; la entrada directa a `/register-helper` sigue pidiéndolo.
 2. **Boost de +80** — dejarlo, bajarlo o quitarlo.
 3. ~~**`Favorites.jsx`**~~ — **decidido y hecho el 2026-08-02: retirada.**
-4. **RLS + `DEMO_MODE`** — el único bloqueo de lanzamiento real.
+4. ~~**RLS**~~ — **CERRADO EN PRODUCCIÓN el 2026-08-08.** Única política:
+   `helpers_anon_read · SELECT · {anon}`. Se encontró y eliminó una política
+   `Auth insert · {public} · with_check: true` que habría dejado la puerta
+   abierta con el RLS encendido. Queda `DEMO_MODE` y desplegar la función.
 5. ~~**Onboarding**~~ — **decidido y hecho el 2026-08-02: enchufado.**
 
 ---

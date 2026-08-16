@@ -5,6 +5,37 @@
 
 ---
 
+## ✅ EJECUTADO por el fundador — 2026-08-08
+
+El bloqueo de lanzamiento **está cerrado**. Estado final de `helpers`:
+
+```
+policyname          cmd      roles
+helpers_anon_read   SELECT   {anon}     ← única política
+```
+
+Cualquiera puede leer profesionales. **Nadie puede escribir con la clave
+pública.** Verificado por el fundador: la búsqueda sigue funcionando.
+
+**Lo que apareció al ejecutarlo, y que este documento no preveía:** la tabla
+ya tenía dos políticas anteriores, y una era
+
+```
+Auth insert | INSERT | {public} | with_check: true
+```
+
+`with_check: true` es **sin condición ninguna**: encender el RLS no servía
+de nada mientras esa política existiera. Habría dado un falso cierre — RLS
+activo y la puerta abierta. Se encontró porque se listaron las políticas en
+vez de fiarse del `Success` de Supabase.
+
+Hecho también: columna `contacto`, tabla `eventos` con RLS y sin políticas,
+y retirada la política `Public read`, redundante con la nueva.
+
+**Pendiente**: desplegar la Edge Function. Hasta entonces el alta
+profesional **no publica** — es lo esperado, y la app lo dice en vez de
+fingir que funcionó.
+
 ## 0 · El esquema REAL (comprobado el 2026-08-08)
 
 Antes de nada: la tabla `helpers` de producción **no era la que el código
