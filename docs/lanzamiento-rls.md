@@ -36,6 +36,39 @@ y retirada la política `Public read`, redundante con la nueva.
 profesional **no publica** — es lo esperado, y la app lo dice en vez de
 fingir que funcionó.
 
+## ✅ CADENA COMPLETA VERIFICADA EN PRODUCCIÓN (2026-08-16)
+
+El alta profesional **publica de verdad**. Probado de extremo a extremo con
+`VITE_DEMO=false`: siete preguntas → fila creada con `id 1105`, categoría
+`logopedia` y el contacto guardado. Fila de prueba borrada después;
+**1008 profesionales, 0 con contacto**, como estaba.
+
+Estado final: RLS cerrado, función desplegada, secreto puesto, JWT apagado,
+variables en Vercel, secuencia de `id` creada. **Y `VITE_DEMO` retirado a
+propósito**: la demo sigue viva para enseñar Nüra.
+
+### El interruptor que hay que recordar
+
+`RegisterHelper.jsx` tiene esta línea:
+
+```js
+const publicado = DEMO_MODE ? true : !!(await saveHelperToSupabase(...))
+```
+
+**Con `DEMO_MODE` encendido, el alta NO escribe.** Es deliberado —evita que
+cada demostración llene la base de perfiles falsos— pero significa que
+**hoy, en producción, el alta profesional no publica**.
+
+El día que llegue el primer profesional real hay que añadir en Vercel:
+
+```
+VITE_DEMO = false
+```
+
+…y redesplegar. Eso apaga también los chats sembrados, los seguidos falsos
+y las respuestas guionizadas del chat. Es el paso de "producto que se
+enseña" a "producto que se usa", y **es una decisión, no un trámite**.
+
 ## ⚠ La columna `id` no tenía autoincremento (2026-08-16)
 
 **El alta profesional fallaba en producción aunque todo lo demás estuviera
