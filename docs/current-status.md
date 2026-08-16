@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-02 (embudo profesional cerrado)
+**Última actualización:** 2026-08-08 (el lado del profesional)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -140,6 +140,23 @@ recomendación en la entrega de la tarea de recuperación.
 | `docs/estrategia-fundacion.md` | `0123354` | no — **ajeno a Nüra 2** |
 
 ---
+
+## El lado del profesional no existe (2026-08-08)
+
+Conducido el ciclo completo → **[`docs/lado-profesional.md`](./lado-profesional.md)**.
+
+Un profesional ve en `/chats` **un chat consigo mismo**, y en
+`/my-services` la frase *"Cuando contrates a un profesional…"*. Solo el
+perfil le habla a él.
+
+`Chats.jsx`, `Chat.jsx` y `MyServices.jsx` **no miran `isHelper` en ninguna
+línea**. Y por debajo: los mensajes viven en el `localStorage` de quien
+escribe, así que **un mensaje dirigido a un profesional nunca sale del móvil
+del usuario**.
+
+No es un fallo que arreglar: es media aplicación que no está. Tres salidas
+—aviso por WhatsApp, bandeja propia, o esperar— con recomendación en el
+documento. **No se ha tocado código**: es decisión de producto.
 
 ## Errores conocidos / problemas pendientes
 
