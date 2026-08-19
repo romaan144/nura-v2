@@ -70,7 +70,12 @@
   padding: 20px 16px;
   background: white;
   border: 1px solid rgba(33,29,51,0.07);
-  border-radius: var(--radius-xl);
+  /* La curva del sistema. Medido en las ocho pantallas: 18px manda —29
+     superficies en Comunidad, 5 en Chats, y es el de PostCard y
+     HelperCardTall, los dos componentes compartidos—. Estas tarjetas
+     estaban a 30px y Siguiendo a 22px: tres formas para el mismo objeto,
+     una tarjeta que se toca para ir a alguien. */
+  border-radius: var(--radius-md);
   cursor: pointer;
   text-align: left;
   font-family: inherit;

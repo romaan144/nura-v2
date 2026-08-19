@@ -356,6 +356,37 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## LA CURVA (ley, 2026-08-16)
+
+Medido en las ocho pantallas con navegador real: había **cuatro radios**
+para el mismo objeto —una tarjeta que se toca para llegar a alguien—.
+Profesionales a 30px, Siguiendo y tres bloques del Perfil a 22px, el resto
+a 18px.
+
+Nadie decidió esas excepciones: son desviaciones locales, no criterio.
+**18px manda** porque es el de `PostCard` y `HelperCardTall`, los dos
+componentes compartidos, y el de 29 superficies en Comunidad.
+
+**Tres curvas, y solo tres:**
+
+| curva | qué lleva | token |
+|---|---|---|
+| **18px** | **toda tarjeta**: profesional, publicación, categoría, chat, seguido, servicio | `--radius-md` |
+| 14px | bloques internos y campos de formulario — no son tarjetas | `--radius-card` |
+| 100px | píldoras, chips, avatares | `--radius-full` |
+
+**Regla**: si el elemento es una superficie que se toca para ir a una
+persona o a un contenido, va a `--radius-md`. Si es algo que vive *dentro*
+de una tarjeta, `--radius-card`. No hay una tercera opción para tarjetas.
+
+`--radius-lg` (22px) y `--radius-xl` (30px) quedan sin uso en superficies.
+No se retiran de los tokens todavía, pero **no deben usarse en código
+nuevo**.
+
+Medido después: Comunidad, Profesionales, Chats, Siguiendo y Servicios en
+18px puro; Perfil y Ficha con 18px en tarjetas y 14px en sus bloques
+internos, que es lo correcto.
+
 ## EL CONTRATO DE LAYOUT (ley, 2026-07-05)
 
 Nace de la auditoria medida de la Fase 0: se encontraron **cinco modelos

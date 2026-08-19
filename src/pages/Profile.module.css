@@ -214,9 +214,12 @@
   font-weight: 500;
 }
 
+/* --radius-md en las superficies de bloque: la curva del sistema. Los
+   14px de --radius-card se quedan donde deben, en campos y bloques
+   internos, que NO son tarjetas y por eso llevan otra curva. */
 .favEmpty {
   background: white;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   padding: 14px 16px;
   display: flex;
   align-items: flex-start;
@@ -237,7 +240,7 @@
 
 .recentList {
   background: white;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(33,29,51,0.05);
 }
@@ -319,7 +322,7 @@
   padding: 13px;
   background: none;
   border: 1px solid var(--ink-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   color: var(--ink-tertiary);
   font-size: var(--text-sm);
   font-weight: 500;
