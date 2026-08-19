@@ -60,7 +60,7 @@
 }
 
 .suggestedLabel {
-  font-size: 10px; font-weight: 700;
+  font-size: var(--text-xs); font-weight: 700;
   color: var(--ink-tertiary); letter-spacing: 0.5px;
   padding: 8px 14px 0;
   text-transform: uppercase;

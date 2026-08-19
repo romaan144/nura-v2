@@ -24,6 +24,9 @@ body {
 
 :root {
   /* ── TYPE SCALE (6 stops — Apple pattern) ─────────── */
+  /* EL SUELO. Nada por debajo de 11px: medido, habia 9px en el carrusel y
+     en "Verificado" de la ficha, y 10px en marcas de tiempo. 9px es
+     ilegible para bastante gente y no era una decision, era un descuido. */
   --text-xs:   11px;   /* captions, badges, timestamps */
   --text-sm:   13px;   /* secondary, meta, labels */
   --text-base: 15px;   /* body, messages, descriptions */

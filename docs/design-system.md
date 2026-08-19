@@ -356,6 +356,39 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## LA ESCALA SE RESPETA (ley, 2026-08-16)
+
+Medido en las ocho pantallas: **23 combinaciones** de tamaño y peso, con
+**cinco tamaños que no existían en la escala**.
+
+| tamaño | dónde estaba | ahora |
+|---|---|---|
+| **9px** | carrusel, "Verificado" de la ficha | `--text-xs` (11px) |
+| **10px** | marcas de tiempo en Chats, Comunidad, ficha | `--text-xs` |
+| **16px** | Inicio, Carta | `--text-base` (15px) |
+| **23px** | saludo de Inicio | `--text-lg` (22px) |
+| 38px | número de la valoración | **se queda** |
+
+**11px es EL SUELO.** Nada por debajo. El 9px era ilegible para bastante
+gente y no era una decisión de estilo: era un descuido, y ya lo había
+señalado la auditoría de accesibilidad.
+
+**Y un píxel de diferencia con el token no se lee como intención, se lee
+como descuido.** 16 contra 15, 23 contra 22: nadie percibe la diferencia,
+pero el conjunto se siente ensamblado en lugar de diseñado.
+
+**El 38px se queda a propósito**: es el número grande de la valoración en
+la ficha. Un tamaño singular para un elemento singular es legítimo;
+lo ilegítimo es un tamaño singular para un texto corriente.
+
+Resultado: **23 → 17 combinaciones**, y los siete tamaños vivos son todos
+tokens (11, 13, 15, 17, 22, 28, 38). Accesibilidad AA sigue limpia en las
+cuatro dimensiones.
+
+**Regla**: en código nuevo, `font-size` siempre con token. Si hace falta un
+tamaño que no está en la escala, la pregunta correcta es si falta un token
+—y entonces se añade y se declara— no si se escribe a mano.
+
 ## LA CURVA (ley, 2026-08-16)
 
 Medido en las ocho pantallas con navegador real: había **cuatro radios**
