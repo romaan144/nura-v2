@@ -28,7 +28,12 @@
 .searchInput { border: none; outline: none; background: transparent; font-size: var(--text-sm); color: var(--ink); flex: 1; }
 .searchInput::placeholder { color: var(--soft); }
 
-.list { display: flex; flex-direction: column; gap: 6px; padding: 8px 14px 0; }
+/* EL RITMO DE LAS LISTAS: --space-10 en las tres listas de personas
+   (Chats, Siguiendo, Profesionales). Esta estaba en 6px, un 40% mas
+   apretada que las otras dos, y nadie lo habia decidido: eran tres
+   declaraciones sueltas escritas a mano. Cinco filas no son cincuenta:
+   la bandeja no resolvia un problema de densidad, solo divergia. */
+.list { display: flex; flex-direction: column; gap: var(--space-10); padding: var(--space-8) 14px 0; }
 
 .chatRow {
   width: 100%; display: flex; align-items: center; gap: 13px;

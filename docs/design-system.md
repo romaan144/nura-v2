@@ -356,6 +356,61 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## EL RITMO DE LAS LISTAS (ley, 2026-08-16)
+
+Tres pantallas muestran lo mismo —una lista vertical de tarjetas de
+persona— y respiraban distinto:
+
+| lista | antes | ahora |
+|---|---|---|
+| Profesionales | 10px a mano | `--space-10` |
+| Siguiendo | 10px a mano | `--space-10` |
+| **Chats** | **6px** | `--space-10` |
+
+Chats respiraba un **40% menos** que las otras dos, y nadie lo había
+decidido: eran tres declaraciones sueltas escritas a mano.
+
+**Por qué este sí y el espaciado general no** (ver la sección de abajo):
+aquí el cambio **se ve**. 4px entre cinco filas son 20px en pantalla. El
+espaciado general eran cambios de 1px que nadie percibe.
+
+**Y por qué no se respetó la densidad de Chats**: una bandeja de entrada
+podría querer más filas visibles, igual que el 38px de la valoración
+merecía ser singular. Pero Chats tiene **cinco filas, no cincuenta** — no
+estaba resolviendo un problema de densidad, solo divergía.
+
+**Regla**: toda lista vertical de tarjetas de persona lleva
+`gap: var(--space-10)`. Comunidad y Perfil tienen otros ritmos a propósito:
+no son listas de personas, son un muro y bloques de contenido.
+
+Las tres quedan además **con token**, no a mano: un cambio del sistema las
+mueve a las tres a la vez.
+
+## EL ESPACIADO: deuda declarada, NO corregida (2026-08-16)
+
+Medido: **112 usos fuera de la escala** (`5px` ×24, `7px` ×11, `18px`,
+`11px`, `9px`…), dispersos por más de seis ficheros. La escala declara
+2·3·4·6·8·10·12·14·16·20·24·28·32.
+
+**Se decide NO corregirlos en una pasada**, y el motivo importa más que la
+deuda:
+
+1. **El cambio sería de 1px.** Llevar 5 a 4 o a 6 no lo percibe nadie. A
+   diferencia de la curva (30→18px, muy visible) o del 9px de tipografía
+   (ilegible), aquí no hay un problema que alguien note.
+2. **Un tercio no es espaciado.** Los valores de 36 a 88px son alturas y
+   anchos de componente —avatares, barras, cápsulas—, no escala fina.
+   Meterlos en la escala sería aplicar la regla donde no toca.
+3. **El riesgo es asimétrico.** 112 cambios repartidos por toda la app,
+   cada uno capaz de descolocar un alineamiento que hoy está bien.
+   Ganancia invisible, riesgo real. **Una escala perfecta con un
+   alineamiento roto es peor producto** — y la ley dice optimizar el
+   producto entero, no una métrica.
+
+**Regla**: en código nuevo, espaciado siempre con token. Los 112 existentes
+se corrigen **cuando se toque ese fichero por otro motivo**, no antes. El
+sistema converge sin arriesgar nada.
+
 ## LA ESCALA SE RESPETA (ley, 2026-08-16)
 
 Medido en las ocho pantallas: **23 combinaciones** de tamaño y peso, con

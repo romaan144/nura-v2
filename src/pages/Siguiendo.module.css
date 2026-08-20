@@ -17,7 +17,7 @@
 .content { padding: 0 14px 40px; }
 .title { font-size: var(--text-lg); font-weight: 800; color: var(--ink); margin-bottom: 4px; letter-spacing: -0.5px; }
 .sub { font-size: var(--text-sm); color: var(--soft); margin-bottom: 20px; }
-.list { display: flex; flex-direction: column; gap: 10px; }
+.list { display: flex; flex-direction: column; gap: var(--space-10); }
 /* --radius-md: la curva del sistema, igual que PostCard y las tarjetas de
    profesional. Estaba en --radius-lg (22px) sin motivo declarado. */
 .card { animation: fadeUp 0.22s cubic-bezier(0.22, 1, 0.36, 1) forwards; background: white; border: 1px solid rgba(33,29,51,0.05); border-radius: var(--radius-md); padding: var(--card-padding); display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow-xs); cursor: pointer; transition: all 0.15s; }
