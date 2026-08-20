@@ -356,6 +356,40 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## EL PAPEL TRANSLÚCIDO (ley, 2026-08-16)
+
+Al cambiar `--paper` a gris, **tres superficies se quedaron con el sepia
+antiguo** y se vio en producción: la barra inferior de otro color que el
+fondo. Lo detectó el fundador, no las pruebas.
+
+| superficie | tenía | ahora |
+|---|---|---|
+| `BottomNav` | `rgba(247,246,242,0.93)` | `--paper-veil` |
+| barra de acción de la ficha | `rgba(247,246,242,0.86)` | `--paper-veil-soft` |
+| `RegisterGate` | `rgba(252,251,248,0.98)` "papel cálido" | `--paper-rgb` |
+
+**Por qué se escaparon**: son barras que difuminan lo de detrás, necesitan
+alfa, y `--paper` es un hex. No podían usar el token, así que llevaban el
+color escrito a mano — y un cambio del sistema no las movía.
+
+**La cura estructural**: `--paper-rgb` guarda los componentes, y los velos
+derivan de él. Cambiar el papel ahora las mueve también.
+
+```css
+--paper-rgb:       247, 247, 249;
+--paper-veil:      rgba(var(--paper-rgb), 0.93);   /* barras fijas */
+--paper-veil-soft: rgba(var(--paper-rgb), 0.86);   /* barras de acción */
+```
+
+**Guardia en la Cuarta Puerta**: ningún fondo casi-blanco escrito a mano.
+El blanco puro sigue siendo legítimo —las tarjetas lo usan—; lo que se
+prohíbe es un papel disfrazado. Probado devolviendo el bug: lo caza con
+fichero y línea y sale con código 1.
+
+**Regla**: si una superficie necesita el papel con transparencia, usa
+`--paper-veil`. Si necesita otra alfa, deriva de `--paper-rgb`. Nunca
+escribas los componentes a mano.
+
 ## EL PAPEL (2026-08-16)
 
 `--paper` pasa de **`#F7F6F2`** (sepia cálido) a **`#F7F7F9`** (gris neutro).

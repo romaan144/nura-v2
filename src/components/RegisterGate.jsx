@@ -47,7 +47,7 @@ export default function RegisterGate({ onClose, reason = 'contact' }) {
       display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
     }}>
       <div onClick={e => e.stopPropagation()} style={{
-        background: 'rgba(252,251,248,0.98)',  /* papel cálido */
+        background: 'rgba(var(--paper-rgb), 0.98)',  /* el papel del sistema, no uno propio */
         backdropFilter: 'blur(32px)',
         WebkitBackdropFilter: 'blur(32px)',
         borderRadius: '28px 28px 0 0',

@@ -123,6 +123,36 @@ try {
     resolve: { alias: { '/logo-iso.png': censo } },
   })
   await import('file://' + join(dir, 'Censo.mjs') + '?t=' + Date.now())
+  // ── El papel escrito a mano ──
+  // Al cambiar `--paper` de sepia a gris, TRES superficies se quedaron con
+  // el color viejo porque lo llevaban escrito a mano: la barra inferior, la
+  // barra de accion de la ficha y la reja de registro. Se vio en produccion:
+  // una barra de otro color. Las barras necesitan alfa y por eso no podian
+  // usar `--paper`; ahora derivan de `--paper-rgb`.
+  {
+    const sueltos = []
+    for (const f of [...readdirSync('src', { recursive: true })]
+      .map(x => join('src', String(x))).filter(x => /\.(css|jsx?)$/.test(x))) {
+      let t; try { t = readFileSync(f, 'utf8') } catch { continue }
+      t.split('\n').forEach((linea, i) => {
+        const limpia = linea.trim()
+        if (limpia.startsWith('//') || limpia.startsWith('*') || limpia.startsWith('/*')) return
+        // fondos casi-blancos escritos a mano: son papel disfrazado
+        for (const m of limpia.matchAll(/rgba?\(\s*(2[3-5]\d)\s*,\s*(2[3-5]\d)\s*,\s*(2[3-5]\d)/g)) {
+          const [r, g, bl] = [+m[1], +m[2], +m[3]]
+          if (r === 255 && g === 255 && bl === 255) continue   // blanco puro: legitimo
+          sueltos.push(`${f}:${i + 1}  rgb(${r},${g},${bl})`)
+        }
+      })
+    }
+    if (sueltos.length) {
+      console.log(`✗ ${'Papel a mano'.padEnd(14)} — ${sueltos.length} fondo(s) casi-papel sin token`)
+      sueltos.slice(0, 5).forEach(x => console.log(`    ${x}`))
+      console.log('    Usa var(--paper) o var(--paper-rgb) para los translucidos.')
+      failed += sueltos.length
+    } else console.log(`✓ ${'Papel a mano'.padEnd(14)} [todo fondo de papel usa token]`)
+  }
+
   // ── El token que no existe ──
   // `var(--text-2xl)` sin declarar y sin respaldo NO da error: la propiedad
   // queda invalida y cae al valor heredado, en silencio. Los tres estados

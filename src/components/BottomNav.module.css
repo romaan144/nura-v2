@@ -14,7 +14,7 @@
      la linea sobre fondos claros, la sombra sobre fondos oscuros, y el
      contraste de superficie cuando el contenido es del mismo papel que la
      barra — que era justo lo que pasaba. */
-  background: rgba(247,246,242,0.93);
+  background: var(--paper-veil);
   -webkit-backdrop-filter: blur(32px) saturate(200%);
   backdrop-filter: blur(32px) saturate(200%);
   border-top: 1px solid rgba(33,29,51,0.12);

@@ -111,6 +111,14 @@ body {
      Se queda por debajo del blanco puro a proposito: las tarjetas son
      blancas, y sin un fondo mas oscuro pierden su profundidad. */
   --paper:    #F7F7F9;   /* Aire: gris neutro, el mismo de las pantallas de carga */
+  /* EL PAPEL TRANSLUCIDO. Las barras que difuminan lo de detras (BottomNav,
+     la barra de accion de la ficha) necesitan alfa, asi que no podian usar
+     --paper y llevaban el color escrito a mano. Al cambiar el papel se
+     quedaron en el sepia antiguo y se vio: una barra de otro color.
+     Ahora derivan del mismo sitio: cambiar --paper las mueve tambien. */
+  --paper-rgb:      247, 247, 249;
+  --paper-veil:     rgba(var(--paper-rgb), 0.93);   /* barras fijas */
+  --paper-veil-soft:rgba(var(--paper-rgb), 0.86);   /* barras de accion */
   --white:    #FFFFFF;
 
   /* ── SEMANTIC COLORS ────────────────────────────────── */

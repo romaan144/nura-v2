@@ -482,7 +482,7 @@
   display: flex;
   gap: var(--space-8);
   padding: var(--space-10) var(--space-16) var(--space-12);
-  background: rgba(247,246,242,0.86);
+  background: var(--paper-veil-soft);
   backdrop-filter: blur(32px) saturate(200%);
   -webkit-backdrop-filter: blur(32px) saturate(200%);
   border-top: 1px solid var(--ink-border);
