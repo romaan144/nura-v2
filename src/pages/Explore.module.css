@@ -71,7 +71,7 @@
   gap: 14px;
   padding: 20px 16px;
   background: white;
-  border: 1px solid rgba(33,29,51,0.07);
+  border: 1px solid var(--ink-border);
   /* La curva del sistema. Medido en las ocho pantallas: 18px manda —29
      superficies en Comunidad, 5 en Chats, y es el de PostCard y
      HelperCardTall, los dos componentes compartidos—. Estas tarjetas
@@ -82,14 +82,21 @@
   text-align: left;
   font-family: inherit;
   -webkit-tap-highlight-color: transparent;
-  box-shadow: var(--shadow-md);
+  /* LA ELEVACION SIGNIFICA ALGO. Estas 13 tarjetas estaban en --shadow-md
+     (4px 20px), la sombra de lo que FLOTA: modales, hojas. En reposo no
+     flotan sobre nada, y hacian que Profesionales se sintiera mas pesada
+     que el resto de la app sin que nadie lo hubiera decidido.
+     Ademas la logica estaba invertida: sombra alta en reposo y baja al
+     pulsar, asi que al tocar parecian hundirse. Ahora reposan suave y al
+     pulsar solo se encogen. */
+  box-shadow: var(--shadow-sm);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
   animation: cardIn 0.22s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .catCard:active {
   transform: scale(0.97);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-xs);
 }
 
 .catCard:active {

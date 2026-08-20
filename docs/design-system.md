@@ -356,6 +356,45 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## LA ELEVACIÓN SIGNIFICA ALGO (ley, 2026-08-16)
+
+Medido: las tarjetas del sistema usaban **tres sombras distintas** para el
+mismo objeto.
+
+| sombra | antes | ahora |
+|---|---|---|
+| `--shadow-sm` (1px 4px) | 39 tarjetas | **54** |
+| **`--shadow-md`** (4px 20px) | **13** (Profesionales) | 0 |
+| `--shadow-xs` (1px 3px) | 3 (Siguiendo) | 1 |
+
+`--shadow-md` es la sombra de **lo que flota**: 20px de difuminado, para
+modales y hojas. En Profesionales la llevaban 13 tarjetas de categoría **en
+reposo**, que no flotan sobre nada — y hacían que esa pantalla se sintiera
+más pesada que el resto sin que nadie lo hubiera decidido.
+
+**Y la lógica estaba invertida**: sombra alta en reposo, baja al pulsar. Al
+tocar, las tarjetas parecían *hundirse* en lugar de responder. Ahora
+reposan en `--shadow-sm` y al pulsar solo se encogen.
+
+**La escala de elevación:**
+
+| nivel | cuándo | token |
+|---|---|---|
+| reposo | **toda tarjeta**: profesional, publicación, categoría, chat | `--shadow-sm` |
+| pulsado | mientras el dedo está encima | `--shadow-xs` |
+| flotando | modales, hojas, lo que se superpone | `--shadow-md` / `--shadow-lg` |
+
+Los bordes acompañan: `--ink-border` en las 54. Antes había tres alfas
+distintas (0.05, 0.06, 0.07) sin criterio.
+
+**Las excepciones que se quedan**, y son correctas: la cabecera del perfil
+es una tarjeta **translúcida destacada** con blur y sombra propia, y los
+bloques internos van sin sombra a propósito. No son tarjetas del sistema.
+
+**Regla**: la sombra comunica **capa**, no importancia. Si algo debe
+destacar sin flotar, se destaca con contraste o tamaño — nunca subiéndole
+la elevación.
+
 ## EL PAPEL TRANSLÚCIDO (ley, 2026-08-16)
 
 Al cambiar `--paper` a gris, **tres superficies se quedaron con el sepia
