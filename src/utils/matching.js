@@ -352,6 +352,21 @@ const DOMAIN_ANCHORS = {
   legal: ['abogado','abogada','gestor','gestoría','contrato','despido','renta','herencia'],
 }
 
+// Matices que afinan DENTRO de un oficio. Palabra completa, no subcadena:
+// `includes('sola')` se dispararia con "consola" y "solar".
+function senalesDe(expandido, original) {
+  const t = ' ' + expandido + ' ' + original + ' '
+  const hay = (...ps) => ps.some(p =>
+    new RegExp(`(^|[^\\p{L}])${p}($|[^\\p{L}])`, 'iu').test(t))
+  return {
+    infantil: hay('hijo', 'hija', 'hijos', 'niño', 'nina', 'niña', 'niños', 'peque',
+                  'peques', 'bebe', 'infantil', 'cria', 'critica') && !hay('adulto', 'adultos'),
+    alzheimer: hay('alzheimer', 'alzheimer', 'demencia', 'deterioro'),
+    sola: hay('sola', 'solo', 'soledad', 'acompanamiento', 'compania'),
+    nocturno: hay('noche', 'noches', 'nocturno', 'nocturna', 'madrugada'),
+  }
+}
+
 export function analyzeNeed(userText) {
   // Expand text with semantic synonyms first
   const expanded = expandText(userText)
@@ -414,6 +429,16 @@ export function analyzeNeed(userText) {
     categoria: toApp(categoria), matchedTerm: catBestKw[categoria] || null, presencial, urgente, nivelRequerido,
     resumen: resumenMap[categoria] || 'Busca ayuda',
     palabrasClave,
+    // ── LOS MATICES ──────────────────────────────────────────────────
+    // Tres ficheros leian `analysis.complexSignals` —la carta de
+    // presentacion, las respuestas del chat y el porque de la
+    // recomendacion— y NADIE lo producia: siempre recibian undefined.
+    // Todo ese codigo estaba escrito y no se ejecutaba nunca.
+    //
+    // El matiz NO cambia la categoria: una logopeda infantil y una de
+    // adultos son las dos logopedas. Lo que cambia es a QUIEN se
+    // recomienda primero.
+    complexSignals: senalesDe(normExpanded, normOriginal),
     confidence: maxScore, // so UI can show fallback if confidence is 0
   })
 }
@@ -499,6 +524,19 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
       if (normalize(h.bio || '').includes(normKw)) score += 5
       if (normalize(h.specialty || '').includes(normKw)) score += 8
     })
+    // El matiz decide el ORDEN, no quien entra. Peso 25: por debajo de la
+    // categoria (40), por encima de una palabra suelta (8-10). Una logopeda
+    // infantil sube ante "mi hijo de 5 años", pero una logopeda de adultos
+    // sigue apareciendo — solo despues.
+    {
+      const sen = analysis.complexSignals || {}
+      const texto = normalize(`${h.specialty || ''} ${h.bio || ''} ${(h.tags || []).join(' ')}`)
+      const dice = (...ps) => ps.some(p => texto.includes(p))
+      if (sen.infantil && dice('infantil', 'niño', 'nino', 'peque', 'pediatr')) score += 25
+      if (sen.alzheimer && dice('alzheimer', 'demencia', 'geriatr', 'dependencia')) score += 25
+      if (sen.sola && dice('acompan', 'compania', 'geriatr')) score += 15
+      if (sen.nocturno && dice('noche', 'nocturn', '24h', 'urgenc')) score += 15
+    }
     if (analysis.presencial && h.presential) score += 15
     if (analysis.urgente && h.urgent) score += 20
     if (h.available) score += 5

@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (cadena completa verificada en producción)
+**Última actualización:** 2026-08-16 (los matices ordenan)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -187,6 +187,30 @@ el enlace de WhatsApp o correo listo. El aviso se arma en la Edge Function
 (operación `avisar`), que es quien ve el contacto; del navegador nunca sale.
 Es un guion a propósito: con treinta personas, quien cumple la promesa eres
 tú, y cada aviso enseña algo que un panel no da.
+
+## Los matices ordenan dentro del oficio (2026-08-16)
+
+`analysis.complexSignals` lo **leían tres ficheros y no lo producía nadie**:
+la carta de presentación, las respuestas del chat y el porqué de la
+recomendación recibían siempre `undefined`. Todo ese código estaba escrito y
+**no se ejecutaba jamás**.
+
+Cuatro señales implementadas: `infantil`, `alzheimer`, `sola`, `nocturno`.
+Con límite de palabra —`includes('sola')` se dispara con *"consola"*—.
+
+**Y ahora puntúan.** Peso 25: por debajo de la categoría (40), por encima de
+una palabra suelta (8–10). **El matiz decide el orden, no quién entra**: una
+logopeda de adultos sigue apareciendo ante un caso infantil, solo después.
+
+Verificado: *"mi hijo de 5 años no pronuncia la R"* → Carlos (Logopeda
+**infantil**) por delante de Sara (Logopeda). Antes empataban.
+
+Cinco pruebas nuevas en la suite dorada: **56/56**.
+
+**Lo que esto destapó**: en *"mi madre tiene alzheimer"*, Pilar —cuidadora
+**especialista en Alzheimer**, valoración 5— sale **tercera**. Su `id` es
+2122, y el ranking da **+80 a los ids ≥ 2000**. Es el boost de demo, que
+está enterrando al perfil más adecuado. Decisión pendiente nº 3.
 
 ## Errores conocidos / problemas pendientes
 

@@ -195,6 +195,32 @@ for (const t of NEGATIVE) {
   console.log(`${ok2 ? '✓' : '✗'} [interceptor] un "si" de verdad se reconoce (${asentimientos.length - fallan.length}/${asentimientos.length})`)
 }
 
+// ── Los matices ordenan dentro del oficio ────────────────────────────────
+// `analysis.complexSignals` lo leian TRES ficheros y no lo producia nadie:
+// la carta de presentacion, las respuestas del chat y el porque de la
+// recomendacion recibian siempre undefined. Todo ese codigo estaba escrito
+// y no se ejecutaba jamas.
+{
+  const { analyzeNeed, matchHelpers } = await import(join(stage, 'utils/matching.js'))
+  const prueba = (nombre, cond) => { if (!cond) failed++; console.log(`${cond ? '✓' : '✗'} [matices] ${nombre}`) }
+
+  const inf = await analyzeNeed('Mi hijo de 5 años no pronuncia la R')
+  prueba('se detecta el matiz infantil', inf.complexSignals?.infantil === true)
+  prueba('"adultos" NO dispara infantil',
+    (await analyzeNeed('Logopeda para adultos')).complexSignals?.infantil === false)
+  // Palabra completa, no subcadena: `includes('sola')` se dispara con "consola".
+  prueba('"consola" no se toma por "sola"',
+    (await analyzeNeed('Reparar mi consola de videojuegos')).complexSignals?.sola === false)
+  prueba('un fontanero no arrastra matices',
+    Object.values((await analyzeNeed('Necesito un fontanero')).complexSignals || {}).every(v => v === false))
+
+  // Lo que de verdad importa: que el matiz REORDENE.
+  const m = await matchHelpers(inf, 3)
+  const primero = (m[0]?.specialty || '').toLowerCase()
+  prueba('ante un caso infantil, primero quien trabaja con niños',
+    /infantil|niñ|nin|peque/.test(primero))
+}
+
 // ── El aviso al profesional ──────────────────────────────────────────────
 // La app le promete al usuario "le aviso de que le has escrito". Si el aviso
 // sale mal, esa promesa se rompe en el unico momento que importa.
