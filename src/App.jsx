@@ -118,7 +118,7 @@ function AppRoutes() {
           <PageTransition>
             <Suspense fallback={
               <div style={{display:'flex',alignItems:'center',justifyContent:'center',
-                height:'100dvh',background:'#F7F7F9'}}>
+                height:'100dvh',background:'var(--paper)'}}>
                 <img src="/logo-iso.png" alt="" style={{width:'36px',opacity:0.35,
                   animation:'pulse 1.5s ease-in-out infinite'}} />
                 <style>{`@keyframes pulse{0%,100%{opacity:0.35}50%{opacity:0.7}}`}</style>

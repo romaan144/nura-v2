@@ -356,6 +356,36 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## EL PAPEL (2026-08-16)
+
+`--paper` pasa de **`#F7F6F2`** (sepia cálido) a **`#F7F7F9`** (gris neutro).
+
+Decisión del fundador, con estas palabras: *"no me gusta el color sepia
+modo papel. Sí que es verdad que hace que sea más cómoda a la vista, pero
+la hace menos seria, más de broma y poca sensación de tecnológica."*
+
+**La diferencia son siete puntos de azul sobre 255**: R247 G246 B242 pasa a
+R247 G247 B249. Eso es todo lo que separa el sepia del gris.
+
+**Y no es un color nuevo**: `#F7F7F9` ya vivía en la app, en las pantallas
+de carga de `App.jsx` y `Chat.jsx`. Esto no introduce nada — unifica dos
+fondos que ya convivían sin que nadie lo hubiera decidido. Los cinco
+escritos a mano pasan al token.
+
+**No se va a blanco puro a propósito.** Las tarjetas son blancas: sin un
+fondo algo más oscuro pierden su profundidad y el sistema de superficies se
+aplana.
+
+**La tensión que queda anotada.** La calidez no era un adorno: en un
+producto donde alguien cuenta que su madre vive sola, un fondo cálido dice
+"esto no es un formulario". Y "tecnológico" es un vector delicado para
+Nüra, cuya tesis es que **la IA no sea la protagonista**: si se ve como
+software, se gana seriedad y se pierde lo que la separa de un directorio.
+
+Se aplica igualmente porque quien ve la app cada día percibe mejor cómo se
+siente que cualquier análisis. **Revertir es una línea** si al vivir con
+ello no convence.
+
 ## EL RITMO DE LAS LISTAS (ley, 2026-08-16)
 
 Tres pantallas muestran lo mismo —una lista vertical de tarjetas de

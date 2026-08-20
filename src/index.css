@@ -101,7 +101,16 @@ body {
   --soft:     #6E6E92;
   --rule:     #E4E4F0;
   --rule2:    #F0F0FA;
-  --paper:    #F7F6F2;   /* Aire: papel cálido */
+  /* EL PAPEL. Era #F7F6F2, un sepia calido. El fundador lo describio como
+     "menos serio, mas de broma, poca sensacion tecnologica" — y quien ve la
+     app cada dia sabe mas de eso que cualquier analisis.
+     La diferencia son SIETE puntos de azul sobre 255: R247 G246 B242 pasa a
+     R247 G247 B249. Y no es un color nuevo: #F7F7F9 ya vivia en la app, en
+     las pantallas de carga. Esto no introduce nada, unifica dos fondos que
+     ya convivian.
+     Se queda por debajo del blanco puro a proposito: las tarjetas son
+     blancas, y sin un fondo mas oscuro pierden su profundidad. */
+  --paper:    #F7F7F9;   /* Aire: gris neutro, el mismo de las pantallas de carga */
   --white:    #FFFFFF;
 
   /* ── SEMANTIC COLORS ────────────────────────────────── */
@@ -206,7 +215,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 body {
-  background: #F7F7F9;
+  background: var(--paper);
   font-family: 'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: clamp(13px, 3.8vw, 16px);
   color: var(--ink);
@@ -249,7 +258,7 @@ body {
     width: 100%;
     max-width: 1280px;
     margin: 0 auto;
-    background: #F7F7F9;
+    background: var(--paper);
     box-shadow: 0 0 0 1px rgba(33,29,51,0.07), 0 4px 48px rgba(33,29,51,0.14);
     min-height: 100dvh;
   }

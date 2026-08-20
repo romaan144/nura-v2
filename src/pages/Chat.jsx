@@ -419,13 +419,13 @@ export default function Chat() {
   }, [messages])
 
   if (!helper && buscando) return (
-    <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100dvh',background:'#F7F7F9'}}>
+    <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100dvh',background:'var(--paper)'}}>
       <img src="/logo-iso.png" alt="" style={{width:'40px',opacity:0.4,animation:'pulse 1.5s infinite'}} />
     </div>
   )
   if (!helper) return (
     <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
-      height:'100dvh',background:'#F7F7F9',padding:'var(--space-32)',textAlign:'center',gap:'var(--space-12)'}}>
+      height:'100dvh',background:'var(--paper)',padding:'var(--space-32)',textAlign:'center',gap:'var(--space-12)'}}>
       <div style={{fontSize:'var(--text-xl)'}}>🤍</div>
       <p style={{fontSize:'var(--text-base)',color:'var(--ink)',lineHeight:1.5,margin:0}}>
         Esta conversación ya no está disponible.
