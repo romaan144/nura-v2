@@ -515,7 +515,16 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
     // solo cambia el primer recomendado en 3 de 24 (los otros terminos
     // deciden), asi que NO es un veto — pero el peso es el doble que
     // acertar la categoria (+40). Pendiente de decision del fundador.
-    if (h.id >= 2000) score += 80
+    // EL BOOST RETIRADO (2026-08-16). Los 107 perfiles de demo (id >= 2000)
+    // recibian +80 puntos para que la demostracion luciera. Medido: decidia
+    // 7 de 8 primeros resultados, pero al desactivarlo salian casi los
+    // mismos nombres — no elegia distinto, solo desempataba.
+    //
+    // Donde SI hacia daño era en los casos dificiles, que son los que Nura
+    // dice resolver: ante "mi madre tiene alzheimer", una asistente personal
+    // adelantaba a Pilar, cuidadora ESPECIALISTA en Alzheimer con
+    // valoracion 5. El boost no protegia la demo: la empeoraba justo en el
+    // caso que uno querria enseñar.
     if (toApp(h.category) === analysis.categoria) score += 40
     const keywords = analysis.palabrasClave || []
     keywords.forEach(kw => {

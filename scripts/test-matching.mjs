@@ -195,6 +195,20 @@ for (const t of NEGATIVE) {
   console.log(`${ok2 ? '✓' : '✗'} [interceptor] un "si" de verdad se reconoce (${asentimientos.length - fallan.length}/${asentimientos.length})`)
 }
 
+// ── Nadie gana por ser de demo ───────────────────────────────────────────
+// Los 107 perfiles sembrados (id >= 2000) recibian +80 puntos. Medido antes
+// de quitarlo: decidia 7 de 8 primeros resultados, pero al desactivarlo
+// salian 11 de 12 iguales — no elegia distinto, solo desempataba.
+{
+  const fuente = readFileSync(join(root, 'src/utils/matching.js'), 'utf8')
+  const vivo = fuente.split('\n').some(l => {
+    const t = l.trim()
+    return !t.startsWith('//') && /h\.id\s*>=\s*2000/.test(t) && /score\s*\+=/.test(t)
+  })
+  if (vivo) failed++
+  console.log(`${vivo ? '✗' : '✓'} [ranking] ningun perfil puntua por su id`)
+}
+
 // ── Los matices ordenan dentro del oficio ────────────────────────────────
 // `analysis.complexSignals` lo leian TRES ficheros y no lo producia nadie:
 // la carta de presentacion, las respuestas del chat y el porque de la

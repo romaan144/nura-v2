@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (duplicados y el boost medido)
+**Última actualización:** 2026-08-16 (boost retirado)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -236,19 +236,34 @@ profesional.)*
 Y confirma el problema de vocabulario: **el mismo Carlos estaba en
 `logopedia` y en `salud`**.
 
-## El boost de +80, medido (2026-08-16)
+## El boost de +80 · **RETIRADO** (2026-08-16)
 
-**Decide 7 de 8 primeros resultados.** Pero al desactivarlo para comparar,
-**salen casi los mismos nombres**: el boost no está eligiendo distinto en
-general, solo desempata.
+Los 107 perfiles sembrados (`id >= 2000`) recibían **+80 puntos** para que
+la demostración luciera. Decidía **7 de 8** primeros resultados.
 
-Donde sí hace daño es en el caso concreto: ante *"mi madre tiene
-alzheimer"*, Pilar —cuidadora **especialista en Alzheimer**, valoración 5,
-id 2122— sale **tercera** por detrás de dos perfiles menos específicos.
+**Medido al quitarlo: 11 de 12 búsquedas dan el mismo primer resultado.**
+No elegía distinto — solo desempataba. Y la suite dorada siguió verde:
+ningún emparejamiento dependía de él.
 
-Sigue siendo **decisión pendiente nº 3**, ahora con el dato: el coste real
-no es que ordene mal en general, es que **entierra al perfil más adecuado
-justo en los casos difíciles**, que son los que Nüra dice resolver.
+Prueba nueva en la suite (**57/57**): ningún perfil puntúa por su `id`.
+
+### Y una corrección a mi propio diagnóstico
+
+Dije que el boost *"enterraba a Pilar, especialista en Alzheimer"*. **Al
+quitarlo, Pilar sigue tercera** — y el ranking tiene razón:
+
+| | etiquetas |
+|---|---|
+| Elena (1ª, 131 pts) | `Alzheimer`, `geriatría`, `acompañamiento` |
+| Pilar (3ª, 114 pts) | `cuidadora nocturna`, `turnos noche`, `emergencias` |
+
+Para *"mi madre tiene alzheimer **y vive sola**"*, Elena encaja mejor: sus
+etiquetas cubren las dos señales. El título de Pilar dice "alzheimer" pero
+sus etiquetas apuntan a turnos de noche.
+
+**El boost no era la causa.** Se retira igualmente porque premiaba por
+antigüedad de fila en vez de por encaje, y eso no debe decidir a quién ve
+una persona que busca ayuda.
 
 ## Errores conocidos / problemas pendientes
 
