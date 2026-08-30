@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (la urgencia se reconoce)
+**Última actualización:** 2026-08-16 (uno de cada cuatro era invisible)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -301,6 +301,38 @@ etiquetas de Pilar dicen otra cosa que su título.
 **Es el mismo problema de vocabulario que ya está anotado.** No se toca
 aquí: normalizar etiquetas sin criterio cambiaría resultados de búsqueda de
 forma difícil de prever.
+
+## Uno de cada cuatro profesionales era invisible (2026-08-16)
+
+Conduciendo entradas reales apareció que *"quiero aprender a nadar"* no
+devolvía nada — **aunque hay una profesora de natación en la base**.
+
+Al medirlo en serio: **32 de 119 especialidades no caían en ninguna
+categoría**. Uno de cada cuatro profesionales no aparecía si alguien
+buscaba su propio oficio.
+
+**La causa**: cuatro categorías —`diseno`, `tecnologia`, `eventos`,
+`automocion`— tenían perfiles pero **ninguna palabra clave**. El diseñador
+gráfico, el fotógrafo, el DJ, el mecánico y el informático existían en la
+base y eran inalcanzables.
+
+Y otras faltaban en categorías que sí existían: neuropsicóloga, dietista,
+osteopatía, chino mandarín, planchado, pet sitter, asistente personal…
+
+**Resultado: 32 → 1.** Prueba nueva en la suite dorada (**58/58**) que no
+deja volver atrás: si más de 3 especialidades quedan sin categoría, falla.
+
+### Y los verbos
+
+La gente dice lo que quiere **hacer**, no el oficio. *"Quiero aprender a
+nadar"*, no *"natación"*. Añadidos `nadar` y `cocinar` al diccionario —solo
+los que tienen profesional real detrás, porque prometer que entiendes algo y
+no tener a nadie es peor que no entenderlo—.
+
+**El cocinero era doblemente invisible**: ni *"cocinar"* ni *"cocinero"*
+caían en ninguna categoría. Ahora se encuentra.
+
+**Existir en la base y no ser encontrable es lo mismo que no existir.**
 
 ## Errores conocidos / problemas pendientes
 

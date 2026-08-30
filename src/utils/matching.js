@@ -63,6 +63,17 @@ const SEMANTIC_MAP = {
   'bebé': 'bebé niñera cuidado niños',
   'recién nacido': 'bebé niñera cuidado',
   'canguro': 'canguro niñera niños cuidado',
+
+  // ── VERBOS ──────────────────────────────────────────────────────────
+  // La gente dice lo que quiere HACER, no el oficio: "quiero aprender a
+  // nadar", no "natación". Medido: el sustantivo encontraba a la profesora
+  // de natacion y el verbo devolvia CERO resultados.
+  // Solo se añaden verbos con profesional real detras: prometer que
+  // entiendes algo y no tener a nadie es peor que no entenderlo.
+  'nadar': 'natación piscina clases deporte',
+  'aprender a nadar': 'natación piscina clases',
+  'cocinar': 'cocinero cocina comida domicilio',
+  'aprender a cocinar': 'cocinero cocina clases',
   'guardería': 'niños cuidado niñera',
   
   // Técnicos — síntomas no técnicos
@@ -206,35 +217,70 @@ const CATEGORY_KEYWORDS = {
     'carpintero','soldador','pintura','frío','no funciona','roto','agua'],
   limpieza: ['limpiar','limpieza','fregar','barrer','hogar','casa','ordenar',
     'cristales','planchar','sucio','polvo','mancha','fregona','desorden'],
-  cuidado: ['cuidar','cuidadora','mayor','anciano','anciana','abuelo','abuela',
+  cuidado: ['asistente personal','ayuda a domicilio','asistencia domiciliaria',
+    'cuidar','cuidadora','mayor','anciano','anciana','abuelo','abuela',
     'acompañar','acompañamiento','geriatría','dependencia','niños','bebé','niñera',
     'enfermera','auxiliar','residencia','alzheimer','parkinson','discapacidad',
     'canguro','guardería','padre mayor','madre mayor','sola en casa','vive sola',
     'confía','de confianza','mañanas','entre semana','demencia','postoperatorio','demencia'],
-  mascotas: ['perro','gato','mascota','animal','pasear','veterinario','adiestramiento',
+  mascotas: ['pet sitter','cuidar mascota','vacaciones mascota','alojamiento animal',
+    'perro','gato','mascota','animal','pasear','veterinario','adiestramiento',
     'cachorro','felino','canino','pájaro','conejo','perrita','gatito','paseo','pasea','pasee','paseos','paseador','mi perro','mi gato'],
-  matematicas: ['matemáticas','mates','clases','profesor','refuerzo','estudiar',
+  matematicas: ['chino','mandarín','biología','geología','historia','ciencias sociales',
+    'dibujo','dibujo artístico','arte','ebau','selectividad','acceso universidad',
+    'matemáticas','mates','clases','profesor','refuerzo','estudiar',
     'deberes','física','química','inglés','idioma','piano','música','programación',
     'francés','alemán','italiano','clase particular','academia','tutorías',
     'selectividad','bachillerato','eso','primaria','universidad','oposiciones',
     'guitarra','ballet','ajedrez','suspenso','examen','instituto','cole'],
-  entrenador: [
+  entrenador: ['pádel','padel','monitor','tenis',
     'perder peso', 'adelgazar', 'bajar de peso', 'dieta y ejercicio','entrenador','entrenamiento','entrenamiento personal','entrenar','gym','gimnasio','deporte','ejercicio','fitness','correr',
     'adelgazar','musculación','yoga','pilates','running','crossfit','natación',
     'ciclismo','spinning','zumba','baile','aeróbic','pesas','cardio','ponerse en forma',
     'músculo','forma'],
-  salud: ['psicólogo','psicóloga','psicología','fisioterapeuta','fisioterapia',
+  salud: ['neuropsicólogo','neuropsicóloga','neuropsicología','dietista','dieta',
+    'osteópata','osteopatía','mindfulness','meditación','relajación',
+    'psicólogo','psicóloga','psicología','fisioterapeuta','fisioterapia',
     'médico','médica','doctor','doctora','enfermero','enfermera','consulta médica',
     'diagnóstico','síntoma','nutricionista','nutrición','dietista','ansiedad',
     'depresión','estrés','insomnio','fobia','trauma','terapia','terapeuta',
     'rehabilitación','masaje','quiropráctico','acupuntura','espalda','lesión',
     'columna','rodilla','hernia','tensión arterial','glucosa','revisión médica'],
   legal: ['abogado','abogada','asesor legal','asesoría','contrato','demanda',
+    'asesor fiscal','fiscal','hacienda','renta','declaración','impuestos','gestoría',
+    'asesor financiero','finanzas','autónomo','autonomo','nómina','nomina',
     'divorcio','herencia','testamento','deuda','hipoteca','alquiler','multa',
     'denuncia','juicio','notario','gestor','gestoría','impuestos','renta','hacienda'],
   hogar: ['arquitecto','arquitecta','reforma','obra','presupuesto reforma',
     'decorador','interiorista','diseño interior','jardín','jardinero','piscina',
-    'pintura hogar','papel pintado','suelo','parquet','azulejo','cocina reforma'],
+    'pintura hogar','papel pintado','suelo','parquet','azulejo','cocina reforma',
+    // El cocinero a domicilio estaba en `hogar` y era INVISIBLE: ni
+    // "cocinero" ni "cocinar" caian en ninguna categoria, asi que jamas
+    // aparecia en una busqueda. Existir en la base y no ser encontrable es
+    // lo mismo que no existir.
+    'planchado','planchar','plancha a domicilio','montador','montar muebles','ikea',
+    'cocinero','cocinera','cocinar','cocina a domicilio','chef','comida casera',
+    'batch cooking','menus semanales'],
+  // ── CATEGORIAS QUE EXISTIAN EN LOS PERFILES Y NO EN EL BUSCADOR ──────
+  // Medido: 32 de 119 especialidades no caian en ninguna categoria — uno de
+  // cada cuatro profesionales era INVISIBLE si alguien buscaba por su
+  // oficio. La causa: `diseno`, `tecnologia`, `eventos` y `automocion`
+  // tenian perfiles pero ninguna palabra clave. Existir en la base y no ser
+  // encontrable es lo mismo que no existir.
+  diseno: ['diseñador','diseñadora','diseño','gráfico','grafico','logo','marca',
+    'branding','ux','ui','web','fotógrafo','fotografa','fotografía','fotos',
+    'vídeo','video','videógrafo','editor de vídeo','montaje','community manager',
+    'redes sociales','copywriter','textos','ilustración','ilustrador'],
+  tecnologia: ['informático','informatica','ordenador','pc','portátil','wifi',
+    'internet','router','red','programador','desarrollador','developer','app',
+    'aplicación','página web','pagina web','software','inteligencia artificial',
+    'datos','ciberseguridad','servidor'],
+  eventos: ['evento','eventos','boda','bodas','fiesta','cumpleaños','celebración',
+    'dj','música','catering','wedding planner','organizar','animación','fotomatón'],
+  automocion: ['coche','moto','vehículo','vehiculo','taller','mecánico','mecanico',
+    'neumático','neumaticos','ruedas','chapa','pintura coche','detailing','lavado',
+    'itv','batería','averia coche'],
+
   otro: ['psicólogo','psicóloga','psicología','fisioterapeuta','fisioterapia',
     'nutricionista','nutrición','dietista','chef','cocina','tatuaje','fotógrafo',
     'fotografía','diseñador','abogado','gestor','asesor','traductor','mudanza',
@@ -348,7 +394,7 @@ const DOMAIN_ANCHORS = {
   tecnico: ['fontanero','electricista','cerrajero','caldera','enchufe','fuga','persiana','instalación','instalador'],
   salud: ['fisioterapeuta','fisio','psicólogo','psicóloga','nutricionista','masajista','ansiedad','espalda'],
   logopedia: ['logopeda','tartamudez','pronunciación'],
-  entrenador: ['entrenador','entrenadora','entrenamiento','gimnasio','gym','fitness','yoga','pilates','crossfit'],
+  entrenador: ['pádel','padel','monitor','tenis','entrenador','entrenadora','entrenamiento','gimnasio','gym','fitness','yoga','pilates','crossfit'],
   legal: ['abogado','abogada','gestor','gestoría','contrato','despido','renta','herencia'],
 }
 

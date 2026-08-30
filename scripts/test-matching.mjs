@@ -195,6 +195,29 @@ for (const t of NEGATIVE) {
   console.log(`${ok2 ? '✓' : '✗'} [interceptor] un "si" de verdad se reconoce (${asentimientos.length - fallan.length}/${asentimientos.length})`)
 }
 
+// ── Nadie es invisible ───────────────────────────────────────────────────
+// Medido: 32 de 119 especialidades no caian en ninguna categoria. Uno de
+// cada cuatro profesionales no aparecia si alguien buscaba su propio
+// oficio, porque `diseno`, `tecnologia`, `eventos` y `automocion` tenian
+// perfiles pero ninguna palabra clave. Existir en la base y no ser
+// encontrable es lo mismo que no existir.
+{
+  const { analyzeNeed } = await import(join(stage, 'utils/matching.js'))
+  const datos = readFileSync(join(root, 'src/data/helpers.js'), 'utf8')
+  const esp = [...new Set([...datos.matchAll(/specialty: "([^"]+)"/g)].map(m => m[1]))]
+  const mudos = []
+  for (const e of esp) {
+    const a = await analyzeNeed(e)
+    if (a.categoria === 'otro') mudos.push(e)
+  }
+  // Se permite un margen pequeño: alguna especialidad muy singular puede no
+  // tener categoria propia. Lo que no se permite es que sean decenas.
+  const ok = mudos.length <= 3
+  if (!ok) failed++
+  console.log(`${ok ? '✓' : '✗'} [cobertura] las especialidades caen en su categoria (${mudos.length} sin categoria de ${esp.length})`)
+  if (!ok) mudos.slice(0, 6).forEach(x => console.log(`    · ${x}`))
+}
+
 // ── Nadie gana por ser de demo ───────────────────────────────────────────
 // Los 107 perfiles sembrados (id >= 2000) recibian +80 puntos. Medido antes
 // de quitarlo: decidia 7 de 8 primeros resultados, pero al desactivarlo
