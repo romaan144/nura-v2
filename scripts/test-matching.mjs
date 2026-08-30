@@ -195,6 +195,29 @@ for (const t of NEGATIVE) {
   console.log(`${ok2 ? '✓' : '✗'} [interceptor] un "si" de verdad se reconoce (${asentimientos.length - fallan.length}/${asentimientos.length})`)
 }
 
+// ── Buscar un oficio devuelve a quien lo ejerce ──────────────────────────
+// Medido antes: buscar "yoga" daba primero al entrenador personal y al
+// instructor de yoga SEGUNDO, por un punto. "abogado de familia" daba el
+// mercantil. "masajista" no encontraba al masajista.
+//
+// Dos causas. Una: `palabrasClave` solo traia terminos del catalogo de la
+// categoria, nunca las palabras del usuario — "masajista" daba []. Dos: que
+// la especialidad dijera exactamente lo buscado valia 8, menos que una
+// etiqueta suelta (10) mas estar disponible (5).
+{
+  const { analyzeNeed, matchHelpers } = await import(join(stage, 'utils/matching.js'))
+  const casos = [
+    ['yoga', /yoga/i], ['pilates', /pilates/i], ['masajista', /masaj/i],
+    ['abogado de familia', /familia/i], ['logopeda infantil', /infantil/i],
+  ]
+  for (const [q, esperado] of casos) {
+    const m = await matchHelpers(await analyzeNeed(q), 1)
+    const ok = esperado.test(m[0]?.specialty || '')
+    if (!ok) failed++
+    console.log(`${ok ? '✓' : '✗'} [oficio] "${q}" → ${m[0]?.specialty || 'nadie'}`)
+  }
+}
+
 // ── Nadie es invisible ───────────────────────────────────────────────────
 // Medido: 32 de 119 especialidades no caian en ninguna categoria. Uno de
 // cada cuatro profesionales no aparecia si alguien buscaba su propio

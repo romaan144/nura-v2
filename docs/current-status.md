@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (uno de cada cuatro era invisible)
+**Última actualización:** 2026-08-16 (buscar un oficio da a quien lo ejerce)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -333,6 +333,36 @@ no tener a nadie es peor que no entenderlo—.
 caían en ninguna categoría. Ahora se encuentra.
 
 **Existir en la base y no ser encontrable es lo mismo que no existir.**
+
+## Buscar un oficio devuelve a quien lo ejerce (2026-08-16)
+
+Ya se encontraban las categorías. Faltaba comprobar si se encontraba a **la
+persona correcta**. Medido sobre 60 especialidades: **47 acertaban**.
+
+Los fallos tenían patrón:
+
+| buscabas | salía |
+|---|---|
+| yoga | entrenador personal *(el de yoga, segundo por 1 punto)* |
+| abogado de familia | abogado mercantil |
+| masajista | psicóloga |
+
+**Dos causas, y la primera no la esperaba.**
+
+**1 · `palabrasClave` no contenía las palabras del usuario.** Solo devolvía
+términos del catálogo de la categoría que aparecieran en el texto. Buscar
+*"yoga"* daba `["entrenador","yoga","pilates"]` —con palabras que el usuario
+no escribió— y *"masajista"* daba **`[]`**.
+
+**2 · La especialidad pesaba 8.** Menos que una etiqueta suelta (10) más
+estar disponible (5). Que el oficio de alguien diga exactamente lo que
+buscas valía menos que dos coincidencias accidentales.
+
+**Ahora**: las palabras propias del usuario entran primero y pesan **45**;
+las que añade el catálogo, 15. Sigue por debajo de la categoría (40), así
+que **nadie sale de su oficio** — solo se ordena bien dentro de él.
+
+**Resultado: 47 → 55 de 60.** Cinco pruebas nuevas (**63/63**).
 
 ## Errores conocidos / problemas pendientes
 

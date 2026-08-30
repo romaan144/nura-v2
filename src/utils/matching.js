@@ -460,9 +460,24 @@ export function analyzeNeed(userText) {
   const nivelRequerido = QUALIFICATION_MAP[categoria] || 'experienced'
   
   // Extract meaningful keywords from expanded text for Supabase search
-  const palabrasClave = (CATEGORY_KEYWORDS[categoria] || [])
+  // LAS PALABRAS DEL USUARIO, NO SOLO LAS DE LA CATEGORIA. Antes esto solo
+  // devolvia terminos del catalogo de la categoria que aparecieran en el
+  // texto: buscar "yoga" daba ["entrenador","yoga","pilates"] y "masajista"
+  // daba []. Resultado: el instructor de yoga salia SEGUNDO por un punto, y
+  // el masajista no se encontraba nunca.
+  const RUIDO = new Set(['para','con','que','una','uno','los','las','del','por','mi','me',
+    'necesito','busco','quiero','alguien','ayuda','favor','algo','tengo','hay'])
+  const propias = normalize(userText).split(/[^\p{L}\d]+/u)
+    .filter(w => w.length > 3 && !RUIDO.has(w))
+  const delCatalogo = (CATEGORY_KEYWORDS[categoria] || [])
     .filter(k => normalize(expanded).includes(normalize(k)))
-    .slice(0, 5)
+  // Primero las suyas: son las que de verdad describen lo que busca.
+  const palabrasClave = [...new Set([...propias, ...delCatalogo])].slice(0, 6)
+  // Las suyas aparte: pesan mas que las que añade el catalogo. Buscar "yoga"
+  // metia tambien "entrenador" y "pilates" por ser de la misma categoria, y
+  // el entrenador personal ganaba al instructor de yoga con palabras que el
+  // usuario no habia escrito.
+  const palabrasPropias = propias.slice(0, 6)
   
   const resumenMap = {
     logopedia: 'Busca un logopeda', tecnico: 'Necesita un técnico o profesional del hogar',
@@ -475,6 +490,7 @@ export function analyzeNeed(userText) {
     categoria: toApp(categoria), matchedTerm: catBestKw[categoria] || null, presencial, urgente, nivelRequerido,
     resumen: resumenMap[categoria] || 'Busca ayuda',
     palabrasClave,
+    palabrasPropias,
     // ── LOS MATICES ──────────────────────────────────────────────────
     // Tres ficheros leian `analysis.complexSignals` —la carta de
     // presentacion, las respuestas del chat y el porque de la
@@ -572,13 +588,33 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
     // valoracion 5. El boost no protegia la demo: la empeoraba justo en el
     // caso que uno querria enseñar.
     if (toApp(h.category) === analysis.categoria) score += 40
+    // EL OFICIO PESA MAS QUE LA ETIQUETA. Medido: buscar "yoga" devolvia
+    // primero a un entrenador personal y al instructor de yoga SEGUNDO, por
+    // un punto. "abogado de familia" daba el mercantil. La causa: que la
+    // especialidad diga exactamente lo que buscas valia 8 — menos que una
+    // etiqueta suelta (10) mas estar disponible (5).
+    //
+    // Ahora la especialidad vale 30, y si coincide ENTERA vale 25 mas. Sigue
+    // por debajo de la categoria (40), asi que no saca a nadie de su oficio:
+    // solo ordena bien dentro de el.
     const keywords = analysis.palabrasClave || []
+    const espNorm = normalize(h.specialty || '')
     keywords.forEach(kw => {
       const normKw = normalize(kw)
+      if (!normKw) return
       if ((h.tags || []).some(t => normalize(String(t)).includes(normKw))) score += 10
       if (normalize(h.bio || '').includes(normKw)) score += 5
-      if (normalize(h.specialty || '').includes(normKw)) score += 8
+      // Si la palabra la escribio el usuario, pesa mas que si la puso el
+      // catalogo de la categoria.
+      const suya = (analysis.palabrasPropias || []).includes(normKw)
+      if (espNorm.includes(normKw)) score += suya ? 45 : 15
     })
+    // La consulta entera dentro del oficio: "instructor de yoga" contiene
+    // "yoga" completo, y eso vale mas que contener una de sus palabras.
+    {
+      const consulta = normalize((analysis.palabrasClave || []).join(' ')).trim()
+      if (consulta && espNorm.includes(consulta)) score += 25
+    }
     // El matiz decide el ORDEN, no quien entra. Peso 25: por debajo de la
     // categoria (40), por encima de una palabra suelta (8-10). Una logopeda
     // infantil sube ante "mi hijo de 5 años", pero una logopeda de adultos
