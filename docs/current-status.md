@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (boost retirado)
+**Última actualización:** 2026-08-16 (la urgencia se reconoce)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -264,6 +264,43 @@ sus etiquetas apuntan a turnos de noche.
 **El boost no era la causa.** Se retira igualmente porque premiaba por
 antigüedad de fila en vez de por encaje, y eso no debe decidir a quién ve
 una persona que busca ayuda.
+
+## Cuando no entiende, la urgencia se reconoce (2026-08-16)
+
+Alguien escribía **"es una emergencia"** y Nüra respondía:
+
+> *"No estoy segura de haberte entendido — ¿me lo cuentas con otras
+> palabras? Por ejemplo: **entrenador personal cerca de casa**…"*
+
+El texto era correcto y el mismo para todos los casos. Pero ante una
+urgencia **sonaba sordo**: detectaba que no entendía y no reconocía el tono.
+
+Ahora hay dos ramas:
+
+| entrada | respuesta |
+|---|---|
+| *"es una emergencia"* | *"Entiendo que corre prisa. Para encontrarte a alguien ya, dime qué ha pasado: ¿es algo de casa, de salud, o cuidar a alguien?"* |
+| *"no sé qué necesito"* | el mensaje de siempre, sin cambios |
+
+Chips nuevos —*Algo se ha roto en casa* · *Necesito ayuda médica* · *Cuidar
+a un familiar*— **verificados los tres: devuelven profesionales reales**.
+
+### Lo que se midió de paso: el vocabulario de etiquetas
+
+**482 etiquetas distintas para 606 usos. 400 aparecen una sola vez.**
+
+Y los conceptos clave están partidos: `urgencias`(6) · `urgente`(1) ·
+`emergencias`(1) son lo mismo y el emparejador las trata como distintas.
+Igual con `alzheimer`/`demencia` y `ninos`/`infantil`.
+
+El diccionario de sinónimos (124 entradas) actúa sobre **lo que escribe el
+usuario**, no sobre las etiquetas del profesional. Por eso Elena gana a
+Pilar en el caso del Alzheimer: no es un fallo del ranking, es que las
+etiquetas de Pilar dicen otra cosa que su título.
+
+**Es el mismo problema de vocabulario que ya está anotado.** No se toca
+aquí: normalizar etiquetas sin criterio cambiaría resultados de búsqueda de
+forma difícil de prever.
 
 ## Errores conocidos / problemas pendientes
 

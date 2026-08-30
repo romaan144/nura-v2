@@ -915,9 +915,20 @@ export default function Home() {
             chips: [`Buscar ${alt.alt}`, 'Ampliar la zona', 'Avísame cuando tengas a alguien'] }])
           return
         }
-        setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
-          lines: ['No estoy segura de haberte entendido del todo — ¿me lo cuentas con otras palabras? Por ejemplo: "entrenador personal cerca de casa" o "alguien que cuide a mi madre".'],
-          chips: ['Entrenador personal', 'Cuidar a un familiar', 'Una reparación en casa'] }])
+        // Cuando no se entiende, se pide otra vez — pero NO igual para todos.
+        // Alguien escribia "es una emergencia" y Nura le respondia con un
+        // ejemplo sobre entrenador personal: detectaba la urgencia y no la
+        // reconocia. Sonaba sorda justo cuando mas importa no sonarlo.
+        {
+          const urge = /\b(urgent\w*|emergenc\w*|ahora mismo|cuanto antes|ya mismo|se me ha roto|no puedo esperar)\b/i.test(msg)
+          setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
+            lines: urge
+              ? ['Entiendo que corre prisa. Para encontrarte a alguien ya, dime qué ha pasado: ¿es algo de casa, de salud, o cuidar a alguien?']
+              : ['No estoy segura de haberte entendido del todo — ¿me lo cuentas con otras palabras? Por ejemplo: "entrenador personal cerca de casa" o "alguien que cuide a mi madre".'],
+            chips: urge
+              ? ['Algo se ha roto en casa', 'Necesito ayuda médica', 'Cuidar a un familiar']
+              : ['Entrenador personal', 'Cuidar a un familiar', 'Una reparación en casa'] }])
+        }
         return
       }
       stopThinking()
