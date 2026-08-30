@@ -123,6 +123,27 @@ try {
     resolve: { alias: { '/logo-iso.png': censo } },
   })
   await import('file://' + join(dir, 'Censo.mjs') + '?t=' + Date.now())
+  // ── La misma persona dos veces ──
+  // Habia dos profesionales duplicados: Carlos Martinez Vidal (ids 1 y 2003)
+  // y Elena Fernandez Ros (5 y 2120), cada uno con su especialidad escrita
+  // distinta. Salian LOS DOS en la misma lista de resultados, y un usuario
+  // que ve dos veces el mismo nombre no sabe cual elegir.
+  {
+    const datos = readFileSync('src/data/helpers.js', 'utf8')
+    // Solo los PROFESIONALES: `name:` aparece tambien en las opiniones de
+    // jefes y companeros dentro de cada perfil. Contarlas daba tres falsos
+    // positivos —la misma Dra. Pilar Mas recomienda a dos personas—.
+    const nombres = [...datos.matchAll(/\n    (?:id: \d+,\s*)?name:\s*"([^"]+)"/g)].map(m => m[1])
+    const cuenta = {}
+    nombres.forEach(n => { cuenta[n] = (cuenta[n] || 0) + 1 })
+    const repes = Object.entries(cuenta).filter(([, n]) => n > 1)
+    if (repes.length) {
+      console.log(`✗ ${'Persona doble'.padEnd(14)} — ${repes.length} nombre(s) repetido(s) en el dataset`)
+      repes.slice(0, 5).forEach(([n, v]) => console.log(`    ${n} ×${v}`))
+      failed += repes.length
+    } else console.log(`✓ ${'Persona doble'.padEnd(14)} [${nombres.length} profesionales, ningun nombre repetido]`)
+  }
+
   // ── El papel escrito a mano ──
   // Al cambiar `--paper` de sepia a gris, TRES superficies se quedaron con
   // el color viejo porque lo llevaban escrito a mano: la barra inferior, la

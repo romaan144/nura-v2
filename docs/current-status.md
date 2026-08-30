@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (los matices ordenan)
+**Última actualización:** 2026-08-16 (duplicados y el boost medido)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -211,6 +211,44 @@ Cinco pruebas nuevas en la suite dorada: **56/56**.
 **especialista en Alzheimer**, valoración 5— sale **tercera**. Su `id` es
 2122, y el ranking da **+80 a los ids ≥ 2000**. Es el boost de demo, que
 está enterrando al perfil más adecuado. Decisión pendiente nº 3.
+
+## La misma persona, dos veces (2026-08-16)
+
+Al medir el boost aparecieron **dos profesionales duplicados**:
+
+| persona | original | copia de demo |
+|---|---|---|
+| Carlos Martínez Vidal | id 1 · *Logopeda infantil* · `logopedia` | id 2003 · *logopeda* · **`salud`** |
+| Elena Fernández Ros | id 5 · *Auxiliar de geriatría* | id 2120 · *cuidadora de mayores* |
+
+**Salían los dos en la misma lista de resultados.** Un usuario que ve dos
+veces el mismo nombre no sabe cuál elegir, y eso destruye la confianza que
+Nüra necesita.
+
+Retiradas las copias: **122 → 120 profesionales**. Guardia nuevo en la
+Cuarta Puerta, probado devolviendo el duplicado.
+
+*(El guardia dio tres falsos positivos al principio: `name:` aparece
+también en las opiniones de jefes y compañeros dentro de cada perfil. La
+misma Dra. Pilar Mas recomienda a dos personas. Afinado a las entradas de
+profesional.)*
+
+Y confirma el problema de vocabulario: **el mismo Carlos estaba en
+`logopedia` y en `salud`**.
+
+## El boost de +80, medido (2026-08-16)
+
+**Decide 7 de 8 primeros resultados.** Pero al desactivarlo para comparar,
+**salen casi los mismos nombres**: el boost no está eligiendo distinto en
+general, solo desempata.
+
+Donde sí hace daño es en el caso concreto: ante *"mi madre tiene
+alzheimer"*, Pilar —cuidadora **especialista en Alzheimer**, valoración 5,
+id 2122— sale **tercera** por detrás de dos perfiles menos específicos.
+
+Sigue siendo **decisión pendiente nº 3**, ahora con el dato: el coste real
+no es que ordene mal en general, es que **entierra al perfil más adecuado
+justo en los casos difíciles**, que son los que Nüra dice resolver.
 
 ## Errores conocidos / problemas pendientes
 
