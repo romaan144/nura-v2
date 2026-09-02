@@ -223,10 +223,17 @@ const CATEGORY_KEYWORDS = {
     'enfermera','auxiliar','residencia','alzheimer','parkinson','discapacidad',
     'canguro','guardería','padre mayor','madre mayor','sola en casa','vive sola',
     'confía','de confianza','mañanas','entre semana','demencia','postoperatorio','demencia'],
-  mascotas: ['pet sitter','cuidar mascota','vacaciones mascota','alojamiento animal',
+  // "cuidadora de animales" caia en `cuidado` (personas) porque `cuidadora`
+  // pesaba mas que `animales`. Estas frases lo desempatan.
+  mascotas: ['cuidadora de animales','cuidador de animales','cuidar animales',
+    'cuidadora de perros','cuidador de perros','cuidadora de gatos',
+    'pet sitter','cuidar mascota','vacaciones mascota','alojamiento animal',
     'perro','gato','mascota','animal','pasear','veterinario','adiestramiento',
     'cachorro','felino','canino','pájaro','conejo','perrita','gatito','paseo','pasea','pasee','paseos','paseador','mi perro','mi gato'],
-  matematicas: ['chino','mandarín','biología','geología','historia','ciencias sociales',
+  // "lengua y literatura española" caia en `logopedia` por la palabra
+  // `lengua`. Es una asignatura, no un problema del habla.
+  matematicas: ['lengua y literatura','literatura','lengua castellana','sintaxis',
+    'comentario de texto','chino','mandarín','biología','geología','historia','ciencias sociales',
     'dibujo','dibujo artístico','arte','ebau','selectividad','acceso universidad',
     'matemáticas','mates','clases','profesor','refuerzo','estudiar',
     'deberes','física','química','inglés','idioma','piano','música','programación',

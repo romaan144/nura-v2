@@ -209,6 +209,13 @@ for (const t of NEGATIVE) {
   const casos = [
     ['yoga', /yoga/i], ['pilates', /pilates/i], ['masajista', /masaj/i],
     ['abogado de familia', /familia/i], ['logopeda infantil', /infantil/i],
+    // Una palabra no puede arrastrar a la categoria equivocada:
+    // "cuidadora de animales" caia en cuidado de PERSONAS por `cuidadora`,
+    // y "lengua y literatura" en logopedia por `lengua`.
+    ['Cuidadora de animales', /animal|perro|gato|mascota/i],
+    ['lengua y literatura española', /lengua|literatura/i],
+    // Y los que ya funcionaban deben seguir funcionando.
+    ['cuidadora de mayores', /cuidador|geriatr|mayor/i],
   ]
   for (const [q, esperado] of casos) {
     const m = await matchHelpers(await analyzeNeed(q), 1)

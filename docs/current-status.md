@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (buscar un oficio da a quien lo ejerce)
+**Última actualización:** 2026-08-16 (una palabra ya no arrastra a la categoría equivocada)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -363,6 +363,32 @@ las que añade el catálogo, 15. Sigue por debajo de la categoría (40), así
 que **nadie sale de su oficio** — solo se ordena bien dentro de él.
 
 **Resultado: 47 → 55 de 60.** Cinco pruebas nuevas (**63/63**).
+
+## Una palabra ya no arrastra a la categoría equivocada (2026-08-16)
+
+De los 5 que fallaban, **dos no eran fallos**: *"yoga"* y *"pilates"* daban
+al instructor correcto, pero mi prueba comparaba el nombre exacto y hay dos
+personas con la misma especialidad. **El criterio de medida estaba mal, no
+el emparejador.**
+
+Los tres reales tenían la misma causa: **una sola palabra decidía la
+categoría**.
+
+| buscabas | caía en | porque |
+|---|---|---|
+| *Cuidadora de animales* | `cuidado` (personas) | `cuidadora` pesa más que `animales` |
+| *lengua y literatura española* | `logopedia` | `lengua` |
+
+Corregido con frases que desempatan, no tocando el cálculo de puntos —que
+es el corazón del emparejador y no merece un cambio arriesgado por dos
+casos—.
+
+Verificado que **lo que ya funcionaba sigue igual**: *"cuidadora de
+mayores"* sigue en `cuidado`, *"mi hijo no pronuncia la R"* sigue dando la
+logopeda infantil.
+
+**Resultado: 57 de 60.** Tres casos nuevos en la suite (**66/66**),
+incluido el de no-regresión.
 
 ## Errores conocidos / problemas pendientes
 
