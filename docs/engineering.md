@@ -208,6 +208,31 @@ objeto sencillo — y desconfiar de `!== 'valor'` como comprobacion, porque
 `undefined !== 'valor'` es **cierto** y deja pasar el caso roto. Preferir
 `x?.campo || defecto`. Guardia en la Cuarta Puerta.
 
+### Escribir en un input de React no es asignar `.value` (2026-08-16)
+
+Probando entradas sin sentido —emojis, `...`, `???`— la app parecia
+**tragarselas en silencio**: boton activo, clic, y no pasaba nada.
+
+Era el instrumento. El script asignaba el valor con el setter nativo:
+
+```js
+const s = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set
+s.call(input, '😀😀😀')
+input.dispatchEvent(new Event('input', { bubbles: true }))
+```
+
+React no siempre reconcilia eso, asi que su estado seguia vacio y
+`handleSend` salia por `if (!msg.trim()) return`. **La pista estaba delante
+y tarde en verla: el input CONSERVABA el texto despues de pulsar Enter**, y
+la app lo vacia siempre al enviar. Si el campo no se vacia, no se envio.
+
+Con `page.type()` —escritura tecla a tecla, como una persona— las cuatro
+entradas funcionan y reciben el mensaje correcto de "no te he entendido".
+
+**Regla**: para probar un formulario de React, `type()`, nunca asignar
+`.value`. Y cuando algo "no hace nada", mirar primero si la accion llego a
+ocurrir.
+
 ### El instrumental vive en el repo: `npm run medir` (2026-08-02)
 
 En una jornada de auditoria la MEDICION se equivoco doce veces y el codigo

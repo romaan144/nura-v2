@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (una palabra ya no arrastra a la categoría equivocada)
+**Última actualización:** 2026-08-16 (comportamiento adverso verificado)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -389,6 +389,24 @@ logopeda infantil.
 
 **Resultado: 57 de 60.** Tres casos nuevos en la suite (**66/66**),
 incluido el de no-regresión.
+
+## Comportamiento adverso: verificado, sin cambios (2026-08-16)
+
+Probados cuatro escenarios que nunca se habían probado. **Los cuatro
+sobreviven**, con la pantalla viva y cero errores JS:
+
+| escenario | resultado |
+|---|---|
+| perder la red a mitad de búsqueda | devuelve resultados y la fila de ajuste |
+| texto de 40 repeticiones | mensaje de "no te he entendido" con chips |
+| solo emojis, `...`, `???` | igual, correcto |
+| dos búsquedas seguidas en 300 ms | gana la segunda, sin mezcla |
+
+**No se toca nada**: la app se comporta bien.
+
+*(La alarma inicial —"los emojis se tragan en silencio"— era del
+instrumento, no del producto: asignar `.value` no es escribir en un input
+de React. Documentado en `engineering.md`.)*
 
 ## Errores conocidos / problemas pendientes
 
