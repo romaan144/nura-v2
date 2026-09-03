@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (comportamiento adverso verificado)
+**Última actualización:** 2026-08-16 (la app pesa 4 veces menos)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -407,6 +407,33 @@ sobreviven**, con la pantalla viva y cero errores JS:
 *(La alarma inicial —"los emojis se tragan en silencio"— era del
 instrumento, no del producto: asignar `.value` no es escribir en un input
 de React. Documentado en `engineering.md`.)*
+
+## La app pesa cuatro veces menos (2026-08-16)
+
+Medido lo que descarga Nüra al abrirse: **432 kB**, y **358 de ellos eran
+dos logos** — el 83%. El código y las fuentes eran minoría.
+
+| | antes | ahora |
+|---|---|---|
+| `logo-iso.png` | 256 kB · **1092×1092 px** (se muestra a 44) | 14 kB · 180×180 |
+| `logo-text.png` | 101 kB · 1568×644 | 15 kB · 420×172 |
+| **descarga total** | **432 kB** | **105 kB** |
+| primer pintado | 320 ms | **220 ms** |
+| carga en 4G lento | 1210 ms | 1159 ms |
+
+Se redimensiona a **3× el uso máximo**, que cubre la pantalla más densa con
+margen. Verificado a densidad 3×: los logos llegan con ratio 5× y 7,8×, muy
+por encima de lo necesario.
+
+**Y tres logos que no usaba nadie**: `logo.png` (262 kB),
+`logo-text-cropped.png` y `nura-wordmark.png` (85 kB cada uno). 431 kB de
+peso muerto en cada despliegue, encontrados por el guardia nuevo.
+
+**Guardia en la Cuarta Puerta**: ninguna imagen de `public/` supera 60 kB.
+
+*(Lo que NO era problema: las fuentes de griego, cirílico y vietnamita —91
+kB— llevan `unicode-range`, así que el navegador no las descarga. Y
+`lucide-react` pesa 39 MB en disco pero el árbol se poda al construir.)*
 
 ## Errores conocidos / problemas pendientes
 

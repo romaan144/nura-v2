@@ -4,7 +4,7 @@
 // Límite honesto: SSR no ejecuta useEffect — caza render, no efectos.
 // ═══════════════════════════════════════════════════════════════
 import { build } from 'vite'
-import { writeFileSync, mkdirSync, rmSync, readdirSync, readFileSync } from 'fs'
+import { writeFileSync, mkdirSync, rmSync, readdirSync, readFileSync, statSync } from 'fs'
 import { join } from 'path'
 
 const SCREENS = [
@@ -123,6 +123,25 @@ try {
     resolve: { alias: { '/logo-iso.png': censo } },
   })
   await import('file://' + join(dir, 'Censo.mjs') + '?t=' + Date.now())
+  // ── Imagenes desproporcionadas ──
+  // El isotipo pesaba 256 kB y medía 1092x1092 px para mostrarse a 44. Los
+  // dos logos eran el 83% de todo lo que descargaba la app al abrirse.
+  {
+    const gordas = []
+    for (const f of [...readdirSync('public', { recursive: true })].map(String)) {
+      if (!/\.(png|jpg|jpeg)$/i.test(f)) continue
+      const ruta = join('public', f)
+      let st; try { st = statSync(ruta) } catch { continue }
+      const kb = Math.round(st.size / 1024)
+      if (kb > 60) gordas.push(`${f} — ${kb} kB`)
+    }
+    if (gordas.length) {
+      console.log(`✗ ${'Imagen pesada'.padEnd(14)} — ${gordas.length} imagen(es) de mas de 60 kB`)
+      gordas.slice(0, 5).forEach(x => console.log(`    ${x}`))
+      failed += gordas.length
+    } else console.log(`✓ ${'Imagen pesada'.padEnd(14)} [ninguna imagen supera 60 kB]`)
+  }
+
   // ── La misma persona dos veces ──
   // Habia dos profesionales duplicados: Carlos Martinez Vidal (ids 1 y 2003)
   // y Elena Fernandez Ros (5 y 2120), cada uno con su especialidad escrita
