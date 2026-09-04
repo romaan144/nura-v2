@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (la app pesa 4 veces menos)
+**Última actualización:** 2026-08-16 (no se puede reservar sin hora)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -434,6 +434,38 @@ peso muerto en cada despliegue, encontrados por el guardia nuevo.
 *(Lo que NO era problema: las fuentes de griego, cirílico y vietnamita —91
 kB— llevan `unicode-range`, así que el navegador no las descarga. Y
 `lucide-react` pesa 39 MB en disco pero el árbol se poda al construir.)*
+
+## No se puede reservar sin hora (2026-08-16)
+
+Conduciendo el ciclo completo —buscar, escribir, contratar, reservar—
+apareció que **se podía enviar una solicitud sin elegir hora**.
+
+El botón hacía `disabled={!date}`: **solo pedía el día**. Un sábado, que el
+logopeda no trabaja, no aparecía ningún hueco y el botón se activaba igual.
+La solicitud llegaba como *"sábado, 5 de septiembre"* a secas.
+
+**Una cita sin hora no es una cita.** Ahora exige día **y** hora.
+
+Verificado en los tres estados:
+
+| día | huecos | aviso | botón |
+|---|---|---|---|
+| sábado (no trabaja) | ninguno | *"no trabaja"* | apagado |
+| lunes, sin elegir hora | 4 huecos | — | apagado |
+| lunes, con hora | 4 huecos | — | **activo** |
+
+Ciclo completo verificado: *"lunes, 7 de septiembre 16:00h"* en la
+confirmación y en Mis servicios.
+
+### Y lo que se midió de paso: la app es rápida
+
+| | |
+|---|---|
+| tarjeta tocable tras buscar | **~120 ms** |
+| primer pintado | 220 ms |
+| carga en 4G lento | 1,16 s |
+
+**El rendimiento no es un problema.** No se toca nada por ahí.
 
 ## Errores conocidos / problemas pendientes
 

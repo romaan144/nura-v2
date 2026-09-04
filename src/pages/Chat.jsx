@@ -232,8 +232,13 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
         </div>
         <div style={{display:'flex',gap:'var(--space-10)'}}>
           <button onClick={onClose} style={{flex:1,padding:'var(--space-14)',background:'var(--surface-subtle)',color:'rgba(33,29,51,0.55)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>Cancelar</button>
-          <button onClick={()=>{ onConfirm?.(date, time, note); setDone(true); notifyServiceConfirmed(helper.name?.split(' ')?.[0] || helper.name); haptic('success') }} disabled={!date}
-            style={{flex:2,padding:'var(--space-14)',background:date?'var(--purple)':'rgba(33,29,51,0.1)',color:date?'white':'rgba(33,29,51,0.3)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:date?'pointer':'default',transition:'all 0.2s'}}>
+          {/* HACEN FALTA DIA **Y** HORA. Antes bastaba el dia: en un sabado,
+              que el logopeda no trabaja, no aparecia ningun hueco y el boton
+              se activaba igual. Se podia enviar una solicitud sin hora — y
+              llegaba al profesional como "sabado, 5 de septiembre" a secas.
+              Una cita sin hora no es una cita. */}
+          <button onClick={()=>{ onConfirm?.(date, time, note); setDone(true); notifyServiceConfirmed(helper.name?.split(' ')?.[0] || helper.name); haptic('success') }} disabled={!date || !time}
+            style={{flex:2,padding:'var(--space-14)',background:(date&&time)?'var(--purple)':'rgba(33,29,51,0.1)',color:(date&&time)?'white':'rgba(33,29,51,0.3)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:(date&&time)?'pointer':'default',transition:'all 0.2s'}}>
             Enviar solicitud
           </button>
         </div>
