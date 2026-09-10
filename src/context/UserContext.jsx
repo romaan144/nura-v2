@@ -117,12 +117,21 @@ export function UserProvider({ children }) {
     return chatHistories[String(helperId)] || []
   }
 
-  function addChat(helperId, helperName, helperColor, helperAvatar, lastMsg) {
+  /**
+   * `deQuien`: 'user' si el mensaje lo escribe la persona, 'helper' si llega
+   * del profesional. Solo lo que LLEGA cuenta como no leido.
+   *
+   * Antes sumaba +1 en cada mensaje, tambien en los propios: escribias tres
+   * y la insignia de la barra decia 2 sin leer, apuntando a tus propias
+   * palabras. Medido en navegador.
+   */
+  function addChat(helperId, helperName, helperColor, helperAvatar, lastMsg, deQuien = 'helper') {
     const existing = (chats||[]).find(c => c.helperId === helperId)
+    const suma = deQuien === 'user' ? 0 : 1
     let updated
     if (existing) {
       updated = (chats||[]).map(c => c.helperId === helperId
-        ? { ...c, lastMsg, lastTime: new Date().toISOString(), unread: (c.unread || 0) + 1 }
+        ? { ...c, lastMsg, lastTime: new Date().toISOString(), unread: (c.unread || 0) + suma }
         : c)
     } else {
       updated = [...chats, { helperId, helperName, helperColor, helperAvatar, lastMsg, lastTime: new Date().toISOString(), unread: 0 }]

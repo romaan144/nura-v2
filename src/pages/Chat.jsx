@@ -455,7 +455,8 @@ export default function Chat() {
     const newMsg = { id: Date.now(), text: msg, from: 'user', time: new Date().toISOString() }
     setMessages(prev => [...prev, newMsg])
     setInput(''); setSuggested('')
-    addChat?.(helper.id, helper.name, helper.avatarColor, helper.avatar, msg)
+    // 'user': lo escribo yo, no cuenta como no leido.
+    addChat?.(helper.id, helper.name, helper.avatarColor, helper.avatar, msg, 'user')
 
     // ── EN PRODUCCION NADIE CONTESTA, Y HAY QUE DECIRLO ──
     // El profesional respondia al instante con un guion: "¡Hola! Soy Carlos.

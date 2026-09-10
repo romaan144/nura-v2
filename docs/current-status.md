@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (tres puertas, una cuenta)
+**Última actualización:** 2026-08-16 (tus propios mensajes ya no son «sin leer»)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -523,6 +523,29 @@ falla. Probado devolviendo el bug — lo caza con el nombre del fichero.
 *(No es fallo: el onboarding tampoco pide teléfono. Se comprobó y **nada
 depende de él**, así que es una diferencia deliberada de fricción, no una
 divergencia.)*
+
+## Tus propios mensajes ya no cuentan como «sin leer» (2026-08-16)
+
+`addChat` sumaba **+1 al contador de no leídos en cada mensaje**, también en
+los que escribe la persona. Medido en producción: escribes tres mensajes y
+**la insignia de la barra dice 2**, apuntando a tus propias palabras.
+
+Ahora `addChat` recibe quién escribe. Solo lo que **llega** cuenta.
+
+Verificado en los dos modos:
+
+| | antes | ahora |
+|---|---|---|
+| producción, 3 mensajes míos | insignia **2** | **sin insignia** |
+| demo (Carlos responde) | 2 | 2 — correcto, son suyos |
+
+### Lo que se comprobó y estaba bien
+
+- Las conversaciones **sobreviven** al salir y volver.
+- En producción, la lista de Chats muestra **lo último que escribiste**.
+  *(En demo muestra la respuesta simulada, porque el segundo `addChat` vive
+  dentro de la rama de demo. Correcto.)*
+- `getChatHistory` se importa en `Chats.jsx` y no se usa — inofensivo.
 
 ## Errores conocidos / problemas pendientes
 
