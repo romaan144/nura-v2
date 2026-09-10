@@ -284,6 +284,38 @@ manipulado no puede declararse verificado. El `chat_log` tiene además un
 tope duro de 200 KB por fila: antes crecía sin límite y pesaba en cada
 lectura del catálogo.
 
+### La tabla de avisos
+
+La app **encola sola** un aviso cuando alguien escribe por primera vez a un
+profesional. Crear la tabla antes de encender `VITE_EDGE_WRITES`:
+
+```sql
+create table if not exists public.avisos (
+  id            bigserial primary key,
+  helper_id     text not null,
+  helper_nombre text,
+  mensaje       text not null,
+  alcanzable    boolean default false,
+  estado        text default 'pendiente',
+  fecha         timestamptz default now()
+);
+
+alter table public.avisos enable row level security;
+-- Sin políticas para `anon`: solo escribe la función, con service_role.
+
+create index if not exists avisos_estado on public.avisos (estado, id);
+```
+
+Para sacarlos:
+
+```bash
+NURA_EDGE_URL=https://<tu-proyecto>.functions.supabase.co/helpers-write \
+  npm run avisar -- --pendientes
+```
+
+Devuelve un enlace por aviso. Al enviarlo:
+`npm run avisar -- --enviado 7`.
+
 ### La tabla de eventos
 
 Los seis eventos de uso (ver `docs/que-puede-medir-nura.md`) viajan por la

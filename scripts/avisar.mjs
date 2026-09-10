@@ -38,13 +38,56 @@ Y antes, en Supabase:
 const args = process.argv.slice(2)
 const arg = (n) => { const i = args.indexOf('--' + n); return i >= 0 ? args[i + 1] : null }
 
+// ── los pendientes, de golpe ─────────────────────────────────────────────
+// La app encola el aviso sola en cuanto alguien escribe a un profesional.
+// Esto los saca todos: un enlace por aviso, listo para abrir y enviar.
+if (args.includes('--pendientes')) {
+  const res = await fetch(EDGE, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', origin: ORIGEN },
+    body: JSON.stringify({ op: 'pendientes' }),
+  })
+  if (!res.ok) { console.log(`✗ La función respondió ${res.status}.`); process.exit(1) }
+  const r = await res.json()
+  const avisos = r.avisos || []
+  if (!avisos.length) { console.log('\nNo hay avisos pendientes.\n'); process.exit(0) }
+
+  console.log(`\n${avisos.length} aviso(s) pendiente(s):\n`)
+  for (const a of avisos) {
+    if (!a.enlace) {
+      console.log(`✗ ${a.nombre} — sin forma de contacto. Se dio de alta antes`)
+      console.log(`   de que el alta lo pidiera: aparece en las búsquedas y`)
+      console.log(`   nadie puede avisarle.\n`)
+      continue
+    }
+    console.log(`✓ ${a.nombre}`)
+    console.log(`   ${a.enlace}`)
+    console.log(`   al enviarlo:  npm run avisar -- --enviado ${a.id}\n`)
+  }
+  process.exit(0)
+}
+
+// ── marcar uno como enviado ──
+const enviado = arg('enviado')
+if (enviado) {
+  const res = await fetch(EDGE, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', origin: ORIGEN },
+    body: JSON.stringify({ op: 'aviso-enviado', avisoId: enviado }),
+  })
+  console.log(res.ok ? `✓ Aviso ${enviado} marcado como enviado.` : `✗ Error ${res.status}`)
+  process.exit(res.ok ? 0 : 1)
+}
+
 const id = arg('id')
 const mensaje = arg('mensaje')
 
 if (!id || !mensaje) {
   console.log(`
 Uso:
-  npm run avisar -- --id 1 --mensaje "Hola Marta, soy Nüra. Sergio te ha escrito..."
+  npm run avisar -- --pendientes          ← lo normal: los que la app encoló
+  npm run avisar -- --enviado 7           ← marcar uno como enviado
+  npm run avisar -- --id 1 --mensaje "…"  ← uno suelto, a mano
 
 El texto lo genera \`src/utils/aviso.js\` (construirAviso). Si tienes el
 aviso en la consola del navegador:

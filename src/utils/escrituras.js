@@ -56,6 +56,19 @@ export async function altaProfesional(payload) {
 }
 
 /**
+ * Encolar el aviso a un profesional. **No bloquea ni avisa de fallos**: si
+ * no sale, la persona no debe enterarse — su mensaje ya esta enviado.
+ *
+ * Se encola en el PRIMER mensaje de una conversacion, no al abrir el chat:
+ * avisar por cada ojeada a una ficha seria ruido para el profesional.
+ */
+export async function encolarAviso(helperId, mensaje) {
+  if (!porLaFuncion()) return
+  try { await llamarFuncion({ op: 'encolar-aviso', helperId, mensaje }) }
+  catch { /* el aviso se pierde; el mensaje del usuario no */ }
+}
+
+/**
  * Registro de conversacion. No bloquea la interfaz si falla.
  *
  * APAGADO por defecto: la tabla real de Supabase **no tiene la columna

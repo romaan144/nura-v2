@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (tus propios mensajes ya no son «sin leer»)
+**Última actualización:** 2026-08-16 (MEJORA PRO: el aviso sale solo)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -546,6 +546,39 @@ Verificado en los dos modos:
   *(En demo muestra la respuesta simulada, porque el segundo `addChat` vive
   dentro de la rama de demo. Correcto.)*
 - `getChatHistory` se importa en `Chats.jsx` y no se usa — inofensivo.
+
+## MEJORA PRO · El aviso al profesional sale solo (2026-08-16)
+
+**Evolución 1 de NÜRA EVOLVE, parte A.** La app prometía *"le aviso de que
+le has escrito"* y eso dependía de que alguien ejecutara un comando a mano.
+
+**Ahora se encola solo**, en el primer mensaje de cada conversación.
+
+| pieza | dónde |
+|---|---|
+| `encolarAviso()` | `utils/escrituras.js` |
+| disparo | `Chat.jsx`, primer mensaje del usuario |
+| `encolar-aviso` · `pendientes` · `aviso-enviado` | Edge Function |
+| `npm run avisar -- --pendientes` | saca todos los enlaces de golpe |
+
+**Dos decisiones que importan:**
+
+**1 · Se encola aunque el profesional no tenga contacto.** Los 1008 del
+dataset están así. Si no se encolara, el aviso se perdería en silencio;
+encolado, `--pendientes` lo dice con su nombre: *"alguien le escribió y
+nadie puede avisarle"*. **Hacer visible el hueco vale más que ocultarlo.**
+
+**2 · Uno por conversación, no por mensaje.** `msgCount` cuenta mensajes del
+**profesional**, y en producción no hay ninguno: siempre vale 0, así que
+encolaba un aviso por cada mensaje. Corregido a *"¿ya había escrito antes?"*.
+Verificado: exactamente 1.
+
+**Falta la vuelta (parte B)**: que la respuesta del profesional llegue al
+usuario. Tres opciones —puente manual, WhatsApp API, enlace de vuelta—.
+**Se decide cuando una profesional real diga por dónde quiere responder.**
+
+**Requiere en Supabase**: `create table avisos` (SQL en
+`docs/lanzamiento-rls.md`).
 
 ## Errores conocidos / problemas pendientes
 

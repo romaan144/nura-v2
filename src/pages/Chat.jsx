@@ -5,7 +5,7 @@ import { HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
 import { slotsDe, ocupacionesDe, motivoSinHuecos, FRASE_SIN_HUECOS } from '../data/horarios'
 import { getHelperById } from '../utils/supabase'
-import { registrarConversacion } from '../utils/escrituras'
+import { registrarConversacion, encolarAviso } from '../utils/escrituras'
 import { notifyServiceConfirmed } from '../utils/notifications'
 import { haptic } from '../utils/haptic'
 import RatingModal from '../components/RatingModal'
@@ -16,6 +16,7 @@ import { DEMO_MODE } from '../config'
 import { Badge, SectionLabel } from '../components/ui'
 import RegisterGate from '../components/RegisterGate'
 import { registrar } from '../utils/analitica'
+import { construirAviso } from '../utils/aviso'
 
 // ── Context-aware first message ───────────────────────────────────────────
 
@@ -457,6 +458,32 @@ export default function Chat() {
     setInput(''); setSuggested('')
     // 'user': lo escribo yo, no cuenta como no leido.
     addChat?.(helper.id, helper.name, helper.avatarColor, helper.avatar, msg, 'user')
+    // EL AVISO SALE SOLO. La app promete "le aviso de que le has escrito" y
+    // hasta ahora eso dependia de que alguien ejecutase un comando a mano.
+    // Se encola en el PRIMER mensaje de la conversacion: uno por persona que
+    // escribe, no uno por mensaje.
+    // `msgCount` cuenta mensajes DEL PROFESIONAL, y en produccion no hay
+    // ninguno: siempre vale 0, asi que se encolaba un aviso por cada mensaje
+    // que escribiera la persona. El criterio correcto es si YA habia escrito
+    // antes en esta conversacion.
+    const yaEscribi = messages.some(m => m.from === 'user')
+    if (!yaEscribi && helper?.id != null) {
+      const aviso = construirAviso({
+        helper,
+        analysis: location.state?.analysis || window.__nuraLastAnalysis,
+        userQuery: location.state?.userQuery || window.__nuraLastQuery || msg,
+        user,
+      })
+      // Se encola AUNQUE no haya contacto. `construirAviso` devuelve null
+      // cuando el profesional no dejo movil ni correo —los 1008 del dataset
+      // original estan asi— y entonces el aviso se perdia en silencio.
+      // Encolarlo igual es lo unico que hace VISIBLE el problema: la cola
+      // marca `alcanzable: false` y `npm run avisar --pendientes` lo dice
+      // con su nombre. Alguien escribio a esa persona y nadie puede avisarla.
+      const cuerpo = aviso?.cuerpo
+        || `Alguien te ha escrito en Nüra: «${msg}». No tenemos forma de avisarte — falta tu móvil o tu correo.`
+      encolarAviso(helper.id, cuerpo)
+    }
 
     // ── EN PRODUCCION NADIE CONTESTA, Y HAY QUE DECIRLO ──
     // El profesional respondia al instante con un guion: "¡Hola! Soy Carlos.

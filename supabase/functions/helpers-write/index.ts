@@ -79,6 +79,18 @@ function limpiarAlta(entrada: Record<string, unknown>) {
   return salida
 }
 
+/** El enlace que abre el canal del profesional con el mensaje ya escrito. */
+function enlaceDe(contacto: string, mensaje: string): string {
+  const c = contacto.trim()
+  const esCorreo = c.includes('@') && /\.[a-z]{2,}$/i.test(c)
+  if (esCorreo) {
+    return `mailto:${encodeURIComponent(c)}?subject=${encodeURIComponent('Alguien te busca en Nüra')}&body=${encodeURIComponent(mensaje)}`
+  }
+  const n = c.replace(/[^\d+]/g, '').replace(/^00/, '+')
+  const tel = n.startsWith('+') ? n.slice(1) : (n.length === 9 ? '34' + n : n)
+  return `https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`
+}
+
 Deno.serve(async (req: Request) => {
   const cors = cabecerasCors(req.headers.get('origin'))
 
@@ -184,17 +196,86 @@ Deno.serve(async (req: Request) => {
     if (!h) return json({ error: 'no existe' }, 404, cors)
     if (!h.contacto) return json({ ok: false, motivo: 'sin_contacto', nombre: h.name }, 200, cors)
 
-    const c = String(h.contacto).trim()
-    const esCorreo = c.includes('@') && /\.[a-z]{2,}$/i.test(c)
-    const enlace = esCorreo
-      ? `mailto:${encodeURIComponent(c)}?subject=${encodeURIComponent('Alguien te busca en Nüra')}&body=${encodeURIComponent(mensaje)}`
-      : (() => {
-          const n = c.replace(/[^\d+]/g, '').replace(/^00/, '+')
-          const tel = n.startsWith('+') ? n.slice(1) : (n.length === 9 ? '34' + n : n)
-          return `https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`
-        })()
+    const esCorreo = String(h.contacto).includes('@')
+    return json({ ok: true, via: esCorreo ? 'email' : 'movil', nombre: h.name,
+      enlace: enlaceDe(String(h.contacto), mensaje) }, 200, cors)
+  }
 
-    return json({ ok: true, via: esCorreo ? 'email' : 'movil', nombre: h.name, enlace }, 200, cors)
+  // ── encolar un aviso ──
+  // El aviso ya no depende de que alguien ejecute un comando: la app lo
+  // encola sola en cuanto una persona escribe a un profesional. Aqui se
+  // guarda; `npm run avisar --pendientes` los saca todos de una vez.
+  //
+  // Se guarda el MENSAJE, no el enlace: el enlace se construye al enviar,
+  // con el contacto de ese momento. Y el contacto NO se guarda en la cola,
+  // porque la cola es una tabla mas y no debe multiplicar donde vive un
+  // dato personal.
+  if (op === 'encolar-aviso') {
+    const id = cuerpo.helperId
+    const mensaje = String(cuerpo.mensaje ?? '').slice(0, 2000)
+    if (id === undefined || id === null) return json({ error: 'falta helperId' }, 400, cors)
+    if (!mensaje) return json({ error: 'falta mensaje' }, 400, cors)
+
+    // Sin contacto no hay aviso posible: se guarda igual, para que el
+    // fundador SEPA que alguien quedo sin poder ser avisado.
+    const lec = await fetch(
+      `${SUPABASE_URL}/rest/v1/helpers?id=eq.${encodeURIComponent(String(id))}&select=name,contacto`,
+      { headers: rest },
+    )
+    const [h] = lec.ok ? await lec.json() : [null]
+
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/avisos`, {
+      method: 'POST',
+      headers: { ...rest, Prefer: 'return=minimal' },
+      body: JSON.stringify({
+        helper_id: String(id),
+        helper_nombre: h?.name ?? null,
+        mensaje,
+        alcanzable: Boolean(h?.contacto),
+        estado: 'pendiente',
+      }),
+    })
+    if (!res.ok) return json({ error: 'aviso no encolado', estado: res.status }, 502, cors)
+    return json({ ok: true, alcanzable: Boolean(h?.contacto) }, 200, cors)
+  }
+
+  // ── los avisos pendientes, con su enlace ya montado ──
+  if (op === 'pendientes') {
+    const lec = await fetch(
+      `${SUPABASE_URL}/rest/v1/avisos?estado=eq.pendiente&order=id.asc&limit=50`,
+      { headers: rest },
+    )
+    if (!lec.ok) return json({ error: 'lectura rechazada', estado: lec.status }, 502, cors)
+    const filas = await lec.json()
+
+    const salida = []
+    for (const f of filas) {
+      const c2 = await fetch(
+        `${SUPABASE_URL}/rest/v1/helpers?id=eq.${encodeURIComponent(String(f.helper_id))}&select=name,contacto`,
+        { headers: rest },
+      )
+      const [hh] = c2.ok ? await c2.json() : [null]
+      salida.push({
+        id: f.id,
+        nombre: hh?.name ?? f.helper_nombre ?? '(sin nombre)',
+        enlace: hh?.contacto ? enlaceDe(String(hh.contacto), f.mensaje) : null,
+        fecha: f.fecha,
+      })
+    }
+    return json({ ok: true, avisos: salida }, 200, cors)
+  }
+
+  // ── marcar un aviso como enviado ──
+  if (op === 'aviso-enviado') {
+    const id = cuerpo.avisoId
+    if (id === undefined || id === null) return json({ error: 'falta avisoId' }, 400, cors)
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/avisos?id=eq.${encodeURIComponent(String(id))}`, {
+      method: 'PATCH',
+      headers: { ...rest, Prefer: 'return=minimal' },
+      body: JSON.stringify({ estado: 'enviado' }),
+    })
+    if (!res.ok) return json({ error: 'no actualizado', estado: res.status }, 502, cors)
+    return json({ ok: true }, 200, cors)
   }
 
   return json({ error: 'operacion desconocida' }, 400, cors)
