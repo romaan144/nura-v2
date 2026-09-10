@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (la valoración es del usuario, y cuenta)
+**Última actualización:** 2026-08-16 (tres puertas, una cuenta)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -501,6 +501,28 @@ guardaba, **sí** llegaba a la ficha del profesional y la app **sí** dejaba
 de pedirla. Mis clics no daban al botón correcto —hay un *"Valorar a
 Carlos"* que **abre** el modal y otro que **envía**— y las estrellas miden
 18px, por debajo del filtro de mi script.
+
+## Tres puertas, una cuenta (2026-08-16)
+
+El patrón *"dos caminos, dos reglas"* ya había dado cuatro fallos:
+`handleContact` escrito cuatro veces, las dos hojas de reserva, los dos
+caminos de valoración. **Se buscó a propósito dónde más aparecía.**
+
+`login()` se llama desde **tres sitios** —`Login`, `Onboarding`,
+`RegisterHelper`— y el de `Onboarding` **no guardaba `joined`**.
+
+Consecuencia visible: quien entraba por el onboarding **no veía "En Nüra
+desde marzo"** en su perfil. Verificado en navegador: la cuenta salía como
+`{name, isHelper}` a secas.
+
+Nadie lo decidió. Es el mismo patrón otra vez.
+
+**Guardia en la Cuarta Puerta**: si alguna puerta crea cuenta sin `joined`,
+falla. Probado devolviendo el bug — lo caza con el nombre del fichero.
+
+*(No es fallo: el onboarding tampoco pide teléfono. Se comprobó y **nada
+depende de él**, así que es una diferencia deliberada de fricción, no una
+divergencia.)*
 
 ## Errores conocidos / problemas pendientes
 

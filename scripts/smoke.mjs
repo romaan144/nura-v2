@@ -142,6 +142,29 @@ try {
     } else console.log(`✓ ${'Imagen pesada'.padEnd(14)} [ninguna imagen supera 60 kB]`)
   }
 
+  // ── Tres puertas, una cuenta ──
+  // `login()` se llama desde Login, Onboarding y RegisterHelper. El de
+  // Onboarding no guardaba `joined`, asi que quien entraba por ahi se
+  // quedaba sin el "En Nüra desde marzo" de su perfil. Nadie lo decidio:
+  // es el patron "dos caminos, dos reglas" que ya habia dado tres fallos.
+  {
+    const puertas = ['src/pages/Login.jsx', 'src/pages/Onboarding.jsx', 'src/pages/RegisterHelper.jsx']
+    const sinFecha = []
+    for (const f of puertas) {
+      let t; try { t = readFileSync(f, 'utf8') } catch { continue }
+      // solo las llamadas que CREAN cuenta (llevan `name:`), no las que reentran
+      const crea = [...t.matchAll(/login\(\{[^}]*name:[^}]*\}/g)].map(m => m[0])
+      for (const c of crea) {
+        if (!/joined/.test(c) && !/\.\.\./.test(c)) sinFecha.push(f.split('/').pop())
+      }
+    }
+    if (sinFecha.length) {
+      console.log(`✗ ${'Cuenta dispar'.padEnd(14)} — ${sinFecha.length} puerta(s) crean cuenta sin \`joined\``)
+      ;[...new Set(sinFecha)].forEach(x => console.log(`    ${x}`))
+      failed += sinFecha.length
+    } else console.log(`✓ ${'Cuenta dispar'.padEnd(14)} [las tres puertas crean la misma cuenta]`)
+  }
+
   // ── La misma persona dos veces ──
   // Habia dos profesionales duplicados: Carlos Martinez Vidal (ids 1 y 2003)
   // y Elena Fernandez Ros (5 y 2120), cada uno con su especialidad escrita

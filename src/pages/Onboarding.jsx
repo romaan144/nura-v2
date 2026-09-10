@@ -52,7 +52,10 @@ export default function OnboardingPage() {
     // "primer momento magico"— y nadie lo escribia: el saludo estaba
     // programado y no se disparaba jamas.
     try { sessionStorage.setItem('nura_just_onboarded', name.trim() || 'Usuario') } catch { /* sin almacenamiento */ }
-    login({ name: name.trim() || 'Usuario', isHelper })
+    // MISMA CUENTA POR LAS TRES PUERTAS. Login y RegisterHelper guardaban
+    // `joined`; esta no. Quien entraba por el onboarding se quedaba sin el
+    // "En Nüra desde marzo" de su perfil, sin que nadie lo hubiera decidido.
+    login({ name: name.trim() || 'Usuario', isHelper, joined: new Date().toISOString() })
     if (intentQuery.trim()) {
       try { sessionStorage.setItem('nura_intent_query', intentQuery.trim()) } catch {}
     }
