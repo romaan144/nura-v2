@@ -7,6 +7,7 @@ import { useUser } from '../context/UserContext'
 import { DEMO_MODE } from '../config'
 import PageHeader from '../components/PageHeader'
 import styles from './MyServices.module.css'
+import { registrar } from '../utils/analitica'
 
 // Demo services for realistic preview
 const DEMO_SERVICES = [
@@ -72,7 +73,15 @@ export default function MyServices() {
   const { services, addRating, hasRated, updateService, user } = useUser()
   const [tab, setTab] = useState('Todos')
   const [ratingModal, setRatingModal] = useState(null)
-  const [ratingVal, setRatingVal] = useState(5)
+  // Empieza en 0, igual que RatingModal. Antes empezaba en 5: una persona
+  // podia pulsar "Enviar valoracion" sin tocar las estrellas y quedaba un 5
+  // que nunca decidio. Una valoracion que el usuario no ha dado no vale.
+  // Empieza en 0 y se REINICIA a 0 al abrir el modal. Antes empezaba en 5 y
+  // los dos sitios que abren el modal hacian setRatingVal(5): se podia
+  // pulsar "Enviar valoracion" sin tocar una estrella y quedaba un 5 que la
+  // persona nunca decidio. Una valoracion que el usuario no ha dado no vale,
+  // y ademas inflaba la media de todos los profesionales.
+  const [ratingVal, setRatingVal] = useState(0)
   const [ratingText, setRatingText] = useState('')
   const [ratingSent, setRatingSent] = useState(false)
 
@@ -92,7 +101,18 @@ export default function MyServices() {
   })
 
   function submitRating() {
-    if (!ratingModal) return
+    if (!ratingModal || !ratingVal) return
+    // LA CONEXION COMPLETADA. Este es el camino PRINCIPAL para valorar —el
+    // que la app ofrece al marcar un servicio como terminado— y era el unico
+    // de los dos que NO registraba el evento. `RatingModal`, que se abre
+    // desde el chat y la ficha, si lo hacia.
+    // El criterio de graduacion del MVP son 100 conexiones completadas: si
+    // la via principal no cuenta, el numero sale corto y nadie lo nota.
+    registrar('resultado_registrado', {
+      helperId: String(ratingModal.helperId),
+      valoracion: ratingVal,
+      conComentario: Boolean(ratingText?.trim()),
+    })
     addRating(ratingModal.helperId, ratingVal, ratingText)
     updateService(ratingModal.id, { status: 'completed', rated: true })
     setRatingSent(true)
@@ -211,7 +231,7 @@ export default function MyServices() {
                 {(s.status === 'pending' || s.status === 'confirmed') && !rated && (
                   <div className={styles.postActions}>
                     <button className={styles.rateBtn}
-                      onClick={e => { e.stopPropagation(); updateService(s.id, { status: 'completed' }); setRatingModal({...s, status:'completed'}); setRatingVal(5) }}
+                      onClick={e => { e.stopPropagation(); updateService(s.id, { status: 'completed' }); setRatingModal({...s, status:'completed'}); setRatingVal(0) }}
                       style={{flex:1}}>
                       <CheckCircle size={13} /> Marcar completado y valorar
                     </button>
@@ -222,7 +242,7 @@ export default function MyServices() {
                 {s.status === 'completed' && !rated && (
                   <div className={styles.postActions}>
                     <button className={styles.actionBtn}
-                      onClick={e => { e.stopPropagation(); setRatingModal(s); setRatingVal(5) }}>
+                      onClick={e => { e.stopPropagation(); setRatingModal(s); setRatingVal(0) }}>
                       <Star size={12} /> Valorar a {s.helperName?.split(' ')?.[0]}
                     </button>
                     <button className={styles.actionBtnSecondary}
@@ -288,7 +308,10 @@ export default function MyServices() {
                     style={{flex:1,padding:'13px',background:'var(--surface-subtle)',color:'rgba(33,29,51,0.55)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
                     Cancelar
                   </button>
-                  <Button variant="primary" onClick={submitRating} style={{flex:2}}>
+                  {/* Apagado hasta tocar una estrella: un boton que se puede
+                      pulsar y no hace nada es peor que uno apagado. */}
+                  <Button variant="primary" onClick={submitRating} disabled={!ratingVal}
+                    style={{flex:2, opacity: ratingVal ? 1 : 0.4}}>
                     Enviar valoración
                   </Button>
                 </div>

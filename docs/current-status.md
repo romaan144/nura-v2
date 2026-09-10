@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (no se puede reservar sin hora)
+**Última actualización:** 2026-08-16 (la valoración es del usuario, y cuenta)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -466,6 +466,41 @@ confirmación y en Mis servicios.
 | carga en 4G lento | 1,16 s |
 
 **El rendimiento no es un problema.** No se toca nada por ahí.
+
+## La valoración es del usuario, y ahora cuenta (2026-08-16)
+
+Conduciendo el cierre del ciclo —cita → completar → valorar— aparecieron
+**dos problemas en el mismo sitio**, y los dos por la misma razón: hay
+**dos caminos distintos para valorar** con reglas distintas.
+
+| | `RatingModal` (chat, ficha) | `MyServices` (el principal) |
+|---|---|---|
+| valor inicial | 0 | **5** |
+| ¿exige tocar estrellas? | sí | **no** |
+| ¿registra la conexión completada? | sí | **NO** |
+
+**1 · Se valoraba con 5 sin tocar nada.** El estado empezaba en 5 y los dos
+sitios que abren el modal hacían `setRatingVal(5)`. Pulsabas *"Enviar
+valoración"* y quedaba un 5 que la persona nunca decidió — **inflando la
+media de todos los profesionales**.
+
+**2 · El camino principal no contaba.** `MyServices` es el que la app ofrece
+al marcar un servicio como terminado, y era el único que **no registraba
+`resultado_registrado`**. El criterio de graduación del MVP son 100
+conexiones completadas: si la vía principal no cuenta, el número sale corto
+y nadie lo nota.
+
+**Ahora**: empieza en 0, el botón está apagado hasta tocar una estrella, y
+ambos caminos registran el evento. Verificado: se guarda **3** cuando se
+pulsa la tercera, no un 5 automático.
+
+### Lo que NO era un fallo
+
+Tres alarmas descartadas antes de tocar nada: la valoración **sí** se
+guardaba, **sí** llegaba a la ficha del profesional y la app **sí** dejaba
+de pedirla. Mis clics no daban al botón correcto —hay un *"Valorar a
+Carlos"* que **abre** el modal y otro que **envía**— y las estrellas miden
+18px, por debajo del filtro de mi script.
 
 ## Errores conocidos / problemas pendientes
 
