@@ -26,6 +26,7 @@ import DesktopSidebar from './components/DesktopSidebar'
 import ScrollToTop from './components/ScrollToTop'
 import OnboardingPage from './pages/Onboarding'
 const MyServices = lazy(() => import('./pages/MyServices'))
+const Responder = lazy(() => import('./pages/Responder'))
 import Siguiendo from './pages/Siguiendo'
 import Toast from './components/Toast'
 import PageTransition from './components/PageTransition'
@@ -131,6 +132,9 @@ function AppRoutes() {
               <Route path="/chat/:id" element={<Chat />} />
               <Route path="/my-services" element={<MyServices />} />
               <Route path="/siguiendo" element={<Siguiendo />} />
+              {/* LA VUELTA: aqui aterriza el profesional desde el enlace
+                  de su aviso. Corta y sin cuenta a proposito. */}
+              <Route path="/r/:token" element={<Responder />} />
               <Route path="/onboarding" element={<OnboardingPage />} />
               <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
               <Route path="/register-helper" element={<RegisterHelper />} />

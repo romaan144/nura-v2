@@ -4,7 +4,7 @@ import styles from './AppShell.module.css'
 // Pages that manage their own full-screen layout
 // '/login' salio de aqui: era la unica pantalla de formulario sin el
 // contenedor de la app, y por eso flotaba sin altura de referencia.
-const SELF_LAYOUT = ['/', '/onboarding', '/register-helper', '/chat/']
+const SELF_LAYOUT = ['/', '/onboarding', '/register-helper', '/chat/', '/r/']
 
 export default function AppShell({ children }) {
   const location = useLocation()

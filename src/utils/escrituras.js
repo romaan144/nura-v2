@@ -55,6 +55,20 @@ export async function altaProfesional(payload) {
   }
 }
 
+/** LA VUELTA: abrir el aviso con el token del enlace. Sin cuenta. */
+export async function abrirAviso(token) {
+  if (!porLaFuncion()) return { ok: false }
+  try { return await llamarFuncion({ op: 'abrir-aviso', token }) }
+  catch { return { ok: false } }
+}
+
+/** LA VUELTA: el profesional responde. Si falla, se dice — no se finge. */
+export async function responderAviso(token, respuesta) {
+  if (!porLaFuncion()) return { ok: false }
+  try { return await llamarFuncion({ op: 'responder-aviso', token, respuesta }) }
+  catch { return { ok: false } }
+}
+
 /**
  * Encolar el aviso a un profesional. **No bloquea ni avisa de fallos**: si
  * no sale, la persona no debe enterarse — su mensaje ya esta enviado.

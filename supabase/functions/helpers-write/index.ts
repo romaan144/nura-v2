@@ -233,6 +233,9 @@ Deno.serve(async (req: Request) => {
         mensaje,
         alcanzable: Boolean(h?.contacto),
         estado: 'pendiente',
+        // La llave de vuelta: va en el enlace y deja al profesional abrir y
+        // responder SIN cuenta. Quien lo tiene es quien recibio el mensaje.
+        token: crypto.randomUUID().replace(/-/g, '').slice(0, 16),
       }),
     })
     if (!res.ok) return json({ error: 'aviso no encolado', estado: res.status }, 502, cors)
@@ -242,7 +245,7 @@ Deno.serve(async (req: Request) => {
   // ── los avisos pendientes, con su enlace ya montado ──
   if (op === 'pendientes') {
     const lec = await fetch(
-      `${SUPABASE_URL}/rest/v1/avisos?estado=eq.pendiente&order=id.asc&limit=50`,
+      `${SUPABASE_URL}/rest/v1/avisos?estado=eq.pendiente&select=id,helper_id,helper_nombre,mensaje,token,fecha&order=id.asc&limit=50`,
       { headers: rest },
     )
     if (!lec.ok) return json({ error: 'lectura rechazada', estado: lec.status }, 502, cors)
@@ -258,7 +261,9 @@ Deno.serve(async (req: Request) => {
       salida.push({
         id: f.id,
         nombre: hh?.name ?? f.helper_nombre ?? '(sin nombre)',
-        enlace: hh?.contacto ? enlaceDe(String(hh.contacto), f.mensaje) : null,
+        enlace: hh?.contacto
+          ? enlaceDe(String(hh.contacto), `${f.mensaje}\n\nResponde aquí: ${ORIGENES[0] || ''}/r/${f.token}`)
+          : null,
         fecha: f.fecha,
       })
     }
@@ -276,6 +281,54 @@ Deno.serve(async (req: Request) => {
     })
     if (!res.ok) return json({ error: 'no actualizado', estado: res.status }, 502, cors)
     return json({ ok: true }, 200, cors)
+  }
+
+  // ── LA VUELTA: el profesional abre su aviso ──
+  // El enlace trae un `token`. No hace falta cuenta ni contraseña: quien
+  // tiene el token es quien recibio el mensaje en su propio movil.
+  // Devuelve el mensaje y su nombre — NUNCA el contacto ni la lista.
+  if (op === 'abrir-aviso') {
+    const token = String(cuerpo.token ?? '').trim()
+    if (!token) return json({ error: 'falta token' }, 400, cors)
+    const lec = await fetch(
+      `${SUPABASE_URL}/rest/v1/avisos?token=eq.${encodeURIComponent(token)}&select=id,helper_id,helper_nombre,mensaje,respuesta,fecha&limit=1`,
+      { headers: rest },
+    )
+    if (!lec.ok) return json({ error: 'lectura rechazada', estado: lec.status }, 502, cors)
+    const [av] = await lec.json()
+    if (!av) return json({ error: 'no existe' }, 404, cors)
+    return json({ ok: true, aviso: {
+      id: av.id, nombre: av.helper_nombre, mensaje: av.mensaje,
+      respuesta: av.respuesta ?? null, fecha: av.fecha,
+    } }, 200, cors)
+  }
+
+  // ── LA VUELTA: el profesional responde ──
+  if (op === 'responder-aviso') {
+    const token = String(cuerpo.token ?? '').trim()
+    const respuesta = String(cuerpo.respuesta ?? '').trim().slice(0, 4000)
+    if (!token) return json({ error: 'falta token' }, 400, cors)
+    if (!respuesta) return json({ error: 'falta respuesta' }, 400, cors)
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/avisos?token=eq.${encodeURIComponent(token)}`,
+      { method: 'PATCH', headers: { ...rest, Prefer: 'return=minimal' },
+        body: JSON.stringify({ respuesta, estado: 'respondido', respondido_en: new Date().toISOString() }) },
+    )
+    if (!res.ok) return json({ error: 'no guardado', estado: res.status }, 502, cors)
+    return json({ ok: true }, 200, cors)
+  }
+
+  // ── el usuario pregunta si ya le han respondido ──
+  if (op === 'respuestas') {
+    const ids = Array.isArray(cuerpo.helperIds) ? cuerpo.helperIds.map(String).slice(0, 20) : []
+    if (!ids.length) return json({ ok: true, respuestas: [] }, 200, cors)
+    const lista = ids.map(encodeURIComponent).join(',')
+    const lec = await fetch(
+      `${SUPABASE_URL}/rest/v1/avisos?helper_id=in.(${lista})&respuesta=not.is.null&select=helper_id,respuesta,respondido_en`,
+      { headers: rest },
+    )
+    if (!lec.ok) return json({ error: 'lectura rechazada', estado: lec.status }, 502, cors)
+    return json({ ok: true, respuestas: await lec.json() }, 200, cors)
   }
 
   return json({ error: 'operacion desconocida' }, 400, cors)
