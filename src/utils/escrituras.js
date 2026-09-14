@@ -55,6 +55,19 @@ export async function altaProfesional(payload) {
   }
 }
 
+/**
+ * LA VUELTA, ultimo tramo: ¿me han respondido?
+ * El usuario pregunta por los profesionales con los que habla. Sin esto el
+ * circulo queda abierto: el profesional contesta y nadie se entera.
+ */
+export async function respuestasDe(helperIds) {
+  if (!porLaFuncion() || !helperIds?.length) return []
+  try {
+    const r = await llamarFuncion({ op: 'respuestas', helperIds })
+    return r?.respuestas || []
+  } catch { return [] }
+}
+
 /** LA VUELTA: abrir el aviso con el token del enlace. Sin cuenta. */
 export async function abrirAviso(token) {
   if (!porLaFuncion()) return { ok: false }

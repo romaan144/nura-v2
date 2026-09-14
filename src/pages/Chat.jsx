@@ -5,7 +5,7 @@ import { HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
 import { slotsDe, ocupacionesDe, motivoSinHuecos, FRASE_SIN_HUECOS } from '../data/horarios'
 import { getHelperById } from '../utils/supabase'
-import { registrarConversacion, encolarAviso } from '../utils/escrituras'
+import { registrarConversacion, encolarAviso, respuestasDe } from '../utils/escrituras'
 import { notifyServiceConfirmed } from '../utils/notifications'
 import { haptic } from '../utils/haptic'
 import RatingModal from '../components/RatingModal'
@@ -289,6 +289,28 @@ export default function Chat() {
   })
 
   // Add welcome message from helper if chat is empty (only when there's no intro letter pending)
+  // LA VUELTA, ultimo tramo. Al abrir el chat se pregunta si el profesional
+  // ya ha respondido desde su enlace. Si lo hizo, su mensaje entra aqui como
+  // uno mas: para la persona que espera, es simplemente que le contestaron.
+  //
+  // Se marca con `__deAviso` para no duplicarlo al volver a entrar.
+  useEffect(() => {
+    if (!helper?.id) return
+    let vivo = true
+    respuestasDe([String(helper.id)]).then(rs => {
+      if (!vivo || !rs.length) return
+      setMessages(prev => {
+        const yaEstan = new Set(prev.filter(m => m.__deAviso).map(m => m.text))
+        const nuevas = rs
+          .filter(r => r.respuesta && !yaEstan.has(r.respuesta))
+          .map(r => ({ id: 'av-' + r.respondido_en, from: 'helper', text: r.respuesta,
+            time: r.respondido_en, __deAviso: true }))
+        return nuevas.length ? [...prev, ...nuevas] : prev
+      })
+    })
+    return () => { vivo = false }
+  }, [helper?.id])
+
   useEffect(() => {
     if (messages.length === 0 && helper && !location.state?.introLetterText) {
       const firstName = helper.name?.split(' ')?.[0] || helper.name

@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (MEJORA PRO: el aviso sale solo)
+**Última actualización:** 2026-08-16 (MEJORA PRO: el círculo se cierra)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -579,6 +579,56 @@ usuario. Tres opciones —puente manual, WhatsApp API, enlace de vuelta—.
 
 **Requiere en Supabase**: `create table avisos` (SQL en
 `docs/lanzamiento-rls.md`).
+
+## MEJORA PRO · El círculo se cierra (2026-08-16)
+
+**Evolución 1 completa.** Nüra ya no solo encuentra a la persona adecuada:
+**la avisa y trae su respuesta de vuelta.**
+
+```
+usuario escribe → aviso encolado → WhatsApp con enlace
+                → el profesional abre y responde
+                → su respuesta aparece en el chat del usuario
+```
+
+Verificado de extremo a extremo en navegador, los cuatro pasos.
+
+### La decisión: enlace de vuelta
+
+Descartadas las otras dos por motivo, no por coste:
+
+- **Puente manual** — te convierte a ti en el producto. Funciona con 20
+  personas porque tú eres el canal; con 100 son ocho horas al día.
+- **WhatsApp API** — resuelve el transporte y pierde todo lo demás. La
+  conversación vive fuera, así que no hay registro de qué resolvió cada
+  profesional. Sin eso, el *currículum vivo* del documento de fundación no
+  puede existir.
+
+El enlace de vuelta preserva ambas cosas: el profesional recibe el aviso
+donde ya mira, y responde donde queda constancia.
+
+### `/r/:token` — la pantalla de la vuelta
+
+Es, casi siempre, el **primer contacto de un profesional con Nüra**. Tres
+reglas:
+
+1. **Sin cuenta.** El token ya prueba quién es: le llegó a su móvil. Pedir
+   registro antes de dejarle contestar pierde a la mitad.
+2. **El mensaje primero.** Ve el problema entero, con las palabras de quien
+   lo escribió. No *"tienes un mensaje nuevo"*.
+3. **Sin vender nada.** Ni banners ni *"completa tu perfil"*. Ha venido a
+   contestar a alguien que le necesita.
+
+Y ofrece decir que no: *"Si ahora no puedes, dilo sin más. Buscaré a otra
+persona."* No se puede pedir un sí sin permitir el no.
+
+### Riesgo asumido
+
+El profesional puede no entrar. Se mitiga con que el aviso **lleve el
+problema completo** —entrar tiene valor— y con no exigir registro.
+
+**Requiere en Supabase**: las columnas `token`, `respuesta` y
+`respondido_en` en `avisos` (SQL actualizado en `lanzamiento-rls.md`).
 
 ## Errores conocidos / problemas pendientes
 

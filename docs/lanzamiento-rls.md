@@ -297,8 +297,16 @@ create table if not exists public.avisos (
   mensaje       text not null,
   alcanzable    boolean default false,
   estado        text default 'pendiente',
+  -- LA VUELTA: el token va en el enlace del aviso y deja al profesional
+  -- abrir y responder SIN cuenta. Quien lo tiene es quien recibió el
+  -- mensaje en su propio móvil.
+  token         text unique,
+  respuesta     text,
+  respondido_en timestamptz,
   fecha         timestamptz default now()
 );
+
+create index if not exists avisos_token on public.avisos (token);
 
 alter table public.avisos enable row level security;
 -- Sin políticas para `anon`: solo escribe la función, con service_role.
