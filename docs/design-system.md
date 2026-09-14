@@ -356,6 +356,39 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## LA BARRA FLOTA, LA CÁPSULA ESCUCHA (ley, 2026-08-16)
+
+El fundador: *"no me convence el diseño de la burbuja para escribir y el
+menú inferior. Es un poco anticuado esa forma de distribución."*
+
+### La barra inferior
+
+**Antes**: pegada al borde, de lado a lado, con línea superior y sombra
+hacia arriba. Es el patrón de 2018 — parece parte del marco del teléfono,
+no de la app.
+
+**Ahora**: una **isla que flota**, con 12px de aire a los lados y 10 abajo,
+`border-radius: 100px` y canto de cristal. El contenido pasa por debajo y
+se ve a través. **Sin línea superior**: una isla no necesita separarse de
+nada, ya está separada.
+
+La app se siente más grande y menos compartimentada.
+
+**Y con ello, la reserva.** `--nav-h` pasa de `58px + área segura` a
+`62px + 10px de aire`. Si no coincidiera, el último contenido de cada
+pantalla quedaría bajo la isla. Verificado en cuatro pantallas: el scroll
+llega al fondo con sobrante **0**.
+
+### La cápsula de escribir
+
+**Antes**: borde gris sólido de 1px y sombra plana. Un campo de formulario.
+
+**Ahora**: canto de cristal claro, más alta, y una sombra larga que la
+levanta del fondo. Y al escribir **no cambia de color: se ilumina** — el
+contorno coge el morado de Nüra, con un halo suave alrededor.
+
+Es la diferencia entre *"rellena esto"* y *"te escucho"*.
+
 ## LO QUE SE OFRECE, NO LO QUE SE RELLENA (ley, 2026-08-16)
 
 El fundador, sobre Home: *"no me parece bonita ni cómoda a la vista. Que te

@@ -45,7 +45,11 @@ body {
      Every page uses these instead of hardcoded px values.
   ── */
   --header-h: calc(max(env(safe-area-inset-top, 0px), 12px) + 64px);
-  --nav-h:    calc(max(env(safe-area-inset-bottom, 0px), 8px) + 58px);
+  /* La barra FLOTA: 62px de alto + 10px de aire hasta el borde (o el area
+     segura si es mayor). Antes reservaba 58 + area segura, cuando iba
+     pegada al borde. Si esto no coincide, el ultimo contenido de cada
+     pantalla queda debajo de la isla. */
+  --nav-h:    calc(max(env(safe-area-inset-bottom, 0px), 10px) + 62px);
 
   /* ── RESERVA INFERIOR (contrato de layout) ──
      El UNICO sitio donde una pantalla reserva su mobiliario fijo de abajo:

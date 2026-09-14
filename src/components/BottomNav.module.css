@@ -8,18 +8,31 @@
   z-index: 100;
   /* La barra mide EXACTAMENTE lo que reserva --nav-h (antes se
      autodimensionaba y quedaban unos px de desajuste con el fondo). */
-  height: var(--nav-h);
+  height: 62px;
   box-sizing: border-box;
   /* TRES CAPAS DE SEPARACION, porque cada una falla en un caso distinto:
      la linea sobre fondos claros, la sombra sobre fondos oscuros, y el
      contraste de superficie cuando el contenido es del mismo papel que la
      barra — que era justo lo que pasaba. */
-  background: var(--paper-veil);
+  /* ── LA BARRA FLOTA ──────────────────────────────────────────────────
+     Antes: pegada al borde, de lado a lado, con linea superior y sombra
+     hacia arriba. Es el patron de 2018 — parte del marco del telefono, no
+     de la app.
+     Ahora: una isla que flota sobre el contenido, con margen a los lados y
+     abajo. El contenido pasa POR DEBAJO y se ve a traves del cristal, asi
+     que la app se siente mas grande y menos compartimentada. */
+  left: var(--space-12);
+  right: var(--space-12);
+  bottom: max(env(safe-area-inset-bottom), var(--space-10));
+  border-radius: var(--radius-full);
+  background: rgba(255,255,255,0.62);
   -webkit-backdrop-filter: blur(32px) saturate(200%);
   backdrop-filter: blur(32px) saturate(200%);
-  border-top: 1px solid rgba(33,29,51,0.12);
-  box-shadow: 0 -2px 16px rgba(33,29,51,0.07);
-  padding: 4px 0 max(env(safe-area-inset-bottom), 8px);
+  /* Sin linea superior: una isla no necesita separarse de nada, ya esta
+     separada. El borde claro le da el canto de cristal. */
+  border: 1px solid rgba(255,255,255,0.7);
+  box-shadow: 0 1px 2px rgba(33,29,51,0.04), 0 12px 32px -12px rgba(33,29,51,0.18);
+  padding: var(--space-6) 0;
 }
 
 .tab {
