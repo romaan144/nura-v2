@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (MEJORA PRO: el círculo se cierra)
+**Última actualización:** 2026-08-16 (plan de rediseño · etapa 1 siguiente)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -629,6 +629,25 @@ problema completo** —entrar tiene valor— y con no exigir registro.
 
 **Requiere en Supabase**: las columnas `token`, `respuesta` y
 `respondido_en` en `avisos` (SQL actualizado en `lanzamiento-rls.md`).
+
+## Rediseño en curso → [`docs/plan-diseno.md`](./plan-diseno.md)
+
+Nueve etapas, por orden de **cuántas personas lo ven y cuánto decide**.
+
+| | etapa | estado |
+|---|---|---|
+| 0 | Home | ✅ hecha |
+| **1** | **La respuesta de Nüra** | ⬅ **siguiente** |
+| 2 | La ficha del profesional | |
+| 3 | El chat | |
+| 4 | Profesionales | |
+| 5 | Comunidad | |
+| 6 | Chats y Mis servicios | |
+| 7 | Perfil y Siguiendo | |
+| 8 | Los tres momentos de entrada | |
+
+**Si se acaba el contexto**: leer `plan-diseno.md`, ir a la etapa marcada
+como siguiente, arrancar por su sección. No hace falta releer el historial.
 
 ## Errores conocidos / problemas pendientes
 
