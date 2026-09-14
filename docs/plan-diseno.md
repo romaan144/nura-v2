@@ -38,7 +38,7 @@ No por gusto: **por cuántas personas lo ven y cuánto decide**.
 |---|---|---|
 | ✅ 0 | **Home** | la puerta. Todo el mundo pasa |
 | 1 | **La respuesta de Nüra** | el momento en que el producto cumple su promesa |
-| 2 | **La ficha del profesional** | donde se decide confiar en alguien |
+| 2 | **La ficha del profesional** ⬅ **SIGUIENTE** | donde se decide confiar en alguien |
 | 3 | **El chat** | donde ocurre la conversación real |
 | 4 | **Profesionales (Explorar)** | la puerta de quien ya sabe qué busca |
 | 5 | **Comunidad** | la prueba de que hay gente viva |
@@ -60,7 +60,22 @@ Leyes en `design-system.md`.
 
 ---
 
-## Etapa 1 · La respuesta de Nüra ⬅ **SIGUIENTE**
+## Etapa 1 · La respuesta de Nüra ✅ *(2026-08-16)*
+
+- La promesa se retira al llegar la respuesta (26px → 17px, con transición)
+- El porqué tiene línea propia y sube a 17px — la frase que justifica Nüra
+- La fila de ajuste con cristal y aire; sigue siendo retoque, no decisión
+
+Ley en `design-system.md`.
+
+### Lo que queda anotado para más adelante
+La tarjeta de recomendación (`HelperCardTall`) no se tocó en esta etapa: es
+la misma que se usa en Explorar y Comunidad, así que su rediseño toca varias
+pantallas y merece su propio ciclo. **Candidata natural tras la etapa 2.**
+
+---
+
+## ~~Etapa 1~~ *(detalle original)*
 
 **Qué es.** Lo que aparece tras buscar: la tarjeta del profesional
 recomendado, el porqué, las alternativas y la fila de ajuste.
@@ -82,7 +97,7 @@ resultados de `Home.module.css` (`.carouselBlock`, `.refineRow`).
 
 ---
 
-## Etapa 2 · La ficha del profesional
+## Etapa 2 · La ficha del profesional ⬅ **SIGUIENTE**
 
 **Dónde.** `HelperProfile.jsx` — 489 líneas de CSS, la pantalla más densa.
 

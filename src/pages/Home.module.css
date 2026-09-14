@@ -370,6 +370,37 @@
 }
 .greeting p { font-size: var(--text-base); line-height: 1.55; }
 
+/* ── EL PORQUE MANDA ───────────────────────────────────────────────────
+   Segunda linea de la burbuja de resultado: la razon por la que Nüra ha
+   elegido a esa persona. Iba en 15px, igual que cualquier dato.
+   Es la frase que justifica el producto entero — la que Doctoralia no
+   puede escribir— y ahora se lee como tal. */
+.bubbleNura p:nth-child(2):not(:only-child) {
+  font-size: var(--text-md);
+  font-weight: 500;
+  color: var(--ink-primary);
+  letter-spacing: -0.2px;
+  line-height: 1.45;
+  margin-top: var(--space-6);
+}
+
+/* ── LA PROMESA SE RETIRA ──────────────────────────────────────────────
+   "Cuéntame qué necesitas y te encuentro a la persona" en 26px es lo
+   correcto en una pantalla vacia: explica el producto a quien no lo
+   conoce. Pero una vez encontrada la persona, esa frase YA cumplio — y
+   seguia siendo lo mas grande de la pantalla, compitiendo con el hallazgo.
+   Al llegar la respuesta se encoge y se aparta. No desaparece: quien suba
+   la conversacion la vuelve a leer. */
+.greetingRetirado p:nth-child(2) {
+  font-size: var(--text-md);
+  color: var(--ink-tertiary);
+  letter-spacing: -0.2px;
+  transition: font-size 0.4s cubic-bezier(0.22,1,0.36,1), color 0.4s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .greetingRetirado p:nth-child(2) { transition: none; }
+}
+
 .typingDots {
   display: flex; gap: 5px; align-items: center; padding: 4px 0;
 }
@@ -511,9 +542,9 @@
 .refineChips {
   display: flex;
   flex-direction: row;
-  gap: 6px;
+  gap: var(--space-8);
   overflow-x: auto;
-  padding: 8px 0 4px;
+  padding: var(--space-10) 0 var(--space-4);
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   flex-wrap: nowrap;
@@ -636,18 +667,34 @@
   width: 100%;
   margin-bottom: 2px;
 }
+/* ── AJUSTAR SIGUE SIENDO UN RETOQUE ───────────────────────────────────
+   Estos NO se convierten en tarjetas como los de respuesta: contestar una
+   pregunta es una decision, ajustar es un retoque. La ley dice que tienen
+   peso visual distinto y eso se respeta.
+   Lo que si cambia: 12,5px fuera de escala, 9px de relleno y una sombra
+   plana los hacian pildoras apretadas de 2012. Ahora respiran, llevan
+   cristal como el resto del sistema, y al tocarlos se acercan en vez de
+   apagarse. */
 .refineChip {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 9px 15px;
-  background: white;
-  border: 1px solid var(--purple-20);
+  gap: var(--space-6);
+  padding: var(--space-10) var(--space-16);
+  background: rgba(255,255,255,0.72);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(123,47,255,0.16);
   border-radius: var(--radius-full);
-  font-size: 12.5px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--purple);
+  letter-spacing: -0.1px;
   cursor: pointer;
-  box-shadow: var(--shadow-xs);
+  box-shadow: 0 1px 2px rgba(33,29,51,0.04), 0 6px 16px -10px rgba(123,47,255,0.24);
+  transition: transform 0.18s cubic-bezier(0.22,1,0.36,1), box-shadow 0.18s ease;
+  -webkit-tap-highlight-color: transparent;
 }
-.refineChip:active { opacity: 0.7; }
+.refineChip:active {
+  transform: scale(0.96);
+  box-shadow: 0 1px 2px rgba(33,29,51,0.04), 0 3px 8px -6px rgba(123,47,255,0.24);
+}

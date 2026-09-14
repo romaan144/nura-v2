@@ -356,6 +356,38 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## EL HALLAZGO MANDA (ley, 2026-08-16 · etapa 1)
+
+Medido tras buscar *"Mi hijo de 5 años no pronuncia la R"*:
+
+| | antes | ahora |
+|---|---|---|
+| *"Cuéntame qué necesitas…"* (ya contestado) | **26px** | 17px |
+| el porqué: *"Trabaja muchísimo con peques…"* | 15px | **17px** |
+
+**La pregunta que ya habías contestado era lo más grande de la pantalla.**
+
+### Tres movimientos
+
+**1 · La promesa se retira.** En una pantalla vacía, 26px es correcto:
+explica el producto a quien no lo conoce. Una vez encontrada la persona,
+esa frase ya cumplió. Se encoge con una transición de 0.4s — no
+desaparece: quien suba la conversación la vuelve a leer.
+
+**2 · El porqué tiene línea propia.** Iba dentro de la misma frase que el
+anuncio, así que se leía como un dato más. Pero *"trabaja muchísimo con
+peques y trabaja muy cerca de ti"* es **lo único que ninguna otra app puede
+decirte**: es la razón de existir de Nüra. Ahora es una segunda línea con
+peso propio.
+
+**3 · La fila de ajuste respira.** `12,5px` fuera de escala, `9px` de
+relleno, sombra plana. Ahora con cristal y aire, y al tocarlos **se acercan
+en vez de apagarse**.
+
+**Lo que NO se hizo**: convertir los chips de ajuste en tarjetas como los de
+respuesta. Contestar una pregunta es una decisión; ajustar es un retoque.
+La ley anterior dice que tienen peso visual distinto, y se respeta.
+
 ## LA BARRA FLOTA, LA CÁPSULA ESCUCHA (ley, 2026-08-16)
 
 El fundador: *"no me convence el diseño de la burbuja para escribir y el

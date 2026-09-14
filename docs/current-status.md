@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (plan de rediseño · etapa 1 siguiente)
+**Última actualización:** 2026-08-16 (etapa 1 hecha · etapa 2 siguiente)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -637,8 +637,8 @@ Nueve etapas, por orden de **cuántas personas lo ven y cuánto decide**.
 | | etapa | estado |
 |---|---|---|
 | 0 | Home | ✅ hecha |
-| **1** | **La respuesta de Nüra** | ⬅ **siguiente** |
-| 2 | La ficha del profesional | |
+| 1 | La respuesta de Nüra | ✅ hecha |
+| **2** | **La ficha del profesional** | ⬅ **siguiente** |
 | 3 | El chat | |
 | 4 | Profesionales | |
 | 5 | Comunidad | |

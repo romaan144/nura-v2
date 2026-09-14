@@ -993,7 +993,13 @@ export default function Home() {
       // La Gramática de la Recomendación — humana, breve, segura
       const why = buildWhy(top, analysis)
       const urgentTail = analysis?.urgente ? ' — y puede estar allí hoy mismo' : ''
-      const resultLine = `Creo que ya tengo a la persona. Mi recomendación es **${topFirstName}**: ${why}${urgentTail}.`
+      // EL PORQUE SE SEPARA. Iba dentro de la misma frase que el anuncio,
+      // asi que se leia en 15px como un dato mas. Pero "trabaja muchisimo
+      // con peques y trabaja muy cerca de ti" es lo UNICO que ninguna otra
+      // app puede decirte: es la razon de existir de Nüra.
+      // En dos lineas puede tener peso propio sin inventar nada.
+      const resultLine = `Creo que ya tengo a la persona. Mi recomendación es **${topFirstName}**.`
+      const whyLine = `${why.charAt(0).toUpperCase()}${why.slice(1)}${urgentTail}.`
 
 
       // Build rich match explanation — the core AI differentiator
@@ -1006,7 +1012,7 @@ export default function Home() {
 
       const resultMsg = {
         id: Date.now(), from: 'nura',
-        lines: [resultLine],
+        lines: [resultLine, whyLine],
         results: matches,
         refineChips: matches.length > 0
           ? ['Más cerca', 'Mejor valorado', 'Más barato', 'No es lo que buscaba']
@@ -1192,7 +1198,7 @@ export default function Home() {
                   <div className={styles.nuraAvatarSpacer} />
                 )
               )}
-              <div className={`${styles.bubble} ${msg.from === 'user' ? styles.bubbleUser : styles.bubbleNura} ${msgIdx === 0 && msg.from !== 'user' ? styles.greeting : ''}`}>
+              <div className={`${styles.bubble} ${msg.from === 'user' ? styles.bubbleUser : styles.bubbleNura} ${msgIdx === 0 && msg.from !== 'user' ? styles.greeting : ''} ${msgIdx === 0 && msg.from !== 'user' && nuraChatMessages.length > 1 ? styles.greetingRetirado : ''}`}>
                 {msg.text && <p>{msg.text}</p>}
                 {msg.lines?.map((line, i) => <p key={i}>{formatLine(line)}</p>)}
                 {msg.loading && <div className={styles.typingDots}><span /><span /><span /></div>}
