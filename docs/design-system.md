@@ -356,6 +356,51 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## LO QUE SE OFRECE, NO LO QUE SE RELLENA (ley, 2026-08-16)
+
+El fundador, sobre Home: *"no me parece bonita ni cómoda a la vista. Que te
+haga una pregunta y los botones de las respuestas sean con ese diseño me
+parece demasiado anticuado. Y que me diga que Carlos publicó hace ocho días
+ensucia todo."*
+
+**Tenía razón en las tres cosas, y ninguna era de tokens.** Siete ciclos
+unificando curvas, sombras y tipografía dejaron el sistema coherente — y eso
+no hace que algo sea bonito. Son problemas distintos.
+
+### Tres cambios
+
+**1 · Fuera el susurro de Comunidad.** *"Carlos, al que sigues, publicó hace
+8 días"* se colaba **entre el saludo y la pregunta**, cortando justo la frase
+que explica el producto. Home no es un muro de novedades: es alguien
+preguntándote qué te pasa. Esa información vive en Comunidad.
+
+**2 · La pregunta manda.** Estaba al revés: saludo en 22px, y *"Cuéntame qué
+necesitas y te encuentro a la persona"* en 15. Competían y ganaba la que
+menos importa. Ahora el saludo es un preámbulo discreto y la promesa es lo
+que se lee.
+
+**3 · Responder es decidir, no rellenar.** Los chips eran píldoras de 9px
+apretadas con `gap: 7`, en fila con scroll horizontal, a `y=611` de 844.
+Ahora van en columna, a lo ancho, con aire y cristal, **llegando
+escalonadas** — como quien piensa en voz alta.
+
+Medido: de dos filas apretadas a `521 · 580 · 639`, uno por línea.
+
+### La regla
+
+**Un chip que contesta una pregunta no es un chip de filtro.** Contestar es
+una decisión; ajustar es un retoque. Tienen peso visual distinto:
+`.answerChip` para lo primero, `.refineChip` para lo segundo.
+
+### Lo que NO se hizo: futurista
+
+Se pidió *"más futurista"*. **Se hizo elegante, no espacial**, y a propósito:
+Nüra existe para que alguien asustado encuentre ayuda. Si al abrirlo parece
+una nave, pierdes a esa persona en tres segundos. Lo que se busca es que
+parezca **de dentro de cinco años, no de ciencia ficción**.
+
+Movimiento con `prefers-reduced-motion` respetado.
+
 ## LA ELEVACIÓN SIGNIFICA ALGO (ley, 2026-08-16)
 
 Medido: las tarjetas del sistema usaban **tres sombras distintas** para el

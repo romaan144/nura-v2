@@ -163,16 +163,15 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
       `Mientras no mirabas, **${sig.vistasHoy} ${sig.vistasHoy === 1 ? 'persona vio' : 'personas vieron'}** tu perfil hoy y hubo **${sig.busquedasSemana} búsquedas** en tu zona esta semana. Tu escaparate está activo ✨ Y si tú necesitas ayuda, aquí estoy.`
     ]
   }
-  // El susurro de Seguir: la evolución te encuentra (solo rama default)
-  let susurro = null
-  try {
-    const seg = getObra(99).filter(p => (following || []).includes(p.helperId))
-    if (seg.length) {
-      const p = seg[0]
-      const first = p.who?.name?.split(' ')?.[0] || ''
-      susurro = `**${first}**, al que sigues, publicó ${p.dateLabel} — ${String(TYPE_META[p.type]?.label || 'obra').toLowerCase()}: “${p.title}”.`
-    }
-  } catch { /* silencioso */ }
+  // EL SUSURRO, RETIRADO (2026-08-16). Decia "Carlos, al que sigues, publico
+  // hace 8 dias — caso: El caso de la R" y se colaba ENTRE el saludo y la
+  // pregunta, cortando justo la frase que explica el producto.
+  //
+  // La intencion era buena —recordar que hay gente viva ahi dentro— pero
+  // estaba en el peor sitio posible. Home no es un muro de novedades: es
+  // alguien preguntandote que te pasa. Esa informacion vive en Comunidad,
+  // que es su sitio.
+  const susurro = null
 
   // LA PROMESA no puede depender de la hora. "Cuentame que necesitas y te
   // encuentro a la persona" es la unica frase que explica el producto a
@@ -1229,10 +1228,15 @@ export default function Home() {
           // ninguno — la pregunta llegaba sin forma de contestarla. Van
           // antes que las sugerencias: quien tiene una pregunta delante no
           // necesita ademas tres ejemplos genericos.
+          // Los chips de RESPUESTA no son los de ajustar. Estos contestan a
+          // una pregunta —"¿para quien necesitas ayuda?"— y son una decision;
+          // los de ajustar son un retoque. Compartian estilo de pildora
+          // pequeña apretada, y eso hacia que responder pareciera rellenar un
+          // formulario.
           if (lastMsg?.chips?.length) return (
-            <div className={styles.refineRow}>
+            <div className={styles.answerRow}>
               {lastMsg.chips.map((chip, i) => (
-                <button key={i} className={styles.refineChip}
+                <button key={i} className={styles.answerChip}
                   onClick={() => handleChip(chip)}>{chip}</button>
               ))}
             </div>

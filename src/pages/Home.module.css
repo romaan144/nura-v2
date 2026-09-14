@@ -145,35 +145,65 @@
 .profileBubble:active { opacity: 0.6; }
 
 /* ── SUGGESTIONS — floating pills ──────────────────── */
+/* ── LO QUE SE OFRECE, NO LO QUE SE RELLENA ────────────────────────────
+   Antes: fila horizontal con scroll, todas identicas, apretadas abajo del
+   todo. Se leia como un formulario — "elige una opcion"— y el fundador lo
+   describio como "anticuado".
+   Ahora: una debajo de otra, a lo ancho, con aire. Se leen como frases que
+   alguien te ofrece, no como casillas. Y entran escalonadas, para que la
+   pantalla parezca viva en vez de dibujada de golpe. */
 .suggestions {
-  /* EL COMPAS: mismo aire al saludo que al input. */
   margin-top: var(--space-20);
   display: flex;
-  flex-direction: row;
-  gap: var(--space-8);
-  overflow-x: auto;
-  padding-bottom: 2px;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
+  flex-direction: column;
+  gap: var(--space-10);
 }
-.suggestions::-webkit-scrollbar { display: none; }
 .suggestion {
   display: flex;
   align-items: center;
-  padding: var(--space-10) var(--space-16);
-  background: rgba(255,255,255,0.92);
-  border: 1px solid var(--ink-border);
-  border-radius: var(--radius-full);
-  box-shadow: var(--shadow-xs);
+  gap: var(--space-10);
+  width: 100%;
+  padding: var(--space-14) var(--space-16);
+  background: rgba(255,255,255,0.72);
+  /* El cristal: el fondo se ve a traves, asi que la tarjeta no se posa
+     encima de la pantalla — forma parte de ella. */
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.6);
+  border-radius: var(--radius-md);
+  box-shadow: 0 1px 2px rgba(33,29,51,0.04), 0 8px 24px -12px rgba(33,29,51,0.10);
   cursor: pointer;
-  transition: opacity 0.15s;
-  white-space: nowrap;
-  flex-shrink: 0;
+  text-align: left;
+  transition: transform 0.18s cubic-bezier(0.22,1,0.36,1), box-shadow 0.18s ease;
   -webkit-tap-highlight-color: transparent;
+  opacity: 0;
+  animation: sugereEntra 0.5s cubic-bezier(0.22,1,0.36,1) forwards;
 }
-.suggestion:active { opacity: 0.7; transform: scale(0.98); }
-.suggestionIcon { font-size: var(--text-base); flex-shrink: 0; }
-.suggestionText { font-size: var(--text-sm); color: rgba(33,29,51,0.7); font-weight: 500; }
+/* Escalonadas: llegan una detras de otra, como quien piensa en voz alta. */
+.suggestion:nth-child(1) { animation-delay: 0.05s; }
+.suggestion:nth-child(2) { animation-delay: 0.13s; }
+.suggestion:nth-child(3) { animation-delay: 0.21s; }
+.suggestion:nth-child(4) { animation-delay: 0.29s; }
+
+@keyframes sugereEntra {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+/* Al tocar NO se hunde: se acerca. Responder es avanzar, no presionar. */
+.suggestion:active {
+  transform: scale(0.985);
+  box-shadow: 0 1px 2px rgba(33,29,51,0.04), 0 4px 12px -8px rgba(33,29,51,0.10);
+}
+@media (prefers-reduced-motion: reduce) {
+  .suggestion { animation: none; opacity: 1; }
+}
+.suggestionIcon { font-size: var(--text-md); flex-shrink: 0; }
+.suggestionText {
+  font-size: var(--text-base);
+  color: var(--ink-primary);
+  font-weight: 500;
+  letter-spacing: -0.2px;
+}
 
 /* ── INPUT CAPSULE — floating, no container ─────────── */
 .inputCapsule {
@@ -307,14 +337,27 @@
   box-shadow: 0 2px 10px rgba(123,47,255,0.22);
 }
 
-/* El saludo abre con la Voz */
+/* ── LA PREGUNTA MANDA ─────────────────────────────────────────────────
+   Estaba al reves: el saludo en 22px y "Cuentame que necesitas y te
+   encuentro a la persona" —la unica frase que explica el producto— en 15.
+   Competian, y ganaba la que menos importa.
+   Ahora el saludo es un preambulo discreto y la promesa es lo que se lee.
+   Quien abre Nura por primera vez entiende a que viene sin leer nada mas. */
 .greeting p:first-child {
-  font-family: var(--font-voice);
-  font-size: var(--text-lg);
-  font-weight: 500;
-  letter-spacing: -0.4px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--ink-tertiary);
+  letter-spacing: 0.2px;
   line-height: 1.3;
-  margin-bottom: 8px;
+  margin-bottom: var(--space-8);
+}
+.greeting p:nth-child(2) {
+  font-family: var(--font-voice);
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.6px;
+  line-height: 1.25;
+  color: var(--ink-primary);
 }
 .greeting p { font-size: var(--text-base); line-height: 1.55; }
 
@@ -522,6 +565,52 @@
 
 /* ── Filtros de refinamiento (bajo la respuesta) ──
    Se anuncian como lo que son: ajustan ESTA búsqueda. */
+/* ── RESPONDER ES DECIDIR, NO RELLENAR ─────────────────────────────────
+   Los chips de respuesta usaban el estilo de los de ajustar: pildoras de
+   9px apretadas con gap 7. El fundador lo llamo "anticuado", y tenia razon:
+   parecia un formulario de 2012.
+   Aqui son opciones a lo ancho, con aire, que llegan escalonadas. La misma
+   idea que las sugerencias del saludo — lo que se ofrece, no lo que se
+   rellena. */
+.answerRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+  margin: var(--space-16) var(--space-8) var(--space-4);
+}
+.answerChip {
+  width: 100%;
+  padding: var(--space-14) var(--space-16);
+  background: rgba(255,255,255,0.72);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.6);
+  border-radius: var(--radius-md);
+  box-shadow: 0 1px 2px rgba(33,29,51,0.04), 0 8px 24px -12px rgba(33,29,51,0.10);
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--ink-primary);
+  letter-spacing: -0.2px;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.18s cubic-bezier(0.22,1,0.36,1), box-shadow 0.18s ease;
+  opacity: 0;
+  animation: sugereEntra 0.5s cubic-bezier(0.22,1,0.36,1) forwards;
+}
+.answerChip:nth-child(1) { animation-delay: 0.06s; }
+.answerChip:nth-child(2) { animation-delay: 0.14s; }
+.answerChip:nth-child(3) { animation-delay: 0.22s; }
+.answerChip:nth-child(4) { animation-delay: 0.30s; }
+.answerChip:active {
+  transform: scale(0.985);
+  box-shadow: 0 1px 2px rgba(33,29,51,0.04), 0 4px 12px -8px rgba(33,29,51,0.10);
+}
+@media (prefers-reduced-motion: reduce) {
+  .answerChip { animation: none; opacity: 1; }
+}
+
 .refineRow {
   display: flex;
   align-items: center;
