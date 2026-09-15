@@ -356,6 +356,39 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## LAS DOS VOCES DE UNA CONVERSACIÓN (ley, 2026-08-16 · etapa 3)
+
+Las burbujas del chat estaban **desparejadas sin que nadie lo decidiera**:
+
+| | antes | ahora |
+|---|---|---|
+| del profesional | sombra `--shadow-xs` | cristal + sombra propia |
+| del usuario | **sin sombra** | morado con profundidad |
+| radios | `18px`, `4px` a mano, y `--card-radius` (alias viejo) | tokens |
+
+Ahora las dos comparten forma y peso. **El pico que ancla cada burbuja a su
+lado se mantiene** —es lo que hace que una conversación se lea de un
+vistazo— pero con el mismo valor en ambas.
+
+La del usuario lleva un degradado suave del morado de Nüra, y **su sombra
+recoge su propio color**: se levanta del papel en vez de posarse plana.
+
+### Las respuestas rápidas siguen siendo retoque
+
+`8px 14px` a mano, `gap: 7px`, y al tocarlas **se apagaban**. Ahora con
+aire, canto de cristal, y **se acercan al tocarlas**.
+
+No se convierten en tarjetas: contestar con una sugerencia es un retoque,
+no la decisión. Es la tercera vez que se aplica esta distinción — Home,
+etapa 1 y aquí.
+
+### Falsa alarma registrada
+
+La verificación marcó *"respuesta rápida no funciona"*. **Era la prueba**:
+buscaba el texto *"¿Cuánto cobras?"* fijo, y las sugerencias **se adaptan a
+la conversación** — tras preguntar por disponibilidad ofrecía *"¿Cuándo
+puedes empezar?"*. El comportamiento era correcto.
+
 ## EL MURO NO ES LA FICHA (ley, 2026-08-16 · etapa 2)
 
 La ficha del profesional medía **4,7 pantallas**, y **tres de ellas eran su

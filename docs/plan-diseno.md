@@ -40,7 +40,7 @@ No por gusto: **por cuántas personas lo ven y cuánto decide**.
 | 1 | **La respuesta de Nüra** | el momento en que el producto cumple su promesa |
 | 2 | **La ficha del profesional** ⬅ **SIGUIENTE** | donde se decide confiar en alguien |
 | 3 | **El chat** ⬅ **SIGUIENTE** | donde ocurre la conversación real |
-| 4 | **Profesionales (Explorar)** | la puerta de quien ya sabe qué busca |
+| 4 | **Profesionales (Explorar)** ⬅ **SIGUIENTE** | la puerta de quien ya sabe qué busca |
 | 5 | **Comunidad** | la prueba de que hay gente viva |
 | 6 | **Chats y Mis servicios** | volver a lo empezado |
 | 7 | **Perfil y Siguiendo** | lo propio |
@@ -120,7 +120,17 @@ foto y el nombre tienen el peso de una persona, o de una ficha?
 
 ---
 
-## Etapa 3 · El chat ⬅ **SIGUIENTE**
+## Etapa 3 · El chat ✅ *(2026-08-16)*
+
+- Las burbujas emparejadas: misma forma, mismo peso, cada una con su voz
+- Las respuestas rápidas con aire y cristal; siguen siendo retoque
+- Verificado: mensaje, respuesta, sugerencias y hoja de reserva
+
+Ley en `design-system.md`.
+
+---
+
+## ~~Etapa 3~~ *(detalle original)*
 
 **Dónde.** `Chat.jsx`, `Chat.module.css`, `conversation.module.css`.
 
@@ -129,7 +139,7 @@ reserva y la barra de acción llevan sin tocarse desde antes del rediseño.
 
 ---
 
-## Etapa 4 · Profesionales
+## Etapa 4 · Profesionales ⬅ **SIGUIENTE**
 
 **Dónde.** `Explore.jsx` — las tarjetas de categoría ya bajaron a 18px, pero
 la pantalla entera es una rejilla de ocho puertas anchas.
