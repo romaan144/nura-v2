@@ -356,6 +356,36 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## LO QUE SE REPITE, SE MULTIPLICA (ley, 2026-08-16 · etapa 5)
+
+Comunidad tiene **27 tarjetas** y es la pantalla con más elementos
+repetidos. `PostCard` llevaba `background: 'white'` sólido con borde gris:
+cualquier mejora aquí **se multiplica por 27**, y cualquier descuido
+también.
+
+Ahora con cristal, como el resto del sistema. El fondo se ve a través, así
+que las historias **forman parte de la pantalla** en vez de apilarse como
+fichas sobre ella.
+
+Y el compositor —*"Cuenta cómo te fue…"*— igual: es una invitación a
+escribir, no un campo de formulario.
+
+### Lo que NO se tocó, y por qué
+
+**Las dos filas de filtros.** Suman 120px antes de la primera historia, y
+la tentación era juntarlas. Pero filtran cosas distintas —**quién**
+publica y **de qué** trata— y fundirlas obligaría a elegir entre dos
+criterios independientes. El segmentador ya está bien resuelto: cristal y
+`--radius-lg`.
+
+**Un problema de espacio no se arregla rompiendo una distinción real.**
+
+### Nota de sintaxis
+
+Un comentario JSX `{/* … */}` antes del `return` **rompe el build**, y un
+`//` también. Dentro de un objeto de estilo va como `/* … */`. Dos intentos
+fallidos antes de acertar — queda anotado.
+
 ## EL MISMO GESTO, LA MISMA SUPERFICIE (ley, 2026-08-16 · etapa 4)
 
 Nüra tiene **dos sitios donde se escribe lo que necesitas** —Home y

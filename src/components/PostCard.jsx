@@ -40,9 +40,17 @@ export default function PostCard({ post }) {
 
   return (
     <article style={{
-      background: 'white', border: '1px solid var(--ink-border)',
-      borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-sm)',
-      padding: 'var(--space-14) var(--space-16)',
+      /* Cristal, como el resto del sistema. Son 27 tarjetas en Comunidad:
+         cualquier cambio aqui se multiplica por 27. El fondo se ve a traves,
+         asi que las historias forman parte de la pantalla en vez de
+         apilarse como fichas sobre ella. */
+      background: 'rgba(255,255,255,0.72)',
+      WebkitBackdropFilter: 'blur(20px) saturate(160%)',
+      backdropFilter: 'blur(20px) saturate(160%)',
+      border: '1px solid rgba(255,255,255,0.6)',
+      borderRadius: 'var(--radius-md)',
+      boxShadow: '0 1px 2px rgba(33,29,51,0.04), 0 8px 24px -12px rgba(33,29,51,0.10)',
+      padding: 'var(--space-16)',
     }}>
       {/* ── El autor: siempre primero, siempre igual ── */}
       <button onClick={post.helperId ? irAlPerfil : undefined}

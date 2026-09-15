@@ -42,7 +42,7 @@ No por gusto: **por cuántas personas lo ven y cuánto decide**.
 | 3 | **El chat** ⬅ **SIGUIENTE** | donde ocurre la conversación real |
 | 4 | **Profesionales (Explorar)** ⬅ **SIGUIENTE** | la puerta de quien ya sabe qué busca |
 | 5 | **Comunidad** ⬅ **SIGUIENTE** | la prueba de que hay gente viva |
-| 6 | **Chats y Mis servicios** | volver a lo empezado |
+| 6 | **Chats y Mis servicios** ⬅ **SIGUIENTE** | volver a lo empezado |
 | 7 | **Perfil y Siguiendo** | lo propio |
 | 8 | **Los tres momentos de entrada** | onboarding, alta, `/r/:token` |
 
@@ -159,14 +159,24 @@ sabe qué busca, y hoy tiene que bucear.
 
 ---
 
-## Etapa 5 · Comunidad ⬅ **SIGUIENTE**
+## Etapa 5 · Comunidad ✅ *(2026-08-16)*
+
+- Las 27 tarjetas con cristal: se multiplica por 27
+- El compositor igual: invitación a escribir, no campo de formulario
+- Las dos filas de filtros NO se fundieron: filtran cosas distintas
+
+Ley en `design-system.md`.
+
+---
+
+## ~~Etapa 5~~ *(detalle original)*
 
 **Dónde.** `Feed.jsx`, `PostCard.jsx` — 29 superficies, la pantalla con más
 elementos repetidos. Cualquier mejora se multiplica por 29.
 
 ---
 
-## Etapa 6 · Chats y Mis servicios
+## Etapa 6 · Chats y Mis servicios ⬅ **SIGUIENTE**
 
 Las dos listas de "vuelve a lo que empezaste". `Chats.module.css` tiene 177
 líneas y `MyServices` 99: son las más simples, y probablemente las más
