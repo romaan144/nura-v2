@@ -39,7 +39,7 @@ No por gusto: **por cuántas personas lo ven y cuánto decide**.
 | ✅ 0 | **Home** | la puerta. Todo el mundo pasa |
 | 1 | **La respuesta de Nüra** | el momento en que el producto cumple su promesa |
 | 2 | **La ficha del profesional** ⬅ **SIGUIENTE** | donde se decide confiar en alguien |
-| 3 | **El chat** | donde ocurre la conversación real |
+| 3 | **El chat** ⬅ **SIGUIENTE** | donde ocurre la conversación real |
 | 4 | **Profesionales (Explorar)** | la puerta de quien ya sabe qué busca |
 | 5 | **Comunidad** | la prueba de que hay gente viva |
 | 6 | **Chats y Mis servicios** | volver a lo empezado |
@@ -97,7 +97,17 @@ resultados de `Home.module.css` (`.carouselBlock`, `.refineRow`).
 
 ---
 
-## Etapa 2 · La ficha del profesional ⬅ **SIGUIENTE**
+## Etapa 2 · La ficha del profesional ✅ *(2026-08-16)*
+
+- El muro de publicaciones se resume: 4,7 → 4 pantallas
+- Las verificaciones pasan de insignias de 11px a bloque con nombre
+- Comprobado: el botón de contactar YA era fijo; el diagnóstico era falso
+
+Ley en `design-system.md`.
+
+---
+
+## ~~Etapa 2~~ *(detalle original)*
 
 **Dónde.** `HelperProfile.jsx` — 489 líneas de CSS, la pantalla más densa.
 
@@ -110,7 +120,7 @@ foto y el nombre tienen el peso de una persona, o de una ficha?
 
 ---
 
-## Etapa 3 · El chat
+## Etapa 3 · El chat ⬅ **SIGUIENTE**
 
 **Dónde.** `Chat.jsx`, `Chat.module.css`, `conversation.module.css`.
 

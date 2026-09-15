@@ -19,6 +19,7 @@ import { showToast } from '../components/Toast'
 import RegisterGate from '../components/RegisterGate'
 import { getHelperById } from '../utils/supabase'
 import { Badge, LiveDot, Bubble, StatBar } from '../components/ui'
+import { getFirstName } from '../utils/name'
 
 // ── HELPERS ─────────────────────────────────────────────────────────────────
 
@@ -188,6 +189,7 @@ function HelperProfileInner() {
   const { id }     = useParams()
   const navigate   = useNavigate()
   const location   = useLocation()
+  const [verTodaLaObra, setVerTodaLaObra] = useState(false)
   const { user, addService } = useUser()
 
   const [h, setH]             = useState(location.state?.helper || null)
@@ -389,19 +391,42 @@ function HelperProfileInner() {
           )}
 
           {/* Trust badges */}
-          <div style={{
-            display:'flex', gap:'var(--space-6)', flexWrap:'wrap',
-            justifyContent:'center', marginBottom:'var(--space-14)',
-            animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both'
-          }}>
-            {[
-              enrichedH.verified && '✓ Identidad verificada',
-              enrichedH.dniVerified && '✓ DNI comprobado',
-              enrichedH.criminalRecordClear && '✓ Sin antecedentes',
-            ].filter(Boolean).map(badge => (
-              <Badge key={badge} variant="success" size="md">{badge}</Badge>
-            ))}
-          </div>
+          {/* ── LO QUE SOSTIENE LA CONFIANZA ────────────────────────────
+              Eran tres insignias sueltas de 11px flotando centradas, del
+              tamaño de un pie de foto. Pero "sin antecedentes" y "DNI
+              comprobado" es lo que mas tranquiliza a alguien que va a dejar
+              entrar a un desconocido en casa de su madre.
+              Ahora es un bloque con nombre: una sola superficie, con su
+              titulo, donde cada linea se lee. No compite con nada porque no
+              hay nada mas importante que esto en el momento de decidir. */}
+          {(enrichedH.verified || enrichedH.dniVerified || enrichedH.criminalRecordClear) && (
+            <div style={{
+              margin:'0 0 var(--space-14)',
+              padding:'var(--space-14) var(--space-16)',
+              background:'rgba(4,120,87,0.05)',
+              border:'1px solid rgba(4,120,87,0.14)',
+              borderRadius:'var(--radius-md)',
+              animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both'
+            }}>
+              <p style={{
+                margin:'0 0 var(--space-10)', fontSize:'var(--text-xs)',
+                fontWeight:700, letterSpacing:'0.4px', textTransform:'uppercase',
+                color:'var(--green)'
+              }}>Nüra lo ha comprobado</p>
+              <div style={{display:'flex', flexDirection:'column', gap:'var(--space-8)'}}>
+                {[
+                  enrichedH.verified && 'Identidad verificada',
+                  enrichedH.dniVerified && 'DNI comprobado',
+                  enrichedH.criminalRecordClear && 'Sin antecedentes penales',
+                ].filter(Boolean).map(linea => (
+                  <div key={linea} style={{display:'flex', alignItems:'center', gap:'var(--space-8)'}}>
+                    <CheckCircle size={16} color="var(--green)" strokeWidth={2.2} />
+                    <span style={{fontSize:'var(--text-sm)', fontWeight:600, color:'var(--ink-primary)'}}>{linea}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Nüra recomienda — justo antes del CTA */}
           <div style={{
@@ -435,9 +460,31 @@ function HelperProfileInner() {
         {getObraDeHelper(enrichedH.id, 2).length > 0 && (
           <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0ms forwards`}} className={styles.section}>
             <h2 className={styles.sectionHeading}>Su obra</h2>
+            {/* ── EL MURO NO ES LA FICHA ──────────────────────────────
+                Se pintaban TODAS las publicaciones: tres pantallas de las
+                4,7 que medía la ficha. Era Comunidad dentro del perfil — el
+                mismo problema que el susurro en Home, en grande.
+                Ahora se ve UNA, prueba de que este profesional trabaja y lo
+                documenta. El resto sigue ahí, a un toque. */}
             <div style={{display:'flex', flexDirection:'column', gap:'var(--space-10)'}}>
-              {publicacionesDe(enrichedH).map(p => <PostCard key={p.id} post={p} />)}
+              {(verTodaLaObra ? publicacionesDe(enrichedH) : publicacionesDe(enrichedH).slice(0, 1))
+                .map(p => <PostCard key={p.id} post={p} />)}
             </div>
+            {!verTodaLaObra && publicacionesDe(enrichedH).length > 1 && (
+              <button onClick={() => setVerTodaLaObra(true)} style={{
+                width:'100%', marginTop:'var(--space-10)', minHeight:48,
+                background:'rgba(255,255,255,0.72)',
+                WebkitBackdropFilter:'blur(20px) saturate(160%)',
+                backdropFilter:'blur(20px) saturate(160%)',
+                border:'1px solid rgba(255,255,255,0.6)',
+                borderRadius:'var(--radius-md)',
+                boxShadow:'0 1px 2px rgba(33,29,51,0.04), 0 8px 24px -12px rgba(33,29,51,0.10)',
+                fontSize:'var(--text-sm)', fontWeight:600, color:'var(--ink-secondary)',
+                fontFamily:'inherit', cursor:'pointer',
+              }}>
+                Ver los {publicacionesDe(enrichedH).length} casos de {getFirstName(enrichedH.name)}
+              </button>
+            )}
           </section>
         )}
         {/* ── Cómo puedo ayudarte ── */}

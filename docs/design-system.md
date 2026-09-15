@@ -356,6 +356,40 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## EL MURO NO ES LA FICHA (ley, 2026-08-16 · etapa 2)
+
+La ficha del profesional medía **4,7 pantallas**, y **tres de ellas eran su
+muro de publicaciones**. Era Comunidad dentro del perfil — el mismo problema
+que el susurro en Home, en grande.
+
+**Ahora se ve una publicación** —prueba de que este profesional trabaja y lo
+documenta— y el resto a un toque: *"Ver los 4 casos de Carlos"*.
+
+**Resultado: 4,7 → 4 pantallas.**
+
+### Lo que sostiene la confianza tiene peso
+
+*"Identidad verificada"*, *"DNI comprobado"*, *"Sin antecedentes"* eran tres
+insignias sueltas de **11px** flotando centradas, del tamaño de un pie de
+foto.
+
+Es lo que más tranquiliza a alguien que va a dejar entrar a un desconocido
+en casa de su madre. Ahora es **un bloque con nombre** —*"Nüra lo ha
+comprobado"*— donde cada línea se lee en 13px con su marca verde.
+
+No compite con nada, porque en el momento de decidir no hay nada más
+importante.
+
+### Lo que NO era un problema
+
+Se diagnosticó que *"el botón de contactar vive a 716px, casi una pantalla
+de scroll"*. **Falso**: medido con `position: fixed` en la cadena de
+ancestros, el botón es **fijo** — está siempre visible sobre la barra
+inferior. El de 716px era ese mismo, ya anclado.
+
+Un acierto de dos en el análisis. La medición lo corrigió antes de tocar
+nada.
+
 ## EL HALLAZGO MANDA (ley, 2026-08-16 · etapa 1)
 
 Medido tras buscar *"Mi hijo de 5 años no pronuncia la R"*:
