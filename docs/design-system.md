@@ -356,6 +356,40 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## EL MISMO GESTO, LA MISMA SUPERFICIE (ley, 2026-08-16 · etapa 4)
+
+Nüra tiene **dos sitios donde se escribe lo que necesitas** —Home y
+Profesionales— y tenían diseños distintos:
+
+| | Home | Explorar (antes) |
+|---|---|---|
+| fondo | cristal | blanco sólido |
+| borde | canto claro | gris de 1px |
+| al escribir | **se ilumina** en morado | nada |
+| tamaño del texto | 15px | 13px |
+
+**Es el mismo gesto, así que es la misma superficie.** Ahora el buscador de
+Profesionales es la cápsula de Home.
+
+Y las tarjetas de categoría pasan a cristal, como las opciones de Home: el
+fondo se ve a través, así que forman parte de la pantalla en vez de posarse
+encima. Al tocarlas **se acercan**, no se hunden.
+
+### La falsa alarma más larga hasta ahora
+
+Se diagnosticó que *"el buscador de Profesionales no recoge lo que
+escribes"*. Cinco intentos para descubrir que era el instrumento:
+
+- `p.$('input')` cogía el input de **Home**, que vive montado en una
+  pestaña oculta — hay dos inputs en el DOM.
+- Con el correcto, `focus()` por código **no basta**: el texto seguía
+  vacío.
+- Con un **clic real en sus coordenadas**, todo funciona: texto recogido,
+  navega a Home, recomienda.
+
+**Regla**: para probar un campo, clic real en sus coordenadas. Ni
+`p.$('input')` cuando hay varios, ni `focus()` por código.
+
 ## LAS DOS VOCES DE UNA CONVERSACIÓN (ley, 2026-08-16 · etapa 3)
 
 Las burbujas del chat estaban **desparejadas sin que nadie lo decidiera**:

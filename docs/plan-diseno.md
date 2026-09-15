@@ -41,7 +41,7 @@ No por gusto: **por cuántas personas lo ven y cuánto decide**.
 | 2 | **La ficha del profesional** ⬅ **SIGUIENTE** | donde se decide confiar en alguien |
 | 3 | **El chat** ⬅ **SIGUIENTE** | donde ocurre la conversación real |
 | 4 | **Profesionales (Explorar)** ⬅ **SIGUIENTE** | la puerta de quien ya sabe qué busca |
-| 5 | **Comunidad** | la prueba de que hay gente viva |
+| 5 | **Comunidad** ⬅ **SIGUIENTE** | la prueba de que hay gente viva |
 | 6 | **Chats y Mis servicios** | volver a lo empezado |
 | 7 | **Perfil y Siguiendo** | lo propio |
 | 8 | **Los tres momentos de entrada** | onboarding, alta, `/r/:token` |
@@ -139,7 +139,17 @@ reserva y la barra de acción llevan sin tocarse desde antes del rediseño.
 
 ---
 
-## Etapa 4 · Profesionales ⬅ **SIGUIENTE**
+## Etapa 4 · Profesionales ✅ *(2026-08-16)*
+
+- El buscador iguala a la cápsula de Home: cristal y se ilumina al escribir
+- Las tarjetas de categoría con cristal; se acercan al tocarlas
+- Comprobado: el buscador SÍ funcionaba — eran cinco fallos del instrumento
+
+Ley en `design-system.md`.
+
+---
+
+## ~~Etapa 4~~ *(detalle original)*
 
 **Dónde.** `Explore.jsx` — las tarjetas de categoría ya bajaron a 18px, pero
 la pantalla entera es una rejilla de ocho puertas anchas.
@@ -149,7 +159,7 @@ sabe qué busca, y hoy tiene que bucear.
 
 ---
 
-## Etapa 5 · Comunidad
+## Etapa 5 · Comunidad ⬅ **SIGUIENTE**
 
 **Dónde.** `Feed.jsx`, `PostCard.jsx` — 29 superficies, la pantalla con más
 elementos repetidos. Cualquier mejora se multiplica por 29.
