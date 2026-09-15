@@ -36,20 +36,27 @@
 .list { display: flex; flex-direction: column; gap: var(--space-10); padding: var(--space-8) 14px 0; }
 
 .chatRow {
-  width: 100%; display: flex; align-items: center; gap: 13px;
-  /* La Superficie: esta fila quedo fuera del censo del dia (miramos las
-     tarjetas de persona y de obra, no las de conversacion). Cuatro leyes
-     incumplidas: curva, sombra, borde y relleno. */
+  width: 100%; display: flex; align-items: center; gap: var(--space-12);
+  /* Cristal, como el resto del sistema. Esta fila llevaba blanco solido y
+     un hueco de 13px escrito a mano: se veia como una lista de correo, no
+     como las conversaciones abiertas de alguien.
+     Al tocarla se ACERCA en vez de apagarse — abrir una conversacion es
+     avanzar hacia una persona. */
   padding: var(--space-14) var(--space-16);
-  background: #FFFFFF;
+  background: rgba(255,255,255,0.72);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
   border-radius: var(--radius-md);
-  border: 1px solid var(--ink-border);
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.15s, opacity 0.15s;
+  border: 1px solid rgba(255,255,255,0.6);
+  box-shadow: 0 1px 2px rgba(33,29,51,0.04), 0 8px 24px -12px rgba(33,29,51,0.10);
+  transition: transform 0.18s cubic-bezier(0.22,1,0.36,1), box-shadow 0.18s ease;
   text-align: left;
   -webkit-tap-highlight-color: transparent;
 }
-.chatRow:active { opacity: 0.75; }
+.chatRow:active {
+  transform: scale(0.985);
+  box-shadow: 0 1px 2px rgba(33,29,51,0.04), 0 4px 12px -8px rgba(33,29,51,0.10);
+}
 .chatUnread {
   border-left: 2px solid var(--purple);
   padding-left: 14px;

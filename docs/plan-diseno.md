@@ -43,7 +43,7 @@ No por gusto: **por cuántas personas lo ven y cuánto decide**.
 | 4 | **Profesionales (Explorar)** ⬅ **SIGUIENTE** | la puerta de quien ya sabe qué busca |
 | 5 | **Comunidad** ⬅ **SIGUIENTE** | la prueba de que hay gente viva |
 | 6 | **Chats y Mis servicios** ⬅ **SIGUIENTE** | volver a lo empezado |
-| 7 | **Perfil y Siguiendo** | lo propio |
+| 7 | **Perfil y Siguiendo** ⬅ **SIGUIENTE** | lo propio |
 | 8 | **Los tres momentos de entrada** | onboarding, alta, `/r/:token` |
 
 ---
@@ -176,7 +176,17 @@ elementos repetidos. Cualquier mejora se multiplica por 29.
 
 ---
 
-## Etapa 6 · Chats y Mis servicios ⬅ **SIGUIENTE**
+## Etapa 6 · Chats y Mis servicios ✅ *(2026-08-16)*
+
+- Las conversaciones con cristal; se acercan al tocarlas
+- Mis servicios igual, y fuera el alias viejo `--card-radius`
+- El estado vacío ya estaba bien: explica y ofrece salida
+
+Ley en `design-system.md`.
+
+---
+
+## ~~Etapa 6~~ *(detalle original)*
 
 Las dos listas de "vuelve a lo que empezaste". `Chats.module.css` tiene 177
 líneas y `MyServices` 99: son las más simples, y probablemente las más
@@ -184,7 +194,7 @@ sosas.
 
 ---
 
-## Etapa 7 · Perfil y Siguiendo
+## Etapa 7 · Perfil y Siguiendo ⬅ **SIGUIENTE**
 
 Lo propio: quién eres en Nüra y a quién sigues.
 

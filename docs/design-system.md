@@ -356,6 +356,29 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## VOLVER TAMBIÉN ES AVANZAR (ley, 2026-08-16 · etapa 6)
+
+Las dos listas de *"vuelve a lo que empezaste"* eran las más sosas de la
+app, y por motivos concretos:
+
+| | tenía | ahora |
+|---|---|---|
+| `Chats` | blanco sólido, hueco de `13px` a mano | cristal, `--space-12` |
+| `MyServices` | `--card-radius` (alias viejo), `--shadow-xs` | tokens reales, cristal |
+
+Ambas **se apagaban al tocarlas**. Ahora **se acercan**: abrir una
+conversación o un servicio es avanzar hacia una persona, no presionar un
+botón.
+
+Un servicio contratado es **una relación en curso, no un recibo** — y su
+tarjeta debe parecerlo.
+
+### Comprobado y correcto
+
+El estado vacío de Mis servicios —*"Aún no has contratado nada. Cuando
+contrates a un profesional y concretéis una cita, aparecerá aquí"*—
+explica y ofrece salida. No se tocó.
+
 ## LO QUE SE REPITE, SE MULTIPLICA (ley, 2026-08-16 · etapa 5)
 
 Comunidad tiene **27 tarjetas** y es la pantalla con más elementos
