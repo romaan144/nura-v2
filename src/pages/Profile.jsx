@@ -267,7 +267,13 @@ export default function Profile() {
           } else if (!user.phone) missing.push('teléfono')
           if (!user.avatar) missing.push('una foto')
           return pct < 100 ? (
-            <div style={{padding:'var(--space-16)',background:'white',borderRadius:'var(--radius-card)',boxShadow:'0 1px 8px rgba(33,29,51,0.06)',border:'1px solid rgba(33,29,51,0.07)'}}>
+            <div style={{padding:'var(--space-16)',
+              background:'rgba(255,255,255,0.72)',
+              WebkitBackdropFilter:'blur(20px) saturate(160%)',
+              backdropFilter:'blur(20px) saturate(160%)',
+              borderRadius:'var(--radius-md)',
+              boxShadow:'0 1px 2px rgba(33,29,51,0.04), 0 8px 24px -12px rgba(33,29,51,0.10)',
+              border:'1px solid rgba(255,255,255,0.6)'}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'var(--space-8)'}}>
                 <span style={{fontSize:'var(--text-sm)',fontWeight:700,color:'var(--ink)',letterSpacing:'-0.2px'}}>Tu perfil está al {pct}%</span>
                 <span style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.38)'}}>{user.isHelper ? 'Más completo, más contactos' : 'Mejora tus matches'}</span>
@@ -336,9 +342,15 @@ export default function Profile() {
           const sem = buildSemana({ contactedHelpers, citas, misObras,
             obraPropia: getObraDeHelper(user.helperId || user.id, 9).filter(o => !o.mine).length })
           return (
-            <div style={{padding:'var(--space-16)', background:'white',
-              border:'1px solid var(--purple-20)', borderRadius:'var(--radius-md)',
-              boxShadow:'var(--shadow-md)', animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 200ms both'}}>
+            <div style={{padding:'var(--space-16)',
+              /* --shadow-md es la sombra de lo que FLOTA (modales, hojas).
+                 Esta tarjeta reposa, asi que lleva la del sistema. */
+              background:'rgba(255,255,255,0.72)',
+              WebkitBackdropFilter:'blur(20px) saturate(160%)',
+              backdropFilter:'blur(20px) saturate(160%)',
+              border:'1px solid rgba(123,47,255,0.16)', borderRadius:'var(--radius-md)',
+              boxShadow:'0 1px 2px rgba(33,29,51,0.04), 0 8px 24px -12px rgba(123,47,255,0.18)',
+              animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 200ms both'}}>
               <SectionLabel tone="brand" style={{marginBottom:'var(--space-8)'}}>
                 Tu semana
               </SectionLabel>

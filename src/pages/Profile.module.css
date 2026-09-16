@@ -14,6 +14,8 @@
 }
 
 /* ── ZONA 1: IDENTIDAD ───────────────────────────────────────── */
+/* Cristal en las superficies del sistema. `.editInput` NO: es un campo, y
+   la ley dice que los campos llevan otra curva y otro fondo. */
 .identity {   display: flex;
   /* EN FILA: el avatar al lado del nombre. Antes en columna y centrado, el
      avatar quedaba aislado arriba y el bloque comia 246px — el 29% de la
@@ -25,7 +27,9 @@
   /* Medido: el bloque ocupaba 246px, el 29% de la pantalla, para cuatro
      datos. Aire recortado sin tocar la estructura. */
   padding: var(--space-20) var(--space-16) var(--space-16);
-  background: white;
+  background: rgba(255,255,255,0.72);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
   gap: 6px;
   }
 
@@ -218,7 +222,9 @@
    14px de --radius-card se quedan donde deben, en campos y bloques
    internos, que NO son tarjetas y por eso llevan otra curva. */
 .favEmpty {
-  background: white;
+  background: rgba(255,255,255,0.72);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
   border-radius: var(--radius-md);
   padding: 14px 16px;
   display: flex;
@@ -239,7 +245,9 @@
   }
 
 .recentList {
-  background: white;
+  background: rgba(255,255,255,0.72);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
   border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(33,29,51,0.05);

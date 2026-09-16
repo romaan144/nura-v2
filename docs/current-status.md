@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (etapa 6 hecha · etapa 7 siguiente)
+**Última actualización:** 2026-08-16 (etapa 7 hecha · etapa 8, la última)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -643,8 +643,8 @@ Nueve etapas, por orden de **cuántas personas lo ven y cuánto decide**.
 | 4 | Profesionales | ✅ hecha |
 | 5 | Comunidad | ✅ hecha |
 | 6 | Chats y Mis servicios | ✅ hecha |
-| **7** | **Perfil y Siguiendo** | ⬅ **siguiente** |
-| 8 | Los tres momentos de entrada | |
+| 7 | Perfil y Siguiendo | ✅ hecha |
+| **8** | **Los tres momentos de entrada** | ⬅ **siguiente** |
 
 **Si se acaba el contexto**: leer `plan-diseno.md`, ir a la etapa marcada
 como siguiente, arrancar por su sección. No hace falta releer el historial.

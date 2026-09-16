@@ -356,6 +356,32 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## LO PROPIO TAMBIÉN ES DEL SISTEMA (ley, 2026-08-16 · etapa 7)
+
+Perfil y Siguiendo tenían **seis superficies blancas sólidas**: la identidad,
+los bloques de historial, las tarjetas de gente a la que sigues.
+
+Todas a cristal — menos una.
+
+### Lo que NO se tocó, y es la distinción que importa
+
+**`.editInput` se queda con fondo propio.** Es un campo, no una superficie
+del sistema, y la ley de la curva ya dice que los campos llevan otro
+tratamiento. Es la cuarta vez que esta distinción evita un cambio
+equivocado.
+
+### Dos correcciones de paso
+
+- Una tarjeta de Perfil llevaba **`--shadow-md`**, la sombra de lo que
+  *flota*, estando en reposo. Corregida a la del sistema.
+- `transition: all` en Siguiendo → las dos propiedades que de verdad
+  cambian. Animar `all` encarece cada fotograma sin motivo.
+
+### La misma piedra, dos veces
+
+Un comentario JSX tras `return (` **rompe el build**. Ya pasó en la etapa 5
+y volvió a pasar aquí. Dentro de un objeto de estilo va como `/* … */`.
+
 ## VOLVER TAMBIÉN ES AVANZAR (ley, 2026-08-16 · etapa 6)
 
 Las dos listas de *"vuelve a lo que empezaste"* eran las más sosas de la

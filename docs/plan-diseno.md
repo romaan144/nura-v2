@@ -44,7 +44,7 @@ No por gusto: **por cuántas personas lo ven y cuánto decide**.
 | 5 | **Comunidad** ⬅ **SIGUIENTE** | la prueba de que hay gente viva |
 | 6 | **Chats y Mis servicios** ⬅ **SIGUIENTE** | volver a lo empezado |
 | 7 | **Perfil y Siguiendo** ⬅ **SIGUIENTE** | lo propio |
-| 8 | **Los tres momentos de entrada** | onboarding, alta, `/r/:token` |
+| 8 | **Los tres momentos de entrada** ⬅ **SIGUIENTE** | onboarding, alta, `/r/:token` |
 
 ---
 
@@ -194,13 +194,23 @@ sosas.
 
 ---
 
-## Etapa 7 · Perfil y Siguiendo ⬅ **SIGUIENTE**
+## Etapa 7 · Perfil y Siguiendo ✅ *(2026-08-16)*
+
+- Seis superficies con cristal; `.editInput` se queda: es un campo
+- Corregida una tarjeta que llevaba la sombra de lo que flota
+- `transition: all` → las dos propiedades que cambian
+
+Ley en `design-system.md`.
+
+---
+
+## ~~Etapa 7~~ *(detalle original)*
 
 Lo propio: quién eres en Nüra y a quién sigues.
 
 ---
 
-## Etapa 8 · Los tres momentos de entrada
+## Etapa 8 · Los tres momentos de entrada ⬅ **SIGUIENTE**
 
 Onboarding, alta profesional y `/r/:token`. Son las primeras impresiones —
 del usuario y del profesional.
