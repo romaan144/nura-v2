@@ -57,9 +57,15 @@ export default function Responder() {
     padding: 'max(env(safe-area-inset-top,0px),24px) var(--space-20) var(--space-32)',
   }
   const caja = {
-    width: '100%', maxWidth: 520, background: 'white',
-    borderRadius: 'var(--radius-md)', border: '1px solid var(--ink-border)',
-    boxShadow: 'var(--shadow-sm)', padding: 'var(--space-20)',
+    width: '100%', maxWidth: 520,
+    // Cristal, como el resto del sistema. Esta caja es, casi siempre, la
+    // primera impresion de un profesional con Nüra.
+    background: 'rgba(255,255,255,0.72)',
+    WebkitBackdropFilter: 'blur(20px) saturate(160%)',
+    backdropFilter: 'blur(20px) saturate(160%)',
+    borderRadius: 'var(--radius-md)', border: '1px solid rgba(255,255,255,0.6)',
+    boxShadow: '0 1px 2px rgba(33,29,51,0.04), 0 16px 40px -16px rgba(33,29,51,0.18)',
+    padding: 'var(--space-20)',
   }
 
   if (estado === 'cargando') {

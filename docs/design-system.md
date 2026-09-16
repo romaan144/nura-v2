@@ -356,6 +356,48 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## LAS CUATRO PUERTAS SE ILUMINAN (ley, 2026-08-16 · etapa 8 · última)
+
+Nüra tiene **cuatro sitios donde alguien escribe por primera vez**: Home,
+Profesionales, el onboarding y el alta profesional. Tres ya se iluminaban;
+**el del onboarding no**.
+
+Es la primera vez que alguien teclea algo en Nüra. **Si la app no reacciona
+ahí, no reacciona en ningún sitio.**
+
+### Las tres entradas, alineadas
+
+| | tenía | ahora |
+|---|---|---|
+| alta profesional | cápsula sin iluminar, burbujas con `4px`/`18px` a mano | cápsula de Home, burbujas del chat |
+| `/r/:token` | caja blanca, sombra plana | cristal y sombra larga |
+| onboarding | campo sin reacción | **se ilumina** |
+
+`/r/:token` importa especialmente: es, casi siempre, **la primera impresión
+de un profesional con Nüra**.
+
+### Verificado
+
+Las tres entradas abren sin errores. El token inválido responde *"Este
+enlace ya no sirve"* — el estado de error también estaba bien resuelto.
+
+---
+
+# 🏁 PLAN DE REDISEÑO COMPLETO
+
+Ocho etapas, de Home a las puertas de entrada. La regla que lo gobernó
+todo, y que vino de un comentario del fundador:
+
+> **Un sistema coherente no hace que algo sea bonito.**
+
+Siete ciclos unificando tokens dejaron el sistema perfecto y la app seguía
+sin gustar. Lo que funcionó fueron tres movimientos, repetidos en cada
+pantalla: **quitar lo que ensucia**, **que lo importante mande**, y **que lo
+que se toca invite en vez de rellenarse**.
+
+Con un límite que nunca se cruzó: **elegante, no espacial**. Nüra existe
+para que alguien asustado encuentre ayuda.
+
 ## LO PROPIO TAMBIÉN ES DEL SISTEMA (ley, 2026-08-16 · etapa 7)
 
 Perfil y Siguiendo tenían **seis superficies blancas sólidas**: la identidad,

@@ -210,7 +210,31 @@ Lo propio: quién eres en Nüra y a quién sigues.
 
 ---
 
-## Etapa 8 · Los tres momentos de entrada ⬅ **SIGUIENTE**
+## Etapa 8 · Los tres momentos de entrada ✅ *(2026-08-16)*
+
+- El campo del onboarding se ilumina: era el único de las cuatro puertas
+- El alta con la cápsula de Home y las burbujas del chat
+- `/r/:token` con cristal — la primera impresión de un profesional
+
+Ley en `design-system.md`.
+
+---
+
+# 🏁 PLAN COMPLETO *(2026-08-16)*
+
+Las ocho etapas hechas. **Lo siguiente en diseño no está planificado**: toca
+mirar la app con ojos nuevos y decidir. Candidatos anotados durante el
+camino:
+
+- **`HelperCardTall`** — la tarjeta de recomendación. Se usa en tres
+  pantallas, así que merece ciclo propio *(anotado en la etapa 1)*.
+- **El vocabulario de especialidades** — 482 etiquetas, 400 usadas una vez.
+  Bloquea el "explorar por especialidad" tipo Doctoralia.
+- **El lado del profesional** — sigue sin existir como app.
+
+---
+
+## ~~Etapa 8~~ *(detalle original)*
 
 Onboarding, alta profesional y `/r/:token`. Son las primeras impresiones —
 del usuario y del profesional.

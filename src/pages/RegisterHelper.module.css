@@ -25,7 +25,17 @@
 .nuraAvatar { width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,0.72); backdrop-filter: blur(16px) saturate(160%); -webkit-backdrop-filter: blur(16px) saturate(160%); border: 1px solid rgba(255,255,255,0.35); display: flex; align-items: center; justify-content: center; flex-shrink: 0; align-self: flex-start; margin-top: 2px; }
 .nuraAvatarImg { width: 30px; height: 30px; object-fit: contain; }
 .bubble { max-width: 78%; padding: 11px 14px; font-size: var(--text-base); line-height: 1.55; letter-spacing: -0.15px; border-radius: 18px; }
-.bubbleNura { background: rgba(255,255,255,0.85); border: 1px solid rgba(255,255,255,0.5); border-radius: 4px 18px 18px 18px; color: rgba(33,29,51,0.85); box-shadow: var(--shadow-xs); }
+/* La misma burbuja que el chat: radios con token en vez de 4px y 18px a
+   mano, y la sombra del sistema. */
+.bubbleNura {
+  background: rgba(255,255,255,0.92);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.7);
+  border-radius: var(--space-6) var(--radius-md) var(--radius-md) var(--radius-md);
+  color: var(--ink-primary);
+  box-shadow: 0 1px 2px rgba(33,29,51,0.04), 0 8px 20px -14px rgba(33,29,51,0.20);
+}
 .bubbleUser { background: var(--purple); color: white; border-radius: 18px 18px 4px 18px; }
 .typingDots { display: flex; gap: 4px; padding: 2px 0; }
 .typingDots span { width: 6px; height: 6px; border-radius: 50%; background: rgba(33,29,51,0.2); animation: tdot 1.4s infinite; }
@@ -36,8 +46,28 @@
 /* Input */
 .inputWrap { position: fixed; bottom: var(--nav-h); left: 0; right: 0; padding: 10px 20px; z-index: 90; pointer-events: none; }
 .inputWrap > * { pointer-events: all; }
-.inputCapsule { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.72); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); border: 1px solid var(--ink-border); border-radius: var(--radius-full); padding: 10px 10px 10px 18px; box-shadow: var(--shadow-sm); transition: all 0.25s cubic-bezier(0.25,0.46,0.45,0.94); }
-.inputCapsule:focus-within { background: rgba(255,255,255,0.86); box-shadow: var(--shadow-sm), 0 0 0 0.5px rgba(33,29,51,0.07); }
+/* La misma capsula que Home: es el mismo gesto —escribir lo que uno es—
+   y para Marta esta es su primera impresion de Nüra. Se ILUMINA al
+   escribir, no cambia de color. */
+.inputCapsule {
+  display: flex; align-items: center; gap: var(--space-8);
+  background: rgba(255,255,255,0.70);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid rgba(255,255,255,0.75);
+  border-radius: var(--radius-full);
+  padding: var(--space-8) var(--space-8) var(--space-8) var(--space-20);
+  box-shadow: 0 1px 2px rgba(33,29,51,0.04), 0 16px 40px -16px rgba(33,29,51,0.22);
+  transition: box-shadow 0.28s cubic-bezier(0.22,1,0.36,1),
+              border-color 0.28s ease, background 0.28s ease;
+}
+.inputCapsule:focus-within {
+  background: rgba(255,255,255,0.88);
+  border-color: rgba(123,47,255,0.35);
+  box-shadow: 0 1px 2px rgba(33,29,51,0.04),
+              0 16px 44px -14px rgba(123,47,255,0.30),
+              0 0 0 4px rgba(123,47,255,0.08);
+}
 .input { flex: 1; border: none; outline: none; background: transparent; font-size: var(--text-base); font-weight: 400; color: var(--ink-primary); font-family: -apple-system,'Inter',sans-serif; letter-spacing: -0.2px; padding: 0; }
 .input::placeholder { color: rgba(33,29,51,0.28); font-weight: 300; letter-spacing: -0.1px; }
 .input:disabled { opacity: 0.5; }

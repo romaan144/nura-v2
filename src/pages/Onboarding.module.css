@@ -70,10 +70,22 @@
   background: rgba(255,255,255,0.72);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255,255,255,0.35);
-  border-radius: 100px; outline: none; text-align: center;
-  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(255,255,255,0.75);
+  border-radius: var(--radius-full); outline: none; text-align: center;
+  box-shadow: 0 1px 2px rgba(33,29,51,0.04), 0 16px 40px -16px rgba(33,29,51,0.22);
+  transition: box-shadow 0.28s cubic-bezier(0.22,1,0.36,1),
+              border-color 0.28s ease, background 0.28s ease;
   box-sizing: border-box;
+}
+/* El unico campo de las cuatro puertas que NO se iluminaba al escribir.
+   Es la primera vez que alguien teclea algo en Nüra: si la app no reacciona
+   ahi, no reacciona en ningun sitio. */
+.nameInput:focus {
+  background: rgba(255,255,255,0.88);
+  border-color: rgba(123,47,255,0.35);
+  box-shadow: 0 1px 2px rgba(33,29,51,0.04),
+              0 16px 44px -14px rgba(123,47,255,0.30),
+              0 0 0 4px rgba(123,47,255,0.08);
 }
 .nameInput::placeholder { color: rgba(33,29,51,0.25); font-weight: 300; }
 .helperCta { background: none; border: none; font-size: var(--text-sm); color: var(--purple); font-weight: 600; padding: 8px; text-align: center; }
