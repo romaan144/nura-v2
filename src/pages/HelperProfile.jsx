@@ -190,6 +190,7 @@ function HelperProfileInner() {
   const navigate   = useNavigate()
   const location   = useLocation()
   const [verTodaLaObra, setVerTodaLaObra] = useState(false)
+  const [verTrayectoria, setVerTrayectoria] = useState(false)
   const { user, addService } = useUser()
 
   const [h, setH]             = useState(location.state?.helper || null)
@@ -454,39 +455,55 @@ function HelperProfileInner() {
 
         {/* ══════════════════════════════════════════════════
             CONTENIDO — flujo continuo, sin tabs
-            La persona es la protagonista
+        {/* ══════════════════════════════════════════════════
+            PRIMERO LAS PERSONAS, DESPUES LOS PAPELES
+            ──────────────────────────────────────────────────
+            Medido antes: `Formación académica` ocupaba 672px y
+            `Trayectoria profesional` 458 — mas de una pantalla entera
+            dedicada a donde estudio Carlos. Y "Lo que dicen de Carlos",
+            que es lo que de verdad decide si confias en alguien, iba la
+            CUARTA con 360px.
+            Era un curriculum, no un perfil. Y el documento de fundacion
+            dice que Nüra descubre talento "incluso fuera de titulos
+            academicos tradicionales", mientras la ficha ponia el titulo
+            academico como lo mas grande de todo.
             ══════════════════════════════════════════════════ */}
 
-        {getObraDeHelper(enrichedH.id, 2).length > 0 && (
-          <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0ms forwards`}} className={styles.section}>
-            <h2 className={styles.sectionHeading}>Su obra</h2>
-            {/* ── EL MURO NO ES LA FICHA ──────────────────────────────
-                Se pintaban TODAS las publicaciones: tres pantallas de las
-                4,7 que medía la ficha. Era Comunidad dentro del perfil — el
-                mismo problema que el susurro en Home, en grande.
-                Ahora se ve UNA, prueba de que este profesional trabaja y lo
-                documenta. El resto sigue ahí, a un toque. */}
-            <div style={{display:'flex', flexDirection:'column', gap:'var(--space-10)'}}>
-              {(verTodaLaObra ? publicacionesDe(enrichedH) : publicacionesDe(enrichedH).slice(0, 1))
-                .map(p => <PostCard key={p.id} post={p} />)}
+{/* ── Valoraciones ── */}
+        {enrichedH.reviews > 0 && (
+          <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 80ms forwards`}} className={styles.section}>
+            <h2 className={styles.sectionHeading}>
+              <Star size={14} fill="var(--amber)" color="var(--amber)" /> Lo que dicen de {firstName}
+            </h2>
+            <div className={styles.ratingRow}>
+              <span className={styles.ratingBig}>{enrichedH.rating}</span>
+              <div>
+                <div className={styles.ratingStars}>
+                  {[1,2,3,4,5].map(n => (
+                    <Star key={n} size={13}
+                      fill={n <= Math.round(enrichedH.rating) ? 'var(--amber)' : 'rgba(33,29,51,0.1)'}
+                      color={n <= Math.round(enrichedH.rating) ? 'var(--amber)' : 'rgba(33,29,51,0.1)'} />
+                  ))}
+                </div>
+                <span className={styles.ratingCount}>{enrichedH.reviews} valoraciones</span>
+              </div>
             </div>
-            {!verTodaLaObra && publicacionesDe(enrichedH).length > 1 && (
-              <button onClick={() => setVerTodaLaObra(true)} style={{
-                width:'100%', marginTop:'var(--space-10)', minHeight:48,
-                background:'rgba(255,255,255,0.72)',
-                WebkitBackdropFilter:'blur(20px) saturate(160%)',
-                backdropFilter:'blur(20px) saturate(160%)',
-                border:'1px solid rgba(255,255,255,0.6)',
-                borderRadius:'var(--radius-md)',
-                boxShadow:'0 1px 2px rgba(33,29,51,0.04), 0 8px 24px -12px rgba(33,29,51,0.10)',
-                fontSize:'var(--text-sm)', fontWeight:600, color:'var(--ink-secondary)',
-                fontFamily:'inherit', cursor:'pointer',
-              }}>
-                Ver los {publicacionesDe(enrichedH).length} casos de {getFirstName(enrichedH.name)}
-              </button>
+            {enrichedH.qualitativeComments?.length > 0 && (
+              <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)',marginTop:'var(--space-4)'}}>
+                {enrichedH.qualitativeComments.slice(0,3).map((c, i) => (
+                  <Bubble
+                    key={i}
+                    index={i}
+                    text={typeof c === 'string' ? c : c.text}
+                    author={typeof c === 'string' ? null : c.user}
+                    style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) ${i*80}ms both`}}
+                  />
+                ))}
+              </div>
             )}
           </section>
         )}
+
         {/* ── Cómo puedo ayudarte ── */}
 
         {(enrichedH.tags?.length > 0 || enrichedH.specialty) && (
@@ -535,40 +552,60 @@ function HelperProfileInner() {
           </section>
         )}
 
-{/* ── Valoraciones ── */}
-        {enrichedH.reviews > 0 && (
-          <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 80ms forwards`}} className={styles.section}>
-            <h2 className={styles.sectionHeading}>
-              <Star size={14} fill="var(--amber)" color="var(--amber)" /> Lo que dicen de {firstName}
-            </h2>
-            <div className={styles.ratingRow}>
-              <span className={styles.ratingBig}>{enrichedH.rating}</span>
-              <div>
-                <div className={styles.ratingStars}>
-                  {[1,2,3,4,5].map(n => (
-                    <Star key={n} size={13}
-                      fill={n <= Math.round(enrichedH.rating) ? 'var(--amber)' : 'rgba(33,29,51,0.1)'}
-                      color={n <= Math.round(enrichedH.rating) ? 'var(--amber)' : 'rgba(33,29,51,0.1)'} />
-                  ))}
-                </div>
-                <span className={styles.ratingCount}>{enrichedH.reviews} valoraciones</span>
-              </div>
+        {getObraDeHelper(enrichedH.id, 2).length > 0 && (
+          <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0ms forwards`}} className={styles.section}>
+            <h2 className={styles.sectionHeading}>Su obra</h2>
+            {/* ── EL MURO NO ES LA FICHA ──────────────────────────────
+                Se pintaban TODAS las publicaciones: tres pantallas de las
+                4,7 que medía la ficha. Era Comunidad dentro del perfil — el
+                mismo problema que el susurro en Home, en grande.
+                Ahora se ve UNA, prueba de que este profesional trabaja y lo
+                documenta. El resto sigue ahí, a un toque. */}
+            <div style={{display:'flex', flexDirection:'column', gap:'var(--space-10)'}}>
+              {(verTodaLaObra ? publicacionesDe(enrichedH) : publicacionesDe(enrichedH).slice(0, 1))
+                .map(p => <PostCard key={p.id} post={p} />)}
             </div>
-            {enrichedH.qualitativeComments?.length > 0 && (
-              <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)',marginTop:'var(--space-4)'}}>
-                {enrichedH.qualitativeComments.slice(0,3).map((c, i) => (
-                  <Bubble
-                    key={i}
-                    index={i}
-                    text={typeof c === 'string' ? c : c.text}
-                    author={typeof c === 'string' ? null : c.user}
-                    style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) ${i*80}ms both`}}
-                  />
-                ))}
-              </div>
+            {!verTodaLaObra && publicacionesDe(enrichedH).length > 1 && (
+              <button onClick={() => setVerTodaLaObra(true)} style={{
+                width:'100%', marginTop:'var(--space-10)', minHeight:48,
+                background:'rgba(255,255,255,0.72)',
+                WebkitBackdropFilter:'blur(20px) saturate(160%)',
+                backdropFilter:'blur(20px) saturate(160%)',
+                border:'1px solid rgba(255,255,255,0.6)',
+                borderRadius:'var(--radius-md)',
+                boxShadow:'0 1px 2px rgba(33,29,51,0.04), 0 8px 24px -12px rgba(33,29,51,0.10)',
+                fontSize:'var(--text-sm)', fontWeight:600, color:'var(--ink-secondary)',
+                fontFamily:'inherit', cursor:'pointer',
+              }}>
+                Ver los {publicacionesDe(enrichedH).length} casos de {getFirstName(enrichedH.name)}
+              </button>
             )}
           </section>
         )}
+
+        {/* ── EL CURRICULO, PLEGADO ──────────────────────────────────
+            Trayectoria y formacion existen para quien las busque, pero no
+            pueden ocupar media ficha. Quien duda de alguien no empieza por
+            su universidad: empieza por lo que dicen quienes ya le
+            contrataron. */}
+        {(enrichedH.experience?.length > 0 || enrichedH.education?.length > 0) && !verTrayectoria && (
+          <button onClick={() => setVerTrayectoria(true)} style={{
+            width:'100%', minHeight:52, marginBottom:'var(--space-20)',
+            background:'rgba(255,255,255,0.72)',
+            WebkitBackdropFilter:'blur(20px) saturate(160%)',
+            backdropFilter:'blur(20px) saturate(160%)',
+            border:'1px solid rgba(255,255,255,0.6)',
+            borderRadius:'var(--radius-md)',
+            boxShadow:'0 1px 2px rgba(33,29,51,0.04), 0 8px 24px -12px rgba(33,29,51,0.10)',
+            fontSize:'var(--text-sm)', fontWeight:600, color:'var(--ink-secondary)',
+            fontFamily:'inherit', cursor:'pointer',
+          }}>
+            Ver su trayectoria y formación
+          </button>
+        )}
+
+        {verTrayectoria && (
+          <>
 
         {/* ── Experiencia ── */}
         {enrichedH.experience?.length > 0 && (
@@ -642,6 +679,9 @@ function HelperProfileInner() {
             </div>
           </section>
         )}
+          </>
+        )}
+
 
         {/* ── Habilidades ── */}
         {enrichedH.skills?.length > 0 && (

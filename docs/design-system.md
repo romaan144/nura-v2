@@ -356,6 +356,53 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## PRIMERO LAS PERSONAS, DESPUÉS LOS PAPELES (ley, 2026-08-16)
+
+**El fundador no veía casi cambios tras ocho etapas de rediseño.** Tenía
+razón, y el diagnóstico es este:
+
+| etapa | qué cambié | ¿se notó? |
+|---|---|---|
+| Home | **composición** | mucho |
+| 1–8 | **acabado** (cristal, sombras, espaciado) | nada |
+
+Apliqué *el sistema* de Home al resto en vez de aplicar *el criterio* de
+Home. El criterio era **"cada pantalla hace una cosa, y lo importante
+manda"**. Lo que repliqué fue el cristal.
+
+**Un acabado mejor no cambia la silueta.** Abres y ves lo mismo colocado
+igual.
+
+### La ficha era un currículum, no un perfil
+
+Medido:
+
+| sección | alto |
+|---|---|
+| **Formación académica** | **672px** |
+| Trayectoria profesional | 458px |
+| Su obra | 447px |
+| *Lo que dicen de él* | 360px — **la cuarta** |
+
+Más de una pantalla dedicada a dónde estudió. Y las opiniones de gente real
+—**lo que de verdad decide si confías en alguien**— enterradas debajo.
+
+El documento de fundación dice que Nüra descubre talento *"incluso fuera de
+títulos académicos tradicionales"*, y la ficha ponía el título académico
+como lo más grande de todo.
+
+### El orden nuevo
+
+1. **Lo que dicen de él**
+2. Puedo ayudarte con
+3. Su obra
+4. *Ver su trayectoria y formación* → plegado
+
+**Resultado: 4 → 2,8 pantallas.**
+
+**Regla**: quien duda de alguien no empieza por su universidad. Empieza por
+lo que dicen quienes ya le contrataron.
+
 ## LAS TARJETAS DE PERSONA (ley, 2026-08-16)
 
 Eran las últimas superficies blancas sólidas de la app, y las más
