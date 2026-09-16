@@ -356,6 +356,36 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## EL MISMO ELEMENTO, EL MISMO MARGEN (ley, 2026-08-16)
+
+Siguiendo el método que enseñó el fundador —**buscar elementos que juntos se
+ven mal**, no pantallas que incumplan leyes— se revisaron las nueve
+pantallas comparando lo que va anclado abajo.
+
+Ocho coherentes. La que no:
+
+| | margen lateral |
+|---|---|
+| cápsula de **Home** | 16px |
+| cápsula del **Chat** | **20px** |
+
+Es el **mismo elemento** —escribir lo que necesitas— en dos sitios. Cuatro
+píxeles de diferencia no se ven en una pantalla, pero **sí al pasar de una a
+otra**: la cápsula salta.
+
+Corregidas las dos declaraciones (la cápsula y la barra de sugerencias que
+lleva encima, que debe compartir su margen).
+
+**Regla**: un elemento que existe en varias pantallas lleva el mismo margen
+en todas. Si difiere, se nota al navegar aunque no se note al mirar.
+
+### El método
+
+No basta con verificar que cada pantalla cumple las leyes. Hay que
+**comparar la misma cosa entre pantallas**, y **mirar los elementos que
+conviven**. Los dos últimos hallazgos —la barra de acción y este— salieron
+de ahí, y ninguno de las mediciones por pantalla.
+
 ## DOS ISLAS, NO UN CAJÓN Y UNA ISLA (ley, 2026-08-16)
 
 El fundador, sobre la ficha: *"los botones aparecen dentro de un recuadro

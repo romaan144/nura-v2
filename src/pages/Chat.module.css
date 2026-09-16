@@ -192,7 +192,10 @@
 .inputWrap {
   position: absolute;
   bottom: max(env(safe-area-inset-bottom, 0px), 16px);
-  left: 20px; right: 20px;
+  /* El mismo margen que la capsula de Home: 16px. Estaba a 20 y es el MISMO
+     elemento en dos sitios —escribir lo que necesitas—, asi que dos margenes
+     distintos se notan al pasar de una pantalla a otra. */
+  left: var(--space-16); right: var(--space-16);
   z-index: 20;
   pointer-events: none;
 }
@@ -244,7 +247,7 @@
   .inputWrap {
   position: absolute;
   bottom: max(env(safe-area-inset-bottom, 0px), 16px);
-  left: 20px; right: 20px;
+  left: var(--space-16); right: var(--space-16);   /* alineada con la capsula que tiene debajo */
   z-index: 20;
   pointer-events: none;
 }
