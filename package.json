@@ -12,7 +12,8 @@
     "smoke": "node scripts/smoke.mjs",
     "preflight": "node scripts/preflight.mjs",
     "medir": "node scripts/medir.mjs",
-    "avisar": "node scripts/avisar.mjs"
+    "avisar": "node scripts/avisar.mjs",
+    "recorrido": "node scripts/recorrido.mjs"
   },
   "dependencies": {
     "@dicebear/collection": "^9.4.2",

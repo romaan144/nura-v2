@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (el filtro de especialidad entiende el oficio)
+**Última actualización:** 2026-08-16 (npm run recorrido · los dos lados verdes)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -683,6 +683,21 @@ correcto: en *"Cuidar mi salud"* no hay ningún logopeda — están en
 devuelve 1.
 
 **El cero era la respuesta correcta a una pregunta sin respuesta.**
+
+## `npm run recorrido` · la quinta comprobación (2026-08-16)
+
+Tras una sesión larga —ocho etapas de rediseño, el aviso automático, la
+vuelta del profesional— se verificó que **todo sigue funcionando junto**.
+
+**Los dos recorridos, completos y sin un solo error JS:**
+
+- **Quien busca ayuda**: onboarding → nombre → buscar → recomendación con
+  su porqué → chat → mensaje enviado
+- **El profesional**: alta de siete preguntas → la vuelta responde bien a un
+  enlace inválido
+
+Queda como guion permanente: `npm run recorrido`. Probado devolviendo un
+bug — lo caza y sale con código 1.
 
 ## Errores conocidos / problemas pendientes
 

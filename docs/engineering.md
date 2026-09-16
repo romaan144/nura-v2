@@ -208,6 +208,31 @@ objeto sencillo — y desconfiar de `!== 'valor'` como comprobacion, porque
 `undefined !== 'valor'` es **cierto** y deja pasar el caso roto. Preferir
 `x?.campo || defecto`. Guardia en la Cuarta Puerta.
 
+### `npm run recorrido` — que las piezas sigan funcionando JUNTAS (2026-08-16)
+
+Las cuatro puertas comprueban **piezas**: que el build pasa, que no hay
+variables sueltas, que el emparejador acierta, que ninguna pantalla se queda
+en blanco.
+
+Ninguna comprobaba que el **camino completo** funcione. Tras una sesión
+larga de cambios —ocho etapas de rediseño, el aviso automático, la vuelta
+del profesional— cada pieza puede estar bien y el recorrido roto igualmente.
+
+Dos recorridos, los dos lados del producto:
+
+| | pasos |
+|---|---|
+| quien busca ayuda | onboarding → nombre → buscar → recomendación → chat → mensaje |
+| el profesional | alta de siete preguntas → la vuelta con enlace inválido |
+
+**Probado devolviendo un bug**: se rompió la línea de recomendación y lo
+cazó con `✗ recomienda a alguien`, saliendo con código 1.
+
+**Las piedras del instrumento van aplicadas dentro**: clic real en las
+coordenadas del campo (nunca `page.type('input')` con varios en el DOM, ni
+`focus()` por código), y se buscan señales en vez de frases exactas, porque
+los textos de Nüra cambian con el contexto.
+
 ### Escribir en un input de React no es asignar `.value` (2026-08-16)
 
 Probando entradas sin sentido —emojis, `...`, `???`— la app parecia
