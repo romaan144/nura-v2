@@ -295,6 +295,30 @@ export default function Explore() {
       }
       const variants = MERGED[sub]
       if (variants && variants.includes(spec)) return true
+
+      // ── EL OFICIO CONTIENE SU ESPECIALIDAD ──────────────────────────
+      // Antes esto devolvia `false` y se acabo: solo valia la coincidencia
+      // EXACTA o estar en el mapa de variantes escrito a mano.
+      // Filtrar por "Logopeda" daba CERO profesionales, porque los suyos se
+      // llaman "Logopeda infantil". Medido en navegador: 10 a 0.
+      //
+      // El mapa MERGED seguira haciendo falta para lo que ninguna regla
+      // deduce —genero gramatical, sinonimos—, pero no puede ser la UNICA
+      // via: cada profesional nuevo escribe su especialidad a mano, y nadie
+      // va a mantener una lista de variantes de 1008 filas.
+      const limpia = t => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      const e = limpia(spec)
+      const q = limpia(sub)
+      // Palabra completa, no subcadena: "dieta" no debe casar con "dietista"
+      // por accidente, pero "Logopeda" si con "Logopeda infantil".
+      const comoPalabra = (texto, termino) =>
+        new RegExp(`(^|[^\\p{L}])${termino.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}($|[^\\p{L}])`, 'iu').test(texto)
+      if (comoPalabra(e, q)) return true
+      // Y al reves: filtrar por "Abogado de familia" encuentra "Abogada de
+      // familia y divorcios" si el oficio contiene todas sus palabras.
+      const palabras = q.split(/\s+/).filter(w => w.length > 3)
+      if (palabras.length > 1 && palabras.every(w => comoPalabra(e, w))) return true
+
       return false
     }
     return true

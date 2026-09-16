@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (las tarjetas de persona · quedan 2 candidatos)
+**Última actualización:** 2026-08-16 (el filtro de especialidad entiende el oficio)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -648,6 +648,41 @@ Nueve etapas, por orden de **cuántas personas lo ven y cuánto decide**.
 
 **🏁 Las ocho etapas están hechas.** Lo siguiente en diseño no está
 planificado — ver los candidatos anotados al final de `plan-diseno.md`.
+
+## El vocabulario ya existía (2026-08-16)
+
+Se iba a construir el *"explorar por especialidad"* tipo Doctoralia. **Al
+medir, ya estaba hecho**: `Explore.jsx` declara **13 categorías con sus
+especialidades** —`Psicóloga`, `Logopeda`, `Fisioterapeuta`…— y las pinta
+como filtros.
+
+Lo que faltaba era que **el filtro entendiera los oficios reales**.
+
+### Comparación exacta, o nada
+
+El filtro aceptaba solo dos cosas: coincidencia **exacta**, o estar en
+`MERGED`, un mapa de variantes **escrito a mano**. Si no, `return false`.
+
+Eso significaba que filtrar por `Psicóloga` **no encontraba** a la
+*"psicóloga clínica y neuropsicóloga"*, ni `Logopeda` a la *"logopeda
+infantil"*.
+
+**Ahora el oficio contiene su especialidad**, con límite de palabra —
+`"dieta"` sigue sin casar con `"dietista"`, que es correcto. Y una consulta
+de varias palabras casa si el oficio las contiene todas.
+
+`MERGED` se queda para lo que ninguna regla deduce (género gramatical,
+sinónimos), pero **ya no es la única vía**: nadie iba a mantener una lista
+de variantes para 1008 filas.
+
+### Falsa alarma, la decimosexta
+
+Filtrar por `Logopeda` daba **0 profesionales** y parecía el fallo. Era
+correcto: en *"Cuidar mi salud"* no hay ningún logopeda — están en
+`logopedia`, su propia categoría. Con `Psicóloga`, que sí existe allí,
+devuelve 1.
+
+**El cero era la respuesta correcta a una pregunta sin respuesta.**
 
 ## Errores conocidos / problemas pendientes
 
