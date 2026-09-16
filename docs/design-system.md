@@ -356,6 +356,37 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## DOS ISLAS, NO UN CAJÓN Y UNA ISLA (ley, 2026-08-16)
+
+El fundador, sobre la ficha: *"los botones aparecen dentro de un recuadro
+rectangular y no flotando bien. El recuadro no está bien incluido en la
+pantalla."*
+
+Medido, y era exacto:
+
+| barra | lados | radio |
+|---|---|---|
+| **acción** (*Escribir a Carlos*) | **0 y 0** — pegada al borde | **0px** — recta |
+| navegación | 12 y 12 | 100px — isla |
+
+**Un rectángulo recto apilado encima de una isla redondeada.** Cuando la
+barra inferior pasó a flotar (etapa 8 del plan), esta se quedó atrás — y el
+contraste entre las dos es justo lo que se ve mal.
+
+Ahora las dos están alineadas: mismos 12px a los lados, mismo canto de
+cristal, sin línea superior, y **8px de aire entre ellas** para que se lean
+como dos piezas y no como un bloque partido.
+
+**Regla**: si una barra fija convive con la de navegación, **es otra isla**.
+Nunca un cajón de lado a lado.
+
+### Comprobado y correcto
+
+Otras tres coincidencias de `left: 0; right: 0` **no son barras
+inferiores**: las cabeceras de Chat y del alta van arriba, y
+`.floatBottom` de Home es un contenedor **sin fondo** — solo posiciona la
+cápsula, no se ve.
+
 ## PRIMERO LAS PERSONAS, DESPUÉS LOS PAPELES (ley, 2026-08-16)
 
 **El fundador no veía casi cambios tras ocho etapas de rediseño.** Tenía
