@@ -67,12 +67,27 @@ export default function HelperCardTall({ helper, small = false }) {
   return (
     <div onClick={handleTap} role="button" aria-label={`Ver perfil de ${helper.name}`}
       style={{
-        background: 'white', border: '1px solid var(--ink-border)',
-        borderRadius: 'var(--radius-md)', boxShadow: small ? 'var(--shadow-sm)' : 'var(--shadow-md)',
-        padding: small ? '14px 10px 12px' : '22px 18px 18px',
+        /* LA TARJETA DEL HALLAZGO. Es la superficie mas importante de Nüra
+           —el momento en que aparece una persona— y se usa en tres sitios.
+           Llevaba blanco solido y `--shadow-md`, la sombra de lo que FLOTA
+           (modales, hojas), estando en reposo. La ley de la elevacion dice
+           que la sombra comunica CAPA, no importancia: si algo debe
+           destacar sin flotar, se destaca con contraste, no elevandolo. */
+        background: 'rgba(255,255,255,0.72)',
+        WebkitBackdropFilter: 'blur(20px) saturate(160%)',
+        backdropFilter: 'blur(20px) saturate(160%)',
+        border: '1px solid rgba(255,255,255,0.6)',
+        borderRadius: 'var(--radius-md)',
+        boxShadow: '0 1px 2px rgba(33,29,51,0.04), 0 8px 24px -12px rgba(33,29,51,0.10)',
+        padding: small ? 'var(--space-14) var(--space-10) var(--space-12)' : 'var(--space-24) var(--space-20) var(--space-20)',
         display: 'flex', flexDirection: 'column', alignItems: 'center',
         textAlign: 'center', cursor: 'pointer', width: '100%',
-      }}>
+        transition: 'transform 0.18s cubic-bezier(0.22,1,0.36,1), box-shadow 0.18s ease',
+        WebkitTapHighlightColor: 'transparent',
+      }}
+      onPointerDown={e => { e.currentTarget.style.transform = 'scale(0.985)' }}
+      onPointerUp={e => { e.currentTarget.style.transform = '' }}
+      onPointerLeave={e => { e.currentTarget.style.transform = '' }}>
       <div style={{ position: 'relative', marginBottom: small ? '8px' : '12px' }}>
         {helper.avatarUrl
           ? <img src={helper.avatarUrl} alt="" decoding="async" width={av} height={av}
@@ -112,8 +127,12 @@ export default function HelperCardTall({ helper, small = false }) {
           <SectionLabel tone="brand" style={{marginBottom: '7px'}}>
             En sus propias palabras
           </SectionLabel>
-          <p style={{ fontFamily: 'var(--font-voice)', fontSize: 'var(--text-sm)', fontWeight: 500,
-            color: 'var(--ink)', lineHeight: 1.5, letterSpacing: '-0.2px', margin: 0,
+          {/* Sus propias palabras: lo unico de esta tarjeta que suena a una
+              persona y no a una ficha. Iba en --text-sm, el mismo tamaño
+              que el precio y la distancia. En un producto que conecta con
+              gente, la voz de esa gente no es un dato mas. */}
+          <p style={{ fontFamily: 'var(--font-voice)', fontSize: 'var(--text-base)', fontWeight: 500,
+            color: 'var(--ink-primary)', lineHeight: 1.55, letterSpacing: '-0.2px', margin: 0,
             display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
             “{helper.quote || helper.bio}”
           </p>

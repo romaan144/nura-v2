@@ -356,6 +356,33 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## LAS TARJETAS DE PERSONA (ley, 2026-08-16)
+
+Eran las últimas superficies blancas sólidas de la app, y las más
+importantes: **el momento en que aparece alguien**.
+
+### Dos tarjetas, no una
+
+Al medir salió algo que no estaba en el plan: **`HelperCardTall` solo vive
+en Home**. La que se ve al explorar una categoría es **`HelperCard`**, otro
+componente. Se corrigieron las dos.
+
+### La sombra que mentía
+
+`HelperCardTall` llevaba **`--shadow-md`** —la sombra de lo que *flota*:
+modales, hojas— estando en reposo. La ley de la elevación ya lo decía: **la
+sombra comunica capa, no importancia**. Si algo debe destacar sin flotar, se
+destaca con contraste, no elevándolo.
+
+### La voz del profesional
+
+*"En sus propias palabras"* iba en `--text-sm`, **el mismo tamaño que el
+precio y la distancia**. Es lo único de esa tarjeta que suena a una persona
+y no a una ficha.
+
+En un producto que conecta con gente, **la voz de esa gente no es un dato
+más**.
+
 ## LAS CUATRO PUERTAS SE ILUMINAN (ley, 2026-08-16 · etapa 8 · última)
 
 Nüra tiene **cuatro sitios donde alguien escribe por primera vez**: Home,

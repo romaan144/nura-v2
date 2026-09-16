@@ -226,8 +226,9 @@ Las ocho etapas hechas. **Lo siguiente en diseño no está planificado**: toca
 mirar la app con ojos nuevos y decidir. Candidatos anotados durante el
 camino:
 
-- **`HelperCardTall`** — la tarjeta de recomendación. Se usa en tres
-  pantallas, así que merece ciclo propio *(anotado en la etapa 1)*.
+- ~~`HelperCardTall`~~ ✅ *(2026-08-16)* — hecha. Y al medirla apareció que
+  **son dos tarjetas**: `HelperCardTall` solo vive en Home; al explorar una
+  categoría se ve `HelperCard`. Corregidas las dos.
 - **El vocabulario de especialidades** — 482 etiquetas, 400 usadas una vez.
   Bloquea el "explorar por especialidad" tipo Doctoralia.
 - **El lado del profesional** — sigue sin existir como app.

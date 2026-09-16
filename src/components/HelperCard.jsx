@@ -63,8 +63,17 @@ export default function HelperCard({ helper, onContact, showContact = true, show
   return (
     <div onClick={handleTap} role="button" aria-label={`Ver perfil de ${helper.name}`}
       style={{
-        background: 'white', border: '1px solid var(--ink-border)',
-        borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-sm)',
+        /* Esta es la tarjeta que de verdad se ve al explorar una categoria
+           —HelperCardTall solo vive en Home—. Cristal y la reaccion del
+           sistema: tocar a una persona es acercarse a ella. */
+        background: 'rgba(255,255,255,0.72)',
+        WebkitBackdropFilter: 'blur(20px) saturate(160%)',
+        backdropFilter: 'blur(20px) saturate(160%)',
+        border: '1px solid rgba(255,255,255,0.6)',
+        borderRadius: 'var(--radius-md)',
+        boxShadow: '0 1px 2px rgba(33,29,51,0.04), 0 8px 24px -12px rgba(33,29,51,0.10)',
+        transition: 'transform 0.18s cubic-bezier(0.22,1,0.36,1), box-shadow 0.18s ease',
+        WebkitTapHighlightColor: 'transparent',
         padding: 'var(--space-14)', cursor: 'pointer', width: '100%',
         display: 'flex', alignItems: 'center', gap: 'var(--space-12)',
       }}>
