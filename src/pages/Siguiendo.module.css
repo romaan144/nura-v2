@@ -14,8 +14,22 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.content { padding: 0 14px 40px; }
-.title { font-size: var(--text-lg); font-weight: 800; color: var(--ink); margin-bottom: 4px; letter-spacing: -0.5px; }
+/* El gutter de la app: 16, como el resto de pantallas. */
+.content { padding: 0 var(--space-16) var(--space-40, 40px); }
+/* ── EL TITULO DE UNA PANTALLA ─────────────────────────────────────────
+   Medido: Comunidad usaba 28px con la fuente de la Voz; esta y Siguiendo,
+   22px con la de sistema. Cuatro pantallas equivalentes con cuatro
+   tratamientos, y ninguno decidido.
+   Gana el de Comunidad: la Voz es lo que da caracter a Nüra, y el titulo de
+   una pantalla es justo donde debe oirse. */
+.title {
+  font-family: var(--font-voice);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--ink-primary);
+  letter-spacing: -0.9px;
+  margin: 0 0 var(--space-4);
+}
 .sub { font-size: var(--text-sm); color: var(--soft); margin-bottom: 20px; }
 .list { display: flex; flex-direction: column; gap: var(--space-10); }
 /* --radius-md: la curva del sistema, igual que PostCard y las tarjetas de

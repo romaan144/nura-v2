@@ -8,8 +8,24 @@
   padding-top: var(--header-h);
   padding-bottom: var(--nav-h);
 }
-.content { padding: 8px 14px; display: flex; flex-direction: column; gap: 10px; }
-.title { font-size: var(--text-lg); font-weight: 800; color: var(--ink-primary); letter-spacing: -0.5px; margin: 8px 0 0; }
+/* El gutter de la app es 16, como la cabecera y el contenido del resto.
+   Estaba a 14: dos pixeles que no se ven en la pantalla pero si al pasar
+   de una a otra. */
+.content { padding: var(--space-8) var(--space-16); display: flex; flex-direction: column; gap: var(--space-10); }
+/* ── EL TITULO DE UNA PANTALLA ─────────────────────────────────────────
+   Medido: Comunidad usaba 28px con la fuente de la Voz; esta y Siguiendo,
+   22px con la de sistema. Cuatro pantallas equivalentes con cuatro
+   tratamientos, y ninguno decidido.
+   Gana el de Comunidad: la Voz es lo que da caracter a Nüra, y el titulo de
+   una pantalla es justo donde debe oirse. */
+.title {
+  font-family: var(--font-voice);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--ink-primary);
+  letter-spacing: -0.9px;
+  margin: var(--space-8) 0 0;
+}
 
 /* Tabs */
 .tabs { display: flex; gap: 6px; background: rgba(255,255,255,0.72); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); border: 1px solid rgba(255,255,255,0.35); border-radius: var(--radius-md); padding: 4px; box-shadow: var(--shadow-sm); }

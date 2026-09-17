@@ -356,6 +356,32 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## EL TÍTULO DE UNA PANTALLA (ley, 2026-08-16)
+
+Comparando el **mismo elemento entre pantallas**, ahora los títulos:
+
+| pantalla | antes | ahora |
+|---|---|---|
+| Comunidad | 28px, fuente de la Voz, x=16 | igual |
+| Mis servicios | **22px**, fuente de sistema, **x=14** | 28px, Voz, x=16 |
+| Siguiendo | **22px**, fuente de sistema, **x=14** | 28px, Voz, x=16 |
+
+Tres pantallas equivalentes con tres tratamientos, y **ninguno decidido**.
+
+**Gana el de Comunidad**: la Voz es lo que da carácter a Nüra, y el título
+de una pantalla es justo donde debe oírse. Las otras dos usaban la fuente
+de sistema, que no dice nada.
+
+Y el gutter a **16px**, el de la app. Estaban a 14: dos píxeles que no se
+ven en una pantalla pero **sí al pasar de una a otra**.
+
+### Lo que NO se unificó
+
+**Perfil y Ficha no llevan título de pantalla**: muestran el *nombre de una
+persona*, centrado bajo su foto. Es otra cosa y merece otro tratamiento.
+
+Es la quinta vez que esta clase de distinción evita un cambio equivocado.
+
 ## EL MISMO ELEMENTO, EL MISMO MARGEN (ley, 2026-08-16)
 
 Siguiendo el método que enseñó el fundador —**buscar elementos que juntos se
