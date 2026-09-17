@@ -65,8 +65,26 @@ body {
   --space-section:var(--space-32);   /* section: between major sections */
 
   /* ── RADIUS SCALE ───────────────────────────────────── */
-  --radius-xs:   4px;
+  --radius-xs:   6px;   /* el pico de una burbuja: lo unico casi recto que queda */
   --radius-full: 100px;
+
+  /* ══════════════════════════════════════════════════════════════════
+     TODO REDONDO. NADA RECTO.
+     ──────────────────────────────────────────────────────────────────
+     El fundador, viendo la app: "hay muchas cosas que son planas y en
+     cambio otras que son redondas y tienen profundidad. No tiene una
+     sensacion de lujo. Deberia ser todo o plano y recto o redondo — yo
+     prefiero redondo, mas estilo Apple."
+     Medido: SEIS curvas distintas conviviendo (18, 0, 100, 22, 14, 10) y
+     26 superficies rectas visibles. Eso no era un sistema, era un
+     acumulado — cada pantalla añadia la suya.
+     Ahora TRES curvas, y cada una significa algo:
+       · --radius-md   (20px)  la SUPERFICIE — tarjetas, bloques, barras
+       · --radius-card (14px)  lo que vive DENTRO de una superficie
+       · --radius-full (100)   la ACCION — botones, chips, islas
+     Nada lleva 0. Si algo parece necesitar esquina recta, es que no es
+     una superficie: es un fondo, y los fondos no se ven.
+     ══════════════════════════════════════════════════════════════════ */
 
   /* ── Nüra palette — from the logo ─────────────────── */
   --red2:     #E8002D;
@@ -147,16 +165,32 @@ body {
 
   /* Shadows */
   --shadow-sm: 0 1px 4px rgba(33,29,51,0.07);
+
+  /* ══════════════════════════════════════════════════════════════════
+     LA PROFUNDIDAD SIGNIFICA ALGO
+     ──────────────────────────────────────────────────────────────────
+     Medido: 105 superficies sin sombra y 70 con ella, sin regla que
+     dijera cuando. Y la sombra buena —dos capas: un contacto de 1px y
+     una difusion larga que levanta— estaba escrita A MANO en 20 sitios.
+     Copiada no es sistema: es coincidencia.
+     Tres niveles, y solo tres:
+       · --alzado-reposo  toda superficie que se apoya en la pantalla
+       · --alzado-pulsado la misma mientras el dedo la toca: se ACERCA
+       · --alzado-flota   lo que se superpone: modales, hojas, islas
+     ══════════════════════════════════════════════════════════════════ */
+  --alzado-reposo:  0 1px 2px rgba(33,29,51,0.04), 0 8px 24px -12px rgba(33,29,51,0.10);
+  --alzado-pulsado: 0 1px 2px rgba(33,29,51,0.04), 0 4px 12px -8px rgba(33,29,51,0.10);
+  --alzado-flota:   0 1px 2px rgba(33,29,51,0.04), 0 16px 40px -16px rgba(33,29,51,0.18);
   --shadow-md: 0 4px 20px rgba(33,29,51,0.10);
   --shadow-lg: 0 12px 48px rgba(13,13,26,0.12);
   --shadow-color: 0 8px 32px rgba(123,47,255,0.18);
 
-  --radius-sm: 10px;
+  --radius-sm: 14px;   /* → mismo valor que --radius-card: DENTRO de una tarjeta */
   --radius-card: 14px;  /* el radio de las tarjetas: 18 elementos vivian
                            en esta banda sin token que los nombrara */
-  --radius-md: 18px;
-  --radius-lg: 22px;
-  --radius-xl: 30px;
+  --radius-md: 20px;   /* LA SUPERFICIE. Toda tarjeta y bloque de la app */
+  --radius-lg: 20px;   /* → unificado con --radius-md: no habia dos ideas, solo dos valores */
+  --radius-xl: 20px;   /* → unificado: nada en Nüra es mas redondo que una superficie */
 
   /* Spacing system — use these everywhere */
   /* ── EL RITMO — escala única de espaciado ─────────────────────
@@ -342,7 +376,7 @@ body {
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid rgba(255,255,255,0.35);
-  border-radius: 100px;
+  border-radius: var(--radius-full);
   padding: 9px 9px 9px 18px;
   box-shadow: 0 2px 16px rgba(33,29,51,0.05), 0 0 0 0.5px rgba(33,29,51,0.06);
   transition: all 0.25s cubic-bezier(0.25,0.46,0.45,0.94);

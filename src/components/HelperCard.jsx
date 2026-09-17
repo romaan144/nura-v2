@@ -71,7 +71,7 @@ export default function HelperCard({ helper, onContact, showContact = true, show
         backdropFilter: 'blur(20px) saturate(160%)',
         border: '1px solid rgba(255,255,255,0.6)',
         borderRadius: 'var(--radius-md)',
-        boxShadow: '0 1px 2px rgba(33,29,51,0.04), 0 8px 24px -12px rgba(33,29,51,0.10)',
+        boxShadow: 'var(--alzado-reposo)',
         transition: 'transform 0.18s cubic-bezier(0.22,1,0.36,1), box-shadow 0.18s ease',
         WebkitTapHighlightColor: 'transparent',
         padding: 'var(--space-14)', cursor: 'pointer', width: '100%',

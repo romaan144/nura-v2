@@ -64,7 +64,7 @@ export default function Responder() {
     WebkitBackdropFilter: 'blur(20px) saturate(160%)',
     backdropFilter: 'blur(20px) saturate(160%)',
     borderRadius: 'var(--radius-md)', border: '1px solid rgba(255,255,255,0.6)',
-    boxShadow: '0 1px 2px rgba(33,29,51,0.04), 0 16px 40px -16px rgba(33,29,51,0.18)',
+    boxShadow: 'var(--alzado-flota)',
     padding: 'var(--space-20)',
   }
 

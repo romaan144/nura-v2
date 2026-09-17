@@ -356,6 +356,59 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## TODO REDONDO. NADA RECTO. (ley, 2026-08-16)
+
+El fundador, viendo la app entera: *"hay muchas cosas que son planas y en
+cambio otras que son redondas y tienen profundidad. No tiene una sensación
+de lujo. Debería ser todo o plano y recto o redondo — yo prefiero redondo,
+más estilo Apple."*
+
+**Tenía razón, y yo había dicho que quedaba poco.** Llevaba horas
+arreglando incoherencias una por una —esta barra, este margen, este
+título— cuando el problema era que **no había una decisión de fondo**.
+
+Medido antes:
+
+| | |
+|---|---|
+| curvas distintas conviviendo | **seis**: `18` · `0` · `100` · `22` · `14` · `10` |
+| superficies rectas visibles | **26** |
+| sin sombra / con sombra | 105 / 70, **sin regla** |
+
+Eso no era un sistema. Era un acumulado: cada pantalla añadía la suya.
+
+### Tres curvas, y cada una significa algo
+
+| curva | qué | token |
+|---|---|---|
+| **20px** | la **superficie** — tarjetas, bloques, barras | `--radius-md` |
+| **14px** | lo que vive **dentro** de una superficie | `--radius-card` |
+| **100px** | la **acción** — botones, chips, islas | `--radius-full` |
+
+`--radius-sm`, `--radius-lg` y `--radius-xl` quedan igualados a los de
+arriba: **no había tres ideas, había tres valores**.
+
+**Nada lleva `0`.** Si algo parece necesitar esquina recta, es que no es una
+superficie: es un fondo, y los fondos no se ven.
+
+### Tres niveles de profundidad, con nombre
+
+La sombra buena —dos capas: un contacto de 1px y una difusión larga que
+levanta— estaba **escrita a mano en 20 sitios**. Copiada no es sistema: es
+coincidencia.
+
+| nivel | cuándo | token |
+|---|---|---|
+| reposo | toda superficie apoyada en la pantalla | `--alzado-reposo` |
+| pulsado | mientras el dedo la toca: **se acerca** | `--alzado-pulsado` |
+| flota | lo que se superpone: modales, hojas, islas | `--alzado-flota` |
+
+### Resultado
+
+**Seis curvas → tres. Veintiséis superficies rectas → cero.** 14 ficheros
+tocados en una sola pasada, porque **la coherencia no se puede entregar a
+trozos**: media app redonda y media no está peor que antes.
+
 ## EL TÍTULO DE UNA PANTALLA (ley, 2026-08-16)
 
 Comparando el **mismo elemento entre pantallas**, ahora los títulos:

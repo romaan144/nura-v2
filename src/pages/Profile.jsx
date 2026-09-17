@@ -272,7 +272,7 @@ export default function Profile() {
               WebkitBackdropFilter:'blur(20px) saturate(160%)',
               backdropFilter:'blur(20px) saturate(160%)',
               borderRadius:'var(--radius-md)',
-              boxShadow:'0 1px 2px rgba(33,29,51,0.04), 0 8px 24px -12px rgba(33,29,51,0.10)',
+              boxShadow:'var(--alzado-reposo)',
               border:'1px solid rgba(255,255,255,0.6)'}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'var(--space-8)'}}>
                 <span style={{fontSize:'var(--text-sm)',fontWeight:700,color:'var(--ink)',letterSpacing:'-0.2px'}}>Tu perfil está al {pct}%</span>

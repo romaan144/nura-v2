@@ -56,7 +56,7 @@ const S = {
   },
   pasos: { display: 'flex', gap: 'var(--space-6)', marginBottom: 'var(--space-24)' },
   paso: hecho => ({
-    height: '3px', flex: 1, borderRadius: '99px',
+    height: '3px', flex: 1, borderRadius: 'var(--radius-full)',
     background: hecho ? 'var(--purple)' : 'var(--surface-muted)',
     transition: 'background 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
   }),

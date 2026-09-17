@@ -196,7 +196,8 @@
      borde y sombra las alejaba del perfil que el fundador señala como el
      bonito, en vez de acercarlas. */
   background: transparent;
-  border-radius: 0;
+  /* Nada en Nüra lleva esquina recta: si es una superficie, es redonda. */
+  border-radius: var(--radius-md);
   padding: var(--space-16) var(--space-4);
   border: none;
   border-top: 1px solid var(--ink-border);
@@ -281,7 +282,8 @@
 /* ── ZONA 4: EVOLUCIÓN ───────────────────────────────────────── */
 .evolutionZone {   margin: 0 var(--space-16);
   background: transparent;
-  border-radius: 0;
+  /* Nada en Nüra lleva esquina recta: si es una superficie, es redonda. */
+  border-radius: var(--radius-md);
   border: none;
   border-top: 1px solid var(--ink-border);
   box-shadow: none;

@@ -15,14 +15,14 @@
 .logo { width: 64px; height: 64px; object-fit: contain; opacity: 0.4; }
 .title { font-size: var(--text-heading); font-weight: 800; color: var(--ink); letter-spacing: -0.5px; }
 .desc { font-size: var(--text-sm); color: var(--soft); line-height: 1.6; max-width: 260px; }
-.btn { padding: 12px 28px; background: var(--purple); color: white; border: none; border-radius: 100px; font-size: var(--text-sm); font-weight: 700; cursor: pointer; }
+.btn { padding: 12px 28px; background: var(--purple); color: white; border: none; border-radius: var(--radius-full); font-size: var(--text-sm); font-weight: 700; cursor: pointer; }
 
 .btnSecondary {
   padding: 12px 28px;
   background: var(--surface-subtle);
   color: rgba(33,29,51,0.55);
   border: none;
-  border-radius: 100px;
+  border-radius: var(--radius-full);
   font-size: var(--text-base);
   font-weight: 600;
   cursor: pointer;

@@ -52,7 +52,7 @@
 .primary {
   display: flex; align-items: center; justify-content: center; gap: 8px;
   padding: 16px; width: 100%;
-  background: var(--purple); color: white; border: none; border-radius: 100px;
+  background: var(--purple); color: white; border: none; border-radius: var(--radius-full);
   font-size: var(--text-base); font-weight: 700; letter-spacing: -0.2px;
   box-shadow: var(--shadow-md); transition: opacity 0.2s;
 }
@@ -72,7 +72,7 @@
   backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid rgba(255,255,255,0.75);
   border-radius: var(--radius-full); outline: none; text-align: center;
-  box-shadow: 0 1px 2px rgba(33,29,51,0.04), 0 16px 40px -16px rgba(33,29,51,0.22);
+  box-shadow: var(--alzado-flota);
   transition: box-shadow 0.28s cubic-bezier(0.22,1,0.36,1),
               border-color 0.28s ease, background 0.28s ease;
   box-sizing: border-box;

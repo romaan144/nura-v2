@@ -175,7 +175,7 @@ export default function Feed() {
             WebkitBackdropFilter: 'blur(20px) saturate(160%)',
             backdropFilter: 'blur(20px) saturate(160%)',
             border: '1px solid rgba(255,255,255,0.6)', borderRadius: 'var(--radius-md)',
-            boxShadow: '0 1px 2px rgba(33,29,51,0.04), 0 8px 24px -12px rgba(33,29,51,0.10)',
+            boxShadow: 'var(--alzado-reposo)',
             padding: 'var(--space-14) var(--space-16)',
             margin: 'var(--space-16) 0 var(--space-20)', cursor: 'pointer', textAlign: 'left',
             fontFamily: 'inherit' }}>
