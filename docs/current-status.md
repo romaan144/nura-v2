@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (el papel da suelo: contraste 1,05 → 1,15)
+**Última actualización:** 2026-08-16 (⚠ revisión profunda · decisiones pendientes)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -698,6 +698,41 @@ vuelta del profesional— se verificó que **todo sigue funcionando junto**.
 
 Queda como guion permanente: `npm run recorrido`. Probado devolviendo un
 bug — lo caza y sale con código 1.
+
+## ⚠ REVISIÓN PROFUNDA → [`docs/revision-profunda.md`](./revision-profunda.md)
+
+El fundador, tras ocho etapas de rediseño: *"No me gusta nada. Le falta
+intuición. La gente al entrar no sabe de qué va, no es cómoda, está todo
+escondido, es feo."*
+
+**El trabajo de diseño anterior no sirvió**, y el motivo queda escrito:
+estuve arreglando la superficie de un producto cuyo problema es la
+estructura. Un producto se entiende o no **antes** de que nadie note si las
+esquinas son redondas.
+
+### Lo medido
+
+| pantalla | acciones | alto |
+|---|---|---|
+| Inicio | 11 | 1 pantalla |
+| Profesionales | 19 | 1,8 |
+| **Comunidad** | **91** | **8,4** |
+| Chats | 10 | 1 |
+| Perfil | 12 | 1,4 |
+
+Tres problemas de fondo: **nadie sabe de qué va** (la promesa no nombra
+nada concreto, y sin nombre te llama *"Usuario"*), **cinco pestañas para una
+sola cosa**, y **lo importante escondido** mientras lo que sobra ocupa el
+sitio.
+
+### Decisiones pendientes del fundador
+
+1. **La promesa** — qué dice Nüra que hace, con ejemplos concretos
+2. **Comunidad** — retirar / fundir con la ficha / mantener *(recomendado:
+   fundir)*
+3. **Dos pestañas** en vez de cinco — varias sesiones, después de decidir 2
+
+**No seguir puliendo.** Ya está pulido y no ha servido.
 
 ## Errores conocidos / problemas pendientes
 
