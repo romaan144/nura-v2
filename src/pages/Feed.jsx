@@ -171,7 +171,7 @@ export default function Feed() {
           style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-10)', width: '100%',
             /* Cristal, como las tarjetas que tiene debajo y la capsula de
                Home: es una invitacion a escribir, no un campo de formulario. */
-            background: 'rgba(255,255,255,0.72)',
+            background: 'rgba(255,255,255,0.96)',
             WebkitBackdropFilter: 'blur(20px) saturate(160%)',
             backdropFilter: 'blur(20px) saturate(160%)',
             border: '1px solid rgba(255,255,255,0.6)', borderRadius: 'var(--radius-md)',

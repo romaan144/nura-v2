@@ -44,7 +44,7 @@ export default function PostCard({ post }) {
          cualquier cambio aqui se multiplica por 27. El fondo se ve a traves,
          asi que las historias forman parte de la pantalla en vez de
          apilarse como fichas sobre ella. */
-      background: 'rgba(255,255,255,0.72)',
+      background: 'rgba(255,255,255,0.96)',
       WebkitBackdropFilter: 'blur(20px) saturate(160%)',
       backdropFilter: 'blur(20px) saturate(160%)',
       border: '1px solid rgba(255,255,255,0.6)',

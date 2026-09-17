@@ -73,7 +73,7 @@ export default function HelperCardTall({ helper, small = false }) {
            (modales, hojas), estando en reposo. La ley de la elevacion dice
            que la sombra comunica CAPA, no importancia: si algo debe
            destacar sin flotar, se destaca con contraste, no elevandolo. */
-        background: 'rgba(255,255,255,0.72)',
+        background: 'rgba(255,255,255,0.96)',
         WebkitBackdropFilter: 'blur(20px) saturate(160%)',
         backdropFilter: 'blur(20px) saturate(160%)',
         border: '1px solid rgba(255,255,255,0.6)',

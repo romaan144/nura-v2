@@ -60,7 +60,7 @@
 .headerCircle {
   width: 42px; height: 42px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.72);
+  background: rgba(255,255,255,0.96);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid rgba(255,255,255,0.35);
@@ -74,7 +74,7 @@
 .headerPill {
   position: absolute;
   left: 50%; transform: translateX(-50%);
-  background: rgba(255,255,255,0.72);
+  background: rgba(255,255,255,0.96);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid rgba(255,255,255,0.35);
@@ -100,7 +100,7 @@
 /* ── INPUT CAPSULE ──────────────────────────────────── */
 .inputCapsule {
   display: flex; align-items: center; gap: 6px;
-  background: rgba(255,255,255,0.72);
+  background: rgba(255,255,255,0.96);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid var(--ink-border);

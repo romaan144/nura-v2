@@ -356,6 +356,43 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## EL PAPEL DA SUELO (ley, 2026-08-16)
+
+El fundador: *"me sigue pareciendo muy poco seria. Muy blanco todo, con poca
+profundidad y no es agradable a la vista."*
+
+**Medido, y era exacto:**
+
+| | |
+|---|---|
+| fondo de la app | `247, 247, 249` |
+| tarjeta encima (blanco al 72%) | `253, 253, 253` |
+| **diferencia** | **6 puntos** |
+| contraste entre ambas | **1,05** — *(1,0 = indistinguibles)* |
+
+**No es que faltara profundidad: es que no había profundidad que ver.** Una
+superficie blanca al 72% sobre un fondo casi blanco no se apoya en ningún
+sitio, y ninguna sombra arregla eso.
+
+### Tres cambios, uno solo no bastaba
+
+| | antes | ahora |
+|---|---|---|
+| papel | `#F7F7F9` | **`#EDEEF3`** |
+| tarjetas | blanco al **72%** | blanco al **96%** |
+| sombras | difusión al 10% | 18–28%, que **sí se ve** |
+
+**Contraste tarjeta/fondo: 1,05 → 1,15.** Las sombras podían pesar de verdad
+solo una vez que el papel les dio dónde caer.
+
+### Lo que se rompió al oscurecer
+
+`--soft` (#6E6E92) daba **4,51** sobre el papel viejo — justo en el mínimo
+AA. Con el papel nuevo cayó a **4,21** y dejó de cumplir.
+
+Corregido a `#63638A`, que da 4,92 **con margen**. Un token que vive al
+límite se rompe con cualquier cambio de fondo.
+
 ## TODO REDONDO. NADA RECTO. (ley, 2026-08-16)
 
 El fundador, viendo la app entera: *"hay muchas cosas que son planas y en

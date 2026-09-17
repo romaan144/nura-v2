@@ -28,7 +28,7 @@
 }
 
 /* Tabs */
-.tabs { display: flex; gap: 6px; background: rgba(255,255,255,0.72); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); border: 1px solid rgba(255,255,255,0.35); border-radius: var(--radius-md); padding: 4px; box-shadow: var(--shadow-sm); }
+.tabs { display: flex; gap: 6px; background: rgba(255,255,255,0.96); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); border: 1px solid rgba(255,255,255,0.35); border-radius: var(--radius-md); padding: 4px; box-shadow: var(--shadow-sm); }
 .tab { flex: 1; padding: 8px 6px; border: none; border-radius: var(--radius-sm); font-size: var(--text-sm); font-weight: 500; color: var(--ink-secondary); background: transparent; cursor: pointer; transition: all 0.15s; font-family: -apple-system,'Inter',sans-serif; display: flex; align-items: center; justify-content: center; gap: 4px; }
 .tabActive { background: var(--purple); color: white; font-weight: 700; }
 .tabBadge { background: var(--red); color: white; font-size: var(--text-xs); font-weight: 700; border-radius: 6px; padding: 1px 5px; min-width: 14px; display: flex; align-items: center; justify-content: center; }
@@ -47,7 +47,7 @@
    Y el cristal completo, como las conversaciones y las historias: un
    servicio contratado es una relacion en curso, no un recibo. */
 .card {
-  background: rgba(255,255,255,0.72);
+  background: rgba(255,255,255,0.96);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
   backdrop-filter: blur(20px) saturate(160%);
   border: 1px solid rgba(255,255,255,0.6);

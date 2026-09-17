@@ -60,7 +60,7 @@ export default function Responder() {
     width: '100%', maxWidth: 520,
     // Cristal, como el resto del sistema. Esta caja es, casi siempre, la
     // primera impresion de un profesional con Nüra.
-    background: 'rgba(255,255,255,0.72)',
+    background: 'rgba(255,255,255,0.96)',
     WebkitBackdropFilter: 'blur(20px) saturate(160%)',
     backdropFilter: 'blur(20px) saturate(160%)',
     borderRadius: 'var(--radius-md)', border: '1px solid rgba(255,255,255,0.6)',

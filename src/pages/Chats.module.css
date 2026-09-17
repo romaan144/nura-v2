@@ -43,7 +43,7 @@
      Al tocarla se ACERCA en vez de apagarse — abrir una conversacion es
      avanzar hacia una persona. */
   padding: var(--space-14) var(--space-16);
-  background: rgba(255,255,255,0.72);
+  background: rgba(255,255,255,0.96);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
   backdrop-filter: blur(20px) saturate(160%);
   border-radius: var(--radius-md);

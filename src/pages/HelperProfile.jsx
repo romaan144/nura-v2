@@ -568,7 +568,7 @@ function HelperProfileInner() {
             {!verTodaLaObra && publicacionesDe(enrichedH).length > 1 && (
               <button onClick={() => setVerTodaLaObra(true)} style={{
                 width:'100%', marginTop:'var(--space-10)', minHeight:48,
-                background:'rgba(255,255,255,0.72)',
+                background:'rgba(255,255,255,0.96)',
                 WebkitBackdropFilter:'blur(20px) saturate(160%)',
                 backdropFilter:'blur(20px) saturate(160%)',
                 border:'1px solid rgba(255,255,255,0.6)',
@@ -591,7 +591,7 @@ function HelperProfileInner() {
         {(enrichedH.experience?.length > 0 || enrichedH.education?.length > 0) && !verTrayectoria && (
           <button onClick={() => setVerTrayectoria(true)} style={{
             width:'100%', minHeight:52, marginBottom:'var(--space-20)',
-            background:'rgba(255,255,255,0.72)',
+            background:'rgba(255,255,255,0.96)',
             WebkitBackdropFilter:'blur(20px) saturate(160%)',
             backdropFilter:'blur(20px) saturate(160%)',
             border:'1px solid rgba(255,255,255,0.6)',

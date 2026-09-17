@@ -120,7 +120,10 @@ body {
   /* WCAG 2.2 AA: #8888AA daba 3,16 sobre papel y 3,42 sobre blanco, con el
      minimo en 4,5. #6E6E92 es el paso minimo que cumple los dos (4,51 y
      4,87) sin cambiar de familia de color. */
-  --soft:     #6E6E92;
+  /* #6E6E92 daba 4,51 sobre el papel viejo (#F7F7F9) — justo en el minimo.
+     Al oscurecer el papel a #EDEEF3 cayo a 4,21 y dejo de cumplir AA.
+     #63638A da 4,92 sobre el papel nuevo, con margen. */
+  --soft:     #63638A;
   --rule:     #E4E4F0;
   --rule2:    #F0F0FA;
   /* EL PAPEL. Era #F7F6F2, un sepia calido. El fundador lo describio como
@@ -132,13 +135,22 @@ body {
      ya convivian.
      Se queda por debajo del blanco puro a proposito: las tarjetas son
      blancas, y sin un fondo mas oscuro pierden su profundidad. */
-  --paper:    #F7F7F9;   /* Aire: gris neutro, el mismo de las pantallas de carga */
+  /* EL PAPEL, MAS HONDO (2026-08-16). Era #F7F7F9 — casi blanco — y las
+     tarjetas iban en blanco al 72%. Medido: entre una tarjeta y el fondo
+     habia 6 puntos de diferencia y un contraste de 1,05. Practicamente
+     indistinguibles.
+     Por eso el fundador veia la app "muy blanca, con poca profundidad y no
+     agradable a la vista": no habia profundidad que ver. Una superficie
+     blanca sobre un fondo casi blanco no se apoya en ningun sitio.
+     #EDEEF3 da suelo: la tarjeta pasa a 1,16 de contraste y el texto se
+     mantiene en 14,1 sobre el papel, muy por encima del minimo. */
+  --paper:    #EDEEF3;
   /* EL PAPEL TRANSLUCIDO. Las barras que difuminan lo de detras (BottomNav,
      la barra de accion de la ficha) necesitan alfa, asi que no podian usar
      --paper y llevaban el color escrito a mano. Al cambiar el papel se
      quedaron en el sepia antiguo y se vio: una barra de otro color.
      Ahora derivan del mismo sitio: cambiar --paper las mueve tambien. */
-  --paper-rgb:      247, 247, 249;
+  --paper-rgb:      237, 238, 243;
   --paper-veil:     rgba(var(--paper-rgb), 0.93);   /* barras fijas */
   --paper-veil-soft:rgba(var(--paper-rgb), 0.86);   /* barras de accion */
   --white:    #FFFFFF;
@@ -178,9 +190,12 @@ body {
        · --alzado-pulsado la misma mientras el dedo la toca: se ACERCA
        · --alzado-flota   lo que se superpone: modales, hojas, islas
      ══════════════════════════════════════════════════════════════════ */
-  --alzado-reposo:  0 1px 2px rgba(33,29,51,0.04), 0 8px 24px -12px rgba(33,29,51,0.10);
-  --alzado-pulsado: 0 1px 2px rgba(33,29,51,0.04), 0 4px 12px -8px rgba(33,29,51,0.10);
-  --alzado-flota:   0 1px 2px rgba(33,29,51,0.04), 0 16px 40px -16px rgba(33,29,51,0.18);
+  /* Con el papel mas hondo (#EDEEF3) la sombra puede pesar de verdad: antes
+     una difusion al 10% sobre un fondo casi blanco no se veia. Estas si
+     levantan la superficie del papel. */
+  --alzado-reposo:  0 1px 2px rgba(33,29,51,0.05), 0 10px 28px -12px rgba(33,29,51,0.18);
+  --alzado-pulsado: 0 1px 2px rgba(33,29,51,0.05), 0 4px 12px -8px rgba(33,29,51,0.14);
+  --alzado-flota:   0 2px 4px rgba(33,29,51,0.06), 0 20px 48px -16px rgba(33,29,51,0.28);
   --shadow-md: 0 4px 20px rgba(33,29,51,0.10);
   --shadow-lg: 0 12px 48px rgba(13,13,26,0.12);
   --shadow-color: 0 8px 32px rgba(123,47,255,0.18);
@@ -254,7 +269,7 @@ a { text-decoration: none; color: inherit; }
 
 /* ── GLASS MORPHISM UTILITIES ── */
 .glass {
-  background: rgba(255,255,255,0.72);
+  background: rgba(255,255,255,0.96);
   backdrop-filter: blur(24px) saturate(160%);
   -webkit-backdrop-filter: blur(24px) saturate(160%);
   border: 1px solid rgba(255,255,255,0.5);
@@ -357,7 +372,7 @@ body {
 .glassCircle {
   width: 42px; height: 42px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.72);
+  background: rgba(255,255,255,0.96);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid rgba(255,255,255,0.35);
@@ -372,7 +387,7 @@ body {
 /* Cápsula de input */
 .glassCapsule {
   display: flex; align-items: center; gap: 6px;
-  background: rgba(255,255,255,0.72);
+  background: rgba(255,255,255,0.96);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid rgba(255,255,255,0.35);

@@ -268,7 +268,7 @@ export default function Profile() {
           if (!user.avatar) missing.push('una foto')
           return pct < 100 ? (
             <div style={{padding:'var(--space-16)',
-              background:'rgba(255,255,255,0.72)',
+              background:'rgba(255,255,255,0.96)',
               WebkitBackdropFilter:'blur(20px) saturate(160%)',
               backdropFilter:'blur(20px) saturate(160%)',
               borderRadius:'var(--radius-md)',
@@ -345,7 +345,7 @@ export default function Profile() {
             <div style={{padding:'var(--space-16)',
               /* --shadow-md es la sombra de lo que FLOTA (modales, hojas).
                  Esta tarjeta reposa, asi que lleva la del sistema. */
-              background:'rgba(255,255,255,0.72)',
+              background:'rgba(255,255,255,0.96)',
               WebkitBackdropFilter:'blur(20px) saturate(160%)',
               backdropFilter:'blur(20px) saturate(160%)',
               border:'1px solid rgba(123,47,255,0.16)', borderRadius:'var(--radius-md)',

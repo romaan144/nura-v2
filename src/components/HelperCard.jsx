@@ -66,7 +66,7 @@ export default function HelperCard({ helper, onContact, showContact = true, show
         /* Esta es la tarjeta que de verdad se ve al explorar una categoria
            —HelperCardTall solo vive en Home—. Cristal y la reaccion del
            sistema: tocar a una persona es acercarse a ella. */
-        background: 'rgba(255,255,255,0.72)',
+        background: 'rgba(255,255,255,0.96)',
         WebkitBackdropFilter: 'blur(20px) saturate(160%)',
         backdropFilter: 'blur(20px) saturate(160%)',
         border: '1px solid rgba(255,255,255,0.6)',
