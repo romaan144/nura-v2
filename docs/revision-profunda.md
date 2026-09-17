@@ -111,7 +111,28 @@ que entender de qué va **antes de tocar nada**.
 
 **Una app que hace una cosa debe tener una pantalla principal.**
 
-### C · La decisión difícil: qué pasa con Comunidad
+### C · Comunidad · ✅ **FUNDIDA CON LA FICHA** *(2026-08-16)*
+
+Decidido y hecho. **Y resultó que fundir no era construir nada**: la ficha
+de cada profesional **ya mostraba su obra**. Comunidad solo duplicaba lo
+que ya existía, en un sitio donde nadie decide nada.
+
+| | |
+|---|---|
+| la barra | **5 pestañas → 4** |
+| lo único que Comunidad aportaba | el gesto de **publicar** |
+| dónde vive ahora | en el perfil del profesional |
+
+El profesional ve en su perfil: *"¿Has ayudado a alguien? Cuenta un caso que
+hayas resuelto. Aparecerá en tu perfil, donde lo ven quienes están
+decidiendo si escribirte."*
+
+**La ruta `/feed` sigue existiendo** — se llega desde una publicación, no
+desde una pestaña. Nada se borra; deja de ocupar un sitio que no merecía.
+
+---
+
+### C · La decisión, en su día
 
 Comunidad son 8,4 pantallas, 91 acciones, y **el sitio donde los
 profesionales publican su trabajo**. Es la pieza más grande que no sirve a

@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Search, Compass, MessageCircle, User, Rss } from 'lucide-react'
+import { Search, Compass, MessageCircle, User } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import styles from './BottomNav.module.css'
 
@@ -7,7 +7,11 @@ const TABS = [
   { path: '/',        icon: Search,        label: 'Buscar'     },
   { path: '/explore', icon: Compass,       label: 'Profesionales' },
   { path: '/chats',   icon: MessageCircle, label: 'Chats'    },
-  { path: '/feed',    icon: Rss,           label: 'Comunidad'     },
+  /* COMUNIDAD, RETIRADA DE LA BARRA (2026-08-16). Era un muro de 91
+     acciones y 8,4 pantallas que no ayudaba a nadie a encontrar ayuda, y
+     sus publicaciones ya vivian en la ficha de cada profesional, que es
+     donde sirven. La ruta /feed sigue existiendo: se llega desde una
+     publicacion, no desde una pestaña. Ver docs/revision-profunda.md. */
   { path: '/profile', icon: User,          label: 'Perfil'   },
 ]
 

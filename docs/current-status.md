@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (⚠ revisión profunda · decisiones pendientes)
+**Última actualización:** 2026-08-16 (Comunidad fundida · barra 5→4)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -728,8 +728,9 @@ sitio.
 ### Decisiones pendientes del fundador
 
 1. **La promesa** — qué dice Nüra que hace, con ejemplos concretos
-2. **Comunidad** — retirar / fundir con la ficha / mantener *(recomendado:
-   fundir)*
+2. ~~**Comunidad**~~ ✅ **fundida con la ficha**. La barra baja de 5 a 4
+   pestañas. Resultó que la ficha **ya mostraba la obra** de cada
+   profesional: Comunidad solo duplicaba.
 3. **Dos pestañas** en vez de cinco — varias sesiones, después de decidir 2
 
 **No seguir puliendo.** Ya está pulido y no ha servido.

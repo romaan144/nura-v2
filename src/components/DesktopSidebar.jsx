@@ -1,6 +1,6 @@
 import { avatarDe } from '../utils/avatar'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Search, Compass, MessageCircle, User, Rss, UserCheck } from 'lucide-react'
+import { Search, Compass, MessageCircle, User, UserCheck } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import styles from './DesktopSidebar.module.css'
 
@@ -16,7 +16,6 @@ export default function DesktopSidebar() {
     { path: '/', icon: <Search size={20} />, label: 'Nüra' },
     { path: '/explore', icon: <Compass size={20} />, label: 'Explorar' },
     { path: '/chats', icon: <MessageCircle size={20} />, label: 'Chats', badge: totalUnreadChats },
-    { path: '/feed', icon: <Rss size={20} />, label: 'Feed' },
     { path: '/siguiendo', icon: <UserCheck size={20} />, label: 'Siguiendo' },
     { path: '/profile', icon: <User size={20} />, label: 'Mi perfil' },
   ]

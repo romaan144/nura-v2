@@ -524,6 +524,32 @@ export default function Profile() {
           )}
         </div>
 
+        {/* ── PUBLICAR: el gesto que vivia en Comunidad ──────────────
+            Comunidad se retira de la barra (ver docs/revision-profunda.md):
+            era un muro de 91 acciones y 8,4 pantallas que no ayudaba a nadie
+            a encontrar ayuda, y las publicaciones ya vivian en la ficha de
+            cada profesional, que es donde sirven —cuando estas decidiendo si
+            le escribes—.
+            Lo unico que Comunidad aportaba y la ficha no era el gesto de
+            PUBLICAR. Vive aqui ahora: en el perfil de quien publica. */}
+        {user.isHelper && (
+          <div className={styles.evolutionZone} style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 200ms forwards`}}>
+            <p className={styles.evolutionQ}>¿Has ayudado a alguien?</p>
+            <p className={styles.evolutionSub}>
+              Cuenta un caso que hayas resuelto. Aparecerá en tu perfil, donde lo ven quienes están decidiendo si escribirte.
+            </p>
+            <button onClick={() => setComposerOpen(true)} style={{
+              width:'100%', minHeight:48, marginTop:'var(--space-12)',
+              background:'var(--purple)', color:'white', border:'none',
+              borderRadius:'var(--radius-full)', fontSize:'var(--text-sm)',
+              fontWeight:700, fontFamily:'inherit', cursor:'pointer',
+            }}>
+              Publicar un caso
+            </button>
+          </div>
+        )}
+        {composerOpen && <ObraComposer onClose={() => setComposerOpen(false)} />}
+
         {/* ── ZONA 4: EVOLUCIÓN ─────────────────────────── */}
 
         {!user.isHelper && (
