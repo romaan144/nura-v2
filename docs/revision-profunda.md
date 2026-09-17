@@ -128,7 +128,35 @@ que entender de qué va **antes de tocar nada**.
 
 **Y nadie se llama "Usuario".** Si no da su nombre, Nüra no lo usa.
 
-### B · De cinco pestañas a dos
+### B · Las pestañas · ✅ **DE CINCO A TRES** *(2026-08-16)*
+
+| | |
+|---|---|
+| antes | Buscar · Profesionales · Chats · Comunidad · Perfil |
+| **ahora** | **Buscar · Chats · Perfil** |
+
+**Comunidad** se fundió con la ficha *(ver C)*. **Profesionales** era una
+segunda puerta a lo mismo: su buscador **ya mandaba a Inicio**.
+
+Pero sí aportaba algo real —**ver qué hay sin saber qué pedir**, con 13
+categorías y sus especialidades— y eso no se pierde. Vive bajo la cápsula
+de Inicio:
+
+> *"¿No sabes qué buscar? Mira todo lo que resuelvo"*
+
+Está donde alguien lo busca —cuando se queda en blanco mirando la cápsula—
+**sin ocupar pantalla**. La ruta `/explore` sigue viva; se llega desde ahí,
+no desde una pestaña.
+
+Medido: 8px de aire entre el enlace y la barra, sin solape.
+
+**Quedan tres pestañas en vez de las dos propuestas**: Perfil sigue en la
+barra porque retirarlo a un avatar es un cambio de navegación que merece su
+propia decisión, no un efecto colateral de este.
+
+---
+
+### B · La propuesta, en su día
 
 | ahora | propuesto |
 |---|---|

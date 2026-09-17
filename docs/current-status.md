@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (la promesa reescrita · onboarding 4→2)
+**Última actualización:** 2026-08-16 (la barra: 5 pestañas → 3)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -733,7 +733,9 @@ sitio.
 2. ~~**Comunidad**~~ ✅ **fundida con la ficha**. La barra baja de 5 a 4
    pestañas. Resultó que la ficha **ya mostraba la obra** de cada
    profesional: Comunidad solo duplicaba.
-3. **Dos pestañas** en vez de cinco — varias sesiones, después de decidir 2
+3. ~~**Dos pestañas**~~ ✅ **de cinco a TRES**: Buscar · Chats · Perfil. El
+   catálogo de categorías vive bajo la cápsula de Inicio. *(Perfil sigue en
+   la barra: pasarlo a un avatar merece su propia decisión.)*
 
 **No seguir puliendo.** Ya está pulido y no ha servido.
 

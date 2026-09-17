@@ -1367,6 +1367,25 @@ export default function Home() {
               </button>
           }
         </div>
+
+        {/* ── PARA QUIEN NO SABE QUE ESCRIBIR ────────────────────────────
+            Profesionales deja de ser una pestaña (ver docs/revision-profunda.md):
+            era una segunda puerta a la misma cosa — su buscador ya mandaba
+            aqui—. Pero SI aportaba algo real: ver que hay sin saber que
+            pedir, con 13 categorias y sus especialidades.
+            Eso no se pierde. Vive aqui, bajo la capsula, donde alguien lo
+            busca cuando se queda en blanco. Sin ocupar pantalla. */}
+        {nuraChatMessages.length <= 1 && (
+          <button onClick={() => navigate('/explore')} style={{
+            alignSelf:'center', marginTop:'var(--space-10)',
+            background:'none', border:'none', cursor:'pointer',
+            fontSize:'var(--text-sm)', fontWeight:600, color:'var(--purple)',
+            fontFamily:'inherit', padding:'var(--space-8) var(--space-12)',
+            pointerEvents:'all',
+          }}>
+            ¿No sabes qué buscar? Mira todo lo que resuelvo
+          </button>
+        )}
       </div>
 
       {showGate && <RegisterGate reason={gateReason} onClose={() => setShowGate(false)} />}

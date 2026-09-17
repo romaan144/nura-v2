@@ -1,11 +1,15 @@
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Search, Compass, MessageCircle, User } from 'lucide-react'
+import { Search, MessageCircle, User } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import styles from './BottomNav.module.css'
 
 const TABS = [
   { path: '/',        icon: Search,        label: 'Buscar'     },
-  { path: '/explore', icon: Compass,       label: 'Profesionales' },
+  /* PROFESIONALES, RETIRADA DE LA BARRA (2026-08-16). Era una segunda
+     puerta a lo mismo: su buscador ya mandaba a Inicio. Lo que si aportaba
+     —ver que hay sin saber que pedir— vive ahora bajo la capsula de Inicio,
+     con el enlace "¿No sabes que buscar?". La ruta /explore sigue viva.
+     Barra final: Nüra · Chats · Perfil. */
   { path: '/chats',   icon: MessageCircle, label: 'Chats'    },
   /* COMUNIDAD, RETIRADA DE LA BARRA (2026-08-16). Era un muro de 91
      acciones y 8,4 pantallas que no ayudaba a nadie a encontrar ayuda, y
