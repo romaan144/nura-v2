@@ -80,7 +80,13 @@ function ResultsBlock({ results }) {
 function getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas) {
   const hour = new Date().getHours()
   const greeting = hour < 14 ? 'Buenos días' : hour < 21 ? 'Buenas tardes' : 'Buenas noches'
-  const firstName = user?.name?.split(' ')?.[0] || user?.name
+  const firstName = user?.name?.split(' ')?.[0] || user?.name || ''
+  /* NADIE SE LLAMA "USUARIO", y tampoco se saluda con una coma colgando.
+     El onboarding inventaba el nombre "Usuario" cuando alguien saltaba ese
+     paso — el primer saludo de un producto que va de calidez. Retirado.
+     Pero entonces las siete plantillas `${greeting}, **${firstName}**.`
+     producian "Buenas tardes, .". Se resuelve aqui, una vez, para todas. */
+  const saludo = firstName ? `${greeting}, **${firstName}**.` : `${greeting}.`
 
   if (!user) return [
     `Hola. Soy **Nüra**.`,
@@ -97,7 +103,7 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
   if (citaProxima) {
     const hf = citaProxima.helperName?.split(' ')?.[0] || citaProxima.helperName
     return [
-      `${greeting}, **${firstName}**.`,
+      saludo,
       citaProxima.personaLabel
         ? `El ${citaProxima.label}, **${hf}** está con ${citaProxima.personaLabel}. Todo listo 💜`
         : `El ${citaProxima.label} tienes tu primera cita con **${hf}**. Todo listo 💜`
@@ -112,7 +118,7 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
     const linkedPersona = (personas || []).find(p => (p.contactedHelperIds || []).includes(last.id))
     if (linkedPersona) {
       return [
-        `${greeting}, **${firstName}**.`,
+        saludo,
         `¿Cómo está ${linkedPersona.label}? Me alegra que **${helperFirst}** esté con vosotros. Si necesitas algo más, aquí estoy.`
       ]
     }
@@ -123,12 +129,12 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
     )
     if (relatedSearch) {
       return [
-        `${greeting}, **${firstName}**.`,
+        saludo,
         `¿Cómo va todo con **${helperFirst}**? ¿Necesitas algo más para lo que buscabas, o hay algo nuevo en lo que pueda ayudarte?`
       ]
     }
     return [
-      `${greeting}, **${firstName}**.`,
+      saludo,
       `¿Cómo está yendo todo con **${helperFirst}**? Cuéntame si puedo ayudarte con algo más.`
     ]
   }
@@ -139,7 +145,7 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
     const last = pendingContacts[pendingContacts.length - 1]
     const helperFirst = last.name?.split(' ')?.[0] || last.name
     return [
-      `${greeting}, **${firstName}**.`,
+      saludo,
       `¿Pudiste resolver lo que necesitabas con **${helperFirst}**? ¿O buscamos otra persona?`
     ]
   }
@@ -149,7 +155,7 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
     const p = personas[personas.length - 1]
     if (!(p.contactedHelperIds || []).length) {
       return [
-        `${greeting}, **${firstName}**.`,
+        saludo,
         `La última vez me hablaste de ${p.label}. ¿Cómo está? ¿Buscamos a alguien que pueda ayudar?`
       ]
     }
@@ -159,7 +165,7 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
   if (user.isHelper) {
     const sig = proSignals(user.name)
     return [
-      `${greeting}, **${firstName}**.`,
+      saludo,
       `Mientras no mirabas, **${sig.vistasHoy} ${sig.vistasHoy === 1 ? 'persona vio' : 'personas vieron'}** tu perfil hoy y hubo **${sig.busquedasSemana} búsquedas** en tu zona esta semana. Tu escaparate está activo ✨ Y si tú necesitas ayuda, aquí estoy.`
     ]
   }
@@ -180,7 +186,7 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
   // A quien ya conoce la casa no hace falta explicarsela.
   const yaTeConoce = (searchHistory || []).length > 0
   return [
-    `${greeting}, **${firstName}**.`,
+    saludo,
     yaTeConoce
       ? (hour < 12 ? '¿En qué puedo ayudarte esta mañana?' : hour < 18 ? '¿Qué necesitas hoy?' : '¿Qué necesitas esta noche?')
       : 'Cuéntame qué necesitas y te encuentro a la persona.',

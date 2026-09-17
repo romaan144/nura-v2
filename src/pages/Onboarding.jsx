@@ -4,30 +4,35 @@ import { useUser } from '../context/UserContext'
 import { ArrowRight, MessageCircle, Brain, Users, Sparkles, Shield, Zap } from 'lucide-react'
 import styles from './Onboarding.module.css'
 
+// ── LA PROMESA ───────────────────────────────────────────────────────────
+//
+// Antes eran CUATRO pantallas antes de dejar hacer nada, y la primera decia:
+// "La IA que conecta personas reales · Cuéntale a Nüra lo que necesitas con
+// tus palabras."
+//
+// Suena bien y NO DICE QUE HACE. "Conecta personas reales" puede ser una red
+// social, una app de citas o un foro. El fundador lo resumio: "la gente al
+// entrar no sabe de que va".
+//
+// Ahora DOS pantallas, y la primera nombra cosas concretas. Un fontanero.
+// Alguien que cuide a tu madre. Un profesor para tu hijo. Nadie entiende
+// "profesional ideal"; todo el mundo entiende "se me ha roto la caldera".
+//
+// Las dos que se retiran —verificacion de identidad y presencial/online— no
+// desaparecen: se cuentan cuando importan, en la ficha de cada profesional,
+// no antes de que nadie sepa para que sirve la app.
 const STEPS = [
   {
     Visual: Sparkles,
-    eyebrow: 'BIENVENIDO',
-    title: 'La IA que conecta\npersonas reales',
-    desc: 'Cuéntale a Nüra lo que necesitas con tus palabras. En segundos encuentra al profesional ideal cerca de ti.',
-  },
-  {
-    Visual: Shield,
-    eyebrow: 'PERFILES VERIFICADOS',
-    title: 'Identidad real,\nresultados reales',
-    desc: 'Cada profesional verifica su identidad con DNI. El perfil lo construye Nüra — no el propio profesional.',
-  },
-  {
-    Visual: Zap,
-    eyebrow: 'CERCANO A TI',
-    title: 'Presencial o online,\ncomo tú necesites',
-    desc: 'Desde cuidadoras de mayores a técnicos de calderas. En tu zona, cuando lo necesites.',
+    eyebrow: 'HOLA',
+    title: '¿A quién llamarías\npara esto?',
+    desc: 'Se te ha roto la caldera. Tu madre necesita a alguien que la cuide. Tu hijo no pronuncia bien. Cuéntamelo con tus palabras y te digo a quién llamar.',
   },
   {
     Visual: null,
-    eyebrow: 'ÚLTIMA PREGUNTA',
+    eyebrow: 'EMPECEMOS',
     title: '¿Qué necesitas?',
-    desc: 'Cuéntaselo a Nüra ahora y tendrá los resultados listos cuando entres.',
+    desc: 'Escríbelo como se lo contarías a un amigo. Ya lo entiendo yo.',
     isIntentCapture: true,
   },
 ]
@@ -51,11 +56,15 @@ export default function OnboardingPage() {
     // Home LEE `nura_just_onboarded` para dar el saludo con el nombre —el
     // "primer momento magico"— y nadie lo escribia: el saludo estaba
     // programado y no se disparaba jamas.
-    try { sessionStorage.setItem('nura_just_onboarded', name.trim() || 'Usuario') } catch { /* sin almacenamiento */ }
+    try { sessionStorage.setItem('nura_just_onboarded', name.trim()) } catch { /* sin almacenamiento */ }
     // MISMA CUENTA POR LAS TRES PUERTAS. Login y RegisterHelper guardaban
     // `joined`; esta no. Quien entraba por el onboarding se quedaba sin el
     // "En Nüra desde marzo" de su perfil, sin que nadie lo hubiera decidido.
-    login({ name: name.trim() || 'Usuario', isHelper, joined: new Date().toISOString() })
+    // NADIE SE LLAMA "USUARIO". Si alguien salta el paso del nombre, la app
+    // le saludaba con "Buenos dias, Usuario" — el primer saludo de un
+    // producto que va de calidez humana. Sin nombre, Nüra no inventa uno:
+    // saluda sin el.
+    login({ name: name.trim(), isHelper, joined: new Date().toISOString() })
     if (intentQuery.trim()) {
       try { sessionStorage.setItem('nura_intent_query', intentQuery.trim()) } catch {}
     }

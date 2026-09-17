@@ -83,7 +83,40 @@ un porcentaje de perfil.
 
 ## Lo que propongo
 
-### A · Nüra dice lo que hace, en una frase
+### A · La promesa · ✅ **REESCRITA** *(2026-08-16)*
+
+**Antes**: cuatro pantallas antes de dejar hacer nada, y la primera decía
+*"La IA que conecta personas reales"*. Suena bien y **no dice qué hace** —
+puede ser una red social, una app de citas o un foro.
+
+**Ahora**, dos pantallas, y la primera nombra cosas concretas:
+
+> **¿A quién llamarías para esto?**
+> *Se te ha roto la caldera. Tu madre necesita a alguien que la cuide. Tu
+> hijo no pronuncia bien. Cuéntamelo con tus palabras y te digo a quién
+> llamar.*
+
+Nadie entiende *"profesional ideal"*. Todo el mundo entiende *"se me ha roto
+la caldera"*.
+
+Las dos pantallas retiradas —verificación de identidad y presencial/online—
+**no desaparecen**: se cuentan en la ficha de cada profesional, cuando
+importan, no antes de que nadie sepa para qué sirve la app.
+
+**Pasos hasta entrar: 4 → 3.**
+
+### Y nadie se llama "Usuario"
+
+Si alguien saltaba el paso del nombre, el onboarding **inventaba uno**:
+*"Buenos días, Usuario"*. El primer saludo de un producto que va de calidez
+humana.
+
+Retirado. Y al quitarlo aparecieron **ocho plantillas** que producían
+*"Buenas tardes, ."* con la coma colgando — resueltas en un solo sitio.
+
+---
+
+### A · La propuesta, en su día
 
 Cambiar la promesa por una que nombre cosas concretas:
 

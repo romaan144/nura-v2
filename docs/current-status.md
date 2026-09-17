@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (Comunidad fundida · barra 5→4)
+**Última actualización:** 2026-08-16 (la promesa reescrita · onboarding 4→2)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -727,7 +727,9 @@ sitio.
 
 ### Decisiones pendientes del fundador
 
-1. **La promesa** — qué dice Nüra que hace, con ejemplos concretos
+1. ~~**La promesa**~~ ✅ **reescrita**. *"¿A quién llamarías para esto? Se
+   te ha roto la caldera…"*. Onboarding de 4 pantallas a 2. Y nadie se
+   llama "Usuario".
 2. ~~**Comunidad**~~ ✅ **fundida con la ficha**. La barra baja de 5 a 4
    pestañas. Resultó que la ficha **ya mostraba la obra** de cada
    profesional: Comunidad solo duplicaba.

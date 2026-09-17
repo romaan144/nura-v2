@@ -78,7 +78,10 @@ console.log('\n── La persona que busca ayuda ──')
   await p.evaluate(() => { localStorage.clear(); sessionStorage.clear() })
   await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
   await espera(2400)
-  paso('el onboarding recibe', /La IA que conecta|BIENVENIDO/.test(await texto(p)))
+  // Se busca una SEÑAL, no el texto exacto: la promesa cambio de "La IA que
+  // conecta personas reales" a "¿A quien llamarias para esto?" y la prueba
+  // fallo sin que el producto tuviera nada roto.
+  paso('el onboarding recibe', /llamarías|Cuéntamelo|HOLA/.test(await texto(p)))
 
   await tocar(p, /Saltar/)
   await espera(1600)
