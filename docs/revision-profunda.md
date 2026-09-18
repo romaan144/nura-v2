@@ -128,7 +128,24 @@ que entender de qué va **antes de tocar nada**.
 
 **Y nadie se llama "Usuario".** Si no da su nombre, Nüra no lo usa.
 
-### B3 · La frase del enlace *(2026-08-16)*
+### B3 · La frase del enlace · **"Buscar profesionales"** *(2026-08-16)*
+
+Decisión del fundador, tras dos intentos míos:
+
+| | problema |
+|---|---|
+| *"Ver a quien puedes encontrar"* | sin tilde en *quién*, y sonaba a catálogo de personas |
+| *"Ver con qué te puedo ayudar"* | correcta, pero indirecta |
+| **"Buscar profesionales"** | ← se queda |
+
+**El nombre llano gana.** Quien llega ahí sabe exactamente lo que va a ver,
+sin que la app tenga que ser ingeniosa. Es la misma lección de la promesa —
+nadie entiende *"profesional ideal"*, todo el mundo entiende *"fontanero"*—
+aplicada un paso más allá: a veces lo claro **es** el nombre de la cosa.
+
+---
+
+### B3 · El razonamiento original
 
 *"Ver a quien puedes encontrar"* tenía **dos problemas**:
 

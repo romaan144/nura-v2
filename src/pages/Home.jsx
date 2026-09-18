@@ -1395,14 +1395,12 @@ export default function Home() {
             fontFamily:'inherit', pointerEvents:'all',
           }}>
             <Compass size={15} color="var(--purple)" style={{flexShrink:0}} />
-            {/* "Ver a quien puedes encontrar" tenia dos problemas: le
-                faltaba la tilde de "quién" —interrogativo indirecto— y
-                sonaba a catalogo de personas.
-                Al otro lado no hay una lista de gente: hay NECESIDADES
-                —"Cuidar mi salud", "Arreglar algo en casa", "Cuidar a
-                alguien querido"—. La frase nombra lo que de verdad hay. */}
+            {/* Decision del fundador. Paso por "Ver a quien puedes
+                encontrar" —con la tilde de "quién" perdida— y por "Ver con
+                qué te puedo ayudar". Se queda en el nombre llano: quien
+                llega aqui sabe lo que va a ver. */}
             <span style={{fontSize:'var(--text-sm)', fontWeight:600, color:'var(--purple)'}}>
-              Ver con qué te puedo ayudar
+              Buscar profesionales
             </span>
           </button>
         )}
