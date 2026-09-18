@@ -128,6 +128,25 @@ que entender de qué va **antes de tocar nada**.
 
 **Y nadie se llama "Usuario".** Si no da su nombre, Nüra no lo usa.
 
+### B5 · El botón se ve *(2026-08-16)*
+
+El fundador: *"con este color y forma está muy poco claro, debe ser más
+visible."*
+
+**Un círculo gris con una brújula no dice nada**: nadie sabe qué hace hasta
+tocarlo. Ahora lleva el morado de Nüra y **la palabra escrita**.
+
+Dos ajustes que salieron al medir:
+
+| | |
+|---|---|
+| *"Profesionales"* | **138px** — comprimía el logo de la barra |
+| *"Buscar"* | corto, pero **confunde**: la cápsula de abajo también busca |
+| **"Ver todos"** | 107px, las tres columnas equilibradas |
+
+Es la **única acción de marca de la barra**, así que el morado no compite
+con nada.
+
 ### B4 · El botón, siempre a mano *(2026-08-16)*
 
 El fundador: *"cuando haces una búsqueda ese botón desaparece, debería estar

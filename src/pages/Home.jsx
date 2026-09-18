@@ -1150,9 +1150,28 @@ export default function Home() {
             la izquierda. Mismo circulo de 42px que el boton de reiniciar,
             asi que no añade un lenguaje nuevo a la barra. */}
         <div style={{display:'flex', alignItems:'center', pointerEvents:'all'}}>
-          <button className={styles.resetBubble} onClick={() => navigate('/explore')}
-            aria-label="Buscar profesionales" title="Buscar profesionales">
-            <Compass size={18} color="var(--ink-secondary)" />
+          <button onClick={() => navigate('/explore')}
+            aria-label="Buscar profesionales"
+            style={{
+              /* UN CIRCULO GRIS CON UNA BRUJULA NO DICE NADA: nadie sabe
+                 que hace hasta tocarlo. Con el morado de Nüra y la palabra
+                 escrita, se lee de un vistazo. Es la unica accion de marca
+                 de la barra, asi que no compite con nada. */
+              /* Medido: con "Profesionales" el boton ocupaba 138px y
+                 comprimia el logo de la barra. Y "Buscar" a secas confunde:
+                 la capsula de abajo tambien busca. "Ver todos" es corto y
+                 dice lo que hace — abre la lista entera. */
+              display:'flex', alignItems:'center', gap:'var(--space-6)',
+              height:42, padding:'0 var(--space-12)',
+              background:'var(--purple)', color:'white', border:'none',
+              borderRadius:'var(--radius-full)',
+              boxShadow:'0 1px 2px rgba(33,29,51,0.05), 0 6px 16px -8px rgba(123,47,255,0.45)',
+              fontSize:'var(--text-sm)', fontWeight:700, fontFamily:'inherit',
+              cursor:'pointer', whiteSpace:'nowrap',
+              WebkitTapHighlightColor:'transparent',
+            }}>
+            <Compass size={16} />
+            Ver todos
           </button>
         </div>
 
