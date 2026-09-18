@@ -85,7 +85,41 @@ tiene oficio que mostrar.
 Es el tipo de resto que deja una pantalla que nadie mira entera — como la
 numeración de zonas rota (1, 2, 4, 5) anotada en el paso 1.
 
-### Paso 3 · Una cosa por bloque ⬅ **SIGUIENTE**
+### Paso 3 · Una cosa por bloque ✅ *(2026-08-16)*
+
+**Profesional: 15 → 12 bloques.**
+
+### Marta veía el perfil de un usuario
+
+El bloque *"Tu actividad · **Aún no has buscado a nadie** · Cuéntame qué
+necesitas y te busco a la persona"* **no comprobaba el rol**.
+
+Una profesional entraba en su propio perfil y la app le hablaba como si
+buscara ayuda — cuando ella la ofrece. Ahora ese hueco vacío es solo del
+usuario, y el título cambia: *"Tus cosas"* para ella, *"Tu actividad"* para
+él.
+
+*(Los enlaces a Mis servicios y Siguiendo se quedan para los dos: esos sí
+sirven a ambos.)*
+
+### Tres botones para publicar
+
+Había **tres** en la misma pantalla:
+
+| dónde | qué pasó |
+|---|---|
+| *"Así te ven quienes te necesitan"* | **se queda** — junto a la vista previa de su ficha |
+| *"¿Has ayudado a alguien?"* | retirado — **lo añadí yo** al fundir Comunidad, duplicando uno que ya existía |
+| *"Tu semana"* → *Publicar en tu obra* | ahora *"Ver cómo te ven"* |
+
+El de *"Tu semana"* no era un descuido: su acción depende del contexto y,
+sin nada pendiente, caía en publicar. Pero **cuando no hay nada pendiente lo
+útil es ver cómo te ven** — de ahí sale el impulso de publicar, no al revés.
+
+**Dos botones para lo mismo no es más fácil de encontrar: es una pantalla
+que no sabe cuál es el gesto.**
+
+### Paso 4 · Las subpantallas ⬅ **SIGUIENTE**
 
 Lo que más daña y lo más rápido. El perfil deja de abrir con una nota.
 
@@ -109,7 +143,7 @@ Coherencia con lo ya hecho: `HelperProfile` ya resolvió esto.
 Quince bloques con fondo en el perfil del profesional. Cada uno compite con
 el siguiente. Fundir lo que es lo mismo y retirar lo que no sirve a nadie.
 
-### Paso 4 · Las subpantallas
+### Paso 4 · detalle
 
 `Mis servicios` y `Siguiendo` se llegan desde aquí y tienen su propio
 diseño. Revisar que sean la misma app: título, márgenes, tarjetas.

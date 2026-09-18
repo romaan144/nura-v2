@@ -37,7 +37,12 @@ function buildSemana({ contactedHelpers, citas, misObras, obraPropia }) {
     ? { txt: 'Responder mensajes', to: '/chats' }
     : proximas.length > 0
     ? { txt: 'Ver la cita', to: '/chats' }
-    : { txt: 'Publicar en tu obra', to: null }
+    // "Publicar en tu obra" ya vive abajo, en "Así te ven quienes te
+    // necesitan", junto a la vista previa de su ficha. Repetirlo aqui daba
+    // DOS botones identicos en la misma pantalla. Cuando no hay nada
+    // pendiente, lo util es ver como le ven: es de donde sale el impulso de
+    // publicar, no al reves.
+    : { txt: 'Ver cómo te ven', to: null }
   return { frase, abiertas, citas: proximas.length, piezas, accion }
 }
 
@@ -483,14 +488,25 @@ export default function Profile() {
           )
         })()}
 
-        {/* ── ZONA 2: ACTIVIDAD HUMANA ──────────────────── */}
+        {/* ── LO QUE HAS BUSCADO ─────────────────────────────────────
+            Este bloque no comprobaba el rol: una profesional veia "Tu
+            actividad · Aún no has buscado a nadie · Cuéntame qué necesitas
+            y te busco a la persona" en SU propio perfil. Marta no busca
+            ayuda, la ofrece — y la app le hablaba como si fuera al reves.
+            Un profesional puede buscar tambien, claro, pero entonces tendra
+            actividad: lo que no tiene sentido es ofrecerle el hueco vacio
+            del usuario cuando lo suyo es otra cosa. */}
         <div className={styles.activityZone} style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 80ms forwards`}}>
-          <p className={styles.zoneLabel}>Tu actividad</p>
+          <p className={styles.zoneLabel}>{user.isHelper ? 'Tus cosas' : 'Tu actividad'}</p>
 
           {/* Sin actividad NO se muestran ceros: un cero grande no informa,
               solo rellena. Se dice que hacer, que es lo que falta cuando
               alguien acaba de entrar y no sabe por donde empezar. */}
-          {searchCount === 0 && chatCount === 0 ? (
+          {/* El hueco vacio del usuario, SOLO para el usuario. Una
+              profesional veia "Aún no has buscado a nadie · Cuéntame qué
+              necesitas y te busco a la persona" en su propio perfil: la app
+              le hablaba como si ella buscara ayuda, cuando la ofrece. */}
+          {searchCount === 0 && chatCount === 0 && !user.isHelper ? (
             <div style={{
               background: 'var(--surface-subtle)', borderRadius: 'var(--radius-md)',
               padding: 'var(--space-20) var(--space-16)', textAlign: 'center',
@@ -562,22 +578,12 @@ export default function Profile() {
             le escribes—.
             Lo unico que Comunidad aportaba y la ficha no era el gesto de
             PUBLICAR. Vive aqui ahora: en el perfil de quien publica. */}
-        {user.isHelper && (
-          <div className={styles.evolutionZone} style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 200ms forwards`}}>
-            <p className={styles.evolutionQ}>¿Has ayudado a alguien?</p>
-            <p className={styles.evolutionSub}>
-              Cuenta un caso que hayas resuelto. Aparecerá en tu perfil, donde lo ven quienes están decidiendo si escribirte.
-            </p>
-            <button onClick={() => setComposerOpen(true)} style={{
-              width:'100%', minHeight:48, marginTop:'var(--space-12)',
-              background:'var(--purple)', color:'white', border:'none',
-              borderRadius:'var(--radius-full)', fontSize:'var(--text-sm)',
-              fontWeight:700, fontFamily:'inherit', cursor:'pointer',
-            }}>
-              Publicar un caso
-            </button>
-          </div>
-        )}
+        {/* AQUI HABIA UN SEGUNDO BOTON DE PUBLICAR, añadido al fundir
+            Comunidad. Duplicaba el que ya existia arriba, en "Así te ven
+            quienes te necesitan" — que esta mejor situado, junto a la vista
+            previa de su ficha.
+            Dos botones para lo mismo no es mas facil de encontrar: es una
+            pantalla que no sabe cual es el gesto. */}
         {composerOpen && <ObraComposer onClose={() => setComposerOpen(false)} />}
 
         {/* ── ZONA 4: EVOLUCIÓN ─────────────────────────── */}
