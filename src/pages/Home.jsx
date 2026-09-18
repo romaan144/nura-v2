@@ -1143,7 +1143,18 @@ export default function Home() {
 
       {/* Floating top — three independent bubbles */}
       <div className={styles.floatTop} ref={topRef}>
-        <div />
+        {/* ── BUSCAR PROFESIONALES, SIEMPRE A MANO ─────────────────────
+            El enlace de abajo desaparece al buscar — y es justo entonces
+            cuando puede hacer falta: si Nüra no acierta, quieres mirar tu.
+            Aqui arriba esta siempre, en el hueco que el logo dejaba vacio a
+            la izquierda. Mismo circulo de 42px que el boton de reiniciar,
+            asi que no añade un lenguaje nuevo a la barra. */}
+        <div style={{display:'flex', alignItems:'center', pointerEvents:'all'}}>
+          <button className={styles.resetBubble} onClick={() => navigate('/explore')}
+            aria-label="Buscar profesionales" title="Buscar profesionales">
+            <Compass size={18} color="var(--ink-secondary)" />
+          </button>
+        </div>
 
         <div className={styles.logoBubble}>
           <img src="/logo-text.png" alt="Nüra" className={styles.headerLogo} />

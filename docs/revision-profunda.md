@@ -128,6 +128,28 @@ que entender de qué va **antes de tocar nada**.
 
 **Y nadie se llama "Usuario".** Si no da su nombre, Nüra no lo usa.
 
+### B4 · El botón, siempre a mano *(2026-08-16)*
+
+El fundador: *"cuando haces una búsqueda ese botón desaparece, debería estar
+arriba de manera fija."*
+
+Y es justo cuando puede hacer falta: **si Nüra no acierta, quieres poder
+mirar tú**.
+
+Ahora hay **dos entradas al mismo sitio**, y las dos tienen su momento:
+
+| dónde | cuándo sirve |
+|---|---|
+| bajo la cápsula, con su frase | al llegar, cuando no sabes qué escribir |
+| arriba, círculo fijo con brújula | **siempre**, sobre todo si la recomendación no convence |
+
+El de arriba ocupa **el hueco que el logo dejaba vacío a la izquierda**, y
+usa el mismo círculo de 42px que el botón de reiniciar: no añade un lenguaje
+nuevo a la barra.
+
+Verificado: presente antes y después de buscar, en `y=14`, y accesibilidad
+AA limpia.
+
 ### B3 · La frase del enlace · **"Buscar profesionales"** *(2026-08-16)*
 
 Decisión del fundador, tras dos intentos míos:
