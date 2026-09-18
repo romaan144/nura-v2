@@ -356,6 +356,42 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## TRES BURBUJAS IGUALES NO SON UNA JERARQUÍA (ley, 2026-08-16)
+
+El fundador: *"no me gusta que ahora hay como tres burbujas parecidas: la de
+escribir, la del botón de profesionales y la barra de menú."*
+
+**Error mío, y reciente**: al hacer el enlace al catálogo más visible lo
+convertí en tarjeta. Resultado medido: **tres bloques blancos de ~60px
+apilados** en los últimos 220px de pantalla, con el mismo fondo y casi la
+misma altura.
+
+| | antes | ahora |
+|---|---|---|
+| cápsula de escribir | superficie blanca, 62px | igual |
+| enlace al catálogo | **superficie blanca, 58px** | **una frase, 32px** |
+| barra de navegación | superficie blanca, 62px | igual |
+
+**Hacer algo más visible no es darle una caja.** El enlace es *subordinado*
+a la cápsula: quien no sabe qué escribir mira ahí después de mirar el campo.
+Darle el mismo peso visual que a la acción principal lo igualaba con ella.
+
+Ahora es texto morado con su brújula, sin fondo ni sombra. **El peso lo da
+el texto, no la caja.**
+
+**Regla**: dos superficies del mismo tipo pueden convivir. Tres apiladas son
+una lista, y una lista no tiene jerarquía.
+
+### La misma piedra, tercera vez
+
+Un comentario JSX tras `&& (` **rompe el build** — y el servidor sigue
+sirviendo el bundle anterior, así que el cambio *parece* no aplicarse. Pasó
+en las etapas 5 y 7, y aquí otra vez.
+
+**Señal para reconocerlo**: si un cambio de estilo no aparece en el
+navegador, comprobar que el build pasó **antes** de buscar la causa en el
+CSS.
+
 ## EL PAPEL DA SUELO (ley, 2026-08-16)
 
 El fundador: *"me sigue pareciendo muy poco seria. Muy blanco todo, con poca

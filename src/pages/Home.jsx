@@ -1382,26 +1382,21 @@ export default function Home() {
             busca cuando se queda en blanco. Sin ocupar pantalla. */}
         {nuraChatMessages.length <= 1 && (
           <button onClick={() => navigate('/explore')} style={{
-            display:'flex', alignItems:'center', gap:'var(--space-10)',
-            width:'100%', marginTop:'var(--space-10)',
-            padding:'var(--space-12) var(--space-16)',
-            background:'rgba(255,255,255,0.96)',
-            WebkitBackdropFilter:'blur(20px) saturate(160%)',
-            backdropFilter:'blur(20px) saturate(160%)',
-            border:'1px solid rgba(255,255,255,0.6)',
-            borderRadius:'var(--radius-md)',
-            boxShadow:'var(--alzado-reposo)',
-            cursor:'pointer', fontFamily:'inherit', textAlign:'left',
-            pointerEvents:'all',
+            /* NO ES UNA TERCERA BURBUJA. Al convertirlo en tarjeta quedaron
+               TRES bloques blancos de ~60px apilados en los ultimos 220px de
+               pantalla —capsula, este y la barra—, con el mismo fondo y casi
+               la misma altura. Parecian hermanos haciendo cosas distintas.
+               Aqui no hay fondo ni sombra: es una frase con su brujula,
+               subordinada a la capsula. El peso lo da el texto, no la caja. */
+            display:'flex', alignItems:'center', justifyContent:'center',
+            gap:'var(--space-8)', alignSelf:'center',
+            marginTop:'var(--space-12)', padding:'var(--space-8) var(--space-12)',
+            background:'none', border:'none', cursor:'pointer',
+            fontFamily:'inherit', pointerEvents:'all',
           }}>
-            <Compass size={18} color="var(--purple)" style={{flexShrink:0}} />
-            <span style={{display:'flex', flexDirection:'column', gap:'2px'}}>
-              <span style={{fontSize:'var(--text-sm)', fontWeight:700, color:'var(--ink-primary)'}}>
-                Ver a quién puedes encontrar
-              </span>
-              <span style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)'}}>
-                Fontaneros, logopedas, cuidadoras, profesores…
-              </span>
+            <Compass size={15} color="var(--purple)" style={{flexShrink:0}} />
+            <span style={{fontSize:'var(--text-sm)', fontWeight:600, color:'var(--purple)'}}>
+              Ver a quién puedes encontrar
             </span>
           </button>
         )}
