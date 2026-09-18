@@ -128,6 +128,22 @@ que entender de qué va **antes de tocar nada**.
 
 **Y nadie se llama "Usuario".** Si no da su nombre, Nüra no lo usa.
 
+### B3 · La frase del enlace *(2026-08-16)*
+
+*"Ver a quien puedes encontrar"* tenía **dos problemas**:
+
+1. **Falta la tilde** en *"quién"* — interrogativo indirecto.
+2. **Sonaba a catálogo de personas**, y al otro lado no hay una lista de
+   gente.
+
+Las 13 categorías **no son oficios, son necesidades**: *"Cuidar mi salud"*,
+*"Arreglar algo en casa"*, *"Cuidar a alguien querido"*.
+
+> **Ver con qué te puedo ayudar**
+
+La frase nombra lo que de verdad hay al otro lado. Y mantiene la voz de
+Nüra en primera persona, como el resto de la app.
+
 ### B2 · La pantalla Buscar · ✅ *(2026-08-16)*
 
 Tras reducir la barra, el fundador: *"la pestaña buscar debe diseñarse mejor

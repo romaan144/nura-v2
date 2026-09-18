@@ -1395,8 +1395,14 @@ export default function Home() {
             fontFamily:'inherit', pointerEvents:'all',
           }}>
             <Compass size={15} color="var(--purple)" style={{flexShrink:0}} />
+            {/* "Ver a quien puedes encontrar" tenia dos problemas: le
+                faltaba la tilde de "quién" —interrogativo indirecto— y
+                sonaba a catalogo de personas.
+                Al otro lado no hay una lista de gente: hay NECESIDADES
+                —"Cuidar mi salud", "Arreglar algo en casa", "Cuidar a
+                alguien querido"—. La frase nombra lo que de verdad hay. */}
             <span style={{fontSize:'var(--text-sm)', fontWeight:600, color:'var(--purple)'}}>
-              Ver a quién puedes encontrar
+              Ver con qué te puedo ayudar
             </span>
           </button>
         )}
