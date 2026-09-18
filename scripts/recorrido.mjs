@@ -97,7 +97,10 @@ console.log('\n── La persona que busca ayuda ──')
   await p.keyboard.press('Enter')
   await espera(5400)
   const t = await texto(p)
-  paso('recomienda a alguien', /Mi recomendación es/.test(t))
+  // Señal, no frase: el texto paso de "Mi recomendacion es Carlos" a
+  // "Carlos es quien mejor encaja", y la prueba fallo sin que el producto
+  // tuviera nada roto. Segunda vez en esta sesion.
+  paso('recomienda a alguien', /quien mejor encaja|Mi recomendación|Escribir a/.test(t))
   paso('explica el porqué', /peques|cerca de ti|años/.test(t))
 
   await tocar(p, /Escribir a/)

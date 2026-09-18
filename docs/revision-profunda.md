@@ -128,6 +128,33 @@ que entender de qué va **antes de tocar nada**.
 
 **Y nadie se llama "Usuario".** Si no da su nombre, Nüra no lo usa.
 
+### B6 · Las respuestas, con datos *(2026-08-16)*
+
+El fundador: *"respuestas e interacción con el buscador más inteligentes.
+Que sea claro y directo. Útil."*
+
+**Nüra tenía los datos y los convertía en frases genéricas.** Carlos tiene
+127 valoraciones, 8 años de experiencia, `dislalia` entre sus etiquetas y un
+94% de éxito documentado — y Nüra decía *"trabaja muchísimo con peques"*.
+
+| antes | ahora |
+|---|---|
+| *"Creo que ya tengo a la persona. Mi recomendación es Carlos."* | *"**Carlos** es quien mejor encaja."* |
+| *"trabaja muchísimo con peques"* | *"se dedica a niños, no es algo que haga de vez en cuando **y lleva 8 años en esto**"* |
+| *"está a unos minutos de tu casa"* | *"está a **0,8 km** de ti"* |
+| *"tiene valoraciones excelentes"* | *"**127 personas** le han valorado con un **4,9**"* |
+
+**Una cifra pesa más que un adjetivo.** *"Mucha experiencia"* lo dice
+cualquiera; *"127 personas le han valorado"* solo lo dice quien tiene el
+dato.
+
+Y fuera *"Creo que ya tengo a la persona"*: el resultado ya está ahí, era
+relleno antes de lo que importa.
+
+**Un ajuste que salió al medir**: la palabra que ancla el porqué se busca en
+las **etiquetas** del profesional, no en el texto suelto. Si no, *"no
+pronuncia la R"* daba *"trabaja exactamente eso: pronuncia"*.
+
 ### B5 · El botón se ve *(2026-08-16)*
 
 El fundador: *"con este color y forma está muy poco claro, debe ser más

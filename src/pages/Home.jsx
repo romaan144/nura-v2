@@ -37,14 +37,45 @@ function buildWhy(helper, analysis) {
     : ''
   const s = analysis?.complexSignals || {}
   const parts = []
-  if (s.alzheimer) parts.push('lleva años acompañando casos de Alzheimer')
-  else if (s.infantil) parts.push('trabaja muchísimo con peques')
-  else if (paraLabel) parts.push(`tiene mucha experiencia con casos como el ${paraLabel.replace('para ', 'de ')}`)
-  if (helper?.distance && helper.distance <= 1.2) parts.push('trabaja muy cerca de ti')
-  else if (helper?.distance && helper.distance <= 3) parts.push('está a unos minutos de tu casa')
-  if ((helper?.rating || 0) >= 4.8) parts.push('tiene valoraciones excelentes')
-  if (helper?.__obra && parts.length < 2) parts.push('ha documentado un caso muy parecido al tuyo')
-  return parts.slice(0, 2).join(' y ') || 'encaja especialmente bien con lo que necesitas'
+
+  // ── LO CONCRETO PRIMERO ──────────────────────────────────────────────
+  // Nüra tenia los datos y los convertia en frases genericas: decia
+  // "trabaja muchisimo con peques" de alguien con 127 valoraciones, 8 años
+  // de experiencia y un 94% de exito en dislalia infantil.
+  // "Mucha experiencia" lo dice cualquiera. "127 familias le han valorado"
+  // solo lo puede decir quien tiene el dato.
+  const txt = `${helper?.specialty || ''} ${helper?.bio || ''} ${(helper?.tags || []).join(' ')}`.toLowerCase()
+
+  // 1. El anclaje al problema, con la palabra que uso la persona
+  // La palabra tiene que ser un SUSTANTIVO que nombre el problema, no un
+  // verbo suelto: "no pronuncia la R" daba "trabaja exactamente eso:
+  // pronuncia", que no es nada. Se comprueba contra las etiquetas del
+  // profesional, que si son oficios y especialidades.
+  const etiquetas = (helper?.tags || []).map(t => String(t).toLowerCase())
+  const clave = (analysis?.palabrasPropias || []).find(w =>
+    w.length > 4 && !/^(pronunc|necesit|busc|quier|tengo|hacer)/.test(w) &&
+    etiquetas.some(e => e.includes(w)))
+  if (clave) parts.push(`su especialidad es justo eso: ${clave}`)
+  else if (s.alzheimer) parts.push('lleva años acompañando casos de Alzheimer')
+  else if (s.infantil) parts.push('se dedica a niños, no es algo que haga de vez en cuando')
+  else if (paraLabel) parts.push(`atiende casos como el ${paraLabel.replace('para ', 'de ')}`)
+
+  // 2. Los años, si la bio los dice — es el dato que mas tranquiliza
+  const años = (helper?.bio || '').match(/(\d+)\s*años de experiencia/)
+  if (años) parts.push(`lleva ${años[1]} años en esto`)
+
+  // 3. Cuantas personas le han valorado: una cifra pesa mas que un adjetivo
+  if ((helper?.reviews || 0) >= 20 && (helper?.rating || 0) >= 4.7) {
+    parts.push(`${helper.reviews} personas le han valorado con un ${String(helper.rating).replace('.', ',')}`)
+  }
+
+  // 4. La distancia exacta, no "a unos minutos"
+  if (helper?.distance && helper.distance <= 3) {
+    parts.push(`está a ${String(helper.distance).replace('.', ',')} km de ti`)
+  }
+
+  if (helper?.__obra && parts.length < 2) parts.push('ha contado un caso muy parecido al tuyo')
+  return parts.slice(0, 2).join(' y ') || 'encaja con lo que necesitas'
 }
 
 function ResultsBlock({ results }) {
@@ -1004,7 +1035,9 @@ export default function Home() {
       // con peques y trabaja muy cerca de ti" es lo UNICO que ninguna otra
       // app puede decirte: es la razon de existir de Nüra.
       // En dos lineas puede tener peso propio sin inventar nada.
-      const resultLine = `Creo que ya tengo a la persona. Mi recomendación es **${topFirstName}**.`
+      // "Creo que ya tengo a la persona" no aportaba nada: el resultado ya
+      // esta ahi. Era relleno antes de lo que importa.
+      const resultLine = `**${topFirstName}** es quien mejor encaja.`
       const whyLine = `${why.charAt(0).toUpperCase()}${why.slice(1)}${urgentTail}.`
 
 
