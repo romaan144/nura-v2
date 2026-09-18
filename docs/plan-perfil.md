@@ -64,7 +64,28 @@ Cada campo tiene su porqué escrito: *"sin ella no apareces en las
 búsquedas"*, *"quien no la ve, casi nunca escribe"*, *"los perfiles con foto
 reciben más mensajes"*.
 
-### Paso 2 · La identidad, como la ficha ⬅ **SIGUIENTE**
+### Paso 2 · La identidad, como la ficha ✅ *(2026-08-16)*
+
+| | ficha | perfil antes | perfil ahora |
+|---|---|---|---|
+| el nombre | 28px | **22px** | 28px |
+| debajo | *"Logopeda infantil · Verificado"* | *"En Nüra desde julio"* | *"**Logopeda infantil** · desde julio"* |
+
+**Un profesional no veía su propio oficio en su perfil**, mientras cualquiera
+que abre su ficha lo lee lo primero. El oficio manda; la fecha pasa detrás.
+
+Al usuario no se le inventa nada: sigue viendo su fecha de alta, porque no
+tiene oficio que mostrar.
+
+### Un fallo encontrado por el camino
+
+`.identity` declaraba **`gap` dos veces**: `var(--space-16)` y luego
+`gap: 6px`, que lo pisaba. Por eso el avatar quedaba pegado al nombre.
+
+Es el tipo de resto que deja una pantalla que nadie mira entera — como la
+numeración de zonas rota (1, 2, 4, 5) anotada en el paso 1.
+
+### Paso 3 · Una cosa por bloque ⬅ **SIGUIENTE**
 
 Lo que más daña y lo más rápido. El perfil deja de abrir con una nota.
 
@@ -83,7 +104,7 @@ teléfono en medio.
 
 Coherencia con lo ya hecho: `HelperProfile` ya resolvió esto.
 
-### Paso 3 · Una cosa por bloque
+### Paso 3 · detalle
 
 Quince bloques con fondo en el perfil del profesional. Cada uno compite con
 el siguiente. Fundir lo que es lo mismo y retirar lo que no sirve a nadie.

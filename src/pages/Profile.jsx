@@ -217,9 +217,20 @@ export default function Profile() {
             </button>
           )}
 
-          {joinedDate && (
+          {/* LO QUE ERES, COMO EN LA FICHA. Bajo el nombre iba la fecha de
+              alta: un profesional no veia su propio oficio en su perfil,
+              mientras cualquiera que abre su ficha lo lee lo primero.
+              El oficio manda; la fecha pasa detras, que es su sitio. */}
+          {(user.isHelper && user.helperProfile?.specialty) ? (
+            <p className={styles.memberSince}>
+              <span style={{color:'var(--ink-secondary)', fontWeight:600}}>
+                {user.helperProfile.specialty}
+              </span>
+              {joinedDate && <span style={{opacity:0.6}}> · desde {joinedDate}</span>}
+            </p>
+          ) : joinedDate ? (
             <p className={styles.memberSince}>En Nüra desde {joinedDate}</p>
-          )}
+          ) : null}
 
           {editingPhone ? (
             <div className={styles.editRow} style={{marginTop: 4}}>

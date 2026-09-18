@@ -30,8 +30,9 @@
   background: rgba(255,255,255,0.96);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
   backdrop-filter: blur(20px) saturate(160%);
-  gap: 6px;
-  }
+  /* Habia un segundo `gap: 6px` aqui que pisaba al --space-16 declarado
+     arriba: el avatar quedaba pegado al nombre. Retirado. */
+}
 
 .identityText {
   flex: 1;
@@ -70,8 +71,11 @@
   background: none; border: none; cursor: pointer; padding: 0;
 }
 
+/* El nombre, al tamaño que usa la ficha de un profesional (28px). Una
+   persona se presenta igual en Nüra sea quien sea: aqui es el usuario
+   mirandose, alli es alguien decidiendo si confiar. */
 .name {
-  font-size: 22px;
+  font-size: var(--text-xl);
   font-weight: 700;
   color: var(--ink-primary);
   margin: 0;
