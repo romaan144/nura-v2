@@ -356,6 +356,32 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## AJUSTAR TAMBIÉN ES ACOTAR — *ley corregida* (2026-08-16)
+
+**Esta ley sustituye a la anterior, que era mía y estaba mal.**
+
+Durante tres ciclos se mantuvo que *"contestar una pregunta es una DECISIÓN
+y ajustar es un RETOQUE"*, y por eso tenían peso visual distinto:
+
+| | antes | ahora |
+|---|---|---|
+| *"Para alguien de mi familia"* | tarjeta, 342×49, radio 20 | igual |
+| *"📍 Más cerca"* | **píldora, 117×38, radio 100** | **tarjeta, 342×49, radio 20** |
+
+El fundador: *"hacen algo parecido, deben tener el mismo diseño."*
+
+**Y tiene razón.** Mira lo que hacen:
+
+- *"Para alguien de mi familia"* → **acota la búsqueda**
+- *"Más cerca"* → **acota la búsqueda**
+
+Son lo mismo. Yo los separaba por **cuándo** aparecen —uno antes de buscar,
+otro después— y eso es una distinción **del que construye, no del que usa**.
+Para quien usa la app, los dos hacen que Nüra afine.
+
+**La lección, que vale más que el cambio**: una regla repetida tres veces no
+se vuelve cierta. Se vuelve difícil de cuestionar.
+
 ## TRES BURBUJAS IGUALES NO SON UNA JERARQUÍA (ley, 2026-08-16)
 
 El fundador: *"no me gusta que ahora hay como tres burbujas parecidas: la de

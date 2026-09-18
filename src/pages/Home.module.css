@@ -541,9 +541,8 @@
 /* Refine chips after carousel — same style as initial suggestions */
 .refineChips {
   display: flex;
-  flex-direction: row;
-  gap: var(--space-8);
-  overflow-x: auto;
+  flex-direction: column;
+  gap: var(--space-10);
   padding: var(--space-10) 0 var(--space-4);
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -675,26 +674,37 @@
    plana los hacian pildoras apretadas de 2012. Ahora respiran, llevan
    cristal como el resto del sistema, y al tocarlos se acercan en vez de
    apagarse. */
+/* ── AJUSTAR TAMBIEN ES ACOTAR ─────────────────────────────────────────
+   Durante tres ciclos se mantuvo que "contestar una pregunta es una
+   DECISION y ajustar es un RETOQUE", y por eso tenian peso visual distinto:
+   los de arriba tarjetas de 342px, estos pildoras de 117.
+   El fundador lo vio de otra forma: hacen algo parecido, asi que deben
+   parecerse. Y tiene razon — la regla estaba mal aplicada. Mira lo que
+   hacen: "Para alguien de mi familia" acota la busqueda, "Mas cerca" acota
+   la busqueda. Son lo mismo. Los separaba CUANDO aparecen, no QUE hacen, y
+   eso es una distincion del que construye, no del que usa. */
 .refineChip {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: var(--space-6);
-  padding: var(--space-10) var(--space-16);
+  gap: var(--space-10);
+  width: 100%;
+  padding: var(--space-14) var(--space-16);
   background: rgba(255,255,255,0.96);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
   backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid rgba(123,47,255,0.16);
-  border-radius: var(--radius-full);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--purple);
-  letter-spacing: -0.1px;
+  border: 1px solid rgba(255,255,255,0.6);
+  border-radius: var(--radius-md);
+  box-shadow: var(--alzado-reposo);
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--ink-primary);
+  letter-spacing: -0.2px;
+  text-align: left;
   cursor: pointer;
-  box-shadow: 0 1px 2px rgba(33,29,51,0.04), 0 6px 16px -10px rgba(123,47,255,0.24);
   transition: transform 0.18s cubic-bezier(0.22,1,0.36,1), box-shadow 0.18s ease;
   -webkit-tap-highlight-color: transparent;
 }
 .refineChip:active {
-  transform: scale(0.96);
-  box-shadow: 0 1px 2px rgba(33,29,51,0.04), 0 3px 8px -6px rgba(123,47,255,0.24);
+  transform: scale(0.985);
+  box-shadow: var(--alzado-pulsado);
 }
