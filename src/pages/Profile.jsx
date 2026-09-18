@@ -266,7 +266,30 @@ export default function Profile() {
             if (!hp.differentiator) missing.push('qué te diferencia')
           } else if (!user.phone) missing.push('teléfono')
           if (!user.avatar) missing.push('una foto')
-          return pct < 100 ? (
+          // ── FUERA EL PORCENTAJE (paso 1 de docs/plan-perfil.md) ────────
+          // El perfil abria con "Tu perfil esta al 67%" y una lista de
+          // deberes. Lo primero que veia alguien al entrar en SU espacio era
+          // una nota baja.
+          //
+          // Para el USUARIO no tiene sentido siquiera: no hay perfil que
+          // rellenar, solo busca ayuda. Le pedia algo que no necesita.
+          //
+          // Para el PROFESIONAL si importa —un perfil incompleto recibe
+          // menos contactos— pero como INVITACION CONCRETA y no como nota:
+          // una sola cosa, la que mas le falta, con el motivo por el que le
+          // conviene. "Añade tu tarifa y te encontraran antes" en vez de
+          // "estas al 29%".
+          if (!user.isHelper || !missing.length) return null
+          const loQueFalta = missing[0]
+          const porQue = {
+            'tu especialidad': 'sin ella no apareces en las búsquedas',
+            'tu formación': 'es lo que más mira quien duda',
+            'tu zona': 'así te encuentran los de tu barrio',
+            'tu tarifa': 'quien no la ve, casi nunca escribe',
+            'qué te diferencia': 'es lo que te separa de los demás',
+            'una foto': 'los perfiles con foto reciben más mensajes',
+          }[loQueFalta] || 'te encontrarán antes'
+          return (
             <div style={{padding:'var(--space-16)',
               background:'rgba(255,255,255,0.96)',
               WebkitBackdropFilter:'blur(20px) saturate(160%)',
@@ -274,20 +297,16 @@ export default function Profile() {
               borderRadius:'var(--radius-md)',
               boxShadow:'var(--alzado-reposo)',
               border:'1px solid rgba(255,255,255,0.6)'}}>
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'var(--space-8)'}}>
-                <span style={{fontSize:'var(--text-sm)',fontWeight:700,color:'var(--ink)',letterSpacing:'-0.2px'}}>Tu perfil está al {pct}%</span>
-                <span style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.38)'}}>{user.isHelper ? 'Más completo, más contactos' : 'Mejora tus matches'}</span>
-              </div>
-              <div style={{height:'6px',background:'rgba(33,29,51,0.07)',borderRadius:'var(--radius-full)',overflow:'hidden'}}>
-                <div style={{height:'100%',width:`${pct}%`,background:'var(--purple)',borderRadius:'var(--radius-full)',transition:'width 0.6s ease'}} />
-              </div>
-              {missing.length > 0 && (
-                <p style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.45)',marginTop:'var(--space-8)',lineHeight:1.4}}>
-                  Añade: {missing.join(' · ')}
-                </p>
-              )}
+              <p style={{margin:0, fontSize:'var(--text-base)', fontWeight:600,
+                color:'var(--ink-primary)', letterSpacing:'-0.2px', lineHeight:1.4}}>
+                Añade {loQueFalta}
+              </p>
+              <p style={{margin:'var(--space-6) 0 0', fontSize:'var(--text-sm)',
+                color:'var(--ink-tertiary)', lineHeight:1.45}}>
+                {porQue.charAt(0).toUpperCase() + porQue.slice(1)}.
+              </p>
             </div>
-          ) : null
+          )
         })()}
 
         {/* ── EL ESPEJO: LAS PERSONAS DE TU VIDA ────────── */}
