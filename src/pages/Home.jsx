@@ -2,7 +2,7 @@ import { avatarDe } from '../utils/avatar'
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { CAT_HUMANA } from '../data/categorias'
-import { Send, Mic, MicOff, RotateCcw, UserRound } from 'lucide-react'
+import { Compass, Send, Mic, MicOff, RotateCcw, UserRound } from 'lucide-react'
 import { analyzeNeed, matchHelpers, getPriceContext } from '../utils/matching'
 import { getFirstName } from '../utils/name'
 import { useUser } from '../context/UserContext'
@@ -1193,7 +1193,12 @@ export default function Home() {
           // Spacing: 16px between messages, 24px after carousel, 20px for user replies
           const spacingClass = prevHadResults ? styles.afterCarousel : ''
           return (
-          <div key={msg.id} style={{marginTop: msgIdx === 0 ? 'auto' : msg.from === 'user' ? 'var(--chat-gap-md)' : 'var(--chat-gap)'}} ref={msg.results?.length ? resultRef : undefined}>
+          /* El `auto` del primer mensaje mantiene la conversacion pegada
+             abajo, que es correcto CUANDO HAY conversacion. En la pantalla
+             de bienvenida dejaba 368px muertos arriba — mas de un tercio de
+             pantalla en blanco antes de que empezara nada. Ahi el saludo
+             sube y respira. */
+          <div key={msg.id} style={{marginTop: msgIdx === 0 ? (nuraChatMessages.length <= 1 ? 'var(--space-32)' : 'auto') : msg.from === 'user' ? 'var(--chat-gap-md)' : 'var(--chat-gap)'}} ref={msg.results?.length ? resultRef : undefined}>
             <div className={`${styles.msgRow} ${msg.from === 'user' ? styles.msgRowUser : ''} ${spacingClass}`}>
               {msg.from === 'nura' && (
                 firstOfNuraRun ? (
@@ -1377,13 +1382,27 @@ export default function Home() {
             busca cuando se queda en blanco. Sin ocupar pantalla. */}
         {nuraChatMessages.length <= 1 && (
           <button onClick={() => navigate('/explore')} style={{
-            alignSelf:'center', marginTop:'var(--space-10)',
-            background:'none', border:'none', cursor:'pointer',
-            fontSize:'var(--text-sm)', fontWeight:600, color:'var(--purple)',
-            fontFamily:'inherit', padding:'var(--space-8) var(--space-12)',
+            display:'flex', alignItems:'center', gap:'var(--space-10)',
+            width:'100%', marginTop:'var(--space-10)',
+            padding:'var(--space-12) var(--space-16)',
+            background:'rgba(255,255,255,0.96)',
+            WebkitBackdropFilter:'blur(20px) saturate(160%)',
+            backdropFilter:'blur(20px) saturate(160%)',
+            border:'1px solid rgba(255,255,255,0.6)',
+            borderRadius:'var(--radius-md)',
+            boxShadow:'var(--alzado-reposo)',
+            cursor:'pointer', fontFamily:'inherit', textAlign:'left',
             pointerEvents:'all',
           }}>
-            ¿No sabes qué buscar? Mira todo lo que resuelvo
+            <Compass size={18} color="var(--purple)" style={{flexShrink:0}} />
+            <span style={{display:'flex', flexDirection:'column', gap:'2px'}}>
+              <span style={{fontSize:'var(--text-sm)', fontWeight:700, color:'var(--ink-primary)'}}>
+                Ver a quién puedes encontrar
+              </span>
+              <span style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)'}}>
+                Fontaneros, logopedas, cuidadoras, profesores…
+              </span>
+            </span>
           </button>
         )}
       </div>

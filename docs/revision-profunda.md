@@ -128,6 +128,36 @@ que entender de qué va **antes de tocar nada**.
 
 **Y nadie se llama "Usuario".** Si no da su nombre, Nüra no lo usa.
 
+### B2 · La pantalla Buscar · ✅ *(2026-08-16)*
+
+Tras reducir la barra, el fundador: *"la pestaña buscar debe diseñarse mejor
+y el botón que lleva a profesionales ser diferente, con una explicación más
+directa."*
+
+**El hueco.** Medido: el saludo empezaba en **y=368** — más de un tercio de
+pantalla en blanco antes de que apareciera nada.
+
+La causa: `marginTop: 'auto'` en el primer mensaje. Es correcto **cuando hay
+conversación** —mantiene los mensajes pegados abajo, como cualquier chat—
+pero en la pantalla de bienvenida, con un solo mensaje, empujaba el saludo
+al fondo dejando el vacío arriba.
+
+**368px → 109px.**
+
+**El enlace.** Era texto de 13px: *"¿No sabes qué buscar? Mira todo lo que
+resuelvo"*. Lo más pequeño de la pantalla, para lo único que ofrece una
+salida a quien se queda en blanco.
+
+Ahora es una tarjeta con brújula, y **dice qué hay dentro**:
+
+> **Ver a quién puedes encontrar**
+> *Fontaneros, logopedas, cuidadoras, profesores…*
+
+Nombrar oficios concretos es la misma regla que gobernó la promesa: nadie
+entiende *"todo lo que resuelvo"*; todo el mundo entiende *"fontaneros"*.
+
+Verificado: sin solape con la barra, y **desaparece al empezar a buscar**.
+
 ### B · Las pestañas · ✅ **DE CINCO A TRES** *(2026-08-16)*
 
 | | |
