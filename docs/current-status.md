@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (el morado cuando es texto · botones desactivados legibles)
+**Última actualización:** 2026-08-16 (estudio del perfil · 8 etapas · etapa 1 siguiente)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -751,6 +751,25 @@ Seis pasos. Uno por cada **"sigue"**.
 | 4 | Las subpantallas | ✅ hecho |
 | 5 | El profesional ve lo suyo | ✅ hecho |
 | 6 | Configuración al final | ✅ hecho |
+
+## Estudio del perfil → [`docs/estudio-perfil.md`](./estudio-perfil.md)
+
+Ocho etapas, en diseño y funciones. Una por cada **"sigue"**.
+
+| | etapa | necesita decisión |
+|---|---|---|
+| **1** | **Lo roto** | no ⬅ **siguiente** |
+| 2 | El profesional edita su ficha (en su móvil) | no |
+| 3 | Ajustes, lo legal primero | quién redacta los textos |
+| 4 | Diseño del perfil de usuario | no |
+| 5 | Diseño del perfil de profesional | no |
+| 6 | Identidad del profesional | **sí: A, B o C** |
+| 7 | La foto | depende de la 6 |
+| 8 | Sin cuenta, y repaso final | no |
+
+**El hallazgo de fondo**: Nüra no tiene autenticación real. Editar la ficha
+pública, subir foto, ver avisos, pausar o **borrar la cuenta (RGPD,
+obligatorio antes de lanzar)** dependen de saber quién es el profesional.
 
 ## Errores conocidos / problemas pendientes
 
