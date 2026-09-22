@@ -173,7 +173,7 @@ export default function RegisterHelper() {
           }} />
           <span style={{
             fontSize: 'var(--text-xs)', fontWeight: 600,
-            color: 'var(--purple)', whiteSpace: 'nowrap'
+            color: 'var(--purple-ink)', whiteSpace: 'nowrap'
           }}>Perfil profesional</span>
         </div>
 
@@ -205,7 +205,7 @@ export default function RegisterHelper() {
             background:'var(--purple-05)', borderRadius:'var(--radius-card)',
             border:'1px solid var(--purple-10)'
           }}>
-            <div style={{fontSize:'var(--text-xs)',fontWeight:700,color:'var(--purple)',marginBottom:'var(--space-6)',letterSpacing:'0.3px',textTransform:'uppercase'}}>
+            <div style={{fontSize:'var(--text-xs)',fontWeight:700,color:'var(--purple-ink)',marginBottom:'var(--space-6)',letterSpacing:'0.3px',textTransform:'uppercase'}}>
               ¿Sabías que?
             </div>
             <div style={{fontSize:'var(--text-sm)',color:'var(--ink)',lineHeight:1.5,letterSpacing:'-0.1px'}}>

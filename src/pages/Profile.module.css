@@ -221,7 +221,7 @@
 
 .favText {
   font-size: var(--text-sm);
-  color: var(--purple);
+  color: var(--purple-ink);
   font-weight: 500;
 }
 

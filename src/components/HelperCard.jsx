@@ -120,7 +120,7 @@ export default function HelperCard({ helper, onContact, showContact = true, show
       {showContact && (
         <button onClick={handleContact} aria-label={`Escribir a ${firstName}`}
           style={{
-            flexShrink: 0, background: 'var(--purple-10)', color: 'var(--purple)',
+            flexShrink: 0, background: 'var(--purple-10)', color: 'var(--purple-ink)',
             border: '1px solid var(--purple-20)', borderRadius: 'var(--radius-full)',
             padding: 'var(--space-8) var(--space-14)', fontSize: 'var(--text-xs)', fontWeight: 700, cursor: 'pointer',
           }}>

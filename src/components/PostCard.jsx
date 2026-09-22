@@ -64,14 +64,14 @@ export default function PostCard({ post }) {
               style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover' }} />
           : <span style={{
               width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
-              background: post.autorColor || 'var(--purple-20)', color: 'var(--purple)',
+              background: post.autorColor || 'var(--purple-20)', color: 'var(--purple-ink)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: 'var(--text-sm)', fontWeight: 700,
             }}>{(post.autor || '?')[0]}</span>}
         <span style={{ minWidth: 0 }}>
           <span style={{ display: 'block', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--ink)' }}>
             {post.autor}
-            {post.verified && <span style={{ color: 'var(--purple)' }}> ✓</span>}
+            {post.verified && <span style={{ color: 'var(--purple-ink)' }}> ✓</span>}
           </span>
           <span style={{ display: 'block', fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)' }}>
             {post.rol}{post.rol && post.dateLabel ? ' · ' : ''}{post.dateLabel}
@@ -98,7 +98,7 @@ export default function PostCard({ post }) {
       {meta && (
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: 'var(--space-4)',
-          background: 'var(--purple-10)', color: 'var(--purple)', borderRadius: 'var(--radius-full)',
+          background: 'var(--purple-10)', color: 'var(--purple-ink)', borderRadius: 'var(--radius-full)',
           padding: '3px var(--space-10)', fontSize: 'var(--text-sm)', fontWeight: 700,
           letterSpacing: '0.4px', textTransform: 'uppercase',
           margin: 'var(--space-12) 0 var(--space-6)',
@@ -184,7 +184,7 @@ export default function PostCard({ post }) {
                 {COMMENT_STARTERS.map(s => (
                   <button key={s} onClick={() => publicar(s)}
                     style={{
-                      background: 'var(--purple-10)', color: 'var(--purple)', border: 'none',
+                      background: 'var(--purple-10)', color: 'var(--purple-ink)', border: 'none',
                       borderRadius: 'var(--radius-full)', padding: '5px var(--space-10)',
                       fontSize: 'var(--text-xs)', fontWeight: 600, cursor: 'pointer',
                     }}>{s}</button>

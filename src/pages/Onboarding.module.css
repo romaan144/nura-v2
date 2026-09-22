@@ -35,7 +35,7 @@
 }
 
 .visual { font-size: 80px; line-height: 1; margin-bottom: 8px; }
-.eyebrow { font-size: var(--text-xs); font-weight: 700; color: var(--purple); letter-spacing: 1.5px; }
+.eyebrow { font-size: var(--text-xs); font-weight: 700; color: var(--purple-ink); letter-spacing: 1.5px; }
 .title {
   font-size: 30px; font-weight: 800; color: var(--ink-primary);
   letter-spacing: -0.8px; line-height: 1.15; margin: 0;
@@ -88,4 +88,4 @@
               0 0 0 4px rgba(123,47,255,0.08);
 }
 .nameInput::placeholder { color: var(--ink-tertiary); font-weight: 300; }
-.helperCta { background: none; border: none; font-size: var(--text-sm); color: var(--purple); font-weight: 600; padding: 8px; text-align: center; }
+.helperCta { background: none; border: none; font-size: var(--text-sm); color: var(--purple-ink); font-weight: 600; padding: 8px; text-align: center; }

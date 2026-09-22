@@ -9,7 +9,7 @@ const STEPS = [
     title: 'Cuéntale qué necesitas',
     desc: 'Escribe en lenguaje natural. "Necesito una cuidadora para mi madre con Alzheimer en el Eixample" — Nüra entiende el contexto completo.',
     example: '"Mi hijo de 5 años tiene problemas con la pronunciación, busco logopeda esta semana"',
-    color: 'var(--purple)',
+    color: 'var(--purple-ink)',
   },
   {
     n: '02',

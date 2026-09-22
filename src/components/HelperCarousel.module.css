@@ -106,7 +106,7 @@
 .metaDot { color: var(--ink-tertiary); }
 .price {
   font-size: var(--text-xs); font-weight: 700;
-  color: var(--purple);
+  color: var(--purple-ink);
   text-align: center;
 }
 
@@ -142,7 +142,7 @@
   transform: translateX(-50%);
   font-size: var(--text-xs); font-weight: 600;
   letter-spacing: 0.3px;
-  color: var(--purple);
+  color: var(--purple-ink);
   background: white;
   padding: 2px 8px;
   border: 1px solid var(--purple-20);
@@ -163,7 +163,7 @@
   align-items: flex-start;
   gap: 4px;
   font-size: var(--text-xs);
-  color: var(--purple);
+  color: var(--purple-ink);
   font-weight: 500;
   line-height: 1.4;
   margin-top: 1px;

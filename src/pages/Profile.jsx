@@ -401,7 +401,7 @@ export default function Profile() {
                 ))}
               </div>
               <button onClick={() => sem.accion.to ? navigate(sem.accion.to) : setComposerOpen(true)}
-                style={{width:'100%', background:'var(--purple-10)', color:'var(--purple)',
+                style={{width:'100%', background:'var(--purple-10)', color:'var(--purple-ink)',
                   border:'none', borderRadius:'var(--radius-full)', padding:'11px',
                   fontSize:'var(--text-sm)', fontWeight:700, cursor:'pointer'}}>
                 {sem.accion.txt} →
@@ -457,7 +457,10 @@ export default function Profile() {
                     fontFamily:'var(--font-voice)', resize:'none', background:'white'}} />
                 <button onClick={saveQuote} disabled={!quoteDraft.trim()}
                   style={{marginTop:'var(--space-8)', background: quoteDraft.trim() ? 'var(--purple)' : 'rgba(33,29,51,0.15)',
-                    color:'white', border:'none', borderRadius:'var(--radius-full)', padding:'9px var(--space-16)',
+                    /* Desactivado era blanco sobre gris claro (1,2): una pildora
+                       vacia. Un boton desactivado puede verse apagado, pero tiene
+                       que decir que es. */
+                    color: quoteDraft.trim() ? 'white' : 'var(--ink-tertiary)', border:'none', borderRadius:'var(--radius-full)', padding:'var(--space-8) var(--space-16)',
                     fontSize:'var(--text-xs)', fontWeight:700}}>
                   Guardar mi cita
                 </button>
@@ -626,7 +629,7 @@ export default function Profile() {
           borderRadius:'var(--radius-md)', border:'1px solid var(--purple-10)'
         }}>
           <div style={{display:'flex',alignItems:'center',gap:'var(--space-8)',marginBottom:'var(--space-8)'}}>
-            <span style={{fontSize:'var(--text-xs)',fontWeight:700,color:'var(--purple)',letterSpacing:'0.8px',textTransform:'uppercase'}}>Próximamente</span>
+            <span style={{fontSize:'var(--text-xs)',fontWeight:700,color:'var(--purple-ink)',letterSpacing:'0.8px',textTransform:'uppercase'}}>Próximamente</span>
           </div>
           <p style={{fontSize:'var(--text-sm)',fontWeight:700,color:'var(--ink)',letterSpacing:'-0.2px',marginBottom:'var(--space-4)'}}>
             Tu reputación profesional verificada

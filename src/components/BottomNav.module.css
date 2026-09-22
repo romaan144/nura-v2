@@ -67,14 +67,14 @@
   transition: color 0.22s cubic-bezier(0.22,1,0.36,1), transform 0.22s cubic-bezier(0.22,1,0.36,1);
 }
 .tabActive svg {
-  color: var(--purple);
+  color: var(--purple-ink);
   transform: scale(1.1);
 }
 .tabActive .iconWrap {
   background: var(--purple-10);
 }
 .tabActive .label {
-  color: var(--purple);
+  color: var(--purple-ink);
   font-weight: 700;
 }
 

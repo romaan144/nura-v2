@@ -136,7 +136,7 @@ export default function Responder() {
             <button onClick={enviar} disabled={!texto.trim() || enviando}
               style={{width: '100%', marginTop: 'var(--space-16)', minHeight: 48,
                 background: texto.trim() ? 'var(--purple)' : 'rgba(33,29,51,0.1)',
-                color: texto.trim() ? 'white' : 'rgba(33,29,51,0.3)',
+                color: texto.trim() ? 'white' : 'var(--ink-tertiary)',   // desactivado, pero legible
                 border: 'none', borderRadius: 'var(--radius-full)',
                 fontSize: 'var(--text-sm)', fontWeight: 700,
                 cursor: texto.trim() ? 'pointer' : 'default'}}>

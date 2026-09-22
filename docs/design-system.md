@@ -356,6 +356,48 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## EL MORADO CUANDO ES TEXTO (ley, 2026-08-16)
+
+Tras arreglar los grises, lo más claro que quedaba era **el morado como
+texto**: *"Buscar profesionales"*, *"Mis servicios e historial"*, la pestaña
+activa. `#7B2FFF` sobre el papel da **4,9** — aprueba justo.
+
+**El morado de la marca no cambia.** Se queda en botones, fondos, iconos y
+acentos. Pero cuando es **texto sobre fondo claro** usa `--purple-ink`:
+
+| | papel | blanco | lila |
+|---|---|---|---|
+| `--purple` `#7B2FFF` | 4,9 | 5,7 | 4,9 |
+| **`--purple-ink` `#5A1BCC`** | **7,4** | **8,5** | **7,3** |
+
+Sigue siendo inequívocamente morado. 54 textos en 28 ficheros.
+
+**Resultado: de 45 textos morados por debajo de 7, a 0.**
+
+### Los botones desactivados también dicen qué son
+
+Al medir apareció *"Guardar mi cita"* desactivado: **texto blanco sobre gris
+claro, contraste 1,2** — una píldora vacía. No sabías qué era hasta escribir
+algo.
+
+Un botón desactivado **puede verse apagado, pero tiene que decir qué es**.
+Ahora su texto va en `--ink-tertiary` sobre el gris.
+
+Lo mismo en *"Enviar respuesta"* (Responder) y *"Enviar solicitud"* (reserva).
+
+### Las horas ocupadas: el tachado ya lo dice
+
+En la hoja de reserva, las horas ocupadas iban al **28%** de tinta —casi
+invisibles— cuando ya llevaban **tachado y borde discontinuo**, que es lo que
+de verdad dice *"no disponible"*. Ahora se lee *"17:00"* y se ve que está
+tomada. Y las horas, que son botones, pasan a 13px.
+
+### El guardia tenía un agujero
+
+Solo buscaba `color: rgba(...)` directo. Los grises dentro de una condición
+—`color: activo ? 'white' : 'rgba(33,29,51,0.3)'`— **se escapaban**. Por ahí
+se colaron los seis de esta sección. Ampliado.
+
 ## CADA TEXTO SEGÚN LO QUE ES — *ley corregida* (2026-08-16)
 
 **Corrige a la ley siguiente, que se pasó de largo.** Subí la escala entera

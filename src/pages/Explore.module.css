@@ -226,7 +226,7 @@
   border: 1px solid var(--ink-border);
   border-radius: var(--radius-full);
   font-size: var(--text-sm);
-  color: var(--purple);
+  color: var(--purple-ink);
   font-weight: 600;
   cursor: pointer;
   font-family: inherit;

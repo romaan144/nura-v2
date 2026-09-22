@@ -180,7 +180,7 @@ export default function Feed() {
             margin: 'var(--space-16) 0 var(--space-20)', cursor: 'pointer', textAlign: 'left',
             fontFamily: 'inherit' }}>
           <span style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--purple-10)',
-            color: 'var(--purple)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: 'var(--purple-ink)', display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 'var(--text-sm)', fontWeight: 700, flexShrink: 0 }}>
             {(user?.name || '+')[0]}
           </span>

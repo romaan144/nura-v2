@@ -58,7 +58,7 @@
 .cardLeft { display: flex; align-items: center; gap: 12px; }
 .avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
 .name { font-size: var(--text-sm); font-weight: 700; color: var(--ink); margin-bottom: 2px; }
-.spec { font-size: var(--text-xs); color: var(--purple); font-weight: 600; margin-bottom: 4px; }
+.spec { font-size: var(--text-xs); color: var(--purple-ink); font-weight: 600; margin-bottom: 4px; }
 .meta { display: flex; align-items: center; gap: 5px; font-size: var(--text-xs); color: var(--soft); }
 .followBtn { width: 36px; height: 36px; border-radius: 50%; background: rgba(239,68,68,0.08); border: none; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity 0.15s; cursor: pointer; }
 .followBtn:active { opacity: 0.6; }

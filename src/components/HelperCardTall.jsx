@@ -102,7 +102,7 @@ export default function HelperCardTall({ helper, small = false }) {
       <div style={{ fontSize: small ? 'var(--text-sm)' : 'var(--text-heading)', fontWeight: 700, color: 'var(--ink)',
         letterSpacing: '-0.4px', lineHeight: 1.2 }}>
         {firstName}{lastInitial ? ` ${lastInitial}.` : ''}
-        {helper.verified && <span style={{ color: 'var(--purple)', marginLeft: 'var(--space-4)' }}>✓</span>}
+        {helper.verified && <span style={{ color: 'var(--purple-ink)', marginLeft: 'var(--space-4)' }}>✓</span>}
       </div>
 
       <div style={{ fontSize: small ? 'var(--text-xs)' : 'var(--text-sm)', color: 'var(--ink-secondary)',
@@ -156,7 +156,7 @@ export default function HelperCardTall({ helper, small = false }) {
           )}
           {helper.dniVerified && (
             <span style={{ background: 'var(--purple-10)', borderRadius: 'var(--radius-full)', padding: 'var(--space-4) var(--space-10)',
-              fontSize: 'var(--text-xs)', color: 'var(--purple)', fontWeight: 600 }}>
+              fontSize: 'var(--text-xs)', color: 'var(--purple-ink)', fontWeight: 600 }}>
               Identidad verificada
             </span>
           )}

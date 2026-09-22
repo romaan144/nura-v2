@@ -149,7 +149,10 @@ try {
   // Todo color de texto va por --ink-primary/secondary/tertiary, solidos.
   {
     const grises = []
-    const pat = /(?<![-\w])color\s*:\s*'?rgba\(\s*33\s*,\s*29\s*,\s*51\s*,\s*0?\.(\d+)/g
+    // Tambien dentro de una condicion — `color: x ? 'white' : 'rgba(...)'` —,
+    // que es por donde se escaparon los botones desactivados y las opciones
+    // del chat. Se busca el gris en cualquier punto de la declaracion.
+    const pat = /(?<![-\w])color\s*:[^;,\n]*?'?rgba\(\s*33\s*,\s*29\s*,\s*51\s*,\s*0?\.(\d+)/g
     const recorrer = dir => {
       for (const f of readdirSync(dir, { withFileTypes: true })) {
         const r = join(dir, f.name)

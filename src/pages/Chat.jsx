@@ -185,7 +185,7 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
                   <button key={i} onClick={()=>setDate(iso)} style={{
                     flexShrink:0,padding:'var(--space-8) var(--space-14)',
                     background:date===iso?'var(--purple)':'rgba(33,29,51,0.05)',
-                    color:date===iso?'white':'rgba(33,29,51,0.6)',
+                    color:date===iso?'white':'var(--ink-secondary)',
                     border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
                     cursor:'pointer',fontFamily:'inherit',transition:'all 0.15s',whiteSpace:'nowrap',
                   }}>{lbl}</button>
@@ -217,9 +217,12 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
                       style={{
                         padding:'7px var(--space-12)',
                         background:time===hora?'var(--purple)':libre?'rgba(33,29,51,0.05)':'transparent',
-                        color:time===hora?'white':libre?'rgba(33,29,51,0.6)':'rgba(33,29,51,0.28)',
+                        /* Las ocupadas ya dicen "no disponible" con el tachado y el
+                           borde discontinuo; el gris al 28% solo las hacia
+                           ilegibles. Se lee "17:00" y se ve que esta tomada. */
+                        color:time===hora?'white':libre?'var(--ink-secondary)':'var(--ink-tertiary)',
                         border:libre?'none':'1px dashed rgba(33,29,51,0.18)',
-                        borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
+                        borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,
                         cursor:libre?'pointer':'not-allowed',fontFamily:'inherit',transition:'all 0.15s',
                         textDecoration:libre?'none':'line-through',
                       }}>{hora}</button>
@@ -240,7 +243,7 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
               llegaba al profesional como "sabado, 5 de septiembre" a secas.
               Una cita sin hora no es una cita. */}
           <button onClick={()=>{ onConfirm?.(date, time, note); setDone(true); notifyServiceConfirmed(helper.name?.split(' ')?.[0] || helper.name); haptic('success') }} disabled={!date || !time}
-            style={{flex:2,padding:'var(--space-14)',background:(date&&time)?'var(--purple)':'rgba(33,29,51,0.1)',color:(date&&time)?'white':'rgba(33,29,51,0.3)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:(date&&time)?'pointer':'default',transition:'all 0.2s'}}>
+            style={{flex:2,padding:'var(--space-14)',background:(date&&time)?'var(--purple)':'rgba(33,29,51,0.1)',color:(date&&time)?'white':'var(--ink-tertiary)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:(date&&time)?'pointer':'default',transition:'all 0.2s'}}>
             Enviar solicitud
           </button>
         </div>
@@ -799,7 +802,7 @@ export default function Chat() {
                           cursor:'pointer',border:'none',
                           background: chip === 'Confirmar reserva'
                             ? 'var(--purple)' : 'rgba(33,29,51,0.07)',
-                          color: chip === 'Confirmar reserva' ? 'white' : 'rgba(33,29,51,0.6)',
+                          color: chip === 'Confirmar reserva' ? 'white' : 'var(--ink-secondary)',
                           fontFamily:'inherit',
                         }}>
                         {chip}

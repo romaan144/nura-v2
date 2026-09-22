@@ -96,6 +96,13 @@ body {
   --cyan:     #00D4C8;
   --cyan2:    #00B4AA;
   --purple:    #7B2FFF;
+  /* EL MORADO CUANDO ES TEXTO. #7B2FFF es el de la marca y se queda en
+     botones, fondos, iconos y acentos. Pero como TEXTO sobre fondo claro
+     daba 4,9: aprobaba justo y era lo mas claro que quedaba tras arreglar
+     los grises ("Buscar profesionales", "Mis servicios e historial", la
+     pestaña activa). Este tono da 7,3 o mas sobre papel, blanco y lila, y
+     sigue siendo inequivocamente morado. */
+  --purple-ink: #5A1BCC;
   --purple-05: rgba(123,47,255,0.05);
   --purple-10: rgba(123,47,255,0.10);
   --purple-20: rgba(123,47,255,0.20);

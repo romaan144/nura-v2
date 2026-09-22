@@ -146,7 +146,7 @@
 
 .badge {
   font-size: var(--text-xs); font-weight: 600;
-  color: var(--purple); background: rgba(123,47,255,0.07);
+  color: var(--purple-ink); background: rgba(123,47,255,0.07);
   border-radius: var(--radius-full); padding: 4px 12px;
   display: inline-block; margin: 0 14px 10px;
 }
@@ -174,7 +174,7 @@
 }
 .action:active { opacity: 0.6; }
 .actionLiked { color: var(--red); }
-.actionSaved { color: var(--purple); }
+.actionSaved { color: var(--purple-ink); }
 .actionEnd { margin-left: auto; }
 
 /* Empty state */
@@ -246,7 +246,7 @@
   display: flex; align-items: center; gap: 4px;
   font-size: var(--text-xs);
   font-weight: 700;
-  color: var(--purple);
+  color: var(--purple-ink);
   letter-spacing: 0.3px;
   text-transform: uppercase;
 }
@@ -281,7 +281,7 @@
 }
 .nuraPickSpec {
   font-size: var(--text-xs);
-  color: var(--purple);
+  color: var(--purple-ink);
   font-weight: 600;
   margin-bottom: 4px;
 }
@@ -299,7 +299,7 @@
 .nuraPickPrice {
   font-size: var(--text-xs);
   font-weight: 700;
-  color: var(--purple);
+  color: var(--purple-ink);
 }
 .nuraPickStar {
   display: flex; align-items: center; gap: 3px;
@@ -323,7 +323,7 @@
   background: none;
   border: none;
   padding: 4px 0 8px;
-  color: var(--purple);
+  color: var(--purple-ink);
   font-size: var(--text-xs);
   font-weight: 600;
   cursor: pointer;

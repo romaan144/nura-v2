@@ -242,7 +242,7 @@ export default function Chats() {
                   return (
                     <div style={{display:'flex', alignItems:'center', gap:'5px', margin:'1px 0 var(--space-2)', flexWrap:'wrap'}}>
                       {lp && <span style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', fontWeight:500}}>Te ayuda con {lp.label}</span>}
-                      {citaViva && <span style={{fontSize:'var(--text-xs)', color:'var(--purple)', fontWeight:600}}>📅 {ci.label}</span>}
+                      {citaViva && <span style={{fontSize:'var(--text-xs)', color:'var(--purple-ink)', fontWeight:600}}>📅 {ci.label}</span>}
                       {ok && <Badge variant="success" size="xs">✓ funcionó</Badge>}
                     </div>
                   )

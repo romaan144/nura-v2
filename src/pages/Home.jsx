@@ -1467,7 +1467,7 @@ export default function Home() {
                 encontrar" —con la tilde de "quién" perdida— y por "Ver con
                 qué te puedo ayudar". Se queda en el nombre llano: quien
                 llega aqui sabe lo que va a ver. */}
-            <span style={{fontSize:'var(--text-sm)', fontWeight:600, color:'var(--purple)'}}>
+            <span style={{fontSize:'var(--text-sm)', fontWeight:600, color:'var(--purple-ink)'}}>
               Buscar profesionales
             </span>
           </button>

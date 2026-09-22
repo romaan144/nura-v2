@@ -93,7 +93,7 @@
 .headerSubtitle {
   font-size: var(--text-xs);
   font-weight: 600;
-  color: var(--purple);
+  color: var(--purple-ink);
   white-space: nowrap;
 }
 

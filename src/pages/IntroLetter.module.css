@@ -45,7 +45,7 @@
 }
 .sparkleIcon {
   width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
-  background: var(--purple-10); color: var(--purple);
+  background: var(--purple-10); color: var(--purple-ink);
   display: flex; align-items: center; justify-content: center;
   margin-top: 1px;
 }

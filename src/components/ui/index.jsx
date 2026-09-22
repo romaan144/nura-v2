@@ -9,7 +9,7 @@
 const BADGE_VARIANTS = {
   success: { color: '#065f46', background: 'rgba(16,185,129,0.10)', border: '1px solid rgba(16,185,129,0.20)' },
   warning: { color: '#92400e', background: 'rgba(245,158,11,0.10)', border: '1px solid rgba(245,158,11,0.20)' },
-  purple:  { color: 'var(--purple)', background: 'var(--purple-10)', border: '1px solid var(--purple-20)' },
+  purple:  { color: 'var(--purple-ink)', background: 'var(--purple-10)', border: '1px solid var(--purple-20)' },
   neutral: { color: 'var(--ink-secondary)', background: 'var(--surface-subtle)', border: '1px solid var(--ink-border)' },
 }
 
@@ -139,7 +139,7 @@ export function Button({
   const skins = {
     primary:   { background: 'var(--purple)', color: 'white', border: 'none' },
     secondary: { background: 'white', color: 'var(--ink)', border: '1px solid var(--ink-border)' },
-    ghost:     { background: 'none', color: 'var(--purple)', border: 'none' },
+    ghost:     { background: 'none', color: 'var(--purple-ink)', border: 'none' },
   }
   return (
     <button
@@ -186,7 +186,7 @@ export function SectionLabel({ tone = 'muted', children, style, ...rest }) {
         fontWeight: 700,
         letterSpacing: '0.6px',
         textTransform: 'uppercase',
-        color: tone === 'brand' ? 'var(--purple)' : 'var(--ink-secondary)',
+        color: tone === 'brand' ? 'var(--purple-ink)' : 'var(--ink-secondary)',
         ...style,
       }}
       {...rest}
