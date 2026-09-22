@@ -160,6 +160,24 @@ export function Button({
 // asi que 0.6px es calibrado, no promedio. No se queda con el margen:
 // cada sitio conserva el suyo via style, para no mover layout.
 // ═══════════════════════════════════════════════════════════════
+/**
+ * TITULO DE SECCION, sobre el fondo de la pantalla.
+ * Existia solo SectionLabel —11px, MAYUSCULAS, gris— y se usaba para dos
+ * cosas distintas: etiquetas DENTRO de una tarjeta, donde funciona, y
+ * titulos de seccion SOBRE EL FONDO, donde no: "TU ACTIVIDAD", "LO QUE HA
+ * PASADO CERCA DE TI" se leian como notas al pie, gris pequeño sobre gris.
+ * Un titulo se escribe como titulo.
+ */
+export function SectionTitle({ children, style }) {
+  return (
+    <h2 style={{
+      fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--ink-primary)',
+      letterSpacing: '-0.2px', lineHeight: 1.3, margin: '0 0 var(--space-10)',
+      ...style,
+    }}>{children}</h2>
+  )
+}
+
 export function SectionLabel({ tone = 'muted', children, style, ...rest }) {
   return (
     <div
@@ -168,7 +186,7 @@ export function SectionLabel({ tone = 'muted', children, style, ...rest }) {
         fontWeight: 700,
         letterSpacing: '0.6px',
         textTransform: 'uppercase',
-        color: tone === 'brand' ? 'var(--purple)' : 'var(--ink-tertiary)',
+        color: tone === 'brand' ? 'var(--purple)' : 'var(--ink-secondary)',
         ...style,
       }}
       {...rest}

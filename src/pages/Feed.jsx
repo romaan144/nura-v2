@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
-import { SectionLabel, EmptyState } from '../components/ui'
+import { SectionTitle, SectionLabel, EmptyState } from '../components/ui'
 import PostCard from '../components/PostCard'
 import ObraComposer from '../components/ObraComposer'
 import HelperCard from '../components/HelperCard'
@@ -125,7 +125,7 @@ export default function Feed() {
                 color: modo === m ? 'white' : 'var(--ink)',
                 border: '1px solid ' + (modo === m ? 'var(--purple)' : 'var(--ink-border)'),
                 borderRadius: 'var(--radius-full)', padding: 'var(--space-6) var(--space-14)',
-                fontSize: 'var(--text-xs)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
+                fontSize: 'var(--text-sm)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
               {m === 'todos' ? 'Todo' : 'A quien sigues'}
             </button>
           ))}
@@ -142,7 +142,7 @@ export default function Feed() {
                 color: tema === t ? 'white' : 'var(--ink-secondary)',
                 border: '1px solid ' + (tema === t ? 'var(--ink)' : 'var(--ink-border)'),
                 borderRadius: 'var(--radius-full)', padding: 'var(--space-6) var(--space-12)',
-                fontSize: 'var(--text-xs)', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>
+                fontSize: 'var(--text-sm)', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>
               {t ? (CAT_HUMANA[t] || t) : 'Todo'}
             </button>
           ))}
@@ -191,9 +191,9 @@ export default function Feed() {
 
         {modo === 'todos' && !tema && mias.length > 0 && (
           <div style={{ marginBottom: 'var(--space-24)' }}>
-            <SectionLabel tone="brand" style={{ marginBottom: 'var(--space-10)' }}>
+            <SectionTitle style={{ marginBottom: 'var(--space-10)' }}>
               Tu conexión
-            </SectionLabel>
+            </SectionTitle>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-12)' }}>
               {mias.map(p => <PostCard key={p.id} post={p} />)}
             </div>
@@ -201,9 +201,9 @@ export default function Feed() {
         )}
 
         {modo === 'todos' && !tema && mias.length > 0 && (
-          <SectionLabel tone="muted" style={{ margin: '0 0 var(--space-10)' }}>
+          <SectionTitle style={{ margin: '0 0 var(--space-10)' }}>
             Lo que ha pasado cerca de ti
-          </SectionLabel>
+          </SectionTitle>
         )}
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-12)' }}>
@@ -219,9 +219,9 @@ export default function Feed() {
 
         {modo === 'todos' && !tema && masUtil.length > 0 && (
           <>
-            <SectionLabel tone="brand" style={{ margin: 'var(--space-28) 0 var(--space-10)' }}>
+            <SectionTitle style={{ margin: 'var(--space-28) 0 var(--space-10)' }}>
               Lo que más ha servido
-            </SectionLabel>
+            </SectionTitle>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-12)' }}>
               {masUtil.map(p => <PostCard key={'u' + p.id} post={p} />)}
             </div>
@@ -230,9 +230,9 @@ export default function Feed() {
 
         {modo === 'todos' && sugeridos.length > 0 && (
           <>
-            <SectionLabel tone="muted" style={{ margin: 'var(--space-28) 0 var(--space-10)' }}>
+            <SectionTitle style={{ margin: 'var(--space-28) 0 var(--space-10)' }}>
               A quién seguir
-            </SectionLabel>
+            </SectionTitle>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-10)' }}>
               {sugeridos.map(h => <HelperCard key={'s' + h.id} helper={h} />)}
             </div>
@@ -241,9 +241,9 @@ export default function Feed() {
 
         {modo === 'todos' && (
           <>
-            <SectionLabel tone="muted" style={{ margin: 'var(--space-28) 0 var(--space-10)' }}>
+            <SectionTitle style={{ margin: 'var(--space-28) 0 var(--space-10)' }}>
               Cerca de ti
-            </SectionLabel>
+            </SectionTitle>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-10)' }}>
               {destacados.map(h => <HelperCard key={h.id} helper={h} showPrice />)}
             </div>

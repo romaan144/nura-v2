@@ -182,15 +182,15 @@
 }
 
 .sectionHeading {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: var(--text-xs);
+  /* Un TITULO: "LO QUE DICEN DE CARLOS" iba en 11px, mayusculas y gris
+     sobre el fondo. Es lo que mas decide la confianza y se leia como un
+     pie de foto. */
+  font-size: var(--text-base);
   font-weight: 700;
-  color: var(--ink-secondary);
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  margin: 0 0 14px;
+  color: var(--ink-primary);
+  letter-spacing: -0.2px;
+  text-transform: none;
+  margin: 0 0 var(--space-12);
 }
 
 /* ── Experience / Education timeline ── */

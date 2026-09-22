@@ -356,7 +356,63 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
-## EL TEXTO SE LEE (ley, 2026-08-16)
+## CADA TEXTO SEGÚN LO QUE ES — *ley corregida* (2026-08-16)
+
+**Corrige a la ley siguiente, que se pasó de largo.** Subí la escala entera
+(11→12, 13→14, 15→16) y el fundador lo corrigió: *"no era un tema de tamaño
+de todo. Había letras y textos pequeños y grises, pero no todo. Hazlo bien.
+Por ejemplo en el perfil 'Tu actividad' se lee mal."*
+
+Tenía razón dos veces: **agrandar la app entera** cambiaba su carácter para
+arreglar unas piezas, y **"Tu actividad" seguía leyéndose mal** — el arreglo
+general no había llegado.
+
+### La escala vuelve a 11 · 13 · 15
+
+### "Tu actividad" aprobaba y se leía mal
+
+| | |
+|---|---|
+| tamaño | 11px |
+| MAYÚSCULAS | sí |
+| color | gris medio (contraste **5,8** — aprueba) |
+| fondo | **gris**, sin tarjeta |
+
+**Gris pequeño en mayúsculas sobre gris se lee mal aunque el número
+apruebe.** Yo medía el número; había que mirar la situación.
+
+### Cada texto según lo que es
+
+| qué es | ejemplo | ahora |
+|---|---|---|
+| **título de sección** | *"Tu actividad"*, *"Lo que dicen de Carlos"*, *"A quién seguir"* | **15px, negrita, tinta principal** — nuevo componente `SectionTitle` |
+| **frase para leer** | *"Psicólogos, logopedas…"*, *"Guarda profesionales…"* | 13px, tinta secundaria |
+| **control que se toca** | filtros *"Apoyo de salud"*, *"✋ Me sirve"* | 13px |
+| **dato pequeño** | *"abiertas"*, *"12m"*, *"127 valoraciones"* | **se queda a 11px** con más tinta (5,8 → 8,5) |
+
+`SectionLabel` —11px, mayúsculas— se queda para lo que sí es: **una
+etiqueta dentro de una tarjeta** (*"En sus propias palabras"*). Usarlo como
+título de sección sobre el fondo era el error.
+
+### Medido
+
+De 229 textos pequeños y grises, **quedan 0 grises**. Los que siguen por
+debajo de 7 son el **morado de la marca** (45) y texto blanco sobre morado
+(9): acentos, no grises.
+
+### Y dos afirmaciones que Nüra no podía sostener, en la ficha
+
+- *"**8** personas cerca de ti contactaron con Carlos este mes"* — calculado
+  como `valoraciones × 0,08 + 2`. **Solo en la demo.**
+- *"Carlos es uno de los profesionales **mejor valorados** de Barcelona"* —
+  se decía de **cualquiera**. Ahora: *"127 personas han valorado a Carlos,
+  con una media de 4,9"*, o *"está empezando: aún tiene pocas
+  valoraciones"*.
+
+**Regla**: no se corrige un síntoma cambiándolo todo. Se encuentra qué
+textos fallan, se entiende **qué son**, y se arreglan esos.
+
+## EL TEXTO SE LEE (ley, 2026-08-16) — *parcialmente revertida*
 
 El fundador: *"toda la app está llena de letras y texto muy gris, pequeño y
 delgado que no se lee con comodidad."*

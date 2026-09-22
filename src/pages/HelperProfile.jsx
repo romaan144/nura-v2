@@ -21,6 +21,7 @@ import { getHelperById } from '../utils/supabase'
 import { Badge, LiveDot, Bubble, StatBar } from '../components/ui'
 import { getFirstName } from '../utils/name'
 import { fmtNota } from '../utils/formato'
+import { DEMO_MODE } from '../config'
 
 // ── HELPERS ─────────────────────────────────────────────────────────────────
 
@@ -379,9 +380,14 @@ function HelperProfileInner() {
           )}
 
           {/* Señales de actividad local */}
-          {enrichedH.reviews >= 30 && (
+          {/* CIFRA INVENTADA, SOLO EN LA DEMO. "N personas cerca de ti
+              contactaron con Carlos este mes" se calculaba como
+              reviews × 0,08 + 2: no mide nada. Con un profesional real seria
+              mentir a quien esta decidiendo si confiar en el — el mismo caso
+              que las cifras del perfil (paso 5 de plan-perfil.md). */}
+          {DEMO_MODE && enrichedH.reviews >= 30 && (
             <div style={{
-              fontSize:'var(--text-xs)', color:'var(--ink-tertiary)',
+              fontSize:'var(--text-sm)', color:'var(--ink-secondary)',
               marginBottom:'var(--space-16)', textAlign:'center',
               animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both'
             }}>
@@ -439,12 +445,17 @@ function HelperProfileInner() {
           }}>
             <img src="/logo-iso.png" alt="Nüra" style={{width:'18px',height:'18px',flexShrink:0,marginTop:'1px',opacity:0.7}} />
             <p style={{
-              fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', lineHeight:1.5,
+              fontSize:'var(--text-sm)', color:'var(--ink-secondary)', lineHeight:1.5,
               margin:0
             }}>
               {location.state?.matchReason
                 ? `Te recomiendo a ${firstName} porque ${String(location.state.matchReason).replace(/\*\*/g, '').trim().replace(/\.$/, '')}.`
-                : `${firstName} es uno de los profesionales mejor valorados en su categoría en Barcelona.`
+                // Se decia de CUALQUIER profesional, tuviera la nota que
+                // tuviera: "uno de los mejor valorados de Barcelona". Ahora
+                // solo lo que se sabe.
+                : (enrichedH.reviews >= 10
+                    ? `${enrichedH.reviews} personas han valorado a ${firstName}, con una media de ${fmtNota(enrichedH.rating)}.`
+                    : `${firstName} está empezando en Nüra: aún tiene pocas valoraciones.`)
               }
             </p>
           </div>

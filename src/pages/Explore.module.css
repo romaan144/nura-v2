@@ -148,8 +148,8 @@
 }
 
 .catDesc {
-  font-size: var(--text-xs);
-  color: var(--ink-tertiary);
+  font-size: var(--text-sm);   /* "Psicólogos, logopedas…": una frase, no un pie */
+  color: var(--ink-secondary);
   line-height: 1.3;
 }
 

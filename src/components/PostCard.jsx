@@ -88,7 +88,7 @@ export default function PostCard({ post }) {
           display: 'inline-flex', alignItems: 'center', gap: 'var(--space-6)',
           background: 'rgba(16,185,129,0.10)', color: 'var(--green-dot, #10B981)',
           borderRadius: 'var(--radius-full)', padding: '4px var(--space-10)',
-          fontSize: 'var(--text-xs)', fontWeight: 700, marginTop: 'var(--space-10)',
+          fontSize: 'var(--text-sm)', fontWeight: 700, marginTop: 'var(--space-10)',
         }}>
           ✓ Confirmado por quien lo vivió
         </div>
@@ -99,7 +99,7 @@ export default function PostCard({ post }) {
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: 'var(--space-4)',
           background: 'var(--purple-10)', color: 'var(--purple)', borderRadius: 'var(--radius-full)',
-          padding: '3px var(--space-10)', fontSize: 'var(--text-xs)', fontWeight: 700,
+          padding: '3px var(--space-10)', fontSize: 'var(--text-sm)', fontWeight: 700,
           letterSpacing: '0.4px', textTransform: 'uppercase',
           margin: 'var(--space-12) 0 var(--space-6)',
         }}>{meta.icon} {meta.label}</div>
@@ -152,7 +152,7 @@ export default function PostCard({ post }) {
           aria-pressed={!!marcado}
           style={{
             background: 'none', border: 'none', padding: 'var(--space-8) 0', cursor: 'pointer', minHeight: 24,
-            fontSize: 'var(--text-xs)', fontWeight: 700,
+            fontSize: 'var(--text-sm)', fontWeight: 700,
             color: marcado ? 'var(--purple)' : 'var(--ink-tertiary)',
           }}>
           ✋ Me sirve{utiles > 0 ? ` · ${utiles}` : ''}
@@ -171,7 +171,7 @@ export default function PostCard({ post }) {
         <div style={{ marginTop: 'var(--space-10)' }}>
           {comments.map(c => (
             <div key={c.id} style={{ marginBottom: 'var(--space-10)' }}>
-              <span style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--ink)' }}>{c.author}</span>
+              <span style={{ fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--ink)' }}>{c.author}</span>
               <span style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)' }}> · {c.ago}</span>
               <p style={{ fontSize: 'var(--text-sm)', lineHeight: 1.5, color: 'var(--ink-secondary)', margin: '2px 0 0' }}>
                 {c.text}
