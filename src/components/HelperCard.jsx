@@ -6,6 +6,7 @@ import { haptic } from '../utils/haptic'
 import { getFirstName } from '../utils/name'
 import { Badge, LiveDot } from './ui'
 import { recordarDestino, contextoDeChat } from '../utils/contacto'
+import { fmtNota, fmtKm } from '../utils/formato'
 
 // ═══════════════════════════════════════════════════════════════
 // La Tarjeta Persona — representación canónica del profesional
@@ -49,14 +50,14 @@ export default function HelperCard({ helper, onContact, showContact = true, show
   const metaParts = []
   if (helper.rating) metaParts.push(
     <span key="r" style={{ color: 'var(--ink)', fontWeight: 700 }}>
-      <span style={{ color: 'var(--amber, #F59E0B)' }}>★</span> {helper.rating}
+      <span style={{ color: 'var(--amber, #F59E0B)' }}>★</span> {fmtNota(helper.rating)}
       {helper.reviews > 0 && <span style={{ color: 'var(--ink-tertiary)', fontWeight: 500 }}> ({helper.reviews})</span>}
     </span>
   )
   if (showPrice && helper.price && helper.price !== 'Consultar')
     metaParts.push(<span key="p" style={{ color: 'var(--ink)', fontWeight: 600 }}>{helper.price}</span>)
   if (helper.distance)
-    metaParts.push(<span key="d" style={{ color: 'var(--ink-tertiary)' }}>a {helper.distance} km</span>)
+    metaParts.push(<span key="d" style={{ color: 'var(--ink-tertiary)' }}>a {fmtKm(helper.distance)}</span>)
   if (helper.urgent)
     metaParts.push(<span key="u" style={{ color: 'var(--ink-tertiary)' }}>⚡ urgencias</span>)
 

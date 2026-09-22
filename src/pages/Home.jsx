@@ -20,6 +20,7 @@ import { PULSO_THRESHOLD, PULSO_DELAY, CONFIRMACION_THRESHOLD, CONFIRMACION_DELA
 import { extractPersona } from '../utils/personas'
 import { proSignals } from '../utils/proSignals'
 import { HELPERS as LOCAL_FALLBACK_HELPERS } from '../data/helpers'
+import { fmtNota, fmtKm } from '../utils/formato'
 
 // ── La Comprensión Visible — lo que Nüra ha entendido, en chips ──
 const PERSONA_CHIP = {
@@ -66,12 +67,12 @@ function buildWhy(helper, analysis) {
 
   // 3. Cuantas personas le han valorado: una cifra pesa mas que un adjetivo
   if ((helper?.reviews || 0) >= 20 && (helper?.rating || 0) >= 4.7) {
-    parts.push(`${helper.reviews} personas le han valorado con un ${String(helper.rating).replace('.', ',')}`)
+    parts.push(`${helper.reviews} personas le han valorado con un ${fmtNota(helper.rating)}`)
   }
 
   // 4. La distancia exacta, no "a unos minutos"
   if (helper?.distance && helper.distance <= 3) {
-    parts.push(`está a ${String(helper.distance).replace('.', ',')} km de ti`)
+    parts.push(`está a ${fmtKm(helper.distance)} de ti`)
   }
 
   if (helper?.__obra && parts.length < 2) parts.push('ha contado un caso muy parecido al tuyo')
@@ -803,7 +804,7 @@ export default function Home() {
             id: Date.now(), from: 'nura',
             lines: [
               topMatch
-                ? `Perfecto. **${firstName}** tiene ${topMatch.rating}★ y suele responder en ${topMatch.responseTime || 'menos de 1 hora'}. Es una muy buena elección.`
+                ? `Perfecto. **${firstName}** tiene ${fmtNota(topMatch.rating)}★ y suele responder en ${topMatch.responseTime || 'menos de 1 hora'}. Es una muy buena elección.`
                 : `Perfecto.`,
               `Pulsa en su tarjeta para ver el perfil completo y escribirle directamente.`
             ],
@@ -831,10 +832,10 @@ export default function Home() {
           refineLine = `Ordenados por precio. El más económico es **${refined[0]?.name?.split(' ')?.[0]}** a ${refined[0]?.price}.`
         } else if (t.includes('más cerca') || t.includes('cerca') || t.includes('zona')) {
           refined = refined.sort((a,b) => (a.distance||9) - (b.distance||9))
-          refineLine = `Ordenados por cercanía. **${refined[0]?.name?.split(' ')?.[0]}** está a ${refined[0]?.distance || '1.2'}km.`
+          refineLine = `Ordenados por cercanía. **${refined[0]?.name?.split(' ')?.[0]}** está a ${fmtKm(refined[0]?.distance || 1.2)}.`
         } else if (t.includes('mejor valorado') || t.includes('rating') || t.includes('valoración')) {
           refined = refined.sort((a,b) => (b.rating||0) - (a.rating||0))
-          refineLine = `Ordenados por valoración. **${refined[0]?.name?.split(' ')?.[0]}** tiene ${refined[0]?.rating}⭐.`
+          refineLine = `Ordenados por valoración. **${refined[0]?.name?.split(' ')?.[0]}** tiene ${fmtNota(refined[0]?.rating)}★.`
         } else if (t.includes('urgencias') || t.includes('urgente') || t.includes('hoy')) {
           refined = refined.filter(h => h.urgent).concat(refined.filter(h => !h.urgent))
           refineLine = refined.filter(h=>h.urgent).length > 0
@@ -1364,14 +1365,14 @@ export default function Home() {
                     if (chip === 'Más cerca' && lastMatches?.length > 0) {
                       const sorted = [...lastMatches].sort((a,b) => (parseFloat(a.distance)||99) - (parseFloat(b.distance)||99))
                       setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-                        lines: [`${sorted[0]?.name?.split(' ')?.[0]} es el más cercano — a ${sorted[0]?.distance || '?'} km.`],
+                        lines: [`${sorted[0]?.name?.split(' ')?.[0]} es el más cercano — a ${sorted[0]?.distance ? fmtKm(sorted[0].distance) : 'poca distancia'}.`],
                         results: sorted, refineChips: ['Más barato','Mejor valorado','Online'] }])
                       setLastMatches(sorted); return
                     }
                     if (chip === 'Mejor valorado' && lastMatches?.length > 0) {
                       const sorted = [...lastMatches].sort((a,b) => (b.rating||0)-(a.rating||0))
                       setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-                        lines: [`${sorted[0]?.name?.split(' ')?.[0]} tiene la mejor valoración — ${sorted[0]?.rating}★.`],
+                        lines: [`${sorted[0]?.name?.split(' ')?.[0]} tiene la mejor valoración — ${fmtNota(sorted[0]?.rating)}★.`],
                         results: sorted, refineChips: ['Más barato','Más cerca','Online'] }])
                       setLastMatches(sorted); return
                     }

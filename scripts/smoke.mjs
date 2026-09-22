@@ -142,6 +142,30 @@ try {
     } else console.log(`✓ ${'Imagen pesada'.padEnd(14)} [ninguna imagen supera 60 kB]`)
   }
 
+  // ── Numeros en español ──
+  // La valoracion y la distancia se pintaban en quince sitios, cada uno a su
+  // manera: "4.9 · 0.8km", "a 0.8 km", "0,8 km". Todas pasan ahora por
+  // utils/formato.js. Este guardia caza cualquiera que se pinte sin el.
+  {
+    const sueltos = []
+    for (const dir of ['src/pages', 'src/components']) {
+      for (const f of readdirSync(dir)) {
+        if (!f.endsWith('.jsx')) continue
+        const lineas = readFileSync(join(dir, f), 'utf8').split('\n')
+        lineas.forEach((l, i) => {
+          if (l.trim().startsWith('//') || l.includes('fmtNota') || l.includes('fmtKm')) return
+          // interpolacion JSX o de plantilla de .rating / .distance
+          if (/\{[\w?.\[\]]+\.(rating|distance)(\s*\|\|\s*[^}]+)?\}/.test(l)) sueltos.push(`${f}:${i + 1}`)
+        })
+      }
+    }
+    if (sueltos.length) {
+      console.log(`✗ ${'Número suelto'.padEnd(14)} — ${sueltos.length} valoración/distancia sin fmtNota/fmtKm`)
+      sueltos.slice(0, 5).forEach(x => console.log(`    ${x}`))
+      failed += sueltos.length
+    } else console.log(`✓ ${'Número suelto'.padEnd(14)} [valoración y distancia, siempre en español]`)
+  }
+
   // ── Tres puertas, una cuenta ──
   // `login()` se llama desde Login, Onboarding y RegisterHelper. El de
   // Onboarding no guardaba `joined`, asi que quien entraba por ahi se

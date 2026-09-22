@@ -6,6 +6,7 @@ import { haptic } from '../utils/haptic'
 import { getFirstName } from '../utils/name'
 import { LiveDot, Button, SectionLabel } from './ui'
 import { recordarDestino, contextoDeChat } from '../utils/contacto'
+import { fmtNota, fmtKm } from '../utils/formato'
 
 // ═══════════════════════════════════════════════════════════════
 // La Tarjeta Vertical — la recomendación como protagonista.
@@ -114,12 +115,12 @@ export default function HelperCardTall({ helper, small = false }) {
         fontSize: small ? 'var(--text-xs)' : 'var(--text-sm)' }}>
         {helper.rating && (
           <span style={{ color: 'var(--ink)', fontWeight: 700 }}>
-            <span style={{ color: 'var(--amber, #F59E0B)' }}>★</span> {helper.rating}
+            <span style={{ color: 'var(--amber, #F59E0B)' }}>★</span> {fmtNota(helper.rating)}
           </span>
         )}
         {!small && helper.price && helper.price !== 'Consultar' &&
           <span style={{ color: 'var(--ink)', fontWeight: 600 }}>{helper.price}</span>}
-        {helper.distance && <span style={{ color: 'var(--ink-tertiary)' }}>a {helper.distance} km</span>}
+        {helper.distance && <span style={{ color: 'var(--ink-tertiary)' }}>a {fmtKm(helper.distance)}</span>}
       </div>
 
       {!small && (helper.quote || helper.bio) && (

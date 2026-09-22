@@ -33,7 +33,8 @@
    apretada que las otras dos, y nadie lo habia decidido: eran tres
    declaraciones sueltas escritas a mano. Cinco filas no son cincuenta:
    la bandeja no resolvia un problema de densidad, solo divergia. */
-.list { display: flex; flex-direction: column; gap: var(--space-10); padding: var(--space-8) 14px 0; }
+/* 16px, el gutter de la app: estaba a 14 escritos a mano. */
+.list { display: flex; flex-direction: column; gap: var(--space-10); padding: var(--space-8) var(--space-16) 0; }
 
 .chatRow {
   width: 100%; display: flex; align-items: center; gap: var(--space-12);

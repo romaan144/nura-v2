@@ -119,7 +119,36 @@ sin nada pendiente, caía en publicar. Pero **cuando no hay nada pendiente lo
 **Dos botones para lo mismo no es más fácil de encontrar: es una pantalla
 que no sabe cuál es el gesto.**
 
-### Paso 4 · Las subpantallas ⬅ **SIGUIENTE**
+### Paso 4 · Las subpantallas ✅ *(2026-08-16)*
+
+**Dos descuadres entre pantallas hermanas:**
+
+| | antes | ahora |
+|---|---|---|
+| título de *Mis servicios* | `y=92` | `y=76` |
+| título de *Siguiendo* | `y=76` | `y=76` |
+| lista de *Chats* | a **14px** del borde | 16px |
+
+*Mis servicios* sumaba 8px de relleno **más** 8px de margen en el título.
+Al pasar de una subpantalla a otra, el título saltaba 16px.
+
+### Y los números, en español
+
+En *Siguiendo* ponía **`4.9 · 0.8km`**. En Inicio, *"0,8 km"*. En las
+tarjetas, *"a 0.8 km"*. **Tres maneras de escribir el mismo dato.**
+
+La valoración y la distancia se pintaban en **quince sitios de siete
+ficheros**, cada uno a su manera. Ahora todos pasan por
+`utils/formato.js`: coma decimal y espacio antes de la unidad, como se
+escribe en español.
+
+**El guardia nuevo encontró uno que mi búsqueda se saltó** — *"es el más
+cercano — a 0.8 km"*. Y con él un fallo latente: si faltaba la distancia,
+la app habría escrito literalmente *"a **?** km"*.
+
+Guardia en la Cuarta Puerta, probado devolviendo el bug.
+
+### Paso 5 · El profesional ve lo suyo ⬅ **SIGUIENTE**
 
 Lo que más daña y lo más rápido. El perfil deja de abrir con una nota.
 
@@ -151,7 +180,7 @@ diseño. Revisar que sean la misma app: título, márgenes, tarjetas.
 *(Parcialmente hecho en la etapa 6 del plan anterior — verificar y
 completar.)*
 
-### Paso 5 · El profesional ve lo suyo
+### Paso 5 · detalle
 
 El perfil del profesional muestra *"TU SEMANA · Semana tranquila · 0
 abiertas"*. Eso es un panel, y está en el sitio equivocado: mezclado con sus

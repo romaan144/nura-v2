@@ -20,6 +20,7 @@ import RegisterGate from '../components/RegisterGate'
 import { getHelperById } from '../utils/supabase'
 import { Badge, LiveDot, Bubble, StatBar } from '../components/ui'
 import { getFirstName } from '../utils/name'
+import { fmtNota } from '../utils/formato'
 
 // ── HELPERS ─────────────────────────────────────────────────────────────────
 
@@ -339,7 +340,7 @@ function HelperProfileInner() {
 
             {/* Stats como logros — no como números */}
             <StatBar stats={[
-              enrichedH.rating && { value: `${enrichedH.rating}★`, label: `${enrichedH.reviews} valoraciones` },
+              enrichedH.rating && { value: `${fmtNota(enrichedH.rating)}★`, label: `${enrichedH.reviews} valoraciones` },
               enrichedH.price && enrichedH.price !== 'Consultar' && {
                 value: enrichedH.price.split('/')[0],
                 label: enrichedH.price.includes('/') ? enrichedH.price.split('/')[1] : 'por sesión'
@@ -476,7 +477,7 @@ function HelperProfileInner() {
               <Star size={14} fill="var(--amber)" color="var(--amber)" /> Lo que dicen de {firstName}
             </h2>
             <div className={styles.ratingRow}>
-              <span className={styles.ratingBig}>{enrichedH.rating}</span>
+              <span className={styles.ratingBig}>{fmtNota(enrichedH.rating)}</span>
               <div>
                 <div className={styles.ratingStars}>
                   {[1,2,3,4,5].map(n => (

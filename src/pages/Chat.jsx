@@ -17,6 +17,7 @@ import { Badge, SectionLabel } from '../components/ui'
 import RegisterGate from '../components/RegisterGate'
 import { registrar } from '../utils/analitica'
 import { construirAviso } from '../utils/aviso'
+import { fmtNota } from '../utils/formato'
 
 // ── Context-aware first message ───────────────────────────────────────────
 
@@ -669,7 +670,7 @@ export default function Chat() {
                     <span style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',minWidth:0}}>{chatSpecialty}</span>
                     {helper.rating && (
                       <span style={{flexShrink:0,fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.4)'}}>
-                        ★ {helper.rating}
+                        ★ {fmtNota(helper.rating)}
                       </span>
                     )}
                     {helper.verified && (
@@ -721,7 +722,7 @@ export default function Chat() {
             <div style={{display:'flex',gap:'var(--space-8)',flexWrap:'wrap',justifyContent:'center',marginTop:'var(--space-4)'}}>
               {helper.dniVerified && <span style={{fontSize:'var(--text-xs)',color:'var(--green)',background:'var(--green-light)',border:'1px solid rgba(5,150,105,0.15)',borderRadius:'var(--radius-full)',padding:'var(--space-3) var(--space-10)',fontWeight:600}}>Verificado</span>}
               {helper.available && <span style={{fontSize:'var(--text-xs)',color:'var(--green)',background:'var(--green-light)',border:'1px solid rgba(5,150,105,0.15)',borderRadius:'var(--radius-full)',padding:'var(--space-3) var(--space-10)',fontWeight:600}}>● Disponible</span>}
-              <span style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.4)',background:'var(--surface-subtle)',borderRadius:'var(--radius-full)',padding:'var(--space-3) var(--space-10)'}}>⭐ {helper.rating} · {helper.reviews} reseñas</span>
+              <span style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.4)',background:'var(--surface-subtle)',borderRadius:'var(--radius-full)',padding:'var(--space-3) var(--space-10)'}}>⭐ {fmtNota(helper.rating)} · {helper.reviews} reseñas</span>
             </div>
             {/* Conversation starters */}
             <div style={{display:'flex',flexDirection:'column',gap:'var(--space-8)',marginTop:'var(--space-20)',width:'100%',maxWidth:'280px'}}>
