@@ -8,7 +8,7 @@ import PostCard from '../components/PostCard'
 import { getObraDeHelper, obraAPost } from '../data/obraPosts'
 import { useNavigate } from 'react-router-dom'
 import { LogOut, Edit2, Check, X, Award, MessageCircle,
-         Heart, ClipboardList, User, Phone, Search, Star , UserPlus, UserCheck } from 'lucide-react'
+         Heart, ClipboardList, User, Phone, Search, Star , UserPlus, UserCheck, ChevronRight } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import { Badge, StatBar } from '../components/ui'
 import HelperCard from '../components/HelperCard'
@@ -18,12 +18,17 @@ import { NURA_BUILD } from '../config'
 
 // ── Tu semana: la voz de Nüra para quien trabaja ──
 // Gramática: frase humana primero, cifras discretas después, cero vanidad.
-function buildSemana({ contactedHelpers, citas, misObras, obraPropia }) {
-  const abiertas = (contactedHelpers || []).filter(c => c && c.confirmed === undefined).length
-  const proximas = (citas || []).filter(ci => {
-    const c = (contactedHelpers || []).find(x => (x.id || x) === ci.helperId)
-    return c && c.confirmed === undefined
-  })
+// CONTABA MAL: "abiertas" y "citas" salian de `contactedHelpers`, que son
+// las conversaciones que el profesional empezo COMO CLIENTE con otros
+// profesionales — no las que le llegan. Con un mensaje sin leer de una
+// clienta, el panel decia "0 abiertas". En produccion diria cero siempre.
+// Lo unico suyo como profesional que existe en el movil son sus
+// publicaciones. Lo que le llega (los avisos) llegara con la identidad del
+// profesional (etapa 6 de estudio-perfil.md). Hasta entonces, no se cuenta
+// lo que no se sabe.
+function buildSemana({ misObras, obraPropia }) {
+  const abiertas = 0
+  const proximas = []
   const piezas = (misObras || []).length + (obraPropia || 0)
   const trozos = []
   if (abiertas > 0) trozos.push(`**${abiertas}** ${abiertas === 1 ? 'conversación abierta' : 'conversaciones abiertas'}`)
@@ -32,7 +37,7 @@ function buildSemana({ contactedHelpers, citas, misObras, obraPropia }) {
     ? `Esta semana tienes ${trozos.join(' y ')}.`
     : piezas > 0
     ? 'Semana tranquila. Tu obra sigue trabajando por ti.'
-    : 'Semana tranquila. Cuando publiques algo, Nüra sabrá recomendarte mejor.'
+    : 'Cuando alguien te escriba, te llegará un aviso con su mensaje. Publicar un caso ayuda a que te encuentren.'
   const accion = abiertas > 0
     ? { txt: 'Responder mensajes', to: '/chats' }
     : proximas.length > 0
@@ -76,6 +81,9 @@ export default function Profile() {
   }
   const navigate = useNavigate()
   const [composerOpen, setComposerOpen] = useStateObra(false)
+  const [campoAbierto, setCampoAbierto] = useState(null)
+  const [campoDraft, setCampoDraft] = useState('')
+  const [confirmarSalida, setConfirmarSalida] = useState(false)
 
   const [editingName, setEditingName]   = useState(false)
   const [nameInput,   setNameInput]     = useState('')
@@ -182,12 +190,10 @@ export default function Profile() {
       {/* El boton de cerrar sesion no tenia nombre accesible: un lector de
           pantalla decia solo "boton" sobre la accion mas destructiva de la
           pantalla. El icono no basta. */}
-      <PageHeader rightEl={
-        <button className={styles.logoutIcon} aria-label="Cerrar sesión"
-          onClick={() => { logout(); navigate('/') }}>
-          <LogOut size={17} />
-        </button>
-      } />
+      {/* Habia un segundo "Cerrar sesión" arriba, como icono de un toque y sin
+          confirmar, en la esquina donde se toca por accidente. Queda uno, al
+          final, y pide confirmacion. */}
+      <PageHeader />
 
       <div className={styles.scroll}>
 
@@ -281,7 +287,9 @@ export default function Profile() {
             if (!hp.price) missing.push('tu tarifa')
             if (!hp.differentiator) missing.push('qué te diferencia')
           } else if (!user.phone) missing.push('teléfono')
-          if (!user.avatar) missing.push('una foto')
+          // "Una foto" fuera de la invitacion: todavia no se puede subir
+          // (etapa 7 de estudio-perfil.md). Pedir algo imposible es peor que
+          // no pedirlo.
           // ── FUERA EL PORCENTAJE (paso 1 de docs/plan-perfil.md) ────────
           // El perfil abria con "Tu perfil esta al 67%" y una lista de
           // deberes. Lo primero que veia alguien al entrar en SU espacio era
@@ -305,23 +313,63 @@ export default function Profile() {
             'qué te diferencia': 'es lo que te separa de los demás',
             'una foto': 'los perfiles con foto reciben más mensajes',
           }[loQueFalta] || 'te encontrarán antes'
-          return (
-            <div style={{padding:'var(--space-16)',
+          // ERA UN RECUADRO QUE NO SE PODIA TOCAR: pedia "Añade tu
+          // formación" y no daba forma de hacerlo. Ahora se toca y se escribe
+          // ahi mismo. Se guarda en su movil; la ficha publica se actualizara
+          // cuando exista identidad del profesional (etapa 6).
+          const campo = { 'tu especialidad':'specialty', 'tu formación':'formation',
+            'tu zona':'zone', 'tu tarifa':'price', 'qué te diferencia':'differentiator' }[loQueFalta]
+          const ejemplo = { specialty:'Ej: logopeda infantil', formation:'Ej: Grado en Logopedia, UB',
+            zone:'Ej: Gràcia, Barcelona', price:'Ej: 45 € la sesión', differentiator:'Ej: trabajo con juego, sin prisas' }[campo]
+          const guardar = () => {
+            const v = campoDraft.trim(); if (!v) return
+            updateUser({ helperProfile: { ...hp, [campo]: v } })
+            setCampoAbierto(null); setCampoDraft('')
+          }
+          const caja = {padding:'var(--space-16)',
               background:'rgba(255,255,255,0.96)',
               WebkitBackdropFilter:'blur(20px) saturate(160%)',
               backdropFilter:'blur(20px) saturate(160%)',
               borderRadius:'var(--radius-md)',
               boxShadow:'var(--alzado-reposo)',
-              border:'1px solid rgba(255,255,255,0.6)'}}>
-              <p style={{margin:0, fontSize:'var(--text-base)', fontWeight:600,
-                color:'var(--ink-primary)', letterSpacing:'-0.2px', lineHeight:1.4}}>
-                Añade {loQueFalta}
-              </p>
-              <p style={{margin:'var(--space-6) 0 0', fontSize:'var(--text-sm)',
-                color:'var(--ink-tertiary)', lineHeight:1.45}}>
-                {porQue.charAt(0).toUpperCase() + porQue.slice(1)}.
-              </p>
+              border:'1px solid rgba(255,255,255,0.6)'}
+          if (campoAbierto === campo) return (
+            <div style={caja}>
+              <label htmlFor="campo-perfil" style={{display:'block', margin:'0 0 var(--space-8)', fontSize:'var(--text-base)',
+                fontWeight:600, color:'var(--ink-primary)'}}>Añade {loQueFalta}</label>
+              <input id="campo-perfil" autoFocus value={campoDraft} placeholder={ejemplo}
+                onChange={e => setCampoDraft(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') guardar(); if (e.key === 'Escape') setCampoAbierto(null) }}
+                style={{width:'100%', boxSizing:'border-box', padding:'var(--space-12) var(--space-14)',
+                  border:'1px solid var(--ink-border)', borderRadius:'var(--radius-card)', fontSize:'var(--text-base)',
+                  fontFamily:'inherit', background:'var(--surface-subtle)', outline:'none'}} />
+              <div style={{display:'flex', gap:'var(--space-8)', marginTop:'var(--space-10)'}}>
+                <button onClick={() => setCampoAbierto(null)} style={{flex:1, minHeight:44, background:'none',
+                  border:'1px solid var(--ink-border)', borderRadius:'var(--radius-full)', fontSize:'var(--text-sm)',
+                  fontWeight:600, color:'var(--ink-secondary)', fontFamily:'inherit', cursor:'pointer'}}>Cancelar</button>
+                <button onClick={guardar} disabled={!campoDraft.trim()} style={{flex:2, minHeight:44, border:'none',
+                  background: campoDraft.trim() ? 'var(--purple)' : 'rgba(33,29,51,0.08)',
+                  color: campoDraft.trim() ? 'white' : 'var(--ink-tertiary)', borderRadius:'var(--radius-full)',
+                  fontSize:'var(--text-sm)', fontWeight:700, fontFamily:'inherit', cursor:'pointer'}}>Guardar</button>
+              </div>
             </div>
+          )
+          return (
+            <button onClick={() => { setCampoAbierto(campo); setCampoDraft('') }}
+              style={{...caja, width:'100%', textAlign:'left', cursor:'pointer', fontFamily:'inherit',
+                display:'flex', alignItems:'center', gap:'var(--space-12)'}}>
+              <span style={{flex:1}}>
+                <span style={{display:'block', fontSize:'var(--text-base)', fontWeight:600,
+                  color:'var(--ink-primary)', letterSpacing:'-0.2px', lineHeight:1.4}}>
+                  Añade {loQueFalta}
+                </span>
+                <span style={{display:'block', margin:'var(--space-4) 0 0', fontSize:'var(--text-sm)',
+                  color:'var(--ink-tertiary)', lineHeight:1.45}}>
+                  {porQue.charAt(0).toUpperCase() + porQue.slice(1)}.
+                </span>
+              </span>
+              <ChevronRight size={18} color="var(--purple-ink)" style={{flexShrink:0}} />
+            </button>
           )
         })()}
 
@@ -374,7 +422,7 @@ export default function Profile() {
 
 
         {user.isHelper && (() => {
-          const sem = buildSemana({ contactedHelpers, citas, misObras,
+          const sem = buildSemana({ misObras,
             obraPropia: getObraDeHelper(user.helperId || user.id, 9).filter(o => !o.mine).length })
           return (
             <div style={{padding:'var(--space-16)',
@@ -392,15 +440,23 @@ export default function Profile() {
               <p style={{fontFamily:'var(--font-voice)', fontSize:'var(--text-base)', fontWeight:600,
                 letterSpacing:'-0.4px', lineHeight:1.4, color:'var(--ink)', margin:'0 0 var(--space-12)'}}
                 dangerouslySetInnerHTML={{__html: sem.frase.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')}} />
+              {/* Sin ceros: "0 abiertas · 0 citas · 0 publicaciones" no
+                  informaba. Solo lo que existe y es verdad. */}
+              {sem.piezas > 0 && (
               <div style={{display:'flex', gap:'18px', marginBottom:'var(--space-12)'}}>
-                {[[sem.abiertas, 'abiertas'], [sem.citas, 'citas'], [sem.piezas, 'publicaciones']].map(([n, l]) => (
+                {[[sem.piezas, sem.piezas === 1 ? 'publicación' : 'publicaciones']].map(([n, l]) => (
                   <div key={l}>
                     <div style={{fontSize:'var(--text-heading)', fontWeight:700, color:'var(--ink)', lineHeight:1}}>{n}</div>
                     <div style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', marginTop:'var(--space-3)'}}>{l}</div>
                   </div>
                 ))}
               </div>
-              <button onClick={() => sem.accion.to ? navigate(sem.accion.to) : setComposerOpen(true)}
+              )}
+              {/* Decia "Ver cómo te ven" y ABRIA LA VENTANA DE PUBLICAR: se
+                  cambio la etiqueta en el paso 3 del plan anterior y no la
+                  accion. Ahora baja a la vista previa. */}
+              <button onClick={() => sem.accion.to ? navigate(sem.accion.to)
+                  : document.getElementById('asi-te-ven')?.scrollIntoView({ behavior:'smooth', block:'start' })}
                 style={{width:'100%', background:'var(--purple-10)', color:'var(--purple-ink)',
                   border:'none', borderRadius:'var(--radius-full)', padding:'11px',
                   fontSize:'var(--text-sm)', fontWeight:700, cursor:'pointer'}}>
@@ -411,9 +467,9 @@ export default function Profile() {
         })()}
 
         {user.isHelper && (
-          <div style={{animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 240ms both'}}>
+          <div id="asi-te-ven" style={{animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 240ms both', scrollMarginTop:'80px'}}>
             <SectionLabel tone="brand" style={{marginBottom:'var(--space-10)'}}>
-              Así te ven quienes te necesitan
+              Así te ven quienes te necesitan · vista previa
             </SectionLabel>
             <Button variant="primary" full onClick={() => setComposerOpen(true)}
               style={{margin:'var(--space-12) 0 var(--space-10)'}}>
@@ -425,7 +481,11 @@ export default function Profile() {
               </div>
             )}
 
-            <div style={{pointerEvents:'none'}}>
+            {/* `inert`, no solo pointer-events: con el dedo ya no se podia
+                tocar, pero con teclado o con VoiceOver el boton "Escribir"
+                se enfocaba y abria /chat/me — un chat consigo misma. Una
+                vista previa se mira, no se usa. */}
+            <div inert style={{pointerEvents:'none'}}>
               <HelperCard helper={proPreview} showPrice />
             </div>
             {/* Solo si hay cifras. Fuera de la demo proSignals devuelve null:
@@ -645,9 +705,13 @@ export default function Profile() {
             2026.07.08" arriba y "Nüra · v1.0" abajo— con "Cerrar sesión"
             encajado entre los dos. Ahora: cerrar sesion, y debajo un solo
             sello, lo ultimo de la pantalla. */}
-        <button className={styles.logoutBtn} onClick={() => { logout(); navigate('/') }}>
+        <button className={styles.logoutBtn} onClick={() => {
+            if (!confirmarSalida) { setConfirmarSalida(true); setTimeout(() => setConfirmarSalida(false), 4000); return }
+            logout(); navigate('/')
+          }}
+          style={confirmarSalida ? {color:'var(--red)', borderColor:'var(--red)'} : undefined}>
           <LogOut size={15} />
-          Cerrar sesión
+          {confirmarSalida ? 'Toca otra vez para cerrar sesión' : 'Cerrar sesión'}
         </button>
         <p className={styles.version}>Nüra · {NURA_BUILD}</p>
 

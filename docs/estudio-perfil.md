@@ -54,13 +54,15 @@ Después del alta, **lo único editable es su cita personal**. No puede cambiar:
 Si Marta sube la tarifa, cambia de barrio o termina un máster, **no hay
 manera de reflejarlo**. Su ficha pública se queda como el día del alta.
 
-### 2.3 · Marta puede escribirse a sí misma
+### 2.3 · Marta puede escribirse a sí misma — *corregido al implementar*
 
 En *"Así te ven quienes te necesitan"* aparece la vista previa de su ficha,
-con su botón *"Escribir"*. **Es un botón real**: al tocarlo abre `/chat/me`,
-un chat consigo misma.
+con su botón *"Escribir"*. **El estudio exageraba**: la vista previa ya
+llevaba `pointer-events: none`, así que **con el dedo no pasa nada** — mi
+prueba pulsó el botón por código, que se salta esa protección.
 
-Una vista previa tiene que parecer la ficha, no funcionar como ella.
+Pero **con teclado o con VoiceOver** el botón sí se enfocaba y abría
+`/chat/me`. Fallo menor, pero real.
 
 ### 2.4 · "Tu semana" siempre dice cero
 
@@ -162,7 +164,28 @@ privado** a su panel, igual que ya tiene uno para cada aviso.
 Ordenadas para que **cada una se pueda hacer sin esperar a la siguiente**, y
 las que dependen de la decisión del apartado 4 van al final.
 
-### Etapa 1 · Lo roto ⬅ **EMPEZAR AQUÍ**
+### Etapa 1 · Lo roto ✅ *(2026-08-16)*
+
+| | antes | ahora |
+|---|---|---|
+| *"Añade tu formación"* | recuadro que no se toca | se toca, abre un campo, guarda y **pasa a pedir lo siguiente** |
+| *"una foto"* en la invitación | pedía algo imposible | fuera hasta la etapa 7 |
+| vista previa de su ficha | enfocable con teclado/VoiceOver | `inert`: se mira, no se usa |
+| *"Tu semana"* | contaba su actividad **como cliente**, y enseñaba ceros | solo sus publicaciones, sin ceros, frase honesta |
+| botón *"Ver cómo te ven"* | **abría la ventana de publicar** | baja a la vista previa |
+| *"Cerrar sesión"* | dos, uno de un toque en la esquina | uno, al final, con confirmación |
+
+El de *"Ver cómo te ven"* era un fallo mío del plan anterior: cambié la
+etiqueta del botón y no su acción.
+
+La edición se guarda **en el móvil del profesional**; su ficha pública no
+cambia hasta la etapa 6. Eso se dice en el código y aquí.
+
+### Etapa 2 · El profesional edita su ficha ⬅ **SIGUIENTE**
+
+---
+
+### Etapa 1 · detalle original
 
 Sin decisiones pendientes. Solo arreglar lo que no funciona.
 
@@ -171,7 +194,7 @@ Sin decisiones pendientes. Solo arreglar lo que no funciona.
 - *"Tu semana"* sin ceros para el profesional nuevo, y sin contar mal
 - Un solo *"Cerrar sesión"*, con confirmación
 
-### Etapa 2 · El profesional edita su ficha *(en su móvil)*
+### Etapa 2 · El profesional edita su ficha *(en su móvil)* — detalle
 
 Un editor con los mismos campos del alta. Mientras no haya autenticación,
 **edita la copia de su móvil** — lo que él ve — y deja preparada la
