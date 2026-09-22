@@ -428,6 +428,9 @@ export default function Profile() {
             <div style={{pointerEvents:'none'}}>
               <HelperCard helper={proPreview} showPrice />
             </div>
+            {/* Solo si hay cifras. Fuera de la demo proSignals devuelve null:
+                eran numeros inventados y no se enseñan a nadie real. */}
+            {proSig && (
             <div style={{marginTop:'var(--space-12)', display:'flex', justifyContent:'center'}}>
               <StatBar stats={[
                 { value: proSig.vistasHoy, label: 'vistas hoy' },
@@ -435,6 +438,7 @@ export default function Profile() {
                 { value: '—', label: 'conexiones ✓' },
               ]} />
             </div>
+            )}
             {!proQuote ? (
               <div style={{marginTop:'var(--space-12)', background:'var(--purple-10)',
                 border:'1px solid var(--purple-20)', borderRadius:'var(--radius-md)', padding:'var(--space-14)'}}>

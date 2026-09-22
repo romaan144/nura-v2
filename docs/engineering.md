@@ -208,6 +208,18 @@ objeto sencillo — y desconfiar de `!== 'valor'` como comprobacion, porque
 `undefined !== 'valor'` es **cierto** y deja pasar el caso roto. Preferir
 `x?.campo || defecto`. Guardia en la Cuarta Puerta.
 
+### `pkill -f "vite preview"` se mata a sí mismo (2026-08-16)
+
+En una sola orden de bash, `pkill -f "vite preview"` busca procesos cuya
+línea de órdenes **contenga** esas palabras — y la propia orden de bash las
+contiene. Mata su propio shell, la orden se corta sin decir nada y el build
+que venía detrás **nunca se ejecuta**: el servidor sigue sirviendo el bundle
+viejo y parece que el cambio no ha funcionado.
+
+Se perdieron varios intentos así. **No usar `pkill -f` con un patrón que
+aparezca en la misma orden.** Lanzar el servidor nuevo sobre el mismo puerto
+basta: el viejo deja de responder.
+
 ### `npm run recorrido` — que las piezas sigan funcionando JUNTAS (2026-08-16)
 
 Las cuatro puertas comprueban **piezas**: que el build pasa, que no hay

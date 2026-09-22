@@ -196,9 +196,13 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
   // Default greeting
   if (user.isHelper) {
     const sig = proSignals(user.name)
+    // Sin cifras reales, solo lo que es verdad: su perfil esta publicado y
+    // le avisaremos cuando alguien le escriba — cosa que SI hace Nüra.
     return [
       saludo,
-      `Mientras no mirabas, **${sig.vistasHoy} ${sig.vistasHoy === 1 ? 'persona vio' : 'personas vieron'}** tu perfil hoy y hubo **${sig.busquedasSemana} búsquedas** en tu zona esta semana. Tu escaparate está activo ✨ Y si tú necesitas ayuda, aquí estoy.`
+      sig
+        ? `Mientras no mirabas, **${sig.vistasHoy} ${sig.vistasHoy === 1 ? 'persona vio' : 'personas vieron'}** tu perfil hoy y hubo **${sig.busquedasSemana} búsquedas** en tu zona esta semana. Tu escaparate está activo ✨ Y si tú necesitas ayuda, aquí estoy.`
+        : `Tu perfil está publicado. Cuando alguien te escriba, te llegará un aviso con su mensaje. Y si tú necesitas ayuda, aquí estoy.`
     ]
   }
   // EL SUSURRO, RETIRADO (2026-08-16). Decia "Carlos, al que sigues, publico

@@ -148,7 +148,56 @@ la app habría escrito literalmente *"a **?** km"*.
 
 Guardia en la Cuarta Puerta, probado devolviendo el bug.
 
-### Paso 5 · El profesional ve lo suyo ⬅ **SIGUIENTE**
+### Paso 5 · El profesional ve lo suyo ✅ *(2026-08-16)*
+
+**Se iba a decidir dónde poner el panel del profesional. Al medirlo apareció
+algo más grave: las cifras eran inventadas.**
+
+```js
+const vistasHoy = 1 + (h % 5)              // 1-5
+const busquedasSemana = 4 + ((h >> 3) % 9) // 4-12
+```
+
+Salen de un *hash* de la fecha y el nombre. **No miden nada.** Y se mostraban
+también en producción: a una profesional real, Inicio le decía
+
+> *"Mientras no mirabas, **3 personas vieron tu perfil** hoy y hubo **9
+> búsquedas** en tu zona. Tu escaparate está activo ✨"*
+
+sin que nadie la hubiera visto ni buscado.
+
+En la demo es aceptable —enseña cómo se verá—. **En producción es mentirle a
+alguien sobre su negocio**, y el día que lo descubre, Nüra pierde a esa
+persona y a todas a las que se lo cuente.
+
+**Corregido en el origen**: `proSignals()` devuelve `null` fuera de la demo.
+Ninguna pantalla puede volver a mostrarlas en producción sin decidirlo.
+
+| | demo | producción |
+|---|---|---|
+| Inicio | *"1 persona vio tu perfil… 4 búsquedas"* | *"Tu perfil está publicado. Cuando alguien te escriba, te llegará un aviso con su mensaje."* |
+| Perfil | fila de cifras | **sin fila** |
+
+La frase de producción dice solo lo que es verdad — y lo del aviso lo es:
+Nüra lo encola y el profesional lo recibe.
+
+### Y un fallo que ya estaba en la demo
+
+`(h >> 3)` usaba desplazamiento **con signo** sobre un hash **sin signo**.
+Medido en 1.600 combinaciones de fecha y nombre: **341 daban negativo**. Un
+día de cada cinco, la demo decía *"hubo **-1 búsquedas** en tu zona"*.
+Corregido a `>>>`.
+
+### La decisión del panel
+
+Sin las cifras falsas, lo que queda —*Tu semana*, *Así te ven*, *Tu primer
+paso*— **es real y es suyo**: mensajes abiertos, citas, su ficha tal como la
+ven otros. Se queda donde está.
+
+**Cuando existan métricas reales** (la tabla `eventos` ya recoge contactos),
+saldrán de ahí.
+
+### Paso 6 · Configuración al final ⬅ **SIGUIENTE**
 
 Lo que más daña y lo más rápido. El perfil deja de abrir con una nota.
 
@@ -188,7 +237,7 @@ ajustes personales.
 
 Decidir si se queda, se mueve o se retira.
 
-### Paso 6 · Configuración al final
+### Paso 6 · detalle
 
 Ajustes y cerrar sesión deben ser lo último y lo más discreto. Verificar que
 lo son.
