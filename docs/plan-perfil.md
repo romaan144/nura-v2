@@ -197,7 +197,55 @@ ven otros. Se queda donde está.
 **Cuando existan métricas reales** (la tabla `eventos` ya recoge contactos),
 saldrán de ahí.
 
-### Paso 6 · Configuración al final ⬅ **SIGUIENTE**
+### Paso 6 · Configuración al final ✅ *(2026-08-16)*
+
+**Al fondo del perfil:**
+
+| | antes | ahora |
+|---|---|---|
+| sellos de versión | **dos, contradictorios**: *"Nüra 2 · 2026.07.08"* y *"Nüra · v1.0"* | uno, lo último de la pantalla |
+| *Cerrar sesión* | encajado **entre** los dos sellos | antes del sello |
+| *"Próximamente · tu reputación profesional"* | también al **usuario** | solo al profesional |
+| zonas del código | 1, 2, 4, 5 | 1, 2, 3, 4 |
+
+### Dos fallos míos de pasos anteriores, encontrados aquí
+
+**1 · Dos ventanas de publicar a la vez.** En el paso 3 retiré el botón
+duplicado pero **dejé su ventana montada** — y ya había otra al final del
+fichero. Un solo toque en *"Publicar"* abría **dos ventanas superpuestas**.
+Medido en navegador: 2. Ahora 1.
+
+**2 · Ceros para el profesional.** Al ocultarle a Marta el hueco vacío del
+usuario (paso 3), cayó en la otra rama y veía *"**0** búsquedas realizadas ·
+**0** profesionales contactados"*. El propio código ya lo prohibía: *"un cero
+grande no informa, solo rellena"*.
+
+Verificados los tres estados:
+
+| | la zona dice |
+|---|---|
+| usuario nuevo | *"Aún no has buscado a nadie. Cuéntame qué necesitas…"* |
+| usuario con actividad | *"1 búsqueda realizada · 0 profesionales contactados"* |
+| profesional nuevo | directo a sus enlaces, **sin ceros** |
+
+---
+
+# 🏁 PERFIL COMPLETO
+
+Seis pasos. Lo que cambió, en una línea cada uno:
+
+1. **Ya no abre con una nota** — *"Tu perfil está al 67%"* fuera
+2. **Se presenta como la ficha** — nombre a 28px y el oficio debajo
+3. **Marta ve el perfil de una profesional**, no el de un usuario
+4. **Las subpantallas encajan** — y los números, en español
+5. **Ninguna cifra inventada en producción**
+6. **Lo último es lo último** — un sello, cerrar sesión, nada más
+
+Y cuatro fallos que no se buscaban: el `gap` duplicado, el `-1 búsquedas`,
+las dos ventanas de publicar y los ceros. **Dos de los cuatro los había
+metido yo en pasos anteriores** — el último paso sirvió también para
+revisar los primeros.
+
 
 Lo que más daña y lo más rápido. El perfil deja de abrir con una nota.
 

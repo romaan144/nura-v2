@@ -492,7 +492,7 @@ export default function Profile() {
           )
         })()}
 
-        {/* ── LO QUE HAS BUSCADO ─────────────────────────────────────
+        {/* ── ZONA 2: LO QUE HAS BUSCADO ─────────────────────────────
             Este bloque no comprobaba el rol: una profesional veia "Tu
             actividad · Aún no has buscado a nadie · Cuéntame qué necesitas
             y te busco a la persona" en SU propio perfil. Marta no busca
@@ -510,7 +510,12 @@ export default function Profile() {
               profesional veia "Aún no has buscado a nadie · Cuéntame qué
               necesitas y te busco a la persona" en su propio perfil: la app
               le hablaba como si ella buscara ayuda, cuando la ofrece. */}
-          {searchCount === 0 && chatCount === 0 && !user.isHelper ? (
+          {/* Sin actividad: al usuario se le invita a buscar; al
+              profesional NO se le enseñan ceros. Al ocultarle el hueco del
+              usuario (paso 3) caia en la otra rama y veia "0 búsquedas
+              realizadas · 0 profesionales contactados". Un cero no informa. */}
+          {searchCount === 0 && chatCount === 0 && user.isHelper ? null
+          : searchCount === 0 && chatCount === 0 ? (
             <div style={{
               background: 'var(--surface-subtle)', borderRadius: 'var(--radius-md)',
               padding: 'var(--space-20) var(--space-16)', textAlign: 'center',
@@ -587,10 +592,13 @@ export default function Profile() {
             quienes te necesitan" — que esta mejor situado, junto a la vista
             previa de su ficha.
             Dos botones para lo mismo no es mas facil de encontrar: es una
-            pantalla que no sabe cual es el gesto. */}
-        {composerOpen && <ObraComposer onClose={() => setComposerOpen(false)} />}
+            pantalla que no sabe cual es el gesto.
+            Y su ventana tambien sobraba: habia DOS <ObraComposer> montados
+            —este y el del final del fichero— y un solo toque en "Publicar"
+            abria dos ventanas superpuestas. Medido en navegador. Se queda
+            solo la del final, que esta en la raiz como debe estar un modal. */}
 
-        {/* ── ZONA 4: EVOLUCIÓN ─────────────────────────── */}
+        {/* ── ZONA 3: EVOLUCIÓN ─────────────────────────── */}
 
         {!user.isHelper && (
           <div className={styles.evolutionZone} style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 240ms forwards`}}>
@@ -605,11 +613,17 @@ export default function Profile() {
           </div>
         )}
 
-        {/* ── PRÓXIMAMENTE ────────────────────────────────── */}
+        {/* ── LO QUE VIENE (solo profesionales) ───────────────────────
+            Prometia "tu reputacion profesional verificada" tambien al
+            USUARIO, que no es profesional ni va a tener curriculum en Nüra.
+            Al profesional si le importa: es la vision del producto y es
+            suyo. Y el degradado era de un color al mismo color — no hacia
+            nada. */}
+        {user.isHelper && (
         <div style={{
           margin:'0 var(--space-16) var(--space-16)', padding:'var(--space-16)',
-          background:'linear-gradient(135deg, var(--purple-05) 0%, var(--purple-05) 100%)',
-          borderRadius:'var(--radius-card)', border:'1px solid var(--purple-10)'
+          background:'var(--purple-05)',
+          borderRadius:'var(--radius-md)', border:'1px solid var(--purple-10)'
         }}>
           <div style={{display:'flex',alignItems:'center',gap:'var(--space-8)',marginBottom:'var(--space-8)'}}>
             <span style={{fontSize:'var(--text-xs)',fontWeight:700,color:'var(--purple)',letterSpacing:'0.8px',textTransform:'uppercase'}}>Próximamente</span>
@@ -621,17 +635,18 @@ export default function Profile() {
             Nüra construirá tu currículum vivo basado en las ayudas reales que ofrezcas — verificadas y reconocidas por las personas que ayudaste.
           </p>
         </div>
+        )}
 
-        {/* ── ZONA 5: CONFIGURACIÓN DISCRETA ────────────── */}
-        <div style={{textAlign:'center', fontSize:'var(--text-xs)', color:'var(--ink-disabled, rgba(33,29,51,0.25))', margin:'var(--space-2) 0 var(--space-10)'}}>
-          Nüra 2 · {NURA_BUILD}
-        </div>
+        {/* ── ZONA 4: CONFIGURACIÓN, AL FINAL Y DISCRETA ──────────────
+            Habia DOS sellos de version que se contradecian —"Nüra 2 ·
+            2026.07.08" arriba y "Nüra · v1.0" abajo— con "Cerrar sesión"
+            encajado entre los dos. Ahora: cerrar sesion, y debajo un solo
+            sello, lo ultimo de la pantalla. */}
         <button className={styles.logoutBtn} onClick={() => { logout(); navigate('/') }}>
           <LogOut size={15} />
           Cerrar sesión
         </button>
-
-        <p className={styles.version}>Nüra · v1.0</p>
+        <p className={styles.version}>Nüra · {NURA_BUILD}</p>
 
       </div>
     </div>

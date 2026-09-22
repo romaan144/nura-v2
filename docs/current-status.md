@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (perfil paso 5/6 · cifras inventadas fuera de producción)
+**Última actualización:** 2026-08-16 (🏁 perfil completo, 6/6)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -750,7 +750,7 @@ Seis pasos. Uno por cada **"sigue"**.
 | 3 | Una cosa por bloque | ✅ hecho |
 | 4 | Las subpantallas | ✅ hecho |
 | 5 | El profesional ve lo suyo | ✅ hecho |
-| **6** | **Configuración al final** | ⬅ **siguiente** |
+| 6 | Configuración al final | ✅ hecho |
 
 ## Errores conocidos / problemas pendientes
 
