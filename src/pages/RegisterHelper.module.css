@@ -8,7 +8,7 @@
 /* Floating header */
 .header { position: absolute; top: 0; left: 0; right: 0; z-index: 20; display: flex; align-items: center; gap: 10px; padding: max(env(safe-area-inset-top,0px),12px) 14px 10px; pointer-events: none; }
 .header > * { pointer-events: all; }
-.back { width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.96); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); border: 1px solid rgba(255,255,255,0.35); box-shadow: var(--shadow-sm), 0 0 0 0.5px rgba(33,29,51,0.06); display: flex; align-items: center; justify-content: center; color: rgba(33,29,51,0.65); cursor: pointer; transition: opacity 0.2s; flex-shrink: 0; }
+.back { width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.96); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); border: 1px solid rgba(255,255,255,0.35); box-shadow: var(--shadow-sm), 0 0 0 0.5px rgba(33,29,51,0.06); display: flex; align-items: center; justify-content: center; color: var(--ink-secondary); cursor: pointer; transition: opacity 0.2s; flex-shrink: 0; }
 .back:active { opacity: 0.6; }
 .logoPill { flex: 1; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.96); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); border: 1px solid rgba(255,255,255,0.35); border-radius: var(--radius-full); padding: 11px 20px; box-shadow: var(--shadow-sm); }
 .logo { height: 20px; width: auto; }
@@ -69,9 +69,9 @@
               0 0 0 4px rgba(123,47,255,0.08);
 }
 .input { flex: 1; border: none; outline: none; background: transparent; font-size: var(--text-base); font-weight: 400; color: var(--ink-primary); font-family: -apple-system,'Inter',sans-serif; letter-spacing: -0.2px; padding: 0; }
-.input::placeholder { color: rgba(33,29,51,0.28); font-weight: 300; letter-spacing: -0.1px; }
+.input::placeholder { color: var(--ink-tertiary); font-weight: 300; letter-spacing: -0.1px; }
 .input:disabled { opacity: 0.5; }
-.plusBtn { width: 34px; height: 34px; border-radius: 50%; background: transparent; border: none; color: rgba(33,29,51,0.3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; transition: opacity 0.15s; }
+.plusBtn { width: 34px; height: 34px; border-radius: 50%; background: transparent; border: none; color: var(--ink-tertiary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; transition: opacity 0.15s; }
 .plusBtn:active { opacity: 0.5; }
 .sendBtn { width: 38px; height: 38px; border-radius: 50%; background: var(--purple); color: white; border: none; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; transition: opacity 0.2s; }
 .sendBtn:active { opacity: 0.7; }

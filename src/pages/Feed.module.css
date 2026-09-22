@@ -100,7 +100,7 @@
   display: flex; align-items: center;
 }
 .authorSub {
-  font-size: var(--text-xs); color: rgba(33,29,51,0.4);
+  font-size: var(--text-xs); color: var(--ink-tertiary);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
@@ -188,7 +188,7 @@
   color: var(--ink-primary); margin: 0; letter-spacing: -0.3px;
 }
 .empty p {
-  font-size: var(--text-sm); color: rgba(33,29,51,0.4);
+  font-size: var(--text-sm); color: var(--ink-tertiary);
   margin: 0; line-height: 1.6; max-width: 240px;
 }
 .emptyBtn {
@@ -252,7 +252,7 @@
 }
 .nuraPickDate {
   font-size: var(--text-xs);
-  color: rgba(33,29,51,0.3);
+  color: var(--ink-tertiary);
 }
 
 .nuraPickCard {
@@ -288,7 +288,7 @@
 .nuraPickReason {
   display: flex; align-items: center; gap: 4px;
   font-size: var(--text-xs);
-  color: rgba(33,29,51,0.4);
+  color: var(--ink-tertiary);
   line-height: 1.4;
 }
 .nuraPickRight {

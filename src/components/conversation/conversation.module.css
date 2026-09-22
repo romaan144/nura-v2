@@ -121,13 +121,13 @@
   font-family: -apple-system, 'Inter', sans-serif;
   letter-spacing: -0.2px; padding: 0;
 }
-.input::placeholder { color: rgba(33,29,51,0.28); font-weight: 300; letter-spacing: -0.1px; }
+.input::placeholder { color: var(--ink-tertiary); font-weight: 300; letter-spacing: -0.1px; }
 .input:disabled { opacity: 0.5; }
 
 .plusBtn {
   width: 34px; height: 34px; border-radius: 50%;
   background: transparent; border: none;
-  color: rgba(33,29,51,0.3);
+  color: var(--ink-tertiary);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; cursor: pointer; transition: opacity 0.15s;
 }
@@ -163,7 +163,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 .suggestion:active { opacity: 0.7; transform: scale(0.98); }
-.suggestionText { font-size: var(--text-sm); color: rgba(33,29,51,0.7); font-weight: 500; }
+.suggestionText { font-size: var(--text-sm); color: var(--ink-secondary); font-weight: 500; }
 
 /* ── MESSAGES / BUBBLES ─────────────────────────────── */
 .msgRow { display: flex; align-items: flex-end; gap: 10px; }

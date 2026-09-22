@@ -25,7 +25,7 @@ export default class ErrorBoundary extends Component {
             <p style={{fontSize:'var(--text-base)',fontWeight:700,color:'var(--ink, #1a1a1a)',marginBottom:'var(--space-6)'}}>
               Algo fue mal por mi lado
             </p>
-            <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.5)',lineHeight:1.5,maxWidth:'280px'}}>
+            <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',lineHeight:1.5,maxWidth:'280px'}}>
               Dame un segundo e inténtalo de nuevo. Si sigue pasando, vuelve atrás y prueba otra vez.
             </p>
           </div>
@@ -40,7 +40,7 @@ export default class ErrorBoundary extends Component {
             </button>
           </div>
           <button onClick={() => this.setState({ showDetail: !this.state.showDetail })}
-            style={{marginTop:'var(--space-8)',fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.3)',background:'none',border:'none'}}>
+            style={{marginTop:'var(--space-8)',fontSize:'var(--text-xs)',color:'var(--ink-tertiary)',background:'none',border:'none'}}>
             {this.state.showDetail ? 'Ocultar detalle técnico' : 'Detalle técnico'}
           </button>
           {this.state.showDetail && (

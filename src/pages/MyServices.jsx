@@ -283,15 +283,15 @@ export default function MyServices() {
             {ratingSent ? (
               <div style={{textAlign:'center',padding:'var(--space-20) 0',display:'flex',flexDirection:'column',alignItems:'center',gap:'var(--space-12)'}}>
                 <Star size={44} color='var(--amber)' fill='var(--amber)' strokeWidth={1.5} />
-                <h3 style={{fontSize:'var(--text-md)',fontWeight:800,color:'rgba(33,29,51,0.85)',margin:0,letterSpacing:'-0.3px'}}>¡Gracias por valorar!</h3>
-                <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.45)',margin:0}}>Tu valoración ayuda a toda la comunidad.</p>
+                <h3 style={{fontSize:'var(--text-md)',fontWeight:800,color:'var(--ink-primary)',margin:0,letterSpacing:'-0.3px'}}>¡Gracias por valorar!</h3>
+                <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:0}}>Tu valoración ayuda a toda la comunidad.</p>
               </div>
             ) : (
               <>
-                <h3 style={{fontSize:'var(--text-md)',fontWeight:800,margin:'0 0 var(--space-4)',color:'rgba(33,29,51,0.85)',letterSpacing:'-0.3px'}}>
+                <h3 style={{fontSize:'var(--text-md)',fontWeight:800,margin:'0 0 var(--space-4)',color:'var(--ink-primary)',letterSpacing:'-0.3px'}}>
                   Valorar a {ratingModal.helperName?.split(' ')?.[0]}
                 </h3>
-                <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.4)',margin:'0 0 var(--space-20)'}}>{ratingModal.specialty}</p>
+                <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:'0 0 var(--space-20)'}}>{ratingModal.specialty}</p>
                 <div style={{display:'flex',gap:'var(--space-6)',justifyContent:'center',marginBottom:'var(--space-16)'}}>
                   {[1,2,3,4,5].map(n => (
                     <button key={n} onClick={() => setRatingVal(n)}
@@ -305,7 +305,7 @@ export default function MyServices() {
                   style={{width:'100%',padding:'var(--space-12) var(--space-16)',border:'1px solid rgba(33,29,51,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',resize:'none',fontFamily:'inherit',background:'var(--surface-subtle)',boxSizing:'border-box',marginBottom:'var(--space-12)'}} />
                 <div style={{display:'flex',gap:'var(--space-8)'}}>
                   <button onClick={() => setRatingModal(null)}
-                    style={{flex:1,padding:'13px',background:'var(--surface-subtle)',color:'rgba(33,29,51,0.55)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
+                    style={{flex:1,padding:'13px',background:'var(--surface-subtle)',color:'var(--ink-tertiary)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
                     Cancelar
                   </button>
                   {/* Apagado hasta tocar una estrella: un boton que se puede

@@ -358,7 +358,9 @@
 
 .version {
   font-size: var(--text-xs);
-  color: var(--ink-disabled);
+  /* --ink-disabled es para lo DESACTIVADO, no para texto que se lee: daba
+     1,67 de contraste. Discreto, pero legible. */
+  color: var(--ink-tertiary);
   text-align: center;
   padding: 14px 0 8px;
 }

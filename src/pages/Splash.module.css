@@ -25,4 +25,4 @@
 .loadBar { width: 200px; height: 2px; background: rgba(33,29,51,0.08); border-radius: 1px; overflow: hidden; }
 .loadFill { height: 100%; background: var(--grad-main); animation: load 2s ease forwards; }
 @keyframes load { from{width:0} to{width:100%} }
-.tagline { font-size: var(--text-sm); color: rgba(33,29,51,0.35); letter-spacing: 0.2px; font-weight: 400; }
+.tagline { font-size: var(--text-sm); color: var(--ink-tertiary); letter-spacing: 0.2px; font-weight: 400; }

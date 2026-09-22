@@ -130,14 +130,14 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
         </div>
         <h3 className={styles.modalTitle}>¡Solicitud enviada!</h3>
             <div className="hilo" style={{width:'56px', margin:'var(--space-2) auto var(--space-10)'}} />
-        <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.45)',marginBottom:'var(--space-12)',lineHeight:1.6}}>{name} confirmará disponibilidad en breve.</p>
+        <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',marginBottom:'var(--space-12)',lineHeight:1.6}}>{name} confirmará disponibilidad en breve.</p>
         {(date || time) && (
           <div style={{background:'var(--surface-subtle)',border:'1px solid rgba(33,29,51,0.06)',borderRadius:'var(--radius-card)',
             padding:'var(--space-10) var(--space-14)',marginBottom:'var(--space-20)',textAlign:'left'}}>
             {date && <p className={styles.metaXs3}>
               {new Date(date).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})}
             </p>}
-            {time && <p style={{margin:0,fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.55)'}}>{time}h</p>}
+            {time && <p style={{margin:0,fontSize:'var(--text-xs)',color:'var(--ink-tertiary)'}}>{time}h</p>}
           </div>
         )}
         <div className={styles.colFull}>
@@ -146,7 +146,7 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
             Ver mis servicios
           </button>
           <button onClick={onClose}
-            style={{padding:'var(--space-12)',background:'transparent',color:'rgba(33,29,51,0.4)',border:'none',fontSize:'var(--text-sm)',cursor:'pointer'}}>
+            style={{padding:'var(--space-12)',background:'transparent',color:'var(--ink-tertiary)',border:'none',fontSize:'var(--text-sm)',cursor:'pointer'}}>
             Volver al chat
           </button>
         </div>
@@ -158,9 +158,9 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
     <div style={{position:'fixed',inset:0,background:'rgba(30,25,40,0.35)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:200,display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
       <div style={{background:'rgba(255,255,255,0.95)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',border:'1px solid rgba(255,255,255,0.5)',borderRadius:'24px 24px 0 0',padding:'var(--space-24) var(--space-20) var(--space-32)',width:'100%',maxWidth:'500px',boxShadow:'0 -8px 40px rgba(33,29,51,0.1)'}}>
         <div style={{width:'36px',height:'4px',background:'var(--surface-muted)',borderRadius:'2px',margin:'0 auto var(--space-24)'}} />
-        <h3 style={{fontSize:'var(--text-md)',fontWeight:800,marginBottom:'var(--space-4)',color:'rgba(33,29,51,0.85)',letterSpacing:'-0.3px'}}>Solicitar servicio</h3>
+        <h3 style={{fontSize:'var(--text-md)',fontWeight:800,marginBottom:'var(--space-4)',color:'var(--ink-primary)',letterSpacing:'-0.3px'}}>Solicitar servicio</h3>
         <div className="hilo" style={{width:'56px', margin:'var(--space-2) 0 var(--space-10)'}} />
-        <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.45)',marginBottom: prefillDate ? '12px' : '20px'}}>Con {name} · {helper.price || 'Precio a consultar'}</p>
+        <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',marginBottom: prefillDate ? '12px' : '20px'}}>Con {name} · {helper.price || 'Precio a consultar'}</p>
         {prefillDate && (
           <div style={{display:'flex',alignItems:'center',gap:'var(--space-6)',
             background:'var(--purple-05)',border:'1px solid var(--purple-10)',
@@ -175,7 +175,7 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
         <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)',marginBottom:'var(--space-20)'}}>
           {/* Day pills */}
           <div>
-            <SectionLabel tone="muted" style={{margin:'0 0 var(--space-8)',color:'rgba(33,29,51,0.4)'}}>Fecha</SectionLabel>
+            <SectionLabel tone="muted" style={{margin:'0 0 var(--space-8)',color:'var(--ink-tertiary)'}}>Fecha</SectionLabel>
             <div style={{display:'flex',gap:'var(--space-6)',overflowX:'auto',paddingBottom:'var(--space-4)'}}>
               {Array.from({length:7},(_,i)=>{
                 const d=new Date(); d.setDate(d.getDate()+i)
@@ -195,7 +195,7 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
           </div>
           {/* Time pills */}
           <div>
-            <SectionLabel tone="muted" style={{margin:'0 0 var(--space-8)',color:'rgba(33,29,51,0.4)'}}>Hora</SectionLabel>
+            <SectionLabel tone="muted" style={{margin:'0 0 var(--space-8)',color:'var(--ink-tertiary)'}}>Hora</SectionLabel>
             <div style={{display:'flex',gap:'var(--space-6)',flexWrap:'wrap'}}>
               {(() => {
                 if (!date) return (
@@ -230,10 +230,10 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
           </div>
           <textarea value={note} onChange={e=>setNote(e.target.value)}
             placeholder="Detalles adicionales (opcional)..." rows={3}
-            style={{padding:'var(--space-12) var(--space-16)',border:'1px solid rgba(33,29,51,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',resize:'none',fontFamily:'-apple-system,Inter,sans-serif',color:'rgba(33,29,51,0.85)',background:'var(--surface-subtle)'}} />
+            style={{padding:'var(--space-12) var(--space-16)',border:'1px solid rgba(33,29,51,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',resize:'none',fontFamily:'-apple-system,Inter,sans-serif',color:'var(--ink-primary)',background:'var(--surface-subtle)'}} />
         </div>
         <div style={{display:'flex',gap:'var(--space-10)'}}>
-          <button onClick={onClose} style={{flex:1,padding:'var(--space-14)',background:'var(--surface-subtle)',color:'rgba(33,29,51,0.55)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>Cancelar</button>
+          <button onClick={onClose} style={{flex:1,padding:'var(--space-14)',background:'var(--surface-subtle)',color:'var(--ink-tertiary)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>Cancelar</button>
           {/* HACEN FALTA DIA **Y** HORA. Antes bastaba el dia: en un sabado,
               que el logopeda no trabaja, no aparecia ningun hueco y el boton
               se activaba igual. Se podia enviar una solicitud sin hora — y
@@ -669,7 +669,7 @@ export default function Chat() {
                     <span className={styles.onlineDot} style={{flexShrink:0}} />
                     <span style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',minWidth:0}}>{chatSpecialty}</span>
                     {helper.rating && (
-                      <span style={{flexShrink:0,fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.4)'}}>
+                      <span style={{flexShrink:0,fontSize:'var(--text-xs)',color:'var(--ink-tertiary)'}}>
                         ★ {fmtNota(helper.rating)}
                       </span>
                     )}
@@ -711,7 +711,7 @@ export default function Chat() {
                 marginBottom:'var(--space-4)',maxWidth:'260px',textAlign:'left',
               }}>
                 <SectionLabel tone="brand" style={{margin:'0 0 var(--space-4)'}}>Mensaje sugerido</SectionLabel>
-                <p style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.5)',margin:0,lineHeight:1.6}}>
+                <p style={{fontSize:'var(--text-xs)',color:'var(--ink-tertiary)',margin:0,lineHeight:1.6}}>
                   Revisa el mensaje antes de enviarlo.
                 </p>
               </div>
@@ -722,11 +722,11 @@ export default function Chat() {
             <div style={{display:'flex',gap:'var(--space-8)',flexWrap:'wrap',justifyContent:'center',marginTop:'var(--space-4)'}}>
               {helper.dniVerified && <span style={{fontSize:'var(--text-xs)',color:'var(--green)',background:'var(--green-light)',border:'1px solid rgba(5,150,105,0.15)',borderRadius:'var(--radius-full)',padding:'var(--space-3) var(--space-10)',fontWeight:600}}>Verificado</span>}
               {helper.available && <span style={{fontSize:'var(--text-xs)',color:'var(--green)',background:'var(--green-light)',border:'1px solid rgba(5,150,105,0.15)',borderRadius:'var(--radius-full)',padding:'var(--space-3) var(--space-10)',fontWeight:600}}>● Disponible</span>}
-              <span style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.4)',background:'var(--surface-subtle)',borderRadius:'var(--radius-full)',padding:'var(--space-3) var(--space-10)'}}>⭐ {fmtNota(helper.rating)} · {helper.reviews} reseñas</span>
+              <span style={{fontSize:'var(--text-xs)',color:'var(--ink-tertiary)',background:'var(--surface-subtle)',borderRadius:'var(--radius-full)',padding:'var(--space-3) var(--space-10)'}}>⭐ {fmtNota(helper.rating)} · {helper.reviews} reseñas</span>
             </div>
             {/* Conversation starters */}
             <div style={{display:'flex',flexDirection:'column',gap:'var(--space-8)',marginTop:'var(--space-20)',width:'100%',maxWidth:'280px'}}>
-              <p style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.4)',textAlign:'center',margin:0}}>Empieza la conversación</p>
+              <p style={{fontSize:'var(--text-xs)',color:'var(--ink-tertiary)',textAlign:'center',margin:0}}>Empieza la conversación</p>
               {[
                 `¿Tienes disponibilidad esta semana?`,
                 `¿Cuánto cobras por sesión?`,
@@ -739,7 +739,7 @@ export default function Chat() {
                     background:'rgba(255,255,255,0.85)',
                     border:'1px solid rgba(33,29,51,0.08)',
                     borderRadius:'var(--radius-card)',
-                    fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.7)',
+                    fontSize:'var(--text-sm)',color:'var(--ink-secondary)',
                     cursor:'pointer',textAlign:'left',
                     fontFamily:'-apple-system,"Inter",sans-serif',
                     transition:'opacity 0.15s',

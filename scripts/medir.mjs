@@ -170,7 +170,15 @@ async function medirA11y() {
     const dianaAA = els.filter(e => e.ancho < 24 || e.alto < 24)
     const sinTeclado = els.filter(e => !e.alcanzableConTeclado)
     const contraste = await p.evaluate(() => {
-      const rgb = s => { const m = s.match(/[\d.]+/g); return m ? m.slice(0, 3).map(Number) : null }
+      // EL MEDIDOR MENTIA (corregido 2026-08-16). Cogia solo R, G y B y
+      // tiraba la TRANSPARENCIA: un texto rgba(33,29,51,0.35) —tinta al 35%,
+      // gris claro en pantalla— lo trataba como tinta al 100%. Toda la
+      // sesion dijo "contraste 0 fallos" mientras el fundador veia texto
+      // gris que no se leia. Ahora el color del texto se COMPONE sobre su
+      // fondo real, que es lo que el ojo ve.
+      const rgba = s => { const m = s.match(/[\d.]+/g); return m ? [+m[0], +m[1], +m[2], m[3] === undefined ? 1 : +m[3]] : null }
+      const rgb = s => { const c = rgba(s); return c ? c.slice(0, 3) : null }
+      const sobre = (fg, bg) => fg.slice(0, 3).map((v, i) => v * fg[3] + bg[i] * (1 - fg[3]))
       const lum = c => { const [r, g, bl] = c.map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4) }); return 0.2126 * r + 0.7152 * g + 0.0722 * bl }
       const ratio = (a, b) => { const l1 = lum(a), l2 = lum(b); return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05) }
       const fondo = e => { let n = e; while (n && n !== document.documentElement) { const s = getComputedStyle(n), c = rgb(s.backgroundColor); const a = (s.backgroundColor.match(/[\d.]+/g) || [])[3]; if (c && (a === undefined || +a > 0.5)) return c; n = n.parentElement } return [255, 255, 255] }
@@ -179,7 +187,8 @@ async function medirA11y() {
         const r = e.getBoundingClientRect()
         if (!e.checkVisibility?.() || r.width < 2) continue
         if (![...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim().length > 1)) continue
-        const s = getComputedStyle(e), fg = rgb(s.color); if (!fg) continue
+        const s = getComputedStyle(e), fgA = rgba(s.color); if (!fgA) continue
+        const fg = sobre(fgA, fondo(e))
         const px = parseFloat(s.fontSize)
         const grande = px >= 24 || (px >= 18.66 && +s.fontWeight >= 700)
         const rt = ratio(fg, fondo(e))
@@ -195,7 +204,9 @@ async function medirA11y() {
   }
   await b.close()
   console.log('\n═══ TOTAL ═══', JSON.stringify(T))
-  return T.sinNombre + T.dianaAA + T.sinTeclado
+  // El contraste NO contaba para el codigo de salida: aunque detectara
+  // fallos, `medir a11y` salia en verde. Ahora cuenta.
+  return T.sinNombre + T.dianaAA + T.sinTeclado + T.contraste
 }
 
 // ── Modo: botones que no hacen nada ──────────────────────────────────────

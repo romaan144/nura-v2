@@ -20,7 +20,7 @@
 .btnSecondary {
   padding: 12px 28px;
   background: var(--surface-subtle);
-  color: rgba(33,29,51,0.55);
+  color: var(--ink-tertiary);
   border: none;
   border-radius: var(--radius-full);
   font-size: var(--text-base);

@@ -72,7 +72,7 @@ export default function RegisterGate({ onClose, reason = 'contact' }) {
             {r.title}
           </h2>
           <div className="hilo" style={{width:'56px', margin:'var(--space-2) 0 var(--space-10)'}} />
-          <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.45)',lineHeight:1.65,margin:0,maxWidth:'280px',marginInline:'auto'}}>
+          <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',lineHeight:1.65,margin:0,maxWidth:'280px',marginInline:'auto'}}>
             {r.desc}
           </p>
         </div>
@@ -83,7 +83,7 @@ export default function RegisterGate({ onClose, reason = 'contact' }) {
           {BENEFITS.map((b, i) => (
             <div key={i} style={{display:'flex',alignItems:'center',gap:'var(--space-10)'}}>
               {b.icon}
-              <span style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.65)',fontWeight:500}}>{b.text}</span>
+              <span style={{fontSize:'var(--text-sm)',color:'var(--ink-secondary)',fontWeight:500}}>{b.text}</span>
             </div>
           ))}
         </div>
@@ -99,7 +99,7 @@ export default function RegisterGate({ onClose, reason = 'contact' }) {
             onClick={() => { onClose(); sessionStorage.setItem('nura_return_to', location.pathname + location.search); navigate('/login') }}
             style={{
               width:'100%',padding:'13px',
-              background:'var(--surface-subtle)',color:'rgba(33,29,51,0.55)',
+              background:'var(--surface-subtle)',color:'var(--ink-tertiary)',
               border:'none',borderRadius:'var(--radius-full)',
               fontSize:'var(--text-sm)',fontWeight:600,
               cursor:'pointer',
@@ -108,7 +108,7 @@ export default function RegisterGate({ onClose, reason = 'contact' }) {
           </button>
         </div>
 
-        <p style={{textAlign:'center',fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.25)',marginTop:'var(--space-14)',marginBottom:0}}>
+        <p style={{textAlign:'center',fontSize:'var(--text-xs)',color:'var(--ink-tertiary)',marginTop:'var(--space-14)',marginBottom:0}}>
           Gratis · Sin tarjeta · Sin compromiso
         </p>
       </div>

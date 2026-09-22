@@ -101,12 +101,12 @@
   align-items: center;
   gap: 4px;
   font-size: var(--text-xs);
-  color: rgba(33,29,51,0.35);
+  color: var(--ink-tertiary);
   line-height: 1.25;
 }
 .metaStrong { font-weight: 700; color: var(--ink-primary); }
-.metaMuted  { color: rgba(33,29,51,0.3); }
-.dot { color: rgba(33,29,51,0.15); margin: 0 1px; }
+.metaMuted  { color: var(--ink-tertiary); }
+.dot { color: var(--ink-tertiary); margin: 0 1px; }
 
 /* Price now lives in meta row */
 .price {

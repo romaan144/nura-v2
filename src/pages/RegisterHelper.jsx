@@ -211,7 +211,7 @@ export default function RegisterHelper() {
             <div style={{fontSize:'var(--text-sm)',color:'var(--ink)',lineHeight:1.5,letterSpacing:'-0.1px'}}>
               Los profesionales de Nüra en Barcelona reciben una media de <strong>8 contactos al mes</strong> desde el primer día.
             </div>
-            <div style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.38)',marginTop:'var(--space-6)'}}>
+            <div style={{fontSize:'var(--text-xs)',color:'var(--ink-tertiary)',marginTop:'var(--space-6)'}}>
               Tu perfil tarda menos de 3 minutos en estar publicado.
             </div>
           </div>

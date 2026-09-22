@@ -60,7 +60,7 @@ export default function HowItWorks() {
         borderBottom:'1px solid rgba(33,29,51,0.06)', marginBottom:'var(--space-4)',
       }}>
         <p style={{
-          fontSize:'var(--text-md)', fontWeight:800, color:'rgba(33,29,51,0.8)',
+          fontSize:'var(--text-md)', fontWeight:800, color:'var(--ink-primary)',
           letterSpacing:'-0.4px', lineHeight:1.5, margin:0,
           
         }}>
@@ -118,17 +118,17 @@ export default function HowItWorks() {
             letterSpacing:'0.5px',textTransform:'uppercase',margin:'0 0 var(--space-10)'}}>
             Sobre Nüra
           </p>
-          <h3 style={{fontSize:'var(--text-md)',fontWeight:800,color:'rgba(33,29,51,0.85)',
+          <h3 style={{fontSize:'var(--text-md)',fontWeight:800,color:'var(--ink-primary)',
             letterSpacing:'-0.4px',margin:'0 0 var(--space-10)',lineHeight:1.3}}>
             Construida para conectar personas reales
           </h3>
-          <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.55)',lineHeight:1.7,margin:'0 0 var(--space-12)'}}>
+          <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',lineHeight:1.7,margin:'0 0 var(--space-12)'}}>
             Nüra nació de una pregunta simple: ¿por qué es tan difícil encontrar a la persona adecuada cuando más la necesitas?
           </p>
-          <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.55)',lineHeight:1.7,margin:'0 0 var(--space-12)'}}>
+          <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',lineHeight:1.7,margin:'0 0 var(--space-12)'}}>
             No creemos que la IA deba reemplazar el contacto humano. Creemos que debe facilitar que dos personas se encuentren — la que necesita ayuda y la que puede darla.
           </p>
-          <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.55)',lineHeight:1.7,margin:0,
+          <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',lineHeight:1.7,margin:0,
             borderLeft:'3px solid var(--purple-20)',paddingLeft:'var(--space-12)'}}>
             "La tecnología más poderosa es la que pone en contacto a personas."
           </p>
@@ -144,10 +144,10 @@ export default function HowItWorks() {
         }}>
           <UserCheck size={28} color='var(--purple)' strokeWidth={1.6} />
           <h3 style={{fontSize:'var(--text-md)',fontWeight:800,margin:0,
-            color:'rgba(33,29,51,0.8)',letterSpacing:'-0.3px'}}>
+            color:'var(--ink-primary)',letterSpacing:'-0.3px'}}>
             ¿Eres profesional?
           </h3>
-          <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.45)',margin:0,
+          <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:0,
             lineHeight:1.6,maxWidth:'260px'}}>
             Ofrece tus servicios. Nüra construye tu perfil automáticamente y te conecta con quienes te necesitan.
           </p>

@@ -631,7 +631,7 @@ export default function Profile() {
           <p style={{fontSize:'var(--text-sm)',fontWeight:700,color:'var(--ink)',letterSpacing:'-0.2px',marginBottom:'var(--space-4)'}}>
             Tu reputación profesional verificada
           </p>
-          <p style={{fontSize:'var(--text-xs)',color:'rgba(33,29,51,0.45)',lineHeight:1.5}}>
+          <p style={{fontSize:'var(--text-xs)',color:'var(--ink-tertiary)',lineHeight:1.5}}>
             Nüra construirá tu currículum vivo basado en las ayudas reales que ofrezcas — verificadas y reconocidas por las personas que ayudaste.
           </p>
         </div>

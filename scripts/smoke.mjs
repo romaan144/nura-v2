@@ -142,6 +142,32 @@ try {
     } else console.log(`✓ ${'Imagen pesada'.padEnd(14)} [ninguna imagen supera 60 kB]`)
   }
 
+  // ── Texto gris a mano ──
+  // 119 colores de texto escritos como rgba(33,29,51, 0.3–0.6): tinta
+  // transparente que sobre el papel quedaba por debajo del minimo legal.
+  // El medidor de accesibilidad no lo veia porque ignoraba la transparencia.
+  // Todo color de texto va por --ink-primary/secondary/tertiary, solidos.
+  {
+    const grises = []
+    const pat = /(?<![-\w])color\s*:\s*'?rgba\(\s*33\s*,\s*29\s*,\s*51\s*,\s*0?\.(\d+)/g
+    const recorrer = dir => {
+      for (const f of readdirSync(dir, { withFileTypes: true })) {
+        const r = join(dir, f.name)
+        if (f.isDirectory()) { recorrer(r); continue }
+        if (!/\.(css|jsx)$/.test(f.name) || f.name === 'index.css') continue
+        readFileSync(r, 'utf8').split('\n').forEach((l, i) => {
+          for (const m of l.matchAll(pat)) if (parseFloat('0.' + m[1]) < 0.65) grises.push(`${f.name}:${i + 1}`)
+        })
+      }
+    }
+    recorrer('src')
+    if (grises.length) {
+      console.log(`✗ ${'Texto gris'.padEnd(14)} — ${grises.length} color(es) de texto con tinta transparente`)
+      grises.slice(0, 5).forEach(x => console.log(`    ${x}`))
+      failed += grises.length
+    } else console.log(`✓ ${'Texto gris'.padEnd(14)} [todo texto usa tinta sólida]`)
+  }
+
   // ── Numeros en español ──
   // La valoracion y la distancia se pintaban en quince sitios, cada uno a su
   // manera: "4.9 · 0.8km", "a 0.8 km", "0,8 km". Todas pasan ahora por

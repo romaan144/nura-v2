@@ -150,7 +150,7 @@
   color: var(--ink);
   background: transparent;
 }
-.introText { font-size: 12px; color: var(--ink-tertiary); }
+.introText { font-size: var(--text-xs); color: var(--ink-tertiary); }
 .regenBtn {
   background: var(--surface-subtle);
   color: var(--ink);

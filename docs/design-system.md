@@ -356,6 +356,60 @@ actual la invoca.
 - [PENDIENTE] Touch targets mínimos 44px en botones circulares de cabecera.
 ---
 
+## EL TEXTO SE LEE (ley, 2026-08-16)
+
+El fundador: *"toda la app está llena de letras y texto muy gris, pequeño y
+delgado que no se lee con comodidad."*
+
+### Primero: el medidor mentía
+
+`npm run medir a11y` cogía solo R, G y B del color del texto y **tiraba la
+transparencia**. Un texto `rgba(33,29,51,0.35)` —tinta al 35%, gris claro en
+pantalla— lo medía como tinta al 100%. Y además el contraste **no contaba**
+para el código de salida.
+
+**Toda la sesión dijo "contraste 0 fallos". Era falso.** Con el medidor
+corregido, la verdad: **141 textos por debajo del mínimo legal**. Tu ojo
+tenía razón y el instrumento no.
+
+### La causa: tinta transparente
+
+| | contraste sobre el papel |
+|---|---|
+| `--ink-tertiary` (tinta al 55%) — el gris "por defecto" | **3,6** — suspende |
+| grises a mano al 45% | 2,7 |
+| grises a mano al 40% (29 usos) | 2,4 |
+| *mínimo legal* | *4,5* |
+
+### Lo que cambió
+
+| | antes | ahora |
+|---|---|---|
+| tintas | transparentes (85%, 72%, 55%) | **sólidas**: `#211D33` · `#46435C` · `#5C5974` |
+| contraste | 9,1 · 6,0 · **3,6** | **14,1 · 8,2 · 5,8** |
+| grises a mano | 119 en 24 ficheros | 0 — todos a tokens |
+| escala | 11 · 13 · 15 | **12 · 14 · 16** |
+
+**Sólidas porque así el contraste no depende del fondo**: el mismo gris se
+lee igual sobre papel, blanco o morado claro.
+
+### Resultado medido
+
+| | antes | ahora |
+|---|---|---|
+| texto por debajo del mínimo legal | **55%** | **0%** |
+| texto cómodo (contraste ≥ 7) | 22% | **47%** |
+
+Verificado en 360px —el móvil estrecho habitual— sin un solo desborde. Una
+cabecera sí se apretó (*"Logopeda infantil ★ 4,9"* necesitaba 112px y tenía
+104 en el chat): recuperados los 8px recortando el botón y el hueco.
+
+**Guardia en la Cuarta Puerta**: ningún color de texto con tinta
+transparente por debajo del 65%. Probado devolviendo un gris.
+
+**Regla**: pasar el mínimo legal no es leerse cómodo. El objetivo es 7, no
+4,5.
+
 ## AJUSTAR TAMBIÉN ES ACOTAR — *ley corregida* (2026-08-16)
 
 **Esta ley sustituye a la anterior, que era mía y estaba mal.**

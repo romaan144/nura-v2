@@ -45,7 +45,7 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
     handle: {width:'36px',height:'4px',background:'var(--surface-muted)',borderRadius:'2px',margin:'0 auto var(--space-20)'},
     input: {width:'100%',padding:'var(--space-12) var(--space-16)',border:'1px solid rgba(33,29,51,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',fontFamily:'-apple-system,Inter,sans-serif',background:'var(--surface-subtle)',boxSizing:'border-box'},
     btnPrimary: {width:'100%',padding:'var(--space-14)',background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:'pointer',transition:'opacity 0.2s'},
-    btnSecondary: {width:'100%',padding:'var(--space-12)',background:'var(--surface-subtle)',color:'rgba(33,29,51,0.55)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'},
+    btnSecondary: {width:'100%',padding:'var(--space-12)',background:'var(--surface-subtle)',color:'var(--ink-tertiary)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'},
   }
 
   return (
@@ -68,10 +68,10 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
               <span style={{position:'absolute',bottom:-2,right:-2,width:'22px',height:'22px',background:'var(--green-dot)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center'}}><svg width='12' height='12' viewBox='0 0 12 12' fill='none'><path d='M2 6l3 3 5-5' stroke='white' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round'/></svg></span>
             </div>
             <div>
-              <h3 style={{fontSize:'var(--text-heading)',fontWeight:800,margin:'0 0 var(--space-4)',color:'rgba(33,29,51,0.85)',letterSpacing:'-0.3px'}}>
+              <h3 style={{fontSize:'var(--text-heading)',fontWeight:800,margin:'0 0 var(--space-4)',color:'var(--ink-primary)',letterSpacing:'-0.3px'}}>
                 ¡Solicitud enviada!
               </h3>
-              <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.5)',margin:0,lineHeight:1.6}}>
+              <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:0,lineHeight:1.6}}>
                 {name} recibirá tu solicitud y confirmará en breve.
               </p>
             </div>
@@ -79,10 +79,10 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
             {(date || time) && (
               <div style={{background:'var(--surface-subtle)',border:'1px solid rgba(33,29,51,0.06)',
                 borderRadius:'var(--radius-card)',padding:'var(--space-12) var(--space-16)',width:'100%',textAlign:'left'}}>
-                {date && <p style={{margin:'0 0 var(--space-4)',fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.6)'}}>
+                {date && <p style={{margin:'0 0 var(--space-4)',fontSize:'var(--text-sm)',color:'var(--ink-tertiary)'}}>
                   {new Date(date).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})}
                 </p>}
-                {time && <p style={{margin:0,fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.6)'}}><Clock size={12} style={{marginRight:'var(--space-4)',verticalAlign:'middle'}}/>{time}h</p>}
+                {time && <p style={{margin:0,fontSize:'var(--text-sm)',color:'var(--ink-tertiary)'}}><Clock size={12} style={{marginRight:'var(--space-4)',verticalAlign:'middle'}}/>{time}h</p>}
               </div>
             )}
             <div style={{display:'flex',flexDirection:'column',gap:'var(--space-8)',width:'100%',marginTop:'var(--space-4)'}}>
@@ -94,12 +94,12 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
           </div>
         ) : (
           <>
-            <h3 style={{fontSize:'var(--text-md)',fontWeight:800,margin:'0 0 var(--space-4)',color:'rgba(33,29,51,0.85)',letterSpacing:'-0.3px'}}>Solicitar servicio</h3>
-            <p style={{fontSize:'var(--text-sm)',color:'rgba(33,29,51,0.4)',margin:'0 0 var(--space-20)'}}>{name} · {helper?.price || 'Precio a consultar'}</p>
+            <h3 style={{fontSize:'var(--text-md)',fontWeight:800,margin:'0 0 var(--space-4)',color:'var(--ink-primary)',letterSpacing:'-0.3px'}}>Solicitar servicio</h3>
+            <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:'0 0 var(--space-20)'}}>{name} · {helper?.price || 'Precio a consultar'}</p>
             <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)',marginBottom:'var(--space-20)'}}>
               {/* Day pills */}
               <div>
-                <SectionLabel tone="muted" style={{margin:'0 0 var(--space-8)',color:'rgba(33,29,51,0.4)'}}>Fecha</SectionLabel>
+                <SectionLabel tone="muted" style={{margin:'0 0 var(--space-8)',color:'var(--ink-tertiary)'}}>Fecha</SectionLabel>
                 <div className={styles.rowScroll}>
                   {Array.from({length:7},(_,i)=>{
                     const d=new Date(); d.setDate(d.getDate()+i)
@@ -123,7 +123,7 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
               </div>
               {/* Time pills */}
               <div>
-                <SectionLabel tone="muted" style={{margin:'0 0 var(--space-8)',color:'rgba(33,29,51,0.4)'}}>Hora</SectionLabel>
+                <SectionLabel tone="muted" style={{margin:'0 0 var(--space-8)',color:'var(--ink-tertiary)'}}>Hora</SectionLabel>
                 <div style={{display:'flex',gap:'var(--space-6)',flexWrap:'wrap'}}>
                   {(() => {
                     const slots = slotsDe(helper, date, ocupadas)
@@ -327,7 +327,7 @@ function HelperProfileInner() {
 
             {/* Especialidad */}
             <div style={{
-              fontSize:'var(--text-sm)', color:'rgba(33,29,51,0.45)', fontWeight:500,
+              fontSize:'var(--text-sm)', color:'var(--ink-tertiary)', fontWeight:500,
               textAlign:'center', marginBottom:'var(--space-10)'
             }}>
               {enrichedH.specialty}
@@ -381,7 +381,7 @@ function HelperProfileInner() {
           {/* Señales de actividad local */}
           {enrichedH.reviews >= 30 && (
             <div style={{
-              fontSize:'var(--text-xs)', color:'rgba(33,29,51,0.4)',
+              fontSize:'var(--text-xs)', color:'var(--ink-tertiary)',
               marginBottom:'var(--space-16)', textAlign:'center',
               animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both'
             }}>
@@ -439,7 +439,7 @@ function HelperProfileInner() {
           }}>
             <img src="/logo-iso.png" alt="Nüra" style={{width:'18px',height:'18px',flexShrink:0,marginTop:'1px',opacity:0.7}} />
             <p style={{
-              fontSize:'var(--text-xs)', color:'rgba(33,29,51,0.5)', lineHeight:1.5,
+              fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', lineHeight:1.5,
               margin:0
             }}>
               {location.state?.matchReason

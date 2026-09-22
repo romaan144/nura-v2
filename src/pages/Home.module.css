@@ -248,7 +248,7 @@
   line-height: 1.4;
 }
 .input::placeholder {
-  color: rgba(33,29,51,0.28);
+  color: var(--ink-tertiary);
   font-weight: 300;
   letter-spacing: -0.1px;
 }
@@ -257,7 +257,7 @@
   width: 34px; height: 34px;
   border-radius: 50%;
   background: transparent; border: none;
-  color: rgba(33,29,51,0.3);
+  color: var(--ink-tertiary);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; cursor: pointer;
   transition: opacity 0.15s;
@@ -658,7 +658,7 @@
   margin: 14px 8px 4px;
 }
 .refineLabel {
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 700;
   color: var(--ink-tertiary);
   letter-spacing: 0.4px;

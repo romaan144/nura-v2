@@ -27,9 +27,16 @@ body {
   /* EL SUELO. Nada por debajo de 11px: medido, habia 9px en el carrusel y
      en "Verificado" de la ficha, y 10px en marcas de tiempo. 9px es
      ilegible para bastante gente y no era una decision, era un descuido. */
-  --text-xs:   11px;   /* captions, badges, timestamps */
-  --text-sm:   13px;   /* secondary, meta, labels */
-  --text-base: 15px;   /* body, messages, descriptions */
+  /* ── EL TEXTO SE LEE (2026-08-16) ──────────────────────────────────
+     El fundador: "toda la app esta llena de letras y texto muy gris,
+     pequeño y delgado que no se lee con comodidad". Medido: el 59% de todo
+     el texto iba a 11px, y 141 textos por debajo del minimo legal de
+     contraste —que el medidor no veia porque ignoraba la transparencia—.
+     El suelo sube un escalon entero: 11→12, 13→14, 15→16. Y 16 en el texto
+     base tiene otra ventaja: iOS deja de hacer zoom al tocar un campo. */
+  --text-xs:   12px;   /* captions, badges, timestamps — EL SUELO */
+  --text-sm:   14px;   /* secondary, meta, labels */
+  --text-base: 16px;   /* body, messages, descriptions */
   --text-md:   17px;   /* subheadings, emphasized body */
   --text-lg:   22px;   /* section titles, card headers */
   --text-xl:   28px;
@@ -102,9 +109,15 @@ body {
   /* Neutrals */
   --ink:      #211D33;   /* La Tinta Viva: violeta cálida */
   /* ── INK OPACITY SCALE ─────────────────────────────── */
-  --ink-primary:   rgba(33,29,51,0.85);
-  --ink-secondary: rgba(33,29,51,0.72);
-  --ink-tertiary:  rgba(33,29,51,0.55);
+  /* TINTA SOLIDA, NO TRANSPARENTE. Eran tinta al 85%, 72% y 55%: su
+     contraste dependia del fondo, y --ink-tertiary (al 55%) daba 3,6 sobre
+     el papel — por debajo del 4,5 legal. Era el gris "por defecto" de media
+     app. Ahora colores solidos, calculados para leerse con holgura sobre
+     papel, blanco y morado claro:
+       primary   14,1 · secondary 8,2 · tertiary 5,8   (minimo legal: 4,5) */
+  --ink-primary:   #211D33;
+  --ink-secondary: #46435C;
+  --ink-tertiary:  #5C5974;
   --ink-disabled:  rgba(33,29,51,0.25);
   --ink-border:    rgba(33,29,51,0.06);
 
