@@ -269,6 +269,57 @@ export default function Profile() {
         </div>
 
         {/* ── PROFILE COMPLETION ─────────────────────────── */}
+        {/* ── TU TRABAJO (etapa 5 de estudio-perfil.md) ───────────────
+            El perfil del profesional era una tarjeta tras otra sin decir de
+            que iba cada parte: invitacion, panel, publicar, vista previa,
+            cita. Ahora dos secciones con titulo: TU TRABAJO (lo que te
+            llega y como hacer que te encuentren) y TU FICHA (como te ven y
+            cambiarlo). "Tu semana" era una etiqueta dentro de la tarjeta. */}
+        {user.isHelper && <SectionTitle className={styles.tituloSeccion}>Tu trabajo</SectionTitle>}
+        {user.isHelper && (() => {
+          const sem = buildSemana({ misObras,
+            obraPropia: getObraDeHelper(user.helperId || user.id, 9).filter(o => !o.mine).length })
+          return (
+            <div style={{padding:'var(--space-16)',
+              /* --shadow-md es la sombra de lo que FLOTA (modales, hojas).
+                 Esta tarjeta reposa, asi que lleva la del sistema. */
+              background:'rgba(255,255,255,0.96)',
+              WebkitBackdropFilter:'blur(20px) saturate(160%)',
+              backdropFilter:'blur(20px) saturate(160%)',
+              border:'1px solid rgba(123,47,255,0.16)', borderRadius:'var(--radius-md)',
+              boxShadow:'0 1px 2px rgba(33,29,51,0.04), 0 8px 24px -12px rgba(123,47,255,0.18)',
+              animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 200ms both'}}>
+              <p style={{fontFamily:'var(--font-voice)', fontSize:'var(--text-base)', fontWeight:600,
+                letterSpacing:'-0.4px', lineHeight:1.4, color:'var(--ink)', margin:'0 0 var(--space-12)'}}
+                dangerouslySetInnerHTML={{__html: sem.frase.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')}} />
+              {/* Sin ceros: "0 abiertas · 0 citas · 0 publicaciones" no
+                  informaba. Solo lo que existe y es verdad. */}
+              {sem.piezas > 0 && (
+              <div style={{display:'flex', gap:'18px', marginBottom:'var(--space-12)'}}>
+                {[[sem.piezas, sem.piezas === 1 ? 'publicación' : 'publicaciones']].map(([n, l]) => (
+                  <div key={l}>
+                    <div style={{fontSize:'var(--text-heading)', fontWeight:700, color:'var(--ink)', lineHeight:1}}>{n}</div>
+                    <div style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', marginTop:'var(--space-3)'}}>{l}</div>
+                  </div>
+                ))}
+              </div>
+              )}
+              {/* Decia "Ver cómo te ven" y ABRIA LA VENTANA DE PUBLICAR: se
+                  cambio la etiqueta en el paso 3 del plan anterior y no la
+                  accion. Ahora baja a la vista previa. */}
+              {/* Publicar un caso es la palanca que el profesional tiene para
+                  que le encuentren: vive aqui, en su trabajo. Antes habia un
+                  segundo boton de publicar en la vista previa. */}
+              <button onClick={() => setComposerOpen(true)}
+                style={{width:'100%', background:'var(--purple-10)', color:'var(--purple-ink)',
+                  border:'none', borderRadius:'var(--radius-full)', padding:'11px',
+                  fontSize:'var(--text-sm)', fontWeight:700, cursor:'pointer'}}>
+                ✍️ Publicar un caso
+              </button>
+            </div>
+          )
+        })()}
+        {user.isHelper && <SectionTitle className={styles.tituloSeccion}>Tu ficha</SectionTitle>}
         {user && (() => {
           // Solo DATOS DEL PERFIL. Antes contaba actividad ("hacer tu
           // primera busqueda", "seguir profesionales") como si fueran campos
@@ -376,108 +427,11 @@ export default function Profile() {
           )
         })()}
 
-        {/* ── EL ESPEJO: LAS PERSONAS DE TU VIDA ────────── */}
-        {(personas || []).length > 0 && (
-          <div style={{animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 60ms both'}}>
-            <SectionLabel tone="brand" style={{marginBottom:'var(--space-10)'}}>Las personas de tu vida</SectionLabel>
-            <div style={{display:'flex', flexDirection:'column', gap:'var(--space-8)'}}>
-              {personas.map(p => {
-                const helperNames = (p.contactedHelperIds || [])
-                  .map(id => helpersCache?.[id]?.name?.split(' ')?.[0] || helpersCache?.[String(id)]?.name?.split(' ')?.[0])
-                  .filter(Boolean)
-                return (
-                  <div key={p.id} style={{
-                    background:'white', borderRadius:'var(--radius-md)',
-                    border:'1px solid var(--ink-border)', padding:'var(--space-12) var(--space-14)',
-                    display:'flex', alignItems:'flex-start', gap:'var(--space-10)'
-                  }}>
-                    <div style={{flex:1, minWidth:0}}>
-                      <div style={{
-                        fontSize:'var(--text-sm)', fontWeight:700, color:'var(--ink)',
-                        letterSpacing:'-0.1px', marginBottom:'var(--space-4)', textTransform:'capitalize'
-                      }}>{p.label.replace('tu ', '')}</div>
-                      {(p.atributos || []).length > 0 && (
-                        <div style={{display:'flex', gap:'var(--space-4)', flexWrap:'wrap', marginBottom: helperNames.length ? '6px' : 0}}>
-                          {p.atributos.map(a => <Badge key={a} variant="neutral">{a}</Badge>)}
-                        </div>
-                      )}
-                      {helperNames.length > 0 && (
-                        <div style={{fontSize:'var(--text-xs)', color:'var(--green)', fontWeight:500}}>
-                          ✓ {helperNames.join(', ')} {helperNames.length === 1 ? 'ayuda' : 'ayudan'} con esto
-                        </div>
-                      )}
-                    </div>
-                    <button onClick={() => removePersona(p.id)} style={{
-                      background:'none', border:'none', padding:'var(--space-2)',
-                      color:'var(--ink-disabled)', flexShrink:0, cursor:'pointer'
-                    }} aria-label={`Olvidar a ${p.label}`}>
-                      <X size={13} />
-                    </button>
-                  </div>
-                )
-              })}
-            </div>
-            <p style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', marginTop:'var(--space-8)', lineHeight:1.4}}>
-              Nüra recuerda esto para ayudarte mejor. Puedes borrar cualquier persona cuando quieras.
-            </p>
-          </div>
-        )}
-
-
-        {user.isHelper && (() => {
-          const sem = buildSemana({ misObras,
-            obraPropia: getObraDeHelper(user.helperId || user.id, 9).filter(o => !o.mine).length })
-          return (
-            <div style={{padding:'var(--space-16)',
-              /* --shadow-md es la sombra de lo que FLOTA (modales, hojas).
-                 Esta tarjeta reposa, asi que lleva la del sistema. */
-              background:'rgba(255,255,255,0.96)',
-              WebkitBackdropFilter:'blur(20px) saturate(160%)',
-              backdropFilter:'blur(20px) saturate(160%)',
-              border:'1px solid rgba(123,47,255,0.16)', borderRadius:'var(--radius-md)',
-              boxShadow:'0 1px 2px rgba(33,29,51,0.04), 0 8px 24px -12px rgba(123,47,255,0.18)',
-              animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 200ms both'}}>
-              <SectionLabel tone="brand" style={{marginBottom:'var(--space-8)'}}>
-                Tu semana
-              </SectionLabel>
-              <p style={{fontFamily:'var(--font-voice)', fontSize:'var(--text-base)', fontWeight:600,
-                letterSpacing:'-0.4px', lineHeight:1.4, color:'var(--ink)', margin:'0 0 var(--space-12)'}}
-                dangerouslySetInnerHTML={{__html: sem.frase.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')}} />
-              {/* Sin ceros: "0 abiertas · 0 citas · 0 publicaciones" no
-                  informaba. Solo lo que existe y es verdad. */}
-              {sem.piezas > 0 && (
-              <div style={{display:'flex', gap:'18px', marginBottom:'var(--space-12)'}}>
-                {[[sem.piezas, sem.piezas === 1 ? 'publicación' : 'publicaciones']].map(([n, l]) => (
-                  <div key={l}>
-                    <div style={{fontSize:'var(--text-heading)', fontWeight:700, color:'var(--ink)', lineHeight:1}}>{n}</div>
-                    <div style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', marginTop:'var(--space-3)'}}>{l}</div>
-                  </div>
-                ))}
-              </div>
-              )}
-              {/* Decia "Ver cómo te ven" y ABRIA LA VENTANA DE PUBLICAR: se
-                  cambio la etiqueta en el paso 3 del plan anterior y no la
-                  accion. Ahora baja a la vista previa. */}
-              <button onClick={() => sem.accion.to ? navigate(sem.accion.to)
-                  : document.getElementById('asi-te-ven')?.scrollIntoView({ behavior:'smooth', block:'start' })}
-                style={{width:'100%', background:'var(--purple-10)', color:'var(--purple-ink)',
-                  border:'none', borderRadius:'var(--radius-full)', padding:'11px',
-                  fontSize:'var(--text-sm)', fontWeight:700, cursor:'pointer'}}>
-                {sem.accion.txt} →
-              </button>
-            </div>
-          )
-        })()}
-
         {user.isHelper && (
           <div id="asi-te-ven" style={{animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 240ms both', scrollMarginTop:'80px'}}>
             <SectionLabel tone="brand" style={{marginBottom:'var(--space-10)'}}>
-              Así te ven quienes te necesitan · vista previa
+              Así te ven · vista previa
             </SectionLabel>
-            <Button variant="primary" full onClick={() => setComposerOpen(true)}
-              style={{margin:'var(--space-12) 0 var(--space-10)'}}>
-              ✍️ Publicar en tu obra
-            </Button>
             {getObraDeHelper(user.helperId || user.id, 2).length > 0 && (
               <div style={{display:'flex', flexDirection:'column', gap:'var(--space-10)', marginBottom:'var(--space-12)'}}>
                 {getObraDeHelper(user.helperId || user.id, 2).map(o => <PostCard key={o.id} post={obraAPost(o)} />)}
@@ -566,6 +520,55 @@ export default function Profile() {
             </div>
           )
         })()}
+
+
+        {/* ── EL ESPEJO: LAS PERSONAS DE TU VIDA ────────── */}
+        {(personas || []).length > 0 && (
+          <div style={{animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 60ms both'}}>
+            <SectionLabel tone="brand" style={{marginBottom:'var(--space-10)'}}>Las personas de tu vida</SectionLabel>
+            <div style={{display:'flex', flexDirection:'column', gap:'var(--space-8)'}}>
+              {personas.map(p => {
+                const helperNames = (p.contactedHelperIds || [])
+                  .map(id => helpersCache?.[id]?.name?.split(' ')?.[0] || helpersCache?.[String(id)]?.name?.split(' ')?.[0])
+                  .filter(Boolean)
+                return (
+                  <div key={p.id} style={{
+                    background:'white', borderRadius:'var(--radius-md)',
+                    border:'1px solid var(--ink-border)', padding:'var(--space-12) var(--space-14)',
+                    display:'flex', alignItems:'flex-start', gap:'var(--space-10)'
+                  }}>
+                    <div style={{flex:1, minWidth:0}}>
+                      <div style={{
+                        fontSize:'var(--text-sm)', fontWeight:700, color:'var(--ink)',
+                        letterSpacing:'-0.1px', marginBottom:'var(--space-4)', textTransform:'capitalize'
+                      }}>{p.label.replace('tu ', '')}</div>
+                      {(p.atributos || []).length > 0 && (
+                        <div style={{display:'flex', gap:'var(--space-4)', flexWrap:'wrap', marginBottom: helperNames.length ? '6px' : 0}}>
+                          {p.atributos.map(a => <Badge key={a} variant="neutral">{a}</Badge>)}
+                        </div>
+                      )}
+                      {helperNames.length > 0 && (
+                        <div style={{fontSize:'var(--text-xs)', color:'var(--green)', fontWeight:500}}>
+                          ✓ {helperNames.join(', ')} {helperNames.length === 1 ? 'ayuda' : 'ayudan'} con esto
+                        </div>
+                      )}
+                    </div>
+                    <button onClick={() => removePersona(p.id)} style={{
+                      background:'none', border:'none', padding:'var(--space-2)',
+                      color:'var(--ink-disabled)', flexShrink:0, cursor:'pointer'
+                    }} aria-label={`Olvidar a ${p.label}`}>
+                      <X size={13} />
+                    </button>
+                  </div>
+                )
+              })}
+            </div>
+            <p style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', marginTop:'var(--space-8)', lineHeight:1.4}}>
+              Nüra recuerda esto para ayudarte mejor. Puedes borrar cualquier persona cuando quieras.
+            </p>
+          </div>
+        )}
+
 
         {/* ── ZONA 2: LO QUE HAS BUSCADO ─────────────────────────────
             Este bloque no comprobaba el rol: una profesional veia "Tu

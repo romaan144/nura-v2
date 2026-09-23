@@ -168,9 +168,9 @@ export function Button({
  * PASADO CERCA DE TI" se leian como notas al pie, gris pequeño sobre gris.
  * Un titulo se escribe como titulo.
  */
-export function SectionTitle({ children, style }) {
+export function SectionTitle({ children, style, className }) {
   return (
-    <h2 style={{
+    <h2 className={className} style={{
       fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--ink-primary)',
       letterSpacing: '-0.2px', lineHeight: 1.3, margin: '0 0 var(--space-10)',
       ...style,

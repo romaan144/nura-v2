@@ -401,6 +401,15 @@
   border-top: 1px solid var(--ink-border);
 }
 
+/* UN TITULO Y LO QUE TITULA SON UNA SOLA SECCION. El compas trataba cada
+   hijo como una seccion: "Tu trabajo" y "Tu ficha" quedaban como bandas
+   sueltas, con su propia linea y 20px abajo, separados ~80px de la tarjeta
+   que titulan. El titulo conserva la linea de arriba (abre la seccion) y
+   pierde el relleno de abajo; lo siguiente pierde su linea y casi todo su
+   relleno de arriba. */
+.scroll > .tituloSeccion { padding-bottom: 0 !important; }
+.scroll > .tituloSeccion + * { border-top: none; padding-top: var(--space-10) !important; }
+
 /* La identidad abre la pagina: no lleva linea encima. */
 .scroll > .identity {
   border-top: none;

@@ -269,7 +269,44 @@ lleva a donde se continúa.
 Sin nada pendiente, **no se inventa nada**: van directos los enlaces a
 *Mis servicios* y *Siguiendo*.
 
-### Etapa 5 · Diseño del perfil de profesional ⬅ **SIGUIENTE**
+### Etapa 5 · Diseño del perfil de profesional ✅ *(2026-08-16)*
+
+El perfil del profesional era **una tarjeta tras otra sin decir de qué iba
+cada parte**: una invitación, un panel, el botón de publicar, la vista
+previa, la cita. Ahora, bajo su nombre, dos secciones con título:
+
+| sección | qué contiene |
+|---|---|
+| **Tu trabajo** | lo que le llega (*"Cuando alguien te escriba, te llegará un aviso…"*), sus publicaciones si las hay, y **Publicar un caso** |
+| **Tu ficha** | lo que le falta (*"Añade tu formación"*), la vista previa, **Editar mi ficha** y su cita |
+
+Después, igual que el usuario: *Tus cosas*, lo que viene, ajustes y cerrar
+sesión.
+
+**Publicar vive en "Tu trabajo"**: es la palanca que tiene para que le
+encuentren. El segundo botón que había en la vista previa, fuera — un solo
+gesto por acción.
+
+*"Tu semana"* era una etiqueta pequeña dentro de la tarjeta; pasa a ser el
+título *"Tu trabajo"*, fuera.
+
+### El compás del perfil y los títulos
+
+El perfil tiene una regla de ritmo —cada bloque de primer nivel lleva 20px
+arriba y abajo y una línea fina encima—, hecha para que respire como la
+ficha. Mis títulos nuevos eran bloques de primer nivel y la regla los trató
+como **secciones sueltas**: línea propia, relleno propio, **81px** separados
+de la tarjeta que titulan.
+
+No se toca la regla. Se le enseña que **un título y lo que titula son una
+sola sección**: `.tituloSeccion` conserva la línea de arriba y pierde el
+relleno de abajo; lo siguiente pierde su línea. Hueco: **81 → 51px**.
+
+### Etapa 6 · Identidad del profesional ⬅ **SIGUIENTE** · *necesita decisión: A, B o C*
+
+---
+
+### Etapa 5 · detalle original
 
 ---
 
@@ -331,7 +368,7 @@ Dos partes claras, que hoy están mezcladas:
 La segunda solo puede estar vacía y ser honesta hasta la etapa 6: *"Cuando
 alguien te escriba, lo verás aquí"* en lugar de ceros.
 
-### Etapa 6 · Identidad del profesional *(requiere decisión del apartado 4)*
+### Etapa 6 · Identidad del profesional — detalle *(requiere decisión del apartado 4)*
 
 Con el camino elegido:
 

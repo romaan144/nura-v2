@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (estudio del perfil · etapa 4/8 hecha)
+**Última actualización:** 2026-08-16 (estudio del perfil · etapa 5/8 hecha · la 6 espera decisión)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -762,8 +762,8 @@ Ocho etapas, en diseño y funciones. Una por cada **"sigue"**.
 | 2 | El profesional edita su ficha (en su móvil) | ✅ hecha |
 | 3 | Ajustes, lo legal primero | ✅ hecha · faltan correo y revisión legal |
 | 4 | Diseño del perfil de usuario | ✅ hecha |
-| **5** | **Diseño del perfil de profesional** | no ⬅ **siguiente** |
-| 6 | Identidad del profesional | **sí: A, B o C** |
+| 5 | Diseño del perfil de profesional | ✅ hecha |
+| **6** | **Identidad del profesional** | **sí: A, B o C** ⬅ **siguiente** |
 | 7 | La foto | depende de la 6 |
 | 8 | Sin cuenta, y repaso final | no |
 
