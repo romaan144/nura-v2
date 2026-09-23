@@ -331,5 +331,43 @@ Deno.serve(async (req: Request) => {
     return json({ ok: true, respuestas: await lec.json() }, 200, cors)
   }
 
+  // ── RECLAMAR LA FICHA (etapa 6b de docs/estudio-perfil.md) ─────────────
+  // Une una cuenta (correo y contraseña) con SU ficha publica. El movil no
+  // guarda que ficha es la suya, asi que la prueba es esta: el correo de la
+  // cuenta, CONFIRMADO, coincide con el contacto que puso en el alta. Sin la
+  // confirmacion, cualquiera podria crear una cuenta con el correo de otra
+  // persona y quedarse con su ficha. La sesion viaja en el cuerpo (no en una
+  // cabecera) porque el CORS de esta funcion solo admite content-type.
+  if (op === 'reclamar-ficha') {
+    const token = String(cuerpo.token || '')
+    if (!token) return json({ error: 'falta la sesion' }, 401, cors)
+    const u = await fetch(`${SUPABASE_URL}/auth/v1/user`, { headers: { apikey: SERVICE_KEY!, Authorization: `Bearer ${token}` } })
+    if (!u.ok) return json({ error: 'sesion no valida' }, 401, cors)
+    const usuario = await u.json()
+    const email = String(usuario?.email || '').trim().toLowerCase()
+    if (!email || !usuario?.id) return json({ error: 'sesion sin correo' }, 400, cors)
+    if (!usuario.email_confirmed_at && !usuario.confirmed_at) return json({ ok: false, motivo: 'sin-confirmar' }, 200, cors)
+
+    const ya = await fetch(`${SUPABASE_URL}/rest/v1/helpers?owner_id=eq.${usuario.id}&select=id,name`, { headers: rest })
+    if (!ya.ok) return json({ error: 'lectura rechazada', estado: ya.status }, 502, cors)
+    const suyas = await ya.json()
+    if (suyas.length) return json({ ok: true, helper: suyas[0] }, 200, cors)
+
+    const cand = await fetch(
+      `${SUPABASE_URL}/rest/v1/helpers?contacto=ilike.${encodeURIComponent(email)}&owner_id=is.null&select=id,name,contacto`,
+      { headers: rest },
+    )
+    if (!cand.ok) return json({ error: 'lectura rechazada', estado: cand.status }, 502, cors)
+    // ilike trata _ y * como comodines: se confirma la coincidencia EXACTA aqui.
+    const filas = (await cand.json()).filter((f: { contacto?: string }) => String(f.contacto || '').trim().toLowerCase() === email)
+    if (filas.length !== 1) return json({ ok: false, motivo: filas.length ? 'varias' : 'sin-ficha' }, 200, cors)
+
+    const pat = await fetch(`${SUPABASE_URL}/rest/v1/helpers?id=eq.${filas[0].id}&owner_id=is.null`, {
+      method: 'PATCH', headers: { ...rest, Prefer: 'return=minimal' }, body: JSON.stringify({ owner_id: usuario.id }),
+    })
+    if (!pat.ok) return json({ error: 'escritura rechazada', estado: pat.status }, 502, cors)
+    return json({ ok: true, helper: { id: filas[0].id, name: filas[0].name } }, 200, cors)
+  }
+
   return json({ error: 'operacion desconocida' }, 400, cors)
 })

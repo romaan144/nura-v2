@@ -36,10 +36,37 @@ export default function EditarFicha({ onClose }) {
     [...CAMPOS.map(c => [c.k, hp[c.k] || '']), ['modality', hp.modality || '']]))
   const cambiado = Object.keys(v).some(k => (v[k] || '').trim() !== (hp[k] || '').trim())
 
-  function guardar() {
+  const vinculada = user?.helperId != null
+  const [guardando, setGuardando] = useState(false)
+  const [fallo, setFallo] = useState('')
+
+  async function guardar() {
     const limpio = Object.fromEntries(Object.entries(v).map(([k, x]) => [k, (x || '').trim()]))
     updateUser({ helperProfile: { ...hp, ...limpio } })
-    onClose()
+    if (!vinculada) { onClose(); return }
+    // ── A LA FICHA PUBLICA (etapa 6b) ──────────────────────────────────
+    // Con la ficha vinculada, el cambio se escribe en Supabase con la sesion
+    // de la profesional. La base de datos solo le deja tocar SU fila
+    // (owner_id = su cuenta) y SOLO estas columnas: nunca verificada, nota
+    // ni valoraciones (ver docs/lanzamiento-cuentas.md). Mismo mapeo que el
+    // alta: la bio es formacion + lo que le diferencia.
+    setGuardando(true); setFallo('')
+    try {
+      const { cuentas } = await import('../utils/cuenta')
+      const cambios = {
+        specialty: limpio.specialty || '',
+        bio: [limpio.formation, limpio.differentiator].filter(Boolean).join('. '),
+        zone: limpio.zone || 'Barcelona',
+        price: limpio.price || null,
+        online: /online|las dos/i.test(limpio.modality || ''),
+        contacto: limpio.contacto || null,
+      }
+      const { data, error } = await cuentas.from('helpers').update(cambios).eq('id', user.helperId).select('id')
+      if (error || !data?.length) throw error || new Error('ninguna fila')
+      onClose()
+    } catch {
+      setFallo('Se ha guardado en tu móvil, pero no en tu ficha pública. Revisa tu conexión y vuelve a guardar.')
+    } finally { setGuardando(false) }
   }
 
   const campo = {
@@ -73,7 +100,7 @@ export default function EditarFicha({ onClose }) {
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 var(--space-16) var(--space-24)' }}>
         <p style={{ margin: '0 0 var(--space-20)', fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)', lineHeight: 1.5 }}>
-          Por ahora, estos cambios se guardan en tu móvil.
+          {vinculada ? 'Lo que cambies se publica en tu ficha.' : 'Por ahora, estos cambios se guardan en tu móvil.'}
         </p>
 
         {CAMPOS.map(c => (
@@ -109,6 +136,8 @@ export default function EditarFicha({ onClose }) {
         </div>
       </div>
 
+      {fallo && <p role="alert" style={{ margin: 0, padding: 'var(--space-10) var(--space-16) 0', fontSize: 'var(--text-sm)',
+        color: 'var(--red-ink)', lineHeight: 1.45 }}>{fallo}</p>}
       <div style={{ display: 'flex', gap: 'var(--space-8)',
         padding: 'var(--space-12) var(--space-16) max(env(safe-area-inset-bottom, 0px), var(--space-16))',
         borderTop: '1px solid var(--ink-border)', background: 'var(--paper)' }}>
@@ -117,12 +146,12 @@ export default function EditarFicha({ onClose }) {
           fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--ink-secondary)' }}>
           Cancelar
         </button>
-        <button onClick={guardar} disabled={!cambiado} style={{ flex: 2, minHeight: 48, border: 'none',
+        <button onClick={guardar} disabled={!cambiado || guardando} style={{ flex: 2, minHeight: 48, border: 'none',
           borderRadius: 'var(--radius-full)', cursor: cambiado ? 'pointer' : 'default',
           fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 700,
           background: cambiado ? 'var(--purple)' : 'rgba(33,29,51,0.08)',
           color: cambiado ? 'white' : 'var(--ink-tertiary)' }}>
-          Guardar cambios
+          {guardando ? 'Guardando…' : 'Guardar cambios'}
         </button>
       </div>
     </div>,

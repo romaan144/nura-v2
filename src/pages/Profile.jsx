@@ -1,5 +1,5 @@
 import { avatarDe } from '../utils/avatar'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import PageHeader from '../components/PageHeader'
 import { Button, SectionLabel, SectionTitle } from '../components/ui'
 import { useState as useStateObra } from 'react'
@@ -17,6 +17,7 @@ import styles from './Profile.module.css'
 import { NURA_BUILD, CONTACTO_EMAIL } from '../config'
 import EditarFicha from '../components/EditarFicha'
 import { fmtTel } from '../utils/formato'
+import { reclamarFicha } from '../utils/escrituras'
 
 // ── Tu semana: la voz de Nüra para quien trabaja ──
 // Gramática: frase humana primero, cifras discretas después, cero vanidad.
@@ -91,6 +92,30 @@ export default function Profile() {
   const [confirmarSalida, setConfirmarSalida] = useState(false)
   const [editarAbierto, setEditarAbierto] = useState(false)
   const [borrarAbierto, setBorrarAbierto] = useState(false)
+  const [vinculo, setVinculo] = useState('')
+
+  // ── VINCULAR LA CUENTA CON SU FICHA (etapa 6b) ───────────────────────
+  // Si la profesional tiene acceso pero el movil no sabe cual es su ficha,
+  // se pide al servidor que la encuentre: su correo confirmado tiene que
+  // coincidir con el contacto que puso en el alta. La libreria de cuentas se
+  // importa AQUI DENTRO, solo si hay sesion: no entra en lo que descarga
+  // todo el mundo.
+  useEffect(() => {
+    if (!user?.isHelper || user?.helperId != null) return
+    let hay = null
+    try { hay = JSON.parse(localStorage.getItem('nura_sesion') || 'null') } catch { /* sin sesion */ }
+    if (!hay?.access_token) return
+    let vivo = true
+    import('../utils/cuenta').then(async ({ sesionActual }) => {
+      const s = await sesionActual()
+      if (!s || !vivo) return
+      const r = await reclamarFicha(s.access_token)
+      if (!vivo) return
+      if (r?.ok && r.helper?.id != null) updateUser({ helperId: r.helper.id })
+      else setVinculo(r?.motivo || 'error')
+    })
+    return () => { vivo = false }
+  }, [user?.isHelper, user?.helperId])
 
   const [editingName, setEditingName]   = useState(false)
   const [nameInput,   setNameInput]     = useState('')
@@ -463,11 +488,23 @@ export default function Profile() {
             {(() => {
               let correo = ''
               try { correo = JSON.parse(localStorage.getItem('nura_sesion') || 'null')?.user?.email || '' } catch { /* sin sesion */ }
-              if (correo) return (
-                <p style={{margin:'var(--space-12) 0 0', fontSize:'var(--text-sm)', color:'var(--ink-tertiary)', textAlign:'center'}}>
-                  Tu acceso: <span style={{color:'var(--ink-secondary)', fontWeight:600}}>{correo}</span>
-                </p>
-              )
+              if (correo) {
+                const nota = user.helperId != null ? 'Tu ficha está vinculada: lo que cambies se publica.'
+                  : vinculo === 'sin-confirmar' ? 'Confirma tu correo con el enlace que te enviamos para vincular tu ficha.'
+                  : vinculo === 'sin-ficha' ? 'No encontramos una ficha dada de alta con este correo.'
+                  : vinculo === 'varias' ? 'Hay varias fichas con este correo: escríbenos y lo resolvemos.'
+                  : vinculo ? 'No hemos podido vincular tu ficha ahora. Lo intentaremos al volver.'
+                  : 'Buscando tu ficha…'
+                return (
+                  <div style={{margin:'var(--space-12) 0 0', textAlign:'center'}}>
+                    <p style={{margin:0, fontSize:'var(--text-sm)', color:'var(--ink-tertiary)'}}>
+                      Tu acceso: <span style={{color:'var(--ink-secondary)', fontWeight:600}}>{correo}</span>
+                    </p>
+                    <p role="status" style={{margin:'var(--space-4) 0 0', fontSize:'var(--text-sm)', lineHeight:1.45,
+                      color: user.helperId != null ? 'var(--green-ink, #067647)' : 'var(--ink-tertiary)'}}>{nota}</p>
+                  </div>
+                )
+              }
               return (
                 <div style={{marginTop:'var(--space-12)', padding:'var(--space-16)', background:'var(--purple-05)',
                   border:'1px solid var(--purple-10)', borderRadius:'var(--radius-md)'}}>

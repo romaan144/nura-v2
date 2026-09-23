@@ -129,3 +129,13 @@ export async function registrarConversacion(helperId, userMsg, helperReply) {
     console.warn('[Nüra] registro del chat no guardado:', e?.message || e)
   }
 }
+
+/** Une la cuenta con su ficha publica (etapa 6b). `token` es la sesion de
+ *  Supabase; el servidor comprueba que el correo este confirmado y coincida
+ *  con el contacto del alta. Devuelve { ok, helper } o { ok:false, motivo }. */
+export async function reclamarFicha(token) {
+  // Sin direccion de la funcion (en local no existe; vive en Vercel),
+  // fetch('') haria un POST a la propia pagina. Se dice claro y ya.
+  if (!EDGE_URL) return { ok: false, motivo: 'sin-servidor' }
+  try { return await llamarFuncion({ op: 'reclamar-ficha', token }) } catch { return { ok: false, motivo: 'sin-red' } }
+}

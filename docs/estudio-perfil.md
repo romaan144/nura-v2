@@ -312,8 +312,8 @@ La etapa se divide en tres partes:
 | | parte | estado |
 |---|---|---|
 | **6a** | **Las cuentas**: crear acceso, entrar, restablecer | ✅ hecha |
-| 6b | La cuenta se une a su ficha pública, y lo que edita **llega** a ella | ⬅ siguiente |
-| 6c | Borrar la cuenta y la ficha pública (RGPD) | |
+| **6b** | **La cuenta se une a su ficha pública, y lo que edita llega a ella** | ✅ hecha |
+| 6c | Borrar la cuenta y la ficha pública (RGPD) | ⬅ siguiente |
 
 #### 6a · Las cuentas ✅ *(2026-08-16)*
 
@@ -341,13 +341,47 @@ librería.
 interceptaron y se respondieron como el servidor — crear, entrar con
 contraseña buena y mala, pedir el enlace, abrir restablecer sin enlace.
 
+#### 6b · La ficha vinculada ✅ *(2026-08-16)*
+
+**El problema de seguridad**: el móvil no guarda qué ficha es la suya. ¿Cómo
+se une una cuenta a su ficha sin que nadie pueda quedarse con la de otra
+persona?
+
+**La prueba**: el correo de la cuenta, **confirmado**, coincide exactamente
+con el contacto que puso en el alta. Sin la confirmación, cualquiera podría
+crear una cuenta con el correo de otra y quedarse con su ficha.
+
+- Operación nueva en el servidor, `reclamar-ficha`: comprueba sesión,
+  confirmación y coincidencia exacta (no se fía del `ilike`, que trata `_`
+  como comodín), y solo entonces escribe `owner_id`.
+- El perfil vincula solo, al abrirse, y dice en qué punto está: *vinculada*,
+  *confirma tu correo*, *no hay ficha con este correo*.
+- **Editar mi ficha** escribe en la ficha pública con la sesión de la
+  profesional. Si el servidor lo rechaza, la hoja no se cierra y lo explica.
+
+**Dos protecciones en el SQL** (`docs/lanzamiento-cuentas.md`):
+
+1. **Qué columnas puede cambiar**: especialidad, bio, zona, precio, online y
+   contacto. **Nunca** verificada, nota ni valoraciones — si no, cualquiera
+   podría ponerse un 5 con 999 opiniones.
+2. **El contacto deja de poder leerse desde fuera.** Encontrado al construir
+   esto: la app no *pedía* el contacto, pero la base de datos dejaba leerlo a
+   cualquiera con la clave pública. Hoy no hay ningún contacto guardado, así
+   que **no se ha filtrado nada** — pero el primer profesional real habría
+   quedado expuesto.
+
+Probado simulando el servidor: vincula, publica con su sesión y solo con las
+columnas permitidas, y el rechazo se explica sin cerrar la hoja.
+
 #### Lo que tiene que hacer el fundador en Supabase *(antes de probarlo de verdad)*
 
 1. **Authentication → Providers → Email**: activado.
 2. **Authentication → URL Configuration**:
    - *Site URL*: la dirección de la app en Vercel.
    - *Redirect URLs*: añadir `…/restablecer` y `…/profile`.
-3. **Antes de lanzar**: *Authentication → SMTP Settings* con el correo de
+3. **Ejecutar el SQL y volver a desplegar la función**: ver
+   `docs/lanzamiento-cuentas.md`.
+4. **Antes de lanzar**: *Authentication → SMTP Settings* con el correo de
    Nüra. El envío por defecto de Supabase solo permite **unos pocos correos
    por hora**: vale para probar, no para lanzar.
 
