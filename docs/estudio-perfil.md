@@ -302,7 +302,58 @@ No se toca la regla. Se le enseña que **un título y lo que titula son una
 sola sección**: `.tituloSeccion` conserva la línea de arriba y pierde el
 relleno de abajo; lo siguiente pierde su línea. Hueco: **81 → 51px**.
 
-### Etapa 6 · Identidad del profesional ⬅ **SIGUIENTE** · *necesita decisión: A, B o C*
+### Etapa 6 · Identidad del profesional — *en curso*
+
+**Decisión del fundador: correo y contraseña**, con *"restablecer
+contraseña"* por correo si se olvida. Como casi todas las apps.
+
+La etapa se divide en tres partes:
+
+| | parte | estado |
+|---|---|---|
+| **6a** | **Las cuentas**: crear acceso, entrar, restablecer | ✅ hecha |
+| 6b | La cuenta se une a su ficha pública, y lo que edita **llega** a ella | ⬅ siguiente |
+| 6c | Borrar la cuenta y la ficha pública (RGPD) | |
+
+#### 6a · Las cuentas ✅ *(2026-08-16)*
+
+- `src/utils/cuenta.js` — la librería **oficial** de Supabase, no llamadas a
+  mano: sesiones, renovación de claves y enlaces de restablecer no se
+  reinventan. Errores traducidos a lo que una persona puede hacer (*"El
+  correo o la contraseña no son correctos"*). Contraseña de **8 caracteres**
+  como mínimo.
+- `/entrar` — entrar, crear acceso y *"¿Has olvidado tu contraseña?"* en una
+  pantalla: son el mismo gesto.
+- `/restablecer` — donde aterriza el enlace del correo. Sin enlace válido,
+  lo explica y ofrece pedir otro: nunca un formulario que no puede
+  funcionar.
+- En **Tu ficha**: *"Crea tu acceso"* si no lo tiene; *"Tu acceso:
+  marta@correo.es"* si lo tiene.
+- La sesión se guarda como `nura_sesion`: **"Borrar mis datos" también la
+  borra**, y *Cerrar sesión* también.
+
+**Peso**: la librería son ~211 kB. Se cargan **solo al abrir Entrar o
+Restablecer**; lo que descarga todo el mundo sigue en 788 kB (antes, 786).
+El perfil lee la sesión directamente de `nura_sesion`, sin importar la
+librería.
+
+**Probado sin tocar la base de datos real**: las llamadas a Supabase se
+interceptaron y se respondieron como el servidor — crear, entrar con
+contraseña buena y mala, pedir el enlace, abrir restablecer sin enlace.
+
+#### Lo que tiene que hacer el fundador en Supabase *(antes de probarlo de verdad)*
+
+1. **Authentication → Providers → Email**: activado.
+2. **Authentication → URL Configuration**:
+   - *Site URL*: la dirección de la app en Vercel.
+   - *Redirect URLs*: añadir `…/restablecer` y `…/profile`.
+3. **Antes de lanzar**: *Authentication → SMTP Settings* con el correo de
+   Nüra. El envío por defecto de Supabase solo permite **unos pocos correos
+   por hora**: vale para probar, no para lanzar.
+
+---
+
+### Etapa 6 · detalle original
 
 ---
 

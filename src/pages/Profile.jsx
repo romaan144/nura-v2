@@ -454,6 +454,36 @@ export default function Profile() {
                 boxShadow:'var(--alzado-reposo)'}}>
               Editar mi ficha
             </button>
+            {/* ── TU ACCESO (etapa 6 de estudio-perfil.md) ───────────────
+                Correo y contraseña. Sin acceso, lo que edita se queda en su
+                movil; con acceso, podra llegar a su ficha publica. La sesion
+                se lee de `nura_sesion` directamente, SIN importar la libreria
+                de Supabase: asi el perfil no arrastra 211 kB que solo
+                necesitan las pantallas de Entrar y Restablecer. */}
+            {(() => {
+              let correo = ''
+              try { correo = JSON.parse(localStorage.getItem('nura_sesion') || 'null')?.user?.email || '' } catch { /* sin sesion */ }
+              if (correo) return (
+                <p style={{margin:'var(--space-12) 0 0', fontSize:'var(--text-sm)', color:'var(--ink-tertiary)', textAlign:'center'}}>
+                  Tu acceso: <span style={{color:'var(--ink-secondary)', fontWeight:600}}>{correo}</span>
+                </p>
+              )
+              return (
+                <div style={{marginTop:'var(--space-12)', padding:'var(--space-16)', background:'var(--purple-05)',
+                  border:'1px solid var(--purple-10)', borderRadius:'var(--radius-md)'}}>
+                  <p style={{margin:0, fontSize:'var(--text-base)', fontWeight:600, color:'var(--ink-primary)'}}>Crea tu acceso</p>
+                  <p style={{margin:'var(--space-4) 0 var(--space-12)', fontSize:'var(--text-sm)', color:'var(--ink-secondary)', lineHeight:1.45}}>
+                    Con tu correo y una contraseña podrás cambiar tu ficha desde cualquier móvil.
+                  </p>
+                  <button onClick={() => navigate('/entrar?modo=crear')} style={{width:'100%', minHeight:44, border:'none',
+                    borderRadius:'var(--radius-full)', background:'var(--purple)', color:'white', cursor:'pointer',
+                    fontFamily:'inherit', fontSize:'var(--text-sm)', fontWeight:700}}>Crear mi acceso</button>
+                  <button onClick={() => navigate('/entrar')} style={{display:'block', margin:'var(--space-8) auto 0',
+                    background:'none', border:'none', padding:'var(--space-6)', cursor:'pointer', fontFamily:'inherit',
+                    fontSize:'var(--text-sm)', fontWeight:600, color:'var(--purple-ink)'}}>¿Ya tienes acceso? Entra</button>
+                </div>
+              )
+            })()}
             {/* Solo si hay cifras. Fuera de la demo proSignals devuelve null:
                 eran numeros inventados y no se enseñan a nadie real. */}
             {proSig && (
@@ -820,6 +850,9 @@ export default function Profile() {
 
         <button className={styles.logoutBtn} onClick={() => {
             if (!confirmarSalida) { setConfirmarSalida(true); setTimeout(() => setConfirmarSalida(false), 4000); return }
+            // El acceso (correo y contraseña) tambien se cierra: si no, el
+            // siguiente que use este movil entraria con la cuenta de otra.
+            try { localStorage.removeItem('nura_sesion') } catch { /* sin almacenamiento */ }
             logout(); navigate('/')
           }}
           style={confirmarSalida ? {color:'var(--red-ink)', borderColor:'var(--red-ink)'} : undefined}>

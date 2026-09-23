@@ -29,6 +29,11 @@ const MyServices = lazy(() => import('./pages/MyServices'))
 const Responder = lazy(() => import('./pages/Responder'))
 import Siguiendo from './pages/Siguiendo'
 import Legal from './pages/Legal'
+// Carga PEREZOSA a proposito: estas dos pantallas traen la libreria de
+// cuentas de Supabase (~220 kB). Solo las abre quien crea o recupera su
+// acceso; el resto de la app no tiene por que descargarla.
+const Entrar = lazy(() => import('./pages/Entrar'))
+const Restablecer = lazy(() => import('./pages/Restablecer'))
 import Toast from './components/Toast'
 import PageTransition from './components/PageTransition'
 import './index.css'
@@ -134,6 +139,8 @@ function AppRoutes() {
               <Route path="/my-services" element={<MyServices />} />
               <Route path="/siguiendo" element={<Siguiendo />} />
               <Route path="/legal/:doc" element={<Legal />} />
+              <Route path="/entrar" element={<Suspense fallback={null}><Entrar /></Suspense>} />
+              <Route path="/restablecer" element={<Suspense fallback={null}><Restablecer /></Suspense>} />
               {/* LA VUELTA: aqui aterriza el profesional desde el enlace
                   de su aviso. Corta y sin cuenta a proposito. */}
               <Route path="/r/:token" element={<Responder />} />
