@@ -391,6 +391,11 @@ Deno.serve(async (req: Request) => {
       const fi = await fetch(`${SUPABASE_URL}/rest/v1/helpers?id=eq.${f.id}&owner_id=eq.${usuario.id}`, { method: 'DELETE', headers: rest })
       if (!fi.ok) return json({ error: 'no se pudo borrar la ficha', estado: fi.status }, 502, cors)
     }
+    // La foto (etapa 7). 404 = no tenia foto: no es un error.
+    const fo = await fetch(`${SUPABASE_URL}/storage/v1/object/fotos/${usuario.id}/perfil.jpg`, {
+      method: 'DELETE', headers: { apikey: SERVICE_KEY!, Authorization: `Bearer ${SERVICE_KEY}` },
+    })
+    if (!fo.ok && fo.status !== 404 && fo.status !== 400) return json({ error: 'no se pudo borrar la foto', estado: fo.status }, 502, cors)
     const cu = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${usuario.id}`, {
       method: 'DELETE', headers: { apikey: SERVICE_KEY!, Authorization: `Bearer ${SERVICE_KEY}` },
     })

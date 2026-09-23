@@ -57,6 +57,33 @@ create policy helpers_auth_read on public.helpers
   for select to authenticated using (true);
 ```
 
+### 1b · La foto de perfil *(etapa 7)*
+
+```sql
+-- La columna que ya lee la app (normalize() en utils/supabase.js).
+alter table public.helpers add column if not exists "avatarUrl" text;
+grant update ("avatarUrl") on public.helpers to authenticated;
+grant select ("avatarUrl") on public.helpers to anon, authenticated;
+
+-- Carpeta de fotos: publica para mirar, 1 MB como maximo y solo JPEG
+-- (la app las reduce a unos 50 kB antes de subir).
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('fotos', 'fotos', true, 1048576, array['image/jpeg'])
+on conflict (id) do update set public = true, file_size_limit = 1048576,
+  allowed_mime_types = array['image/jpeg'];
+
+-- Cada profesional solo puede escribir en SU carpeta: fotos/<su cuenta>/
+drop policy if exists fotos_subir_propia on storage.objects;
+create policy fotos_subir_propia on storage.objects for insert to authenticated
+  with check (bucket_id = 'fotos' and (storage.foldername(name))[1] = auth.uid()::text);
+drop policy if exists fotos_cambiar_propia on storage.objects;
+create policy fotos_cambiar_propia on storage.objects for update to authenticated
+  using (bucket_id = 'fotos' and (storage.foldername(name))[1] = auth.uid()::text);
+drop policy if exists fotos_borrar_propia on storage.objects;
+create policy fotos_borrar_propia on storage.objects for delete to authenticated
+  using (bucket_id = 'fotos' and (storage.foldername(name))[1] = auth.uid()::text);
+```
+
 ### Comprobar que ha ido bien
 
 ```sql

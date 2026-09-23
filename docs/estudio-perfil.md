@@ -487,13 +487,41 @@ Con el camino elegido:
 - puede **pausar** su ficha
 - puede **borrar** su cuenta y su ficha pública *(cierra el RGPD)*
 
-### Etapa 7 · La foto ⬅ **SIGUIENTE** *(la etapa 6 ya está)*
+### Etapa 7 · La foto ✅ *(2026-08-16)*
+
+La app le decía al profesional *"los perfiles con foto reciben más mensajes"*
+y no había forma de subir una. Nuevo `FotoPerfil`, en **Tu ficha**, solo con
+la ficha vinculada — sin saber quién es, cualquiera podría cambiar la foto
+de cualquiera.
+
+- **Se recorta y se reduce en el móvil** antes de subir: cuadrada, 480×480,
+  JPEG. Una foto de cámara pesa 3-5 MB; con mala cobertura no subiría, y
+  cada persona que mire la ficha la descargaría.
+- **Ve cómo queda antes de guardarla**: *"Así se verá en tu ficha"*, con
+  *Elegir otra* o *Usar esta foto*.
+- Se guarda en `fotos/<su cuenta>/perfil.jpg`; **el almacenamiento solo le
+  deja escribir en su carpeta**. La ficha pública apunta a ella
+  (`avatarUrl`, la columna que la app ya leía), con `?v=` para que nadie
+  siga viendo la anterior.
+- Sale en la cabecera de su perfil y en la vista previa de su ficha.
+- *Borrar mi cuenta* borra también la foto.
+
+Probado con una foto de 2400×1600: llega a la vista previa como 480×480, se
+sube a su carpeta y la ficha la usa. SQL en `docs/lanzamiento-cuentas.md`
+(apartado 1b): la columna, la carpeta —pública para mirar, 1 MB y solo
+JPEG— y los permisos por carpeta.
+
+### Etapa 8 · Sin cuenta, y el repaso final ⬅ **SIGUIENTE**
+
+---
+
+### Etapa 7 · detalle original
 
 Subida de foto al almacenamiento de Supabase, con recorte cuadrado en el
 móvil. Solo se puede hacer con identidad: si no, cualquiera podría cambiar
 la foto de cualquiera.
 
-### Etapa 8 · Sin cuenta, y el repaso final
+### Etapa 8 · Sin cuenta, y el repaso final — detalle
 
 La página del perfil sin cuenta, y un repaso de las seis variantes a 360px
 —el móvil estrecho— con el método que ha funcionado: **comparar la misma

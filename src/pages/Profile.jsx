@@ -18,6 +18,7 @@ import { NURA_BUILD, CONTACTO_EMAIL } from '../config'
 import EditarFicha from '../components/EditarFicha'
 import { fmtTel } from '../utils/formato'
 import { reclamarFicha, borrarCuenta } from '../utils/escrituras'
+import FotoPerfil from '../components/FotoPerfil'
 
 // ── Tu semana: la voz de Nüra para quien trabaja ──
 // Gramática: frase humana primero, cifras discretas después, cero vanidad.
@@ -77,7 +78,7 @@ export default function Profile() {
     // el ✓ de verificado mientras su ficha publica real (la del alta) dice
     // verified: false. "Así te ven" le mentia a ella misma.
     verified: hp.verified === true,
-    avatarUrl: avatarDe(encodeURIComponent(user.name || 'pro')),
+    avatarUrl: user.avatar || avatarDe(encodeURIComponent(user.name || 'pro')),
   } : null
   function saveQuote() {
     const v = quoteDraft.trim()
@@ -237,7 +238,7 @@ export default function Profile() {
         <div className={styles.identity} style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0ms forwards`}}>
           <div className={styles.avatarWrap}>
             <img
-              src={avatarDe(encodeURIComponent(user.name || 'user'))}
+              src={user.avatar || avatarDe(encodeURIComponent(user.name || 'user'))}
               alt={user.name} className={styles.avatar}
             />
             {user.isHelper && (
@@ -458,6 +459,11 @@ export default function Profile() {
 
         {user.isHelper && (
           <div id="asi-te-ven" style={{animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 240ms both', scrollMarginTop:'80px'}}>
+            {/* La foto, solo con la ficha vinculada (etapa 7): sin saber
+                quien es, cualquiera podria cambiar la foto de cualquiera. */}
+            {user.helperId != null && tieneCuenta && (
+              <FotoPerfil actual={user.avatar} helperId={user.helperId} onCambio={url => updateUser({ avatar: url })} />
+            )}
             <SectionLabel tone="brand" style={{marginBottom:'var(--space-10)'}}>
               Así te ven · vista previa
             </SectionLabel>
