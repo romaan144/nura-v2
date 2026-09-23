@@ -369,5 +369,34 @@ Deno.serve(async (req: Request) => {
     return json({ ok: true, helper: { id: filas[0].id, name: filas[0].name } }, 200, cors)
   }
 
+  // ── BORRAR LA CUENTA (etapa 6c · RGPD, derecho de supresion) ───────────
+  // Borra, por este orden: los avisos que le llegaron (mensajes de clientes:
+  // datos de terceros que solo existen por su ficha), su ficha publica y su
+  // cuenta. Solo lo SUYO: la ficha se busca por owner_id = la cuenta de la
+  // sesion, nunca por un id que mande el movil.
+  if (op === 'borrar-cuenta') {
+    const token = String(cuerpo.token || '')
+    if (!token) return json({ error: 'falta la sesion' }, 401, cors)
+    const u = await fetch(`${SUPABASE_URL}/auth/v1/user`, { headers: { apikey: SERVICE_KEY!, Authorization: `Bearer ${token}` } })
+    if (!u.ok) return json({ error: 'sesion no valida' }, 401, cors)
+    const usuario = await u.json()
+    if (!usuario?.id) return json({ error: 'sesion sin usuario' }, 400, cors)
+
+    const suyas = await fetch(`${SUPABASE_URL}/rest/v1/helpers?owner_id=eq.${usuario.id}&select=id`, { headers: rest })
+    if (!suyas.ok) return json({ error: 'lectura rechazada', estado: suyas.status }, 502, cors)
+    for (const f of await suyas.json()) {
+      const av = await fetch(`${SUPABASE_URL}/rest/v1/avisos?helper_id=eq.${encodeURIComponent(String(f.id))}`, { method: 'DELETE', headers: rest })
+      // Si la tabla avisos aun no existe (404), no hay avisos que borrar.
+      if (!av.ok && av.status !== 404) return json({ error: 'no se pudieron borrar los avisos', estado: av.status }, 502, cors)
+      const fi = await fetch(`${SUPABASE_URL}/rest/v1/helpers?id=eq.${f.id}&owner_id=eq.${usuario.id}`, { method: 'DELETE', headers: rest })
+      if (!fi.ok) return json({ error: 'no se pudo borrar la ficha', estado: fi.status }, 502, cors)
+    }
+    const cu = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${usuario.id}`, {
+      method: 'DELETE', headers: { apikey: SERVICE_KEY!, Authorization: `Bearer ${SERVICE_KEY}` },
+    })
+    if (!cu.ok) return json({ error: 'no se pudo borrar la cuenta', estado: cu.status }, 502, cors)
+    return json({ ok: true }, 200, cors)
+  }
+
   return json({ error: 'operacion desconocida' }, 400, cors)
 })

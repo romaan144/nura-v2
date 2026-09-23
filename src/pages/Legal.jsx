@@ -26,7 +26,7 @@ const DOCS = {
       ['Para qué', 'Para ponerte en contacto con la persona que puede ayudarte, y para que los profesionales reciban los avisos de quien les escribe. No vendemos tus datos ni los usamos para publicidad.'],
       ['Dónde', 'Lo que se guarda en tu móvil no sale de él. La ficha de los profesionales y los avisos se guardan en los servidores de Supabase, en [región de los servidores].'],
       ['Tus derechos', 'Puedes pedir ver, corregir o borrar tus datos, oponerte a que los tratemos, limitar su uso o llevártelos. Escríbenos a [correo de contacto]. Si no te respondemos bien, puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es).'],
-      ['Borrar tus datos', 'Desde tu perfil, en «Borrar mis datos de este móvil», eliminas al momento todo lo que Nüra guarda en tu teléfono. Para retirar una ficha profesional pública, escríbenos.'],
+      ['Borrar tus datos', 'Desde tu perfil, en Ajustes, puedes borrarlo todo al momento. Sin acceso, se borra lo que Nüra guarda en tu teléfono. Con acceso, «Borrar mi cuenta» elimina además tu cuenta, tu ficha pública y los mensajes que te han llegado.'],
     ],
   },
   terminos: {

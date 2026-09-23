@@ -139,3 +139,9 @@ export async function reclamarFicha(token) {
   if (!EDGE_URL) return { ok: false, motivo: 'sin-servidor' }
   try { return await llamarFuncion({ op: 'reclamar-ficha', token }) } catch { return { ok: false, motivo: 'sin-red' } }
 }
+
+/** Borra la cuenta, la ficha publica y sus avisos (etapa 6c, RGPD). */
+export async function borrarCuenta(token) {
+  if (!EDGE_URL) return { ok: false, motivo: 'sin-servidor' }
+  try { return await llamarFuncion({ op: 'borrar-cuenta', token }) } catch { return { ok: false, motivo: 'sin-red' } }
+}

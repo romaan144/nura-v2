@@ -17,7 +17,7 @@ import styles from './Profile.module.css'
 import { NURA_BUILD, CONTACTO_EMAIL } from '../config'
 import EditarFicha from '../components/EditarFicha'
 import { fmtTel } from '../utils/formato'
-import { reclamarFicha } from '../utils/escrituras'
+import { reclamarFicha, borrarCuenta } from '../utils/escrituras'
 
 // ── Tu semana: la voz de Nüra para quien trabaja ──
 // Gramática: frase humana primero, cifras discretas después, cero vanidad.
@@ -93,6 +93,10 @@ export default function Profile() {
   const [editarAbierto, setEditarAbierto] = useState(false)
   const [borrarAbierto, setBorrarAbierto] = useState(false)
   const [vinculo, setVinculo] = useState('')
+  const [borrando, setBorrando] = useState(false)
+  const [borrarError, setBorrarError] = useState('')
+  let tieneCuenta = false
+  try { tieneCuenta = !!JSON.parse(localStorage.getItem('nura_sesion') || 'null')?.access_token } catch { /* sin sesion */ }
 
   // ── VINCULAR LA CUENTA CON SU FICHA (etapa 6b) ───────────────────────
   // Si la profesional tiene acceso pero el movil no sabe cual es su ficha,
@@ -854,30 +858,52 @@ export default function Profile() {
               style={{display:'flex', alignItems:'center', width:'100%', minHeight:52, padding:'0 var(--space-16)',
                 background:'none', border:'none', borderTop:'1px solid var(--ink-border)', cursor:'pointer',
                 fontFamily:'inherit', textAlign:'left'}}>
-              <span style={{flex:1, fontSize:'var(--text-base)', color:'var(--red-ink)'}}>Borrar mis datos de este móvil</span>
+              <span style={{flex:1, fontSize:'var(--text-base)', color:'var(--red-ink)'}}>{tieneCuenta ? 'Borrar mi cuenta' : 'Borrar mis datos de este móvil'}</span>
             </button>
             {borrarAbierto && (
               <div style={{padding:'0 var(--space-16) var(--space-16)'}}>
                 <p style={{margin:'0 0 var(--space-12)', fontSize:'var(--text-sm)', color:'var(--ink-secondary)', lineHeight:1.5}}>
-                  Se borra al momento todo lo que Nüra guarda en este teléfono: tu cuenta, tus búsquedas, tus conversaciones y a quién sigues. No se puede deshacer.
-                  {user.isHelper && ` Tu ficha pública no se borra desde aquí${CONTACTO_EMAIL ? `: escríbenos a ${CONTACTO_EMAIL} y la retiramos.` : ' todavía.'}`}
+                  {tieneCuenta
+                    ? `Se borra tu acceso${user.helperId != null ? ', tu ficha pública y los mensajes que te han llegado' : ''}, y todo lo que Nüra guarda en este teléfono. No se puede deshacer.`
+                    : 'Se borra al momento todo lo que Nüra guarda en este teléfono: tus búsquedas, tus conversaciones y a quién sigues. No se puede deshacer.'}
+                  {!tieneCuenta && user.isHelper && ' Tu ficha pública no se borra desde aquí: para eso, crea tu acceso y bórralo desde él.'}
                 </p>
+                {borrarError && <p role="alert" style={{margin:'0 0 var(--space-10)', fontSize:'var(--text-sm)', color:'var(--red-ink)', lineHeight:1.45}}>{borrarError}</p>}
                 <div style={{display:'flex', gap:'var(--space-8)'}}>
                   <button onClick={() => setBorrarAbierto(false)} style={{flex:1, minHeight:44, background:'none',
                     border:'1px solid var(--ink-border)', borderRadius:'var(--radius-full)', cursor:'pointer',
                     fontFamily:'inherit', fontSize:'var(--text-sm)', fontWeight:600, color:'var(--ink-secondary)'}}>Cancelar</button>
-                  <button onClick={() => {
-                      // Todo lo que empieza por nura_ es de Nüra (32 claves hoy) y
-                      // nada mas lo es: borra completo sin tocar nada ajeno. Luego
-                      // se recarga para que ningun estado en memoria sobreviva.
+                  <button disabled={borrando} onClick={async () => {
+                      // CON CUENTA (etapa 6c): primero el servidor — avisos, ficha
+                      // publica y cuenta. Si falla, NO se borra nada del movil:
+                      // la persona tiene que poder volver a intentarlo con su
+                      // sesion. Sin cuenta, solo el movil.
+                      if (tieneCuenta) {
+                        setBorrando(true); setBorrarError('')
+                        try {
+                          const { sesionActual } = await import('../utils/cuenta')
+                          const ses = await sesionActual()
+                          const r = ses ? await borrarCuenta(ses.access_token) : { ok: false }
+                          if (!r?.ok) throw new Error('rechazado')
+                        } catch {
+                          setBorrando(false)
+                          setBorrarError('No se ha podido borrar tu cuenta ahora. No hemos tocado nada: vuelve a probar en un momento.')
+                          return
+                        }
+                      }
+                      // Todo lo que empieza por nura_ es de Nüra (32 claves hoy, y
+                      // la sesion) y nada mas lo es: borra completo sin tocar nada
+                      // ajeno. Luego se recarga para que nada sobreviva en memoria.
                       for (const st of [localStorage, sessionStorage]) {
                         try { Object.keys(st).filter(k => k.startsWith('nura_')).forEach(k => st.removeItem(k)) } catch { /* sin almacenamiento */ }
                       }
                       window.location.replace('/')
                     }}
-                    style={{flex:1, minHeight:44, border:'none', borderRadius:'var(--radius-full)', cursor:'pointer',
-                      fontFamily:'inherit', fontSize:'var(--text-sm)', fontWeight:700, background:'var(--red)', color:'white'}}>
-                    Borrar todo
+                    style={{flex:1, minHeight:44, border:'none', borderRadius:'var(--radius-full)', cursor: borrando ? 'default' : 'pointer',
+                      fontFamily:'inherit', fontSize:'var(--text-sm)', fontWeight:700,
+                      /* --red-ink, no --red: blanco sobre el rojo claro daba 3,76 */
+                      background:'var(--red-ink)', color:'white'}}>
+                    {borrando ? 'Borrando…' : 'Borrar todo'}
                   </button>
                 </div>
               </div>

@@ -72,7 +72,7 @@ select policyname from pg_policies where tablename = 'helpers';
 
 ## 2 · Volver a desplegar la función
 
-La función `helpers-write` tiene una operación nueva: **`reclamar-ficha`**.
+La función `helpers-write` tiene **dos** operaciones nuevas: **`reclamar-ficha`** (une la cuenta a su ficha) y **`borrar-cuenta`** (borra avisos, ficha y cuenta).
 
 **Supabase → Edge Functions → helpers-write → Code**: sustituye todo el
 código por el de `supabase/functions/helpers-write/index.ts` del

@@ -302,7 +302,7 @@ No se toca la regla. Se le enseña que **un título y lo que titula son una
 sola sección**: `.tituloSeccion` conserva la línea de arriba y pierde el
 relleno de abajo; lo siguiente pierde su línea. Hueco: **81 → 51px**.
 
-### Etapa 6 · Identidad del profesional — *en curso*
+### Etapa 6 · Identidad del profesional ✅ *(2026-08-16)*
 
 **Decisión del fundador: correo y contraseña**, con *"restablecer
 contraseña"* por correo si se olvida. Como casi todas las apps.
@@ -313,7 +313,7 @@ La etapa se divide en tres partes:
 |---|---|---|
 | **6a** | **Las cuentas**: crear acceso, entrar, restablecer | ✅ hecha |
 | **6b** | **La cuenta se une a su ficha pública, y lo que edita llega a ella** | ✅ hecha |
-| 6c | Borrar la cuenta y la ficha pública (RGPD) | ⬅ siguiente |
+| **6c** | **Borrar la cuenta y la ficha pública (RGPD)** | ✅ hecha |
 
 #### 6a · Las cuentas ✅ *(2026-08-16)*
 
@@ -372,6 +372,31 @@ crear una cuenta con el correo de otra y quedarse con su ficha.
 
 Probado simulando el servidor: vincula, publica con su sesión y solo con las
 columnas permitidas, y el rechazo se explica sin cerrar la hoja.
+
+#### 6c · Borrar la cuenta ✅ *(2026-08-16)*
+
+Con acceso, la fila de Ajustes pasa a llamarse **"Borrar mi cuenta"** y dice
+exactamente qué se borra. Operación nueva en el servidor, `borrar-cuenta`,
+que borra **por este orden**:
+
+1. **Los avisos** que le llegaron — mensajes de clientes, datos de terceros
+   que solo existen por su ficha.
+2. **Su ficha pública** — buscada por `owner_id` = la cuenta de la sesión,
+   **nunca por un id que mande el móvil**.
+3. **Su cuenta.**
+
+Después, todo lo del móvil. **Si el servidor falla, no se borra nada del
+móvil**: tiene que poder volver a intentarlo con su sesión, y se le dice.
+
+Probados los dos casos simulando el servidor.
+
+Y un fallo mío de la etapa 3: el botón *"Borrar todo"* era **blanco sobre el
+rojo claro (3,76)**. El medidor no lo vio porque solo aparece al desplegar.
+Ahora sobre `--red-ink`.
+
+**Con esto el RGPD queda cubierto en la app**: cualquiera puede borrar sus
+datos, y una profesional, también su ficha pública. Falta que un abogado
+revise los textos.
 
 #### Lo que tiene que hacer el fundador en Supabase *(antes de probarlo de verdad)*
 
@@ -462,7 +487,7 @@ Con el camino elegido:
 - puede **pausar** su ficha
 - puede **borrar** su cuenta y su ficha pública *(cierra el RGPD)*
 
-### Etapa 7 · La foto *(requiere la etapa 6)*
+### Etapa 7 · La foto ⬅ **SIGUIENTE** *(la etapa 6 ya está)*
 
 Subida de foto al almacenamiento de Supabase, con recorte cuadrado en el
 móvil. Solo se puede hacer con identidad: si no, cualquiera podría cambiar
