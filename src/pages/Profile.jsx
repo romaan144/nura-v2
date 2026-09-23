@@ -189,16 +189,26 @@ export default function Profile() {
           </Button>
           <div style={{height:'var(--space-10)'}} />
           <Button variant="secondary" full onClick={() => navigate('/register-helper')}>
-            Quiero ser Profesional
+            Quiero ser profesional
           </Button>
+          {/* Sin esto, una profesional con acceso que cambiaba de movil no
+              tenia por donde entrar: solo "crear cuenta" y "darse de alta". */}
+          <button onClick={() => navigate('/entrar')} style={{display:'block', width:'100%', minHeight:44,
+            marginTop:'var(--space-10)', background:'none', border:'none', cursor:'pointer', fontFamily:'inherit',
+            fontSize:'var(--text-sm)', fontWeight:600, color:'var(--purple-ink)'}}>
+            ¿Ya tienes acceso de profesional? Entra
+          </button>
         </div>
 
         <p style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', textAlign:'center',
           margin:'var(--space-20) 0 0', lineHeight:1.5}}>
           Tu teléfono no se muestra a nadie.<br />Solo sirve para entrar.
         </p>
+        {/* Sin opacity: aclaraba el texto por encima de su color, y el medidor
+            de contraste mira el color, no la opacidad del elemento. Mismo sello
+            que el perfil con cuenta. */}
         <div style={{textAlign:'center', fontSize:'var(--text-xs)', color:'var(--ink-tertiary)',
-          marginTop:'var(--space-16)', opacity:0.6}}>{NURA_BUILD}</div>
+          marginTop:'var(--space-16)'}}>Nüra · {NURA_BUILD}</div>
       </div>
     </div>
   )

@@ -348,13 +348,17 @@ Deno.serve(async (req: Request) => {
     if (!email || !usuario?.id) return json({ error: 'sesion sin correo' }, 400, cors)
     if (!usuario.email_confirmed_at && !usuario.confirmed_at) return json({ ok: false, motivo: 'sin-confirmar' }, 200, cors)
 
-    const ya = await fetch(`${SUPABASE_URL}/rest/v1/helpers?owner_id=eq.${usuario.id}&select=id,name`, { headers: rest })
+    // Se devuelve la ficha entera (no solo el id): al entrar desde un MOVIL
+    // NUEVO, el movil no sabe nada de la profesional y la reconstruye con esto.
+    // Solo columnas que crea el alta: pedir una que no exista rompe la consulta.
+    const CAMPOS = 'id,name,specialty,zone,price,online,bio,contacto'
+    const ya = await fetch(`${SUPABASE_URL}/rest/v1/helpers?owner_id=eq.${usuario.id}&select=${CAMPOS}`, { headers: rest })
     if (!ya.ok) return json({ error: 'lectura rechazada', estado: ya.status }, 502, cors)
     const suyas = await ya.json()
     if (suyas.length) return json({ ok: true, helper: suyas[0] }, 200, cors)
 
     const cand = await fetch(
-      `${SUPABASE_URL}/rest/v1/helpers?contacto=ilike.${encodeURIComponent(email)}&owner_id=is.null&select=id,name,contacto`,
+      `${SUPABASE_URL}/rest/v1/helpers?contacto=ilike.${encodeURIComponent(email)}&owner_id=is.null&select=${CAMPOS}`,
       { headers: rest },
     )
     if (!cand.ok) return json({ error: 'lectura rechazada', estado: cand.status }, 502, cors)
@@ -366,7 +370,7 @@ Deno.serve(async (req: Request) => {
       method: 'PATCH', headers: { ...rest, Prefer: 'return=minimal' }, body: JSON.stringify({ owner_id: usuario.id }),
     })
     if (!pat.ok) return json({ error: 'escritura rechazada', estado: pat.status }, 502, cors)
-    return json({ ok: true, helper: { id: filas[0].id, name: filas[0].name } }, 200, cors)
+    return json({ ok: true, helper: filas[0] }, 200, cors)
   }
 
   // ── BORRAR LA CUENTA (etapa 6c · RGPD, derecho de supresion) ───────────

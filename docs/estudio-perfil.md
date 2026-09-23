@@ -511,7 +511,73 @@ sube a su carpeta y la ficha la usa. SQL en `docs/lanzamiento-cuentas.md`
 (apartado 1b): la columna, la carpeta —pública para mirar, 1 MB y solo
 JPEG— y los permisos por carpeta.
 
-### Etapa 8 · Sin cuenta, y el repaso final ⬅ **SIGUIENTE**
+### Etapa 8 · Sin cuenta, y el repaso final ✅ *(2026-08-16)*
+
+#### Lo grave: no había forma de entrar
+
+La página sin cuenta ofrecía *"Crear cuenta gratis"* y *"Quiero ser
+profesional"*, pero **ningún "ya tengo acceso"**. La cuenta de la etapa 6 no
+se podía usar desde un móvil nuevo. Y aunque se encontrara la pantalla de
+entrar, el móvil no sabría quién era ni cuál era su ficha.
+
+- *"¿Ya tienes acceso de profesional? Entra"* en la página sin cuenta.
+- Al entrar desde un móvil sin nada guardado, el servidor devuelve **su
+  ficha entera** y el móvil **reconstruye a la profesional**: nombre,
+  especialidad, zona, precio y ficha vinculada. Probado simulando el
+  servidor.
+
+#### Lo menor
+
+- *"Quiero ser **P**rofesional"* → *"profesional"*.
+- El sello de versión llevaba `opacity: 0.6`, que aclara el texto por encima
+  de su color. **Otro punto ciego del medidor**: miraba el color, no la
+  opacidad del elemento. Corregido el sello, y el medidor ahora multiplica
+  la opacidad de cada elemento y sus padres.
+
+#### El repaso, a 360px
+
+| variante | alto | secciones | desborde |
+|---|---|---|---|
+| sin cuenta | 1,1 | Crea tu cuenta | no |
+| usuario nuevo | 1,6 | nombre · Ajustes | no |
+| usuario activo | 1,5 | nombre · lo tuyo · Ajustes | no |
+| profesional nueva | 2,7 | nombre · Tu trabajo · Tu ficha · Ajustes | no |
+| profesional vinculada | 2,7 | nombre · Tu trabajo · Tu ficha · Ajustes | no |
+
+**Es más largo que al empezar** (a igual pantalla: usuario 1,1 → 1,4;
+profesional 1,9 → 2,4). No es relleno: son funciones que no existían
+—ajustes, acceso, foto, editar la ficha—, y lo más largo va al final.
+
+---
+
+# 🏁 ESTUDIO DEL PERFIL · COMPLETO
+
+| | etapa | |
+|---|---|---|
+| 1 | Lo roto | ✅ |
+| 2 | El profesional edita su ficha | ✅ |
+| 3 | Ajustes, lo legal primero | ✅ |
+| 4 | El perfil de usuario: lo que tienes a medias | ✅ |
+| 5 | El perfil de profesional: tu trabajo y tu ficha | ✅ |
+| 6 | Cuentas, ficha vinculada y borrado (RGPD) | ✅ |
+| 7 | La foto | ✅ |
+| 8 | Sin cuenta, y repaso | ✅ |
+
+**Fallos encontrados sin buscarlos**: el ✓ de verificado falso en su propia
+vista previa, la barra tapando *"Guardar cambios"*, el contacto legible
+desde fuera de la app, dos fallos de contraste que el medidor no veía
+(opacidad, botón oculto) y que no se podía entrar desde un móvil nuevo.
+
+**Pendiente del fundador** para que funcione en producción:
+
+1. Supabase → **SQL** de `docs/lanzamiento-cuentas.md` (apartados 1 y 1b).
+2. Supabase → **volver a desplegar** la función `helpers-write`.
+3. **Correo de Nüra** → `CONTACTO_EMAIL` y el SMTP de Supabase.
+4. **Revisión legal** de privacidad y términos.
+
+---
+
+### Etapa 8 · detalle original
 
 ---
 
@@ -521,7 +587,7 @@ Subida de foto al almacenamiento de Supabase, con recorte cuadrado en el
 móvil. Solo se puede hacer con identidad: si no, cualquiera podría cambiar
 la foto de cualquiera.
 
-### Etapa 8 · Sin cuenta, y el repaso final — detalle
+### Etapa 8 · detalle del plan
 
 La página del perfil sin cuenta, y un repaso de las seis variantes a 360px
 —el móvil estrecho— con el método que ha funcionado: **comparar la misma

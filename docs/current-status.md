@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-08-16 (etapa 7: foto de perfil · SQL y función pendientes en Supabase)
+**Última actualización:** 2026-08-16 (🏁 estudio del perfil completo · pendiente: SQL, función, correo, revisión legal)
 **Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
 **Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
 **Sello de build:** `2026.07.07-f`
@@ -765,7 +765,7 @@ Ocho etapas, en diseño y funciones. Una por cada **"sigue"**.
 | 5 | Diseño del perfil de profesional | ✅ hecha |
 | 6 | Identidad del profesional | ✅ hecha · **falta SQL y desplegar la función** |
 | 7 | La foto | ✅ hecha · **falta SQL (apartado 1b)** |
-| **8** | **Sin cuenta, y repaso final** | no ⬅ **siguiente** |
+| 8 | Sin cuenta, y repaso final | ✅ hecha |
 
 **El hallazgo de fondo**: Nüra no tiene autenticación real. Editar la ficha
 pública, subir foto, ver avisos, pausar o **borrar la cuenta (RGPD,

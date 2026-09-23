@@ -188,7 +188,11 @@ async function medirA11y() {
         if (!e.checkVisibility?.() || r.width < 2) continue
         if (![...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim().length > 1)) continue
         const s = getComputedStyle(e), fgA = rgba(s.color); if (!fgA) continue
-        const fg = sobre(fgA, fondo(e))
+        // La OPACIDAD del elemento y de sus padres tambien aclara el texto
+        // (2026-08-16): un sello con opacity 0.6 pasaba el medidor porque
+        // solo se miraba el color. Se multiplica en la transparencia.
+        let op = 1; for (let n = e; n && n !== document.documentElement; n = n.parentElement) op *= parseFloat(getComputedStyle(n).opacity || '1')
+        const fg = sobre([fgA[0], fgA[1], fgA[2], fgA[3] * op], fondo(e))
         const px = parseFloat(s.fontSize)
         const grande = px >= 24 || (px >= 18.66 && +s.fontWeight >= 700)
         const rt = ratio(fg, fondo(e))
