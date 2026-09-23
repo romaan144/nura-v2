@@ -181,7 +181,38 @@ etiqueta del botón y no su acción.
 La edición se guarda **en el móvil del profesional**; su ficha pública no
 cambia hasta la etapa 6. Eso se dice en el código y aquí.
 
-### Etapa 2 · El profesional edita su ficha ⬅ **SIGUIENTE**
+### Etapa 2 · El profesional edita su ficha ✅ *(2026-08-16)*
+
+Nuevo `EditarFicha`: un botón **"Editar mi ficha"** bajo la vista previa abre
+una hoja con **los mismos campos del alta** —especialidad, formación, dónde
+trabaja, tarifa, qué le diferencia, dónde le avisamos— y cómo atiende
+(presencial, online o las dos).
+
+*"Guardar cambios"* solo se activa si algo cambió; *Cancelar* no guarda. La
+vista previa se actualiza al momento. La hoja dice, en una línea: *"Por
+ahora, estos cambios se guardan en tu móvil"* — la ficha pública espera a la
+etapa 6.
+
+### Dos fallos encontrados por el camino
+
+**El ✓ de verificado era falso.** La vista previa ponía `verified: true` a
+todo profesional, mientras su ficha pública real (la del alta) dice
+`verified: false`. *"Así te ven"* le enseñaba una insignia que nadie más
+ve. Ahora solo si está verificada de verdad.
+
+**La barra flotante tapaba "Guardar cambios".** La hoja se pintaba dentro
+de la pantalla del perfil, que crea su propia capa: ningún `z-index` sale de
+ella, y la pestaña *"Perfil"* quedaba **encima** del botón. El toque caía en
+la barra y no se guardaba nada. Medido con `elementFromPoint`. La hoja se
+monta ahora en un *portal* al nivel del documento.
+
+Verificado a 360px con toques reales.
+
+### Etapa 3 · Ajustes, lo legal primero ⬅ **SIGUIENTE**
+
+---
+
+### Etapa 2 · detalle original
 
 ---
 
@@ -203,7 +234,7 @@ escritura al servidor para la etapa 6.
 Es media función, y hay que decirlo así: el profesional ve su cambio, pero
 su ficha pública no cambia hasta la etapa 6.
 
-### Etapa 3 · Ajustes, lo legal primero
+### Etapa 3 · Ajustes, lo legal primero — detalle
 
 - Privacidad y términos *(los textos los tiene que redactar alguien con
   criterio legal; aquí se ponen los enlaces y el sitio)*

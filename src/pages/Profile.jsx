@@ -15,6 +15,7 @@ import HelperCard from '../components/HelperCard'
 import { proSignals } from '../utils/proSignals'
 import styles from './Profile.module.css'
 import { NURA_BUILD } from '../config'
+import EditarFicha from '../components/EditarFicha'
 
 // ── Tu semana: la voz de Nüra para quien trabaja ──
 // Gramática: frase humana primero, cifras discretas después, cero vanidad.
@@ -70,7 +71,10 @@ export default function Profile() {
     price: hp.price,
     zone: hp.zone || hp.city || 'Barcelona',
     quote: proQuote || undefined,
-    verified: true,
+    // Ponia `verified: true` a todo profesional: la vista previa le enseñaba
+    // el ✓ de verificado mientras su ficha publica real (la del alta) dice
+    // verified: false. "Así te ven" le mentia a ella misma.
+    verified: hp.verified === true,
     avatarUrl: avatarDe(encodeURIComponent(user.name || 'pro')),
   } : null
   function saveQuote() {
@@ -84,6 +88,7 @@ export default function Profile() {
   const [campoAbierto, setCampoAbierto] = useState(null)
   const [campoDraft, setCampoDraft] = useState('')
   const [confirmarSalida, setConfirmarSalida] = useState(false)
+  const [editarAbierto, setEditarAbierto] = useState(false)
 
   const [editingName, setEditingName]   = useState(false)
   const [nameInput,   setNameInput]     = useState('')
@@ -275,10 +280,6 @@ export default function Profile() {
           // coletilla "mejora tus matches" no le habla a un profesional:
           // el no busca match, el ES el match.
           const hp = user.helperProfile || {}
-          const fields = user.isHelper
-            ? [!!user.name, !!hp.specialty, !!hp.formation, !!hp.zone, !!hp.price, !!hp.differentiator, !!user.avatar]
-            : [!!user.name, !!user.phone, !!user.avatar]
-          const pct = Math.round((fields.filter(Boolean).length / fields.length) * 100)
           const missing = []
           if (user.isHelper) {
             if (!hp.specialty) missing.push('tu especialidad')
@@ -488,6 +489,15 @@ export default function Profile() {
             <div inert style={{pointerEvents:'none'}}>
               <HelperCard helper={proPreview} showPrice />
             </div>
+            {/* Despues del alta no habia forma de cambiar nada de la ficha
+                salvo la cita. Etapa 2 de estudio-perfil.md. */}
+            <button onClick={() => setEditarAbierto(true)}
+              style={{width:'100%', minHeight:48, marginTop:'var(--space-10)', background:'white',
+                border:'1px solid var(--ink-border)', borderRadius:'var(--radius-full)', cursor:'pointer',
+                fontFamily:'inherit', fontSize:'var(--text-sm)', fontWeight:700, color:'var(--purple-ink)',
+                boxShadow:'var(--alzado-reposo)'}}>
+              Editar mi ficha
+            </button>
             {/* Solo si hay cifras. Fuera de la demo proSignals devuelve null:
                 eran numeros inventados y no se enseñan a nadie real. */}
             {proSig && (
@@ -718,6 +728,7 @@ export default function Profile() {
       </div>
     </div>
     {composerOpen && <ObraComposer onClose={() => setComposerOpen(false)} />}
+    {editarAbierto && <EditarFicha onClose={() => setEditarAbierto(false)} />}
     </>
   )
 }
