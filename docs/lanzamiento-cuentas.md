@@ -97,7 +97,22 @@ select policyname from pg_policies where tablename = 'helpers';
 
 ---
 
-## 2 · Volver a desplegar la función
+## 2 · Volver a desplegar la función · ✅ *hecho (2026-09-23)*
+
+Desplegada desde el Chrome del fundador. Se trajo el código de GitHub y se
+comprobó idéntico (20.643 caracteres, 8 operaciones) antes de pulsar Deploy.
+
+**Hallazgo**: la versión que estaba en vivo tenía **201 líneas**; la del
+repositorio, 412. En Supabase seguía una versión antigua: **tampoco estaban
+vivas las operaciones de avisos** (`encolar-aviso`, `abrir-aviso`,
+`responder-aviso`, `respuestas`). Este despliegue las activó.
+
+Comprobado desde la app en producción: `reclamar-ficha` y `borrar-cuenta`
+sin sesión → 401; `respuestas` → 200 (la tabla `avisos` existe); operación
+inventada → 400. Desde otro origen (supabase.com) la función rechaza la
+llamada, como debe.
+
+### Lo que se hacía antes
 
 La función `helpers-write` tiene **dos** operaciones nuevas: **`reclamar-ficha`** (une la cuenta a su ficha) y **`borrar-cuenta`** (borra avisos, ficha y cuenta).
 
