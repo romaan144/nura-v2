@@ -8,7 +8,7 @@ import PostCard from '../components/PostCard'
 import { getObraDeHelper, obraAPost } from '../data/obraPosts'
 import { useNavigate } from 'react-router-dom'
 import { LogOut, Edit2, Check, X, Award, MessageCircle,
-         Heart, ClipboardList, User, Phone, Search, Star , UserPlus, UserCheck, ChevronRight } from 'lucide-react'
+         Heart, ClipboardList, User, Phone, Star , UserPlus, UserCheck, ChevronRight } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import { Badge, StatBar } from '../components/ui'
 import HelperCard from '../components/HelperCard'
@@ -16,6 +16,7 @@ import { proSignals } from '../utils/proSignals'
 import styles from './Profile.module.css'
 import { NURA_BUILD, CONTACTO_EMAIL } from '../config'
 import EditarFicha from '../components/EditarFicha'
+import { fmtTel } from '../utils/formato'
 
 // ── Tu semana: la voz de Nüra para quien trabaja ──
 // Gramática: frase humana primero, cifras discretas después, cero vanidad.
@@ -261,7 +262,7 @@ export default function Profile() {
           ) : (
             <button className={styles.phoneBtn} onClick={() => { setPhoneInput(user.phone || ''); setEditingPhone(true) }}>
               <Phone size={11} strokeWidth={1.8} />
-              {user.phone ? user.phone : 'Añadir teléfono'}
+              {user.phone ? fmtTel(user.phone) : 'Añadir teléfono'}
             </button>
           )}
           </div>
@@ -575,7 +576,7 @@ export default function Profile() {
             actividad: lo que no tiene sentido es ofrecerle el hueco vacio
             del usuario cuando lo suyo es otra cosa. */}
         <div className={styles.activityZone} style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 80ms forwards`}}>
-          <p className={styles.zoneLabel}>{user.isHelper ? 'Tus cosas' : 'Tu actividad'}</p>
+          <p className={styles.zoneLabel}>{user.isHelper ? 'Tus cosas' : 'Lo tuyo'}</p>
 
           {/* Sin actividad NO se muestran ceros: un cero grande no informa,
               solo rellena. Se dice que hacer, que es lo que falta cuando
@@ -612,24 +613,65 @@ export default function Profile() {
                 Buscar a alguien
               </Button>
             </div>
-          ) : (
-          <div className={styles.activityGrid}>
-            <button className={styles.activityCard} onClick={() => navigate('/')}>
-              <span className={styles.activityNum}>{searchCount}</span>
-              <span className={styles.activityDesc}>
-                {searchCount === 1 ? 'búsqueda realizada' : 'búsquedas realizadas'}
-              </span>
-              <Search size={16} className={styles.activityIcon} strokeWidth={1.5} />
-            </button>
-            <button className={styles.activityCard} onClick={() => navigate('/chats')}>
-              <span className={styles.activityNum}>{chatCount}</span>
-              <span className={styles.activityDesc}>
-                {chatCount === 1 ? 'profesional contactado' : 'profesionales contactados'}
-              </span>
-              <MessageCircle size={16} className={styles.activityIcon} strokeWidth={1.5} />
-            </button>
-          </div>
-          )}
+          ) : (() => {
+            // ── LO QUE TIENES A MEDIAS (etapa 4 de estudio-perfil.md) ──
+            // Enseñaba contadores: "2 búsquedas realizadas · 1 profesional
+            // contactado". Un numero no dice que hacer. Nadie abre su perfil
+            // para ver cuantas veces busco: lo abre para encontrar la cita
+            // del jueves o la conversacion con la logopeda. Aqui van, con
+            // nombre propio, y cada una lleva a donde se continua.
+            const nombre = n => (n || '').split(' ')[0]
+            const citas = (services || [])
+              .filter(sv => sv && sv.status !== 'completed')
+              .slice(0, 2)
+              .map(sv => ({ k: 'c' + sv.id, to: `/chat/${sv.helperId}`,
+                titulo: `Cita con ${nombre(sv.helperName)}`,
+                detalle: [sv.date, sv.time].filter(Boolean).join(' · '),
+                estado: sv.status === 'confirmed' ? 'Confirmada' : 'Pendiente de confirmar' }))
+            const conCita = new Set((services || []).filter(sv => sv && sv.status !== 'completed').map(sv => String(sv.helperId)))
+            const charlas = [...(chats || [])]
+              .filter(c => c && !conCita.has(String(c.helperId)))
+              .sort((a, b) => (b.unread || 0) - (a.unread || 0) || String(b.lastTime || '').localeCompare(String(a.lastTime || '')))
+              .slice(0, 3 - citas.length)
+              .map(c => ({ k: 'h' + c.helperId, to: `/chat/${c.helperId}`,
+                titulo: nombre(c.helperName) || 'Conversación',
+                detalle: c.lastMsg ? `«${String(c.lastMsg).slice(0, 60)}${String(c.lastMsg).length > 60 ? '…' : ''}»` : '',
+                sinLeer: c.unread || 0 }))
+            const items = [...citas, ...charlas]
+            if (!items.length) return null
+            return (
+              <div style={{background:'rgba(255,255,255,0.96)', borderRadius:'var(--radius-md)',
+                boxShadow:'var(--alzado-reposo)', border:'1px solid rgba(255,255,255,0.6)', overflow:'hidden',
+                marginBottom:'var(--space-10)'}}>
+                {items.map((it, i) => (
+                  <button key={it.k} onClick={() => navigate(it.to)}
+                    style={{display:'flex', alignItems:'center', gap:'var(--space-12)', width:'100%', minHeight:60,
+                      padding:'var(--space-12) var(--space-16)', background:'none', border:'none', cursor:'pointer',
+                      borderTop: i ? '1px solid var(--ink-border)' : 'none', textAlign:'left', fontFamily:'inherit'}}>
+                    <span style={{flex:1, minWidth:0}}>
+                      <span style={{display:'block', fontSize:'var(--text-base)', fontWeight:600, color:'var(--ink-primary)'}}>
+                        {it.titulo}
+                      </span>
+                      {(it.detalle || it.estado) && (
+                        <span style={{display:'block', marginTop:'var(--space-2)', fontSize:'var(--text-sm)',
+                          color:'var(--ink-tertiary)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}>
+                          {[it.detalle, it.estado].filter(Boolean).join(' · ')}
+                        </span>
+                      )}
+                    </span>
+                    {it.sinLeer > 0 && (
+                      <span aria-label={`${it.sinLeer} sin leer`} style={{minWidth:22, height:22, padding:'0 6px',
+                        borderRadius:'var(--radius-full)', background:'var(--purple)', color:'white',
+                        fontSize:'var(--text-xs)', fontWeight:700, display:'flex', alignItems:'center', justifyContent:'center'}}>
+                        {it.sinLeer}
+                      </span>
+                    )}
+                    <ChevronRight size={18} color="var(--ink-tertiary)" style={{flexShrink:0}} />
+                  </button>
+                ))}
+              </div>
+            )
+          })()}
 
           <button className={styles.favRow} onClick={() => navigate('/my-services')}>
             <ClipboardList size={15} color="var(--purple)" strokeWidth={1.8} />

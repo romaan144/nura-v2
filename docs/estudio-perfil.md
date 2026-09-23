@@ -249,7 +249,31 @@ fondos, y `--red-ink` (`#B42318`, 6,6 sobre blanco) cuando es texto.
 - **Los datos del responsable** para el texto de privacidad
 - **La revisión legal** de los dos textos antes de lanzar
 
-### Etapa 4 · Diseño del perfil de usuario ⬅ **SIGUIENTE**
+### Etapa 4 · Diseño del perfil de usuario ✅ *(2026-08-16)*
+
+**Nadie abre su perfil para ver cuántas veces buscó.** Lo abre para
+encontrar la cita del jueves o la conversación con la logopeda.
+
+| antes | ahora |
+|---|---|
+| *"2 búsquedas realizadas · 1 profesional contactado"* | **"Cita con Carlos · jueves 12 · 16:00 · Pendiente de confirmar"** |
+| | **"Elena · «Mañana a las 9:30 en su domicilio…»"** con los mensajes sin leer |
+| título *"Tu actividad"* | *"Lo tuyo"* |
+| teléfono `600123456` | `600 123 456` (nuevo `fmtTel`) |
+
+Hasta tres filas: primero las **citas** sin completar, luego las
+**conversaciones**, las que tienen mensajes sin leer delante. Si alguien
+tiene cita y conversación con la misma persona, sale una vez. Cada fila
+lleva a donde se continúa.
+
+Sin nada pendiente, **no se inventa nada**: van directos los enlaces a
+*Mis servicios* y *Siguiendo*.
+
+### Etapa 5 · Diseño del perfil de profesional ⬅ **SIGUIENTE**
+
+---
+
+### Etapa 4 · detalle original
 
 ---
 
@@ -297,7 +321,7 @@ El perfil de usuario pasa a ser eso: **lo que tienes pendiente**, arriba y
 con nombre propio. La identidad, compacta. El teléfono, con formato
 (*600 123 456*) — y preguntar si debe verse siquiera.
 
-### Etapa 5 · El diseño del perfil de profesional
+### Etapa 5 · El diseño del perfil de profesional — detalle
 
 Dos partes claras, que hoy están mezcladas:
 
