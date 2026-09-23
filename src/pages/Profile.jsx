@@ -1,7 +1,7 @@
 import { avatarDe } from '../utils/avatar'
 import { useState } from 'react'
 import PageHeader from '../components/PageHeader'
-import { Button, SectionLabel } from '../components/ui'
+import { Button, SectionLabel, SectionTitle } from '../components/ui'
 import { useState as useStateObra } from 'react'
 import ObraComposer from '../components/ObraComposer'
 import PostCard from '../components/PostCard'
@@ -14,7 +14,7 @@ import { Badge, StatBar } from '../components/ui'
 import HelperCard from '../components/HelperCard'
 import { proSignals } from '../utils/proSignals'
 import styles from './Profile.module.css'
-import { NURA_BUILD } from '../config'
+import { NURA_BUILD, CONTACTO_EMAIL } from '../config'
 import EditarFicha from '../components/EditarFicha'
 
 // ── Tu semana: la voz de Nüra para quien trabaja ──
@@ -89,6 +89,7 @@ export default function Profile() {
   const [campoDraft, setCampoDraft] = useState('')
   const [confirmarSalida, setConfirmarSalida] = useState(false)
   const [editarAbierto, setEditarAbierto] = useState(false)
+  const [borrarAbierto, setBorrarAbierto] = useState(false)
 
   const [editingName, setEditingName]   = useState(false)
   const [nameInput,   setNameInput]     = useState('')
@@ -715,11 +716,68 @@ export default function Profile() {
             2026.07.08" arriba y "Nüra · v1.0" abajo— con "Cerrar sesión"
             encajado entre los dos. Ahora: cerrar sesion, y debajo un solo
             sello, lo ultimo de la pantalla. */}
+        {/* ── AJUSTES (etapa 3 de estudio-perfil.md) ──────────────────
+            No habia ninguno. Lo legal primero: privacidad y terminos (un
+            borrador marcado como provisional) y BORRAR LOS DATOS, que el
+            RGPD exige. Aqui se borra todo lo que Nüra guarda en ESTE movil;
+            la ficha publica de un profesional necesita identidad (etapa 6),
+            y mientras tanto se retira escribiendonos. */}
+        <div style={{margin:'0 var(--space-16) var(--space-16)'}}>
+          <SectionTitle>Ajustes</SectionTitle>
+          <div style={{background:'rgba(255,255,255,0.96)', borderRadius:'var(--radius-md)',
+            boxShadow:'var(--alzado-reposo)', border:'1px solid rgba(255,255,255,0.6)', overflow:'hidden'}}>
+            {[
+              ['Privacidad', () => navigate('/legal/privacidad')],
+              ['Términos de uso', () => navigate('/legal/terminos')],
+              ...(CONTACTO_EMAIL ? [['Ayuda y contacto', () => { window.location.href = 'mailto:' + CONTACTO_EMAIL }]] : []),
+            ].map(([t, fn], i) => (
+              <button key={t} onClick={fn} style={{display:'flex', alignItems:'center', width:'100%', minHeight:52,
+                padding:'0 var(--space-16)', background:'none', border:'none', cursor:'pointer', fontFamily:'inherit',
+                borderTop: i ? '1px solid var(--ink-border)' : 'none', textAlign:'left'}}>
+                <span style={{flex:1, fontSize:'var(--text-base)', color:'var(--ink-primary)'}}>{t}</span>
+                <ChevronRight size={18} color="var(--ink-tertiary)" />
+              </button>
+            ))}
+            <button onClick={() => setBorrarAbierto(v => !v)} aria-expanded={borrarAbierto}
+              style={{display:'flex', alignItems:'center', width:'100%', minHeight:52, padding:'0 var(--space-16)',
+                background:'none', border:'none', borderTop:'1px solid var(--ink-border)', cursor:'pointer',
+                fontFamily:'inherit', textAlign:'left'}}>
+              <span style={{flex:1, fontSize:'var(--text-base)', color:'var(--red-ink)'}}>Borrar mis datos de este móvil</span>
+            </button>
+            {borrarAbierto && (
+              <div style={{padding:'0 var(--space-16) var(--space-16)'}}>
+                <p style={{margin:'0 0 var(--space-12)', fontSize:'var(--text-sm)', color:'var(--ink-secondary)', lineHeight:1.5}}>
+                  Se borra al momento todo lo que Nüra guarda en este teléfono: tu cuenta, tus búsquedas, tus conversaciones y a quién sigues. No se puede deshacer.
+                  {user.isHelper && ` Tu ficha pública no se borra desde aquí${CONTACTO_EMAIL ? `: escríbenos a ${CONTACTO_EMAIL} y la retiramos.` : ' todavía.'}`}
+                </p>
+                <div style={{display:'flex', gap:'var(--space-8)'}}>
+                  <button onClick={() => setBorrarAbierto(false)} style={{flex:1, minHeight:44, background:'none',
+                    border:'1px solid var(--ink-border)', borderRadius:'var(--radius-full)', cursor:'pointer',
+                    fontFamily:'inherit', fontSize:'var(--text-sm)', fontWeight:600, color:'var(--ink-secondary)'}}>Cancelar</button>
+                  <button onClick={() => {
+                      // Todo lo que empieza por nura_ es de Nüra (32 claves hoy) y
+                      // nada mas lo es: borra completo sin tocar nada ajeno. Luego
+                      // se recarga para que ningun estado en memoria sobreviva.
+                      for (const st of [localStorage, sessionStorage]) {
+                        try { Object.keys(st).filter(k => k.startsWith('nura_')).forEach(k => st.removeItem(k)) } catch { /* sin almacenamiento */ }
+                      }
+                      window.location.replace('/')
+                    }}
+                    style={{flex:1, minHeight:44, border:'none', borderRadius:'var(--radius-full)', cursor:'pointer',
+                      fontFamily:'inherit', fontSize:'var(--text-sm)', fontWeight:700, background:'var(--red)', color:'white'}}>
+                    Borrar todo
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
         <button className={styles.logoutBtn} onClick={() => {
             if (!confirmarSalida) { setConfirmarSalida(true); setTimeout(() => setConfirmarSalida(false), 4000); return }
             logout(); navigate('/')
           }}
-          style={confirmarSalida ? {color:'var(--red)', borderColor:'var(--red)'} : undefined}>
+          style={confirmarSalida ? {color:'var(--red-ink)', borderColor:'var(--red-ink)'} : undefined}>
           <LogOut size={15} />
           {confirmarSalida ? 'Toca otra vez para cerrar sesión' : 'Cerrar sesión'}
         </button>

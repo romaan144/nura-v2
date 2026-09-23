@@ -185,7 +185,11 @@ body {
   --green:        #047857;   /* verified, available, success */
   --green-light:  #ECFDF5;   /* green background tint */
   --green-dot:    #10B981;   /* availability dot — único verde "activo" de la app */
-  --red:          #EF4444;   /* error, remove, danger */
+  --red:          #EF4444;
+  /* EL ROJO CUANDO ES TEXTO. Como el morado: --red sirve para fondos y
+     avisos, pero como texto sobre blanco daba 3,76 ("Borrar mis datos de
+     este móvil"). Este da 6,6 sobre blanco y 5,8 sobre el papel. */
+  --red-ink: #B42318;   /* error, remove, danger */
   --red-light:    #FEF2F2;   /* red background tint */
   --amber-light:  #FEF3C7;   /* amber background tint */
   --blue:         #3B82F6;   /* info, links */

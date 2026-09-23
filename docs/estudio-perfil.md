@@ -208,7 +208,52 @@ monta ahora en un *portal* al nivel del documento.
 
 Verificado a 360px con toques reales.
 
-### Etapa 3 · Ajustes, lo legal primero ⬅ **SIGUIENTE**
+### Etapa 3 · Ajustes, lo legal primero ✅ *(2026-08-16)*
+
+Nuevo bloque **Ajustes** al final del perfil, antes de *Cerrar sesión*:
+
+| fila | qué hace |
+|---|---|
+| **Privacidad** | abre `/legal/privacidad` |
+| **Términos de uso** | abre `/legal/terminos` |
+| **Ayuda y contacto** | solo aparece cuando exista `CONTACTO_EMAIL` |
+| **Borrar mis datos de este móvil** | borra todo lo de Nüra en el teléfono, con confirmación |
+
+### Los textos legales son un borrador, y lo dicen
+
+Redactados a partir de **lo que la app hace de verdad**: qué guarda, dónde
+(móvil o Supabase), para qué, los derechos del RGPD y la reclamación ante la
+AEPD. Lo que no sé **queda entre corchetes y no se inventa**: nombre y NIF
+del responsable, domicilio, correo de contacto, región de los servidores.
+
+En pantalla: *"Versión provisional, pendiente de revisión legal."*
+
+### Borrar mis datos
+
+Borra **todas las claves que empiezan por `nura_`** (32 hoy) de este móvil y
+recarga, para que ningún dato sobreviva en memoria. No toca nada de otras
+apps. Verificado: la cuenta y las búsquedas desaparecen y se aterriza en la
+bienvenida. Quedan listas vacías que la app recrea al arrancar — sin datos.
+
+Al profesional se le avisa de que **su ficha pública no se borra desde
+aquí** todavía: eso necesita la etapa 6.
+
+### El rojo cuando es texto
+
+*"Borrar mis datos"* en rojo daba **3,76**. Como con el morado: `--red` para
+fondos, y `--red-ink` (`#B42318`, 6,6 sobre blanco) cuando es texto.
+
+### Pendiente del fundador
+
+- **El correo de contacto** → `CONTACTO_EMAIL` en `src/config.js`
+- **Los datos del responsable** para el texto de privacidad
+- **La revisión legal** de los dos textos antes de lanzar
+
+### Etapa 4 · Diseño del perfil de usuario ⬅ **SIGUIENTE**
+
+---
+
+### Etapa 3 · detalle original
 
 ---
 
@@ -242,7 +287,7 @@ su ficha pública no cambia hasta la etapa 6.
 - **Borrar mis datos del móvil** — la parte del RGPD que sí se puede hacer
   sin servidor: todo lo que Nüra guarda en el teléfono, fuera
 
-### Etapa 4 · El diseño del perfil de usuario
+### Etapa 4 · El diseño del perfil de usuario — detalle
 
 **¿Para qué abre alguien su perfil?** No para ver su nombre. Para
 encontrar **lo que tiene a medias**: la cita del jueves, la conversación con

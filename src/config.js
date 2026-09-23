@@ -40,4 +40,11 @@ export const PULSO_DELAY = DEMO_MODE ? 5000 : 1000
 export const MOMENTO_CERO_COOLDOWN = DEMO_MODE ? 2 * 60 * 60 * 1000 : Infinity
 
 // Sello de build visible — para verificar qué versión corre el dispositivo
-export const NURA_BUILD = '2026.07.09-e'
+export const NURA_BUILD = '2026.07.09-f'
+
+// ── CONTACTO ─────────────────────────────────────────────────────────────
+// El correo al que una persona escribe para pedir ayuda o que se borre su
+// ficha publica. VACIO A PROPOSITO: no se inventa una direccion. Mientras
+// este vacio, la app no enseña ninguna — pendiente del fundador (etapa 3 de
+// docs/estudio-perfil.md). Cuando exista, basta con escribirla aqui.
+export const CONTACTO_EMAIL = ''
