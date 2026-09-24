@@ -30,9 +30,13 @@ actualizar por eso mismo.
 
 ### En producción (comprobado)
 
-- **Función `helpers-write` versión 8** (2026-09-24), 18 operaciones
+- **Función `helpers-write` versión 9** (2026-09-24), 19 operaciones
   (nuevas: `valorar`, `clave-push`, `crear-alerta`, `alertas`,
-  `quitar-alerta`, `confirmar-declarado`).
+  `quitar-alerta`, `confirmar-declarado`, `mi-pulso`).
+- **Honestidad**: fuera de la demo ya no hay cifras inventadas en la app
+  (revisado el 2026-09-24). Las que quedan dependen de DEMO_MODE y se van
+  al apagarlo: saludo del profesional, «X personas cerca de ti
+  contactaron», respuestas automáticas del chat.
 - **Función `perfil-ia` versión 1** (2026-09-24): ordena lo que escribe
   el profesional con Claude. **Inactiva hasta que exista
   `ANTHROPIC_API_KEY`** (abajo); sin ella la app sigue igual.

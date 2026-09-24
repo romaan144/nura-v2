@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
-import { requestNotificationPermission, scheduleRetentionNotifications } from '../utils/notifications'
 import { Button } from '../components/ui'
 import { NURA_BUILD } from '../config'
 
@@ -152,7 +151,6 @@ export default function Login() {
       catch { savedUser = null }
       if (savedUser?.name && savedUser.name !== 'Usuario') {
         login({ ...savedUser, phone, verified: true })
-        requestNotificationPermission().then(g => { if (g) scheduleRetentionNotifications(savedUser.name) })
         salir()
       } else {
         setStep('name')
@@ -164,7 +162,6 @@ export default function Login() {
     if (!name.trim()) return
     login({ name: name.trim(), phone, joined: new Date().toISOString() })
     sessionStorage.setItem('nura_just_registered', '1')
-    requestNotificationPermission().then(g => { if (g) scheduleRetentionNotifications(name.trim()) })
     salir()
   }
 

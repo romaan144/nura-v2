@@ -10,6 +10,29 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-24 — Sin cifras inventadas; el Pulso cuenta lo real
+
+- **El Pulso del profesional se inventaba sus cifras** con un número al azar
+  («esta semana 9 personas buscaron… y 2 te escribieron») **fuera de la
+  demo**, a profesionales reales. Ahora cuenta lo que ha pasado de verdad en
+  7 días (op `mi-pulso`, solo con su sesión y solo su ficha):
+  - búsquedas de su oficio (solo la categoría, nunca la frase);
+  - veces que su ficha salió recomendada (nuevo: se anota qué profesionales
+    se recomiendan, sin la frase);
+  - mensajes recibidos y contestados.
+  Sin cuenta, el Pulso no enseña cifras: invita a crear el acceso.
+- **Retiradas otras afirmaciones sin base**: «40 % más de contactos con
+  foto», «3× más conversión», «las búsquedas de tu categoría incluyen…»
+  (Nüra no analiza búsquedas), «más de 900 profesionales», «más de 1.200
+  profesionales verificados», y señales de actividad falsas sin usar en
+  Explorar. Quedan solo en la demo (DEMO_MODE) las cifras ya marcadas así.
+- **El acceso ya no pide permiso de notificaciones** nada más entrar: se
+  pide solo cuando la persona quiere un aviso («te aviso si aparece»).
+- **«Lo que Nüra sabe de ti»** en el perfil del profesional: todo lo que
+  enseña su ficha, agrupado por de dónde sale (medido, clientes, lo que
+  cuenta él), y lo que cuenta él se puede quitar con un toque.
+- `helpers-write` v9. 5 pruebas nuevas (98/98).
+
 ## 2026-09-24 — Lo declarado, ordenado por IA (con confirmación)
 
 - **Qué hace**: al terminar el alta (y al editar la ficha con cuenta), Nüra

@@ -21,10 +21,12 @@ export function scheduleLocalNotification(title, body, delayMs = 0, icon = '/log
 export function scheduleRetentionNotifications(userName = 'tú') {
   if (!('Notification' in window) || Notification.permission !== 'granted') return
 
-  // 24h reminder if no activity
+  // Sin cifras inventadas: antes prometia «más de 1.200 profesionales
+  // verificados». Ya no se llama desde el acceso (el permiso se pide solo
+  // cuando la persona quiere un aviso: «te aviso si aparece alguien»).
   scheduleLocalNotification(
     '¿Encontraste lo que buscabas?',
-    'Nüra tiene más de 1.200 profesionales verificados esperando.',
+    'Cuéntale a Nüra qué necesitas y te busco a la persona adecuada.',
     24 * 60 * 60 * 1000
   )
 }
