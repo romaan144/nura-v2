@@ -72,7 +72,7 @@ const SEMANTIC_MAP = {
   // entiendes algo y no tener a nadie es peor que no entenderlo.
   'nadar': 'natación piscina clases deporte',
   'aprender a nadar': 'natación piscina clases',
-  'cocinar': 'cocinero cocina comida domicilio',
+  'cocinar': 'cocinero chef cocina comida domicilio',
   'aprender a cocinar': 'cocinero cocina clases',
   'guardería': 'niños cuidado niñera',
   
@@ -107,7 +107,6 @@ const SEMANTIC_MAP = {
   'foto': 'fotógrafo fotografía',
   'boda': 'fotógrafo evento',
   'cumpleaños': 'animador fotógrafo evento',
-  'cocinar': 'chef cocina comida',
   'menú': 'chef cocina comida',
   'comida': 'chef nutricionista cocina',
   'seguro': 'gestor asesor seguros',
@@ -162,6 +161,10 @@ const SEMANTIC_MAP = {
   // Limpieza — expresiones coloquiales
   'ordenar': 'ordenar limpieza hogar',
   'desorden': 'limpieza ordenar hogar',
+  // «limpiar mi casa» no daba puntos a quien tiene «Limpieza del hogar» de
+  // especialidad: el verbo no coincide con el oficio. Sin esto, la
+  // limpiadora quedaba detras del electricista.
+  'limpiar': 'limpieza limpiadora',
   'sucio': 'limpiar limpieza',
   'fregona': 'limpiar limpieza',
   
@@ -257,7 +260,9 @@ const CATEGORY_KEYWORDS = {
     'asesor fiscal','fiscal','hacienda','renta','declaración','impuestos','gestoría',
     'asesor financiero','finanzas','autónomo','autonomo','nómina','nomina',
     'divorcio','herencia','testamento','deuda','hipoteca','alquiler','multa',
-    'denuncia','juicio','notario','gestor','gestoría','impuestos','renta','hacienda'],
+    'denuncia','juicio','notario','gestor','gestoría','impuestos','renta','hacienda',
+    // «asesor» a secas y «contable» caian en `otro`: 3 asesores invisibles.
+    'asesor','asesora','contable','contabilidad'],
   hogar: ['arquitecto','arquitecta','reforma','obra','presupuesto reforma',
     'decorador','interiorista','diseño interior','jardín','jardinero','piscina',
     'pintura hogar','papel pintado','suelo','parquet','azulejo','cocina reforma',
@@ -267,7 +272,9 @@ const CATEGORY_KEYWORDS = {
     // lo mismo que no existir.
     'planchado','planchar','plancha a domicilio','montador','montar muebles','ikea',
     'cocinero','cocinera','cocinar','cocina a domicilio','chef','comida casera',
-    'batch cooking','menus semanales'],
+    'batch cooking','menus semanales',
+    // «busco quien me haga la comida» caia en `otro`: sin resultados.
+    'hacer la comida','haga la comida','hacerme la comida','cocine'],
   // ── CATEGORIAS QUE EXISTIAN EN LOS PERFILES Y NO EN EL BUSCADOR ──────
   // Medido: 32 de 119 especialidades no caian en ninguna categoria — uno de
   // cada cuatro profesionales era INVISIBLE si alguien buscaba por su
@@ -288,6 +295,10 @@ const CATEGORY_KEYWORDS = {
     'neumático','neumaticos','ruedas','chapa','pintura coche','detailing','lavado',
     'itv','batería','averia coche'],
 
+  // Traductores, interpretes y guias caian en `otro`: invisibles. En
+  // Explorar ya eran su propia categoria («Viajar o hablar otro idioma»).
+  idiomas: ['traductor','traductora','traducción','traducir','intérprete',
+    'guía turístico','guía turística','guia turistico','guía'],
   otro: ['psicólogo','psicóloga','psicología','fisioterapeuta','fisioterapia',
     'nutricionista','nutrición','dietista','chef','cocina','tatuaje','fotógrafo',
     'fotografía','diseñador','abogado','gestor','asesor','traductor','mudanza',
@@ -363,7 +374,14 @@ function applyRefinement(helpers, refinementText) {
 // ── Puente de vocabulario: ids internos legacy → ids de la app ──
 // Las tablas internas (precios, resúmenes, keywords) conservan sus claves;
 // hacia fuera, la app habla un solo idioma (CAT_HUMANA, chips, Explorar).
-const APP_CATEGORIA = { matematicas: 'clases', limpieza: 'hogar' }
+// `educacion` existe en los perfiles y la app no la conocia: 11 profesores
+// no recibian nunca el peso de su categoria.
+const APP_CATEGORIA = { matematicas: 'clases', limpieza: 'hogar', educacion: 'clases' }
+
+// Las categorias de la BASE DE DATOS que la app agrupa bajo una suya. Se le
+// piden todas a Supabase: antes solo se pedia la exacta, y a quien buscaba
+// «limpiar mi casa» (hogar) nunca le llegaban los 55 de `limpieza`.
+const categoriasEnBD = cat => [cat, ...Object.keys(APP_CATEGORIA).filter(k => APP_CATEGORIA[k] === cat)]
 const toApp = c => APP_CATEGORIA[c] || c
 
 // Coincidencia por palabra completa: 'forma' ya no puede colarse en 'reforma'
@@ -434,6 +452,11 @@ export function analyzeNeed(userText) {
   const catBestKw = {}
 
   for (const [cat, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
+    // `otro` NO puede ganar: no tiene profesionales, y ganar `otro` es
+    // "no he entendido" -> cero resultados. Sus palabras (chef, nutricionista,
+    // asesor...) le daban la victoria sobre la categoria correcta, y un
+    // profesional real que se diera de alta con ellas quedaba invisible.
+    if (cat === 'otro') continue
     let score = 0
     for (const kw of keywords) {
       const normKw = normalize(kw)
@@ -557,7 +580,7 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
     let remote = []
     try {
       const timeoutSb = new Promise(res => setTimeout(() => res([]), 2200))
-      remote = (await Promise.race([searchHelpers(analysis.categoria, analysis.palabrasClave), timeoutSb])) || []
+      remote = (await Promise.race([searchHelpers(categoriasEnBD(analysis.categoria), analysis.palabrasClave), timeoutSb])) || []
     } catch (e) { console.error('[Nüra] Supabase no disponible — pool local activo:', e); remote = [] }
     if (remote && remote.length > 0) {
       pool = [...demoPool, ...remote.map(normalizeHelper).filter(Boolean)]
