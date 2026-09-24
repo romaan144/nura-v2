@@ -13,6 +13,26 @@
 --   · token         la del profesional (responder). Pasa de 16 a 32 cifras.
 --   · lectura_hash  el resumen SHA-256 de la llave de quien escribio (leer).
 
+-- En produccion la tabla NUNCA llego a crearse (comprobado el 2026-09-24:
+-- "relation public.avisos does not exist"): los avisos no se guardaban. Se
+-- crea aqui completa. Si ya existe, esto no hace nada y sigue abajo.
+create table if not exists public.avisos (
+  id            bigserial primary key,
+  helper_id     text not null,
+  helper_nombre text,
+  mensaje       text not null,
+  alcanzable    boolean default false,
+  estado        text default 'pendiente',
+  token         text unique,
+  lectura_hash  text unique,
+  respuesta     text,
+  respondido_en timestamptz,
+  fecha         timestamptz default now()
+);
+alter table public.avisos enable row level security;
+-- Sin politicas: solo la funcion, con service_role, lee y escribe.
+create index if not exists avisos_estado on public.avisos (estado, id);
+
 alter table public.avisos add column if not exists lectura_hash text;
 
 create unique index if not exists avisos_lectura_hash
