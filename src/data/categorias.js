@@ -5,4 +5,5 @@ export const CAT_HUMANA = {
   cuidado:'Compañía y cuidado', salud:'Apoyo de salud', logopedia:'Apoyo con el habla',
   tecnico:'Arreglo técnico', legal:'Orientación legal', clases:'Clases y apoyo',
   mascotas:'Cuidado de mascotas', hogar:'Ayuda en el hogar', entrenador:'Entrenamiento',
+  idiomas:'Idiomas y traducción',
 }

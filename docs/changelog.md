@@ -10,6 +10,26 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-24 — La trampa de la categoría «otro», y 72 profesionales que no llegaban
+
+- **La categoría `otro` tenía palabras propias** (chef, nutricionista,
+  asesor, traductor…) y **cero profesionales**. Cuando ganaba, la búsqueda
+  lo trataba como «no he entendido» y no enseñaba a nadie. Medido: 6 de 35
+  palabras caían ahí; «busco quien me haga la comida», «necesito un
+  asesor» o «un traductor» no devolvían nada teniendo profesionales. Y un
+  profesional real que se diera de alta con esas palabras quedaba
+  **invisible para siempre** (el alta decide su categoría con la misma
+  búsqueda). Ahora `otro` no puede ganar.
+- **Supabase solo recibía la categoría exacta**: buscar «hogar» no traía a
+  los 55 de `limpieza`, ni «clases» a los 11 de `educacion`. Ahora se piden
+  todas las que la app agrupa bajo la suya.
+- Nueva categoría de búsqueda `idiomas` (traductores, intérpretes, guías),
+  como ya existía en Explorar.
+- «limpiar» → «limpieza limpiadora»: la limpiadora ya no queda detrás del
+  electricista.
+- `npm run test:matching`: 66 → 71 casos; 4 de los nuevos fallan con la
+  versión anterior.
+
 ## 2026-09-24 — Fuera tres pantallas de una versión anterior
 
 - `HowItWorks`, `MomentoCero` y `Splash` no tenían ruta. Retiradas por

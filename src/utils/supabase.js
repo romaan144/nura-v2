@@ -239,9 +239,15 @@ descubrimiento = descubrirColumnas()
 export async function searchHelpers(category, keywords = []) {
   try {
     let url = `${SUPABASE_URL}/rest/v1/helpers?select=${columnasHelpers()}&limit=100&order=rating.desc`
-    if (category && !['otro','general','todos'].includes(category)) {
+    // Una categoria o varias: la app agrupa algunas de la base bajo una suya
+    // (hogar = hogar + limpieza). Con varias se piden todas a la vez.
+    const cats = (Array.isArray(category) ? category : [category])
+      .filter(c => c && !['otro','general','todos'].includes(c))
+    if (cats.length === 1) {
       // Exact match first, case-insensitive via ilike without wildcards
-      url += `&category=ilike.${encodeURIComponent(category)}`
+      url += `&category=ilike.${encodeURIComponent(cats[0])}`
+    } else if (cats.length > 1) {
+      url += `&category=in.(${cats.map(encodeURIComponent).join(',')})`
     }
     const res = await fetch(url, { headers, signal: AbortSignal.timeout(2500) })
     if (!res.ok) return null

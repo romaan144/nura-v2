@@ -38,7 +38,7 @@ for (const dir of ['utils', 'data']) {
 
 const { analyzeNeed, matchHelpers } = await import(join(stage, 'utils/matching.js'))
 
-const ALIAS = { matematicas: 'clases', limpieza: 'hogar' }
+const ALIAS = { matematicas: 'clases', limpieza: 'hogar', educacion: 'clases' }
 const cat_ = c => ALIAS[c] || c
 
 const GOLDEN = [
@@ -66,6 +66,17 @@ const GOLDEN = [
   { q: 'alguien que cuide de mi perro este finde', cat: 'mascotas' },
   { q: 'profesor particular para mi hijo', cat: 'clases' },
   { q: 'cuidar el jardín semanalmente', cat: 'hogar' },
+  // 2026-09-24: estas tres caian en la categoria `otro` (= cero resultados)
+  // o no premiaban al oficio buscado.
+  { q: 'busco quien me haga la comida', cat: 'hogar' },
+  { q: 'necesito un asesor', cat: 'legal' },
+  { q: 'necesito alguien para limpiar mi casa', cat: 'hogar' },
+]
+// Solo la categoria: en la copia local no hay traductores (viven en
+// Supabase), asi que aqui no se exige que haya resultados.
+const SOLO_CATEGORIA = [
+  { q: 'necesito un traductor de árabe', cat: 'idiomas' },
+  { q: 'busco un intérprete', cat: 'idiomas' },
 ]
 const HONESTY = ['asdfgh qwerty zzz', 'necesito algo no sé muy bien qué']
 const NEGATIVE = [
@@ -78,6 +89,12 @@ const NEGATIVE = [
 ]
 
 let failed = 0
+for (const t of SOLO_CATEGORIA) {
+  const a = await analyzeNeed(t.q)
+  const ok = a.categoria === t.cat
+  if (!ok) failed++
+  console.log(`${ok ? '✓' : '✗'} ${t.q.slice(0, 46).padEnd(46)} → ${a.categoria}${ok ? '' : `≠${t.cat}`} (solo categoria)`)
+}
 for (const t of GOLDEN) {
   const a = await analyzeNeed(t.q)
   const m = await matchHelpers(a, 4)
