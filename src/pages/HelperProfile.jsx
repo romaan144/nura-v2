@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Star, Shield, MapPin, MessageCircle, Calendar,
          Share2, UserPlus, UserCheck, Briefcase, BookOpen, Award,
-         CheckCircle, Check, Globe, Zap, ChevronRight, Clock } from 'lucide-react'
+         CheckCircle, Check, Globe, Zap, ChevronRight, Clock, ThumbsUp, ShieldCheck } from 'lucide-react'
 import { HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
 import RatingModal from '../components/RatingModal'
@@ -18,6 +18,8 @@ import { DEMO_ENRICHMENTS } from '../data/demoEnrichments'
 import { showToast } from '../components/Toast'
 import RegisterGate from '../components/RegisterGate'
 import { getHelperById } from '../utils/supabase'
+import { atributosDe } from '../utils/escrituras'
+import { ETIQUETA_CUALIDAD } from '../utils/cualidades'
 import { Badge, LiveDot, Bubble, StatBar } from '../components/ui'
 import { getFirstName } from '../utils/name'
 import { fmtNota } from '../utils/formato'
@@ -207,6 +209,13 @@ function HelperProfileInner() {
   const [showGate, setShowGate]       = useState(false)
   const [shared, setShared]           = useState(false)
   const [following, setFollowing] = useState(false)
+  // Perfil vivo: lo medido y lo que dicen sus clientes, cada dato con su prueba.
+  const [atributos, setAtributos] = useState([])
+  useEffect(() => {
+    let vivo = true
+    atributosDe(id).then(a => { if (vivo) setAtributos(Array.isArray(a) ? a : []) })
+    return () => { vivo = false }
+  }, [id])
 
   useEffect(() => {
     if (!h) {
@@ -481,6 +490,9 @@ function HelperProfileInner() {
             academico como lo mas grande de todo.
             ══════════════════════════════════════════════════ */}
 
+{/* ── Perfil vivo: solo lo que tiene prueba (docs/perfil-vivo.md §2) ── */}
+        <ConPrueba atributos={atributos} firstName={firstName} sinNota={enrichedH.reviews > 0} />
+
 {/* ── Valoraciones ── */}
         {enrichedH.reviews > 0 && (
           <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 80ms forwards`}} className={styles.section}>
@@ -752,6 +764,63 @@ function HelperProfileInner() {
         </Button>
       </div>
 </div>
+  )
+}
+
+function tiempoHumano(min) {
+  if (min < 60) return 'en menos de 1 h'
+  if (min < 180) return 'en 1–3 h'
+  if (min < 1440) return 'el mismo día'
+  return `en ${Math.round(min / 1440)} días`
+}
+
+// Un rasgo sin prueba no se enseña: cada línea dice de dónde sale.
+function ConPrueba({ atributos, firstName, sinNota }) {
+  const de = (clave, fuente) => atributos.find(a => a.clave === clave && a.fuente === fuente)
+  const volveria = de('volveria', 'clientes')
+  const estrellas = !sinNota && de('estrellas', 'clientes')
+  const tiempo = de('tiempo_respuesta', 'medido')
+  const tasa = de('tasa_respuesta', 'medido')
+  const cualidades = atributos
+    .filter(a => a.fuente === 'clientes' && a.clave.startsWith('cualidad:') && ETIQUETA_CUALIDAD[a.clave.slice(9)])
+    .sort((a, b) => (b.valor?.n || 0) - (a.valor?.n || 0))
+    .slice(0, 6)
+  if (!volveria && !estrellas && !tiempo && !tasa && !cualidades.length) return null
+
+  const filas = [
+    volveria && { icono: <ThumbsUp size={15} />, texto: `${volveria.valor.si} de ${volveria.valor.total} volverían a llamar a ${firstName}`, fuente: 'Lo dicen sus clientes' },
+    estrellas && { icono: <Star size={15} />, texto: `${fmtNota(estrellas.valor.media)} de nota`, fuente: estrellas.prueba },
+    tiempo && { icono: <Clock size={15} />, texto: `Suele contestar ${tiempoHumano(tiempo.valor.mediana_minutos)}`, fuente: `Medido por Nüra en ${tiempo.valor.n} mensajes` },
+    tasa && { icono: <MessageCircle size={15} />, texto: `Contesta ${Math.round(100 * tasa.valor.respondidos / tasa.valor.recibidos)} % de los mensajes`, fuente: `Medido por Nüra · ${tasa.prueba}` },
+  ].filter(Boolean)
+
+  return (
+    <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 40ms forwards`}} className={styles.section}>
+      <h2 className={styles.sectionHeading}><ShieldCheck size={14} /> Su historial en Nüra</h2>
+      {filas.length > 0 && (
+        <ul className={styles.pruebas}>
+          {filas.map((f, i) => (
+            <li key={i} className={styles.prueba}>
+              <span className={styles.pruebaIcono}>{f.icono}</span>
+              <span>
+                <span className={styles.pruebaTexto}>{f.texto}</span>
+                <span className={styles.pruebaFuente}>{f.fuente}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+      {cualidades.length > 0 && (
+        <div className={styles.cualidades}>
+          {cualidades.map(c => (
+            <span key={c.clave} className={styles.cualidad}>
+              {ETIQUETA_CUALIDAD[c.clave.slice(9)]}
+              <span className={styles.cualidadN}>{c.prueba}</span>
+            </span>
+          ))}
+        </div>
+      )}
+    </section>
   )
 }
 

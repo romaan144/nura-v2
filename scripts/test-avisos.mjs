@@ -28,7 +28,7 @@ function ok(cond, texto) {
 }
 
 // ── la base de datos ficticia ───────────────────────────────────────────
-const db = { helpers: [], avisos: [] }
+const db = { helpers: [], avisos: [], valoraciones: [] }
 const peticionesBD = []   // todo lo que la funcion le pide a "Supabase"
 
 function coincide(fila, campo, cond) {
@@ -60,7 +60,12 @@ async function postgrest(url, init = {}) {
     return Response.json(cumplen.slice(0, lim).map(elegir))
   }
   if (metodo === 'POST') {
-    const fila = { id: db[tabla].length + 1, fecha: new Date().toISOString(), ...JSON.parse(init.body) }
+    const nueva = JSON.parse(init.body)
+    // Como la restriccion `unique` de la base real: una valoracion por aviso.
+    if (tabla === 'valoraciones' && db.valoraciones.some(v => v.aviso_id === nueva.aviso_id)) {
+      return new Response('{"code":"23505"}', { status: 409 })
+    }
+    const fila = { id: db[tabla].length + 1, fecha: new Date().toISOString(), ...nueva }
     db[tabla].push(fila)
     return quiereFilas ? Response.json([fila], { status: 201 }) : new Response(null, { status: 201 })
   }
@@ -213,6 +218,33 @@ ok(r.datos.respuestas.length === 0, 'con llaves mal formadas → nada')
 ok(!respuestasTexto.some(t => t.includes('RESPUESTA ANTIGUA')), 'la respuesta del aviso antiguo no sale por ningun sitio')
 r = await llamarG(funcion, { op: 'abrir-aviso', token: 'abcdef0123456789' })
 ok(r.estado === 404, 'el enlace antiguo (16 cifras) ya no abre nada')
+
+console.log('\n── Valorar (perfil vivo) ──')
+{
+  const antesEnviado = filaB.enviado_en
+  ok(Boolean(antesEnviado), 'aviso-enviado guarda cuándo le llegó al profesional (enviado_en)')
+  r = await llamarG(funcion, { op: 'valorar', llave: a.datos.lectura, estrellas: 5, volveria: true,
+    cualidades: ['paciente', 'puntual', 'inventada', 'paciente'], comentario: 'Muy bien', publico: false })
+  ok(r.estado === 200, `A valora con su llave → 200 (dio ${r.estado})`)
+  const vA = db.valoraciones.at(-1)
+  ok(vA?.helper_id === '7' && vA?.aviso_id === filaA.id, 'el profesional sale del aviso, no del móvil')
+  ok(JSON.stringify(vA?.cualidades) === '["paciente","puntual"]', 'solo cualidades de la lista, sin repetir')
+  ok(vA?.comentario === null, 'un comentario no público ni siquiera se guarda')
+  r = await llamarG(funcion, { op: 'valorar', llave: a.datos.lectura, estrellas: 1 })
+  ok(r.estado === 409 && db.valoraciones.length === 1, `una segunda valoración de la misma conversación → 409 (dio ${r.estado})`)
+  r = await llamarG(funcion, { op: 'valorar', llave: '0'.repeat(32), estrellas: 5 })
+  ok(r.estado === 404 && db.valoraciones.length === 1, `sin haber escrito a nadie no se puede valorar → 404 (dio ${r.estado})`)
+  r = await llamarG(funcion, { op: 'valorar', llave: filaB.token, estrellas: 5 })
+  ok(r.estado === 404, 'la llave del profesional no sirve para valorarse a sí mismo')
+  r = await llamarG(funcion, { op: 'valorar', llave: b.datos.lectura, helperId: '999', volveria: false, comentario: 'Público', publico: true })
+  const vB = db.valoraciones.at(-1)
+  ok(r.estado === 200 && vB?.helper_id === '7', 'mandar otro helperId no cambia a quién se valora')
+  ok(vB?.comentario === 'Público' && vB?.comentario_publico === true, 'el comentario público sí se guarda')
+  r = await llamarG(funcion, { op: 'valorar', llave: b.datos.lectura })
+  ok(r.estado === 400, `una valoración vacía se rechaza → 400 (dio ${r.estado})`)
+  r = await llamarG(funcion, { op: 'valorar', llave: a.datos.lectura, estrellas: 9 })
+  ok(r.estado === 400, `estrellas fuera de 1–5 no valen → 400 (dio ${r.estado})`)
+}
 
 console.log('\n── El secreto no se filtra ──')
 ok(!peticionesBD.some(p => (p.url + p.cuerpo + p.cabeceras).includes(SECRETO)), 'el secreto no viaja a la base de datos')
