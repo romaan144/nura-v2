@@ -827,25 +827,28 @@ obligatorio antes de lanzar)** dependen de saber quién es el profesional.
 
 ## Errores conocidos / problemas pendientes
 
-- **Bloqueo de lanzamiento**: políticas RLS de Supabase sin verificar.
-  **Auditado el 2026-08-02 → ver [`docs/lanzamiento-rls.md`](./lanzamiento-rls.md)**:
-  superficie completa, SQL exacto y orden de ejecución en 7 pasos. La
-  ejecución requiere tu red y tus credenciales.
-- **`DEMO_MODE` no aísla la base de datos**: solo tapa el alta profesional.
-  Las tres lecturas y la escritura de `chat_log` van a producción también
-  en modo demo.
-- **`DEMO_MODE` sigue en `true`** por defecto — correcto hasta lanzar, pero
-  es lo que mantiene el preflight en rojo.
-- **Filas de prueba en producción**: hasta el sello `-y`, cada recorrido del
-  alta escribía un profesional real en Supabase. Revisar y limpiar las filas
-  con `ai_data->>'self_registered' = 'true'` que no sean reales.
-- `chat_log` sigue siendo legible con la clave pública por quien pida
-  `select=*` a mano. El cliente ya no lo pide; cerrarlo del todo requiere el
-  `revoke` en Supabase (tuyo).
-- **3** pantallas construidas y no alcanzables: `HowItWorks`, `MomentoCero`,
-  `Splash`. (Eran 5: `Favorites` retirada y `Onboarding` enchufada.)
-- `nura_demanda_no_cubierta` sigue solo en local; requiere backend.
-- Chats y Comunidad necesitarán estado de carga cuando haya backend.
+> **Revisado punto por punto el 2026-09-24** contra el código y contra
+> Supabase. Lo tachado ya no ocurre.
+
+- ~~RLS sin verificar~~ — **verificado**: RLS encendido en `helpers`,
+  `eventos` y `avisos`. Políticas: lectura pública de `helpers` y edición
+  de la ficha propia con cuenta. `eventos` y `avisos` sin políticas: solo
+  escribe la función. El asesor de seguridad de Supabase solo señalaba
+  `rls_auto_enable()` ejecutable por anon (inocuo: es un disparador);
+  retirado igualmente (`supabase/migrations/20260924120000_*`).
+- ~~Filas de prueba del alta en producción~~ — **no hay**: 1008
+  profesionales, los del conjunto de simulación. Se borrarán todos antes
+  de lanzar (decisión del 2026-09-24).
+- ~~`chat_log` legible con la clave pública~~ — **la columna no existe**.
+- ~~`nura_demanda_no_cubierta` solo en local~~ — la demanda sin cubrir ya
+  llega a Supabase como evento `sin_cobertura` (tabla `eventos`).
+- **`DEMO_MODE` sigue en `true`** y no aísla la base de datos. Correcto
+  mientras la app sea una simulación; se apaga al lanzar.
+- **3 pantallas construidas y sin ruta**: `HowItWorks`, `MomentoCero`,
+  `Splash`. Ningún fichero las importa. Decisión del fundador: enchufarlas
+  o retirarlas.
+- Chats necesitará estado de carga cuando las conversaciones vivan en el
+  servidor (hoy viven en el móvil).
 
 ---
 
