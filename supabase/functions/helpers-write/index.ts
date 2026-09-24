@@ -79,6 +79,16 @@ const hex = (b: Uint8Array) => Array.from(b, x => x.toString(16).padStart(2, '0'
 const llaveAleatoria = () => hex(crypto.getRandomValues(new Uint8Array(16)))
 const FORMATO_LLAVE = /^[0-9a-f]{32}$/
 
+// ── PERFIL VIVO: lo que puede decir un cliente al terminar ──────────────
+// Lista cerrada: son toques, no texto libre, asi que nadie puede colar
+// nada aqui. Las etiquetas visibles viven en src/utils/cualidades.js; si se
+// añade una, va en los dos sitios.
+const CUALIDADES = new Set([
+  'paciente', 'puntual', 'trato_cercano', 'de_confianza', 'resuelve_bien',
+  'explica_bien', 'motiva', 'se_adapta', 'deja_limpio', 'precio_claro',
+  'amable', 'cuidadoso', 'rapido', 'buen_consejo', 'creativo',
+])
+
 const json = (cuerpo: unknown, estado: number, cors: Record<string, string>) =>
   new Response(JSON.stringify(cuerpo), {
     status: estado,
@@ -332,7 +342,9 @@ Deno.serve(async (req: Request) => {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/avisos?id=eq.${encodeURIComponent(String(id))}`, {
       method: 'PATCH',
       headers: { ...rest, Prefer: 'return=minimal' },
-      body: JSON.stringify({ estado: 'enviado' }),
+      // `enviado_en` mide desde cuando tiene el aviso el profesional: de ahi
+      // sale cuanto tarda en contestar (perfil vivo, fuente «medido»).
+      body: JSON.stringify({ estado: 'enviado', enviado_en: new Date().toISOString() }),
     })
     if (!res.ok) return json({ error: 'no actualizado', estado: res.status }, 502, cors)
     return json({ ok: true }, 200, cors)
@@ -411,6 +423,46 @@ Deno.serve(async (req: Request) => {
     })) }, 200, cors)
   }
 
+  // ── VALORAR (perfil vivo, docs/perfil-vivo.md §3) ──────────────────────
+  // Solo valora quien de verdad escribio a ese profesional: la prueba es su
+  // llave de lectura, que solo tiene quien envio el mensaje. El profesional
+  // se saca del aviso, NUNCA de lo que mande el movil. Una vez por
+  // conversacion (aviso_id unico). El comentario solo se guarda si el
+  // cliente acepta que sea publico: si no, ni siquiera se guarda.
+  if (op === 'valorar') {
+    const llave = String(cuerpo.llave ?? '')
+    if (!FORMATO_LLAVE.test(llave)) return json({ error: 'no existe' }, 404, cors)
+    const e = cuerpo.estrellas
+    const estrellas = Number.isInteger(e) && (e as number) >= 1 && (e as number) <= 5 ? e : null
+    const volveria = typeof cuerpo.volveria === 'boolean' ? cuerpo.volveria : null
+    const cualidades = Array.isArray(cuerpo.cualidades)
+      ? [...new Set(cuerpo.cualidades.map(String).filter(c => CUALIDADES.has(c)))].slice(0, 3)
+      : []
+    if (estrellas === null && volveria === null && !cualidades.length) {
+      return json({ error: 'valoracion vacia' }, 400, cors)
+    }
+    const publico = cuerpo.publico === true
+    const comentario = publico ? (String(cuerpo.comentario ?? '').trim().slice(0, 500) || null) : null
+
+    const lec = await fetch(
+      `${SUPABASE_URL}/rest/v1/avisos?lectura_hash=eq.${hex(await sha256(llave))}&select=id,helper_id&limit=1`,
+      { headers: rest },
+    )
+    if (!lec.ok) return json({ error: 'lectura rechazada', estado: lec.status }, 502, cors)
+    const [av] = await lec.json()
+    if (!av) return json({ error: 'no existe' }, 404, cors)
+
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/valoraciones`, {
+      method: 'POST',
+      headers: { ...rest, Prefer: 'return=minimal' },
+      body: JSON.stringify({ helper_id: String(av.helper_id), aviso_id: av.id, estrellas, volveria,
+        cualidades, comentario, comentario_publico: publico && Boolean(comentario) }),
+    })
+    if (res.status === 409) return json({ error: 'ya valorado' }, 409, cors)
+    if (!res.ok) return json({ error: 'no guardado', estado: res.status }, 502, cors)
+    return json({ ok: true }, 200, cors)
+  }
+
   // ── RECLAMAR LA FICHA (etapa 6b de docs/estudio-perfil.md) ─────────────
   // Une una cuenta (correo y contraseña) con SU ficha publica. El movil no
   // guarda que ficha es la suya, asi que la prueba es esta: el correo de la
@@ -472,6 +524,12 @@ Deno.serve(async (req: Request) => {
       const av = await fetch(`${SUPABASE_URL}/rest/v1/avisos?helper_id=eq.${encodeURIComponent(String(f.id))}`, { method: 'DELETE', headers: rest })
       // Si la tabla avisos aun no existe (404), no hay avisos que borrar.
       if (!av.ok && av.status !== 404) return json({ error: 'no se pudieron borrar los avisos', estado: av.status }, 502, cors)
+      // Lo que se sabe de ella (perfil vivo): opiniones y atributos. 404 = la
+      // tabla aun no existe: no hay nada que borrar.
+      for (const t of ['valoraciones', 'perfil_atributos']) {
+        const r = await fetch(`${SUPABASE_URL}/rest/v1/${t}?helper_id=eq.${encodeURIComponent(String(f.id))}`, { method: 'DELETE', headers: rest })
+        if (!r.ok && r.status !== 404) return json({ error: 'no se pudo borrar ' + t, estado: r.status }, 502, cors)
+      }
       const fi = await fetch(`${SUPABASE_URL}/rest/v1/helpers?id=eq.${f.id}&owner_id=eq.${usuario.id}`, { method: 'DELETE', headers: rest })
       if (!fi.ok) return json({ error: 'no se pudo borrar la ficha', estado: fi.status }, 502, cors)
     }

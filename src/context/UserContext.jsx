@@ -76,6 +76,7 @@ export function UserProvider({ children }) {
       helperId: helper.id,
       helperName: helper.name,
       specialty: helper.specialty,
+      category: helper.category,
       avatarUrl: helper.avatarUrl,
       avatarColor: helper.avatarColor,
       avatar: helper.avatar,

@@ -1,13 +1,12 @@
 import { avatarDe } from '../utils/avatar'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button } from '../components/ui'
 import { Calendar, CheckCircle, ChevronRight, Star, ClipboardList, MessageCircle, RotateCcw } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import { DEMO_MODE } from '../config'
 import PageHeader from '../components/PageHeader'
 import styles from './MyServices.module.css'
-import { registrar } from '../utils/analitica'
+import RatingModal from '../components/RatingModal'
 
 // Demo services for realistic preview
 const DEMO_SERVICES = [
@@ -70,20 +69,9 @@ const TABS = ['Todos', 'Próximos', 'Completados']
 
 export default function MyServices() {
   const navigate = useNavigate()
-  const { services, addRating, hasRated, updateService, user } = useUser()
+  const { services, hasRated, updateService, user } = useUser()
   const [tab, setTab] = useState('Todos')
   const [ratingModal, setRatingModal] = useState(null)
-  // Empieza en 0, igual que RatingModal. Antes empezaba en 5: una persona
-  // podia pulsar "Enviar valoracion" sin tocar las estrellas y quedaba un 5
-  // que nunca decidio. Una valoracion que el usuario no ha dado no vale.
-  // Empieza en 0 y se REINICIA a 0 al abrir el modal. Antes empezaba en 5 y
-  // los dos sitios que abren el modal hacian setRatingVal(5): se podia
-  // pulsar "Enviar valoracion" sin tocar una estrella y quedaba un 5 que la
-  // persona nunca decidio. Una valoracion que el usuario no ha dado no vale,
-  // y ademas inflaba la media de todos los profesionales.
-  const [ratingVal, setRatingVal] = useState(0)
-  const [ratingText, setRatingText] = useState('')
-  const [ratingSent, setRatingSent] = useState(false)
 
   // Merge real + demo (real take priority by helperId)
   const realIds = new Set((services||[]).map(s => String(s.helperId)))
@@ -99,25 +87,6 @@ export default function MyServices() {
     if (tab === 'Completados') return s.status === 'completed'
     return true
   })
-
-  function submitRating() {
-    if (!ratingModal || !ratingVal) return
-    // LA CONEXION COMPLETADA. Este es el camino PRINCIPAL para valorar —el
-    // que la app ofrece al marcar un servicio como terminado— y era el unico
-    // de los dos que NO registraba el evento. `RatingModal`, que se abre
-    // desde el chat y la ficha, si lo hacia.
-    // El criterio de graduacion del MVP son 100 conexiones completadas: si
-    // la via principal no cuenta, el numero sale corto y nadie lo nota.
-    registrar('resultado_registrado', {
-      helperId: String(ratingModal.helperId),
-      valoracion: ratingVal,
-      conComentario: Boolean(ratingText?.trim()),
-    })
-    addRating(ratingModal.helperId, ratingVal, ratingText)
-    updateService(ratingModal.id, { status: 'completed', rated: true })
-    setRatingSent(true)
-    setTimeout(() => { setRatingModal(null); setRatingSent(false); setRatingText('') }, 1800)
-  }
 
   function formatDate(dateStr) {
     if (!dateStr) return ''
@@ -231,7 +200,7 @@ export default function MyServices() {
                 {(s.status === 'pending' || s.status === 'confirmed') && !rated && (
                   <div className={styles.postActions}>
                     <button className={styles.rateBtn}
-                      onClick={e => { e.stopPropagation(); updateService(s.id, { status: 'completed' }); setRatingModal({...s, status:'completed'}); setRatingVal(0) }}
+                      onClick={e => { e.stopPropagation(); updateService(s.id, { status: 'completed' }); setRatingModal({...s, status:'completed'}) }}
                       style={{flex:1}}>
                       <CheckCircle size={13} /> Marcar completado y valorar
                     </button>
@@ -242,7 +211,7 @@ export default function MyServices() {
                 {s.status === 'completed' && !rated && (
                   <div className={styles.postActions}>
                     <button className={styles.actionBtn}
-                      onClick={e => { e.stopPropagation(); setRatingModal(s); setRatingVal(0) }}>
+                      onClick={e => { e.stopPropagation(); setRatingModal(s) }}>
                       <Star size={12} /> Valorar a {s.helperName?.split(' ')?.[0]}
                     </button>
                     <button className={styles.actionBtnSecondary}
@@ -275,50 +244,12 @@ export default function MyServices() {
         </div>
       </div>
 
-      {/* Rating modal */}
+      {/* La misma ventana de valorar que en el chat y la ficha: antes habia
+          dos, y esta (la principal) no registraba la conexion ni el perfil vivo. */}
       {ratingModal && (
-        <div style={{position:'fixed',inset:0,background:'var(--surface-scrim)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:300,display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
-          <div style={{background:'rgba(255,255,255,0.96)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',borderRadius:'24px 24px 0 0',padding:'var(--space-24) var(--space-20) 36px',width:'100%',maxWidth:'500px'}}>
-            <div style={{width:'36px',height:'4px',background:'var(--surface-muted)',borderRadius:'2px',margin:'0 auto var(--space-20)'}} />
-            {ratingSent ? (
-              <div style={{textAlign:'center',padding:'var(--space-20) 0',display:'flex',flexDirection:'column',alignItems:'center',gap:'var(--space-12)'}}>
-                <Star size={44} color='var(--amber)' fill='var(--amber)' strokeWidth={1.5} />
-                <h3 style={{fontSize:'var(--text-md)',fontWeight:800,color:'var(--ink-primary)',margin:0,letterSpacing:'-0.3px'}}>¡Gracias por valorar!</h3>
-                <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:0}}>Tu valoración ayuda a toda la comunidad.</p>
-              </div>
-            ) : (
-              <>
-                <h3 style={{fontSize:'var(--text-md)',fontWeight:800,margin:'0 0 var(--space-4)',color:'var(--ink-primary)',letterSpacing:'-0.3px'}}>
-                  Valorar a {ratingModal.helperName?.split(' ')?.[0]}
-                </h3>
-                <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:'0 0 var(--space-20)'}}>{ratingModal.specialty}</p>
-                <div style={{display:'flex',gap:'var(--space-6)',justifyContent:'center',marginBottom:'var(--space-16)'}}>
-                  {[1,2,3,4,5].map(n => (
-                    <button key={n} onClick={() => setRatingVal(n)}
-                      style={{fontSize:'34px',background:'none',border:'none',cursor:'pointer',opacity:n<=ratingVal?1:0.25,transition:'opacity 0.15s'}}>
-                      <Star size={18} fill={ratingVal >= n ? 'var(--amber)' : 'none'} color='var(--amber)' />
-                    </button>
-                  ))}
-                </div>
-                <textarea value={ratingText} onChange={e=>setRatingText(e.target.value)}
-                  placeholder="¿Qué destacarías? (opcional)" rows={3}
-                  style={{width:'100%',padding:'var(--space-12) var(--space-16)',border:'1px solid rgba(33,29,51,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',resize:'none',fontFamily:'inherit',background:'var(--surface-subtle)',boxSizing:'border-box',marginBottom:'var(--space-12)'}} />
-                <div style={{display:'flex',gap:'var(--space-8)'}}>
-                  <button onClick={() => setRatingModal(null)}
-                    style={{flex:1,padding:'13px',background:'var(--surface-subtle)',color:'var(--ink-tertiary)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
-                    Cancelar
-                  </button>
-                  {/* Apagado hasta tocar una estrella: un boton que se puede
-                      pulsar y no hace nada es peor que uno apagado. */}
-                  <Button variant="primary" onClick={submitRating} disabled={!ratingVal}
-                    style={{flex:2, opacity: ratingVal ? 1 : 0.4}}>
-                    Enviar valoración
-                  </Button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
+        <RatingModal helper={ratingModal}
+          onClose={() => setRatingModal(null)}
+          onEnviado={() => updateService(ratingModal.id, { status: 'completed', rated: true })} />
       )}
     </div>
   )

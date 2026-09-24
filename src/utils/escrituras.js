@@ -89,6 +89,60 @@ export async function respuestasDe(helperId) {
   } catch { return [] }
 }
 
+// Llaves ya usadas para valorar: cada conversacion se valora una vez.
+const VALORADAS = 'nura_llaves_valoradas'
+
+function llavesValoradas() {
+  try { return new Set(JSON.parse(localStorage.getItem(VALORADAS) || '[]')) }
+  catch { return new Set() }
+}
+
+function marcarValorada(llave) {
+  try { localStorage.setItem(VALORADAS, JSON.stringify([...llavesValoradas(), llave].slice(-100))) }
+  catch { /* sin almacenamiento: el servidor ya impide repetir */ }
+}
+
+/**
+ * PERFIL VIVO: lo que dice el cliente al terminar. Solo cuenta si viene de
+ * una conversacion real con ese profesional (la llave de lectura lo prueba);
+ * el servidor saca el profesional de la conversacion, no de lo que mande el
+ * movil. Sin llave (o sin la funcion) se queda solo en este movil.
+ * Devuelve 'publicada' | 'ya-valorada' | 'local'.
+ */
+export async function valorar(helperId, { estrellas, volveria, cualidades, comentario, publico }) {
+  const usadas = llavesValoradas()
+  const pendientes = (llavesGuardadas()[String(helperId)] || []).filter(l => !usadas.has(l)).reverse()
+  if (!porLaFuncion() || !pendientes.length) return 'local'
+  const cuerpo = {
+    op: 'valorar',
+    estrellas: estrellas || undefined,
+    volveria: typeof volveria === 'boolean' ? volveria : undefined,
+    cualidades: cualidades || [],
+    comentario: publico ? comentario : undefined,
+    publico: Boolean(publico && comentario?.trim()),
+  }
+  try {
+    for (const llave of pendientes) {
+      const r = await llamarFuncion({ ...cuerpo, llave })
+      if (r?.ok) { marcarValorada(llave); return 'publicada' }
+      if (r?.estado === 409) { marcarValorada(llave); continue }
+      return 'local'
+    }
+    return 'ya-valorada'
+  } catch { return 'local' }
+}
+
+/** Lo que se sabe de un profesional, cada dato con su prueba. Lectura publica. */
+export async function atributosDe(helperId) {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/perfil_atributos?helper_id=eq.${encodeURIComponent(String(helperId))}&select=clave,fuente,valor,prueba`,
+      { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }, signal: AbortSignal.timeout(6000) },
+    )
+    return res.ok ? await res.json() : []
+  } catch { return [] }
+}
+
 /** LA VUELTA: abrir el aviso con el token del enlace. Sin cuenta. */
 export async function abrirAviso(token) {
   if (!porLaFuncion()) return { ok: false }

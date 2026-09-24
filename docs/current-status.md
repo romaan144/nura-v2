@@ -30,7 +30,12 @@ actualizar por eso mismo.
 
 ### En producción (comprobado)
 
-- **Función `helpers-write` versión 4** (2026-09-24), 12 operaciones.
+- **Función `helpers-write` versión 6** (2026-09-24), 13 operaciones
+  (nueva: `valorar`).
+- **Perfil vivo, pieza 1** (2026-09-24): tablas `valoraciones` y
+  `perfil_atributos` creadas y probadas (en una transacción que se
+  deshizo). La ventana de valorar y la sección «Su historial en Nüra» de
+  la ficha, publicadas. Aún no hay valoraciones reales.
 - **Avisos**: la tabla `avisos` **no existía hasta el 2026-09-24**. Hasta
   ese día, cuando alguien escribía a un profesional, la app decía «le
   aviso» y **el aviso se perdía**. Creada y probada con un mensaje real

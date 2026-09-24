@@ -10,6 +10,27 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-24 — Perfil vivo, pieza 1: lo que dicen los clientes, con prueba
+
+- **Nueva ventana de valorar** (una sola en toda la app: «Mis servicios»
+  tenía otra propia que no contaba la conexión). Tres preguntas de un
+  toque, todas opcionales: ¿volverías a llamarle?, ¿qué destacarías? (hasta
+  3 de 5 cualidades, distintas por oficio) y estrellas. El comentario solo
+  sale del móvil si la persona marca «se puede publicar».
+- **Solo cuenta quien de verdad habló con el profesional**: la prueba es la
+  llave de lectura de su conversación. Una valoración por conversación. Sin
+  conversación por Nüra, se guarda solo en el móvil y se dice así.
+- **Base de datos**: tablas `valoraciones` (privada) y `perfil_atributos`
+  (pública, cada dato con fuente y prueba), recalculadas solas. Lo
+  **medido** (cuánto tarda en contestar, cuántos mensajes contesta) solo
+  aparece con 3 mensajes o más.
+- **Ficha pública**: nueva sección «Su historial en Nüra» («11 de 12
+  volverían a llamar a Carlos», «Paciente · lo dicen 10 clientes»,
+  «Suele contestar en menos de 1 h · medido por Nüra en 9 mensajes»).
+  Sin datos, no aparece.
+- Función `helpers-write` versión 6 (operación `valorar`; borrar cuenta
+  también borra valoraciones y atributos).
+
 ## 2026-09-24 — Recordar solo con permiso
 
 - «Las personas de tu vida» ya no se guarda sola: Nüra pregunta al final

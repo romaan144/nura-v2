@@ -1,4 +1,4 @@
-.overlay { position: fixed; inset: 0; z-index: 50; background: rgba(13,13,26,0.55); backdrop-filter: blur(8px); display: flex; align-items: flex-end; justify-content: center; padding: 0 0 16px; animation: fadeIn 0.25s ease; }
+.overlay { position: fixed; inset: 0; z-index: 300; background: rgba(13,13,26,0.55); backdrop-filter: blur(8px); display: flex; align-items: flex-end; justify-content: center; padding: 0 0 max(16px, env(safe-area-inset-bottom)); animation: fadeIn 0.25s ease; }
 @keyframes fadeIn { from{opacity:0} to{opacity:1} }
 
 .card { background: var(--white); border-radius: var(--radius-md) 28px 24px 24px; padding: 32px 24px 24px; width: 100%; max-width: 420px; position: relative; max-height: 88dvh; overflow-y: auto;
@@ -8,9 +8,9 @@
 
 .close { position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 50%; background: var(--rule2); color: var(--soft); display: flex; align-items: center; justify-content: center; }
 
-.avatar { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: var(--text-lg); font-weight: 700; margin: 0 auto 14px; box-shadow: var(--shadow-md); }
+.avatar { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: var(--text-lg); font-weight: 700; margin: 0 auto 14px; box-shadow: var(--shadow-md); object-fit: cover; }
 .title { font-size: var(--text-md); font-weight: 800; color: var(--ink); text-align: center; margin-bottom: 6px; letter-spacing: -0.3px; }
-.desc { font-size: var(--text-sm); color: var(--mid); text-align: center; margin-bottom: 22px; line-height: 1.5; }
+.desc { font-size: var(--text-sm); color: var(--mid); text-align: center; margin-bottom: 18px; line-height: 1.5; }
 
 .stars { display: flex; justify-content: center; gap: 4px; margin-bottom: 8px; }
 .star { padding: 4px; transition: transform 0.1s; }
@@ -27,3 +27,24 @@
 
 .doneState { text-align: center; padding: 16px 0; }
 .doneIcon { font-size: 56px; margin-bottom: 14px; }
+
+/* ── Perfil vivo: preguntas de un toque ── */
+.pregunta { font-size: var(--text-sm); font-weight: 700; color: var(--ink); margin: 0 0 10px; display: flex; align-items: baseline; gap: 8px; }
+.nota { font-size: var(--text-xs, 12px); font-weight: 500; color: var(--soft); }
+
+.siNo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.opcion { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; border-radius: var(--radius-card); border: 1.5px solid var(--rule); background: var(--paper); color: var(--ink); font-size: var(--text-sm); font-weight: 700; transition: all 0.15s; }
+.opcion:hover { border-color: var(--purple); }
+.opcionSi { border-color: var(--green); background: var(--green-light); color: var(--green); }
+.opcionNo { border-color: var(--red); background: var(--red-light); color: var(--red); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.chip { min-height: 38px; padding: 8px 14px; border-radius: 999px; border: 1.5px solid var(--rule); background: var(--paper); color: var(--ink); font-size: var(--text-sm); font-weight: 600; transition: all 0.15s; }
+.chip:hover:not(:disabled) { border-color: var(--purple); }
+.chip:disabled { opacity: 0.4; }
+.chipOn { border-color: var(--purple); background: var(--purple); color: white; }
+
+.publicar { display: flex; align-items: center; gap: 10px; font-size: var(--text-sm); color: var(--mid); margin: -6px 0 16px; cursor: pointer; }
+.publicar input { width: 18px; height: 18px; accent-color: var(--purple); }
+
+.privacidad { text-align: center; font-size: var(--text-xs, 12px); color: var(--soft); margin-top: 12px; }

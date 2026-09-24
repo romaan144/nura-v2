@@ -1,6 +1,7 @@
 # El perfil vivo · diseño (2026-09-24)
 
-> Estado: **propuesta para aprobar**. No hay nada programado todavía.
+> Estado: **aprobado**. Pieza 1 (§3, §5 y lo medido) **hecha el
+> 2026-09-24**; ver «Lo construido» al final.
 > Objetivo de fondo (fase 3): que una empresa describa a la persona que
 > busca y Nüra encuentre a la mejor, con muchos parámetros y **explicando
 > por qué**.
@@ -144,3 +145,16 @@ guarda la frase. Vive solo en el móvil y se borra desde el perfil.
 2. Lo declarado ordenado por IA con confirmación (sección 4).
 3. La ficha pública enseña los rasgos con su prueba.
 4. Fase 3: búsqueda para empresas, tras revisión legal.
+
+## 11 · Lo construido
+
+### Pieza 1 (2026-09-24)
+- Cualidades por oficio: `src/utils/cualidades.js` (lista cerrada, repetida
+  en `helpers-write` → `CUALIDADES`).
+- Ventana: `src/components/RatingModal.jsx`, la única de la app.
+- Servidor: operación `valorar` en `helpers-write`. El profesional sale de
+  la conversación (llave de lectura), nunca del móvil.
+- Base de datos: `supabase/migrations/20260925000000_perfil_vivo_valoraciones.sql`.
+- Ficha: sección «Su historial en Nüra» en `HelperProfile.jsx`.
+- Lo medido cuenta desde que el aviso se marca como enviado
+  (`npm run avisar` llama a `aviso-enviado`), no desde que se escribió.
