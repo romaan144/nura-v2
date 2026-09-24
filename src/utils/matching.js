@@ -44,6 +44,7 @@ export function getPriceContext(helper, categoria) {
 import { HELPERS as LOCAL_HELPERS } from '../data/helpers'
 import { obraSignal } from '../data/obraPosts'
 import { searchHelpers } from './supabase'
+import { barrioEnTexto, barrioDeZona, kmEntre } from '../data/barrios'
 
 // ── SEMANTIC EXPANSION MAP ────────────────────────────────────────────────
 // Maps everyday expressions → canonical keywords
@@ -377,7 +378,7 @@ function applyRefinement(helpers, refinementText) {
     filtered.sort((a, b) => (b.urgent ? 1 : 0) - (a.urgent ? 1 : 0))
   }
   const distMatch = text.match(/menos de (\d+)\s*km/)
-  if (distMatch) filtered = filtered.filter(h => h.distance <= parseInt(distMatch[1]))
+  if (distMatch) filtered = filtered.filter(h => h.distance != null && h.distance <= parseInt(distMatch[1]))
   const priceMatch = text.match(/menos de (\d+)|maximo (\d+)|hasta (\d+)/)
   if (priceMatch) {
     const maxP = parseInt(priceMatch[1] || priceMatch[2] || priceMatch[3])
@@ -386,7 +387,7 @@ function applyRefinement(helpers, refinementText) {
   if (text.includes('mejor valorado') || text.includes('mas valorado'))
     filtered.sort((a, b) => b.rating - a.rating)
   if (text.includes('mas cercano') || text.includes('cerca'))
-    filtered.sort((a, b) => a.distance - b.distance)
+    filtered.sort((a, b) => (a.distance ?? 99) - (b.distance ?? 99))
   if (text.includes('mas barato') || text.includes('economico') || text.includes('precio'))
     filtered.sort((a, b) => parseInt(a.price||'999') - parseInt(b.price||'999'))
   return filtered.length > 0 ? filtered : helpers
@@ -546,6 +547,9 @@ export function analyzeNeed(userText) {
   
   return Promise.resolve({
     categoria: toApp(categoria), matchedTerm: catBestKw[categoria] || null, presencial, urgente, nivelRequerido,
+    // El barrio que nombra («cerca de Gràcia»), o null. Solo para ordenar
+    // esta busqueda: no se guarda en ningun sitio.
+    zona: barrioEnTexto(userText),
     resumen: resumenMap[categoria] || 'Busca ayuda',
     palabrasClave,
     palabrasPropias,
@@ -578,7 +582,10 @@ function normalizeHelper(h) {
     tags: h.tags || [],
     skills: h.skills || [],
     rating: parseFloat(h.rating) || 4.5,
-    distance: parseFloat(h.distance) || 1.5,
+    // Sin barrio de quien busca NO hay distancia: la del dataset era
+    // inventada y se enseñaba como real («a 0,8 km»). Se calcula abajo,
+    // solo si la persona dice donde esta.
+    distance: null,
     reviews: parseInt(h.reviews) || 0,
     services: parseInt(h.services) || 0,
     price: h.price || null,
@@ -690,10 +697,20 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
     if (analysis.urgente && h.urgent) score += 20
     if (h.available) score += 5
     score += (h.rating || 4.5) * 2
-    score -= (h.distance || 1) * 2
+    // LA CERCANIA, DE VERDAD. Antes restaba por una distancia inventada, y
+    // eso cambiaba el orden. Ahora solo cuenta si la persona nombro su
+    // barrio: entre el centro de su barrio y el del profesional. Pesa menos
+    // que el oficio y la especialidad: ordena dentro de lo que encaja.
+    const km = analysis.zona ? kmEntre(analysis.zona, barrioDeZona(h.zone)) : null
+    if (km != null) {
+      if (km <= 1.5) score += 18
+      else if (km <= 3) score += 10
+      else if (km <= 5) score += 3
+      else if (!h.online) score -= 8
+    }
     const os = obraSignal(h.id, analysis)
     score += os.score
-    return { ...h, score, __obra: os.best }
+    return { ...h, score, __obra: os.best, distance: km, distanciaDesde: km != null ? analysis.zona.nombre : null }
   })
 
   const sorted = scored.sort((a, b) => b.score - a.score)

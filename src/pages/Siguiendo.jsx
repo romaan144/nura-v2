@@ -6,7 +6,7 @@ import { useUser } from '../context/UserContext'
 import { DEMO_MODE } from '../config'
 import PageHeader from '../components/PageHeader'
 import styles from './Siguiendo.module.css'
-import { fmtNota, fmtKm } from '../utils/formato'
+import { fmtNota } from '../utils/formato'
 
 export default function Siguiendo() {
   const navigate = useNavigate()
@@ -67,7 +67,7 @@ export default function Siguiendo() {
                     <div className={styles.meta}>
                       <Star size={11} fill="var(--amber)" color="var(--amber)" /> {fmtNota(h.rating)}
                       <span>·</span>
-                      <MapPin size={11} /> {fmtKm(h.distance)}
+                      <MapPin size={11} /> {h.zone || 'Barcelona'}
                       <span>·</span>
                       {h.price && h.price !== 'Consultar' ? <strong>{h.price}</strong> : <span>Consultar</span>}
                     </div>

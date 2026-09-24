@@ -362,6 +362,38 @@ for (const t of NEGATIVE) {
     enlaceDeAviso({ ...a, via: 'email', destino: 'a@b.cat' }).startsWith('mailto:a%40b.cat?subject='))
 }
 
+
+// ── LA ZONA (2026-09-24) ─────────────────────────────────────────────────
+// Antes no se entendia el barrio y la distancia de las tarjetas era
+// inventada. Ahora: se entiende, ordena por cercania real, y sin barrio no
+// hay distancia.
+{
+  console.log('\n── La zona ──')
+  const prueba = (texto, cond) => { console.log((cond ? '✓ ' : '✗ ') + texto); if (!cond) failed++ }
+  const { barrioEnTexto, kmEntre, barrioDeZona } = await import(join(stage, 'data/barrios.js'))
+  const nombre = t => barrioEnTexto(t)?.nombre ?? null
+  prueba('«cerca de Gràcia» → Gràcia', nombre('logopeda cerca de Gràcia') === 'Gràcia')
+  prueba('«gracias» NO es Gràcia', nombre('muchas gracias por la ayuda') === null)
+  prueba('«vivo en el Poblenou» → Poblenou', nombre('vivo en el Poblenou') === 'Poblenou')
+  prueba('«Sarrià-Sant Gervasi» → Sant Gervasi (el alias más largo)', nombre('en Sarrià-Sant Gervasi') === 'Sant Gervasi')
+  prueba('«Sants» no se confunde con «Sant Andreu»', nombre('soy de Sants') === 'Sants' && nombre('en Sant Andreu') === 'Sant Andreu')
+  prueba('sin barrio → null', nombre('necesito un fontanero urgente') === null)
+  prueba('Gràcia–Vallcarca está cerca (< 2 km)', kmEntre(barrioDeZona('Gràcia'), barrioDeZona('Vallcarca')) < 2)
+  prueba('Gràcia–Barceloneta está lejos (> 2,5 km)', kmEntre(barrioDeZona('Gràcia'), barrioDeZona('Barceloneta')) > 2.5)
+
+  for (const [q, cat] of [['fontanero en Horta', 'tecnico'], ['logopeda infantil en Sants', 'logopedia'], ['alguien que cuide a mi madre en Gràcia', 'cuidado']]) {
+    const a = await analyzeNeed(q)
+    prueba(`el barrio no cambia el oficio: «${q}» → ${cat}`, cat_(a.categoria) === cat && a.zona)
+  }
+  const cerca = await matchHelpers(await analyzeNeed('logopeda infantil cerca de Gràcia'), 4)
+  prueba('con barrio, cada resultado dice su distancia desde ese barrio',
+    cerca.length > 0 && cerca.every(h => h.distanciaDesde === 'Gràcia' && (h.distance === null || typeof h.distance === 'number')))
+  const conKm = cerca.filter(h => typeof h.distance === 'number')
+  prueba('con barrio, el primero está a 3 km o menos (si hay alguien así)', !conKm.length || conKm[0].distance <= 3 || conKm.every(h => h.distance > 3))
+  const sin = await matchHelpers(await analyzeNeed('logopeda infantil'), 4)
+  prueba('sin barrio, ninguna distancia (antes se inventaba)', sin.length > 0 && sin.every(h => h.distance == null))
+}
+
 // El total se contaba sumando los tres catalogos, asi que se quedo en 32
 // mientras las pruebas reales llegaban a 51: cada bloque añadido despues
 // (obra, agenda, silencios, interceptor, aviso) pasaba sin figurar. Un

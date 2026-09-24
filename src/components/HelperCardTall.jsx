@@ -6,7 +6,7 @@ import { haptic } from '../utils/haptic'
 import { getFirstName } from '../utils/name'
 import { LiveDot, Button, SectionLabel } from './ui'
 import { recordarDestino, contextoDeChat } from '../utils/contacto'
-import { fmtNota, fmtKm } from '../utils/formato'
+import { fmtNota, dondeEsta } from '../utils/formato'
 
 // ═══════════════════════════════════════════════════════════════
 // La Tarjeta Vertical — la recomendación como protagonista.
@@ -120,7 +120,7 @@ export default function HelperCardTall({ helper, small = false }) {
         )}
         {!small && helper.price && helper.price !== 'Consultar' &&
           <span style={{ color: 'var(--ink)', fontWeight: 600 }}>{helper.price}</span>}
-        {helper.distance && <span style={{ color: 'var(--ink-tertiary)' }}>a {fmtKm(helper.distance)}</span>}
+        {dondeEsta(helper) && <span style={{ color: 'var(--ink-tertiary)' }}>{dondeEsta(helper)}</span>}
       </div>
 
       {!small && (helper.quote || helper.bio) && (

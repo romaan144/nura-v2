@@ -6,7 +6,7 @@ import { showToast } from './Toast'
 import styles from './HelperCarousel.module.css'
 import { haptic } from '../utils/haptic'
 import { recordarDestino, contextoDeChat } from '../utils/contacto'
-import { fmtNota, fmtKm } from '../utils/formato'
+import { fmtNota, dondeEsta } from '../utils/formato'
 
 /**
  * HelperCarousel — horizontal scroll of compact helper cards.
@@ -84,9 +84,11 @@ function CarouselCard({ helper, isTopPick, matchReason }) {
         {helper.reviews > 0 && (
           <span className={styles.metaDot}>({helper.reviews})</span>
         )}
-        <span className={styles.metaDot}>·</span>
-        <MapPin size={8} color="rgba(33,29,51,0.3)" />
-        <span>{fmtKm(helper.distance || 1.2)}</span>
+        {dondeEsta(helper) && <>
+          <span className={styles.metaDot}>·</span>
+          <MapPin size={8} color="rgba(33,29,51,0.3)" />
+          <span>{dondeEsta(helper)}</span>
+        </>}
       </div>
 
       {/* Match reason — why Nüra chose this person */}
