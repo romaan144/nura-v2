@@ -1,14 +1,15 @@
 import { avatarDe } from '../utils/avatar'
 import { useState, useEffect } from 'react'
 import PageHeader from '../components/PageHeader'
-import { Button, SectionLabel, SectionTitle } from '../components/ui'
+import { Button, SectionLabel } from '../components/ui'
 import { useState as useStateObra } from 'react'
 import ObraComposer from '../components/ObraComposer'
 import PostCard from '../components/PostCard'
 import { getObraDeHelper, obraAPost } from '../data/obraPosts'
 import { useNavigate } from 'react-router-dom'
-import { LogOut, Edit2, Check, X, Award, MessageCircle,
-         Heart, ClipboardList, User, Phone, Star , UserPlus, UserCheck, ChevronRight } from 'lucide-react'
+import { LogOut, Edit2, Check, X, Award, MessageCircle, ClipboardList, User, Phone, Star,
+         UserPlus, UserCheck, ChevronRight, PenLine, Plus, Mail, CalendarDays, Search,
+         Shield, FileText, Trash2 } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import { Badge, StatBar } from '../components/ui'
 import HelperCard from '../components/HelperCard'
@@ -231,719 +232,514 @@ export default function Profile() {
   )].slice(0, 3)
 
   /* ── Render ─────────────────────────────────────────────── */
+  // EL MISMO LENGUAJE QUE LA FICHA DE UN PROFESIONAL (el fundador la señala
+  // como el nivel a alcanzar): cabecera blanca y centrada que sube bajo la
+  // barra, y debajo secciones con titulo sobre el papel, separadas por una
+  // linea fina. Dentro de las secciones, DOS formas y ninguna mas:
+  //   · .tarjeta  un bloque para leer y actuar
+  //   · .lista    filas que llevan a otra pantalla (icono · texto · flecha)
+  // Antes convivian seis estilos de caja (gris, lila, blanca con borde,
+  // pildora, borde lila, sin borde) y una regla que forzaba el mismo relleno
+  // a todo: tarjetas que se salian del borde y un "Cerrar sesión" descolocado.
+  // Un boton desactivado se ve apagado pero se LEE: el de la primitiva baja
+  // la opacidad y dejaba blanco sobre lila claro, ilegible.
+  const apagado = { background: 'rgba(33,29,51,0.08)', color: 'var(--ink-tertiary)', opacity: 1 }
+  const entrada = ms => ({ animation: `fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) ${ms}ms both` })
+
+  let correoAcceso = ''
+  try { correoAcceso = JSON.parse(localStorage.getItem('nura_sesion') || 'null')?.user?.email || '' } catch { /* sin sesion */ }
+
+  // ── Lo que le falta a la ficha: UNA invitacion concreta, nunca una nota ──
+  // (paso 1 de docs/plan-perfil.md: fuera el porcentaje). Un profesional con
+  // la ficha incompleta recibe menos mensajes; se le pide la cosa que mas
+  // falta, con el motivo, y se escribe ahi mismo.
+  const faltaEnFicha = (() => {
+    if (!user.isHelper) return null
+    const orden = [
+      ['specialty', 'tu especialidad', 'sin ella no apareces en las búsquedas', 'Ej: logopeda infantil'],
+      ['formation', 'tu formación', 'es lo que más mira quien duda', 'Ej: Grado en Logopedia, UB'],
+      ['zone', 'tu zona', 'así te encuentran los de tu barrio', 'Ej: Gràcia, Barcelona'],
+      ['price', 'tu tarifa', 'quien no la ve, casi nunca escribe', 'Ej: 45 € la sesión'],
+      ['differentiator', 'qué te diferencia', 'es lo que te separa de los demás', 'Ej: trabajo con juego, sin prisas'],
+    ]
+    const f = orden.find(([c]) => !hp[c])
+    return f ? { campo: f[0], nombre: f[1], porQue: f[2], ejemplo: f[3] } : null
+  })()
+  const guardarCampo = () => {
+    const v = campoDraft.trim(); if (!v || !faltaEnFicha) return
+    updateUser({ helperProfile: { ...hp, [faltaEnFicha.campo]: v } })
+    setCampoAbierto(null); setCampoDraft('')
+  }
+
+  // ── Lo que tienes a medias (etapa 4 de estudio-perfil.md) ──
+  // Con nombre propio y cada cosa lleva a donde se continua: nadie abre su
+  // perfil para contar busquedas, lo abre para encontrar la cita del jueves.
+  const nombre = n => (n || '').split(' ')[0]
+  const aMedias = (() => {
+    const pendientes = (services || [])
+      .filter(sv => sv && sv.status !== 'completed')
+      .slice(0, 2)
+      .map(sv => ({ k: 'c' + sv.id, to: `/chat/${sv.helperId}`,
+        titulo: `Cita con ${nombre(sv.helperName)}`,
+        detalle: [sv.date, sv.time, sv.status === 'confirmed' ? 'Confirmada' : 'Pendiente de confirmar'].filter(Boolean).join(' · ') }))
+    const conCita = new Set(pendientes.map(p => p.to))
+    const charlas = [...(chats || [])]
+      .filter(c => c && !conCita.has(`/chat/${c.helperId}`))
+      .sort((a, b) => (b.unread || 0) - (a.unread || 0) || String(b.lastTime || '').localeCompare(String(a.lastTime || '')))
+      .slice(0, 3 - pendientes.length)
+      .map(c => ({ k: 'h' + c.helperId, to: `/chat/${c.helperId}`,
+        titulo: nombre(c.helperName) || 'Conversación',
+        detalle: c.lastMsg ? `«${String(c.lastMsg).slice(0, 60)}${String(c.lastMsg).length > 60 ? '…' : ''}»` : '',
+        sinLeer: c.unread || 0 }))
+    return [...pendientes, ...charlas]
+  })()
+
+  const citaProxima = (citas || []).slice().reverse().find(ci => {
+    const c = (contactedHelpers || []).find(x => (x.id || x) === ci.helperId)
+    return c && c.confirmed === undefined
+  })
+
+  const sem = user.isHelper ? buildSemana({ misObras,
+    obraPropia: getObraDeHelper(user.helperId || user.id, 9).filter(o => !o.mine).length }) : null
+  const obraPropia = user.isHelper ? getObraDeHelper(user.helperId || user.id, 2) : []
+
   return (
     <>
     <div className={styles.page}>
-      {/* El boton de cerrar sesion no tenia nombre accesible: un lector de
-          pantalla decia solo "boton" sobre la accion mas destructiva de la
-          pantalla. El icono no basta. */}
-      {/* Habia un segundo "Cerrar sesión" arriba, como icono de un toque y sin
-          confirmar, en la esquina donde se toca por accidente. Queda uno, al
-          final, y pide confirmacion. */}
+      {/* Un solo "Cerrar sesión", al final y con confirmacion: habia otro
+          arriba, de un toque, donde se pulsa por accidente. */}
       <PageHeader />
 
       <div className={styles.scroll}>
 
-        {/* ── ZONA 1: IDENTIDAD ─────────────────────────── */}
-        <div className={styles.identity} style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0ms forwards`}}>
+        {/* ── LA CABECERA: como la de una ficha ───────────────────── */}
+        <header className={styles.hero} style={entrada(0)}>
           <div className={styles.avatarWrap}>
             <img
               src={user.avatar || avatarDe(encodeURIComponent(user.name || 'user'))}
               alt={user.name} className={styles.avatar}
             />
             {user.isHelper && (
-              <div className={styles.avatarBadge}>
-                <Award size={12} color="white" />
+              <div className={styles.avatarBadge} aria-hidden="true">
+                <Award size={13} color="white" />
               </div>
             )}
           </div>
-          <div className={styles.identityText}>
 
           {editingName ? (
             <div className={styles.editRow}>
-              <input className={styles.editInput} value={nameInput}
+              <input className={styles.editInput} value={nameInput} aria-label="Tu nombre"
                 onChange={e => setNameInput(e.target.value)}
                 onKeyDown={e => { if (e.key==='Enter') saveName(); if (e.key==='Escape') setEditingName(false) }}
                 autoFocus maxLength={40} />
-              <button className={styles.editConfirm} onClick={saveName}><Check size={15} /></button>
-              <button className={styles.editCancel} onClick={() => setEditingName(false)}><X size={15} /></button>
+              <button className={styles.editConfirm} onClick={saveName} aria-label="Guardar nombre"><Check size={16} /></button>
+              <button className={styles.editCancel} onClick={() => setEditingName(false)} aria-label="Cancelar"><X size={16} /></button>
             </div>
           ) : (
-            <button className={styles.nameTap} onClick={() => { setNameInput(user.name); setEditingName(true) }}>
-              <h2 className={styles.name} style={{fontFamily:'var(--font-voice)', fontWeight:700, letterSpacing:'-0.7px'}}>{user.name}</h2>
-              <Edit2 size={13} className={styles.editHint} />
+            <button className={styles.nameTap} onClick={() => { setNameInput(user.name); setEditingName(true) }}
+              aria-label={`Cambiar tu nombre, ${user.name}`}>
+              <h1 className={styles.name}>{user.name}</h1>
+              <Edit2 size={14} className={styles.editHint} aria-hidden="true" />
             </button>
           )}
 
-          {/* LO QUE ERES, COMO EN LA FICHA. Bajo el nombre iba la fecha de
-              alta: un profesional no veia su propio oficio en su perfil,
-              mientras cualquiera que abre su ficha lo lee lo primero.
-              El oficio manda; la fecha pasa detras, que es su sitio. */}
-          {(user.isHelper && user.helperProfile?.specialty) ? (
-            <p className={styles.memberSince}>
-              <span style={{color:'var(--ink-secondary)', fontWeight:600}}>
-                {user.helperProfile.specialty}
-              </span>
-              {joinedDate && <span style={{opacity:0.6}}> · desde {joinedDate}</span>}
+          {/* Lo que eres, como en la ficha: el oficio manda y la fecha va
+              detras. Al usuario, desde cuando esta en Nüra. */}
+          {user.isHelper && hp.specialty ? (
+            <p className={styles.subtitulo}>
+              <span className={styles.oficio}>{hp.specialty}</span>
+              {joinedDate && <> · desde {joinedDate}</>}
             </p>
           ) : joinedDate ? (
-            <p className={styles.memberSince}>En Nüra desde {joinedDate}</p>
+            <p className={styles.subtitulo}>En Nüra desde {joinedDate}</p>
           ) : null}
 
           {editingPhone ? (
-            <div className={styles.editRow} style={{marginTop: 4}}>
-              <input className={styles.editInput} value={phoneInput} placeholder="6XX XXX XXX"
+            <div className={styles.editRow} style={{marginTop:'var(--space-8)'}}>
+              <input className={styles.editInput} value={phoneInput} placeholder="6XX XXX XXX" aria-label="Tu teléfono"
                 onChange={e => setPhoneInput(e.target.value)}
                 onKeyDown={e => { if (e.key==='Enter') savePhone(); if (e.key==='Escape') setEditingPhone(false) }}
                 autoFocus type="tel" maxLength={15} />
-              <button className={styles.editConfirm} onClick={savePhone}><Check size={15} /></button>
-              <button className={styles.editCancel} onClick={() => setEditingPhone(false)}><X size={15} /></button>
+              <button className={styles.editConfirm} onClick={savePhone} aria-label="Guardar teléfono"><Check size={16} /></button>
+              <button className={styles.editCancel} onClick={() => setEditingPhone(false)} aria-label="Cancelar"><X size={16} /></button>
             </div>
           ) : (
-            <button className={styles.phoneBtn} onClick={() => { setPhoneInput(user.phone || ''); setEditingPhone(true) }}>
-              <Phone size={11} strokeWidth={1.8} />
+            <button className={`${styles.dato} ${user.phone ? '' : styles.datoVacio}`}
+              onClick={() => { setPhoneInput(user.phone || ''); setEditingPhone(true) }}>
+              <Phone size={13} strokeWidth={2} aria-hidden="true" />
               {user.phone ? fmtTel(user.phone) : 'Añadir teléfono'}
             </button>
           )}
-          </div>
-        </div>
 
-        {/* ── PROFILE COMPLETION ─────────────────────────── */}
-        {/* ── TU TRABAJO (etapa 5 de estudio-perfil.md) ───────────────
-            El perfil del profesional era una tarjeta tras otra sin decir de
-            que iba cada parte: invitacion, panel, publicar, vista previa,
-            cita. Ahora dos secciones con titulo: TU TRABAJO (lo que te
-            llega y como hacer que te encuentren) y TU FICHA (como te ven y
-            cambiarlo). "Tu semana" era una etiqueta dentro de la tarjeta. */}
-        {user.isHelper && <SectionTitle className={styles.tituloSeccion}>Tu trabajo</SectionTitle>}
-        {user.isHelper && (() => {
-          const sem = buildSemana({ misObras,
-            obraPropia: getObraDeHelper(user.helperId || user.id, 9).filter(o => !o.mine).length })
-          return (
-            <div style={{padding:'var(--space-16)',
-              /* --shadow-md es la sombra de lo que FLOTA (modales, hojas).
-                 Esta tarjeta reposa, asi que lleva la del sistema. */
-              background:'rgba(255,255,255,0.96)',
-              WebkitBackdropFilter:'blur(20px) saturate(160%)',
-              backdropFilter:'blur(20px) saturate(160%)',
-              border:'1px solid rgba(123,47,255,0.16)', borderRadius:'var(--radius-md)',
-              boxShadow:'0 1px 2px rgba(33,29,51,0.04), 0 8px 24px -12px rgba(123,47,255,0.18)',
-              animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 200ms both'}}>
-              <p style={{fontFamily:'var(--font-voice)', fontSize:'var(--text-base)', fontWeight:600,
-                letterSpacing:'-0.4px', lineHeight:1.4, color:'var(--ink)', margin:'0 0 var(--space-12)'}}
-                dangerouslySetInnerHTML={{__html: sem.frase.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')}} />
-              {/* Sin ceros: "0 abiertas · 0 citas · 0 publicaciones" no
-                  informaba. Solo lo que existe y es verdad. */}
-              {sem.piezas > 0 && (
-              <div style={{display:'flex', gap:'18px', marginBottom:'var(--space-12)'}}>
-                {[[sem.piezas, sem.piezas === 1 ? 'publicación' : 'publicaciones']].map(([n, l]) => (
-                  <div key={l}>
-                    <div style={{fontSize:'var(--text-heading)', fontWeight:700, color:'var(--ink)', lineHeight:1}}>{n}</div>
-                    <div style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', marginTop:'var(--space-3)'}}>{l}</div>
-                  </div>
-                ))}
-              </div>
-              )}
-              {/* Decia "Ver cómo te ven" y ABRIA LA VENTANA DE PUBLICAR: se
-                  cambio la etiqueta en el paso 3 del plan anterior y no la
-                  accion. Ahora baja a la vista previa. */}
-              {/* Publicar un caso es la palanca que el profesional tiene para
-                  que le encuentren: vive aqui, en su trabajo. Antes habia un
-                  segundo boton de publicar en la vista previa. */}
-              <button onClick={() => setComposerOpen(true)}
-                style={{width:'100%', background:'var(--purple-10)', color:'var(--purple-ink)',
-                  border:'none', borderRadius:'var(--radius-full)', padding:'11px',
-                  fontSize:'var(--text-sm)', fontWeight:700, cursor:'pointer'}}>
-                ✍️ Publicar un caso
-              </button>
-            </div>
-          )
-        })()}
-        {user.isHelper && <SectionTitle className={styles.tituloSeccion}>Tu ficha</SectionTitle>}
-        {user && (() => {
-          // Solo DATOS DEL PERFIL. Antes contaba actividad ("hacer tu
-          // primera busqueda", "seguir profesionales") como si fueran campos
-          // que rellenar: eso es lo que hacia el indicador confuso y
-          // provisional. Y duplicaba el estado vacio de la zona de actividad,
-          // que ya invita a buscar y encima con un boton.
-          // Un profesional NO se mide con la regla de un usuario. Medido:
-          // quien respondia 2 preguntas en el registro basico salia al 67%,
-          // y quien respondia las 6 del alta profesional salia al 33% — al
-          // que mas daba se le decia que era el que menos tenia. Y la
-          // coletilla "mejora tus matches" no le habla a un profesional:
-          // el no busca match, el ES el match.
-          const hp = user.helperProfile || {}
-          const missing = []
-          if (user.isHelper) {
-            if (!hp.specialty) missing.push('tu especialidad')
-            if (!hp.formation) missing.push('tu formación')
-            if (!hp.zone) missing.push('tu zona')
-            if (!hp.price) missing.push('tu tarifa')
-            if (!hp.differentiator) missing.push('qué te diferencia')
-          } else if (!user.phone) missing.push('teléfono')
-          // "Una foto" fuera de la invitacion: todavia no se puede subir
-          // (etapa 7 de estudio-perfil.md). Pedir algo imposible es peor que
-          // no pedirlo.
-          // ── FUERA EL PORCENTAJE (paso 1 de docs/plan-perfil.md) ────────
-          // El perfil abria con "Tu perfil esta al 67%" y una lista de
-          // deberes. Lo primero que veia alguien al entrar en SU espacio era
-          // una nota baja.
-          //
-          // Para el USUARIO no tiene sentido siquiera: no hay perfil que
-          // rellenar, solo busca ayuda. Le pedia algo que no necesita.
-          //
-          // Para el PROFESIONAL si importa —un perfil incompleto recibe
-          // menos contactos— pero como INVITACION CONCRETA y no como nota:
-          // una sola cosa, la que mas le falta, con el motivo por el que le
-          // conviene. "Añade tu tarifa y te encontraran antes" en vez de
-          // "estas al 29%".
-          if (!user.isHelper || !missing.length) return null
-          const loQueFalta = missing[0]
-          const porQue = {
-            'tu especialidad': 'sin ella no apareces en las búsquedas',
-            'tu formación': 'es lo que más mira quien duda',
-            'tu zona': 'así te encuentran los de tu barrio',
-            'tu tarifa': 'quien no la ve, casi nunca escribe',
-            'qué te diferencia': 'es lo que te separa de los demás',
-            'una foto': 'los perfiles con foto reciben más mensajes',
-          }[loQueFalta] || 'te encontrarán antes'
-          // ERA UN RECUADRO QUE NO SE PODIA TOCAR: pedia "Añade tu
-          // formación" y no daba forma de hacerlo. Ahora se toca y se escribe
-          // ahi mismo. Se guarda en su movil; la ficha publica se actualizara
-          // cuando exista identidad del profesional (etapa 6).
-          const campo = { 'tu especialidad':'specialty', 'tu formación':'formation',
-            'tu zona':'zone', 'tu tarifa':'price', 'qué te diferencia':'differentiator' }[loQueFalta]
-          const ejemplo = { specialty:'Ej: logopeda infantil', formation:'Ej: Grado en Logopedia, UB',
-            zone:'Ej: Gràcia, Barcelona', price:'Ej: 45 € la sesión', differentiator:'Ej: trabajo con juego, sin prisas' }[campo]
-          const guardar = () => {
-            const v = campoDraft.trim(); if (!v) return
-            updateUser({ helperProfile: { ...hp, [campo]: v } })
-            setCampoAbierto(null); setCampoDraft('')
-          }
-          const caja = {padding:'var(--space-16)',
-              background:'rgba(255,255,255,0.96)',
-              WebkitBackdropFilter:'blur(20px) saturate(160%)',
-              backdropFilter:'blur(20px) saturate(160%)',
-              borderRadius:'var(--radius-md)',
-              boxShadow:'var(--alzado-reposo)',
-              border:'1px solid rgba(255,255,255,0.6)'}
-          if (campoAbierto === campo) return (
-            <div style={caja}>
-              <label htmlFor="campo-perfil" style={{display:'block', margin:'0 0 var(--space-8)', fontSize:'var(--text-base)',
-                fontWeight:600, color:'var(--ink-primary)'}}>Añade {loQueFalta}</label>
-              <input id="campo-perfil" autoFocus value={campoDraft} placeholder={ejemplo}
-                onChange={e => setCampoDraft(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') guardar(); if (e.key === 'Escape') setCampoAbierto(null) }}
-                style={{width:'100%', boxSizing:'border-box', padding:'var(--space-12) var(--space-14)',
-                  border:'1px solid var(--ink-border)', borderRadius:'var(--radius-card)', fontSize:'var(--text-base)',
-                  fontFamily:'inherit', background:'var(--surface-subtle)', outline:'none'}} />
-              <div style={{display:'flex', gap:'var(--space-8)', marginTop:'var(--space-10)'}}>
-                <button onClick={() => setCampoAbierto(null)} style={{flex:1, minHeight:44, background:'none',
-                  border:'1px solid var(--ink-border)', borderRadius:'var(--radius-full)', fontSize:'var(--text-sm)',
-                  fontWeight:600, color:'var(--ink-secondary)', fontFamily:'inherit', cursor:'pointer'}}>Cancelar</button>
-                <button onClick={guardar} disabled={!campoDraft.trim()} style={{flex:2, minHeight:44, border:'none',
-                  background: campoDraft.trim() ? 'var(--purple)' : 'rgba(33,29,51,0.08)',
-                  color: campoDraft.trim() ? 'white' : 'var(--ink-tertiary)', borderRadius:'var(--radius-full)',
-                  fontSize:'var(--text-sm)', fontWeight:700, fontFamily:'inherit', cursor:'pointer'}}>Guardar</button>
-              </div>
-            </div>
-          )
-          return (
-            <button onClick={() => { setCampoAbierto(campo); setCampoDraft('') }}
-              style={{...caja, width:'100%', textAlign:'left', cursor:'pointer', fontFamily:'inherit',
-                display:'flex', alignItems:'center', gap:'var(--space-12)'}}>
-              <span style={{flex:1}}>
-                <span style={{display:'block', fontSize:'var(--text-base)', fontWeight:600,
-                  color:'var(--ink-primary)', letterSpacing:'-0.2px', lineHeight:1.4}}>
-                  Añade {loQueFalta}
-                </span>
-                <span style={{display:'block', margin:'var(--space-4) 0 0', fontSize:'var(--text-sm)',
-                  color:'var(--ink-tertiary)', lineHeight:1.45}}>
-                  {porQue.charAt(0).toUpperCase() + porQue.slice(1)}.
-                </span>
-              </span>
-              <ChevronRight size={18} color="var(--purple-ink)" style={{flexShrink:0}} />
-            </button>
-          )
-        })()}
-
-        {user.isHelper && (
-          <div id="asi-te-ven" style={{animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 240ms both', scrollMarginTop:'80px'}}>
-            {/* La foto, solo con la ficha vinculada (etapa 7): sin saber
-                quien es, cualquiera podria cambiar la foto de cualquiera. */}
-            {user.helperId != null && tieneCuenta && (
-              <FotoPerfil actual={user.avatar} helperId={user.helperId} onCambio={url => updateUser({ avatar: url })} />
-            )}
-            <SectionLabel tone="brand" style={{marginBottom:'var(--space-10)'}}>
-              Así te ven · vista previa
-            </SectionLabel>
-            {getObraDeHelper(user.helperId || user.id, 2).length > 0 && (
-              <div style={{display:'flex', flexDirection:'column', gap:'var(--space-10)', marginBottom:'var(--space-12)'}}>
-                {getObraDeHelper(user.helperId || user.id, 2).map(o => <PostCard key={o.id} post={obraAPost(o)} />)}
-              </div>
-            )}
-
-            {/* `inert`, no solo pointer-events: con el dedo ya no se podia
-                tocar, pero con teclado o con VoiceOver el boton "Escribir"
-                se enfocaba y abria /chat/me — un chat consigo misma. Una
-                vista previa se mira, no se usa. */}
-            <div inert style={{pointerEvents:'none'}}>
-              <HelperCard helper={proPreview} showPrice />
-            </div>
-            {/* Despues del alta no habia forma de cambiar nada de la ficha
-                salvo la cita. Etapa 2 de estudio-perfil.md. */}
-            <button onClick={() => setEditarAbierto(true)}
-              style={{width:'100%', minHeight:48, marginTop:'var(--space-10)', background:'white',
-                border:'1px solid var(--ink-border)', borderRadius:'var(--radius-full)', cursor:'pointer',
-                fontFamily:'inherit', fontSize:'var(--text-sm)', fontWeight:700, color:'var(--purple-ink)',
-                boxShadow:'var(--alzado-reposo)'}}>
-              Editar mi ficha
-            </button>
-            {/* ── TU ACCESO (etapa 6 de estudio-perfil.md) ───────────────
-                Correo y contraseña. Sin acceso, lo que edita se queda en su
-                movil; con acceso, podra llegar a su ficha publica. La sesion
-                se lee de `nura_sesion` directamente, SIN importar la libreria
-                de Supabase: asi el perfil no arrastra 211 kB que solo
-                necesitan las pantallas de Entrar y Restablecer. */}
-            {(() => {
-              let correo = ''
-              try { correo = JSON.parse(localStorage.getItem('nura_sesion') || 'null')?.user?.email || '' } catch { /* sin sesion */ }
-              if (correo) {
-                const nota = user.helperId != null ? 'Tu ficha está vinculada: lo que cambies se publica.'
-                  : vinculo === 'sin-confirmar' ? 'Confirma tu correo con el enlace que te enviamos para vincular tu ficha.'
-                  : vinculo === 'sin-ficha' ? 'No encontramos una ficha dada de alta con este correo.'
-                  : vinculo === 'varias' ? 'Hay varias fichas con este correo: escríbenos y lo resolvemos.'
-                  : vinculo ? 'No hemos podido vincular tu ficha ahora. Lo intentaremos al volver.'
-                  : 'Buscando tu ficha…'
-                return (
-                  <div style={{margin:'var(--space-12) 0 0', textAlign:'center'}}>
-                    <p style={{margin:0, fontSize:'var(--text-sm)', color:'var(--ink-tertiary)'}}>
-                      Tu acceso: <span style={{color:'var(--ink-secondary)', fontWeight:600}}>{correo}</span>
-                    </p>
-                    <p role="status" style={{margin:'var(--space-4) 0 0', fontSize:'var(--text-sm)', lineHeight:1.45,
-                      color: user.helperId != null ? 'var(--green-ink, #067647)' : 'var(--ink-tertiary)'}}>{nota}</p>
-                  </div>
-                )
-              }
-              return (
-                <div style={{marginTop:'var(--space-12)', padding:'var(--space-16)', background:'var(--purple-05)',
-                  border:'1px solid var(--purple-10)', borderRadius:'var(--radius-md)'}}>
-                  <p style={{margin:0, fontSize:'var(--text-base)', fontWeight:600, color:'var(--ink-primary)'}}>Crea tu acceso</p>
-                  <p style={{margin:'var(--space-4) 0 var(--space-12)', fontSize:'var(--text-sm)', color:'var(--ink-secondary)', lineHeight:1.45}}>
-                    Con tu correo y una contraseña podrás cambiar tu ficha desde cualquier móvil.
-                  </p>
-                  <button onClick={() => navigate('/entrar?modo=crear')} style={{width:'100%', minHeight:44, border:'none',
-                    borderRadius:'var(--radius-full)', background:'var(--purple)', color:'white', cursor:'pointer',
-                    fontFamily:'inherit', fontSize:'var(--text-sm)', fontWeight:700}}>Crear mi acceso</button>
-                  <button onClick={() => navigate('/entrar')} style={{display:'block', margin:'var(--space-8) auto 0',
-                    background:'none', border:'none', padding:'var(--space-6)', cursor:'pointer', fontFamily:'inherit',
-                    fontSize:'var(--text-sm)', fontWeight:600, color:'var(--purple-ink)'}}>¿Ya tienes acceso? Entra</button>
-                </div>
-              )
-            })()}
-            {/* Solo si hay cifras. Fuera de la demo proSignals devuelve null:
-                eran numeros inventados y no se enseñan a nadie real. */}
-            {proSig && (
-            <div style={{marginTop:'var(--space-12)', display:'flex', justifyContent:'center'}}>
+          {/* Solo con cifras: fuera de la demo proSignals devuelve null, y
+              numeros inventados no se enseñan a nadie real. */}
+          {user.isHelper && proSig && (
+            <div className={styles.heroStats}>
               <StatBar stats={[
                 { value: proSig.vistasHoy, label: 'vistas hoy' },
                 { value: proSig.busquedasSemana, label: 'búsquedas en tu zona' },
                 { value: '—', label: 'conexiones ✓' },
               ]} />
             </div>
-            )}
-            {!proQuote ? (
-              <div style={{marginTop:'var(--space-12)', background:'var(--purple-10)',
-                border:'1px solid var(--purple-20)', borderRadius:'var(--radius-md)', padding:'var(--space-14)'}}>
-                <div style={{fontSize:'var(--text-sm)', fontWeight:700, color:'var(--ink)', marginBottom:'var(--space-4)'}}>
-                  Tu primer paso
-                </div>
-                <p style={{fontSize:'var(--text-xs)', color:'var(--ink-secondary)', margin:'0 0 var(--space-10)', lineHeight:1.5}}>
-                  Añade tu cita personal — es lo primero que leen, con tu voz.
-                  Los perfiles con cita generan mucha más confianza.
-                </p>
-                <textarea value={quoteDraft} onChange={e => setQuoteDraft(e.target.value)}
-                  placeholder="Ej: Cuido a cada persona como cuidaría a mi propia familia."
-                  aria-label="Tu cita personal"
-                  style={{width:'100%', minHeight:'64px', border:'1px solid var(--ink-border)',
-                    borderRadius:'var(--radius-sm)', padding:'var(--space-10)', fontSize:'var(--text-sm)',
-                    fontFamily:'var(--font-voice)', resize:'none', background:'white'}} />
-                <button onClick={saveQuote} disabled={!quoteDraft.trim()}
-                  style={{marginTop:'var(--space-8)', background: quoteDraft.trim() ? 'var(--purple)' : 'rgba(33,29,51,0.15)',
-                    /* Desactivado era blanco sobre gris claro (1,2): una pildora
-                       vacia. Un boton desactivado puede verse apagado, pero tiene
-                       que decir que es. */
-                    color: quoteDraft.trim() ? 'white' : 'var(--ink-tertiary)', border:'none', borderRadius:'var(--radius-full)', padding:'var(--space-8) var(--space-16)',
-                    fontSize:'var(--text-xs)', fontWeight:700}}>
-                  Guardar mi cita
-                </button>
-              </div>
-            ) : (
-              <div style={{marginTop:'var(--space-12)', fontSize:'var(--text-xs)', color:'var(--ink-tertiary)',
-                display:'flex', alignItems:'center', flexWrap:'wrap', gap:'var(--space-6)'}}>
-                <Badge variant="success" size="xs">✓ Cita añadida</Badge>
-                <span>Tu primera conexión verificada aparecerá aquí cuando ocurra.</span>
-              </div>
-            )}
-          </div>
+          )}
+        </header>
+
+        {/* ── TU TRABAJO (profesional) ─────────────────────────────── */}
+        {user.isHelper && (
+          <section className={styles.seccion} style={entrada(80)}>
+            <h2 className={styles.titulo}>Tu trabajo</h2>
+            <div className={styles.tarjeta}>
+              <p className={styles.frase}
+                dangerouslySetInnerHTML={{__html: sem.frase.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')}} />
+              {/* Sin ceros: solo lo que existe y es verdad. */}
+              {sem.piezas > 0 && (
+                <p className={styles.cifra}><strong>{sem.piezas}</strong> {sem.piezas === 1 ? 'publicación' : 'publicaciones'}</p>
+              )}
+              <Button variant="primary" full onClick={() => setComposerOpen(true)} style={{marginTop:'var(--space-16)'}}>
+                <PenLine size={16} aria-hidden="true" /> Publicar un caso
+              </Button>
+            </div>
+          </section>
         )}
 
-        {/* ── TU MUNDO: la cita próxima ── */}
-        {(() => {
-          const cp = (citas || []).slice().reverse().find(ci => {
-            const c = (contactedHelpers || []).find(x => (x.id || x) === ci.helperId)
-            return c && c.confirmed === undefined
-          })
-          if (!cp) return null
-          const hf = cp.helperName?.split(' ')?.[0] || cp.helperName
-          return (
-            <div style={{padding:'var(--space-14) var(--space-16)', background:'white',
-              border:'1px solid var(--ink-border)', borderRadius:'var(--radius-md)',
-              boxShadow:'var(--shadow-sm)', display:'flex', alignItems:'center', gap:'var(--space-10)'}}>
-              <span style={{fontSize:'var(--text-md)'}}>📅</span>
-              <div style={{fontSize:'var(--text-sm)', color:'var(--ink)', lineHeight:1.45}}>
-                El {cp.label}, <strong>{hf}</strong>{cp.personaLabel ? <> está con {cp.personaLabel}</> : <> — vuestra primera cita</>}. Todo listo 💜
+        {/* ── TU FICHA (profesional) ───────────────────────────────── */}
+        {user.isHelper && (
+          <section id="asi-te-ven" className={styles.seccion} style={{...entrada(140), scrollMarginTop:'80px'}}>
+            <h2 className={styles.titulo}>Tu ficha</h2>
+            <div className={styles.pila}>
+
+              {faltaEnFicha && (campoAbierto === faltaEnFicha.campo ? (
+                <div className={styles.tarjeta}>
+                  <label htmlFor="campo-perfil" className={styles.tarjetaTitulo}>Añade {faltaEnFicha.nombre}</label>
+                  <input id="campo-perfil" className={styles.campo} autoFocus value={campoDraft} placeholder={faltaEnFicha.ejemplo}
+                    onChange={e => setCampoDraft(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter') guardarCampo(); if (e.key === 'Escape') setCampoAbierto(null) }} />
+                  <div className={styles.acciones}>
+                    <Button variant="secondary" onClick={() => setCampoAbierto(null)} style={{flex:1}}>Cancelar</Button>
+                    <Button variant="primary" disabled={!campoDraft.trim()} onClick={guardarCampo} style={{flex:2, ...(campoDraft.trim() ? {} : apagado)}}>Guardar</Button>
+                  </div>
+                </div>
+              ) : (
+                <div className={styles.lista}>
+                  <Fila icono={Plus} titulo={`Añade ${faltaEnFicha.nombre}`}
+                    detalle={faltaEnFicha.porQue.charAt(0).toUpperCase() + faltaEnFicha.porQue.slice(1) + '.'}
+                    envolver onClick={() => { setCampoAbierto(faltaEnFicha.campo); setCampoDraft('') }} />
+                </div>
+              ))}
+
+              {/* La foto, solo con la ficha vinculada (etapa 7): sin saber
+                  quien es, cualquiera podria cambiar la foto de cualquiera. */}
+              {user.helperId != null && tieneCuenta && (
+                <FotoPerfil actual={user.avatar} helperId={user.helperId} onCambio={url => updateUser({ avatar: url })} />
+              )}
+
+              <div>
+                <SectionLabel tone="brand" style={{margin:'var(--space-4) 0 var(--space-10)'}}>
+                  Así te ven · vista previa
+                </SectionLabel>
+                {obraPropia.length > 0 && (
+                  <div className={styles.pila} style={{marginBottom:'var(--space-12)'}}>
+                    {obraPropia.map(o => <PostCard key={o.id} post={obraAPost(o)} />)}
+                  </div>
+                )}
+                {/* `inert`, no solo pointer-events: con teclado o VoiceOver
+                    el "Escribir" abria /chat/me, un chat consigo misma. Una
+                    vista previa se mira, no se usa. */}
+                <div inert style={{pointerEvents:'none'}}>
+                  <HelperCard helper={proPreview} showPrice />
+                </div>
               </div>
+
+              <Button variant="secondary" full onClick={() => setEditarAbierto(true)}
+                style={{color:'var(--purple-ink)', boxShadow:'var(--alzado-reposo)', minHeight:48}}>
+                <Edit2 size={15} aria-hidden="true" /> Editar mi ficha
+              </Button>
+
+              {/* La cita: es lo primero que leen, con su voz. */}
+              {!proQuote ? (
+                <div className={styles.tarjeta}>
+                  <label htmlFor="cita-personal" className={styles.tarjetaTitulo}>Tu cita personal</label>
+                  <p className={styles.tarjetaTexto}>
+                    Es lo primero que leen, con tu voz. Las fichas con cita generan mucha más confianza.
+                  </p>
+                  <textarea id="cita-personal" className={styles.campo} value={quoteDraft}
+                    onChange={e => setQuoteDraft(e.target.value)} rows={3}
+                    placeholder="Ej: Cuido a cada persona como cuidaría a mi propia familia."
+                    style={{marginTop:'var(--space-12)', fontFamily:'var(--font-voice)', resize:'none'}} />
+                  <Button variant="primary" full disabled={!quoteDraft.trim()} onClick={saveQuote}
+                    style={{marginTop:'var(--space-12)', ...(quoteDraft.trim() ? {} : apagado)}}>
+                    Guardar mi cita
+                  </Button>
+                </div>
+              ) : (
+                <p className={styles.nota}>
+                  <Badge variant="success" size="xs">✓ Cita añadida</Badge>
+                  Tu primera conexión verificada aparecerá aquí cuando ocurra.
+                </p>
+              )}
             </div>
-          )
-        })()}
+          </section>
+        )}
 
+        {/* ── TU ACCESO (etapa 6 de estudio-perfil.md) ─────────────────
+            Correo y contraseña. La sesion se lee de `nura_sesion` sin
+            importar la libreria de Supabase: el perfil no arrastra 211 kB
+            que solo necesitan Entrar y Restablecer. */}
+        {user.isHelper && (
+          <section className={styles.seccion} style={entrada(200)}>
+            <h2 className={styles.titulo}>Tu acceso</h2>
+            {correoAcceso ? (
+              <div className={styles.lista}>
+                <div className={styles.fila} style={{cursor:'default'}}>
+                  <span className={styles.filaIcono} aria-hidden="true"><Mail size={17} /></span>
+                  <span className={styles.filaTexto}>
+                    <span className={styles.filaTitulo} style={{overflow:'hidden', textOverflow:'ellipsis'}}>{correoAcceso}</span>
+                    <span role="status" className={styles.filaDetalle} style={{whiteSpace:'normal',
+                      color: user.helperId != null ? 'var(--green-ink, #067647)' : undefined}}>
+                      {user.helperId != null ? 'Tu ficha está vinculada: lo que cambies se publica.'
+                        : vinculo === 'sin-confirmar' ? 'Confirma tu correo con el enlace que te enviamos para vincular tu ficha.'
+                        : vinculo === 'sin-ficha' ? 'No encontramos una ficha dada de alta con este correo.'
+                        : vinculo === 'varias' ? 'Hay varias fichas con este correo: escríbenos y lo resolvemos.'
+                        : vinculo ? 'No hemos podido vincular tu ficha ahora. Lo intentaremos al volver.'
+                        : 'Buscando tu ficha…'}
+                    </span>
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div className={styles.tarjeta}>
+                <p className={styles.tarjetaTitulo}>Crea tu acceso</p>
+                <p className={styles.tarjetaTexto}>
+                  Con tu correo y una contraseña podrás cambiar tu ficha desde cualquier móvil.
+                </p>
+                <Button variant="primary" full onClick={() => navigate('/entrar?modo=crear')} style={{marginTop:'var(--space-16)'}}>
+                  Crear mi acceso
+                </Button>
+                <Button variant="ghost" full onClick={() => navigate('/entrar')} style={{marginTop:'var(--space-4)'}}>
+                  ¿Ya tienes acceso? Entra
+                </Button>
+              </div>
+            )}
+          </section>
+        )}
 
-        {/* ── EL ESPEJO: LAS PERSONAS DE TU VIDA ────────── */}
+        {/* ── TU PROXIMA CITA ───────────────────────────────────────── */}
+        {citaProxima && (
+          <section className={styles.seccion} style={entrada(60)}>
+            <h2 className={styles.titulo}>Tu próxima cita</h2>
+            <div className={styles.tarjeta} style={{display:'flex', alignItems:'center', gap:'var(--space-12)'}}>
+              <span className={styles.filaIcono} aria-hidden="true"><CalendarDays size={17} /></span>
+              <p className={styles.tarjetaTexto} style={{color:'var(--ink)'}}>
+                El {citaProxima.label}, <strong>{nombre(citaProxima.helperName)}</strong>
+                {citaProxima.personaLabel ? <> está con {citaProxima.personaLabel}</> : <> — vuestra primera cita</>}. Todo listo.
+              </p>
+            </div>
+          </section>
+        )}
+
+        {/* ── LAS PERSONAS DE TU VIDA ─────────────────────────────── */}
         {(personas || []).length > 0 && (
-          <div style={{animation:'fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 60ms both'}}>
-            <SectionLabel tone="brand" style={{marginBottom:'var(--space-10)'}}>Las personas de tu vida</SectionLabel>
-            <div style={{display:'flex', flexDirection:'column', gap:'var(--space-8)'}}>
+          <section className={styles.seccion} style={entrada(60)}>
+            <h2 className={styles.titulo}>Las personas de tu vida</h2>
+            <div className={styles.lista}>
               {personas.map(p => {
-                const helperNames = (p.contactedHelperIds || [])
-                  .map(id => helpersCache?.[id]?.name?.split(' ')?.[0] || helpersCache?.[String(id)]?.name?.split(' ')?.[0])
+                const ayudan = (p.contactedHelperIds || [])
+                  .map(id => nombre(helpersCache?.[id]?.name || helpersCache?.[String(id)]?.name))
                   .filter(Boolean)
                 return (
-                  <div key={p.id} style={{
-                    background:'white', borderRadius:'var(--radius-md)',
-                    border:'1px solid var(--ink-border)', padding:'var(--space-12) var(--space-14)',
-                    display:'flex', alignItems:'flex-start', gap:'var(--space-10)'
-                  }}>
-                    <div style={{flex:1, minWidth:0}}>
-                      <div style={{
-                        fontSize:'var(--text-sm)', fontWeight:700, color:'var(--ink)',
-                        letterSpacing:'-0.1px', marginBottom:'var(--space-4)', textTransform:'capitalize'
-                      }}>{p.label.replace('tu ', '')}</div>
+                  <div key={p.id} className={styles.fila} style={{cursor:'default', alignItems:'flex-start'}}>
+                    <span className={styles.filaTexto}>
+                      <span className={styles.filaTitulo} style={{textTransform:'capitalize'}}>{p.label.replace('tu ', '')}</span>
                       {(p.atributos || []).length > 0 && (
-                        <div style={{display:'flex', gap:'var(--space-4)', flexWrap:'wrap', marginBottom: helperNames.length ? '6px' : 0}}>
+                        <span style={{display:'flex', gap:'var(--space-4)', flexWrap:'wrap', marginTop:'var(--space-6)'}}>
                           {p.atributos.map(a => <Badge key={a} variant="neutral">{a}</Badge>)}
-                        </div>
+                        </span>
                       )}
-                      {helperNames.length > 0 && (
-                        <div style={{fontSize:'var(--text-xs)', color:'var(--green)', fontWeight:500}}>
-                          ✓ {helperNames.join(', ')} {helperNames.length === 1 ? 'ayuda' : 'ayudan'} con esto
-                        </div>
+                      {ayudan.length > 0 && (
+                        <span className={styles.filaDetalle} style={{color:'var(--green)', marginTop:'var(--space-6)'}}>
+                          ✓ {ayudan.join(', ')} {ayudan.length === 1 ? 'ayuda' : 'ayudan'} con esto
+                        </span>
                       )}
-                    </div>
-                    <button onClick={() => removePersona(p.id)} style={{
-                      background:'none', border:'none', padding:'var(--space-2)',
-                      color:'var(--ink-disabled)', flexShrink:0, cursor:'pointer'
-                    }} aria-label={`Olvidar a ${p.label}`}>
-                      <X size={13} />
+                    </span>
+                    <button className={styles.quitar} onClick={() => removePersona(p.id)} aria-label={`Olvidar a ${p.label}`}>
+                      <X size={16} />
                     </button>
                   </div>
                 )
               })}
             </div>
-            <p style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', marginTop:'var(--space-8)', lineHeight:1.4}}>
+            <p className={styles.pie}>
               Nüra recuerda esto para ayudarte mejor. Puedes borrar cualquier persona cuando quieras.
             </p>
-          </div>
+          </section>
         )}
 
-
-        {/* ── ZONA 2: LO QUE HAS BUSCADO ─────────────────────────────
-            Este bloque no comprobaba el rol: una profesional veia "Tu
-            actividad · Aún no has buscado a nadie · Cuéntame qué necesitas
-            y te busco a la persona" en SU propio perfil. Marta no busca
-            ayuda, la ofrece — y la app le hablaba como si fuera al reves.
-            Un profesional puede buscar tambien, claro, pero entonces tendra
-            actividad: lo que no tiene sentido es ofrecerle el hueco vacio
-            del usuario cuando lo suyo es otra cosa. */}
-        <div className={styles.activityZone} style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 80ms forwards`}}>
-          <p className={styles.zoneLabel}>{user.isHelper ? 'Tus cosas' : 'Lo tuyo'}</p>
-
-          {/* Sin actividad NO se muestran ceros: un cero grande no informa,
-              solo rellena. Se dice que hacer, que es lo que falta cuando
-              alguien acaba de entrar y no sabe por donde empezar. */}
-          {/* El hueco vacio del usuario, SOLO para el usuario. Una
-              profesional veia "Aún no has buscado a nadie · Cuéntame qué
-              necesitas y te busco a la persona" en su propio perfil: la app
-              le hablaba como si ella buscara ayuda, cuando la ofrece. */}
-          {/* Sin actividad: al usuario se le invita a buscar; al
-              profesional NO se le enseñan ceros. Al ocultarle el hueco del
-              usuario (paso 3) caia en la otra rama y veia "0 búsquedas
-              realizadas · 0 profesionales contactados". Un cero no informa. */}
-          {searchCount === 0 && chatCount === 0 && user.isHelper ? null
-          : searchCount === 0 && chatCount === 0 ? (
-            <div style={{
-              background: 'var(--surface-subtle)', borderRadius: 'var(--radius-md)',
-              padding: 'var(--space-20) var(--space-16)', textAlign: 'center',
-            }}>
-              <p style={{
-                fontFamily: 'var(--font-voice)', fontSize: 'var(--text-base)',
-                color: 'var(--ink)', lineHeight: 1.55, letterSpacing: '-0.2px',
-                margin: '0 0 var(--space-6)',
-              }}>
-                Aún no has buscado a nadie.
-              </p>
-              <p style={{
-                fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)',
-                lineHeight: 1.5, margin: '0 0 var(--space-16)',
-              }}>
-                Cuéntame qué necesitas y te busco a la persona. Aquí irá quedando
-                lo que hagas.
-              </p>
-              <Button variant="primary" onClick={() => navigate('/')}>
-                Buscar a alguien
-              </Button>
-            </div>
-          ) : (() => {
-            // ── LO QUE TIENES A MEDIAS (etapa 4 de estudio-perfil.md) ──
-            // Enseñaba contadores: "2 búsquedas realizadas · 1 profesional
-            // contactado". Un numero no dice que hacer. Nadie abre su perfil
-            // para ver cuantas veces busco: lo abre para encontrar la cita
-            // del jueves o la conversacion con la logopeda. Aqui van, con
-            // nombre propio, y cada una lleva a donde se continua.
-            const nombre = n => (n || '').split(' ')[0]
-            const citas = (services || [])
-              .filter(sv => sv && sv.status !== 'completed')
-              .slice(0, 2)
-              .map(sv => ({ k: 'c' + sv.id, to: `/chat/${sv.helperId}`,
-                titulo: `Cita con ${nombre(sv.helperName)}`,
-                detalle: [sv.date, sv.time].filter(Boolean).join(' · '),
-                estado: sv.status === 'confirmed' ? 'Confirmada' : 'Pendiente de confirmar' }))
-            const conCita = new Set((services || []).filter(sv => sv && sv.status !== 'completed').map(sv => String(sv.helperId)))
-            const charlas = [...(chats || [])]
-              .filter(c => c && !conCita.has(String(c.helperId)))
-              .sort((a, b) => (b.unread || 0) - (a.unread || 0) || String(b.lastTime || '').localeCompare(String(a.lastTime || '')))
-              .slice(0, 3 - citas.length)
-              .map(c => ({ k: 'h' + c.helperId, to: `/chat/${c.helperId}`,
-                titulo: nombre(c.helperName) || 'Conversación',
-                detalle: c.lastMsg ? `«${String(c.lastMsg).slice(0, 60)}${String(c.lastMsg).length > 60 ? '…' : ''}»` : '',
-                sinLeer: c.unread || 0 }))
-            const items = [...citas, ...charlas]
-            if (!items.length) return null
-            return (
-              <div style={{background:'rgba(255,255,255,0.96)', borderRadius:'var(--radius-md)',
-                boxShadow:'var(--alzado-reposo)', border:'1px solid rgba(255,255,255,0.6)', overflow:'hidden',
-                marginBottom:'var(--space-10)'}}>
-                {items.map((it, i) => (
-                  <button key={it.k} onClick={() => navigate(it.to)}
-                    style={{display:'flex', alignItems:'center', gap:'var(--space-12)', width:'100%', minHeight:60,
-                      padding:'var(--space-12) var(--space-16)', background:'none', border:'none', cursor:'pointer',
-                      borderTop: i ? '1px solid var(--ink-border)' : 'none', textAlign:'left', fontFamily:'inherit'}}>
-                    <span style={{flex:1, minWidth:0}}>
-                      <span style={{display:'block', fontSize:'var(--text-base)', fontWeight:600, color:'var(--ink-primary)'}}>
-                        {it.titulo}
-                      </span>
-                      {(it.detalle || it.estado) && (
-                        <span style={{display:'block', marginTop:'var(--space-2)', fontSize:'var(--text-sm)',
-                          color:'var(--ink-tertiary)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap'}}>
-                          {[it.detalle, it.estado].filter(Boolean).join(' · ')}
-                        </span>
-                      )}
-                    </span>
-                    {it.sinLeer > 0 && (
-                      <span aria-label={`${it.sinLeer} sin leer`} style={{minWidth:22, height:22, padding:'0 6px',
-                        borderRadius:'var(--radius-full)', background:'var(--purple)', color:'white',
-                        fontSize:'var(--text-xs)', fontWeight:700, display:'flex', alignItems:'center', justifyContent:'center'}}>
-                        {it.sinLeer}
-                      </span>
-                    )}
-                    <ChevronRight size={18} color="var(--ink-tertiary)" style={{flexShrink:0}} />
-                  </button>
-                ))}
-              </div>
-            )
-          })()}
-
-          <button className={styles.favRow} onClick={() => navigate('/my-services')}>
-            <ClipboardList size={15} color="var(--purple)" strokeWidth={1.8} />
-            <span className={styles.favText}>Mis servicios e historial</span>
-          </button>
-
-          {favCount > 0 ? (
-            <button className={styles.favRow} onClick={() => navigate('/siguiendo')}>
-              <UserCheck size={15} color="var(--purple)" strokeWidth={1.8} />
-              <span className={styles.favText}>
-                {favCount === 1 ? '1 profesional al que sigues' : `${favCount} profesionales que sigues`}
-              </span>
-            </button>
-          ) : (
-            <div className={styles.favEmpty}>
-              <UserPlus size={14} strokeWidth={1.5} color="var(--ink-disabled)" />
-              <span className={styles.favEmptyText}>
-                Guarda profesionales que te interesen para encontrarlos rápido
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* ── PUBLICAR: el gesto que vivia en Comunidad ──────────────
-            Comunidad se retira de la barra (ver docs/revision-profunda.md):
-            era un muro de 91 acciones y 8,4 pantallas que no ayudaba a nadie
-            a encontrar ayuda, y las publicaciones ya vivian en la ficha de
-            cada profesional, que es donde sirven —cuando estas decidiendo si
-            le escribes—.
-            Lo unico que Comunidad aportaba y la ficha no era el gesto de
-            PUBLICAR. Vive aqui ahora: en el perfil de quien publica. */}
-        {/* AQUI HABIA UN SEGUNDO BOTON DE PUBLICAR, añadido al fundir
-            Comunidad. Duplicaba el que ya existia arriba, en "Así te ven
-            quienes te necesitan" — que esta mejor situado, junto a la vista
-            previa de su ficha.
-            Dos botones para lo mismo no es mas facil de encontrar: es una
-            pantalla que no sabe cual es el gesto.
-            Y su ventana tambien sobraba: habia DOS <ObraComposer> montados
-            —este y el del final del fichero— y un solo toque en "Publicar"
-            abria dos ventanas superpuestas. Medido en navegador. Se queda
-            solo la del final, que esta en la raiz como debe estar un modal. */}
-
-        {/* ── ZONA 3: EVOLUCIÓN ─────────────────────────── */}
-
-        {!user.isHelper && (
-          <div className={styles.evolutionZone} style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 240ms forwards`}}>
-            <p className={styles.evolutionQ}>¿Tienes algo que ofrecer?</p>
-            <p className={styles.evolutionSub}>
-              Muchas personas de Nüra también ayudan a otros. Crea tu perfil profesional y empieza a recibir solicitudes.
-            </p>
-            <button className={styles.evolutionBtn} onClick={() => navigate('/register-helper')}>
-              <User size={15} strokeWidth={1.8} />
-              Crear perfil profesional
-            </button>
-          </div>
-        )}
-
-        {/* ── LO QUE VIENE (solo profesionales) ───────────────────────
-            Prometia "tu reputacion profesional verificada" tambien al
-            USUARIO, que no es profesional ni va a tener curriculum en Nüra.
-            Al profesional si le importa: es la vision del producto y es
-            suyo. Y el degradado era de un color al mismo color — no hacia
-            nada. */}
-        {user.isHelper && (
-        <div style={{
-          margin:'0 var(--space-16) var(--space-16)', padding:'var(--space-16)',
-          background:'var(--purple-05)',
-          borderRadius:'var(--radius-md)', border:'1px solid var(--purple-10)'
-        }}>
-          <div style={{display:'flex',alignItems:'center',gap:'var(--space-8)',marginBottom:'var(--space-8)'}}>
-            <span style={{fontSize:'var(--text-xs)',fontWeight:700,color:'var(--purple-ink)',letterSpacing:'0.8px',textTransform:'uppercase'}}>Próximamente</span>
-          </div>
-          <p style={{fontSize:'var(--text-sm)',fontWeight:700,color:'var(--ink)',letterSpacing:'-0.2px',marginBottom:'var(--space-4)'}}>
-            Tu reputación profesional verificada
-          </p>
-          <p style={{fontSize:'var(--text-xs)',color:'var(--ink-tertiary)',lineHeight:1.5}}>
-            Nüra construirá tu currículum vivo basado en las ayudas reales que ofrezcas — verificadas y reconocidas por las personas que ayudaste.
-          </p>
-        </div>
-        )}
-
-        {/* ── ZONA 4: CONFIGURACIÓN, AL FINAL Y DISCRETA ──────────────
-            Habia DOS sellos de version que se contradecian —"Nüra 2 ·
-            2026.07.08" arriba y "Nüra · v1.0" abajo— con "Cerrar sesión"
-            encajado entre los dos. Ahora: cerrar sesion, y debajo un solo
-            sello, lo ultimo de la pantalla. */}
-        {/* ── AJUSTES (etapa 3 de estudio-perfil.md) ──────────────────
-            No habia ninguno. Lo legal primero: privacidad y terminos (un
-            borrador marcado como provisional) y BORRAR LOS DATOS, que el
-            RGPD exige. Aqui se borra todo lo que Nüra guarda en ESTE movil;
-            la ficha publica de un profesional necesita identidad (etapa 6),
-            y mientras tanto se retira escribiendonos. */}
-        <div style={{margin:'0 var(--space-16) var(--space-16)'}}>
-          <SectionTitle>Ajustes</SectionTitle>
-          <div style={{background:'rgba(255,255,255,0.96)', borderRadius:'var(--radius-md)',
-            boxShadow:'var(--alzado-reposo)', border:'1px solid rgba(255,255,255,0.6)', overflow:'hidden'}}>
-            {[
-              ['Privacidad', () => navigate('/legal/privacidad')],
-              ['Términos de uso', () => navigate('/legal/terminos')],
-              ...(CONTACTO_EMAIL ? [['Ayuda y contacto', () => { window.location.href = 'mailto:' + CONTACTO_EMAIL }]] : []),
-            ].map(([t, fn], i) => (
-              <button key={t} onClick={fn} style={{display:'flex', alignItems:'center', width:'100%', minHeight:52,
-                padding:'0 var(--space-16)', background:'none', border:'none', cursor:'pointer', fontFamily:'inherit',
-                borderTop: i ? '1px solid var(--ink-border)' : 'none', textAlign:'left'}}>
-                <span style={{flex:1, fontSize:'var(--text-base)', color:'var(--ink-primary)'}}>{t}</span>
-                <ChevronRight size={18} color="var(--ink-tertiary)" />
-              </button>
-            ))}
-            <button onClick={() => setBorrarAbierto(v => !v)} aria-expanded={borrarAbierto}
-              style={{display:'flex', alignItems:'center', width:'100%', minHeight:52, padding:'0 var(--space-16)',
-                background:'none', border:'none', borderTop:'1px solid var(--ink-border)', cursor:'pointer',
-                fontFamily:'inherit', textAlign:'left'}}>
-              <span style={{flex:1, fontSize:'var(--text-base)', color:'var(--red-ink)'}}>{tieneCuenta ? 'Borrar mi cuenta' : 'Borrar mis datos de este móvil'}</span>
-            </button>
-            {borrarAbierto && (
-              <div style={{padding:'0 var(--space-16) var(--space-16)'}}>
-                <p style={{margin:'0 0 var(--space-12)', fontSize:'var(--text-sm)', color:'var(--ink-secondary)', lineHeight:1.5}}>
-                  {tieneCuenta
-                    ? `Se borra tu acceso${user.helperId != null ? ', tu ficha pública y los mensajes que te han llegado' : ''}, y todo lo que Nüra guarda en este teléfono. No se puede deshacer.`
-                    : 'Se borra al momento todo lo que Nüra guarda en este teléfono: tus búsquedas, tus conversaciones y a quién sigues. No se puede deshacer.'}
-                  {!tieneCuenta && user.isHelper && ' Tu ficha pública no se borra desde aquí: para eso, crea tu acceso y bórralo desde él.'}
+        {/* ── LO TUYO ──────────────────────────────────────────────────
+            El hueco vacio del usuario ("Aún no has buscado a nadie") solo al
+            usuario: una profesional no busca ayuda, la ofrece. */}
+        <section className={styles.seccion} style={entrada(user.isHelper ? 240 : 80)}>
+          <h2 className={styles.titulo}>{user.isHelper ? 'Tus cosas' : 'Lo tuyo'}</h2>
+          <div className={styles.pila}>
+            {!user.isHelper && searchCount === 0 && chatCount === 0 && (
+              <div className={`${styles.tarjeta} ${styles.tarjetaCentrada}`}>
+                <p className={styles.tarjetaTitulo} style={{fontFamily:'var(--font-voice)'}}>Aún no has buscado a nadie</p>
+                <p className={styles.tarjetaTexto}>
+                  Cuéntame qué necesitas y te busco a la persona. Aquí irá quedando lo que hagas.
                 </p>
-                {borrarError && <p role="alert" style={{margin:'0 0 var(--space-10)', fontSize:'var(--text-sm)', color:'var(--red-ink)', lineHeight:1.45}}>{borrarError}</p>}
-                <div style={{display:'flex', gap:'var(--space-8)'}}>
-                  <button onClick={() => setBorrarAbierto(false)} style={{flex:1, minHeight:44, background:'none',
-                    border:'1px solid var(--ink-border)', borderRadius:'var(--radius-full)', cursor:'pointer',
-                    fontFamily:'inherit', fontSize:'var(--text-sm)', fontWeight:600, color:'var(--ink-secondary)'}}>Cancelar</button>
-                  <button disabled={borrando} onClick={async () => {
-                      // CON CUENTA (etapa 6c): primero el servidor — avisos, ficha
-                      // publica y cuenta. Si falla, NO se borra nada del movil:
-                      // la persona tiene que poder volver a intentarlo con su
-                      // sesion. Sin cuenta, solo el movil.
-                      if (tieneCuenta) {
-                        setBorrando(true); setBorrarError('')
-                        try {
-                          const { sesionActual } = await import('../utils/cuenta')
-                          const ses = await sesionActual()
-                          const r = ses ? await borrarCuenta(ses.access_token) : { ok: false }
-                          if (!r?.ok) throw new Error('rechazado')
-                        } catch {
-                          setBorrando(false)
-                          setBorrarError('No se ha podido borrar tu cuenta ahora. No hemos tocado nada: vuelve a probar en un momento.')
-                          return
-                        }
-                      }
-                      // Todo lo que empieza por nura_ es de Nüra (32 claves hoy, y
-                      // la sesion) y nada mas lo es: borra completo sin tocar nada
-                      // ajeno. Luego se recarga para que nada sobreviva en memoria.
-                      for (const st of [localStorage, sessionStorage]) {
-                        try { Object.keys(st).filter(k => k.startsWith('nura_')).forEach(k => st.removeItem(k)) } catch { /* sin almacenamiento */ }
-                      }
-                      window.location.replace('/')
-                    }}
-                    style={{flex:1, minHeight:44, border:'none', borderRadius:'var(--radius-full)', cursor: borrando ? 'default' : 'pointer',
-                      fontFamily:'inherit', fontSize:'var(--text-sm)', fontWeight:700,
-                      /* --red-ink, no --red: blanco sobre el rojo claro daba 3,76 */
-                      background:'var(--red-ink)', color:'white'}}>
-                    {borrando ? 'Borrando…' : 'Borrar todo'}
-                  </button>
-                </div>
+                <Button variant="primary" onClick={() => navigate('/')} style={{marginTop:'var(--space-16)'}}>
+                  <Search size={15} aria-hidden="true" /> Buscar a alguien
+                </Button>
               </div>
             )}
-          </div>
-        </div>
 
-        <button className={styles.logoutBtn} onClick={() => {
-            if (!confirmarSalida) { setConfirmarSalida(true); setTimeout(() => setConfirmarSalida(false), 4000); return }
-            // El acceso (correo y contraseña) tambien se cierra: si no, el
-            // siguiente que use este movil entraria con la cuenta de otra.
-            try { localStorage.removeItem('nura_sesion') } catch { /* sin almacenamiento */ }
-            logout(); navigate('/')
-          }}
-          style={confirmarSalida ? {color:'var(--red-ink)', borderColor:'var(--red-ink)'} : undefined}>
-          <LogOut size={15} />
-          {confirmarSalida ? 'Toca otra vez para cerrar sesión' : 'Cerrar sesión'}
-        </button>
-        <p className={styles.version}>Nüra · {NURA_BUILD}</p>
+            {aMedias.length > 0 && (
+              <div className={styles.lista}>
+                {aMedias.map(it => (
+                  <Fila key={it.k} icono={it.k.startsWith('c') ? CalendarDays : MessageCircle}
+                    titulo={it.titulo} detalle={it.detalle} sinLeer={it.sinLeer} onClick={() => navigate(it.to)} />
+                ))}
+              </div>
+            )}
+
+            <div className={styles.lista}>
+              <Fila icono={ClipboardList} titulo="Mis servicios e historial"
+                detalle="Tus citas y lo que ya has resuelto" onClick={() => navigate('/my-services')} />
+              <Fila icono={favCount > 0 ? UserCheck : UserPlus} titulo="Profesionales que sigues"
+                detalle={favCount > 0
+                  ? (favCount === 1 ? 'Sigues a 1 profesional' : `Sigues a ${favCount} profesionales`)
+                  : 'Guarda a quien te interese'}
+                onClick={() => navigate('/siguiendo')} />
+            </div>
+          </div>
+        </section>
+
+        {/* ── ¿TIENES ALGO QUE OFRECER? (usuario) ─────────────────── */}
+        {!user.isHelper && (
+          <section className={styles.seccion} style={entrada(160)}>
+            <h2 className={styles.titulo}>¿Tienes algo que ofrecer?</h2>
+            <div className={styles.tarjeta}>
+              <p className={styles.tarjetaTexto}>
+                Muchas personas de Nüra también ayudan a otras. Crea tu perfil profesional y empieza a recibir solicitudes.
+              </p>
+              <Button variant="secondary" full onClick={() => navigate('/register-helper')}
+                style={{marginTop:'var(--space-16)', color:'var(--purple-ink)'}}>
+                <User size={15} aria-hidden="true" /> Crear perfil profesional
+              </Button>
+            </div>
+          </section>
+        )}
+
+        {/* ── LO QUE VIENE (profesional) ───────────────────────────────
+            La reputacion verificada es suya, no del usuario. */}
+        {user.isHelper && (
+          <section className={styles.seccion} style={entrada(280)}>
+            <div className={styles.tarjeta}>
+              <SectionLabel tone="brand" style={{marginBottom:'var(--space-8)'}}>Próximamente</SectionLabel>
+              <p className={styles.tarjetaTitulo}>Tu reputación profesional verificada</p>
+              <p className={styles.tarjetaTexto}>
+                Nüra construirá tu currículum vivo con las ayudas reales que ofrezcas, verificadas por las personas que ayudaste.
+              </p>
+            </div>
+          </section>
+        )}
+
+        {/* ── AJUSTES (etapa 3 de estudio-perfil.md) ───────────────────
+            Lo legal primero, y BORRAR LOS DATOS, que el RGPD exige. Al
+            final y discreto; un solo sello de version, lo ultimo. */}
+        <section className={styles.seccion}>
+          <h2 className={styles.titulo}>Ajustes</h2>
+          <div className={styles.pila}>
+            <div className={styles.lista}>
+              <Fila icono={Shield} titulo="Privacidad" onClick={() => navigate('/legal/privacidad')} />
+              <Fila icono={FileText} titulo="Términos de uso" onClick={() => navigate('/legal/terminos')} />
+              {CONTACTO_EMAIL && (
+                <Fila icono={Mail} titulo="Ayuda y contacto" onClick={() => { window.location.href = 'mailto:' + CONTACTO_EMAIL }} />
+              )}
+              <Fila icono={Trash2} peligro titulo={tieneCuenta ? 'Borrar mi cuenta' : 'Borrar mis datos de este móvil'}
+                abierta={borrarAbierto} onClick={() => setBorrarAbierto(v => !v)} />
+              {borrarAbierto && (
+                <div className={styles.borrar}>
+                  <p className={styles.tarjetaTexto}>
+                    {tieneCuenta
+                      ? `Se borra tu acceso${user.helperId != null ? ', tu ficha pública y los mensajes que te han llegado' : ''}, y todo lo que Nüra guarda en este teléfono. No se puede deshacer.`
+                      : 'Se borra al momento todo lo que Nüra guarda en este teléfono: tus búsquedas, tus conversaciones y a quién sigues. No se puede deshacer.'}
+                    {!tieneCuenta && user.isHelper && ' Tu ficha pública no se borra desde aquí: para eso, crea tu acceso y bórralo desde él.'}
+                  </p>
+                  {borrarError && <p role="alert" className={styles.tarjetaTexto} style={{color:'var(--red-ink)', marginTop:'var(--space-10)'}}>{borrarError}</p>}
+                  <div className={styles.acciones}>
+                    <Button variant="secondary" onClick={() => setBorrarAbierto(false)} style={{flex:1}}>Cancelar</Button>
+                    <Button variant="primary" disabled={borrando} style={{flex:1, background:'var(--red-ink)'}} onClick={async () => {
+                        // CON CUENTA (etapa 6c): primero el servidor — avisos,
+                        // ficha publica y cuenta. Si falla, NO se borra nada
+                        // del movil: tiene que poder reintentarlo con su sesion.
+                        if (tieneCuenta) {
+                          setBorrando(true); setBorrarError('')
+                          try {
+                            const { sesionActual } = await import('../utils/cuenta')
+                            const ses = await sesionActual()
+                            const r = ses ? await borrarCuenta(ses.access_token) : { ok: false }
+                            if (!r?.ok) throw new Error('rechazado')
+                          } catch {
+                            setBorrando(false)
+                            setBorrarError('No se ha podido borrar tu cuenta ahora. No hemos tocado nada: vuelve a probar en un momento.')
+                            return
+                          }
+                        }
+                        // Todo lo que empieza por nura_ es de Nüra y nada mas
+                        // lo es. Luego se recarga: nada sobrevive en memoria.
+                        for (const st of [localStorage, sessionStorage]) {
+                          try { Object.keys(st).filter(k => k.startsWith('nura_')).forEach(k => st.removeItem(k)) } catch { /* sin almacenamiento */ }
+                        }
+                        window.location.replace('/')
+                      }}>
+                      {borrando ? 'Borrando…' : 'Borrar todo'}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className={styles.lista}>
+              <button className={styles.salir} onClick={() => {
+                  if (!confirmarSalida) { setConfirmarSalida(true); setTimeout(() => setConfirmarSalida(false), 4000); return }
+                  // El acceso tambien se cierra: si no, el siguiente que use
+                  // este movil entraria con la cuenta de otra persona.
+                  try { localStorage.removeItem('nura_sesion') } catch { /* sin almacenamiento */ }
+                  logout(); navigate('/')
+                }}
+                style={confirmarSalida ? {color:'var(--red-ink)'} : undefined}>
+                <LogOut size={16} aria-hidden="true" />
+                {confirmarSalida ? 'Toca otra vez para cerrar sesión' : 'Cerrar sesión'}
+              </button>
+            </div>
+          </div>
+          <p className={styles.version}>Nüra · {NURA_BUILD}</p>
+        </section>
 
       </div>
     </div>
     {composerOpen && <ObraComposer onClose={() => setComposerOpen(false)} />}
     {editarAbierto && <EditarFicha onClose={() => setEditarAbierto(false)} />}
     </>
+  )
+}
+
+/** Una fila de lista: icono en su circulo, texto y flecha. La misma forma
+ *  para todo lo que lleva a otra pantalla. */
+function Fila({ icono: Icono, titulo, detalle, sinLeer, peligro, abierta, envolver, onClick }) {
+  return (
+    <button className={`${styles.fila} ${peligro ? styles.filaPeligro : ''}`} onClick={onClick}
+      aria-expanded={abierta}>
+      {Icono && <span className={styles.filaIcono} aria-hidden="true"><Icono size={17} strokeWidth={1.9} /></span>}
+      <span className={styles.filaTexto}>
+        <span className={styles.filaTitulo}>{titulo}</span>
+        {detalle && <span className={styles.filaDetalle} style={envolver ? {whiteSpace:'normal'} : undefined}>{detalle}</span>}
+      </span>
+      {sinLeer > 0 && <span className={styles.contador} aria-label={`${sinLeer} sin leer`}>{sinLeer}</span>}
+      {abierta === undefined
+        ? <ChevronRight size={18} className={styles.chevron} aria-hidden="true" />
+        : <ChevronRight size={18} className={styles.chevron} aria-hidden="true"
+            style={{transform: abierta ? 'rotate(90deg)' : 'none', transition:'transform 0.2s'}} />}
+    </button>
   )
 }
