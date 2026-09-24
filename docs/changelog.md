@@ -10,6 +10,24 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-24 — La búsqueda entiende el barrio (y deja de inventar distancias)
+
+- **Las tarjetas enseñaban una distancia inventada** («a 0,8 km») sin saber
+  dónde estaba nadie, y el orden de resultados **restaba puntos por esa
+  distancia falsa**. Ahora no hay distancia salvo que la persona diga dónde
+  está; entonces se mide entre el centro de su barrio y el del profesional
+  y se enseña con su origen: «a 1,7 km de Gràcia».
+- **Entiende el barrio**: «cerca de Gràcia», «vivo en el Poblenou», «en
+  Sarrià-Sant Gervasi»… 42 barrios y municipios cercanos
+  (`src/data/barrios.js`). «gracias» no es Gràcia. El barrio no cambia el
+  oficio entendido y pesa menos que la especialidad: ordena dentro de lo que
+  encaja.
+- **«Más cerca» sin barrio** pregunta «¿En qué barrio estás?». Responder
+  solo con el barrio («en Sants», «¿y en Horta?») repite la búsqueda allí.
+- **Privacidad**: el barrio vale para esa búsqueda; no se guarda.
+- Sin zona conocida, la tarjeta enseña el barrio del profesional (o nada).
+- 14 pruebas nuevas de búsqueda (100/100).
+
 ## 2026-09-24 — El recorrido real, de punta a punta (y lo que se rompía)
 
 Nuevo `npm run recorrido:real`: compila la app sin demo y hace en un

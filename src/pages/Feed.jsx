@@ -48,7 +48,7 @@ export default function Feed() {
     // Prueba social ESPECIFICA Y LOCAL (manifesto): la zona y la distancia
     // ya viven en los datos del profesional; hasta hoy no se usaban.
     lugar: s.helper?.zone
-      ? `${s.helper.zone}${s.helper.distance ? ` · a ${Math.round(s.helper.distance * 1000)} m` : ''}`
+      ? s.helper.zone
       : null,
     // El sello solo si la confirmacion es real
     confirmado: s.mine ? confirmadas.has(s.helper?.id) : !!s.confirmed,

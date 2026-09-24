@@ -6,7 +6,7 @@ import { haptic } from '../utils/haptic'
 import { getFirstName } from '../utils/name'
 import { Badge, LiveDot } from './ui'
 import { recordarDestino, contextoDeChat } from '../utils/contacto'
-import { fmtNota, fmtKm } from '../utils/formato'
+import { fmtNota, dondeEsta } from '../utils/formato'
 
 // ═══════════════════════════════════════════════════════════════
 // La Tarjeta Persona — representación canónica del profesional
@@ -56,8 +56,8 @@ export default function HelperCard({ helper, onContact, showContact = true, show
   )
   if (showPrice && helper.price && helper.price !== 'Consultar')
     metaParts.push(<span key="p" style={{ color: 'var(--ink)', fontWeight: 600 }}>{helper.price}</span>)
-  if (helper.distance)
-    metaParts.push(<span key="d" style={{ color: 'var(--ink-tertiary)' }}>a {fmtKm(helper.distance)}</span>)
+  if (dondeEsta(helper))
+    metaParts.push(<span key="d" style={{ color: 'var(--ink-tertiary)' }}>{dondeEsta(helper)}</span>)
   if (helper.urgent)
     metaParts.push(<span key="u" style={{ color: 'var(--ink-tertiary)' }}>⚡ urgencias</span>)
 

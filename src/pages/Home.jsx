@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { CAT_HUMANA } from '../data/categorias'
 import { Compass, Send, Mic, MicOff, RotateCcw, UserRound } from 'lucide-react'
 import { analyzeNeed, matchHelpers, getPriceContext } from '../utils/matching'
+import { barrioEnTexto } from '../data/barrios'
 import { getFirstName } from '../utils/name'
 import { useUser } from '../context/UserContext'
 import { showToast } from '../components/Toast'
@@ -74,8 +75,9 @@ function buildWhy(helper, analysis) {
   }
 
   // 4. La distancia exacta, no "a unos minutos"
-  if (helper?.distance && helper.distance <= 3) {
-    parts.push(`está a ${fmtKm(helper.distance)} de ti`)
+  // Solo si la persona dijo su barrio: si no, no hay distancia que contar.
+  if (typeof helper?.distance === 'number' && helper.distanciaDesde && helper.distance <= 3) {
+    parts.push(helper.distance < 0.5 ? `trabaja en ${helper.distanciaDesde}` : `está a ${fmtKm(helper.distance)} de ${helper.distanciaDesde}`)
   }
 
   if (helper?.__obra && parts.length < 2) parts.push('ha contado un caso muy parecido al tuyo')
@@ -858,8 +860,16 @@ export default function Home() {
           })
           refineLine = `Ordenados por precio. El más económico es **${refined[0]?.name?.split(' ')?.[0]}** a ${refined[0]?.price}.`
         } else if (t.includes('más cerca') || t.includes('cerca') || t.includes('zona')) {
-          refined = refined.sort((a,b) => (a.distance||9) - (b.distance||9))
-          refineLine = `Ordenados por cercanía. **${refined[0]?.name?.split(' ')?.[0]}** está a ${fmtKm(refined[0]?.distance || 1.2)}.`
+          // Sin su barrio no hay cercania que medir: se pregunta (antes se
+          // decia «está a 1,2 km» con una distancia inventada).
+          if (refined.every(h => typeof h.distance !== 'number')) {
+            setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+              lines: ['¿En qué barrio estás? Dímelo —por ejemplo, «en Gràcia»— y los ordeno por cercanía.'] }])
+            setLoading(false)
+            return
+          }
+          refined = refined.sort((a,b) => (a.distance ?? 99) - (b.distance ?? 99))
+          refineLine = `Ordenados por cercanía. **${refined[0]?.name?.split(' ')?.[0]}** está ${refined[0]?.distance < 0.5 ? `en ${refined[0]?.distanciaDesde}` : `a ${fmtKm(refined[0]?.distance)} de ${refined[0]?.distanciaDesde}`}.`
         } else if (t.includes('mejor valorado') || t.includes('rating') || t.includes('valoración')) {
           refined = refined.sort((a,b) => (b.rating||0) - (a.rating||0))
           refineLine = `Ordenados por valoración. **${refined[0]?.name?.split(' ')?.[0]}** tiene ${fmtNota(refined[0]?.rating)}★.`
@@ -921,10 +931,24 @@ export default function Home() {
       return
     }
 
+    // «¿Y en Sants?» / «en Gràcia»: si solo nombra un barrio, es la MISMA
+    // busqueda en ese sitio (tambien es la respuesta a «¿en que barrio estas?»).
+    let zonaForzada = null
+    {
+      const b = barrioEnTexto(msg)
+      let previa = window.__nuraLastQuery
+      try { previa = previa || sessionStorage.getItem('nura_last_query') } catch { /* sin memoria */ }
+      if (b && previa && msg.trim().split(/\s+/).length <= 5 && (await analyzeNeed(msg))?.categoria === 'otro') {
+        zonaForzada = b
+        msg = previa
+      }
+    }
+
     try {
       // Analyse first so we can use it for contextual loading message
       const analysis = (await analyzeNeed(msg))
         || { categoria: 'otro', palabrasClave: msg.toLowerCase().split(' '), complexSignals: {} }
+      if (zonaForzada) analysis.zona = zonaForzada
       try {
         if (forWhom) analysis.paraQuien = forWhom
         // El Espejo — detectar y recordar a la persona de esta búsqueda
@@ -1438,9 +1462,14 @@ export default function Home() {
                       setLastMatches(sorted); return
                     }
                     if (chip === 'Más cerca' && lastMatches?.length > 0) {
-                      const sorted = [...lastMatches].sort((a,b) => (parseFloat(a.distance)||99) - (parseFloat(b.distance)||99))
+                      if (lastMatches.every(h => typeof h.distance !== 'number')) {
+                        setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+                          lines: ['¿En qué barrio estás? Dímelo —por ejemplo, «en Gràcia»— y los ordeno por cercanía.'] }])
+                        return
+                      }
+                      const sorted = [...lastMatches].sort((a,b) => (a.distance ?? 99) - (b.distance ?? 99))
                       setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-                        lines: [`${sorted[0]?.name?.split(' ')?.[0]} es el más cercano — a ${sorted[0]?.distance ? fmtKm(sorted[0].distance) : 'poca distancia'}.`],
+                        lines: [`${sorted[0]?.name?.split(' ')?.[0]} es quien está más cerca: ${sorted[0]?.distance < 0.5 ? `en ${sorted[0]?.distanciaDesde}` : `a ${fmtKm(sorted[0]?.distance)} de ${sorted[0]?.distanciaDesde}`}.`],
                         results: sorted, refineChips: ['Más barato','Mejor valorado','Online'] }])
                       setLastMatches(sorted); return
                     }
