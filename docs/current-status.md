@@ -4,26 +4,75 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-09-23 (función helpers-write desplegada con 8 operaciones · falta el SQL de cuentas)
-**Último commit:** `ad77e13` — *"El onboarding que nadie ve"*
-**Rama:** `main` · árbol limpio · local y `origin/main` sincronizados
-**Sello de build:** `2026.07.07-f`
+**Última actualización:** 2026-09-24
+**Último commit publicado:** ver `git log origin/main` (este documento no copia hashes: se desfasaban)
+**Sello de build:** `2026.07.09-m`
 
 ---
 
-## Estado actual
+## Estado actual (2026-09-24)
 
-El prompt maestro está **implementado**. Las 20 discrepancias de la
-auditoría están resueltas o descartadas con justificación medida.
+> Todo lo que hay en este apartado está **comprobado contra el código y
+> contra Supabase** el 2026-09-24. Lo que viene después de «Histórico» es
+> memoria de sesiones anteriores: **no** sirve para saber el estado.
 
-El proyecto **no tiene una fase activa**. Los últimos 8 commits fueron
-trabajo autodirigido fuera de la estructura de fases (ver
-"Cambios que requieren revisión").
+### Cómo se publica
 
-**No hay ninguna tarea técnica en curso.** Lo pendiente son decisiones del
-fundador.
+| parte | dónde vive | cómo se publica |
+|---|---|---|
+| La app (pantallas) | Vercel | **Sola**: al llegar a `main` en GitHub |
+| La función `helpers-write` | Supabase · Edge Functions | **A mano**: con el conector de Supabase de Claude, o copiando el código en el panel |
+| La base de datos | Supabase · SQL | **A mano**: migraciones en `supabase/migrations/` |
+
+La función y la base de datos **no** se actualizan solas desde GitHub. El
+2026-09-23 se descubrió que la función publicada llevaba meses sin
+actualizar por eso mismo.
+
+### En producción (comprobado)
+
+- **Función `helpers-write` versión 4** (2026-09-24), 12 operaciones.
+- **Avisos**: la tabla `avisos` **no existía hasta el 2026-09-24**. Hasta
+  ese día, cuando alguien escribía a un profesional, la app decía «le
+  aviso» y **el aviso se perdía**. Creada y probada con un mensaje real
+  del fundador (guardado con sus dos llaves; borrado después).
+- **Seguridad de avisos** (2026-09-24):
+  - `pendientes`, `avisar` y `aviso-enviado` exigen el secreto
+    `NURA_ADMIN_SECRET` (creado en Supabase → Edge Functions → Secrets).
+    Sin él, cerradas para todos.
+  - Cada aviso tiene dos llaves: la del profesional (responder) y la de
+    quien escribió (solo leer su respuesta). `respuestas` ya no devuelve
+    lo que un profesional contestó a otras personas.
+  - Una respuesta no se puede reescribir.
+- **Cuentas de profesionales** (`docs/lanzamiento-cuentas.md`): el SQL de
+  cuentas y el de la foto **están aplicados** (`owner_id`, `avatarUrl`,
+  carpeta `fotos` y sus tres políticas). El contacto no se puede leer con
+  la clave pública.
+- **RLS** encendido en `helpers`, `eventos` y `avisos`.
+- **Perfil propio rediseñado** con el lenguaje de la ficha de un
+  profesional (2026-09-24).
+
+### Pendiente
+
+1. **Documentación histórica desordenada**: los apartados de abajo mezclan
+   decisiones cerradas con otras abiertas. Se conservan como memoria.
+2. `chat_log` no existe como columna: el registro de conversaciones está
+   apagado a propósito (decisión de producto pendiente).
+3. Profesionales **sin móvil ni correo**: su aviso se guarda marcado como
+   «no se le puede avisar». Hay que decidir qué hacer con ellos.
+4. La pantalla de invitado del perfil no se ha rediseñado.
+
+### Cómo se trabaja
+
+Ver `docs/ai-collaboration.md` §6: quién decide, ramas, pruebas y cómo se
+publica cada parte.
 
 ---
+
+# Histórico
+
+> Lo que sigue es el registro de sesiones anteriores, tal cual se escribió.
+> Varias cosas que aquí figuran como pendientes ya están hechas (ver
+> «Estado actual» arriba). No usarlo para saber el estado.
 
 ## Fases terminadas
 

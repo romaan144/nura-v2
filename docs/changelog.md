@@ -6,6 +6,42 @@
 
 ---
 
+> **Hueco en este registro**: entre el 2026-07-05 y el 2026-09-23 no se
+> anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
+> históricos de `docs/current-status.md`.
+
+## 2026-09-24 — Los avisos existen por primera vez, y son privados
+
+- **La tabla `avisos` nunca se había creado en producción.** Cada vez que
+  alguien escribía a un profesional, la app decía «le aviso» y el aviso se
+  perdía. El 2026-09-23 se dio por buena porque `respuestas` devolvía 200,
+  pero sin datos esa operación contestaba **sin consultar la tabla**: la
+  comprobación no demostraba nada. Lección: comprobar con una consulta
+  real a la base de datos, no con una respuesta que puede salir sin ella.
+- **Seguridad** (revisión de Codex sobre `d940e44`): comprobar el origen
+  no protegía nada, porque la cabecera la escribe quien llama.
+  - `pendientes`, `avisar` y `aviso-enviado` exigen `NURA_ADMIN_SECRET`
+    en la cabecera `x-nura-admin`; sin secreto configurado, cerradas.
+  - Dos llaves por aviso: `token` (el profesional responde) y la de
+    lectura (quien escribió lee **solo** su respuesta; en la base de datos
+    solo queda su resumen, `lectura_hash`).
+  - Una respuesta ya dada no se puede reescribir.
+  - `npm run test:avisos`: 47 pruebas con base de datos ficticia.
+- Función `helpers-write` versión 4, desplegada con el conector de
+  Supabase. Probado con un mensaje real del fundador; aviso de prueba
+  borrado.
+- **Perfil propio** con el lenguaje de la ficha de un profesional:
+  cabecera blanca centrada, secciones con título, solo dos formas
+  (tarjeta y lista de filas). La causa de los descuadres era una regla
+  `.scroll > *` con `!important` que quitaba márgenes a todo.
+- Supabase conectado a Claude: la función y la base de datos ya no se
+  copian a mano.
+
+## 2026-09-23 — La función desplegada llevaba meses sin actualizar
+
+- En Supabase seguía una versión de 201 líneas; la del repositorio tenía
+  412. Las operaciones de avisos no estaban vivas. Desplegada.
+
 ## 2026-07-04 — La Voz Moderna (corrección de dirección del fundador)
 
 - **La serif sale de toda la app** ("letra de lápiz de libro"): el token

@@ -6,6 +6,10 @@
 
 ---
 
+> **Estado (comprobado en Supabase el 2026-09-24): todo aplicado.** Los
+> apartados 1 y 1b están en la base de datos (`owner_id`, `avatarUrl`,
+> carpeta `fotos` y sus políticas) y la función va por la versión 4.
+
 ## 1 · El SQL
 
 **Supabase → SQL Editor → New query**, pega todo y pulsa **Run**. Se puede
@@ -97,7 +101,7 @@ select policyname from pg_policies where tablename = 'helpers';
 
 ---
 
-## 2 · Volver a desplegar la función · ✅ *hecho (2026-09-23)*
+## 2 · Volver a desplegar la función · ✅ *hecho (2026-09-23; versión 4 el 2026-09-24)*
 
 Desplegada desde el Chrome del fundador. Se trajo el código de GitHub y se
 comprobó idéntico (20.643 caracteres, 8 operaciones) antes de pulsar Deploy.

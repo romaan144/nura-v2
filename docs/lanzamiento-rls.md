@@ -301,6 +301,9 @@ create table if not exists public.avisos (
   -- abrir y responder SIN cuenta. Quien lo tiene es quien recibió el
   -- mensaje en su propio móvil.
   token         text unique,
+  -- La llave de QUIEN ESCRIBIO: solo deja leer su respuesta. Aqui solo se
+  -- guarda su resumen SHA-256 (2026-09-24).
+  lectura_hash  text unique,
   respuesta     text,
   respondido_en timestamptz,
   fecha         timestamptz default now()
@@ -314,12 +317,21 @@ alter table public.avisos enable row level security;
 create index if not exists avisos_estado on public.avisos (estado, id);
 ```
 
-Para sacarlos:
+> **Aplicado en producción el 2026-09-24** (antes la tabla no existía y los
+> avisos se perdían). Versión completa: `supabase/migrations/20260924000000_avisos_llaves_separadas.sql`.
+
+Para sacarlos hace falta el secreto `NURA_ADMIN_SECRET` (Supabase → Edge
+Functions → Secrets) también en tu terminal, sin que quede en el historial:
 
 ```bash
+read -rs NURA_ADMIN_SECRET && export NURA_ADMIN_SECRET
 NURA_EDGE_URL=https://<tu-proyecto>.functions.supabase.co/helpers-write \
   npm run avisar -- --pendientes
 ```
+
+Sin el secreto, `pendientes`, `avisar` y `aviso-enviado` responden 401 (o
+503 si la función no lo tiene): nadie más puede ver los avisos ni los
+contactos.
 
 Devuelve un enlace por aviso. Al enviarlo:
 `npm run avisar -- --enviado 7`.
