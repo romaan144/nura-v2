@@ -722,6 +722,44 @@ Deno.serve(async (req: Request) => {
     return ok ? json({ ok: true }, 200, cors) : json({ error: 'no guardado' }, 502, cors)
   }
 
+  // ── EL PULSO: la semana de la profesional, con datos REALES ──
+  // Antes el Pulso se inventaba las cifras con un numero al azar («9
+  // personas buscaron…»). Ahora cuenta lo que ha pasado de verdad en 7 dias:
+  // busquedas de su oficio (solo la categoria: nunca la frase), veces que su
+  // ficha salio recomendada y mensajes recibidos y contestados. Solo con
+  // sesion y solo de SU ficha.
+  if (op === 'mi-pulso') {
+    const token = String(cuerpo.sesion || '')
+    if (!token) return json({ error: 'falta la sesion' }, 401, cors)
+    const u = await fetch(`${SUPABASE_URL}/auth/v1/user`, { headers: { apikey: SERVICE_KEY!, Authorization: `Bearer ${token}` } })
+    if (!u.ok) return json({ error: 'sesion no valida' }, 401, cors)
+    const usuario = await u.json()
+    if (!usuario?.id) return json({ error: 'sesion sin usuario' }, 401, cors)
+    const f = await fetch(`${SUPABASE_URL}/rest/v1/helpers?owner_id=eq.${usuario.id}&select=id,category&limit=1`, { headers: rest })
+    if (!f.ok) return json({ error: 'lectura rechazada', estado: f.status }, 502, cors)
+    const [ficha] = await f.json()
+    if (!ficha) return json({ error: 'sin ficha' }, 404, cors)
+
+    const desde = new Date(Date.now() - 7 * 864e5).toISOString()
+    const id = encodeURIComponent(String(ficha.id))
+    // Las busquedas se anotan con la categoria de la APP; la ficha guarda la
+    // de la base de datos (mismo mapeo que src/utils/matching.js).
+    const APP: Record<string, string> = { matematicas: 'clases', limpieza: 'hogar', educacion: 'clases' }
+    const cat = String(ficha.category || '')
+    const catApp = APP[cat] || cat
+    const contar = async (ruta: string) => {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/${ruta}&limit=5000`, { headers: rest })
+      return r.ok ? (await r.json()).length : null
+    }
+    const [busquedas, apariciones, recibidos, respondidos] = await Promise.all([
+      CATEGORIA_OK.test(catApp) ? contar(`eventos?tipo=in.(busqueda,sin_cobertura)&categoria=eq.${catApp}&fecha=gt.${desde}&select=id`) : null,
+      contar(`eventos?tipo=eq.recomendacion_vista&helper_id=eq.${id}&fecha=gt.${desde}&select=id`),
+      contar(`avisos?helper_id=eq.${id}&fecha=gt.${desde}&select=id`),
+      contar(`avisos?helper_id=eq.${id}&fecha=gt.${desde}&respondido_en=not.is.null&select=id`),
+    ])
+    return json({ ok: true, pulso: { busquedas, apariciones, recibidos, respondidos } }, 200, cors)
+  }
+
   // ── RECLAMAR LA FICHA (etapa 6b de docs/estudio-perfil.md) ─────────────
   // Une una cuenta (correo y contraseña) con SU ficha publica. El movil no
   // guarda que ficha es la suya, asi que la prueba es esta: el correo de la

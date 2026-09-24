@@ -28,7 +28,7 @@ function ok(cond, texto) {
 }
 
 // ── la base de datos ficticia ───────────────────────────────────────────
-const db = { helpers: [], avisos: [], valoraciones: [], alertas: [], ajustes: [], perfil_atributos: [] }
+const db = { helpers: [], avisos: [], valoraciones: [], alertas: [], ajustes: [], perfil_atributos: [], eventos: [] }
 const peticionesBD = []   // todo lo que la funcion le pide a "Supabase"
 
 function coincide(fila, campo, cond) {
@@ -384,6 +384,35 @@ console.log('\n── Lo declarado: solo lo que confirma el profesional ──')
   ok(db.perfil_atributos.filter(a => a.helper_id === id).length === bueno.length, 'la ficha de otra persona no se toca')
   r = await llamarG(funcion, { op: 'confirmar-declarado', sesion: 'sesion-confirmada', atributos: [] })
   ok(r.estado === 200 && !db.perfil_atributos.some(a => a.helper_id === '555'), 'confirmar una lista vacía borra lo declarado')
+}
+
+
+console.log('\n── El Pulso: cifras de verdad, solo de la ficha propia ──')
+{
+  const hoy = new Date().toISOString(), viejo = '2020-01-01T00:00:00.000Z'
+  db.helpers.push({ id: 777, name: 'Pulso Ficticia', category: 'limpieza', owner_id: 'u1' })
+  db.helpers = db.helpers.filter(h => !(h.owner_id === 'u1' && h.id !== 777))
+  db.eventos.push(
+    { id: 1, tipo: 'busqueda', categoria: 'hogar', fecha: hoy },
+    { id: 2, tipo: 'sin_cobertura', categoria: 'hogar', fecha: hoy },
+    { id: 3, tipo: 'busqueda', categoria: 'hogar', fecha: viejo },
+    { id: 4, tipo: 'busqueda', categoria: 'salud', fecha: hoy },
+    { id: 5, tipo: 'recomendacion_vista', helper_id: '777', fecha: hoy },
+    { id: 6, tipo: 'recomendacion_vista', helper_id: '8', fecha: hoy },
+  )
+  db.avisos.push(
+    { id: 70, helper_id: '777', fecha: hoy, respondido_en: hoy },
+    { id: 71, helper_id: '777', fecha: hoy, respondido_en: null },
+    { id: 72, helper_id: '777', fecha: viejo, respondido_en: null },
+  )
+  let r = await llamarG(funcion, { op: 'mi-pulso' })
+  ok(r.estado === 401, 'sin sesión no hay Pulso → 401')
+  r = await llamarG(funcion, { op: 'mi-pulso', sesion: 'sesion-confirmada', helperId: 8 })
+  const p = r.datos?.pulso
+  ok(r.estado === 200 && p?.busquedas === 2, `cuenta las búsquedas de su oficio de esta semana (limpieza → hogar): ${p?.busquedas}`)
+  ok(p?.apariciones === 1, 'cuenta solo las veces que salió SU ficha, no la que diga el móvil')
+  ok(p?.recibidos === 2 && p?.respondidos === 1, 'mensajes de esta semana: recibidos y contestados')
+  ok(!JSON.stringify(r.datos).includes('mensaje'), 'el Pulso no devuelve ningún mensaje ni frase de nadie')
 }
 
 console.log('\n── El secreto no se filtra ──')

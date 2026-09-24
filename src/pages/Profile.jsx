@@ -21,6 +21,7 @@ import { fmtTel } from '../utils/formato'
 import { reclamarFicha, borrarCuenta } from '../utils/escrituras'
 import FotoPerfil from '../components/FotoPerfil'
 import MisAlertas from '../components/MisAlertas'
+import LoQueSabeNura from '../components/LoQueSabeNura'
 import { quitarTodas } from '../utils/alertas'
 
 // ── Tu semana: la voz de Nüra para quien trabaja ──
@@ -477,7 +478,7 @@ export default function Profile() {
                 <div className={styles.tarjeta}>
                   <label htmlFor="cita-personal" className={styles.tarjetaTitulo}>Tu cita personal</label>
                   <p className={styles.tarjetaTexto}>
-                    Es lo primero que leen, con tu voz. Las fichas con cita generan mucha más confianza.
+                    Es lo primero que leen, con tu voz: ayuda a que te conozcan antes de escribirte.
                   </p>
                   <textarea id="cita-personal" className={styles.campo} value={quoteDraft}
                     onChange={e => setQuoteDraft(e.target.value)} rows={3}
@@ -496,6 +497,11 @@ export default function Profile() {
               )}
             </div>
           </section>
+        )}
+
+        {/* ── LO QUE NÜRA SABE DE TI (perfil vivo) ─────────────────── */}
+        {user.isHelper && user.helperId != null && (
+          <LoQueSabeNura helperId={user.helperId} estilos={styles} puedeCorregir={tieneCuenta} />
         )}
 
         {/* ── TU ACCESO (etapa 6 de estudio-perfil.md) ─────────────────

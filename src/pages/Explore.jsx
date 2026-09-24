@@ -13,14 +13,6 @@ import HelperCard from '../components/HelperCard'
 import styles from './Explore.module.css'
 import { LiveDot, EmptyState, Skeleton } from '../components/ui'
 
-// ── Escaparate Vivo — señales de actividad reciente ──────────────────────
-const ACTIVITY_SIGNALS = [
-  () => `respondió a un mensaje hace ${Math.floor(Math.random()*50)+5} minutos`,
-  () => `completó una sesión esta mañana`,
-  () => { const h = Math.floor(Math.random()*3)+1; return `aceptó una consulta hace ${h} ${h === 1 ? 'hora' : 'horas'}` },
-  () => `está disponible ahora mismo`,
-  () => `recibió una valoración de 5★ hoy`,
-]
 
 
 

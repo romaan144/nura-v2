@@ -521,43 +521,44 @@ export default function Home() {
       const shouldShowPulso = Date.now() - lastPulso >= PULSO_THRESHOLD
 
       if (shouldShowPulso) {
-        timers.push(setTimeout(() => {
-          setMessages(prev => {
-            if (prev.length > 1) return prev
-
-            // Build real data from system
-            const helperCat = user?.helperProfile?.category || user?.helperProfile?.specialty || 'tu especialidad'
-            const helperSpec = user?.helperProfile?.specialty || 'tu especialidad'
-            const firstName = user?.name?.split(' ')?.[0] || user?.name
-
-            // Simulate realistic weekly numbers based on existing data
-            const weekSearches = Math.floor(Math.random() * 8) + 4   // 4-12 búsquedas
-            const profileViews = Math.floor(weekSearches * 0.6)       // ~60% vieron el perfil
-            const contacts = Math.floor(profileViews * 0.25)          // ~25% contactaron
-
-            // Suggestions based on what's missing from helper profile
-            const suggestions = [
-              `Añadir tu disponibilidad horaria puede aumentar tus contactos esta semana.`,
-              `Los profesionales con foto de perfil real reciben un 40% más de contactos.`,
-              `Responder en menos de 1 hora multiplica por 3 tu tasa de conversión.`,
-              `Añadir tu zona exacta de trabajo mejora tu posición en búsquedas cercanas.`,
-            ]
-            const suggestion = suggestions[Math.floor(Math.random() * suggestions.length)]
-
-            try { localStorage.setItem('nura_last_pulso', String(Date.now())) } catch {}
-
-            return [...prev, {
-              id: Date.now() + 77,
-              from: 'nura',
-              isPulso: true,
-              lines: [
-                `**El Pulso de esta semana, ${firstName}.**`,
-                `Esta semana **${weekSearches} personas** buscaron ${helperSpec} en Barcelona. Tu perfil apareció en **${profileViews}** de esas búsquedas${contacts > 0 ? ` y **${contacts} te escribieron**` : ''}.`,
-                `💡 ${suggestion}`,
-              ],
-              chips: contacts > 0 ? ['Ver mis contactos', 'Mejorar mi perfil'] : ['Mejorar mi perfil', 'Ver qué buscan']
-            }]
-          })
+        // ANTES las cifras salian de Math.random(): «9 personas buscaron…,
+        // 2 te escribieron», a profesionales reales. Ahora son las de verdad
+        // (op `mi-pulso`, con su sesion) o no hay cifras.
+        timers.push(setTimeout(async () => {
+          const firstName = user?.name?.split(' ')?.[0] || user?.name
+          const helperSpec = user?.helperProfile?.specialty || 'tu especialidad'
+          let pulso = null
+          if (user?.helperId != null) {
+            try {
+              const { sesionActual } = await import('../utils/cuenta')
+              const { miPulso } = await import('../utils/escrituras')
+              pulso = await miPulso((await sesionActual())?.access_token)
+            } catch { pulso = null }
+          }
+          // Consejos sin estadisticas inventadas: solo lo que es cierto.
+          const hp = user?.helperProfile || {}
+          const consejos = [
+            !user?.avatar && 'Una foto tuya real da confianza a quien te busca.',
+            !hp.price && 'Si pones tu tarifa, quien te busca sabe desde el principio si encaja.',
+            'Contestar pronto se nota: tu ficha enseña cuánto sueles tardar en responder.',
+          ].filter(Boolean)
+          const lineas = [`**El Pulso de esta semana, ${firstName}.**`]
+          if (pulso) {
+            const n = (x, uno, varios) => `**${x}** ${x === 1 ? uno : varios}`
+            if (pulso.busquedas != null) lineas.push(`${n(pulso.busquedas, 'persona buscó', 'personas buscaron')} ${helperSpec.toLowerCase()} en Nüra.`)
+            if (pulso.apariciones != null) lineas.push(`Tu ficha salió recomendada ${n(pulso.apariciones, 'vez', 'veces')}.`)
+            if (pulso.recibidos != null) lineas.push(pulso.recibidos
+              ? `Te escribieron ${n(pulso.recibidos, 'persona', 'personas')} y contestaste a ${pulso.respondidos ?? 0}.`
+              : 'Esta semana nadie te ha escrito todavía.')
+          } else {
+            lineas.push('Crea tu acceso con correo y cada semana te diré cuántas personas buscan lo que haces y cuántas veces sale tu ficha.')
+          }
+          lineas.push(`💡 ${consejos[Math.floor(Math.random() * consejos.length)]}`)
+          try { localStorage.setItem('nura_last_pulso', String(Date.now())) } catch { /* sin memoria */ }
+          setMessages(prev => prev.length > 1 ? prev : [...prev, {
+            id: Date.now() + 77, from: 'nura', isPulso: true, lines: lineas,
+            chips: pulso?.recibidos ? ['Ver mis contactos', 'Mejorar mi perfil'] : ['Mejorar mi perfil'],
+          }])
         }, PULSO_DELAY))
       } else {
         // Fallback: generic helper proactive after 8s
@@ -724,7 +725,7 @@ export default function Home() {
     }
 
     // ── El Pulso — interceptar respuesta a chips ────────────────────
-    const PULSO_CHIPS = ['Ver mis contactos', 'Mejorar mi perfil', 'Ver qué buscan', 'Actualizar perfil', 'Ahora no']
+    const PULSO_CHIPS = ['Ver mis contactos', 'Mejorar mi perfil', 'Actualizar perfil', 'Ahora no']
     const pulsoMsg = messages.find(m => m.isPulso)
     if (pulsoMsg && PULSO_CHIPS.includes(msg)) {
       const t = msg.toLowerCase()
@@ -732,16 +733,10 @@ export default function Home() {
         if (t.includes('contacto') || t.includes('escrib')) {
           setMessages(prev => [...prev, {
             id: Date.now(), from: 'nura',
-            lines: [`Tus contactos recientes están en la pestaña **Chats**. Responde rápido — los profesionales que responden en menos de 1 hora tienen un 3x más de conversión.`]
+            lines: [`Tus contactos recientes están en la pestaña **Chats**. Contestar pronto se nota: tu ficha enseña cuánto sueles tardar.`]
           }])
         } else if (t.includes('perfil') || t.includes('mejorar')) {
           navigate('/register-helper')
-        } else if (t.includes('buscan') || t.includes('busca')) {
-          setMessages(prev => [...prev, {
-            id: Date.now(), from: 'nura',
-            lines: [`Esta semana las búsquedas más frecuentes en tu categoría incluyen: disponibilidad inmediata, experiencia verificada y cercanía. ¿Quieres actualizar tu perfil para destacar esos puntos?`],
-            chips: ['Actualizar perfil', 'Ahora no']
-          }])
         } else {
           setMessages(prev => [...prev, {
             id: Date.now(), from: 'nura',
@@ -1014,7 +1009,10 @@ export default function Home() {
       try { sessionStorage.setItem('nura_last_query', msg) } catch {}
       todosRef.current = matches
       registrar('busqueda', { categoria: analysis?.categoria || 'otro', resultados: matches.length })
-      if (matches.length) registrar('recomendacion_vista', { categoria: analysis?.categoria, resultados: matches.length })
+      // Una por profesional recomendado: es lo que cuenta su Pulso («tu ficha
+      // salio X veces»). Solo quien salio y la categoria, nunca la frase.
+      matches.slice(0, 6).forEach(h => registrar('recomendacion_vista', {
+        categoria: analysis?.categoria, resultados: matches.length, helperId: h?.id != null ? String(h.id) : undefined }))
       setLastMatches(matches)
       // Schedule reminder if user doesn't contact
       scheduleLocalNotification(

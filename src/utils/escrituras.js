@@ -225,3 +225,16 @@ export async function borrarCuenta(token) {
   if (!EDGE_URL) return { ok: false, motivo: 'sin-servidor' }
   try { return await llamarFuncion({ op: 'borrar-cuenta', token }) } catch { return { ok: false, motivo: 'sin-red' } }
 }
+
+/**
+ * EL PULSO: la semana real de la profesional (busquedas de su oficio, veces
+ * que salio recomendada, mensajes recibidos y contestados). Necesita su
+ * sesion. Devuelve null si no se puede saber: entonces no se enseñan cifras.
+ */
+export async function miPulso(sesion) {
+  if (!porLaFuncion() || !sesion) return null
+  try {
+    const r = await llamarFuncion({ op: 'mi-pulso', sesion })
+    return r?.ok ? r.pulso : null
+  } catch { return null }
+}
