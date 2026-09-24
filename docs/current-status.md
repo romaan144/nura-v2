@@ -844,9 +844,8 @@ obligatorio antes de lanzar)** dependen de saber quién es el profesional.
   llega a Supabase como evento `sin_cobertura` (tabla `eventos`).
 - **`DEMO_MODE` sigue en `true`** y no aísla la base de datos. Correcto
   mientras la app sea una simulación; se apaga al lanzar.
-- **3 pantallas construidas y sin ruta**: `HowItWorks`, `MomentoCero`,
-  `Splash`. Ningún fichero las importa. Decisión del fundador: enchufarlas
-  o retirarlas.
+- ~~3 pantallas construidas y sin ruta~~ — **retiradas el 2026-09-24**
+  (`HowItWorks`, `MomentoCero`, `Splash`), por decisión del fundador.
 - Chats necesitará estado de carga cuando las conversaciones vivan en el
   servidor (hoy viven en el móvil).
 

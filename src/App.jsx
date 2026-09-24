@@ -2,7 +2,7 @@ import { useState, useEffect, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useUser } from './context/UserContext'
 
-import { MOMENTO_CERO_COOLDOWN, NURA_BUILD } from './config'
+import { NURA_BUILD } from './config'
 console.log('[Nüra] build', NURA_BUILD)   // preflight-ok: el sello es como se sabe QUE hay desplegado; no lleva dato de nadie
 // El navegador restauraba la posicion de scroll al navegar. Con rutas que
 // alternan entre contenedor fijo (pestañas) y documento desplazable
