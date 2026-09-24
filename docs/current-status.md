@@ -67,6 +67,12 @@ actualizar por eso mismo.
    frases reales nuevas acierta 17 (2026-09-24). Cada forma nueva de decir
    algo hay que añadirla a mano. Mejorarlo de verdad (por ejemplo, con un
    modelo de lenguaje que entienda la frase) es decisión del fundador.
+6. **Perfil vivo** (`docs/perfil-vivo.md`): diseño propuesto, pendiente de
+   aprobar. Decidido: ni chats privados ni búsquedas se analizan. Hay tres
+   funciones actuales que chocan con eso y esperan decisión: la memoria
+   «Las personas de tu vida» (se saca de las búsquedas, vive solo en el
+   móvil), el historial de búsquedas en el móvil, y el identificador de
+   dispositivo en los eventos de búsqueda.
 
 ### Cómo se trabaja
 

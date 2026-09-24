@@ -10,6 +10,17 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-24 — El perfil vivo: qué se analiza y qué no (decisión del fundador)
+
+- **Los chats privados y las búsquedas no se analizan nunca.** Una búsqueda
+  se lee en el momento para encontrar al profesional y se olvida.
+- **Sí se analiza**: lo que el profesional escribe en su perfil, lo medido
+  en la app y lo que dicen los clientes al terminar un servicio. Cada dato
+  guarda su prueba y su fuente. Diseño: `docs/perfil-vivo.md`.
+- Motivo: la ley europea (selección de personas con IA = alto riesgo;
+  datos de salud en las búsquedas), la confianza de profesionales y
+  clientes, y que un rasgo con prueba vale más ante una empresa.
+
 ## 2026-09-24 — Frases reales: fallos corregidos, y el límite de las listas de palabras
 
 - 59 peticiones escritas como las escribiría una persona: 39 bien y 6 sin
