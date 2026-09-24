@@ -15,6 +15,9 @@
    ni cómo habla, ni nada.
 3. **Todo lo demás sí:** lo que el profesional escribe en su perfil, lo que
    se mide en la app y lo que dicen los clientes al terminar un servicio.
+4. **Excepción, siempre con permiso:** Nüra puede *recordar una necesidad
+   concreta* si la persona se lo pide, para ayudarla (sección 10). Nunca
+   para saber cómo es.
 
 ## 2 · El principio: cada dato con su prueba
 
@@ -105,10 +108,39 @@ nocturno de comentarios nuevos, una búsqueda. Con cientos de profesionales:
   se publican si lo aceptas. Nunca leemos tus chats ni guardamos lo que
   buscas.»
 
+## 10 · Recordar con permiso (aprobado 2026-09-24)
+
+Regla: **Nüra solo recuerda algo de quien busca si esa persona dice que
+sí**, guarda lo mínimo (nunca la frase), caduca y se puede borrar.
+
+### «Te aviso si aparece alguien»
+1. Si alguien busca y no contacta con nadie, o no hay resultados, Nüra
+   ofrece: *«¿Quieres que te avise si llega un logopeda infantil a tu
+   zona?»*.
+2. Con un sí se guarda solo: *categoría · especialidad · zona*.
+3. Caduca a los 3 meses (Nüra pregunta si sigue buscando).
+4. En el perfil: *«Te aviso si aparece: …»*, con botón para quitarlo.
+5. Cuando se da de alta o mejora su perfil un profesional que encaja, Nüra
+   avisa. La comprobación compara datos ordenados: sin IA, sin coste.
+6. **Avisos por las dos vías** (decisión del fundador): notificación del
+   móvil y correo. Hace falta que quien busca pueda tener cuenta con correo,
+   como los profesionales.
+
+⚠ Hoy el botón «Avísame cuando tengas a alguien» responde «Anotado, te
+aviso» **y no avisa**. Se arregla al construir esto.
+
+### «Las personas de tu vida» (hecho el 2026-09-24)
+Antes se guardaba sola (*«mi madre tiene Alzheimer»* → *Madre ·
+Alzheimer* en el móvil). Ahora Nüra pregunta al final de la búsqueda:
+*«¿Quieres que me acuerde de tu madre…?»* y solo guarda con un sí. Nunca
+guarda la frase. Vive solo en el móvil y se borra desde el perfil.
+
 ## 9 · Orden de trabajo propuesto
 
 1. Preguntas al cliente tras el servicio (sección 3) + tabla
    `perfil_atributos` + datos medidos.
+1b. Cuentas con correo para quien busca + «te aviso si aparece alguien»
+   (sección 10).
 2. Lo declarado ordenado por IA con confirmación (sección 4).
 3. La ficha pública enseña los rasgos con su prueba.
 4. Fase 3: búsqueda para empresas, tras revisión legal.

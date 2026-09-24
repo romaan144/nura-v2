@@ -10,6 +10,17 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-24 — Recordar solo con permiso
+
+- «Las personas de tu vida» ya no se guarda sola: Nüra pregunta al final
+  de la búsqueda y solo guarda con un sí. Probado en navegador: sin
+  respuesta no se guarda nada; «No, gracias» no guarda nada.
+- Ya no se guarda la frase de la búsqueda en ningún sitio del móvil (ni en
+  la memoria de personas ni en la demanda no cubierta).
+- Aprobado por el fundador: «te aviso si aparece alguien», con permiso,
+  mínimo, caducidad y avisos por notificación y correo
+  (`docs/perfil-vivo.md` §10). Pendiente de construir.
+
 ## 2026-09-24 — El perfil vivo: qué se analiza y qué no (decisión del fundador)
 
 - **Los chats privados y las búsquedas no se analizan nunca.** Una búsqueda
