@@ -7,7 +7,7 @@ import { Button } from './ui'
  * tries to do something that requires an account.
  * Shows VALUE before asking to register. (Airbnb/Tinder pattern)
  */
-export default function RegisterGate({ onClose, reason = 'contact' }) {
+export default function RegisterGate({ onClose, reason = 'contact', volverA }) {
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -91,12 +91,12 @@ export default function RegisterGate({ onClose, reason = 'contact' }) {
         {/* CTAs */}
         <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)'}}>
           <Button variant="primary" full
-            onClick={() => { onClose(); sessionStorage.setItem('nura_return_to', location.pathname + location.search); navigate('/login') }}
+            onClick={() => { onClose(); sessionStorage.setItem('nura_return_to', volverA || location.pathname + location.search); navigate('/login') }}
             style={{fontSize:'var(--text-base)',letterSpacing:'-0.2px'}}>
             Crear cuenta gratis <ArrowRight size={16} />
           </Button>
           <button
-            onClick={() => { onClose(); sessionStorage.setItem('nura_return_to', location.pathname + location.search); navigate('/login') }}
+            onClick={() => { onClose(); sessionStorage.setItem('nura_return_to', volverA || location.pathname + location.search); navigate('/login') }}
             style={{
               width:'100%',padding:'13px',
               background:'var(--surface-subtle)',color:'var(--ink-tertiary)',

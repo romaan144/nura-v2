@@ -15,7 +15,7 @@ import { Badge, StatBar } from '../components/ui'
 import HelperCard from '../components/HelperCard'
 import { proSignals } from '../utils/proSignals'
 import styles from './Profile.module.css'
-import { NURA_BUILD, CONTACTO_EMAIL } from '../config'
+import { NURA_BUILD, CONTACTO_EMAIL, DEMO_MODE } from '../config'
 import EditarFicha from '../components/EditarFicha'
 import { fmtTel } from '../utils/formato'
 import { reclamarFicha, borrarCuenta } from '../utils/escrituras'
@@ -215,7 +215,7 @@ export default function Profile() {
 
         <p style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', textAlign:'center',
           margin:'var(--space-20) 0 0', lineHeight:1.5}}>
-          Tu teléfono no se muestra a nadie.<br />Solo sirve para entrar.
+          {DEMO_MODE ? <>Tu teléfono no se muestra a nadie.<br />Solo sirve para entrar.</> : <>Nunca leemos tus chats ni guardamos lo que buscas.</>}
         </p>
         {/* Quien busca sin cuenta tambien puede pedir «te aviso»: lo ve aqui. */}
         {!verAlertas && (

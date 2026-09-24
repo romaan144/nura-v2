@@ -34,7 +34,7 @@ export function scheduleRetentionNotifications(userName = 'tú') {
 export function notifyServiceConfirmed(helperName) {
   scheduleLocalNotification(
     'Solicitud enviada',
-    `${helperName} recibirá tu solicitud y te confirmará en breve.`
+    `${helperName} recibirá tu propuesta y te contestará en el chat.`
   )
 }
 

@@ -16,6 +16,7 @@ import { haptic } from '../utils/haptic'
 import { scheduleLocalNotification, notifySearchAbandoned } from '../utils/notifications'
 import { registrar } from '../utils/analitica'
 import AlertaSheet from '../components/AlertaSheet'
+import RatingModal from '../components/RatingModal'
 import { tieneAlerta, misAlertas, alertasGuardadas } from '../utils/alertas'
 import styles from './Home.module.css'
 import { PULSO_THRESHOLD, PULSO_DELAY, CONFIRMACION_THRESHOLD, CONFIRMACION_DELAY } from '../config'
@@ -363,7 +364,7 @@ const HELPER_SUGGESTIONS = [
 export default function Home() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { user, addSearch, searchHistory, favorites, helpersCache, nuraChatMessages, setNuraChatMessages, nuraLastMatches, setNuraLastMatches, cacheHelpers, contactedHelpers, confirmContact, following, personas, upsertPersona, citas, addStory , registrarDemanda } = useUser()
+  const { user, addSearch, searchHistory, favorites, helpersCache, nuraChatMessages, setNuraChatMessages, nuraLastMatches, setNuraLastMatches, cacheHelpers, contactedHelpers, confirmContact, following, personas, upsertPersona, citas, addStory , registrarDemanda, hasRated } = useUser()
   // messages persisted in context so they survive navigation
   const messages = nuraChatMessages
   const setMessages = setNuraChatMessages
@@ -386,6 +387,8 @@ export default function Home() {
   // (nunca la frase) y la hoja que pide permiso.
   const sinCoberturaRef = useRef(null)
   const [alerta, setAlerta] = useState(null)
+  // Tras «Sí, genial»: la ventana de valorar a ese profesional.
+  const [valorar, setValorar] = useState(null)
   // Si ha llegado alguien que esta persona esperaba, se le dice al abrir
   // (una vez por sesion). El detalle esta en su perfil.
   useEffect(() => {
@@ -758,10 +761,12 @@ export default function Home() {
       if (confirmMsg.confirmacionHelperId) {
         confirmContact(confirmMsg.confirmacionHelperId, isPositive)
         if (isPositive) {
-          // El Muro que crece contigo: la ayuda real se vuelve prueba visible
+          // Su historia, en SU muro (se guarda en este movil). Antes se le
+          // decia «lo he compartido con la comunidad, ya esta ayudando a
+          // otros»: no se compartia con nadie.
           try {
             const hid = confirmMsg.confirmacionHelperId
-            const hf = (helpersCache || []).find(x => x?.id === hid) || { id: hid, name: confirmMsg.confirmacionHelperName }
+            const hf = (helpersCache && (helpersCache[hid] || helpersCache[String(hid)])) || { id: hid, name: confirmMsg.confirmacionHelperName }
             const lp = (personas || []).find(p => (p.contactedHelperIds || []).includes(hid))
             const ci = (citas || []).slice().reverse().find(c => c.helperId === hid)
             const fn = user?.name?.split(' ')?.[0] || 'Alguien'
@@ -771,7 +776,9 @@ export default function Home() {
               seconds: null, timeAgo: 'hoy',
               text: `${fn} encontró ${lp ? `ayuda de confianza para ${lp.label}` : 'la ayuda que necesitaba'}${ci ? ` — primera visita, el ${ci.label}` : ''}. ✓ Funcionó.`,
             })
-            showToast('Me alegro mucho. Lo he compartido con la comunidad — a alguien le va a servir.')
+            // Y el momento de preguntarle como fue: es lo que construye la
+            // ficha del profesional (perfil vivo) y ayuda a otros a elegir.
+            if (!hasRated?.(hid)) setValorar({ ...hf, id: hf.id ?? hid, name: hf.name || confirmMsg.confirmacionHelperName || '' })
           } catch (e) { console.error('[Nüra] historia:', e) }
         }
       }
@@ -782,7 +789,7 @@ export default function Home() {
             id: Date.now(), from: 'nura',
             lines: [
               `Me alegra mucho. **${helperName}** queda anotado como una conexión que funcionó. 🤍`,
-              `He escrito vuestra historia en el Muro 💜 — ya está ayudando a que otros se atrevan.`
+              `Si me cuentas cómo fue, ayudarás a otros a elegir bien.`
             ]
           }])
         } else {
@@ -1539,6 +1546,7 @@ export default function Home() {
       </div>
 
       {showGate && <RegisterGate reason={gateReason} onClose={() => setShowGate(false)} />}
+      {valorar && <RatingModal helper={valorar} onClose={() => setValorar(null)} />}
       {alerta && (
         <AlertaSheet categoria={alerta.categoria} que={alerta.que}
           onClose={() => setAlerta(null)}

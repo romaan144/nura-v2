@@ -18,7 +18,7 @@ import { DEMO_ENRICHMENTS } from '../data/demoEnrichments'
 import { showToast } from '../components/Toast'
 import RegisterGate from '../components/RegisterGate'
 import { getHelperById } from '../utils/supabase'
-import { atributosDe } from '../utils/escrituras'
+import { atributosDe, enviarPropuestaCita } from '../utils/escrituras'
 import { ETIQUETA_CUALIDAD } from '../utils/cualidades'
 import { etiquetaDe } from '../utils/declarado'
 import { Badge, LiveDot, Bubble, StatBar } from '../components/ui'
@@ -76,7 +76,7 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
                 ¡Solicitud enviada!
               </h3>
               <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:0,lineHeight:1.6}}>
-                {name} recibirá tu solicitud y confirmará en breve.
+                {DEMO_MODE ? `${name} recibirá tu solicitud y confirmará en breve.` : `Se la hago llegar a ${name}. Su respuesta te llegará en el chat.`}
               </p>
             </div>
             {/* Booking summary */}
@@ -743,13 +743,18 @@ function HelperProfileInner() {
       </div>
 
       {/* Modals */}
-      {showGate && <RegisterGate reason="contact" onClose={() => setShowGate(false)} />}
+      {/* Tras crear la cuenta, directo al chat que quería abrir: antes volvía
+          a la ficha (o a Inicio) y tenía que buscar el botón otra vez. */}
+      {showGate && <RegisterGate reason="contact" volverA={`/chat/${enrichedH.id}`} onClose={() => setShowGate(false)} />}
       {showRating && <RatingModal helper={h} onClose={() => setShowRating(false)} />}
       {showConfirm && (
         <BookingModal
           helper={h}
           onClose={() => setShowConfirm(false)}
-          onBook={addService}
+          onBook={(hh, date, time, note) => {
+            addService(hh, date, time, note)
+            if (!DEMO_MODE) enviarPropuestaCita(hh, date, time, note, user?.name?.split(' ')?.[0])
+          }}
           onNavigate={navigate}
         />
       )}

@@ -559,6 +559,35 @@ Deno.serve(async (req: Request) => {
     return json({ ok: true }, 200, cors)
   }
 
+  // ── SEGUIR LA CONVERSACION ──
+  // Antes solo el PRIMER mensaje llegaba al profesional: lo que la persona
+  // escribia despues no iba a ningun sitio. Ahora, mientras el profesional
+  // no ha contestado, lo nuevo se AÑADE a su aviso (lo vera todo junto al
+  // abrir su enlace). Si ya contesto, responde 409 y la app encola un aviso
+  // nuevo. Solo con la llave de lectura de esa conversacion.
+  if (op === 'ampliar-aviso') {
+    const llave = String(cuerpo.llave ?? '')
+    const mensaje = String(cuerpo.mensaje ?? '').trim().slice(0, 1000)
+    if (!FORMATO_LLAVE.test(llave)) return json({ error: 'no existe' }, 404, cors)
+    if (!mensaje) return json({ error: 'falta mensaje' }, 400, cors)
+    const lec = await fetch(
+      `${SUPABASE_URL}/rest/v1/avisos?lectura_hash=eq.${hex(await sha256(llave))}&select=id,mensaje,respuesta&limit=1`,
+      { headers: rest },
+    )
+    if (!lec.ok) return json({ error: 'lectura rechazada', estado: lec.status }, 502, cors)
+    const [av] = await lec.json()
+    if (!av) return json({ error: 'no existe' }, 404, cors)
+    if (av.respuesta) return json({ error: 'ya respondido' }, 409, cors)
+    const nuevo = `${av.mensaje}\n\n—\n${mensaje}`
+    if (nuevo.length > 6000) return json({ error: 'demasiado largo' }, 413, cors)
+    // `respuesta=is.null` tambien aqui: si contesta justo ahora, no se pisa.
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/avisos?id=eq.${av.id}&respuesta=is.null`, {
+      method: 'PATCH', headers: { ...rest, Prefer: 'return=representation' }, body: JSON.stringify({ mensaje: nuevo }),
+    })
+    if (!res.ok) return json({ error: 'no guardado', estado: res.status }, 502, cors)
+    return (await res.json()).length ? json({ ok: true }, 200, cors) : json({ error: 'ya respondido' }, 409, cors)
+  }
+
   // ── el usuario pregunta si ya le han respondido ──
   // Solo con SUS llaves de lectura: cada una abre la respuesta de UNA
   // conversacion. Preguntar por un profesional ya no devuelve nada: antes

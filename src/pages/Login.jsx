@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import { Button } from '../components/ui'
-import { NURA_BUILD } from '../config'
+import { DEMO_MODE, NURA_BUILD } from '../config'
 
 // ═══════════════════════════════════════════════════════════════
 // LOGIN — reescrita desde cero.
@@ -119,7 +119,12 @@ const S = {
 const PASO = { phone: 0, code: 1, name: 2 }
 
 export default function Login() {
-  const [step, setStep] = useState('phone')
+  // SIN SMS NO HAY CODIGO. La pantalla decia «te lo hemos enviado» y no se
+  // enviaba nada: valia cualquier numero de 4 cifras, y una persona real se
+  // quedaria esperando un mensaje que nunca llega. Fuera de la demo se pide
+  // solo el nombre (lo unico que el profesional necesita para saber quien
+  // le escribe); el acceso de verdad es el del correo (/entrar).
+  const [step, setStep] = useState(DEMO_MODE ? 'phone' : 'name')
   const [phone, setPhone] = useState('')
   const [code, setCode] = useState('')
   const [name, setName] = useState('')
@@ -129,8 +134,10 @@ export default function Login() {
 
   const salir = () => {
     const returnTo = sessionStorage.getItem('nura_return_to')
-    sessionStorage.removeItem('nura_return_to')
-    navigate(returnTo || '/')
+    navigate(returnTo || '/', { replace: true })
+    // Se borra DESPUES: la ruta /login, al ver la sesion, tambien redirige
+    // leyendo este destino, y si ya no estaba mandaba a Inicio.
+    setTimeout(() => { try { sessionStorage.removeItem('nura_return_to') } catch { /* sin memoria */ } }, 1500)
   }
 
   function handlePhone() {
@@ -173,9 +180,11 @@ export default function Login() {
         <p style={S.lema}>Encuentra a la persona adecuada</p>
 
         <div style={S.card}>
-          <div style={S.pasos}>
-            {[0, 1, 2].map(i => <div key={i} style={S.paso(i <= PASO[step])} />)}
-          </div>
+          {DEMO_MODE && (
+            <div style={S.pasos}>
+              {[0, 1, 2].map(i => <div key={i} style={S.paso(i <= PASO[step])} />)}
+            </div>
+          )}
 
           {step === 'phone' && (
             <>
@@ -226,19 +235,26 @@ export default function Login() {
           {step === 'name' && (
             <>
               <h1 style={S.titulo}>¿Cómo te llamas?</h1>
-              <p style={S.ayuda}>Así sabrán quién les escribe.</p>
+              <p style={S.ayuda}>Así sabrán quién les escribe. Se guarda en este móvil.</p>
               <input style={S.campo} placeholder="Tu nombre" value={name}
                 onChange={e => setName(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') handleName() }} />
               <Button variant="primary" full onClick={handleName} disabled={!name.trim()}>
                 Entrar en Nüra
               </Button>
+              {!DEMO_MODE && (
+                <button style={S.volver} onClick={() => navigate('/entrar?modo=crear&volver=' + encodeURIComponent(sessionStorage.getItem('nura_return_to') || '/'))}>
+                  ¿Quieres entrar desde cualquier móvil? Crea tu acceso con correo
+                </button>
+              )}
             </>
           )}
         </div>
 
         <p style={S.confianza}>
-          Tu teléfono no se muestra a nadie.<br />Solo sirve para entrar.
+          {DEMO_MODE
+            ? <>Tu teléfono no se muestra a nadie.<br />Solo sirve para entrar.</>
+            : <>Nunca leemos tus chats ni guardamos lo que buscas.</>}
         </p>
 
         <div style={S.sello}>{NURA_BUILD}</div>
