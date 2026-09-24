@@ -170,35 +170,36 @@ export default function Profile() {
             Solo tarda 30 segundos.
           </p>
 
-          <div style={{display:'flex', flexDirection:'column', gap:'var(--space-12)',
-            marginBottom:'var(--space-24)'}}>
+          {/* Lo que da una cuenta, con los iconos en su circulo: la misma
+              forma que las filas del perfil con sesion. El marco de la
+              tarjeta NO cambia: es el mismo que el de Entrar, al pixel. */}
+          <ul style={{listStyle:'none', margin:'0 0 var(--space-24)', padding:0,
+            display:'flex', flexDirection:'column', gap:'var(--space-10)'}}>
             {[
               [MessageCircle, 'Escribe a cualquier profesional'],
               [UserPlus,      'Sigue a tus profesionales favoritos'],
               [ClipboardList, 'Consulta tu historial de búsquedas'],
-              [Star,          'Valora a los profesionales que contratas'],
+              [Star,          'Valora a quien contratas'],
             ].map(([Icon, text]) => (
-              <div key={text} style={{display:'flex', alignItems:'center', gap:'var(--space-12)'}}>
-                <Icon size={16} color="var(--purple)" strokeWidth={1.8} style={{flexShrink:0}} />
-                <span style={{fontSize:'var(--text-sm)', color:'var(--ink-secondary)'}}>{text}</span>
-              </div>
+              <li key={text} style={{display:'flex', alignItems:'center', gap:'var(--space-12)'}}>
+                <span className={styles.filaIcono} aria-hidden="true"><Icon size={17} strokeWidth={1.9} /></span>
+                <span style={{fontSize:'var(--text-base)', color:'var(--ink-primary)', lineHeight:1.35}}>{text}</span>
+              </li>
             ))}
-          </div>
+          </ul>
 
-          <Button variant="primary" full onClick={() => navigate('/login')}>
+          <Button variant="primary" full onClick={() => navigate('/login')} style={{minHeight:48}}>
             Crear cuenta gratis
           </Button>
-          <div style={{height:'var(--space-10)'}} />
-          <Button variant="secondary" full onClick={() => navigate('/register-helper')}>
-            Quiero ser profesional
+          <Button variant="secondary" full onClick={() => navigate('/register-helper')}
+            style={{minHeight:48, marginTop:'var(--space-10)', color:'var(--purple-ink)', boxShadow:'var(--alzado-reposo)'}}>
+            <User size={15} aria-hidden="true" /> Quiero ser profesional
           </Button>
           {/* Sin esto, una profesional con acceso que cambiaba de movil no
               tenia por donde entrar: solo "crear cuenta" y "darse de alta". */}
-          <button onClick={() => navigate('/entrar')} style={{display:'block', width:'100%', minHeight:44,
-            marginTop:'var(--space-10)', background:'none', border:'none', cursor:'pointer', fontFamily:'inherit',
-            fontSize:'var(--text-sm)', fontWeight:600, color:'var(--purple-ink)'}}>
+          <Button variant="ghost" full onClick={() => navigate('/entrar')} style={{marginTop:'var(--space-6)'}}>
             ¿Ya tienes acceso de profesional? Entra
-          </button>
+          </Button>
         </div>
 
         <p style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', textAlign:'center',
