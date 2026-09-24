@@ -465,7 +465,7 @@ export default function Home() {
     let justRegistered; try { justRegistered = sessionStorage.getItem('nura_just_registered') } catch {}
     if (justRegistered) {
       sessionStorage.removeItem('nura_just_registered')
-      lines = [`**${user?.name?.split(' ')?.[0] || 'Hola'}**, Ya puedes contactar con cualquier profesional. ¿Qué necesitas?`]
+      lines = [`**${user?.name?.split(' ')?.[0] || 'Hola'}**, ya puedes contactar con cualquier profesional. ¿Qué necesitas?`]
       setTimeout(() => setMessages([{ id: 1, from: 'nura', lines }]), 300)
       return
     }
