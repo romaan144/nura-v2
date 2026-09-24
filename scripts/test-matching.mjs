@@ -77,6 +77,9 @@ const GOLDEN = [
 const SOLO_CATEGORIA = [
   { q: 'necesito un traductor de árabe', cat: 'idiomas' },
   { q: 'busco un intérprete', cat: 'idiomas' },
+  { q: 'pediatra para mi bebé', cat: 'salud' },
+  { q: 'mi bebé tiene fiebre, necesito un pediatra', cat: 'salud' },
+  { q: 'canguro para mi bebé', cat: 'cuidado' },
 ]
 const HONESTY = ['asdfgh qwerty zzz', 'necesito algo no sé muy bien qué']
 const NEGATIVE = [
@@ -89,6 +92,16 @@ const NEGATIVE = [
 ]
 
 let failed = 0
+// Ningun oficio real puede quedarse sin categoria: el alta decide la
+// categoria con analyzeNeed(especialidad), y `otro` es invisible.
+{
+  const { oficios } = JSON.parse(readFileSync(join(root, 'scripts/oficios-reales.json'), 'utf8'))
+  const sin = []
+  for (const o of oficios) { if ((await analyzeNeed(o)).categoria === 'otro') sin.push(o) }
+  const ok = sin.length === 0
+  if (!ok) failed++
+  console.log(`${ok ? '✓' : '✗'} oficios reales con categoria: ${oficios.length - sin.length}/${oficios.length}${ok ? '' : ' → sin categoria: ' + sin.join(', ')}`)
+}
 for (const t of SOLO_CATEGORIA) {
   const a = await analyzeNeed(t.q)
   const ok = a.categoria === t.cat
