@@ -10,6 +10,15 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-24 — Fuera tres pantallas de una versión anterior
+
+- `HowItWorks`, `MomentoCero` y `Splash` no tenían ruta. Retiradas por
+  decisión del fundador: repetían el eslogan antiguo («La IA que conecta
+  personas reales»), que choca con la promesa actual y con que la IA no se
+  note; y **`MomentoCero` enseñaba testimonios inventados como reales**
+  («Sergio, 34 años… hace 2 horas»), lo contrario de un producto que va de
+  confianza. Siguen en el historial de git.
+
 ## 2026-09-24 — Los profesionales actuales son de simulación
 
 - Medido: 0 de 1008 profesionales tienen móvil o correo, y ninguno tiene

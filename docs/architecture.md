@@ -199,15 +199,21 @@ borrable — principio de transparencia, ver `manifesto.md`).
 ## 9. Configuración central y sello de versión
 
 `src/config.js` es el **único interruptor** demo/producción (`DEMO_MODE`
-gobierna los umbrales de Confirmación, Pulso y Momento Cero) y define
+gobierna los umbrales de Confirmación y Pulso) y define
 `NURA_BUILD`, el sello de versión visible al final del Perfil y en consola —
 el mecanismo oficial para verificar qué build corre un dispositivo (caché).
 
 ## 10. Arranque de la app
 
-`Splash` → `MomentoCero` (según cooldown en localStorage/config) → app con
+Un dispositivo nuevo entra por `/onboarding` (solo desde la raíz y solo si
+el almacenamiento persiste); después, directo a la app, con
 `PageTransition` global, `BottomNav` (oculta en `/login`, `/onboarding`,
 `/chat/`) y `ErrorBoundary` amable (detalle técnico plegado).
+
+`Splash`, `MomentoCero` y `HowItWorks` se **retiraron el 2026-09-24**: no
+tenían ruta, repetían el eslogan antiguo («La IA que conecta personas
+reales») y `MomentoCero` mostraba testimonios inventados como si fueran
+reales. Siguen en el historial de git.
 
 
 ### UNA SOLA PUERTA A LA IA (2026-07-04)
