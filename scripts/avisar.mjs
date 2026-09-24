@@ -13,13 +13,36 @@
 // Function, que tiene la clave de servicio; de aqui solo sale un enlace.
 //
 // NECESITA
-//   NURA_EDGE_URL   la funcion desplegada
+//   NURA_EDGE_URL       la funcion desplegada
+//   NURA_ADMIN_SECRET   el mismo secreto que la funcion (Supabase → Edge
+//                       Functions → Secrets). Solo en TU terminal: nunca en
+//                       .env de la app, ni VITE_, ni el repositorio.
 //   La tabla `helpers` con la columna `contacto`
 //
 //   NURA_EDGE_URL=https://xxx.functions.supabase.co/helpers-write npm run avisar
 
 const EDGE = process.env.NURA_EDGE_URL
 const ORIGEN = process.env.NURA_ORIGIN || 'https://nura-v2-two.vercel.app'
+const SECRETO = process.env.NURA_ADMIN_SECRET || ''
+
+// El secreto va en una cabecera propia y NUNCA se imprime: ni aqui ni en
+// los errores. La funcion rechaza sin el (401) o si no lo tiene configurado (503).
+const cabeceras = { 'Content-Type': 'application/json', origin: ORIGEN, 'x-nura-admin': SECRETO }
+const explicarRechazo = (estado) => {
+  if (estado === 401) return '✗ La función rechazó el secreto (401). Revisa NURA_ADMIN_SECRET.'
+  if (estado === 503) return '✗ La función no tiene configurado NURA_ADMIN_SECRET (503).'
+  return `✗ La función respondió ${estado}.`
+}
+
+if (EDGE && !SECRETO) {
+  console.log(`
+Falta NURA_ADMIN_SECRET en esta terminal (el mismo que tiene la función).
+Escríbelo sin que quede en el historial, por ejemplo:
+
+  read -rs NURA_ADMIN_SECRET && export NURA_ADMIN_SECRET
+`)
+  process.exit(1)
+}
 
 if (!EDGE) {
   console.log(`
@@ -44,10 +67,10 @@ const arg = (n) => { const i = args.indexOf('--' + n); return i >= 0 ? args[i + 
 if (args.includes('--pendientes')) {
   const res = await fetch(EDGE, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', origin: ORIGEN },
+    headers: cabeceras,
     body: JSON.stringify({ op: 'pendientes' }),
   })
-  if (!res.ok) { console.log(`✗ La función respondió ${res.status}.`); process.exit(1) }
+  if (!res.ok) { console.log(explicarRechazo(res.status)); process.exit(1) }
   const r = await res.json()
   const avisos = r.avisos || []
   if (!avisos.length) { console.log('\nNo hay avisos pendientes.\n'); process.exit(0) }
@@ -72,10 +95,10 @@ const enviado = arg('enviado')
 if (enviado) {
   const res = await fetch(EDGE, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', origin: ORIGEN },
+    headers: cabeceras,
     body: JSON.stringify({ op: 'aviso-enviado', avisoId: enviado }),
   })
-  console.log(res.ok ? `✓ Aviso ${enviado} marcado como enviado.` : `✗ Error ${res.status}`)
+  console.log(res.ok ? `✓ Aviso ${enviado} marcado como enviado.` : explicarRechazo(res.status))
   process.exit(res.ok ? 0 : 1)
 }
 
@@ -99,12 +122,14 @@ aviso en la consola del navegador:
 
 const res = await fetch(EDGE, {
   method: 'POST',
-  headers: { 'Content-Type': 'application/json', origin: ORIGEN },
+  headers: cabeceras,
   body: JSON.stringify({ op: 'avisar', helperId: id, mensaje }),
 })
 
 if (!res.ok) {
-  console.log(`✗ La función respondió ${res.status}. ¿Está desplegada y NURA_ORIGINS incluye ${ORIGEN}?`)
+  console.log(res.status === 403
+    ? `✗ La función respondió 403. ¿NURA_ORIGINS incluye ${ORIGEN}?`
+    : explicarRechazo(res.status))
   process.exit(1)
 }
 

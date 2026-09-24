@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test:matching": "node scripts/test-matching.mjs",
+    "test:avisos": "node scripts/test-avisos.mjs",
     "smoke": "node scripts/smoke.mjs",
     "preflight": "node scripts/preflight.mjs",
     "medir": "node scripts/medir.mjs",

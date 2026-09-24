@@ -33,6 +33,52 @@ function cabecerasCors(origen: string | null) {
   }
 }
 
+// ── ACCESO ADMINISTRATIVO ────────────────────────────────────────────────
+// `avisar`, `pendientes` y `aviso-enviado` devuelven contactos, mensajes de
+// la gente y la llave con la que el profesional responde. Son solo para el
+// guion `npm run avisar`. Comprobar el origen NO basta: la cabecera `origin`
+// la escribe quien llama, y fuera de un navegador se pone cualquiera.
+//
+// El secreto vive SOLO aqui (secreto de la funcion en Supabase) y en el
+// entorno de quien ejecuta el guion. Viaja en una cabecera que el CORS no
+// admite, asi que un navegador no puede mandarla aunque quisiera. Si falta o
+// es corto, el acceso queda CERRADO: nunca abierto por defecto.
+const ADMIN_SECRET = Deno.env.get('NURA_ADMIN_SECRET') ?? ''
+const OPS_ADMIN = new Set(['avisar', 'pendientes', 'aviso-enviado'])
+
+async function sha256(texto: string): Promise<Uint8Array> {
+  return new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(texto)))
+}
+
+/** Compara resumenes de igual longitud sin salir antes: no filtra por tiempo. */
+function igualesSinPrisa(a: Uint8Array, b: Uint8Array): boolean {
+  if (a.length !== b.length) return false
+  let dif = 0
+  for (let i = 0; i < a.length; i++) dif |= a[i] ^ b[i]
+  return dif === 0
+}
+
+async function esAdmin(req: Request): Promise<boolean> {
+  if (ADMIN_SECRET.length < 32) return false
+  const dada = req.headers.get('x-nura-admin') ?? ''
+  if (!dada) return false
+  return igualesSinPrisa(await sha256(dada), await sha256(ADMIN_SECRET))
+}
+
+// ── LLAVES DE LOS AVISOS ─────────────────────────────────────────────────
+// Cada aviso tiene DOS llaves distintas, sin relacion entre ellas:
+//   · `token`         la del profesional: va en su enlace y deja abrir y
+//                     RESPONDER. Se guarda tal cual: `pendientes` la necesita
+//                     para montar el enlace.
+//   · llave de lectura la de quien escribio: solo deja LEER la respuesta de
+//                     su conversacion. Se le entrega una vez al encolar y
+//                     aqui solo se guarda su resumen (`lectura_hash`).
+// Quien tiene una no puede sacar la otra: el usuario no puede hacerse pasar
+// por el profesional.
+const hex = (b: Uint8Array) => Array.from(b, x => x.toString(16).padStart(2, '0')).join('')
+const llaveAleatoria = () => hex(crypto.getRandomValues(new Uint8Array(16)))
+const FORMATO_LLAVE = /^[0-9a-f]{32}$/
+
 const json = (cuerpo: unknown, estado: number, cors: Record<string, string>) =>
   new Response(JSON.stringify(cuerpo), {
     status: estado,
@@ -107,6 +153,11 @@ Deno.serve(async (req: Request) => {
   try { cuerpo = await req.json() } catch { return json({ error: 'json invalido' }, 400, cors) }
 
   const op = String(cuerpo?.op || '')
+
+  if (OPS_ADMIN.has(op)) {
+    if (ADMIN_SECRET.length < 32) return json({ error: 'acceso administrativo sin configurar' }, 503, cors)
+    if (!(await esAdmin(req))) return json({ error: 'no autorizado' }, 401, cors)
+  }
 
   // ── alta profesional ──
   if (op === 'alta') {
@@ -224,6 +275,9 @@ Deno.serve(async (req: Request) => {
     )
     const [h] = lec.ok ? await lec.json() : [null]
 
+    // La llave de lectura sale UNA vez, hacia quien escribio; aqui solo
+    // queda su resumen. Ver "LLAVES DE LOS AVISOS" arriba.
+    const lectura = llaveAleatoria()
     const res = await fetch(`${SUPABASE_URL}/rest/v1/avisos`, {
       method: 'POST',
       headers: { ...rest, Prefer: 'return=minimal' },
@@ -235,17 +289,18 @@ Deno.serve(async (req: Request) => {
         estado: 'pendiente',
         // La llave de vuelta: va en el enlace y deja al profesional abrir y
         // responder SIN cuenta. Quien lo tiene es quien recibio el mensaje.
-        token: crypto.randomUUID().replace(/-/g, '').slice(0, 16),
+        token: llaveAleatoria(),
+        lectura_hash: hex(await sha256(lectura)),
       }),
     })
     if (!res.ok) return json({ error: 'aviso no encolado', estado: res.status }, 502, cors)
-    return json({ ok: true, alcanzable: Boolean(h?.contacto) }, 200, cors)
+    return json({ ok: true, alcanzable: Boolean(h?.contacto), lectura }, 200, cors)
   }
 
   // ── los avisos pendientes, con su enlace ya montado ──
   if (op === 'pendientes') {
     const lec = await fetch(
-      `${SUPABASE_URL}/rest/v1/avisos?estado=eq.pendiente&select=id,helper_id,helper_nombre,mensaje,token,fecha&order=id.asc&limit=50`,
+      `${SUPABASE_URL}/rest/v1/avisos?estado=eq.pendiente&lectura_hash=not.is.null&select=id,helper_id,helper_nombre,mensaje,token,fecha&order=id.asc&limit=50`,
       { headers: rest },
     )
     if (!lec.ok) return json({ error: 'lectura rechazada', estado: lec.status }, 502, cors)
@@ -290,6 +345,7 @@ Deno.serve(async (req: Request) => {
   if (op === 'abrir-aviso') {
     const token = String(cuerpo.token ?? '').trim()
     if (!token) return json({ error: 'falta token' }, 400, cors)
+    if (!FORMATO_LLAVE.test(token)) return json({ error: 'no existe' }, 404, cors)
     const lec = await fetch(
       `${SUPABASE_URL}/rest/v1/avisos?token=eq.${encodeURIComponent(token)}&select=id,helper_id,helper_nombre,mensaje,respuesta,fecha&limit=1`,
       { headers: rest },
@@ -309,26 +365,50 @@ Deno.serve(async (req: Request) => {
     const respuesta = String(cuerpo.respuesta ?? '').trim().slice(0, 4000)
     if (!token) return json({ error: 'falta token' }, 400, cors)
     if (!respuesta) return json({ error: 'falta respuesta' }, 400, cors)
+    if (!FORMATO_LLAVE.test(token)) return json({ error: 'no existe' }, 404, cors)
+    // Se responde UNA vez: `respuesta=is.null` impide reescribir una
+    // respuesta ya dada (antes cualquiera con el token podia cambiarla).
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/avisos?token=eq.${encodeURIComponent(token)}`,
-      { method: 'PATCH', headers: { ...rest, Prefer: 'return=minimal' },
+      `${SUPABASE_URL}/rest/v1/avisos?token=eq.${encodeURIComponent(token)}&respuesta=is.null`,
+      { method: 'PATCH', headers: { ...rest, Prefer: 'return=representation' },
         body: JSON.stringify({ respuesta, estado: 'respondido', respondido_en: new Date().toISOString() }) },
     )
     if (!res.ok) return json({ error: 'no guardado', estado: res.status }, 502, cors)
+    const filas = await res.json()
+    if (!filas.length) {
+      // O no existe, o ya estaba respondido. Se distingue para la pantalla.
+      const ya = await fetch(
+        `${SUPABASE_URL}/rest/v1/avisos?token=eq.${encodeURIComponent(token)}&select=id&limit=1`,
+        { headers: rest },
+      )
+      const [av] = ya.ok ? await ya.json() : []
+      return av ? json({ error: 'ya respondido' }, 409, cors) : json({ error: 'no existe' }, 404, cors)
+    }
     return json({ ok: true }, 200, cors)
   }
 
   // ── el usuario pregunta si ya le han respondido ──
+  // Solo con SUS llaves de lectura: cada una abre la respuesta de UNA
+  // conversacion. Preguntar por un profesional ya no devuelve nada: antes
+  // devolvia lo que ese profesional hubiera contestado a cualquiera.
+  // Los avisos anteriores a las llaves no tienen `lectura_hash` y no salen
+  // nunca por aqui (ver supabase/migrations).
   if (op === 'respuestas') {
-    const ids = Array.isArray(cuerpo.helperIds) ? cuerpo.helperIds.map(String).slice(0, 20) : []
-    if (!ids.length) return json({ ok: true, respuestas: [] }, 200, cors)
-    const lista = ids.map(encodeURIComponent).join(',')
+    const llaves = Array.isArray(cuerpo.llaves)
+      ? [...new Set(cuerpo.llaves.map(String).filter(l => FORMATO_LLAVE.test(l)))].slice(0, 50)
+      : []
+    if (!llaves.length) return json({ ok: true, respuestas: [] }, 200, cors)
+    const resumenes = await Promise.all(llaves.map(async l => hex(await sha256(l))))
     const lec = await fetch(
-      `${SUPABASE_URL}/rest/v1/avisos?helper_id=in.(${lista})&respuesta=not.is.null&select=helper_id,respuesta,respondido_en`,
+      `${SUPABASE_URL}/rest/v1/avisos?lectura_hash=in.(${resumenes.join(',')})&respuesta=not.is.null&select=lectura_hash,respuesta,respondido_en`,
       { headers: rest },
     )
     if (!lec.ok) return json({ error: 'lectura rechazada', estado: lec.status }, 502, cors)
-    return json({ ok: true, respuestas: await lec.json() }, 200, cors)
+    const deLlave = new Map(resumenes.map((r, i) => [r, llaves[i]]))
+    const filas: { lectura_hash: string, respuesta: string, respondido_en: string }[] = await lec.json()
+    return json({ ok: true, respuestas: filas.map(f => ({
+      llave: deLlave.get(f.lectura_hash), respuesta: f.respuesta, respondido_en: f.respondido_en,
+    })) }, 200, cors)
   }
 
   // ── RECLAMAR LA FICHA (etapa 6b de docs/estudio-perfil.md) ─────────────

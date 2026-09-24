@@ -301,7 +301,7 @@ export default function Chat() {
   useEffect(() => {
     if (!helper?.id) return
     let vivo = true
-    respuestasDe([String(helper.id)]).then(rs => {
+    respuestasDe(helper.id).then(rs => {
       if (!vivo || !rs.length) return
       setMessages(prev => {
         const yaEstan = new Set(prev.filter(m => m.__deAviso).map(m => m.text))
