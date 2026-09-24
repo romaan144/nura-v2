@@ -55,15 +55,36 @@ export async function altaProfesional(payload) {
   }
 }
 
+// Llaves de lectura: una por conversacion, guardadas en ESTE movil. Cada
+// una abre solo la respuesta a lo que se escribio desde aqui. No sirven para
+// responder: esa llave es otra y solo la tiene el profesional.
+const LLAVES = 'nura_llaves_aviso'
+
+function llavesGuardadas() {
+  try { return JSON.parse(localStorage.getItem(LLAVES) || '{}') || {} }
+  catch { return {} }
+}
+
+function guardarLlave(helperId, llave) {
+  try {
+    const todas = llavesGuardadas()
+    const k = String(helperId)
+    todas[k] = [...new Set([...(todas[k] || []), llave])].slice(-20)
+    localStorage.setItem(LLAVES, JSON.stringify(todas))
+  } catch { /* sin almacenamiento no hay vuelta; el mensaje sigue enviado */ }
+}
+
 /**
  * LA VUELTA, ultimo tramo: ¿me han respondido?
- * El usuario pregunta por los profesionales con los que habla. Sin esto el
- * circulo queda abierto: el profesional contesta y nadie se entera.
+ * Se pregunta con las llaves de lectura de este movil para ese profesional,
+ * nunca por el profesional a secas: el servidor solo devuelve la respuesta
+ * de cada conversacion a quien tiene su llave.
  */
-export async function respuestasDe(helperIds) {
-  if (!porLaFuncion() || !helperIds?.length) return []
+export async function respuestasDe(helperId) {
+  const llaves = llavesGuardadas()[String(helperId)] || []
+  if (!porLaFuncion() || !llaves.length) return []
   try {
-    const r = await llamarFuncion({ op: 'respuestas', helperIds })
+    const r = await llamarFuncion({ op: 'respuestas', llaves })
     return r?.respuestas || []
   } catch { return [] }
 }
@@ -91,7 +112,10 @@ export async function responderAviso(token, respuesta) {
  */
 export async function encolarAviso(helperId, mensaje) {
   if (!porLaFuncion()) return
-  try { await llamarFuncion({ op: 'encolar-aviso', helperId, mensaje }) }
+  try {
+    const r = await llamarFuncion({ op: 'encolar-aviso', helperId, mensaje })
+    if (r?.ok && r.lectura) guardarLlave(helperId, r.lectura)
+  }
   catch { /* el aviso se pierde; el mensaje del usuario no */ }
 }
 
