@@ -153,6 +153,17 @@ guarda la frase. Vive solo en el móvil y se borra desde el perfil.
 
 ## 11 · Lo construido
 
+### Lo declarado, ordenado por IA (2026-09-24)
+- `supabase/functions/perfil-ia` (Claude, esquema fijo: vehículo, años,
+  idiomas, especialidades, con quién trabaja, títulos, disponibilidad).
+- Confirmación: `src/components/ConfirmarDeclarado.jsx`, en el alta
+  (`RegisterHelper.jsx`) y en `EditarFicha.jsx`. Guardado: `alta` y
+  `confirmar-declarado` en `helpers-write` (vocabulario cerrado).
+- Ficha: «Lo que cuenta {nombre}» en `HelperProfile.jsx`.
+- Tope diario: `sumar_uso` (migración `20260927000000_contador_uso_ia.sql`).
+- Pendiente: usar estos datos en la búsqueda (hoy salen del mismo texto
+  que ya se busca; ganan valor en la fase 3, con filtros).
+
 ### «Te aviso si aparece alguien» (2026-09-24)
 - App: `src/components/AlertaSheet.jsx` (el permiso), `MisAlertas.jsx`
   (perfil), `src/utils/alertas.js`, `public/sw.js` (notificaciones),
