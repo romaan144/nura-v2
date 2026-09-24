@@ -127,8 +127,13 @@ sí**, guarda lo mínimo (nunca la frase), caduca y se puede borrar.
    móvil y correo. Hace falta que quien busca pueda tener cuenta con correo,
    como los profesionales.
 
-⚠ Hoy el botón «Avísame cuando tengas a alguien» responde «Anotado, te
-aviso» **y no avisa**. Se arregla al construir esto.
+**Hecho el 2026-09-24.** El botón ya avisa de verdad. Detalles:
+- Se guarda el oficio de la app (y sus categorías de la base de datos),
+  nunca la frase. Aún **no hay zona**: la búsqueda no la extrae (todo es
+  Barcelona). Cuando se añada, se añade aquí.
+- Se avisa al darse de **alta** un profesional de ese oficio. Editar la
+  ficha no cambia el oficio, así que no avisa.
+- Pendiente: al caducar se borra sin preguntar si sigue buscando.
 
 ### «Las personas de tu vida» (hecho el 2026-09-24)
 Antes se guardaba sola (*«mi madre tiene Alzheimer»* → *Madre ·
@@ -147,6 +152,13 @@ guarda la frase. Vive solo en el móvil y se borra desde el perfil.
 4. Fase 3: búsqueda para empresas, tras revisión legal.
 
 ## 11 · Lo construido
+
+### «Te aviso si aparece alguien» (2026-09-24)
+- App: `src/components/AlertaSheet.jsx` (el permiso), `MisAlertas.jsx`
+  (perfil), `src/utils/alertas.js`, `public/sw.js` (notificaciones),
+  `src/pages/BajaAlerta.jsx` (enlace del correo).
+- Servidor: `clave-push`, `crear-alerta`, `alertas`, `quitar-alerta` y el
+  aviso dentro de `alta`. Migración `20260926000000_te_aviso_si_aparece.sql`.
 
 ### Pieza 1 (2026-09-24)
 - Cualidades por oficio: `src/utils/cualidades.js` (lista cerrada, repetida

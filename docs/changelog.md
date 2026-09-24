@@ -10,6 +10,32 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-24 — «Te aviso si aparece alguien», de verdad
+
+- **Antes**: el botón «Avísame cuando tengas a alguien» respondía «Anotado,
+  te aviso» y **no avisaba a nadie**. Ahora avisa.
+- **Con permiso**: al pulsarlo, una ventana dice exactamente qué se guarda
+  (el oficio, nunca la frase), que caduca a los 3 meses y por dónde avisar.
+  Nada se guarda hasta «Sí, avísame».
+- **Dos vías** (decisión del fundador):
+  - **Notificación en el móvil**: sin coste y sin proveedor. El aviso llega
+    vacío («ha llegado alguien»): Google o Apple nunca ven qué se buscaba.
+    En iPhone solo funciona con Nüra añadida a la pantalla de inicio (lo
+    explica la propia ventana).
+  - **Correo**: el de la cuenta de la persona, con el correo confirmado
+    (nadie puede apuntar a otro). Necesita un proveedor de correo
+    (Resend): **pendiente del fundador**, ver `docs/current-status.md`.
+    Mientras tanto, las alertas con correo se guardan y se ven en el perfil.
+- **Quien busca ya puede crear cuenta con correo** (antes «Entrar» solo
+  servía a profesionales).
+- **Cuándo avisa**: al darse de alta un profesional de ese oficio.
+- **Perfil**: nueva sección «Te aviso si aparece», con quién ha llegado y
+  botón para quitarla. Los correos llevan enlace «Deja de avisarme».
+  «Borrar mis datos» y «Borrar mi cuenta» también borran las alertas.
+- Base de datos: tablas `alertas` y `ajustes` (solo la función las toca).
+  Función `helpers-write` versión 7 (4 operaciones nuevas). 26 pruebas
+  nuevas (85/85).
+
 ## 2026-09-24 — Perfil vivo, pieza 1: lo que dicen los clientes, con prueba
 
 - **Nueva ventana de valorar** (una sola en toda la app: «Mis servicios»

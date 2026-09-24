@@ -89,6 +89,118 @@ const CUALIDADES = new Set([
   'amable', 'cuidadoso', 'rapido', 'buen_consejo', 'creativo',
 ])
 
+// ── «TE AVISO SI APARECE ALGUIEN» (docs/perfil-vivo.md §10) ─────────────
+// Notificaciones del movil SIN contenido: el aviso solo dice «hay algo
+// nuevo» y la app, al abrirse, pregunta que es con su llave. Asi no hace
+// falta cifrar nada y el servicio de notificaciones del navegador (Google,
+// Apple, Mozilla) nunca ve que buscaba nadie. Se firma con VAPID; las llaves
+// las crea esta funcion la primera vez y se guardan en `ajustes`.
+const b64url = (b: Uint8Array) => btoa(String.fromCharCode(...b)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+const CATEGORIA_OK = /^[a-z_]{2,30}$/
+// Solo se envia a servicios de notificaciones reales: una suscripcion es una
+// URL que manda el movil, y sin esto la funcion podria llamar a cualquier sitio.
+const PUSH_OK = /^https:\/\/([a-z0-9-]+\.)*(googleapis\.com|mozilla\.com|mozaws\.net|push\.apple\.com|notify\.windows\.com)\//
+const MAX_ALERTAS_CORREO = 10
+
+type Vapid = { publica: string, privada: JsonWebKey }
+
+async function llavesVapid(): Promise<Vapid | null> {
+  const lee = async () => {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/ajustes?clave=eq.vapid&select=valor`, { headers: rest })
+    if (!r.ok) return null
+    const [f] = await r.json()
+    return (f?.valor as Vapid) ?? null
+  }
+  const ya = await lee()
+  if (ya) return ya
+  const par = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, true, ['sign', 'verify']) as CryptoKeyPair
+  const publica = b64url(new Uint8Array(await crypto.subtle.exportKey('raw', par.publicKey)))
+  const privada = await crypto.subtle.exportKey('jwk', par.privateKey)
+  // Si dos llamadas las crean a la vez, gana la primera y las dos leen esa.
+  await fetch(`${SUPABASE_URL}/rest/v1/ajustes?on_conflict=clave`, {
+    method: 'POST', headers: { ...rest, Prefer: 'resolution=ignore-duplicates,return=minimal' },
+    body: JSON.stringify({ clave: 'vapid', valor: { publica, privada } }),
+  })
+  return await lee()
+}
+
+/** Toca el movil. Devuelve false si la suscripcion ya no existe (hay que olvidarla). */
+async function tocarMovil(push: { endpoint?: string }, vapid: Vapid): Promise<boolean> {
+  const endpoint = String(push?.endpoint || '')
+  if (!PUSH_OK.test(endpoint)) return false
+  const cab = b64url(new TextEncoder().encode(JSON.stringify({ typ: 'JWT', alg: 'ES256' })))
+  const cuerpo = b64url(new TextEncoder().encode(JSON.stringify({
+    aud: new URL(endpoint).origin, exp: Math.floor(Date.now() / 1000) + 12 * 3600,
+    sub: 'mailto:' + (Deno.env.get('NURA_CONTACTO') || 'hola@nura.app'),
+  })))
+  const llave = await crypto.subtle.importKey('jwk', vapid.privada, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign'])
+  const firma = b64url(new Uint8Array(await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, llave, new TextEncoder().encode(`${cab}.${cuerpo}`))))
+  try {
+    const r = await fetch(endpoint, {
+      method: 'POST',
+      headers: { TTL: '86400', Urgency: 'normal', Authorization: `vapid t=${cab}.${cuerpo}.${firma}, k=${vapid.publica}` },
+    })
+    return !(r.status === 404 || r.status === 410)
+  } catch { return true }
+}
+
+const escHtml = (s: string) => s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!))
+
+/** Correo por Resend. Sin RESEND_API_KEY y NURA_EMAIL_FROM no se envia nada. */
+async function enviarCorreo(para: string, asunto: string, html: string): Promise<boolean> {
+  const clave = Deno.env.get('RESEND_API_KEY'), de = Deno.env.get('NURA_EMAIL_FROM')
+  if (!clave || !de) return false
+  try {
+    const r = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${clave}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from: de, to: [para], subject: asunto, html }),
+    })
+    return r.ok
+  } catch { return false }
+}
+
+/**
+ * Ha llegado un profesional: avisa a quien lo estaba esperando. Nunca hace
+ * fallar el alta: si algo no sale, el profesional queda dado de alta igual.
+ */
+async function avisarAlertas(h: { id?: unknown, name?: unknown, specialty?: unknown, category?: unknown }) {
+  try {
+    const cat = String(h?.category || '')
+    if (!CATEGORIA_OK.test(cat) || h?.id === undefined) return
+    const ahora = new Date().toISOString()
+    // De paso se borran las caducadas: caducar es borrar, no esconder.
+    await fetch(`${SUPABASE_URL}/rest/v1/alertas?caduca_en=lt.${ahora}`, { method: 'DELETE', headers: rest })
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/alertas?categorias=cs.{${cat}}&caduca_en=gt.${ahora}&select=id,que,correo,push,baja,encontrados`,
+      { headers: rest },
+    )
+    if (!r.ok) return
+    const alertas = await r.json()
+    if (!alertas.length) return
+    const vapid = alertas.some((a: { push?: unknown }) => a.push) ? await llavesVapid() : null
+    const nombre = String(h.name || '').split(' ')[0] || 'Alguien'
+    const oficio = String(h.specialty || '')
+    const origen = ORIGENES[0] || ''
+    for (const a of alertas) {
+      const encontrados = [...(a.encontrados || []), { id: h.id, nombre, especialidad: oficio, fecha: ahora }].slice(-20)
+      const cambios: Record<string, unknown> = { encontrados, avisada_en: ahora }
+      if (a.push && vapid && !(await tocarMovil(a.push, vapid))) cambios.push = null
+      if (a.correo) {
+        await enviarCorreo(a.correo, `Ha llegado a Nüra: ${oficio || a.que}`,
+          `<p>Hola:</p><p>Nos pediste que te avisáramos si llegaba a Nüra alguien de <b>${escHtml(a.que)}</b>.</p>` +
+          `<p><b>${escHtml(nombre)}</b>${oficio ? ` (${escHtml(oficio)})` : ''} acaba de darse de alta.</p>` +
+          `<p><a href="${origen}/helper/${encodeURIComponent(String(h.id))}">Ver su ficha</a></p>` +
+          `<p style="color:#777;font-size:13px">¿Ya no lo necesitas? <a href="${origen}/baja/${a.baja}">Deja de avisarme</a>. ` +
+          `Este aviso se borra solo a los 3 meses.</p>`)
+      }
+      await fetch(`${SUPABASE_URL}/rest/v1/alertas?id=eq.${a.id}`, {
+        method: 'PATCH', headers: { ...rest, Prefer: 'return=minimal' }, body: JSON.stringify(cambios),
+      })
+    }
+  } catch { /* el alta ya esta hecha: un aviso perdido no la deshace */ }
+}
+
 const json = (cuerpo: unknown, estado: number, cors: Record<string, string>) =>
   new Response(JSON.stringify(cuerpo), {
     status: estado,
@@ -181,6 +293,11 @@ Deno.serve(async (req: Request) => {
     })
     if (!res.ok) return json({ error: 'insert rechazado', estado: res.status }, 502, cors)
     const datos = await res.json()
+    // Quien estaba esperando a alguien asi recibe el aviso. En segundo plano
+    // si el entorno lo permite: el alta no espera a los correos.
+    const avisos = avisarAlertas(datos?.[0] ?? fila)
+    const er = (globalThis as { EdgeRuntime?: { waitUntil?: (p: Promise<unknown>) => void } }).EdgeRuntime
+    if (er?.waitUntil) er.waitUntil(avisos); else await avisos
     return json({ ok: true, helper: datos?.[0] ?? null }, 200, cors)
   }
 
@@ -463,6 +580,88 @@ Deno.serve(async (req: Request) => {
     return json({ ok: true }, 200, cors)
   }
 
+  // ── «TE AVISO SI APARECE ALGUIEN» ───────────────────────────────────────
+  // La llave publica para que el movil se suscriba a las notificaciones.
+  if (op === 'clave-push') {
+    const v = await llavesVapid()
+    return v ? json({ ok: true, clave: v.publica }, 200, cors) : json({ error: 'sin llaves' }, 502, cors)
+  }
+
+  // Guardar una alerta. Solo con el SI de la persona (lo pide la app antes).
+  // Se guarda el oficio, nunca la frase. El correo sale de SU cuenta con el
+  // correo confirmado, nunca de lo que escriba el movil: asi nadie puede
+  // apuntar a otra persona a recibir correos.
+  if (op === 'crear-alerta') {
+    const categorias = Array.isArray(cuerpo.categorias)
+      ? [...new Set(cuerpo.categorias.map(String).filter(c => CATEGORIA_OK.test(c)))].slice(0, 6)
+      : []
+    const que = String(cuerpo.que ?? '').trim().slice(0, 60)
+    if (!categorias.length || !que) return json({ error: 'falta el oficio' }, 400, cors)
+
+    let push: { endpoint: string, keys?: unknown } | null = null
+    const p = cuerpo.push as { endpoint?: unknown, keys?: unknown } | undefined
+    if (p && typeof p.endpoint === 'string') {
+      if (!PUSH_OK.test(p.endpoint)) return json({ error: 'suscripcion no valida' }, 400, cors)
+      push = { endpoint: p.endpoint.slice(0, 1000), keys: p.keys ?? null }
+    }
+
+    let correo: string | null = null
+    if (cuerpo.sesion) {
+      const u = await fetch(`${SUPABASE_URL}/auth/v1/user`, { headers: { apikey: SERVICE_KEY!, Authorization: `Bearer ${String(cuerpo.sesion)}` } })
+      if (!u.ok) return json({ error: 'sesion no valida' }, 401, cors)
+      const usuario = await u.json()
+      if (!usuario?.email || (!usuario.email_confirmed_at && !usuario.confirmed_at)) return json({ error: 'correo sin confirmar' }, 400, cors)
+      correo = String(usuario.email).trim().toLowerCase()
+      const ya = await fetch(`${SUPABASE_URL}/rest/v1/alertas?correo=eq.${encodeURIComponent(correo)}&select=id`, { headers: rest })
+      if (ya.ok && (await ya.json()).length >= MAX_ALERTAS_CORREO) return json({ error: 'demasiadas alertas' }, 429, cors)
+    }
+
+    const llave = llaveAleatoria()
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/alertas`, {
+      method: 'POST',
+      headers: { ...rest, Prefer: 'return=representation' },
+      body: JSON.stringify({ categorias, que, correo, push, llave_hash: hex(await sha256(llave)), baja: llaveAleatoria() }),
+    })
+    if (!res.ok) return json({ error: 'no guardada', estado: res.status }, 502, cors)
+    const [fila] = await res.json()
+    return json({ ok: true, llave, caduca_en: fila?.caduca_en ?? null,
+      canales: { movil: Boolean(push), correo: Boolean(correo) },
+      correoActivo: Boolean(Deno.env.get('RESEND_API_KEY') && Deno.env.get('NURA_EMAIL_FROM')) }, 200, cors)
+  }
+
+  // Las alertas de ESTE movil (por sus llaves) y quien ha llegado.
+  if (op === 'alertas') {
+    const llaves = Array.isArray(cuerpo.llaves)
+      ? [...new Set(cuerpo.llaves.map(String).filter(l => FORMATO_LLAVE.test(l)))].slice(0, 20)
+      : []
+    if (!llaves.length) return json({ ok: true, alertas: [] }, 200, cors)
+    const resumenes = await Promise.all(llaves.map(async l => hex(await sha256(l))))
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/alertas?llave_hash=in.(${resumenes.join(',')})&caduca_en=gt.${new Date().toISOString()}&select=llave_hash,que,caduca_en,encontrados,correo,push`,
+      { headers: rest },
+    )
+    if (!r.ok) return json({ error: 'lectura rechazada', estado: r.status }, 502, cors)
+    const deLlave = new Map(resumenes.map((h, i) => [h, llaves[i]]))
+    const filas: { llave_hash: string, que: string, caduca_en: string, encontrados: unknown[], correo: string | null, push: unknown }[] = await r.json()
+    return json({ ok: true, alertas: filas.map(f => ({
+      llave: deLlave.get(f.llave_hash), que: f.que, caduca_en: f.caduca_en, encontrados: f.encontrados || [],
+      canales: { movil: Boolean(f.push), correo: Boolean(f.correo) },
+    })) }, 200, cors)
+  }
+
+  // Borrar una alerta: con la llave del movil o con el enlace del correo.
+  if (op === 'quitar-alerta') {
+    const llave = String(cuerpo.llave ?? ''), baja = String(cuerpo.baja ?? '')
+    let filtro = ''
+    if (FORMATO_LLAVE.test(llave)) filtro = `llave_hash=eq.${hex(await sha256(llave))}`
+    else if (FORMATO_LLAVE.test(baja)) filtro = `baja=eq.${baja}`
+    else return json({ error: 'no existe' }, 404, cors)
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/alertas?${filtro}`, { method: 'DELETE', headers: { ...rest, Prefer: 'return=representation' } })
+    if (!r.ok) return json({ error: 'no borrada', estado: r.status }, 502, cors)
+    const borradas = await r.json()
+    return borradas.length ? json({ ok: true }, 200, cors) : json({ error: 'no existe' }, 404, cors)
+  }
+
   // ── RECLAMAR LA FICHA (etapa 6b de docs/estudio-perfil.md) ─────────────
   // Une una cuenta (correo y contraseña) con SU ficha publica. El movil no
   // guarda que ficha es la suya, asi que la prueba es esta: el correo de la
@@ -532,6 +731,11 @@ Deno.serve(async (req: Request) => {
       }
       const fi = await fetch(`${SUPABASE_URL}/rest/v1/helpers?id=eq.${f.id}&owner_id=eq.${usuario.id}`, { method: 'DELETE', headers: rest })
       if (!fi.ok) return json({ error: 'no se pudo borrar la ficha', estado: fi.status }, 502, cors)
+    }
+    // Sus alertas «te aviso si aparece» con el correo de la cuenta.
+    if (usuario.email) {
+      const al = await fetch(`${SUPABASE_URL}/rest/v1/alertas?correo=eq.${encodeURIComponent(String(usuario.email).trim().toLowerCase())}`, { method: 'DELETE', headers: rest })
+      if (!al.ok && al.status !== 404) return json({ error: 'no se pudieron borrar las alertas', estado: al.status }, 502, cors)
     }
     // La foto (etapa 7). 404 = no tenia foto: no es un error.
     const fo = await fetch(`${SUPABASE_URL}/storage/v1/object/fotos/${usuario.id}/perfil.jpg`, {

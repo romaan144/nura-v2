@@ -15,6 +15,8 @@ import RegisterGate from '../components/RegisterGate'
 import { haptic } from '../utils/haptic'
 import { scheduleLocalNotification, notifySearchAbandoned } from '../utils/notifications'
 import { registrar } from '../utils/analitica'
+import AlertaSheet from '../components/AlertaSheet'
+import { tieneAlerta, misAlertas, alertasGuardadas } from '../utils/alertas'
 import styles from './Home.module.css'
 import { PULSO_THRESHOLD, PULSO_DELAY, CONFIRMACION_THRESHOLD, CONFIRMACION_DELAY } from '../config'
 import { extractPersona } from '../utils/personas'
@@ -380,6 +382,25 @@ export default function Home() {
   // vuelta atras. Un filtro de un solo sentido es la misma trampa que
   // retiramos en La Comprension Visible.
   const todosRef = useRef([])
+  // «Te aviso si aparece alguien»: el oficio de la ultima busqueda sin nadie
+  // (nunca la frase) y la hoja que pide permiso.
+  const sinCoberturaRef = useRef(null)
+  const [alerta, setAlerta] = useState(null)
+  // Si ha llegado alguien que esta persona esperaba, se le dice al abrir
+  // (una vez por sesion). El detalle esta en su perfil.
+  useEffect(() => {
+    if (!alertasGuardadas().length) return
+    try { if (sessionStorage.getItem('nura_alertas_dicho')) return } catch { /* sin memoria */ }
+    let vivo = true
+    misAlertas().then(l => {
+      if (!vivo) return
+      const nuevos = l.reduce((n, a) => n + Math.max(0, (a.encontrados || []).length - (a.visto || 0)), 0)
+      if (!nuevos || window.location.pathname.startsWith('/profile')) return
+      try { sessionStorage.setItem('nura_alertas_dicho', '1') } catch { /* sin memoria */ }
+      showToast(nuevos === 1 ? 'Ha llegado alguien que buscabas. Míralo en tu perfil.' : `Han llegado ${nuevos} personas que buscabas. Míralas en tu perfil.`)
+    })
+    return () => { vivo = false }
+  }, [])
   const [loading, setLoading] = useState(false)
   const [listening, setListening] = useState(false)
   const [showGate, setShowGate] = useState(false)
@@ -959,6 +980,7 @@ export default function Home() {
         }
           const alt = alternativas[analysis.categoria] || alternativas.otro
           const queEs = (CAT_HUMANA[analysis.categoria] || 'eso').toLowerCase()
+          sinCoberturaRef.current = { categoria: analysis.categoria, que: CAT_HUMANA[analysis.categoria] || queEs }
           registrarDemanda?.({ categoria: analysis.categoria, fecha: Date.now() })
           registrar('sin_cobertura', { categoria: analysis.categoria })
           setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
@@ -1154,9 +1176,16 @@ export default function Home() {
     }
 
     if (chip === 'Avisame cuando tengas a alguien' || chip === 'Avísame cuando tengas a alguien') {
-      // La demanda ya quedo anotada al producirse el silencio.
+      // Antes respondia «Anotado, te aviso» y NO avisaba. Ahora pide permiso
+      // (la hoja dice que guarda) y avisa de verdad: movil y/o correo.
       haptic('light')
-      responde(['Anotado. Te aviso en cuanto tenga a alguien asi cerca de ti.'])
+      const pend = sinCoberturaRef.current
+      if (!pend) { responde(['Cuéntame otra vez qué necesitas y te digo si puedo avisarte.']); return }
+      if (tieneAlerta(pend.categoria)) {
+        responde([`Ya te aviso si llega alguien de ${pend.que.toLowerCase()}. Lo tienes en tu perfil.`])
+        return
+      }
+      setAlerta(pend)
       return
     }
 
@@ -1512,6 +1541,29 @@ export default function Home() {
       </div>
 
       {showGate && <RegisterGate reason={gateReason} onClose={() => setShowGate(false)} />}
+      {alerta && (
+        <AlertaSheet categoria={alerta.categoria} que={alerta.que}
+          onClose={() => setAlerta(null)}
+          onHecho={r => {
+            setAlerta(null)
+            // Se dice lo que ha pasado de verdad, canal por canal.
+            const lineas = []
+            if (!r.ok) lineas.push(r.motivo === 'demasiadas'
+              ? 'Ya tienes muchos avisos con ese correo. Quita alguno desde tu perfil y vuelve a pedírmelo.'
+              : 'No he podido guardarlo ahora. Vuelve a probar en un momento.')
+            else {
+              const vias = [r.canales?.movil && 'con una notificación', r.canales?.correo && 'por correo'].filter(Boolean)
+              lineas.push(vias.length
+                ? `Hecho. Si llega alguien de ${alerta.que.toLowerCase()}, te aviso ${vias.join(' y ')}.`
+                : `Hecho. Si llega alguien de ${alerta.que.toLowerCase()}, lo verás en tu perfil al abrir Nüra.`)
+              if (r.motivoMovil === 'denegado') lineas.push('El móvil no ha dado permiso para notificaciones: puedes activarlo en los ajustes del navegador.')
+              else if (r.motivoMovil === 'error') lineas.push('No he podido activar las notificaciones en este móvil ahora.')
+              if (r.canales?.correo && !r.correoActivo) lineas.push('Los correos aún se están poniendo en marcha: mientras tanto lo verás en tu perfil.')
+              lineas.push('Se borra solo a los 3 meses. Lo tienes en tu perfil por si quieres quitarlo antes.')
+            }
+            setMessages(prev => [...prev, { id: Date.now(), from: 'nura', lines: lineas }])
+          }} />
+      )}
     </div>
   )
 }

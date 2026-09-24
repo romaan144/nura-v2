@@ -403,7 +403,7 @@ const APP_CATEGORIA = { matematicas: 'clases', limpieza: 'hogar', educacion: 'cl
 // Las categorias de la BASE DE DATOS que la app agrupa bajo una suya. Se le
 // piden todas a Supabase: antes solo se pedia la exacta, y a quien buscaba
 // «limpiar mi casa» (hogar) nunca le llegaban los 55 de `limpieza`.
-const categoriasEnBD = cat => [cat, ...Object.keys(APP_CATEGORIA).filter(k => APP_CATEGORIA[k] === cat)]
+export const categoriasEnBD = cat => [cat, ...Object.keys(APP_CATEGORIA).filter(k => APP_CATEGORIA[k] === cat)]
 const toApp = c => APP_CATEGORIA[c] || c
 
 // Coincidencia por palabra completa: 'forma' ya no puede colarse en 'reforma'

@@ -27,6 +27,7 @@ import ScrollToTop from './components/ScrollToTop'
 import OnboardingPage from './pages/Onboarding'
 const MyServices = lazy(() => import('./pages/MyServices'))
 const Responder = lazy(() => import('./pages/Responder'))
+const BajaAlerta = lazy(() => import('./pages/BajaAlerta'))
 import Siguiendo from './pages/Siguiendo'
 import Legal from './pages/Legal'
 // Carga PEREZOSA a proposito: estas dos pantallas traen la libreria de
@@ -144,6 +145,7 @@ function AppRoutes() {
               {/* LA VUELTA: aqui aterriza el profesional desde el enlace
                   de su aviso. Corta y sin cuenta a proposito. */}
               <Route path="/r/:token" element={<Responder />} />
+              <Route path="/baja/:token" element={<BajaAlerta />} />
               <Route path="/onboarding" element={<OnboardingPage />} />
               <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
               <Route path="/register-helper" element={<RegisterHelper />} />

@@ -30,8 +30,26 @@ actualizar por eso mismo.
 
 ### En producción (comprobado)
 
-- **Función `helpers-write` versión 6** (2026-09-24), 13 operaciones
-  (nueva: `valorar`).
+- **Función `helpers-write` versión 7** (2026-09-24), 17 operaciones
+  (nuevas: `valorar`, `clave-push`, `crear-alerta`, `alertas`,
+  `quitar-alerta`).
+- **«Te aviso si aparece alguien»** (2026-09-24): tablas `alertas` y
+  `ajustes` creadas, cerradas al público (comprobado). Las notificaciones
+  del móvil funcionan sin configurar nada. **Los correos no salen hasta que
+  el fundador configure Resend** (abajo).
+
+### Pendiente del fundador: correos de Nüra (Resend)
+
+Para que «te aviso» también llegue por correo:
+1. Crear cuenta en resend.com y verificar el dominio de Nüra (añadir los
+   registros DNS que indica).
+2. Crear una API key en Resend.
+3. Supabase → Edge Functions → Secrets → añadir:
+   - `RESEND_API_KEY` = la key (no pegarla en ningún chat).
+   - `NURA_EMAIL_FROM` = por ejemplo `Nüra <avisos@tudominio>`.
+   - Opcional `NURA_CONTACTO` = el correo de contacto que va en la firma
+     de las notificaciones.
+Sin esto no se envía ningún correo y la app lo dice.
 - **Perfil vivo, pieza 1** (2026-09-24): tablas `valoraciones` y
   `perfil_atributos` creadas y probadas (en una transacción que se
   deshizo). La ventana de valorar y la sección «Su historial en Nüra» de

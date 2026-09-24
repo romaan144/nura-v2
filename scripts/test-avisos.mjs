@@ -28,7 +28,7 @@ function ok(cond, texto) {
 }
 
 // ── la base de datos ficticia ───────────────────────────────────────────
-const db = { helpers: [], avisos: [], valoraciones: [] }
+const db = { helpers: [], avisos: [], valoraciones: [], alertas: [], ajustes: [] }
 const peticionesBD = []   // todo lo que la funcion le pide a "Supabase"
 
 function coincide(fila, campo, cond) {
@@ -38,6 +38,9 @@ function coincide(fila, campo, cond) {
   if (cond.startsWith('eq.')) return String(v) === cond.slice(3)
   if (cond.startsWith('ilike.')) return String(v ?? '').toLowerCase() === cond.slice(6).toLowerCase()
   if (cond.startsWith('in.(')) return cond.slice(4, -1).split(',').includes(String(v))
+  if (cond.startsWith('cs.{')) return cond.slice(4, -1).split(',').every(x => (v || []).includes(x))
+  if (cond.startsWith('gt.')) return String(v) > cond.slice(3)
+  if (cond.startsWith('lt.')) return String(v) < cond.slice(3)
   throw new Error('filtro no soportado: ' + cond)
 }
 
@@ -47,7 +50,7 @@ async function postgrest(url, init = {}) {
   peticionesBD.push({ url, metodo, cuerpo: init.body ?? '', cabeceras: JSON.stringify(init.headers ?? {}) })
   const tabla = u.pathname.replace('/rest/v1/', '')
   if (!db[tabla]) return new Response('[]', { status: 404 })
-  const filtros = [...u.searchParams].filter(([k]) => !['select', 'order', 'limit'].includes(k))
+  const filtros = [...u.searchParams].filter(([k]) => !['select', 'order', 'limit', 'on_conflict'].includes(k))
   const cumplen = db[tabla].filter(f => filtros.every(([k, c]) => coincide(f, k, c)))
   const elegir = (f) => {
     const sel = u.searchParams.get('select')
@@ -65,7 +68,9 @@ async function postgrest(url, init = {}) {
     if (tabla === 'valoraciones' && db.valoraciones.some(v => v.aviso_id === nueva.aviso_id)) {
       return new Response('{"code":"23505"}', { status: 409 })
     }
-    const fila = { id: db[tabla].length + 1, fecha: new Date().toISOString(), ...nueva }
+    if (tabla === 'ajustes' && db.ajustes.some(f => f.clave === nueva.clave)) return new Response(null, { status: 201 })
+    const extra = tabla === 'alertas' ? { caduca_en: new Date(Date.now() + 90 * 864e5).toISOString(), encontrados: [] } : {}
+    const fila = { id: db[tabla].length + 1, fecha: new Date().toISOString(), ...extra, ...nueva }
     db[tabla].push(fila)
     return quiereFilas ? Response.json([fila], { status: 201 }) : new Response(null, { status: 201 })
   }
@@ -76,12 +81,27 @@ async function postgrest(url, init = {}) {
   }
   if (metodo === 'DELETE') {
     db[tabla] = db[tabla].filter(f => !cumplen.includes(f))
-    return new Response(null, { status: 204 })
+    return quiereFilas ? Response.json(cumplen) : new Response(null, { status: 204 })
   }
   return new Response(null, { status: 405 })
 }
 
+// Sesiones ficticias: una con el correo confirmado y otra sin confirmar.
+const SESIONES = {
+  'sesion-confirmada': { id: 'u1', email: 'Cliente@Ficticio.test', email_confirmed_at: '2026-09-01T00:00:00Z' },
+  'sesion-sin-confirmar': { id: 'u2', email: 'otra@ficticio.test' },
+}
+const tocados = []   // notificaciones enviadas al servicio de push ficticio
+const correos = []   // correos enviados al proveedor ficticio
+let pushResponde = 201
+
 globalThis.fetch = async (url, init) => {
+  if (String(url) === SUPA + '/auth/v1/user') {
+    const s = SESIONES[String(init?.headers?.Authorization || '').replace('Bearer ', '')]
+    return s ? Response.json(s) : new Response('{}', { status: 401 })
+  }
+  if (String(url).startsWith('https://fcm.googleapis.com/')) { tocados.push({ url: String(url), init }); return new Response(null, { status: pushResponde }) }
+  if (String(url) === 'https://api.resend.com/emails') { correos.push(JSON.parse(init.body)); return Response.json({ id: 'x' }) }
   if (String(url).startsWith(SUPA)) return postgrest(String(url), init)
   throw new Error('salida de red no permitida en la prueba: ' + url)
 }
@@ -244,6 +264,90 @@ console.log('\n── Valorar (perfil vivo) ──')
   ok(r.estado === 400, `una valoración vacía se rechaza → 400 (dio ${r.estado})`)
   r = await llamarG(funcion, { op: 'valorar', llave: a.datos.lectura, estrellas: 9 })
   ok(r.estado === 400, `estrellas fuera de 1–5 no valen → 400 (dio ${r.estado})`)
+}
+
+
+console.log('\n── Te aviso si aparece alguien ──')
+{
+  const SUB = { endpoint: 'https://fcm.googleapis.com/fcm/send/ficticio-1', keys: { p256dh: 'x', auth: 'y' } }
+  let r = await llamarG(funcion, { op: 'clave-push' })
+  ok(r.estado === 200 && /^[A-Za-z0-9_-]{80,}$/.test(r.datos?.clave ?? ''), 'la función da su llave pública de notificaciones')
+  const clave1 = r.datos.clave
+  r = await llamarG(funcion, { op: 'clave-push' })
+  ok(r.datos?.clave === clave1 && db.ajustes.length === 1, 'la llave se crea una vez y se reutiliza')
+  ok(!respuestasTexto.some(t => t.includes('"d"')), 'la llave privada no sale nunca en una respuesta')
+
+  r = await llamarG(funcion, { op: 'crear-alerta', categorias: ['logopedia'], que: 'Apoyo con el habla', push: SUB })
+  ok(r.estado === 200 && /^[0-9a-f]{32}$/.test(r.datos?.llave ?? '') && r.datos?.canales?.movil === true, 'se guarda una alerta con aviso al móvil')
+  const llaveMovil = r.datos.llave
+  ok(!JSON.stringify(db.alertas).includes(llaveMovil), 'la llave de la alerta no se guarda tal cual')
+  const fila = db.alertas.at(-1)
+  ok(Object.keys(fila).every(k => ['id','fecha','caduca_en','encontrados','categorias','que','correo','push','llave_hash','baja'].includes(k)),
+    'la alerta guarda solo oficio, canales y llaves: ninguna frase')
+
+  r = await llamarG(funcion, { op: 'crear-alerta', categorias: ['logopedia'], que: 'x', push: { endpoint: 'https://atacante.test/robar' } })
+  ok(r.estado === 400, `una «suscripción» a una web cualquiera se rechaza → 400 (dio ${r.estado})`)
+  r = await llamarG(funcion, { op: 'crear-alerta', categorias: ['DROP TABLE'], que: 'x' })
+  ok(r.estado === 400, 'un oficio con forma rara se rechaza')
+  r = await llamarG(funcion, { op: 'crear-alerta', categorias: ['logopedia'], que: 'Habla', sesion: 'sesion-sin-confirmar', correo: 'victima@ficticio.test' })
+  ok(r.estado === 400 && !db.alertas.some(f => f.correo), 'con el correo sin confirmar no se apunta a nadie')
+  r = await llamarG(funcion, { op: 'crear-alerta', categorias: ['logopedia'], que: 'Habla', sesion: 'falsa' })
+  ok(r.estado === 401, 'con una sesión falsa → 401')
+  r = await llamarG(funcion, { op: 'crear-alerta', categorias: ['logopedia'], que: 'Apoyo con el habla', sesion: 'sesion-confirmada', correo: 'victima@ficticio.test' })
+  ok(r.estado === 200 && db.alertas.at(-1).correo === 'cliente@ficticio.test', 'el correo sale de la cuenta confirmada, no del que mande el móvil')
+  const llaveCorreo = r.datos.llave
+  await llamarG(funcion, { op: 'crear-alerta', categorias: ['mascotas'], que: 'Cuidado de mascotas', push: SUB })
+
+  // Llega una logopeda nueva
+  const antes = tocados.length
+  r = await llamarG(funcion, { op: 'alta', payload: { name: 'Lucía Ficticia Pérez', category: 'logopedia', specialty: 'Logopeda infantil' } })
+  ok(r.estado === 200, 'el alta sigue funcionando')
+  ok(tocados.length === antes + 1, `se toca el móvil de quien esperaba una logopeda, y solo ese (${tocados.length - antes})`)
+  const t = tocados.at(-1)
+  ok(!t.init.body, 'la notificación va vacía: el servicio de push no ve qué se buscaba')
+  const [, jwt, k] = /vapid t=([^,]+), k=(.+)$/.exec(t.init.headers.Authorization) || []
+  let firmaValida = false
+  if (jwt) {
+    const [h, c, f] = jwt.split('.')
+    const d = x => Uint8Array.from(Buffer.from(x, 'base64url'))
+    const pub = await crypto.subtle.importKey('raw', d(k), { name: 'ECDSA', namedCurve: 'P-256' }, false, ['verify'])
+    firmaValida = await crypto.subtle.verify({ name: 'ECDSA', hash: 'SHA-256' }, pub, d(f), new TextEncoder().encode(h + '.' + c))
+      && JSON.parse(Buffer.from(c, 'base64url')).aud === 'https://fcm.googleapis.com'
+  }
+  ok(firmaValida && k === clave1, 'la firma VAPID es válida con la llave pública')
+  ok(correos.length === 0, 'sin proveedor de correo configurado no se envía ningún correo')
+
+  r = await llamarG(funcion, { op: 'alertas', llaves: [llaveMovil] })
+  ok(r.estado === 200 && r.datos.alertas.length === 1 && r.datos.alertas[0].encontrados[0]?.nombre === 'Lucía', 'el móvil ve quién ha llegado con su llave')
+  ok(!JSON.stringify(r.datos).includes('cliente@ficticio'), 'la consulta del móvil no devuelve correos')
+  r = await llamarG(funcion, { op: 'alertas', llaves: ['0'.repeat(32)] })
+  ok(r.datos?.alertas?.length === 0, 'una llave inventada no ve nada')
+
+  // Con proveedor de correo
+  const conCorreo = await cargarFuncion({ ...ENV, RESEND_API_KEY: 're_ficticia', NURA_EMAIL_FROM: 'Nüra <avisos@ficticio.test>' })
+  await llamarG(conCorreo, { op: 'alta', payload: { name: '<b>Marta</b> Ficticia', category: 'logopedia', specialty: 'Logopeda' } })
+  ok(correos.length === 1 && correos[0].to[0] === 'cliente@ficticio.test', 'con proveedor configurado, llega el correo a la cuenta')
+  ok(correos[0]?.html.includes('&lt;b&gt;') && correos[0]?.html.includes('/baja/'), 'el correo escapa el nombre y lleva enlace para darse de baja')
+
+  // Suscripción caducada: se olvida
+  pushResponde = 410
+  await llamarG(funcion, { op: 'alta', payload: { name: 'Otra Ficticia', category: 'logopedia' } })
+  pushResponde = 201
+  ok(db.alertas.find(f => f.categorias.includes('logopedia') && f.correo === null).push === null, 'si el móvil ya no acepta avisos, se olvida su suscripción')
+
+  // Caducadas
+  db.alertas.push({ id: 99, categorias: ['logopedia'], que: 'vieja', correo: null, push: null, llave_hash: 'h', baja: 'b'.repeat(32), caduca_en: '2020-01-01T00:00:00Z', encontrados: [] })
+  await llamarG(funcion, { op: 'alta', payload: { name: 'Una Más', category: 'logopedia' } })
+  ok(!db.alertas.some(f => f.id === 99), 'las alertas caducadas se borran')
+
+  // Quitar
+  r = await llamarG(funcion, { op: 'quitar-alerta', llave: llaveMovil })
+  ok(r.estado === 200 && !db.alertas.some(f => f.categorias.includes('logopedia') && f.correo === null), 'se quita con la llave del móvil')
+  const baja = db.alertas.find(f => f.correo).baja
+  r = await llamarG(funcion, { op: 'quitar-alerta', baja })
+  ok(r.estado === 200 && !db.alertas.some(f => f.correo), 'se quita con el enlace del correo')
+  r = await llamarG(funcion, { op: 'quitar-alerta', llave: llaveCorreo })
+  ok(r.estado === 404, 'quitar dos veces → 404')
 }
 
 console.log('\n── El secreto no se filtra ──')
