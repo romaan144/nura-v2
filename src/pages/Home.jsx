@@ -905,11 +905,21 @@ export default function Home() {
       try {
         if (forWhom) analysis.paraQuien = forWhom
         // El Espejo — detectar y recordar a la persona de esta búsqueda
+        // SOLO CON PERMISO (decision del fundador, 2026-09-24). Antes se
+        // guardaba sola: «mi madre tiene Alzheimer» dejaba «Madre ·
+        // Alzheimer» en el movil sin preguntar. Ahora, si ya estaba guardada
+        // (permiso dado), se actualiza; si no, se pregunta al final.
         const personaDetected = extractPersona(msg)
+        window.__nuraPersonaPendiente = null
         if (personaDetected) {
-          const pid = upsertPersona(personaDetected, msg)
           analysis.persona = personaDetected.relacion
-          window.__nuraActivePersona = pid
+          const yaGuardada = (personas || []).some(p => p.relacion === personaDetected.relacion)
+          if (yaGuardada) {
+            window.__nuraActivePersona = upsertPersona(personaDetected)
+          } else {
+            window.__nuraActivePersona = null
+            window.__nuraPersonaPendiente = personaDetected
+          }
         } else {
           window.__nuraActivePersona = null
         }
@@ -949,11 +959,13 @@ export default function Home() {
         }
           const alt = alternativas[analysis.categoria] || alternativas.otro
           const queEs = (CAT_HUMANA[analysis.categoria] || 'eso').toLowerCase()
-          registrarDemanda?.({ categoria: analysis.categoria, consulta: msg, fecha: Date.now() })
+          registrarDemanda?.({ categoria: analysis.categoria, fecha: Date.now() })
           registrar('sin_cobertura', { categoria: analysis.categoria })
           setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
             lines: [`Te he entendido: buscas ${queEs}. Ahora mismo no tengo a nadie así cerca de ti.`],
             chips: [`Buscar ${alt.alt}`, 'Ampliar la zona', 'Avísame cuando tengas a alguien'] }])
+          // Aqui NO se pregunta si recordar: solo se ven las opciones del
+          // ultimo mensaje, y taparia estas.
           return
         }
         // Cuando no se entiende, se pide otra vez — pero NO igual para todos.
@@ -1063,6 +1075,7 @@ export default function Home() {
           : ['Ampliar búsqueda', 'Cambiar zona', 'Online también']
       }
       setMessages(prev => [...prev, resultMsg])
+      preguntarSiRecordar()
       setLoading(false)
     } catch (err) {
       searchSeqRef.current++  // invalida temporizadores huérfanos de esta búsqueda
@@ -1086,9 +1099,33 @@ export default function Home() {
   // eso era un callejon: Nura ofrecia algo y al tocarlo buscaba otra cosa.
   // Los que son respuesta a una pregunta suya siguen yendo a handleSend,
   // que ya los intercepta por cadena exacta.
+  // «¿Quieres que me acuerde de tu madre?» — se pregunta al final de la
+  // busqueda, nunca se guarda sin un si.
+  function preguntarSiRecordar() {
+    const p = window.__nuraPersonaPendiente
+    if (!p?.label) return
+    setTimeout(() => setMessages(prev => [...prev, { id: Date.now() + 5, from: 'nura',
+      lines: [`¿Quieres que me acuerde de ${p.label} para ayudarte mejor la próxima vez? Solo lo guardo en tu móvil y puedes borrarlo cuando quieras.`],
+      chips: ['Sí, acuérdate', 'No, gracias'] }]), 900)
+  }
+
   function handleChip(chip) {
     const responde = (lines, chips) =>
       setMessages(prev => [...prev, { id: Date.now(), from: 'nura', lines, chips }])
+
+    if (chip === 'Sí, acuérdate' || chip === 'No, gracias') {
+      const p = window.__nuraPersonaPendiente
+      window.__nuraPersonaPendiente = null
+      haptic('light')
+      if (!p) return
+      if (chip === 'Sí, acuérdate') {
+        window.__nuraActivePersona = upsertPersona(p)
+        responde([`Hecho, me acordaré de ${p.label}. Lo tienes en tu perfil, por si quieres borrarlo.`])
+      } else {
+        responde(['Vale, no lo guardo.'])
+      }
+      return
+    }
 
     if (chip.startsWith('Escribir a')) {
       const h = lastMatches?.[0]

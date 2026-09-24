@@ -218,7 +218,10 @@ export function UserProvider({ children }) {
   }
 
   // ── El Espejo — las personas de la vida del usuario ──
-  function upsertPersona(extracted, query) {
+  // Solo con permiso (decision del fundador, 2026-09-24): Home pregunta
+  // «¿Quieres que me acuerde de tu madre?» y solo entonces se llama aqui.
+  // Nunca se guarda la frase de la busqueda: solo quien es y sus rasgos.
+  function upsertPersona(extracted) {
     if (!extracted?.relacion) return null
     const existing = personas.find(p => p.relacion === extracted.relacion)
     let id, updated
@@ -226,7 +229,7 @@ export function UserProvider({ children }) {
       id = existing.id
       const atributos = [...new Set([...(existing.atributos || []), ...(extracted.atributos || [])])]
       updated = personas.map(p => p.id === id
-        ? { ...p, atributos, lastMentioned: Date.now(), lastQuery: query }
+        ? { ...p, atributos, lastMentioned: Date.now() }
         : p)
     } else {
       id = 'p_' + Date.now()
@@ -234,7 +237,7 @@ export function UserProvider({ children }) {
         id, relacion: extracted.relacion, label: extracted.label, suyo: extracted.suyo,
         atributos: extracted.atributos || [],
         firstMentioned: Date.now(), lastMentioned: Date.now(),
-        lastQuery: query, contactedHelperIds: [],
+        contactedHelperIds: [],
       }]
     }
     setPersonas(updated)
@@ -279,10 +282,11 @@ export function UserProvider({ children }) {
   // exista historico en vez de empezar de cero. Le dira que profesionales
   // fichar y en que zona — un marketplace que no mide su demanda
   // insatisfecha recluta a ciegas.
-  function registrarDemanda({ categoria, consulta, fecha }) {
+  // Sin la frase de la busqueda: solo la categoria que no tuvo cobertura.
+  function registrarDemanda({ categoria, fecha }) {
     if (!categoria) return
     const prev = load('nura_demanda_no_cubierta', [])
-    const updated = [...prev, { categoria, consulta, fecha: fecha || Date.now() }].slice(-100)
+    const updated = [...prev, { categoria, fecha: fecha || Date.now() }].slice(-100)
     save('nura_demanda_no_cubierta', updated)
   }
 
