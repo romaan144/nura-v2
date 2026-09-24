@@ -34,10 +34,12 @@ export async function llamarFuncion(cuerpo) {
 }
 
 /** Alta profesional. Devuelve la fila creada, o null si no se publico. */
-export async function altaProfesional(payload) {
+export async function altaProfesional(payload, declarado = []) {
   try {
     if (porLaFuncion()) {
-      const r = await llamarFuncion({ op: 'alta', payload })
+      // `declarado`: lo que confirmo de la propuesta de la IA (utils/declarado.js).
+      const r = await llamarFuncion({ op: 'alta', payload,
+        declarado: declarado.map(({ clave, valor }) => ({ clave, valor })) })
       if (!r?.ok) { console.warn('[Nüra] alta rechazada por la funcion:', r?.estado ?? '?'); return null }
       return r.helper ?? null
     }

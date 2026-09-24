@@ -201,6 +201,45 @@ async function avisarAlertas(h: { id?: unknown, name?: unknown, specialty?: unkn
   } catch { /* el alta ya esta hecha: un aviso perdido no la deshace */ }
 }
 
+// ── LO DECLARADO (perfil vivo §4) ───────────────────────────────────────
+// La IA (funcion `perfil-ia`) PROPONE; aqui solo entra lo que el profesional
+// CONFIRMA. Vocabulario cerrado (el de perfil-ia): cualquier otra clave se
+// descarta. Se guarda con fuente «declarado» y la fecha de la confirmacion.
+const DISPONIBLES = new Set(['mañanas', 'tardes', 'noches', 'fines de semana', 'urgencias'])
+const TEXTO_DECLARADO = /^[\p{L}\p{N} .,'()/-]{1,60}$/u
+
+function limpiarDeclarado(entrada: unknown): { clave: string, valor: unknown }[] {
+  if (!Array.isArray(entrada)) return []
+  const vistas = new Set<string>()
+  const salida: { clave: string, valor: unknown }[] = []
+  for (const a of entrada.slice(0, 40)) {
+    const clave = String((a as { clave?: unknown })?.clave ?? '')
+    const valor = (a as { valor?: unknown })?.valor
+    let ok = false
+    if (clave === 'vehiculo') ok = typeof valor === 'boolean'
+    else if (clave === 'anos_experiencia') ok = Number.isInteger(valor) && (valor as number) >= 0 && (valor as number) <= 70
+    else {
+      const m = /^(idioma|especialidad|personas|titulo|disponibilidad):(.+)$/u.exec(clave)
+      if (m && valor === true && TEXTO_DECLARADO.test(m[2]) && (m[1] !== 'disponibilidad' || DISPONIBLES.has(m[2]))) ok = true
+    }
+    if (ok && !vistas.has(clave)) { vistas.add(clave); salida.push({ clave, valor }) }
+  }
+  return salida
+}
+
+/** Reemplaza TODO lo declarado de un profesional por lo que acaba de confirmar. */
+async function guardarDeclarado(helperId: string, atributos: { clave: string, valor: unknown }[]): Promise<boolean> {
+  const del = await fetch(`${SUPABASE_URL}/rest/v1/perfil_atributos?helper_id=eq.${encodeURIComponent(helperId)}&fuente=eq.declarado`, { method: 'DELETE', headers: rest })
+  if (!del.ok) return false
+  if (!atributos.length) return true
+  const fecha = new Date().toISOString().slice(0, 10)
+  const ins = await fetch(`${SUPABASE_URL}/rest/v1/perfil_atributos`, {
+    method: 'POST', headers: { ...rest, Prefer: 'return=minimal' },
+    body: JSON.stringify(atributos.map(a => ({ helper_id: helperId, clave: a.clave, fuente: 'declarado', valor: a.valor, prueba: `lo confirmó el ${fecha}` }))),
+  })
+  return ins.ok
+}
+
 const json = (cuerpo: unknown, estado: number, cors: Record<string, string>) =>
   new Response(JSON.stringify(cuerpo), {
     status: estado,
@@ -293,6 +332,10 @@ Deno.serve(async (req: Request) => {
     })
     if (!res.ok) return json({ error: 'insert rechazado', estado: res.status }, 502, cors)
     const datos = await res.json()
+    // Lo que confirmo al darse de alta (la IA lo propuso en la app). Si no
+    // se guarda, el alta vale igual: se puede confirmar despues.
+    const declarado = limpiarDeclarado(cuerpo.declarado)
+    if (declarado.length && datos?.[0]?.id !== undefined) await guardarDeclarado(String(datos[0].id), declarado)
     // Quien estaba esperando a alguien asi recibe el aviso. En segundo plano
     // si el entorno lo permite: el alta no espera a los correos.
     const avisos = avisarAlertas(datos?.[0] ?? fila)
@@ -660,6 +703,23 @@ Deno.serve(async (req: Request) => {
     if (!r.ok) return json({ error: 'no borrada', estado: r.status }, 502, cors)
     const borradas = await r.json()
     return borradas.length ? json({ ok: true }, 200, cors) : json({ error: 'no existe' }, 404, cors)
+  }
+
+  // ── Confirmar lo declarado desde «Editar mi ficha» ──
+  // Solo la profesional con sesion, y solo sobre SU ficha (owner_id).
+  if (op === 'confirmar-declarado') {
+    const token = String(cuerpo.sesion || '')
+    if (!token) return json({ error: 'falta la sesion' }, 401, cors)
+    const u = await fetch(`${SUPABASE_URL}/auth/v1/user`, { headers: { apikey: SERVICE_KEY!, Authorization: `Bearer ${token}` } })
+    if (!u.ok) return json({ error: 'sesion no valida' }, 401, cors)
+    const usuario = await u.json()
+    if (!usuario?.id) return json({ error: 'sesion sin usuario' }, 401, cors)
+    const f = await fetch(`${SUPABASE_URL}/rest/v1/helpers?owner_id=eq.${usuario.id}&select=id&limit=1`, { headers: rest })
+    if (!f.ok) return json({ error: 'lectura rechazada', estado: f.status }, 502, cors)
+    const [ficha] = await f.json()
+    if (!ficha) return json({ error: 'sin ficha' }, 404, cors)
+    const ok = await guardarDeclarado(String(ficha.id), limpiarDeclarado(cuerpo.atributos))
+    return ok ? json({ ok: true }, 200, cors) : json({ error: 'no guardado' }, 502, cors)
   }
 
   // ── RECLAMAR LA FICHA (etapa 6b de docs/estudio-perfil.md) ─────────────

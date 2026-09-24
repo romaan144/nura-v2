@@ -20,6 +20,7 @@ import RegisterGate from '../components/RegisterGate'
 import { getHelperById } from '../utils/supabase'
 import { atributosDe } from '../utils/escrituras'
 import { ETIQUETA_CUALIDAD } from '../utils/cualidades'
+import { etiquetaDe } from '../utils/declarado'
 import { Badge, LiveDot, Bubble, StatBar } from '../components/ui'
 import { getFirstName } from '../utils/name'
 import { fmtNota } from '../utils/formato'
@@ -492,6 +493,7 @@ function HelperProfileInner() {
 
 {/* ── Perfil vivo: solo lo que tiene prueba (docs/perfil-vivo.md §2) ── */}
         <ConPrueba atributos={atributos} firstName={firstName} sinNota={enrichedH.reviews > 0} />
+        <LoQueCuenta atributos={atributos} firstName={firstName} />
 
 {/* ── Valoraciones ── */}
         {enrichedH.reviews > 0 && (
@@ -820,6 +822,25 @@ function ConPrueba({ atributos, firstName, sinNota }) {
           ))}
         </div>
       )}
+    </section>
+  )
+}
+
+// Lo DECLARADO: lo que el profesional dice de si y confirmo (perfil vivo
+// §4). Se enseña como suyo, no como comprobado: «lo dice ella».
+const ORDEN_DECLARADO = ['vehiculo', 'anos_experiencia', 'personas', 'especialidad', 'idioma', 'disponibilidad', 'titulo']
+function LoQueCuenta({ atributos, firstName }) {
+  const suyos = atributos.filter(a => a.fuente === 'declarado' && !(a.clave === 'vehiculo' && a.valor === false))
+  if (!suyos.length) return null
+  const tipo = c => c.includes(':') ? c.slice(0, c.indexOf(':')) : c
+  const ordenados = [...suyos].sort((a, b) => ORDEN_DECLARADO.indexOf(tipo(a.clave)) - ORDEN_DECLARADO.indexOf(tipo(b.clave)))
+  return (
+    <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 60ms forwards`}} className={styles.section}>
+      <h2 className={styles.sectionHeading}>Lo que cuenta {firstName}</h2>
+      <div className={styles.tags}>
+        {ordenados.map(a => <span key={a.clave} className={styles.tag}>{etiquetaDe(a.clave, a.valor)}</span>)}
+      </div>
+      <p className={styles.declaradoPie}>Lo dice {firstName} y lo ha confirmado. Nüra no lo ha comprobado.</p>
     </section>
   )
 }

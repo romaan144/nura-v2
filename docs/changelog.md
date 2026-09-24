@@ -10,6 +10,29 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-24 — Lo declarado, ordenado por IA (con confirmación)
+
+- **Qué hace**: al terminar el alta (y al editar la ficha con cuenta), Nüra
+  convierte lo que el profesional ha escrito en datos concretos («Tiene
+  coche · 9 años de experiencia · Habla catalán · Alzheimer · Trabaja con
+  personas mayores») y le pregunta «¿Es correcto?». Quita lo que no, con
+  un toque. **Solo se guarda lo confirmado.**
+- **Ficha pública**: sección «Lo que cuenta {nombre}», con la nota «Lo dice
+  {nombre} y lo ha confirmado. Nüra no lo ha comprobado».
+- **IA**: Claude (`claude-opus-5`, esfuerzo bajo, salida con esquema fijo y
+  respaldo automático si rechaza). Solo lee lo que el profesional escribe
+  de sí mismo; nunca chats ni búsquedas. Nueva función `perfil-ia`.
+- **Coste acotado**: tope diario de llamadas (`NURA_IA_MAX_DIA`, 300 por
+  defecto) con contador atómico en la base de datos.
+- **Sin clave, sin cambios**: mientras no exista `ANTHROPIC_API_KEY` en
+  Supabase, el alta y la edición funcionan como antes, sin este paso.
+- `helpers-write` v8: el alta acepta lo confirmado y nueva operación
+  `confirmar-declarado` (solo sobre la ficha propia). 8 pruebas nuevas
+  (93/93). La función `perfil-ia` se probó contra un servidor de Anthropic
+  simulado (petición, origen, tope diario y rechazo).
+- **Corregido**: el alta decía «reciben una media de 8 contactos al mes».
+  Ese dato no existe; ahora explica cómo llegan los mensajes.
+
 ## 2026-09-24 — «Te aviso si aparece alguien», de verdad
 
 - **Antes**: el botón «Avísame cuando tengas a alguien» respondía «Anotado,

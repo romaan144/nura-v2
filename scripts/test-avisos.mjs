@@ -28,7 +28,7 @@ function ok(cond, texto) {
 }
 
 // ── la base de datos ficticia ───────────────────────────────────────────
-const db = { helpers: [], avisos: [], valoraciones: [], alertas: [], ajustes: [] }
+const db = { helpers: [], avisos: [], valoraciones: [], alertas: [], ajustes: [], perfil_atributos: [] }
 const peticionesBD = []   // todo lo que la funcion le pide a "Supabase"
 
 function coincide(fila, campo, cond) {
@@ -64,6 +64,10 @@ async function postgrest(url, init = {}) {
   }
   if (metodo === 'POST') {
     const nueva = JSON.parse(init.body)
+    if (Array.isArray(nueva)) {
+      for (const n of nueva) db[tabla].push({ ...n })
+      return new Response(null, { status: 201 })
+    }
     // Como la restriccion `unique` de la base real: una valoracion por aviso.
     if (tabla === 'valoraciones' && db.valoraciones.some(v => v.aviso_id === nueva.aviso_id)) {
       return new Response('{"code":"23505"}', { status: 409 })
@@ -348,6 +352,38 @@ console.log('\n── Te aviso si aparece alguien ──')
   ok(r.estado === 200 && !db.alertas.some(f => f.correo), 'se quita con el enlace del correo')
   r = await llamarG(funcion, { op: 'quitar-alerta', llave: llaveCorreo })
   ok(r.estado === 404, 'quitar dos veces → 404')
+}
+
+
+console.log('\n── Lo declarado: solo lo que confirma el profesional ──')
+{
+  const bueno = [
+    { clave: 'vehiculo', valor: true }, { clave: 'anos_experiencia', valor: 9 },
+    { clave: 'idioma:catalán', valor: true }, { clave: 'especialidad:alzheimer', valor: true },
+    { clave: 'disponibilidad:mañanas', valor: true },
+  ]
+  const malo = [
+    { clave: 'verificado', valor: true }, { clave: 'disponibilidad:siempre', valor: true },
+    { clave: 'idioma:<script>', valor: true }, { clave: 'anos_experiencia', valor: 500 },
+    { clave: 'vehiculo', valor: 'sí' },
+  ]
+  let r = await llamarG(funcion, { op: 'alta', payload: { name: 'Pilar Ficticia', category: 'cuidado' }, declarado: [...bueno, ...malo] })
+  const id = String(r.datos?.helper?.id)
+  const suyos = db.perfil_atributos.filter(a => a.helper_id === id)
+  ok(r.estado === 200 && suyos.length === bueno.length, `el alta guarda lo confirmado (${suyos.length} de ${bueno.length}) y descarta lo que no es del vocabulario`)
+  ok(suyos.every(a => a.fuente === 'declarado' && /^lo confirmó el \d{4}-\d{2}-\d{2}$/.test(a.prueba)), 'cada dato lleva su fuente «declarado» y la fecha')
+  ok(!suyos.some(a => a.clave === 'verificado'), 'nadie puede declararse «verificado»')
+
+  db.helpers.push({ id: 555, name: 'Dueña Ficticia', owner_id: 'u1' })
+  r = await llamarG(funcion, { op: 'confirmar-declarado', atributos: bueno })
+  ok(r.estado === 401, 'sin sesión no se confirma nada → 401')
+  r = await llamarG(funcion, { op: 'confirmar-declarado', sesion: 'sesion-sin-confirmar', atributos: bueno })
+  ok(r.estado === 404, 'con sesión pero sin ficha propia → 404')
+  r = await llamarG(funcion, { op: 'confirmar-declarado', sesion: 'sesion-confirmada', helperId: id, atributos: [{ clave: 'vehiculo', valor: false }] })
+  ok(r.estado === 200 && db.perfil_atributos.filter(a => a.helper_id === '555').length === 1, 'se guarda en SU ficha, no en la que diga el móvil')
+  ok(db.perfil_atributos.filter(a => a.helper_id === id).length === bueno.length, 'la ficha de otra persona no se toca')
+  r = await llamarG(funcion, { op: 'confirmar-declarado', sesion: 'sesion-confirmada', atributos: [] })
+  ok(r.estado === 200 && !db.perfil_atributos.some(a => a.helper_id === '555'), 'confirmar una lista vacía borra lo declarado')
 }
 
 console.log('\n── El secreto no se filtra ──')

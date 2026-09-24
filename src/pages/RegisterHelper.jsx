@@ -5,10 +5,12 @@ import { useUser } from '../context/UserContext'
 import { DEMO_MODE } from '../config'
 import { altaProfesional } from '../utils/escrituras'
 import BottomNav from '../components/BottomNav'
+import ConfirmarDeclarado from '../components/ConfirmarDeclarado'
+import { ordenarPerfil } from '../utils/declarado'
 import styles from './Home.module.css'
 
 
-async function saveHelperToSupabase(answers) {
+async function saveHelperToSupabase(answers, declarado = []) {
   try {
     const { analyzeNeed } = await import('../utils/matching')
     // `analyzeNeed` devuelve una PROMESA. Sin await, `.categoria` era
@@ -45,7 +47,7 @@ async function saveHelperToSupabase(answers) {
     }
     // La escritura vive en utils/escrituras.js: un solo sitio decide si va
     // por la Edge Function (service_role) o por el camino directo.
-    return await altaProfesional(payload)
+    return await altaProfesional(payload, declarado)
   } catch (e) { console.warn('[Nüra] alta profesional no guardada:', e?.message || e); return null }
 }
 
@@ -81,6 +83,8 @@ export default function RegisterHelper() {
   const [typing, setTyping]       = useState(false)
   const [listening, setListening] = useState(false)
   const [done, setDone]           = useState(false)
+  // Lo que la IA ha ordenado de sus respuestas, esperando su «es correcto».
+  const [propuesta, setPropuesta] = useState(null)
   const [topH, setTopH]           = useState(80)
   const bottomRef = useRef(null)
   const inputRef  = useRef(null)
@@ -120,13 +124,31 @@ export default function RegisterHelper() {
         setQIdx(next)
       }, 800)
     } else {
+      // ── LO DECLARADO, ORDENADO POR IA (docs/perfil-vivo.md §4) ──
+      // Antes de publicar, Nüra ordena lo que ha contado en datos concretos
+      // y se los enseña. Sin IA (o si falla) se publica igual, sin este paso.
       setTyping(true)
-      setTimeout(async () => {
+      const texto = [newAnswers.specialty, newAnswers.formation, newAnswers.zone, newAnswers.differentiator]
+        .map(x => (x || '').trim()).filter(Boolean).join('. ')
+      ordenarPerfil(texto).then(items => {
+        if (!items.length) { finalizar(newAnswers, []); return }
+        setTyping(false)
+        setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+          text: 'He ordenado lo que me has contado para que te encuentren mejor. ¿Es correcto?' }])
+        setPropuesta({ items, answers: newAnswers })
+      })
+    }
+  }
+
+  function finalizar(newAnswers, declarado) {
+    const val = newAnswers.name || ''
+    setTyping(true)
+    setTimeout(async () => {
         // En demo NO se escribe en produccion. Cada recorrido del alta creaba
         // un profesional real y permanente en la base de datos viva; desde que
         // el alta guarda bien la categoria, ademas, esos perfiles de prueba
         // SALEN en las busquedas de gente real.
-        const publicado = DEMO_MODE ? true : !!(await saveHelperToSupabase(newAnswers))
+        const publicado = DEMO_MODE ? true : !!(await saveHelperToSupabase(newAnswers, declarado))
         setTyping(false); setDone(true)
         setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
           text: publicado
@@ -139,7 +161,6 @@ export default function RegisterHelper() {
         sessionStorage.setItem('nura_show_profile_preview', '1')
         setTimeout(() => navigate('/'), 3000)
       }, 1000)
-    }
   }
 
   function toggleMic() {
@@ -205,11 +226,14 @@ export default function RegisterHelper() {
             background:'var(--purple-05)', borderRadius:'var(--radius-card)',
             border:'1px solid var(--purple-10)'
           }}>
+            {/* Antes: «reciben una media de 8 contactos al mes». Ese dato no
+                existe: no hay profesionales reales todavia. Se promete solo
+                lo que la app hace. */}
             <div style={{fontSize:'var(--text-xs)',fontWeight:700,color:'var(--purple-ink)',marginBottom:'var(--space-6)',letterSpacing:'0.3px',textTransform:'uppercase'}}>
-              ¿Sabías que?
+              Cómo funciona
             </div>
             <div style={{fontSize:'var(--text-sm)',color:'var(--ink)',lineHeight:1.5,letterSpacing:'-0.1px'}}>
-              Los profesionales de Nüra en Barcelona reciben una media de <strong>8 contactos al mes</strong> desde el primer día.
+              Cuando alguien te necesite, te llega su mensaje al <strong>móvil o al correo</strong> y respondes desde ahí, sin descargar nada.
             </div>
             <div style={{fontSize:'var(--text-xs)',color:'var(--ink-tertiary)',marginTop:'var(--space-6)'}}>
               Tu perfil tarda menos de 3 minutos en estar publicado.
@@ -245,12 +269,32 @@ export default function RegisterHelper() {
           </div>
         )}
 
+        {propuesta && (
+          <div style={{ marginTop: 'var(--chat-gap)' }}>
+            <ConfirmarDeclarado items={propuesta.items}
+              textoBoton="Es correcto, publicar"
+              onConfirmar={elegidos => {
+                const { answers: a } = propuesta
+                setPropuesta(null)
+                setMessages(prev => [...prev, { id: Date.now(), from: 'user',
+                  text: elegidos.length ? elegidos.map(e => e.etiqueta).join(' · ') : 'Mejor sin esto' }])
+                finalizar(a, elegidos)
+              }}
+              onSaltar={() => {
+                const { answers: a } = propuesta
+                setPropuesta(null)
+                setMessages(prev => [...prev, { id: Date.now(), from: 'user', text: 'Mejor sin esto' }])
+                finalizar(a, [])
+              }} />
+          </div>
+        )}
+
         <div style={{ height: '96px' }} />
         <div ref={bottomRef} />
       </div>
 
       {/* ── FLOAT BOTTOM — idéntico a Home ── */}
-      {!done && (
+      {!done && !propuesta && (
         <div className={styles.floatBottom}>
           <div className={styles.inputCapsule}>
             <input

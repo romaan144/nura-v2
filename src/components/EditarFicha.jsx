@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 import { useUser } from '../context/UserContext'
+import ConfirmarDeclarado from './ConfirmarDeclarado'
+import { ordenarPerfil, confirmarDeclarado } from '../utils/declarado'
 
 // ── EDITAR MI FICHA ────────────────────────────────────────────────────
 //
@@ -39,6 +41,18 @@ export default function EditarFicha({ onClose }) {
   const vinculada = user?.helperId != null
   const [guardando, setGuardando] = useState(false)
   const [fallo, setFallo] = useState('')
+  // Tras guardar: lo que la IA ha ordenado del texto nuevo, para confirmar.
+  const [propuesta, setPropuesta] = useState(null)
+
+  async function confirmar(elegidos) {
+    setGuardando(true); setFallo('')
+    const { sesionActual } = await import('../utils/cuenta')
+    const ses = await sesionActual()
+    const ok = await confirmarDeclarado(elegidos, ses?.access_token)
+    setGuardando(false)
+    if (ok) onClose()
+    else setFallo('Tu ficha está guardada, pero esto no se ha podido guardar. Vuelve a probar en un momento.')
+  }
 
   async function guardar() {
     const limpio = Object.fromEntries(Object.entries(v).map(([k, x]) => [k, (x || '').trim()]))
@@ -63,7 +77,10 @@ export default function EditarFicha({ onClose }) {
       }
       const { data, error } = await cuentas.from('helpers').update(cambios).eq('id', user.helperId).select('id')
       if (error || !data?.length) throw error || new Error('ninguna fila')
-      onClose()
+      // Lo declarado (perfil vivo §4): con el texto nuevo, la IA propone
+      // datos concretos y ella confirma. Sin IA, se cierra como antes.
+      const items = await ordenarPerfil([cambios.specialty, limpio.formation, limpio.zone, limpio.differentiator].filter(Boolean).join('. '))
+      if (items.length) setPropuesta(items); else onClose()
     } catch {
       setFallo('Se ha guardado en tu móvil, pero no en tu ficha pública. Revisa tu conexión y vuelve a guardar.')
     } finally { setGuardando(false) }
@@ -103,6 +120,14 @@ export default function EditarFicha({ onClose }) {
           {vinculada ? 'Lo que cambies se publica en tu ficha.' : 'Por ahora, estos cambios se guardan en tu móvil.'}
         </p>
 
+        {propuesta ? (
+          <div>
+            <p style={{ margin: '0 0 var(--space-12)', fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--ink-primary)' }}>
+              Guardado. He ordenado lo que cuentas para que te encuentren mejor. ¿Es correcto?
+            </p>
+            <ConfirmarDeclarado items={propuesta} guardando={guardando} onConfirmar={confirmar} onSaltar={onClose} />
+          </div>
+        ) : <>
         {CAMPOS.map(c => (
           <div key={c.k} style={{ marginBottom: 'var(--space-16)' }}>
             <label htmlFor={'f-' + c.k} style={{ display: 'block', margin: '0 0 var(--space-6)',
@@ -134,11 +159,12 @@ export default function EditarFicha({ onClose }) {
             })}
           </div>
         </div>
+        </>}
       </div>
 
       {fallo && <p role="alert" style={{ margin: 0, padding: 'var(--space-10) var(--space-16) 0', fontSize: 'var(--text-sm)',
         color: 'var(--red-ink)', lineHeight: 1.45 }}>{fallo}</p>}
-      <div style={{ display: 'flex', gap: 'var(--space-8)',
+      {!propuesta && <div style={{ display: 'flex', gap: 'var(--space-8)',
         padding: 'var(--space-12) var(--space-16) max(env(safe-area-inset-bottom, 0px), var(--space-16))',
         borderTop: '1px solid var(--ink-border)', background: 'var(--paper)' }}>
         <button onClick={onClose} style={{ flex: 1, minHeight: 48, background: 'none',
@@ -153,7 +179,7 @@ export default function EditarFicha({ onClose }) {
           color: cambiado ? 'white' : 'var(--ink-tertiary)' }}>
           {guardando ? 'Guardando…' : 'Guardar cambios'}
         </button>
-      </div>
+      </div>}
     </div>,
     document.body
   )

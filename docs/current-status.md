@@ -30,13 +30,25 @@ actualizar por eso mismo.
 
 ### En producción (comprobado)
 
-- **Función `helpers-write` versión 7** (2026-09-24), 17 operaciones
+- **Función `helpers-write` versión 8** (2026-09-24), 18 operaciones
   (nuevas: `valorar`, `clave-push`, `crear-alerta`, `alertas`,
-  `quitar-alerta`).
+  `quitar-alerta`, `confirmar-declarado`).
+- **Función `perfil-ia` versión 1** (2026-09-24): ordena lo que escribe
+  el profesional con Claude. **Inactiva hasta que exista
+  `ANTHROPIC_API_KEY`** (abajo); sin ella la app sigue igual.
 - **«Te aviso si aparece alguien»** (2026-09-24): tablas `alertas` y
   `ajustes` creadas, cerradas al público (comprobado). Las notificaciones
   del móvil funcionan sin configurar nada. **Los correos no salen hasta que
   el fundador configure Resend** (abajo).
+
+### Pendiente del fundador: activar la IA del perfil
+
+1. En console.anthropic.com crear una API key (y poner un límite de gasto
+   mensual en Billing, por ejemplo 20 €).
+2. Supabase → Edge Functions → Secrets → `ANTHROPIC_API_KEY` = la key (no
+   pegarla en ningún chat).
+3. Opcional: `NURA_IA_MAX_DIA` (llamadas al día; 300 por defecto).
+Coste estimado: menos de 1 céntimo por perfil ordenado.
 
 ### Pendiente del fundador: correos de Nüra (Resend)
 
