@@ -30,9 +30,15 @@ actualizar por eso mismo.
 
 ### En producción (comprobado)
 
-- **Función `helpers-write` versión 9** (2026-09-24), 19 operaciones
+- **Función `helpers-write` versión 10** (2026-09-24), 20 operaciones
   (nuevas: `valorar`, `clave-push`, `crear-alerta`, `alertas`,
-  `quitar-alerta`, `confirmar-declarado`, `mi-pulso`).
+  `quitar-alerta`, `confirmar-declarado`, `mi-pulso`, `ampliar-aviso`).
+- **Recorrido real verificado** (`npm run recorrido:real`, 21/21): una
+  familia y un profesional de punta a punta sin demo, con servidor
+  ficticio. Pasarlo antes de cada publicación importante.
+- **Ojo**: sin `VITE_DEMO` definida, la app arranca EN DEMO
+  (`DEFAULT_DEMO = true` en `src/config.js`). Para lanzar: `VITE_DEMO=false`
+  en Vercel.
 - **Honestidad**: fuera de la demo ya no hay cifras inventadas en la app
   (revisado el 2026-09-24). Las que quedan dependen de DEMO_MODE y se van
   al apagarlo: saludo del profesional, «X personas cerca de ti

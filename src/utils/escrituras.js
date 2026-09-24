@@ -238,3 +238,39 @@ export async function miPulso(sesion) {
     return r?.ok ? r.pulso : null
   } catch { return null }
 }
+
+/**
+ * SEGUIR LA CONVERSACION. Si el profesional aun no ha contestado, el mensaje
+ * nuevo se añade a su aviso (lo vera todo junto). Si ya contesto, se le
+ * manda un aviso nuevo (`cuerpoNuevo`, con el contexto). Nunca bloquea.
+ */
+export async function seguirConversacion(helperId, texto, cuerpoNuevo) {
+  if (!porLaFuncion()) return
+  const ultima = (llavesGuardadas()[String(helperId)] || []).at(-1)
+  try {
+    if (ultima) {
+      const r = await llamarFuncion({ op: 'ampliar-aviso', llave: ultima, mensaje: texto })
+      if (r?.ok) return
+      if (r?.estado !== 409 && r?.estado !== 404 && r?.estado !== 413) return
+    }
+    await encolarAviso(helperId, cuerpoNuevo)
+  } catch { /* el mensaje queda en el chat; el aviso se pierde */ }
+}
+
+/**
+ * LA PROPUESTA DE CITA LLEGA AL PROFESIONAL. Antes «Enviar solicitud» solo
+ * la guardaba en el movil de quien la pedia y le decia «te confirmara en
+ * breve»: al profesional no le llegaba nada. Ahora viaja por el mismo camino
+ * que los mensajes, y su respuesta vuelve al chat.
+ */
+export async function enviarPropuestaCita(helper, fecha, hora, nota, nombre) {
+  if (!porLaFuncion() || helper?.id == null) return false
+  let cuando = fecha
+  try { cuando = new Date(fecha + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' }) } catch { /* fecha tal cual */ }
+  const quien = nombre || 'Alguien'
+  const texto = `${quien} te propone una cita: ${cuando}${hora ? ` a las ${hora}` : ''}.${nota?.trim() ? ` «${nota.trim()}»` : ''} ¿Te va bien?`
+  const hayConversacion = (llavesGuardadas()[String(helper.id)] || []).length > 0
+  if (hayConversacion) await seguirConversacion(helper.id, texto, `${texto}\n\n(Te escribe desde Nüra.)`)
+  else await encolarAviso(helper.id, `${texto}\n\n(Te escribe desde Nüra.)`)
+  return true
+}

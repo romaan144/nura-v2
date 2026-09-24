@@ -10,6 +10,37 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-24 — El recorrido real, de punta a punta (y lo que se rompía)
+
+Nuevo `npm run recorrido:real`: compila la app sin demo y hace en un
+navegador lo que haría una familia y un profesional (buscar → cuenta →
+escribir → respuesta → cita → valorar), con un servidor ficticio. 21
+comprobaciones. Lo que encontró, ya arreglado:
+
+- **Código por SMS falso**: «Crear cuenta» decía «te lo hemos enviado al
+  612…» y no se enviaba nada (valía cualquier número). Fuera de la demo
+  ahora pide solo el nombre y ofrece el acceso de verdad, con correo.
+- **Tras crear la cuenta se perdía el chat**: volvía a Inicio. Ahora va
+  directo al chat que quería abrir.
+- **El profesional «saludaba» solo** («Hola, soy Carlos. Vi que me
+  encontraste…») fuera de la demo, y la nota de Nüra salía con su foto.
+- **La conversación moría tras la primera respuesta**: lo que la familia
+  escribía después no llegaba. Ahora, si aún no ha contestado, se añade a
+  su aviso; si ya contestó, le llega uno nuevo con el contexto (op
+  `ampliar-aviso`, helpers-write v10).
+- **La respuesta solo aparecía al volver a entrar al chat**: ahora se mira
+  cada 30 s con la pantalla abierta.
+- **«Enviar solicitud» no enviaba nada**: la cita se guardaba en el móvil
+  de la familia y se le decía «te confirmará en breve». Ahora la propuesta
+  le llega al profesional y su respuesta vuelve al chat.
+- **El profesional leía «no tenemos forma de avisarte»** en el mensaje que
+  estaba leyendo.
+- **«Lo he compartido con la comunidad»** tras «Sí, genial»: no se
+  compartía con nadie. Ahora se le pide su valoración (y el código que lo
+  intentaba fallaba en silencio).
+- **Un «1» en Chats** (mensaje de ejemplo) el primer día, fuera de la demo.
+- 4 pruebas nuevas del servidor (102/102).
+
 ## 2026-09-24 — Sin cifras inventadas; el Pulso cuenta lo real
 
 - **El Pulso del profesional se inventaba sus cifras** con un número al azar

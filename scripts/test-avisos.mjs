@@ -415,6 +415,24 @@ console.log('\n── El Pulso: cifras de verdad, solo de la ficha propia ──
   ok(!JSON.stringify(r.datos).includes('mensaje'), 'el Pulso no devuelve ningún mensaje ni frase de nadie')
 }
 
+
+console.log('\n── Seguir la conversación ──')
+{
+  let r = await llamarG(funcion, { op: 'encolar-aviso', helperId: 7, mensaje: 'Primer mensaje ficticio' })
+  const llave = r.datos.lectura
+  const fila = db.avisos.find(a => a.mensaje === 'Primer mensaje ficticio')
+  r = await llamarG(funcion, { op: 'ampliar-aviso', llave, mensaje: 'Y otra cosa ficticia' })
+  ok(r.estado === 200 && fila.mensaje.includes('Primer mensaje ficticio') && fila.mensaje.endsWith('Y otra cosa ficticia'),
+    'antes de que conteste, lo nuevo se añade a su aviso')
+  r = await llamarG(funcion, { op: 'ampliar-aviso', llave: '0'.repeat(32), mensaje: 'x' })
+  ok(r.estado === 404, 'con una llave inventada no se toca ningún aviso')
+  r = await llamarG(funcion, { op: 'responder-aviso', token: fila.token, respuesta: 'Respuesta ficticia' })
+  r = await llamarG(funcion, { op: 'ampliar-aviso', llave, mensaje: 'Después de contestar' })
+  ok(r.estado === 409 && !fila.mensaje.includes('Después de contestar'), 'si ya contestó → 409 (la app encola un aviso nuevo) y su aviso no cambia')
+  r = await llamarG(funcion, { op: 'ampliar-aviso', llave, mensaje: '' })
+  ok(r.estado === 400, 'un mensaje vacío se rechaza')
+}
+
 console.log('\n── El secreto no se filtra ──')
 ok(!peticionesBD.some(p => (p.url + p.cuerpo + p.cabeceras).includes(SECRETO)), 'el secreto no viaja a la base de datos')
 ok(!respuestasTexto.some(t => t.includes(SECRETO)), 'el secreto no aparece en ninguna respuesta')

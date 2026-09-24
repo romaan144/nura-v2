@@ -5,7 +5,7 @@ import { HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
 import { slotsDe, ocupacionesDe, motivoSinHuecos, FRASE_SIN_HUECOS } from '../data/horarios'
 import { getHelperById } from '../utils/supabase'
-import { registrarConversacion, encolarAviso, respuestasDe } from '../utils/escrituras'
+import { registrarConversacion, encolarAviso, respuestasDe, seguirConversacion, enviarPropuestaCita } from '../utils/escrituras'
 import { notifyServiceConfirmed } from '../utils/notifications'
 import { haptic } from '../utils/haptic'
 import RatingModal from '../components/RatingModal'
@@ -130,7 +130,7 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
         </div>
         <h3 className={styles.modalTitle}>¡Solicitud enviada!</h3>
             <div className="hilo" style={{width:'56px', margin:'var(--space-2) auto var(--space-10)'}} />
-        <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',marginBottom:'var(--space-12)',lineHeight:1.6}}>{name} confirmará disponibilidad en breve.</p>
+        <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',marginBottom:'var(--space-12)',lineHeight:1.6}}>{DEMO_MODE ? `${name} confirmará disponibilidad en breve.` : `Se la hago llegar a ${name}. Su respuesta te llegará en este chat.`}</p>
         {(date || time) && (
           <div style={{background:'var(--surface-subtle)',border:'1px solid rgba(33,29,51,0.06)',borderRadius:'var(--radius-card)',
             padding:'var(--space-10) var(--space-14)',marginBottom:'var(--space-20)',textAlign:'left'}}>
@@ -298,10 +298,13 @@ export default function Chat() {
   // uno mas: para la persona que espera, es simplemente que le contestaron.
   //
   // Se marca con `__deAviso` para no duplicarlo al volver a entrar.
+  // Y MIENTRAS el chat esta abierto: antes solo se preguntaba al entrar, y
+  // quien esperaba con la pantalla abierta no veia llegar la respuesta hasta
+  // salir y volver. Cada 30 s con la pantalla visible, y al volver a ella.
   useEffect(() => {
     if (!helper?.id) return
     let vivo = true
-    respuestasDe(helper.id).then(rs => {
+    const mirar = () => respuestasDe(helper.id).then(rs => {
       if (!vivo || !rs.length) return
       setMessages(prev => {
         const yaEstan = new Set(prev.filter(m => m.__deAviso).map(m => m.text))
@@ -312,11 +315,18 @@ export default function Chat() {
         return nuevas.length ? [...prev, ...nuevas] : prev
       })
     })
-    return () => { vivo = false }
+    mirar()
+    const cada = setInterval(() => { if (document.visibilityState === 'visible') mirar() }, 30000)
+    const alVolver = () => { if (document.visibilityState === 'visible') mirar() }
+    document.addEventListener('visibilitychange', alVolver)
+    return () => { vivo = false; clearInterval(cada); document.removeEventListener('visibilitychange', alVolver) }
   }, [helper?.id])
 
+  // El saludo automatico del profesional, SOLO en la demo. Fuera de ella era
+  // poner en su boca un mensaje que nunca escribio («Hola, soy Carlos…»)
+  // a alguien que aun no sabe que le han escrito.
   useEffect(() => {
-    if (messages.length === 0 && helper && !location.state?.introLetterText) {
+    if (DEMO_MODE && messages.length === 0 && helper && !location.state?.introLetterText) {
       const firstName = helper.name?.split(' ')?.[0] || helper.name
       const welcomeMsg = {
         id: 'welcome',
@@ -421,8 +431,9 @@ export default function Chat() {
 
     // Send initial greeting if no history
     if (!hasHistory) {
-      setTyping(true)
-      const delay = 800 + Math.random() * 400
+      // Fuera de la demo nadie esta escribiendo: sin «escribiendo…».
+      if (DEMO_MODE) setTyping(true)
+      const delay = DEMO_MODE ? 800 + Math.random() * 400 : 300
       setTimeout(() => {
         setTyping(false)
         // Mismo motivo: sin demo, el saludo lo da Nüra en su nombre, no el
@@ -432,7 +443,9 @@ export default function Chat() {
           : `Escríbele a ${helper.name?.split(' ')?.[0] || 'esta persona'}. Le aviso de que le has escrito y te traigo su respuesta aquí.`
         const greetMsg = {
           id: Date.now(),
-          from: 'helper',
+          // Lo dice Nüra, y se ve como de Nüra: con la foto del profesional
+          // al lado parecia que lo habia escrito el.
+          from: DEMO_MODE ? 'helper' : 'nura',
           text: greeting,
           time: new Date().toISOString()
         }
@@ -506,9 +519,18 @@ export default function Chat() {
       // Encolarlo igual es lo unico que hace VISIBLE el problema: la cola
       // marca `alcanzable: false` y `npm run avisar --pendientes` lo dice
       // con su nombre. Alguien escribio a esa persona y nadie puede avisarla.
-      const cuerpo = aviso?.cuerpo
-        || `Alguien te ha escrito en Nüra: «${msg}». No tenemos forma de avisarte — falta tu móvil o tu correo.`
+      // Sin la coletilla «no tenemos forma de avisarte»: este texto lo lee
+      // EL PROFESIONAL al abrir su enlace, y si lo esta leyendo es que si le
+      // llego. Que no tiene contacto ya lo marca `alcanzable: false`.
+      const cuerpo = aviso?.cuerpo || `Alguien te ha escrito en Nüra: «${msg}»`
       encolarAviso(helper.id, cuerpo)
+    } else if (helper?.id != null) {
+      // Lo que escribe DESPUES tambien le llega (antes se perdia).
+      const nombre = user?.name?.split(' ')?.[0] || 'La persona que te escribió'
+      const suRespuesta = [...messages].reverse().find(m => m.__deAviso)?.text
+      seguirConversacion(helper.id, msg, suRespuesta
+        ? `${nombre} te contesta en Nüra.\n\nTú le dijiste: «${suRespuesta.slice(0, 400)}»\n\nAhora te escribe: «${msg}»`
+        : `${nombre} te escribe en Nüra: «${msg}»`)
     }
 
     // ── EN PRODUCCION NADIE CONTESTA, Y HAY QUE DECIRLO ──
@@ -874,7 +896,11 @@ export default function Chat() {
           onNavigate={navigate}
           prefillDate={extractedDate}
           prefillTime={extractedTime}
-          onConfirm={(date, time, note) => { addService(helper, date, time, note) }}
+          onConfirm={(date, time, note) => {
+            addService(helper, date, time, note)
+            // Y la propuesta le llega a el (antes se quedaba en este movil).
+            if (!DEMO_MODE) enviarPropuestaCita(helper, date, time, note, user?.name?.split(' ')?.[0])
+          }}
         />
       })()}
     </div>

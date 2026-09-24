@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Search, MessageCircle, User } from 'lucide-react'
 import { useUser } from '../context/UserContext'
+import { DEMO_MODE } from '../config'
 import styles from './BottomNav.module.css'
 
 const TABS = [
@@ -25,9 +26,10 @@ export default function BottomNav() {
   const location = useLocation()
   const navigate = useNavigate()
   const { totalUnreadChats } = useUser()
-  // Add 1 demo unread (Elena's message) if no real chats yet
+  // El «1» de Elena (conversacion de ejemplo) SOLO en la demo. Fuera de
+  // ella era un mensaje sin leer que no existia, el primer dia de alguien.
   const { chats } = useUser()
-  const effectiveUnread = chats?.length > 0 ? totalUnreadChats : totalUnreadChats + 1
+  const effectiveUnread = DEMO_MODE && !(chats?.length > 0) ? totalUnreadChats + 1 : totalUnreadChats
 
   if (HIDE_ON.some(p => location.pathname.startsWith(p))) return null
 

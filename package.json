@@ -14,7 +14,8 @@
     "preflight": "node scripts/preflight.mjs",
     "medir": "node scripts/medir.mjs",
     "avisar": "node scripts/avisar.mjs",
-    "recorrido": "node scripts/recorrido.mjs"
+    "recorrido": "node scripts/recorrido.mjs",
+    "recorrido:real": "node scripts/recorrido-real.mjs"
   },
   "dependencies": {
     "@dicebear/collection": "^9.4.2",

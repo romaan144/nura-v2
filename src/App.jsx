@@ -147,7 +147,9 @@ function AppRoutes() {
               <Route path="/r/:token" element={<Responder />} />
               <Route path="/baja/:token" element={<BajaAlerta />} />
               <Route path="/onboarding" element={<OnboardingPage />} />
-              <Route path="/login" element={user ? <Navigate to="/" /> : <Login />} />
+              {/* Con sesion, /login lleva a donde iba (nura_return_to), no a Inicio:
+                  si no, al entrar se perdia el chat que la persona queria abrir. */}
+              <Route path="/login" element={user ? <Navigate to={leerDestino()} replace /> : <Login />} />
               <Route path="/register-helper" element={<RegisterHelper />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
@@ -161,6 +163,10 @@ function AppRoutes() {
       <Toast />
     </>
   )
+}
+
+function leerDestino() {
+  try { return sessionStorage.getItem('nura_return_to') || '/' } catch { return '/' }
 }
 
 export default function App() {
