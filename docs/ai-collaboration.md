@@ -3,7 +3,7 @@
 > Cómo trabaja la IA con el fundador en este proyecto. Válido para cualquier
 > modelo de IA que se incorpore: leyendo `docs/` completo, una sesión nueva
 > queda operativa sin depender de conversaciones antiguas.
-> Última actualización: 2026-07-04
+> Última actualización: 2026-09-24
 
 ---
 
@@ -100,3 +100,40 @@ completamente integrada — nunca varias a medias.
 5. Mantener los documentos: actualizar lo evolutivo (`context.md` §Pendientes,
    `architecture.md`, `changelog.md`); **no tocar `manifesto.md`** salvo orden
    explícita del fundador.
+
+## 6. Varias herramientas, ramas y publicación (2026-09-24)
+
+**Quién hace qué**
+- **Sergio** decide producto y lanzamiento. Las explicaciones, en español
+  claro y sin tecnicismos innecesarios.
+- **Claude Code** implementa, prueba y publica.
+- **Codex** se usa en momentos puntuales. Si interviene, la tarea tiene un
+  solo responsable, cada herramienta trabaja en su propia rama y nunca se
+  tocan a la vez los mismos archivos.
+
+**Antes de empezar**
+- Leer primero «Estado actual» en `current-status.md`: es lo único
+  comprobado. Lo que hay debajo de «Histórico» es memoria.
+- Traer `main` y comprobar que no hay cambios ajenos en la rama.
+
+**Cómo se publica cada parte**
+- **La app**: al llegar a `main`, Vercel la publica sola.
+- **La función `helpers-write`**: con el conector de Supabase de Claude.
+  No se publica sola desde GitHub.
+- **La base de datos**: migraciones en `supabase/migrations/`, aplicadas
+  con el conector. **Siempre antes** que la función que las necesita.
+- Tras publicar, comprobar con una consulta real a la base de datos, no
+  con una respuesta que la función puede dar sin consultarla (lección del
+  2026-09-24, ver `changelog.md`).
+
+**Secretos**
+- Viven solo en Supabase (Edge Functions → Secrets) y en el entorno de
+  quien ejecuta un guion. Nunca en el repositorio, en variables `VITE_` ni
+  en registros.
+- `NURA_ADMIN_SECRET` protege las operaciones de administración de
+  avisos. Si alguna vez se comparte una conversación donde aparezca, se
+  cambia por uno nuevo.
+
+**Registro**
+- Decisiones importantes: una entrada en `changelog.md`.
+- Estado: el apartado «Estado actual» de `current-status.md`, comprobado.
