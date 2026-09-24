@@ -57,8 +57,11 @@ actualizar por eso mismo.
    decisiones cerradas con otras abiertas. Se conservan como memoria.
 2. `chat_log` no existe como columna: el registro de conversaciones está
    apagado a propósito (decisión de producto pendiente).
-3. Profesionales **sin móvil ni correo**: su aviso se guarda marcado como
-   «no se le puede avisar». Hay que decidir qué hacer con ellos.
+3. ~~Profesionales sin móvil ni correo~~ — **decidido el 2026-09-24: no
+   es un problema.** Los 1008 profesionales de la base de datos son **de
+   simulación** (ninguno tiene contacto ni cuenta, medido). Nadie real usa
+   la app todavía. Antes del lanzamiento se eliminarán y solo habrá
+   profesionales reales, que dejan su contacto al darse de alta.
 4. La pantalla de invitado del perfil no se ha rediseñado.
 
 ### Cómo se trabaja

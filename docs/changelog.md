@@ -10,6 +10,13 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-24 — Los profesionales actuales son de simulación
+
+- Medido: 0 de 1008 profesionales tienen móvil o correo, y ninguno tiene
+  cuenta. **Decisión del fundador**: no se cambia nada. La app es una
+  simulación que nadie real usa todavía; antes de lanzar se eliminarán
+  los profesionales de prueba y solo quedarán los reales.
+
 ## 2026-09-24 — Los avisos existen por primera vez, y son privados
 
 - **La tabla `avisos` nunca se había creado en producción.** Cada vez que
