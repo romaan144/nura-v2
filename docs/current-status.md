@@ -171,8 +171,10 @@ salida, no mete a nadie: se va directo a Home.
 Verificado con `setItem` neutralizado: va a Home. Con almacenamiento normal:
 onboarding la primera vez, Home la segunda.
 
-**Defecto de fondo, anotado y no tocado**: la bienvenida de Home **no se
-recalcula cuando alguien inicia sesión a mitad de sesión**. El onboarding lo
+~~**Defecto de fondo**: la bienvenida de Home **no se recalcula cuando
+alguien inicia sesión a mitad de sesión**.~~ **No se reproduce (comprobado
+en navegador el 2026-09-24)**: tras crear la cuenta desde `/login`, Inicio
+saluda por el nombre. Queda como historia. El onboarding lo
 esquiva recargando; quien se registre desde `/login` seguirá viendo el
 saludo genérico hasta recargar. Es tarea propia.
 
