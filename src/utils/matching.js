@@ -215,6 +215,8 @@ const CATEGORY_KEYWORDS = {
     'fonema','tartamudez','tartamudea','voz','dislalia','disfagia','comunicación',
     'hablar','retraso lenguaje','terapia habla','pronuncia','no pronuncia','la r','erre'],
   tecnico: ['caldera','fontanero','fontanería','electricista','técnico','reparar',
+    // «el grifo de la cocina»: 'cocina' suma en hogar como tallo de 'cocinero'.
+    'grifo de la cocina','fregadero',
     'avería','instalación','grifo','tubería','luz','calefacción','aire acondicionado',
     'pintor','cerrajero','electrodoméstico','lavadora','nevera','frigorífico','horno',
     'microondas','persiana','puerta','cerradura','ventana','gotera','humedad',
@@ -222,7 +224,8 @@ const CATEGORY_KEYWORDS = {
     'albañil','yesero','escayola','azulejo','parquet','suelo','techo','pared',
     'carpintero','soldador','pintura','frío','no funciona','roto','agua'],
   limpieza: ['limpiar','limpieza','fregar','barrer','hogar','casa','ordenar',
-    'cristales','planchar','sucio','polvo','mancha','fregona','desorden'],
+    'cristales','planchar','sucio','polvo','mancha','fregona','desorden',
+    'organizar el piso','organizar la casa','organizar mi casa'],
   cuidado: ['asistente personal','ayuda a domicilio','asistencia domiciliaria',
     'cuidar','cuidadora','mayor','anciano','anciana','abuelo','abuela',
     'acompañar','acompañamiento','geriatría','dependencia','niños','bebé','niñera',
@@ -266,7 +269,12 @@ const CATEGORY_KEYWORDS = {
     'pediatra','pediatría','ginecólogo','ginecóloga','ginecología',
     'reumatólogo','reumatóloga','reumatología','obesidad',
     'trastornos alimentarios','trastorno alimentario','anorexia','bulimia',
-    'coach de vida','reiki','quiromasajista','quiromasaje','reflexología'],
+    'coach de vida','reiki','quiromasajista','quiromasaje','reflexología',
+    'comer sano','comer más sano','alimentación','hablar con alguien',
+    // Desempates medidos: «estoy muy triste» empataba con logopedia (por
+    // 'hablar'), «mancha en la piel» con limpieza, «conducta» con cuidado.
+    'triste','tristeza','deprimido','deprimida','piel','lunar',
+    'conducta','problemas de conducta','comportamiento'],
   legal: ['abogado','abogada','asesor legal','asesoría','contrato','demanda',
     'asesor fiscal','fiscal','hacienda','renta','declaración','impuestos','gestoría',
     'asesor financiero','finanzas','autónomo','autonomo','nómina','nomina',
@@ -311,7 +319,7 @@ const CATEGORY_KEYWORDS = {
 
   // Traductores, interpretes y guias caian en `otro`: invisibles. En
   // Explorar ya eran su propia categoria («Viajar o hablar otro idioma»).
-  idiomas: ['traductor','traductora','traducción','traducir','intérprete',
+  idiomas: ['traductor','traductora','traducción','traducir','intérprete','traducir documentos',
     'guía turístico','guía turística','guia turistico','guía'],
   otro: ['psicólogo','psicóloga','psicología','fisioterapeuta','fisioterapia',
     'nutricionista','nutrición','dietista','chef','cocina','tatuaje','fotógrafo',
@@ -426,16 +434,21 @@ function hitStem(textWords, kw) {
 // 'abuela' manda sobre 'pasear'. Las acciones acompañan; el dominio decide.
 const DOMAIN_ANCHORS = {
   mascotas: ['mascota','mascotas','perro','perros','perrito','gato','gatos','gatito','cachorro','animal','animales','paseador','adiestrador','veterinario'],
-  cuidado: ['niño','niños','niña','bebé','hijo','hija','madre','padre','abuelo','abuela','mayor','mayores','anciano','anciana','alzheimer','dependiente','canguro','niñera','cuidadora','cuidador'],
+  cuidado: ['niño','niños','niña','bebé','hijo','hija','madre','padre','abuelo','abuela','mayor','mayores','anciano','anciana','alzheimer','dependiente','canguro','niñera','cuidadora','cuidador','hijos','hijas'],
   matematicas: ['inglés','matemáticas','mates','idioma','idiomas','guitarra','piano','selectividad','francés','alemán','profesor','profesora','profe','academia'],
   hogar: ['reforma','obra','jardín','jardinero','piscina','mudanza','baño','cocina','decorador'],
-  limpieza: ['limpieza','plancha','planchar','cristales'],
-  tecnico: ['fontanero','electricista','cerrajero','caldera','enchufe','fuga','persiana','instalación','instalador'],
+  limpieza: ['limpieza','plancha','planchar','cristales','planche','plancharme'],
+  tecnico: ['fontanero','electricista','cerrajero','caldera','enchufe','fuga','persiana','instalación','instalador','grifo','llaves','váter','atascado','atasco'],
   // 'pediatra' decide: «pediatra para mi bebé» caia en `cuidado` (canguros) por «bebé».
-  salud: ['pediatra','pediatría','fisioterapeuta','fisio','psicólogo','psicóloga','nutricionista','masajista','ansiedad','espalda'],
+  salud: ['pediatra','pediatría','fisioterapeuta','fisio','psicólogo','psicóloga','nutricionista','masajista','ansiedad','espalda','triste','tristeza','piel','tobillo','esguince','conducta'],
   logopedia: ['logopeda','tartamudez','pronunciación'],
   entrenador: ['pádel','padel','monitor','tenis','entrenador','entrenadora','entrenamiento','gimnasio','gym','fitness','yoga','pilates','crossfit'],
-  legal: ['abogado','abogada','gestor','gestoría','contrato','despido','renta','herencia'],
+  legal: ['abogado','abogada','gestor','gestoría','contrato','despido','renta','herencia','despedido','despedida','casero','casera','fianza','inquilino','heredé','heredar'],
+  // Barrido de frases reales (2026-09-24): «un logo para mi negocio» iba a
+  // logopedia (el tallo de 'logo' es el principio de 'logopeda') y
+  // «traducir unos documentos al inglés» a clases (por 'inglés').
+  diseno: ['logo','logotipo','branding'],
+  idiomas: ['traducir','traducción','traductor','traductora','intérprete'],
 }
 
 // Matices que afinan DENTRO de un oficio. Palabra completa, no subcadena:

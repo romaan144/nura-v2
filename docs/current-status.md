@@ -62,7 +62,11 @@ actualizar por eso mismo.
    simulación** (ninguno tiene contacto ni cuenta, medido). Nadie real usa
    la app todavía. Antes del lanzamiento se eliminarán y solo habrá
    profesionales reales, que dejan su contacto al darse de alta.
-4. La pantalla de invitado del perfil no se ha rediseñado.
+4. ~~La pantalla de invitado del perfil~~ — hecha el 2026-09-24.
+5. **Comprensión de la búsqueda**: funciona por listas de palabras. Con 25
+   frases reales nuevas acierta 17 (2026-09-24). Cada forma nueva de decir
+   algo hay que añadirla a mano. Mejorarlo de verdad (por ejemplo, con un
+   modelo de lenguaje que entienda la frase) es decisión del fundador.
 
 ### Cómo se trabaja
 

@@ -10,6 +10,22 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-24 — Frases reales: fallos corregidos, y el límite de las listas de palabras
+
+- 59 peticiones escritas como las escribiría una persona: 39 bien y 6 sin
+  ninguna respuesta. Ahora 55 bien y 0 sin respuesta (las 4 restantes van
+  a donde están los profesionales en la base, y se dan por buenas).
+  Casos: «un logo para mi negocio» iba a logopedia (el tallo de 'logo' es
+  el principio de 'logopeda'); «estoy muy triste» también; «recoger a mis
+  hijos del colegio», a clases; despido, fianza, váter, grifo…
+- **Comprobación honesta con 25 frases nuevas, no usadas para ajustar:
+  17/25 antes y 17/25 después.** Tapar frases una a una arregla esos casos
+  pero no hace que la búsqueda entienda mejor en general. Es el límite de
+  un buscador por listas de palabras; mejorarlo de verdad es una decisión
+  de producto (ver `current-status.md`, pendientes).
+- `npm run test:matching`: 75 → 86 casos; los 11 nuevos fallan con la
+  versión anterior.
+
 ## 2026-09-24 — Ningún oficio real sin categoría
 
 - Barrido de los 228 oficios distintos de la base: **16 no caían en

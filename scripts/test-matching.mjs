@@ -80,6 +80,19 @@ const SOLO_CATEGORIA = [
   { q: 'pediatra para mi bebé', cat: 'salud' },
   { q: 'mi bebé tiene fiebre, necesito un pediatra', cat: 'salud' },
   { q: 'canguro para mi bebé', cat: 'cuidado' },
+  // Barrido de frases reales (2026-09-24): antes iban a otra categoria o a
+  // ninguna. 'logo' iba a logopedia; 'triste', a logopedia.
+  { q: 'necesito un logo para mi negocio', cat: 'diseno' },
+  { q: 'necesito hablar con alguien, estoy muy triste', cat: 'salud' },
+  { q: 'tengo una mancha rara en la piel', cat: 'salud' },
+  { q: 'me han despedido sin motivo', cat: 'legal' },
+  { q: 'mi casero no me devuelve la fianza', cat: 'legal' },
+  { q: 'necesito alguien que recoja a mis hijos del colegio', cat: 'cuidado' },
+  { q: 'el váter está atascado', cat: 'tecnico' },
+  { q: 'se me ha roto el grifo de la cocina', cat: 'tecnico' },
+  { q: 'busco quien me planche la ropa', cat: 'hogar' },
+  { q: 'quiero comer más sano', cat: 'salud' },
+  { q: 'necesito traducir unos documentos al inglés', cat: 'idiomas' },
 ]
 const HONESTY = ['asdfgh qwerty zzz', 'necesito algo no sé muy bien qué']
 const NEGATIVE = [
