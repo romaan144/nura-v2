@@ -10,6 +10,17 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-24 — Ningún oficio real sin categoría
+
+- Barrido de los 228 oficios distintos de la base: **16 no caían en
+  ninguna categoría** (dermatóloga, psiquiatra, pediatra, ginecóloga,
+  reumatóloga, manitas, mago, SEO, especialista en IA…). Un profesional
+  real que se diera de alta con ellos habría sido invisible. Ahora 228/228.
+- «Pediatra para mi bebé» iba a `cuidado` (canguros) por «bebé»; ahora a
+  salud. «Canguro para mi bebé» sigue en cuidado.
+- `npm run test:matching` comprueba los 228 (`scripts/oficios-reales.json`)
+  en cada pasada: 71 → 75 casos.
+
 ## 2026-09-24 — La trampa de la categoría «otro», y 72 profesionales que no llegaban
 
 - **La categoría `otro` tenía palabras propias** (chef, nutricionista,

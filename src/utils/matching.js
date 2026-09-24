@@ -165,6 +165,9 @@ const SEMANTIC_MAP = {
   // especialidad: el verbo no coincide con el oficio. Sin esto, la
   // limpiadora quedaba detras del electricista.
   'limpiar': 'limpieza limpiadora',
+  // Desempata «pediatra para mi bebé» hacia salud: «bebé» es palabra
+  // decisiva de `cuidado` y empataban.
+  'pediatra': 'médico pediatría doctor',
   'sucio': 'limpiar limpieza',
   'fregona': 'limpiar limpieza',
   
@@ -255,7 +258,15 @@ const CATEGORY_KEYWORDS = {
     'diagnóstico','síntoma','nutricionista','nutrición','dietista','ansiedad',
     'depresión','estrés','insomnio','fobia','trauma','terapia','terapeuta',
     'rehabilitación','masaje','quiropráctico','acupuntura','espalda','lesión',
-    'columna','rodilla','hernia','tensión arterial','glucosa','revisión médica'],
+    'columna','rodilla','hernia','tensión arterial','glucosa','revisión médica',
+    // Barrido del 2026-09-24: 16 de 228 oficios reales no caian en ninguna
+    // categoria. Un profesional que se diera de alta con ellos quedaba
+    // invisible. Estos son los de salud.
+    'dermatólogo','dermatóloga','dermatología','psiquiatra','psiquiatría',
+    'pediatra','pediatría','ginecólogo','ginecóloga','ginecología',
+    'reumatólogo','reumatóloga','reumatología','obesidad',
+    'trastornos alimentarios','trastorno alimentario','anorexia','bulimia',
+    'coach de vida','reiki','quiromasajista','quiromasaje','reflexología'],
   legal: ['abogado','abogada','asesor legal','asesoría','contrato','demanda',
     'asesor fiscal','fiscal','hacienda','renta','declaración','impuestos','gestoría',
     'asesor financiero','finanzas','autónomo','autonomo','nómina','nomina',
@@ -263,7 +274,7 @@ const CATEGORY_KEYWORDS = {
     'denuncia','juicio','notario','gestor','gestoría','impuestos','renta','hacienda',
     // «asesor» a secas y «contable» caian en `otro`: 3 asesores invisibles.
     'asesor','asesora','contable','contabilidad'],
-  hogar: ['arquitecto','arquitecta','reforma','obra','presupuesto reforma',
+  hogar: ['arquitecto','arquitecta','architect','manitas','reforma','obra','presupuesto reforma',
     'decorador','interiorista','diseño interior','jardín','jardinero','piscina',
     'pintura hogar','papel pintado','suelo','parquet','azulejo','cocina reforma',
     // El cocinero a domicilio estaba en `hogar` y era INVISIBLE: ni
@@ -282,14 +293,17 @@ const CATEGORY_KEYWORDS = {
   // tenian perfiles pero ninguna palabra clave. Existir en la base y no ser
   // encontrable es lo mismo que no existir.
   diseno: ['diseñador','diseñadora','diseño','gráfico','grafico','logo','marca',
+    'seo','marketing digital',
     'branding','ux','ui','web','fotógrafo','fotografa','fotografía','fotos',
     'vídeo','video','videógrafo','editor de vídeo','montaje','community manager',
     'redes sociales','copywriter','textos','ilustración','ilustrador'],
   tecnologia: ['informático','informatica','ordenador','pc','portátil','wifi',
+    'inteligencia artificial','especialista en ia',
     'internet','router','red','programador','desarrollador','developer','app',
     'aplicación','página web','pagina web','software','inteligencia artificial',
     'datos','ciberseguridad','servidor'],
   eventos: ['evento','eventos','boda','bodas','fiesta','cumpleaños','celebración',
+    'mago','magia',
     'dj','música','catering','wedding planner','organizar','animación','fotomatón'],
   automocion: ['coche','moto','vehículo','vehiculo','taller','mecánico','mecanico',
     'neumático','neumaticos','ruedas','chapa','pintura coche','detailing','lavado',
@@ -417,7 +431,8 @@ const DOMAIN_ANCHORS = {
   hogar: ['reforma','obra','jardín','jardinero','piscina','mudanza','baño','cocina','decorador'],
   limpieza: ['limpieza','plancha','planchar','cristales'],
   tecnico: ['fontanero','electricista','cerrajero','caldera','enchufe','fuga','persiana','instalación','instalador'],
-  salud: ['fisioterapeuta','fisio','psicólogo','psicóloga','nutricionista','masajista','ansiedad','espalda'],
+  // 'pediatra' decide: «pediatra para mi bebé» caia en `cuidado` (canguros) por «bebé».
+  salud: ['pediatra','pediatría','fisioterapeuta','fisio','psicólogo','psicóloga','nutricionista','masajista','ansiedad','espalda'],
   logopedia: ['logopeda','tartamudez','pronunciación'],
   entrenador: ['pádel','padel','monitor','tenis','entrenador','entrenadora','entrenamiento','gimnasio','gym','fitness','yoga','pilates','crossfit'],
   legal: ['abogado','abogada','gestor','gestoría','contrato','despido','renta','herencia'],
