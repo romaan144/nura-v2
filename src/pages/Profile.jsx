@@ -20,6 +20,8 @@ import EditarFicha from '../components/EditarFicha'
 import { fmtTel } from '../utils/formato'
 import { reclamarFicha, borrarCuenta } from '../utils/escrituras'
 import FotoPerfil from '../components/FotoPerfil'
+import MisAlertas from '../components/MisAlertas'
+import { quitarTodas } from '../utils/alertas'
 
 // ── Tu semana: la voz de Nüra para quien trabaja ──
 // Gramática: frase humana primero, cifras discretas después, cero vanidad.
@@ -88,6 +90,8 @@ export default function Profile() {
     setQuoteDraft('')
   }
   const navigate = useNavigate()
+  // Al tocar la notificacion «ha llegado alguien» se abre /profile?alertas=1
+  const verAlertas = typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('alertas')
   const [composerOpen, setComposerOpen] = useStateObra(false)
   const [campoAbierto, setCampoAbierto] = useState(null)
   const [campoDraft, setCampoDraft] = useState('')
@@ -146,6 +150,12 @@ export default function Profile() {
       padding: 'var(--space-32) var(--space-20) var(--reserva-nav)',
     }}>
       <div style={{maxWidth:'360px', width:'100%', margin:'auto'}}>
+        {/* Desde la notificacion «ha llegado alguien»: eso primero. */}
+        {verAlertas && (
+          <div style={{margin:'0 calc(var(--space-20) * -1) var(--space-16)'}}>
+            <MisAlertas estilos={styles} />
+          </div>
+        )}
         <img src="/logo-iso.png" alt="" style={{width:'60px', height:'60px', display:'block',
           margin:'0 auto', animation:'pulse 3s ease-in-out infinite'}} />
         <img src="/logo-text.png" alt="Nüra" style={{height:'26px', display:'block',
@@ -206,6 +216,12 @@ export default function Profile() {
           margin:'var(--space-20) 0 0', lineHeight:1.5}}>
           Tu teléfono no se muestra a nadie.<br />Solo sirve para entrar.
         </p>
+        {/* Quien busca sin cuenta tambien puede pedir «te aviso»: lo ve aqui. */}
+        {!verAlertas && (
+          <div style={{margin:'var(--space-16) calc(var(--space-20) * -1) 0'}}>
+            <MisAlertas estilos={styles} />
+          </div>
+        )}
         {/* Sin opacity: aclaraba el texto por encima de su color, y el medidor
             de contraste mira el color, no la opacidad del elemento. Mismo sello
             que el perfil con cuenta. */}
@@ -538,6 +554,9 @@ export default function Profile() {
           </section>
         )}
 
+        {/* ── TE AVISO SI APARECE ─────────────────────────────────── */}
+        <MisAlertas estilos={styles} destacar={verAlertas} />
+
         {/* ── LAS PERSONAS DE TU VIDA ─────────────────────────────── */}
         {(personas || []).length > 0 && (
           <section className={styles.seccion} style={entrada(60)}>
@@ -686,6 +705,9 @@ export default function Profile() {
                             return
                           }
                         }
+                        // Los avisos «te aviso si aparece» viven tambien en el
+                        // servidor: se quitan antes de olvidar sus llaves.
+                        await quitarTodas()
                         // Todo lo que empieza por nura_ es de Nüra y nada mas
                         // lo es. Luego se recarga: nada sobrevive en memoria.
                         for (const st of [localStorage, sessionStorage]) {

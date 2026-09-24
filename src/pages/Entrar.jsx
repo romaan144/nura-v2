@@ -25,6 +25,9 @@ export default function Entrar() {
   const { user, login } = useUser()
   const [params] = useSearchParams()
   const [modo, setModo] = useState(params.get('modo') === 'crear' ? 'crear' : 'entrar')
+  // Quien llega desde «te aviso si aparece alguien» busca, no ofrece: su
+  // cuenta es para recibir el aviso por correo, no para una ficha.
+  const volver = (params.get('volver') || '').startsWith('/') && !(params.get('volver') || '').startsWith('//') ? params.get('volver') : ''
   const [email, setEmail] = useState('')
   const [pass, setPass] = useState('')
   const [error, setError] = useState('')
@@ -59,12 +62,14 @@ export default function Entrar() {
         login({ name: h.name || email.split('@')[0], isHelper: true, helperId: h.id, joined: new Date().toISOString(),
           helperProfile: { specialty: h.specialty || '', zone: h.zone || '', price: h.price || '', contacto: h.contacto || '',
             formation: h.bio || '', modality: h.online ? 'Las dos' : 'Presencial' } })
+      } else if (volver) {
+        login({ name: email.trim().split('@')[0], isHelper: false, joined: new Date().toISOString() })
       } else {
         setAviso('Has entrado, pero no encontramos una ficha de profesional con este correo. Si te diste de alta con otro contacto, escríbenos.')
         return
       }
     }
-    navigate('/profile')
+    navigate(volver || '/profile')
   }
 
   return (
@@ -73,7 +78,8 @@ export default function Entrar() {
       <div className={styles.content}>
         <h1 className={styles.title}>{titulo}</h1>
         <p style={{ margin: '0 0 var(--space-20)', fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)', lineHeight: 1.5 }}>
-          {modo === 'crear' ? 'Con tu correo y una contraseña podrás cambiar tu ficha desde cualquier móvil.'
+          {modo === 'crear' && volver ? 'Con tu correo te aviso cuando llegue alguien que buscas. Solo lo usamos para eso y para entrar.'
+            : modo === 'crear' ? 'Con tu correo y una contraseña podrás cambiar tu ficha desde cualquier móvil.'
             : modo === 'olvido' ? 'Escribe tu correo y te enviaremos un enlace para poner una contraseña nueva.'
             : 'Con el correo y la contraseña de tu acceso.'}
         </p>

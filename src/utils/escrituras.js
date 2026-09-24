@@ -18,11 +18,11 @@ const directas = {
   'Content-Type': 'application/json',
 }
 
-function porLaFuncion() {
+export function porLaFuncion() {
   return EDGE_WRITES && Boolean(EDGE_URL)
 }
 
-async function llamarFuncion(cuerpo) {
+export async function llamarFuncion(cuerpo) {
   const res = await fetch(EDGE_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
