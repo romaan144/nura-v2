@@ -22,7 +22,6 @@ import { reclamarFicha, borrarCuenta } from '../utils/escrituras'
 import FotoPerfil from '../components/FotoPerfil'
 import MisAlertas from '../components/MisAlertas'
 import LoQueSabeNura from '../components/LoQueSabeNura'
-import InstalarApp from '../components/InstalarApp'
 import { quitarTodas } from '../utils/alertas'
 import { compartirEnlace, enlaceDeFicha } from '../utils/compartir'
 import { showToast } from '../components/Toast'
@@ -226,9 +225,6 @@ export default function Profile() {
             <MisAlertas estilos={styles} />
           </div>
         )}
-        <div className={styles.lista} style={{marginTop:'var(--space-16)'}}>
-          <InstalarApp estilos={styles} />
-        </div>
         {/* Sin opacity: aclaraba el texto por encima de su color, y el medidor
             de contraste mira el color, no la opacidad del elemento. Mismo sello
             que el perfil con cuenta. */}
@@ -703,7 +699,6 @@ export default function Profile() {
           <h2 className={styles.titulo}>Ajustes</h2>
           <div className={styles.pila}>
             <div className={styles.lista}>
-              <InstalarApp estilos={styles} />
               <Fila icono={Shield} titulo="Privacidad" onClick={() => navigate('/legal/privacidad')} />
               <Fila icono={FileText} titulo="Términos de uso" onClick={() => navigate('/legal/terminos')} />
               {CONTACTO_EMAIL && (

@@ -39,6 +39,9 @@ avisos seguirán yendo **vacíos**: Apple tampoco verá qué busca nadie.
 
 ## 3. Reglas desde ya (para que la web sirva a la app)
 
+0. **No se invita a instalar la web** en la pantalla de inicio (decisión
+   del fundador, 2026-09-25): la app de verdad será la de iOS.
+
 1. **Toda escritura y toda lectura privada va por la función**, nunca desde
    el navegador con la clave pública. Así la app no necesita nada distinto.
 2. **Nada de lógica importante solo en el navegador.** Lo que decide
