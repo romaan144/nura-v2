@@ -31,7 +31,7 @@ export function conFicha(html, h, url) {
   const titulo = [h.name, oficio].filter(Boolean).join(' · ')
   const desc = recortar(h.bio, 150) || `${oficio ? oficio + ' en ' : 'En '}${barrio}. Escríbele por Nüra.`
   const foto = /^https:\/\/[^"<>\s]+\.(jpe?g|png|webp)(\?[^"<>\s]*)?$/i.test(h.avatarUrl || '')
-    ? h.avatarUrl : `${origen}/og-image.png`
+    ? h.avatarUrl : null
   const poner = (html, atributo, clave, valor) => html.replace(
     new RegExp(`(<meta ${atributo}="${clave}" content=")[^"]*(")`), `$1${escapar(valor)}$2`)
   let out = html.replace(/<title>[^<]*<\/title>/, `<title>${escapar(titulo)} — Nüra</title>`)
@@ -39,11 +39,21 @@ export function conFicha(html, h, url) {
   out = poner(out, 'property', 'og:type', 'profile')
   out = poner(out, 'property', 'og:title', `${titulo} — Nüra`)
   out = poner(out, 'property', 'og:description', desc)
-  out = poner(out, 'property', 'og:image', foto)
+  if (foto) {
+    // Su foto: otras medidas y otro formato. Se quitan las de la imagen de
+    // Nüra para que WhatsApp no la deforme.
+    out = out.replace(/\s*<meta property="og:image:(type|width|height)" content="[^"]*" \/>/g, '')
+    out = poner(out, 'property', 'og:image', foto)
+    out = poner(out, 'property', 'og:image:secure_url', foto)
+    out = poner(out, 'name', 'twitter:image', foto)
+  } else {
+    // La de Nüra, siempre con la direccion completa de ESTA web.
+    for (const [a, k] of [['property', 'og:image'], ['property', 'og:image:secure_url'], ['name', 'twitter:image']])
+      out = poner(out, a, k, `${origen}/og-nura.png`)
+  }
   out = poner(out, 'property', 'og:url', url)
   out = poner(out, 'name', 'twitter:title', `${titulo} — Nüra`)
   out = poner(out, 'name', 'twitter:description', desc)
-  out = poner(out, 'name', 'twitter:image', foto)
   return out
 }
 

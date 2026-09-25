@@ -10,6 +10,20 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — Imagen nueva para compartir (og-nura.png)
+
+- El fundador: «No aparece la miniatura bien». La imagen de antes llevaba
+  escrita una dirección vieja (`nura-app-pied.vercel.app`) y, al recortarla
+  en cuadrado como hace WhatsApp en pequeño, se veía un trozo de chat.
+- **`public/og-nura.png`** (1200×630, 218 KB, bajo el límite de WhatsApp):
+  logo, «Nüra», «Encuentra a la persona adecuada · Cerca de ti, en
+  Barcelona». Todo en el centro, así que el recorte cuadrado se ve entero.
+  Nombre nuevo para que WhatsApp no tire de la copia vieja.
+- Se añaden `og:image:width/height/type/secure_url/alt`: sin medidas,
+  WhatsApp a veces no enseña la imagen la primera vez que ve un enlace.
+- En una ficha con foto real se quitan esas medidas (son las de la imagen
+  de Nüra) y se usa su foto también en `secure_url` y Twitter.
+
 ## 2026-09-25 — La ficha, con vista previa al compartirla
 
 - **`middleware.js` (middleware de Vercel, solo en `/helper/:id`)**: WhatsApp
