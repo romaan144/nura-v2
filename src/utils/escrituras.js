@@ -185,13 +185,21 @@ export async function responderAviso(token, respuesta) {
  * Se encola en el PRIMER mensaje de una conversacion, no al abrir el chat:
  * avisar por cada ojeada a una ficha seria ruido para el profesional.
  */
+// Resultado de mandar algo al profesional:
+//   'ok'        — llegó al servidor
+//   'fallo'     — sin conexión o el servidor no respondió: se puede reintentar
+//   'rechazado' — el servidor lo rechazó (4xx): reintentar no lo arregla
+//   'nada'      — demo, no hay servidor
+const resultado = r => r?.ok ? 'ok' : (r?.estado >= 400 && r?.estado < 500 && r?.estado !== 408 && r?.estado !== 429 ? 'rechazado' : 'fallo')
+
 export async function encolarAviso(helperId, mensaje) {
-  if (!porLaFuncion()) return
+  if (!porLaFuncion()) return 'nada'
   try {
     const r = await llamarFuncion({ op: 'encolar-aviso', helperId, mensaje })
     if (r?.ok && r.lectura) guardarLlave(helperId, r.lectura)
+    return resultado(r)
   }
-  catch { /* el aviso se pierde; el mensaje del usuario no */ }
+  catch { return 'fallo' }
 }
 
 /**
@@ -273,16 +281,75 @@ export async function miPulso(sesion) {
  * manda un aviso nuevo (`cuerpoNuevo`, con el contexto). Nunca bloquea.
  */
 export async function seguirConversacion(helperId, texto, cuerpoNuevo) {
-  if (!porLaFuncion()) return
+  if (!porLaFuncion()) return 'nada'
   const ultima = (llavesGuardadas()[String(helperId)] || []).at(-1)
   try {
     if (ultima) {
       const r = await llamarFuncion({ op: 'ampliar-aviso', llave: ultima, mensaje: texto })
-      if (r?.ok) return
-      if (r?.estado !== 409 && r?.estado !== 404 && r?.estado !== 413) return
+      if (r?.ok) return 'ok'
+      if (r?.estado !== 409 && r?.estado !== 404 && r?.estado !== 413) return resultado(r)
     }
-    await encolarAviso(helperId, cuerpoNuevo)
-  } catch { /* el mensaje queda en el chat; el aviso se pierde */ }
+    return await encolarAviso(helperId, cuerpoNuevo)
+  } catch { return 'fallo' }
+}
+
+// ── LOS MENSAJES QUE NO SALIERON ──────────────────────────────────────────
+// Sin conexión, el aviso al profesional se perdía en silencio mientras el
+// chat decía «Mensaje enviado». Ahora se guarda aquí, el chat lo marca como
+// pendiente y sale solo al volver la conexión, EN ORDEN (el primero abre la
+// conversación; los siguientes la amplían).
+const PENDIENTES = 'nura_pendientes'
+const leerPendientes = () => { try { return JSON.parse(localStorage.getItem(PENDIENTES) || '[]') || [] } catch { return [] } }
+const guardarPendientes = l => {
+  try { localStorage.setItem(PENDIENTES, JSON.stringify(l.slice(-50))) } catch { /* sin almacenamiento */ }
+  if (typeof window !== 'undefined') window.dispatchEvent(new Event('nura:pendientes'))
+}
+
+/** Los ids de los mensajes del chat que aún no han salido. */
+export const idsPendientes = () => new Set(leerPendientes().map(p => p.msgId))
+
+const mandar = p => p.primero
+  ? encolarAviso(p.helperId, p.cuerpo)
+  : seguirConversacion(p.helperId, p.mensaje, p.cuerpoNuevo)
+
+let reenviando = null
+/** Intenta mandar los pendientes, en orden. Para en el primero que falle. */
+export function reenviarPendientes() {
+  if (reenviando) return reenviando
+  reenviando = (async () => {
+    try {
+      for (;;) {
+        const [p] = leerPendientes()
+        if (!p) return
+        const r = await mandar(p)
+        if (r === 'fallo') return
+        guardarPendientes(leerPendientes().filter(x => x.msgId !== p.msgId))
+      }
+    } finally { reenviando = null }
+  })()
+  return reenviando
+}
+
+/**
+ * Manda al profesional lo que se escribe en el chat. Si no sale, queda
+ * pendiente. Devuelve el resultado ('ok' | 'fallo' | 'rechazado' | 'nada').
+ * { msgId, helperId, primero, mensaje, cuerpo, cuerpoNuevo }
+ */
+export async function enviarAlProfesional(p) {
+  // Si ya hay pendientes, este va detrás: el orden importa.
+  if (leerPendientes().length) {
+    guardarPendientes([...leerPendientes(), p])
+    await reenviarPendientes()
+    return idsPendientes().has(p.msgId) ? 'fallo' : 'ok'
+  }
+  const r = await mandar(p)
+  if (r === 'fallo') guardarPendientes([...leerPendientes(), p])
+  return r
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('online', () => { reenviarPendientes() })
+  setTimeout(() => { if (leerPendientes().length) reenviarPendientes() }, 3000)
 }
 
 /**

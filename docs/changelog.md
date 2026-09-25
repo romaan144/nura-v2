@@ -10,6 +10,25 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — Mensajes sin conexión: se guardan y salen solos
+
+- **Sin conexión, el aviso al profesional se perdía en silencio** y el chat
+  decía igualmente «Mensaje enviado. Aviso a Carlos…». El profesional no
+  se enteraba nunca y la persona creía que sí.
+- Ahora (`escrituras.js`: `enviarAlProfesional`, `reenviarPendientes`):
+  - si no sale, se guarda en `nura_pendientes` y el chat lo marca
+    «Pendiente de enviar»; Nüra dice «Ahora mismo no hay conexión. Tu
+    mensaje está guardado y se lo envío a Carlos en cuanto vuelva»;
+  - al volver la conexión (y al abrir la app) salen solos **en orden**: el
+    primero abre la conversación y los siguientes la amplían;
+  - «Mensaje enviado» solo se dice cuando de verdad ha salido;
+  - si el servidor lo rechaza (4xx) no se reintenta en bucle.
+- `encolarAviso` y `seguirConversacion` devuelven ya el resultado
+  ('ok' | 'fallo' | 'rechazado' | 'nada') en vez de nada.
+- Comprobado en el navegador en modo real con el servidor simulado: sin
+  red → dos pendientes; vuelve la red → llegan `encolar-aviso` y
+  `ampliar-aviso` en orden y desaparecen las marcas.
+
 ## 2026-09-25 — Crear cuenta: el correo, comprobado
 
 - El correo de los avisos «te aviso si aparece alguien» sale de la cuenta,
