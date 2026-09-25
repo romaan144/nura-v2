@@ -10,6 +10,17 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — Las pantallas secundarias se cargan aparte
+
+- **Explorar, chat, perfil, mis chats, Siguiendo, textos legales, entrar y
+  la página de error** ya no van en el archivo principal: se piden al
+  abrirlas. Archivo principal: 445 KB → 294 KB (comprimido 137 → 93 KB).
+  Con el cambio anterior, 707 → 294 KB en total.
+- **Las pestañas siguen siendo instantáneas**: en cuanto el móvil queda
+  libre tras abrir la app, se precargan en segundo plano mis chats, el
+  perfil y el chat. Motivo: abrir Nüra más rápido con conexión lenta sin
+  que se note espera al cambiar de pestaña.
+
 ## 2026-09-25 — Página para captar profesionales (/profesionales)
 
 - **Nueva página `/profesionales`**, para compartir por WhatsApp o en

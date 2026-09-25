@@ -12,14 +12,14 @@ try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual' }
 import Home from './pages/Home'
 const HelperProfile = lazy(() => import('./pages/HelperProfile'))
 const IntroLetter = lazy(() => import('./pages/IntroLetter'))
-import Chat from './pages/Chat'
-import Login from './pages/Login'
-import Profile from './pages/Profile'
-import Chats from './pages/Chats'
+const Chat = lazy(() => import('./pages/Chat'))
+const Login = lazy(() => import('./pages/Login'))
+const Profile = lazy(() => import('./pages/Profile'))
+const Chats = lazy(() => import('./pages/Chats'))
 const RegisterHelper = lazy(() => import('./pages/RegisterHelper'))
-import Explore from './pages/Explore'
+const Explore = lazy(() => import('./pages/Explore'))
 const Feed = lazy(() => import('./pages/Feed'))
-import NotFound from './pages/NotFound'
+const NotFound = lazy(() => import('./pages/NotFound'))
 import BottomNav from './components/BottomNav'
 import AppShell from './components/AppShell'
 import DesktopSidebar from './components/DesktopSidebar'
@@ -29,8 +29,8 @@ const MyServices = lazy(() => import('./pages/MyServices'))
 const Responder = lazy(() => import('./pages/Responder'))
 const BajaAlerta = lazy(() => import('./pages/BajaAlerta'))
 const Profesionales = lazy(() => import('./pages/Profesionales'))
-import Siguiendo from './pages/Siguiendo'
-import Legal from './pages/Legal'
+const Siguiendo = lazy(() => import('./pages/Siguiendo'))
+const Legal = lazy(() => import('./pages/Legal'))
 // Carga PEREZOSA a proposito: estas dos pantallas traen la libreria de
 // cuentas de Supabase (~220 kB). Solo las abre quien crea o recupera su
 // acceso; el resto de la app no tiene por que descargarla.
@@ -94,6 +94,15 @@ function AppRoutes() {
   }, [location.pathname, isTab, seenTabs])
   const tabStyle = p => ({ display: location.pathname === p ? 'block' : 'none', height: '100%' })
 
+  // Lo que casi seguro se abrira despues (Chats, Perfil, un chat) se
+  // descarga en segundo plano cuando la app ya esta quieta: abrir primero
+  // es rapido y cambiar de pestaña sigue siendo instantaneo.
+  useEffect(() => {
+    const precargar = () => { import('./pages/Chats'); import('./pages/Profile'); import('./pages/Chat') }
+    const id = window.requestIdleCallback ? window.requestIdleCallback(precargar, { timeout: 4000 }) : setTimeout(precargar, 2500)
+    return () => { window.cancelIdleCallback ? window.cancelIdleCallback(id) : clearTimeout(id) }
+  }, [])
+
 
 
   return (
@@ -112,16 +121,18 @@ function AppRoutes() {
 
       <AppShell>
       <div className="desktopMain">
-        {/* Pestañas vivas: montadas tras su primera visita, visibles según ruta */}
+        {/* Pestañas vivas: montadas tras su primera visita, visibles según ruta.
+            Solo Inicio va en el archivo principal: el resto se descarga al
+            visitarlas por primera vez (la app abre antes). */}
         <div style={tabStyle('/')}><Home /></div>
-        {seenTabs['/explore'] && <div style={tabStyle('/explore')}><Explore /></div>}
+        {seenTabs['/explore'] && <div style={tabStyle('/explore')}><Suspense fallback={null}><Explore /></Suspense></div>}
         {seenTabs['/feed'] && (
           <div style={tabStyle('/feed')}>
             <Suspense fallback={null}><Feed /></Suspense>
           </div>
         )}
-        {seenTabs['/chats'] && <div style={tabStyle('/chats')}><Chats /></div>}
-        {seenTabs['/profile'] && <div style={tabStyle('/profile')}><Profile /></div>}
+        {seenTabs['/chats'] && <div style={tabStyle('/chats')}><Suspense fallback={null}><Chats /></Suspense></div>}
+        {seenTabs['/profile'] && <div style={tabStyle('/profile')}><Suspense fallback={null}><Profile /></Suspense></div>}
 
         {!isTab && (
           <PageTransition>
