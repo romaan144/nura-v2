@@ -10,6 +10,22 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — El profesional contesta con mala cobertura
+
+- **Abrir el enlace sin conexión decía «Este enlace ya no sirve»**: el
+  profesional creía que el mensaje ya no valía. Ahora `abrirAviso` distingue
+  «sin red» (sin respuesta o error del servidor) de «el enlace no vale»
+  (4xx) y enseña «No he podido abrir el mensaje. Parece un problema de
+  conexión. El mensaje sigue esperándote» con **Reintentar**.
+- **Lo que escribe se guarda en el móvil** (`nura_borrador_<token>`): si
+  cierra la página o se le corta, al volver sigue ahí. Se borra al enviarse.
+- **Si falla por la conexión, sale sola al volver** («Sin conexión. Tu
+  respuesta está guardada: la envío en cuanto vuelva»). Un seguro evita que
+  dos avisos de «hay conexión» la manden dos veces.
+- Comprobado en el navegador: abrir sin red → reintentar → abre; recargar
+  conserva el borrador; enviar sin red → vuelve la red → «Respuesta
+  enviada», una sola vez, y borrador limpio.
+
 ## 2026-09-25 — Mensajes sin conexión: se guardan y salen solos
 
 - **Sin conexión, el aviso al profesional se perdía en silencio** y el chat

@@ -167,8 +167,12 @@ export async function atributosDe(helperId) {
 /** LA VUELTA: abrir el aviso con el token del enlace. Sin cuenta. */
 export async function abrirAviso(token) {
   if (!porLaFuncion()) return { ok: false }
-  try { return await llamarFuncion({ op: 'abrir-aviso', token }) }
-  catch { return { ok: false } }
+  // `sinRed`: no se pudo preguntar (no es que el enlace no valga).
+  try {
+    const r = await llamarFuncion({ op: 'abrir-aviso', token })
+    return r?.ok || (r?.estado >= 400 && r?.estado < 500) ? r : { ...r, sinRed: true }
+  }
+  catch { return { ok: false, sinRed: true } }
 }
 
 /** LA VUELTA: el profesional responde. Si falla, se dice — no se finge. */
