@@ -1,4 +1,5 @@
 import { avatarDe } from '../utils/avatar'
+import { ciudadEnTexto } from '../data/ciudades'
 // LA UNICA FUENTE. Estaban declaradas en TRES sitios y ya habian divergido:
 // aqui la clave nueva `sb_publishable_`, y en claudeApi.js (retirado) y
 // el JWT antiguo. Es decir, las LECTURAS iban con una credencial y las
@@ -141,7 +142,8 @@ function normalize(h) {
     bio: h.bio || '',
     price: h.price || null,
     zone: h.zone || h.city || 'Barcelona',
-    city: h.city || 'Barcelona',
+    // Sin ciudad guardada se lee de su zona; si no se sabe, no se inventa.
+    city: h.city || ciudadEnTexto(h.zone) || null,
     distance: parseFloat(h.distance) || 1.5, // Default 1.5km — honest fallback
     rating: parseFloat(h.rating) || 4.5,
     reviews: parseInt(h.reviews) || 0,

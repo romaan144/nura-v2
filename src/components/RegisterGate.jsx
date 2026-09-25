@@ -33,7 +33,7 @@ export default function RegisterGate({ onClose, reason = 'contact', volverA }) {
 
   const BENEFITS = [
     { icon: <MessageCircle size={15} color="var(--purple)" />, text: 'Contacto directo con profesionales' },
-    { icon: <Shield size={15} color="var(--green)" />, text: 'Profesionales de Barcelona, con lo que dicen sus clientes a la vista' },
+    { icon: <Shield size={15} color="var(--green)" />, text: 'Profesionales cerca de ti, con lo que dicen sus clientes a la vista' },
     { icon: <Star size={15} color="var(--amber)" />, text: 'Historial y valoraciones de tus servicios' },
     { icon: <UserPlus size={15} color="var(--purple)" />, text: 'Sigue profesionales y accede a ellos cuando quieras' },
   ]

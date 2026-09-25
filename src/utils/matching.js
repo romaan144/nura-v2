@@ -31,6 +31,9 @@ export function getPriceContext(helper, categoria) {
   const isAvg   = helperNum >= ctx.lo && helperNum <= ctx.hi
 
   const helperName = helper.name?.split(' ')?.[0] || 'Este profesional'
+  // Los precios de referencia son de Barcelona: fuera, no se compara.
+  const ciudad = ciudadDe(helper)
+  if (ciudad && ciudad !== 'Barcelona') return null
 
   if (isBelow) {
     return `El precio de ${ctx.label} en Barcelona es ${ctx.lo}–${ctx.hi}€/${ctx.unit}. ${helperName} cobra ${helperNum}€ — por debajo de la media.`
@@ -45,6 +48,7 @@ import { HELPERS as LOCAL_HELPERS } from '../data/helpers'
 import { obraSignal } from '../data/obraPosts'
 import { searchHelpers } from './supabase'
 import { barrioEnTexto, barrioDeZona, kmEntre } from '../data/barrios'
+import { ciudadEnTexto, ciudadDe } from '../data/ciudades'
 import { pideDeclarado, puntosDeclarados, declaradosDe, pideAlgo } from './pideDeclarado'
 
 // ── SEMANTIC EXPANSION MAP ────────────────────────────────────────────────
@@ -563,6 +567,9 @@ export function analyzeNeed(userText) {
     // El barrio que nombra («cerca de Gràcia»), o null. Solo para ordenar
     // esta busqueda: no se guarda en ningun sitio.
     zona: barrioEnTexto(userText),
+    // La ciudad que nombra («fontanero en Madrid»), o null. Si la nombra,
+    // solo entra quien trabaja allí o atiende online.
+    ciudad: ciudadEnTexto(userText),
     // Lo que pide que un profesional puede haber declarado («que hable
     // catalán», «con coche», «por las tardes»). Solo ordena esta busqueda.
     pide: pideDeclarado(userText, propias),
@@ -739,7 +746,10 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
   // Sin comprensión (categoria 'otro') no hay recomendaciones: honestidad > confianza falsa.
   if (!analysis?.categoria || analysis.categoria === 'otro') return []
   const finalPool = withContent.length > 0 ? withContent : sorted
-  const compatibles = finalPool.filter(h => toApp(h?.category) === analysis.categoria)
+  // LA CIUDAD. Quien busca en Madrid no quiere un fontanero de Barcelona.
+  // Si no la nombra, no se filtra (hoy casi todo es Barcelona).
+  const enSuCiudad = h => !analysis.ciudad || h.online || ciudadDe(h) === analysis.ciudad
+  const compatibles = finalPool.filter(h => toApp(h?.category) === analysis.categoria && enSuCiudad(h))
   // LO DECLARADO. Si pide algo comprobable («que hable catalán», «con
   // coche»), se miran los datos que los mejores candidatos confirmaron de si
   // mismos y se reordena. Una sola peticion, con tope de tiempo: si no

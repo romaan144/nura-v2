@@ -106,6 +106,7 @@ const SOLO_CATEGORIA = [
   { q: 'necesito traducir unos documentos al inglés', cat: 'idiomas' },
   { q: 'traducir mi título al inglés', cat: 'idiomas' },
 ]
+
 const HONESTY = ['asdfgh qwerty zzz', 'necesito algo no sé muy bien qué']
 const NEGATIVE = [
   { q: 'Sesión de entrenamiento personal', forbid: 'tecnico' },
@@ -434,6 +435,30 @@ for (const t of NEGATIVE) {
   prueba('quien tiene lo que pides sube, y se sabe por qué', orden[0].id === 2 && orden[0].__declarado?.length === 3)
   const lejos = reordenarPorDeclarado([{ id: 1, score: 200 }, { id: 2, score: 80 }], new Map([['2', attrs]]), p1)
   prueba('no da la vuelta a una diferencia grande (pesa menos que el oficio)', lejos[0].id === 1)
+}
+
+// ── La ciudad (2026-09-25): Nüra se usará en más ciudades ──
+{
+  const { ciudadEnTexto } = await import(join(stage, 'data/ciudades.js'))
+  const casos = [
+    ['fontanero en Madrid', 'Madrid'], ['busco canguro en valència', 'Valencia'], ['canguro en Valencia', 'Valencia'],
+    ['logopeda cerca de Gràcia', 'Barcelona'], ['clases de inglés', null], ['Chamberí, Madrid', 'Madrid'],
+    ['mi hijo León necesita un logopeda', null], ['vivo en León y busco fisio', 'León'], ['Granada', 'Granada'],
+    ['quiero una granada', null], ['Palma de Mallorca', 'Palma'], ['toda Barcelona', 'Barcelona'], ['bcn', 'Barcelona'],
+  ]
+  for (const [t, esp] of casos) {
+    const r = ciudadEnTexto(t)
+    if (r !== esp) failed++
+    console.log(`${r === esp ? '✓' : '✗'} ciudad: «${t}» → ${r}${r === esp ? '' : ` (esperado ${esp})`}`)
+  }
+  const a = await analyzeNeed('fontanero urgente en Madrid')
+  const m = await matchHelpers(a, 6)
+  const fuera = (m || []).filter(h => !h.online && (h.city || 'Barcelona') !== 'Madrid')
+  if (!(a.ciudad === 'Madrid' && fuera.length === 0)) failed++
+  console.log(`${a.ciudad === 'Madrid' && fuera.length === 0 ? '✓' : '✗'} buscar en Madrid no da técnicos de Barcelona (${(m || []).length} resultados, ${fuera.length} de fuera)`)
+  const b = await matchHelpers(await analyzeNeed('fontanero urgente'), 4)
+  if (!(b || []).length) failed++
+  console.log(`${(b || []).length > 0 ? '✓' : '✗'} sin ciudad no se filtra (${(b || []).length} resultados)`)
 }
 
 // El total se contaba sumando los tres catalogos, asi que se quedo en 32
