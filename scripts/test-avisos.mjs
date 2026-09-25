@@ -538,7 +538,7 @@ console.log('\n── El Pulso: cifras de verdad, solo de la ficha propia ──
 
   // La bandeja: quien le ha escrito, solo con su sesión y solo lo suyo
   db.avisos.push(
-    { id: 80, helper_id: '777', mensaje: 'Para la 777 (ficticio)', token: 't'.repeat(32), lectura_hash: 'h80', fecha: hoy, respuesta: null },
+    { id: 80, helper_id: '777', mensaje: 'Para la 777 (ficticio)', token: 't'.repeat(32), lectura_hash: 'h80', fecha: hoy, respuesta: null, cita_fecha: '2030-01-02', cita_hora: '10:00', cita_estado: 'propuesta' },
     { id: 81, helper_id: '999', mensaje: 'Para OTRA (ficticio)', token: 'o'.repeat(32), lectura_hash: 'h81', fecha: hoy, respuesta: null },
   )
   r = await llamarG(funcion, { op: 'mis-avisos' })
@@ -547,6 +547,7 @@ console.log('\n── El Pulso: cifras de verdad, solo de la ficha propia ──
   const lista = r.datos?.avisos || []
   ok(r.estado === 200 && lista.some(a => a.id === 80) && !lista.some(a => a.helper_id === '999' || a.id === 81), 've los mensajes de SU ficha, nunca los de otra (aunque el móvil pida otra)')
   ok(lista.find(a => a.id === 80)?.token === 't'.repeat(32) && !JSON.stringify(lista).includes('h80'), 'con el enlace para contestar, sin la llave de quien escribió')
+  ok(lista.find(a => a.id === 80)?.cita_hora === '10:00' && lista.find(a => a.id === 80)?.cita_estado === 'propuesta', 'y con su cita (día, hora y estado) para su agenda')
 
   // «Avísame cuando me escriban»: la notificación le llega a la profesional
   const SUBP = { endpoint: 'https://fcm.googleapis.com/fcm/send/ficticio-pro', keys: { p256dh: 'x', auth: 'y' } }

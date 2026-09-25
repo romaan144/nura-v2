@@ -10,6 +10,22 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-10-04 — «Mi agenda» del profesional
+
+- En «Chats», encima de «Te han escrito», el profesional con cuenta ve
+  **Mi agenda** (`components/AgendaProfesional.jsx`): sus citas de hoy a 14
+  días, por día («Hoy», «Mañana», «Lunes, 28 de septiembre») y por hora.
+- Cada cita dice su estado: **Confirmada**, **Por contestar**, **Sin
+  confirmar** (contestó con texto pero no la aceptó) o **Cancelada** (tachada,
+  «Hora libre»). Las rechazadas no salen. Contador «N por contestar».
+- Al tocar una, se abre su aviso para aceptarla o contestar.
+- Sale de los mismos datos que la bandeja: `mis-avisos` ahora devuelve
+  también día, hora y estado de la cita (`helpers-write` v20 desplegada).
+- Lógica en `agendaDe` (`data/horarios.js`), con 9 pruebas en
+  `test:matching` (191). `test:avisos` 162. Probado en el navegador como
+  profesional con sesión.
+- Como la bandeja, solo se ve con el modo demo apagado.
+
 ## 2026-10-03 — Recordatorio de la cita y cancelarla
 
 - **Recordatorio en Inicio** (`components/RecordatorioCita.jsx`): cuando
