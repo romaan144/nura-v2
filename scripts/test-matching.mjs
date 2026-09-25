@@ -549,6 +549,36 @@ for (const t of NEGATIVE) {
   for (const [n, ok] of casos) { if (!ok) failed++; console.log(`${ok ? '✓' : '✗'} recordatorio: ${n}`) }
 }
 
+// ── La agenda del profesional (2026-10-04) ──
+{
+  const H = await import(join(stage, 'data/horarios.js'))
+  const ahora = new Date(2026, 9, 3, 10, 30)          // 3 oct
+  const a = (id, fecha, hora, estado, respuesta = null) => ({ id, token: 't' + id, cita_fecha: fecha, cita_hora: hora, cita_estado: estado, respuesta })
+  const ag = H.agendaDe([
+    a(1, '2026-10-05', '17:00', 'aceptada'),
+    a(2, '2026-10-03', '9:00', 'propuesta'),
+    a(3, '2026-10-05', '10:00', 'cancelada'),
+    a(4, '2026-10-04', '12:00', 'rechazada'),
+    a(5, '2026-10-02', '12:00', 'aceptada'),
+    a(6, '2026-10-30', '12:00', 'aceptada'),
+    a(7, '2026-10-04', '11:00', 'propuesta', 'Déjame mirarlo'),
+    { id: 8, token: 't8', mensaje: 'sin cita' },
+  ], ahora)
+  const planas = ag.flatMap(d => d.citas)
+  const casos = [
+    ['agrupa por día, en orden', ag.map(d => d.fecha).join() === '2026-10-03,2026-10-04,2026-10-05'],
+    ['dentro del día, por hora (10:00 antes que 17:00)', ag[2].citas.map(c => c.hora).join() === '10:00,17:00'],
+    ['aceptada → confirmada', planas.find(c => c.id === 1)?.estado === 'confirmada'],
+    ['propuesta sin responder → por contestar', planas.find(c => c.id === 2)?.estado === 'por-contestar'],
+    ['respondida sin aceptar → sin confirmar', planas.find(c => c.id === 7)?.estado === 'sin-decidir'],
+    ['cancelada sale como cancelada', planas.find(c => c.id === 3)?.estado === 'cancelada'],
+    ['la rechazada no sale', !planas.some(c => c.id === 4)],
+    ['ni la de ayer, ni la de dentro de un mes, ni un mensaje sin cita', !planas.some(c => [5, 6, 8].includes(c.id))],
+    ['sin nada, agenda vacía', H.agendaDe([], ahora).length === 0 && H.agendaDe(null, ahora).length === 0],
+  ]
+  for (const [n, ok] of casos) { if (!ok) failed++; console.log(`${ok ? '✓' : '✗'} agenda del profesional: ${n}`) }
+}
+
 // El total se contaba sumando los tres catalogos, asi que se quedo en 32
 // mientras las pruebas reales llegaban a 51: cada bloque añadido despues
 // (obra, agenda, silencios, interceptor, aviso) pasaba sin figurar. Un

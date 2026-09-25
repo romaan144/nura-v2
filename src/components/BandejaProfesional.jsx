@@ -4,6 +4,7 @@ import { Inbox, Bell } from 'lucide-react'
 import { misAvisos, porLaFuncion } from '../utils/escrituras'
 import { movilPuedeAvisar, esIphoneSinInstalar, avisosProActivos, activarAvisosPro, desactivarAvisosPro } from '../utils/alertas'
 import styles from '../pages/Chats.module.css'
+import AgendaProfesional from './AgendaProfesional'
 
 // ── «TE HAN ESCRITO»: la bandeja de la profesional ──────────────────────
 // Antes solo podia contestar desde el enlace de cada aviso. Aqui ve todo lo
@@ -76,6 +77,7 @@ export default function BandejaProfesional() {
 
   return (
     <section aria-labelledby="bandeja-titulo" style={{ padding: 'var(--space-8) var(--space-16) var(--space-4)' }}>
+      <AgendaProfesional avisos={avisos} />
       <h2 id="bandeja-titulo" style={{ fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--ink)', margin: '0 0 var(--space-8)', display: 'flex', alignItems: 'center', gap: 'var(--space-6)' }}>
         <Inbox size={16} aria-hidden="true" /> Te han escrito
         {porContestar.length > 0 && (

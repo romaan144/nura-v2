@@ -1053,7 +1053,7 @@ Deno.serve(async (req: Request) => {
     const [ficha] = await f.json()
     if (!ficha) return json({ error: 'sin ficha' }, 404, cors)
     const r = await fetch(
-      `${SUPABASE_URL}/rest/v1/avisos?helper_id=eq.${encodeURIComponent(String(ficha.id))}&lectura_hash=not.is.null&select=id,mensaje,respuesta,fecha,respondido_en,token&order=id.desc&limit=50`,
+      `${SUPABASE_URL}/rest/v1/avisos?helper_id=eq.${encodeURIComponent(String(ficha.id))}&lectura_hash=not.is.null&select=id,mensaje,respuesta,fecha,respondido_en,token,cita_fecha,cita_hora,cita_estado&order=id.desc&limit=50`,
       { headers: rest },
     )
     if (!r.ok) return json({ error: 'lectura rechazada', estado: r.status }, 502, cors)

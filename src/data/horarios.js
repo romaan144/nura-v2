@@ -201,3 +201,35 @@ export function citaEn24h(services = [], citas = [], ahora = new Date()) {
   const gemela = cerca.find(c => c !== p && String(c.helperId) === String(p.helperId) && c.fecha === p.fecha && c.hora === p.hora)
   return gemela ? { ...gemela, ...Object.fromEntries(Object.entries(p).filter(([, v]) => v != null)) } : p
 }
+
+/**
+ * LA AGENDA DEL PROFESIONAL: sus citas de hoy a `dias` días, por día y
+ * por hora, a partir de los avisos que le han llegado (op `mis-avisos`).
+ * Estados que ve:
+ *   · 'confirmada'     la aceptó
+ *   · 'por-contestar'  se la han propuesto y aún no ha respondido
+ *   · 'sin-decidir'    respondió con texto pero sin aceptar ni rechazar
+ *   · 'cancelada'      la canceló quien la pidió (la hora vuelve a estar libre)
+ * Las que rechazó no salen: no son citas.
+ */
+export function agendaDe(avisos = [], ahora = new Date(), dias = 14) {
+  const hoy = isoLocal(ahora)
+  const tope = new Date(ahora); tope.setDate(tope.getDate() + dias)
+  const hasta = isoLocal(tope)
+  const estadoDe = a => a.cita_estado === 'aceptada' ? 'confirmada'
+    : a.cita_estado === 'cancelada' ? 'cancelada'
+    : a.cita_estado === 'propuesta' ? (a.respuesta ? 'sin-decidir' : 'por-contestar')
+    : null
+  const citas = (avisos || [])
+    .filter(a => a?.cita_fecha && a?.cita_hora && a.cita_fecha >= hoy && a.cita_fecha <= hasta)
+    .map(a => ({ id: a.id, token: a.token, fecha: a.cita_fecha, hora: a.cita_hora, estado: estadoDe(a), mensaje: a.mensaje }))
+    .filter(c => c.estado)
+    .sort((x, y) => (x.fecha + x.hora.padStart(5, '0')).localeCompare(y.fecha + y.hora.padStart(5, '0')))
+  const porDia = []
+  for (const c of citas) {
+    const ultimo = porDia.at(-1)
+    if (ultimo?.fecha === c.fecha) ultimo.citas.push(c)
+    else porDia.push({ fecha: c.fecha, citas: [c] })
+  }
+  return porDia
+}
