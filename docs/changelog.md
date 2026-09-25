@@ -10,6 +10,23 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — «Instala Nüra en tu móvil», en el perfil
+
+- En iPhone, instalar Nüra en la pantalla de inicio es la ÚNICA forma de
+  recibir avisos, y solo se explicaba de pasada al crear una alerta.
+- Nueva fila en el perfil (con cuenta, en Ajustes; sin cuenta, bajo la
+  tarjeta de crear cuenta). No aparece si ya está instalada. Nada salta
+  solo: se explica al tocarla.
+  - **Android/Chrome**: un toque abre el cuadro de instalar del navegador
+    (se guarda el aviso `beforeinstallprompt` al arrancar,
+    `src/utils/instalar.js`).
+  - **iPhone**: tres pasos (Compartir → Añadir a pantalla de inicio → abrir
+    desde el icono).
+  - **Otros**: menú del navegador → Instalar aplicación.
+- Comprobado en el navegador en los cuatro casos; accesibilidad a cero.
+- De paso: `var(--space-40)` no existe (los tokens llegan a 32); usarlo
+  anula el `padding` entero sin avisar.
+
 ## 2026-09-25 — Iconos de la app instalada, bien hechos
 
 - El manifiesto declaraba `logo-iso.png` (180×180, fondo transparente)
