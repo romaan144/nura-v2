@@ -86,6 +86,9 @@ completamente integrada — nunca varias a medias.
   pegado, adjuntos o intenciones que no estén escritas.
 - Evitar "para" en tono imperativo al dirigirse al fundador.
 - Idioma de trabajo: **español**.
+- **Al final de CADA respuesta, decir qué se hará si el fundador contesta
+  «sigue»** (2026-09-25). Una propuesta concreta, en una o dos frases, y
+  luego hacer exactamente eso cuando diga «sigue».
 - Ante errores de la IA: reconocerlos sin dramatismo, corregirlos con hechos
   (reproducir > teorizar, ver `engineering.md`) y registrar la lección.
 
