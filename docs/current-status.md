@@ -30,7 +30,7 @@ actualizar por eso mismo.
 
 ### En producción (comprobado)
 
-- **Función `helpers-write` versión 12** (2026-09-25), 21 operaciones
+- **Función `helpers-write` versión 13** (2026-09-25), 21 operaciones · avisos por correo automáticos
   (nuevas: `valorar`, `clave-push`, `crear-alerta`, `alertas`,
   `quitar-alerta`, `confirmar-declarado`, `mi-pulso`, `ampliar-aviso`).
 - **Captar profesionales**: enlace para compartir `/profesionales`
@@ -672,6 +672,7 @@ le has escrito"* y eso dependía de que alguien ejecutara un comando a mano.
 | disparo | `Chat.jsx`, primer mensaje del usuario |
 | `encolar-aviso` · `pendientes` · `aviso-enviado` | Edge Function |
 | `npm run avisar -- --pendientes` | saca todos los enlaces de golpe |
+| (automático) | si el profesional dio un **correo** y Resend está configurado, el aviso le llega solo; `--pendientes` solo saca los de móvil (y los que superen 5 por hora) |
 
 **Dos decisiones que importan:**
 
