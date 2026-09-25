@@ -4,7 +4,7 @@
 > verdad sobre dónde está el proyecto. El histórico largo vive en
 > `docs/improvement-roadmap.md` y no debe usarse para saber el estado.
 
-**Última actualización:** 2026-09-24
+**Última actualización:** 2026-09-25
 **Último commit publicado:** ver `git log origin/main` (este documento no copia hashes: se desfasaban)
 **Sello de build:** `2026.07.09-m`
 
@@ -33,6 +33,9 @@ actualizar por eso mismo.
 - **Función `helpers-write` versión 10** (2026-09-24), 20 operaciones
   (nuevas: `valorar`, `clave-push`, `crear-alerta`, `alertas`,
   `quitar-alerta`, `confirmar-declarado`, `mi-pulso`, `ampliar-aviso`).
+- **Captar profesionales**: enlace para compartir `/profesionales`
+  (https://nura-v2-two.vercel.app/profesionales). Si se configura
+  `CONTACTO_EMAIL` en `src/config.js`, la página muestra el correo.
 - **Recorrido real verificado** (`npm run recorrido:real`, 21/21): una
   familia y un profesional de punta a punta sin demo, con servidor
   ficticio. Pasarlo antes de cada publicación importante.
