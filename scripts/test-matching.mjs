@@ -579,6 +579,45 @@ for (const t of NEGATIVE) {
   for (const [n, ok] of casos) { if (!ok) failed++; console.log(`${ok ? '✓' : '✗'} agenda del profesional: ${n}`) }
 }
 
+// ── Días u horas bloqueadas (2026-10-05) ──
+{
+  const H = await import(join(stage, 'data/horarios.js'))
+  const horas = ['16:00', '17:00', '18:00', '19:00']
+  const pro = { id: 55, category: 'logopedia', horario: { dias: [1, 2, 3, 4, 5], horas } }
+  const lunes = (() => { for (let i = 1; i < 14; i++) { const d = new Date(); d.setDate(d.getDate() + i); if (d.getDay() === 1) return H.isoLocal(d) } })()
+  const martes = (() => { const d = new Date(lunes + 'T12:00:00'); d.setDate(d.getDate() + 1); return H.isoLocal(d) })()
+  const conDia = { ...pro, bloqueos: [{ fecha: lunes }] }
+  const conHoras = { ...pro, bloqueos: [{ fecha: lunes, horas: ['17:00'] }] }
+  let b = H.alternarHora([], lunes, '17:00', horas)
+  const c1 = b.length === 1 && b[0].horas.join() === '17:00'
+  b = H.alternarHora(b, lunes, '17:00', horas)
+  const c2 = b.length === 0
+  b = H.alternarDia([], lunes)
+  const c3 = b.length === 1 && !b[0].horas
+  b = H.alternarHora(b, lunes, '16:00', horas)
+  const c4 = b[0].horas?.join() === '17:00,18:00,19:00'
+  b = H.alternarHora(b, lunes, '16:00', horas)
+  const c5 = b.length === 1 && !b[0].horas
+  const casos = [
+    ['un día entero bloqueado no tiene horas', H.slotsDe(conDia, lunes, []).length === 0],
+    ['y dice «no disponible», no «no trabaja» ni «completo»', H.motivoSinHuecos(conDia, lunes) === 'bloqueado'],
+    ['el día siguiente, igual que sin bloqueos', JSON.stringify(H.slotsDe(conDia, martes, [])) === JSON.stringify(H.slotsDe(pro, martes, []))],
+    ['una hora bloqueada sale ocupada; las demás, como sin bloqueos', (() => {
+      const sin = H.slotsDe(pro, lunes, []), con = H.slotsDe(conHoras, lunes, [])
+      return con.length === 4 && con.every((x, i) => x.hora === '17:00' ? x.estado === 'ocupada' : x.estado === sin[i].estado)
+    })()],
+    ['el próximo hueco salta lo bloqueado', H.proximoHueco(conDia, []).fecha !== lunes],
+    ['bloquear una hora y volver a tocarla la libera', c1 && c2],
+    ['bloquear el día entero', c3],
+    ['quitar una hora a un día entero deja «todas menos esa»', c4],
+    ['bloquear todas las horas vuelve a ser el día entero', c5],
+    ['los bloqueos rotos se ignoran', H.bloqueosValidos([{ fecha: 'mañana' }, { fecha: lunes, horas: ['25:00'] }, null, 'x']).length === 0],
+    ['los días pasados se olvidan', H.bloqueosVigentes([{ fecha: '2020-01-01' }, { fecha: lunes }]).map(x => x.fecha).join() === lunes],
+    ['sin bloqueos, todo como antes', H.slotsDe(pro, lunes, []).length === 4 && H.bloqueoDe(pro, lunes) === null],
+  ]
+  for (const [n, ok] of casos) { if (!ok) failed++; console.log(`${ok ? '✓' : '✗'} bloqueos: ${n}`) }
+}
+
 // El total se contaba sumando los tres catalogos, asi que se quedo en 32
 // mientras las pruebas reales llegaban a 51: cada bloque añadido despues
 // (obra, agenda, silencios, interceptor, aviso) pasaba sin figurar. Un

@@ -45,7 +45,7 @@ export default function ElegirCita({ helper, date, time, onDate, onTime }) {
       iso, libres,
       arriba: i === 0 ? 'Hoy' : i === 1 ? 'Mañana' : d.toLocaleDateString('es-ES', { weekday: 'short' }).replace('.', ''),
       numero: d.getDate(),
-      abajo: libres < 0 ? 'No trabaja' : libres === 0 ? (i === 0 && motivoSinHuecos(helper, iso) === 'tarde' ? 'Terminado' : 'Completo') : `${libres} ${libres === 1 ? 'hueco' : 'huecos'}`,
+      abajo: libres < 0 ? 'No trabaja' : libres === 0 ? ({ tarde: i === 0 ? 'Terminado' : 'Completo', bloqueado: 'No disponible' }[motivoSinHuecos(helper, iso)] || 'Completo') : `${libres} ${libres === 1 ? 'hueco' : 'huecos'}`,
     }
   })
 
