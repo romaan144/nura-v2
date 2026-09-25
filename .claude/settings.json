@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "mcp__Supabase"
+      "Bash", "Read", "Edit", "Write", "Glob", "Grep",
+      "WebFetch", "WebSearch", "Skill", "Agent", "Artifact", "NotebookEdit",
+      "mcp__Supabase", "mcp__github", "mcp__Claude_Code_Remote", "mcp__Claude_Docs"
     ]
   }
 }
