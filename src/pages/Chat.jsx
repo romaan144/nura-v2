@@ -6,7 +6,7 @@ import { HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
 import { slotsDe, ocupacionesDe, motivoSinHuecos, FRASE_SIN_HUECOS } from '../data/horarios'
 import { getHelperById } from '../utils/supabase'
-import { registrarConversacion, encolarAviso, respuestasDe, seguirConversacion, enviarPropuestaCita } from '../utils/escrituras'
+import { registrarConversacion, respuestasDe, enviarPropuestaCita, enviarAlProfesional, idsPendientes } from '../utils/escrituras'
 import { avisarCuandoConteste, movilPuedeAvisar, esIphoneSinInstalar } from '../utils/alertas'
 import { marcarVistas } from '../utils/respuestasNuevas'
 import { notifyServiceConfirmed } from '../utils/notifications'
@@ -280,6 +280,13 @@ export default function Chat() {
   // no iba a llegar. Un callejon sin puerta es peor que un error.
   const [buscando, setBuscando] = useState(!helper)
   const [sinRed, setSinRed]     = useState(false)
+  // Los mensajes que aún no han salido (sin conexión): se marcan en el chat.
+  const [pendientes, setPendientes] = useState(idsPendientes)
+  useEffect(() => {
+    const ver = () => setPendientes(idsPendientes())
+    window.addEventListener('nura:pendientes', ver)
+    return () => window.removeEventListener('nura:pendientes', ver)
+  }, [])
   const [intento, setIntento]   = useState(0)
   useTitulo(helper?.name ? `Chat con ${helper.name.split(' ')[0]}` : null)
   useEffect(() => {
@@ -526,6 +533,7 @@ export default function Chat() {
     // que escribiera la persona. El criterio correcto es si YA habia escrito
     // antes en esta conversacion.
     const yaEscribi = messages.some(m => m.from === 'user')
+    let envio = Promise.resolve('nada')
     if (!yaEscribi && helper?.id != null) {
       const aviso = construirAviso({
         helper,
@@ -543,14 +551,15 @@ export default function Chat() {
       // EL PROFESIONAL al abrir su enlace, y si lo esta leyendo es que si le
       // llego. Que no tiene contacto ya lo marca `alcanzable: false`.
       const cuerpo = aviso?.cuerpo || `Alguien te ha escrito en Nüra: «${msg}»`
-      encolarAviso(helper.id, cuerpo)
+      envio = enviarAlProfesional({ msgId: newMsg.id, helperId: helper.id, primero: true, cuerpo })
     } else if (helper?.id != null) {
       // Lo que escribe DESPUES tambien le llega (antes se perdia).
       const nombre = user?.name?.split(' ')?.[0] || 'La persona que te escribió'
       const suRespuesta = [...messages].reverse().find(m => m.__deAviso)?.text
-      seguirConversacion(helper.id, msg, suRespuesta
-        ? `${nombre} te contesta en Nüra.\n\nTú le dijiste: «${suRespuesta.slice(0, 400)}»\n\nAhora te escribe: «${msg}»`
-        : `${nombre} te escribe en Nüra: «${msg}»`)
+      envio = enviarAlProfesional({ msgId: newMsg.id, helperId: helper.id, primero: false, mensaje: msg,
+        cuerpoNuevo: suRespuesta
+          ? `${nombre} te contesta en Nüra.\n\nTú le dijiste: «${suRespuesta.slice(0, 400)}»\n\nAhora te escribe: «${msg}»`
+          : `${nombre} te escribe en Nüra: «${msg}»` })
     }
 
     // ── EN PRODUCCION NADIE CONTESTA, Y HAY QUE DECIRLO ──
@@ -563,15 +572,23 @@ export default function Chat() {
     // lo honesto es decir que el mensaje esta enviado y que avisaremos.
     const isFirstContact = msgCount === 0
     if (!DEMO_MODE) {
-      if (isFirstContact) {
+      const quien = helper.name?.split(' ')?.[0] || 'la persona'
+      // Solo se dice «enviado» cuando de verdad ha salido.
+      envio.then(r => {
+        if (r === 'fallo') {
+          setMessages(prev => [...prev, { id: Date.now() + 1, from: 'nura', time: new Date().toISOString(),
+            text: `Ahora mismo no hay conexión. Tu mensaje está guardado y se lo envío a ${quien} en cuanto vuelva.` }])
+          return
+        }
+        if (!isFirstContact) return
         setTimeout(() => setMessages(prev => [...prev, {
           id: Date.now() + 1, from: 'nura', time: new Date().toISOString(),
-          text: `Mensaje enviado. Aviso a ${helper.name?.split(' ')?.[0] || 'la persona'} de que le has escrito; en cuanto responda te llega aquí.`,
+          text: `Mensaje enviado. Aviso a ${quien} de que le has escrito; en cuanto responda te llega aquí.`,
           // Solo si este movil puede recibir notificaciones (en iPhone, desde
           // la pantalla de inicio). Nada se pide hasta que lo toque.
           chips: movilPuedeAvisar() && !esIphoneSinInstalar() ? [AVISAME] : undefined,
-        }]), 700)
-      }
+        }]), 400)
+      })
       return
     }
     setTyping(true)
@@ -869,7 +886,9 @@ export default function Chat() {
                     ))}
                   </div>
                 )}
-                <span className={msg.from === 'user' ? styles.msgTime : styles.msgTimeHelper}>{formatTime(msg.time)}</span>
+                <span className={msg.from === 'user' ? styles.msgTime : styles.msgTimeHelper}>
+                  {formatTime(msg.time)}{msg.from === 'user' && pendientes.has(msg.id) ? ' · Pendiente de enviar' : ''}
+                </span>
               </div>
             </div>
           )
