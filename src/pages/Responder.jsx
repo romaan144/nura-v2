@@ -17,16 +17,27 @@
 //    perfil". Ha venido a contestar a alguien que le necesita.
 
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
-import { abrirAviso, responderAviso } from '../utils/escrituras'
+import { useParams, useNavigate } from 'react-router-dom'
+import { abrirAviso, responderAviso, misAvisos, porLaFuncion } from '../utils/escrituras'
 import { refrescarSinContestar } from '../utils/sinContestar'
 
+// Una pantalla por mensaje: al pasar al siguiente (otro token) se monta de
+// nuevo, limpia, sin arrastrar lo escrito en el anterior.
 export default function Responder() {
   const { token } = useParams()
+  return <ResponderAviso key={token} token={token} />
+}
+
+function ResponderAviso({ token }) {
   const [estado, setEstado] = useState('cargando')   // cargando|listo|enviado|fallo|error
   const [aviso, setAviso] = useState(null)
   const [texto, setTexto] = useState('')
   const [enviando, setEnviando] = useState(false)
+  const navigate = useNavigate()
+  // Despues de contestar (y SOLO despues: la regla 3 sigue en pie mientras
+  // escribe), que hacer ahora: con cuenta, el siguiente mensaje o su bandeja;
+  // sin cuenta, la invitacion a verlo todo en Nüra. null = aun no se sabe.
+  const [despues, setDespues] = useState(null)
 
   useEffect(() => {
     let vivo = true
@@ -41,6 +52,20 @@ export default function Responder() {
     })
     return () => { vivo = false }
   }, [token])
+
+  useEffect(() => {
+    if (estado !== 'enviado' || !porLaFuncion()) return
+    let vivo = true
+    ;(async () => {
+      const { sesionActual } = await import('../utils/cuenta')
+      const sesion = (await sesionActual())?.access_token
+      if (!sesion) { if (vivo) setDespues({ conCuenta: false }); return }
+      const lista = await misAvisos(sesion)
+      const pendientes = (lista || []).filter(a => !a.respuesta && a.token !== token)
+      if (vivo) setDespues({ conCuenta: Array.isArray(lista), siguiente: pendientes[0]?.token || null, quedan: pendientes.length })
+    })()
+    return () => { vivo = false }
+  }, [estado, token])
 
   async function enviar() {
     if (!texto.trim() || enviando) return
@@ -115,6 +140,37 @@ export default function Responder() {
             <p style={{fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)', margin: 0, lineHeight: 1.6}}>
               Se la hago llegar. Si quiere seguir contigo, te aviso.
             </p>
+            {despues?.conCuenta && (
+              <button onClick={() => navigate(despues.siguiente ? `/r/${despues.siguiente}` : '/chats')}
+                style={{ marginTop: 'var(--space-20)', width: '100%', minHeight: 48, border: 'none', cursor: 'pointer',
+                  borderRadius: 'var(--radius-full)', background: 'var(--purple)', color: 'white',
+                  fontFamily: 'inherit', fontSize: 'var(--text-base)', fontWeight: 700 }}>
+                {despues.siguiente
+                  ? `Siguiente mensaje sin contestar${despues.quedan > 1 ? ` (${despues.quedan})` : ''}`
+                  : 'Volver a mis mensajes'}
+              </button>
+            )}
+            {despues && !despues.conCuenta && (
+              <div style={{ marginTop: 'var(--space-24)', padding: 'var(--space-16)', borderRadius: 'var(--radius-card)',
+                background: 'var(--surface-subtle)', textAlign: 'left' }}>
+                <p style={{ margin: '0 0 var(--space-6)', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--ink-primary)' }}>
+                  ¿Quieres verlo todo en un sitio?
+                </p>
+                <p style={{ margin: '0 0 var(--space-12)', fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)', lineHeight: 1.5 }}>
+                  Con tu acceso ves aquí todo lo que te escriban y te aviso en el móvil. Usa el mismo correo que diste en Nüra.
+                </p>
+                <button onClick={() => navigate('/entrar?modo=crear&volver=/chats')}
+                  style={{ width: '100%', minHeight: 44, border: '1px solid var(--purple)', cursor: 'pointer', borderRadius: 'var(--radius-full)',
+                    background: 'transparent', color: 'var(--purple)', fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 700 }}>
+                  Crear mi acceso
+                </button>
+                <button onClick={() => navigate('/entrar?volver=/chats')}
+                  style={{ width: '100%', minHeight: 40, marginTop: 'var(--space-6)', border: 'none', cursor: 'pointer', background: 'transparent',
+                    color: 'var(--ink-secondary)', fontFamily: 'inherit', fontSize: 'var(--text-sm)' }}>
+                  Ya tengo acceso: entrar
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           <>

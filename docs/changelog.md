@@ -2276,3 +2276,11 @@ registradas retroactivamente con su motivo:
 - La insignia de Chats suma esos mensajes.
 - Al entrar, Nüra le dice «Tienes N mensajes sin contestar» con «Contestar ahora» (lleva a su bandeja). Una vez por visita.
 - Comprobado en navegador: mensaje, insignia «2» y navegación a Chats.
+
+## 2026-09-25 · Después de contestar, el siguiente paso
+- La pantalla de responder (`/r/:token`) ya no termina en «Respuesta enviada» sin más:
+  - Con cuenta: «Siguiente mensaje sin contestar (N)» lleva al siguiente; si no queda ninguno, «Volver a mis mensajes».
+  - Sin cuenta (vino del enlace del correo o WhatsApp): «¿Quieres verlo todo en un sitio?» → crear su acceso con el mismo correo (y vuelve a su bandeja) o entrar.
+- Solo después de contestar: mientras escribe, la pantalla sigue sin vender nada.
+- Cada mensaje monta la pantalla de nuevo (lo escrito no se arrastra al siguiente).
+- Comprobado en navegador en los dos casos.
