@@ -17,6 +17,7 @@ import { haptic } from '../utils/haptic'
 import { scheduleLocalNotification, notifySearchAbandoned } from '../utils/notifications'
 import { registrar } from '../utils/analitica'
 import AlertaSheet from '../components/AlertaSheet'
+import { useSinContestar } from '../utils/sinContestar'
 import RatingModal from '../components/RatingModal'
 import { tieneAlerta, misAlertas, alertasGuardadas } from '../utils/alertas'
 import styles from './Home.module.css'
@@ -372,6 +373,8 @@ const HELPER_SUGGESTIONS = [
 ]
 
 
+const CONTESTAR = 'Contestar ahora'
+
 export default function Home() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -398,6 +401,21 @@ export default function Home() {
   // (nunca la frase) y la hoja que pide permiso.
   const sinCoberturaRef = useRef(null)
   const [alerta, setAlerta] = useState(null)
+
+  // LA PROFESIONAL, AL ENTRAR: si alguien le ha escrito y no ha contestado,
+  // es lo primero que tiene que saber. Una vez por visita, con el numero real.
+  const sinContestar = useSinContestar(user)
+  const avisadoSinContestar = useRef(false)
+  useEffect(() => {
+    // Despues del saludo: el saludo reemplaza la conversacion al abrir.
+    if (!sinContestar || avisadoSinContestar.current || !messages?.length) return
+    avisadoSinContestar.current = true
+    setMessages(prev => [...(prev || []), { id: Date.now() + 91, from: 'nura',
+      lines: [sinContestar === 1
+        ? 'Tienes **1 mensaje sin contestar**. Quien te escribió está esperando tu respuesta.'
+        : `Tienes **${sinContestar} mensajes sin contestar**. Quienes te escribieron están esperando tu respuesta.`],
+      chips: [CONTESTAR] }])
+  }, [sinContestar, messages?.length, setMessages])
   // Tras «Sí, genial»: la ventana de valorar a ese profesional.
   const [valorar, setValorar] = useState(null)
   // Si ha llegado alguien que esta persona esperaba, se le dice al abrir
@@ -1170,6 +1188,7 @@ export default function Home() {
   }
 
   function handleChip(chip) {
+    if (chip === CONTESTAR) { navigate('/chats'); return }
     const responde = (lines, chips) =>
       setMessages(prev => [...prev, { id: Date.now(), from: 'nura', lines, chips }])
 
