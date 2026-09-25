@@ -5,7 +5,7 @@ import { labelDe } from './personas'
 // Business logic for generating helper responses, separated from UI layer
 
 function generateFirstMessage(helper) {
-  const name = helper.name?.split(' ')?.[0] || 'Hola'
+  const name = getFirstName(helper.name) || 'Hola'
   const map = {
     logopeda:    `Hola ${name}, te contacto Hola, necesito ayuda con logopedia. ¿Tienes disponibilidad esta semana?`,
     tecnico:     `Hola ${name}, Tengo un problema que necesita un técnico. ¿Cuándo podrías venir?`,
@@ -90,7 +90,7 @@ function getHelperReply(helper, count, userMsg = '', isIntroLetter = false) {
       ? `Sí, atiendo urgencias. ¿Me cuentas más?`
       : `No hago urgencias normalmente, pero dime qué necesitas y lo vemos.`
   if (t.includes('gracias') || t.includes('perfecto') || t.includes('genial') || t.includes('de acuerdo')) {
-    const firstName = helper.name?.split(' ')?.[0] || ''
+    const firstName = getFirstName(helper.name) || ''
     const options = [
       `¡Perfecto! Cuando quieras cerramos los detalles, ${firstName}.`,
       `Genial. Avísame cuando quieras concretar y lo organizamos.`,
@@ -170,7 +170,7 @@ function getHelperReply(helper, count, userMsg = '', isIntroLetter = false) {
 }
 
 function getNuraIntervention(helper, count, messages) {
-  const name = helper.name?.split(' ')?.[0] || helper.name
+  const name = getFirstName(helper.name) || helper.name
   if (count < 2) return null
 
   // Read all message text to detect booking signals
@@ -220,7 +220,7 @@ function detectFranja(text) {
 }
 
 function buildLivingConversation({ helper, analysis, userQuery }) {
-  const firstName = helper?.name?.split(' ')?.[0] || ''
+  const firstName = getFirstName(helper?.name) || ''
   const persona = labelDe(analysis?.persona)
   const s = analysis?.complexSignals || {}
   const especial =

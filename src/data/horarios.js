@@ -1,3 +1,5 @@
+import { DEMO_MODE } from '../config'
+
 // ═══════════════════════════════════════════════════════════════
 // LA AGENDA — disponibilidad real, por horas.
 // Antes: ocho horas fijas escritas a mano, iguales para los 123
@@ -38,20 +40,75 @@ export function horarioDe(helper) {
  * @returns {{hora:string, estado:'libre'|'pendiente'|'ocupada'}[]}
  */
 export function slotsDe(helper, fechaISO, citas = []) {
+  if (!fechaISO) return []
   const h = horarioDe(helper)
   const dia = new Date(fechaISO + 'T12:00:00').getDay()
   if (!h.dias.includes(dia)) return []
 
   const suyas = (citas || []).filter(c => String(c.helperId) === String(helper?.id) && c.fecha === fechaISO)
   const ahora = new Date()
-  const esHoy = fechaISO === ahora.toISOString().split('T')[0]
+  const esHoy = fechaISO === isoLocal(ahora)
+  const deOtros = ocupadasDeEjemplo(helper, fechaISO)
 
   return h.horas
     .filter(hora => !esHoy || parseInt(hora, 10) > ahora.getHours())
     .map(hora => {
       const c = suyas.find(x => x.hora === hora)
-      return { hora, estado: !c ? 'libre' : (c.estado === 'confirmada' ? 'ocupada' : 'pendiente') }
+      // 'tuya': la ha pedido esta persona y espera respuesta.
+      if (c) return { hora, estado: c.estado === 'confirmada' ? 'ocupada' : 'tuya' }
+      return { hora, estado: deOtros.has(hora) ? 'ocupada' : 'libre' }
     })
+}
+
+/** La fecha de HOY (o de `d`) en la hora de aquí, «2026-09-25». Con
+ *  toISOString, entre las 0:00 y las 2:00 «hoy» salía como ayer (UTC). */
+export function isoLocal(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+// ── LA AGENDA DE LOS PERFILES DE EJEMPLO ─────────────────────────────────
+// Una agenda con todas las horas libres no parece de nadie. En la demo,
+// cada profesional tiene horas ya cogidas por otros clientes: unas pocas
+// sueltas, bastantes algunos días, y algún día completo. Sale siempre igual
+// para el mismo profesional y el mismo día (no cambia al recargar).
+// Fuera de la demo no se inventa nada: solo cuentan las citas reales.
+function numeroDe(texto) {
+  let n = 2166136261
+  for (let i = 0; i < texto.length; i++) { n ^= texto.charCodeAt(i); n = Math.imul(n, 16777619) }
+  return n >>> 0
+}
+function azar(semilla) {
+  let a = semilla
+  return () => {
+    a = (a + 0x6D2B79F5) | 0
+    let t = Math.imul(a ^ (a >>> 15), 1 | a)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+export function ocupadasDeEjemplo(helper, fechaISO) {
+  if (!DEMO_MODE || helper?.id == null || !fechaISO) return new Set()
+  const horas = horarioDe(helper).horas
+  const r = azar(numeroDe(`${helper.id}|${fechaISO}`))
+  if (r() < 0.12) return new Set(horas)                 // día completo
+  const carga = 0.15 + r() * 0.45                        // entre 15 % y 60 %
+  return new Set(horas.filter(() => r() < carga))
+}
+
+/** Cuántas horas libres le quedan ese día (0 si no trabaja o está lleno). */
+export function huecosLibres(helper, fechaISO, citas = []) {
+  return slotsDe(helper, fechaISO, citas).filter(s => s.estado === 'libre').length
+}
+
+/** El primer hueco libre en los próximos `dias` días: { fecha, hora } o null. */
+export function proximoHueco(helper, citas = [], dias = 14) {
+  for (let i = 0; i < dias; i++) {
+    const d = new Date(); d.setDate(d.getDate() + i)
+    const f = isoLocal(d)
+    const s = slotsDe(helper, f, citas).find(x => x.estado === 'libre')
+    if (s) return { fecha: f, hora: s.hora, dentro: i }
+  }
+  return null
 }
 
 /**
@@ -65,8 +122,7 @@ export function motivoSinHuecos(helper, fechaISO) {
   const h = horarioDe(helper)
   const dia = new Date(fechaISO + 'T12:00:00').getDay()
   if (!h.dias.includes(dia)) return 'cerrado'
-  const ahora = new Date()
-  if (fechaISO === ahora.toISOString().split('T')[0]) return 'tarde'
+  if (fechaISO === isoLocal()) return 'tarde'
   return 'completo'
 }
 

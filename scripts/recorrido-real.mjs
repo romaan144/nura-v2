@@ -143,15 +143,12 @@ try {
 
   console.log('\n── Propone una cita, la marca hecha y valora ──')
   ok(await pulsar(c, 'Contratar'), 'en el chat, «Contratar»')
-  const dias = await c.evaluate(() => [...document.querySelectorAll('button')].map(b => b.textContent.trim()).filter(t => /^(Mañana|(lun|mar|mié|jue|vie|sáb|dom) \d+)$/.test(t)))
-  let dia = null, hora = null
-  for (const d of dias) {   // el primer dia en que trabaja (un sabado puede no tener huecos)
-    await pulsar(c, d)
-    hora = await c.evaluate(() => [...document.querySelectorAll('button')].map(b => b.textContent.trim()).find(t => /^\d\d:\d\d$/.test(t)))
-    if (hora) { dia = d; break }
-  }
-  if (hora) await pulsar(c, hora)
-  ok(await pulsar(c, 'Enviar solicitud'), `elige día (${dia}) y hora (${hora}), y envía la propuesta`)
+  // La hoja de cita (ElegirCita): el primer día con huecos y su primera hora libre.
+  const dia = await c.evaluate(() => { const d = [...document.querySelectorAll('[role=option]')].find(x => !x.disabled); d?.click(); return d?.getAttribute('aria-label') || null })
+  await espera(500)
+  const hora = await c.evaluate(() => { const h = [...document.querySelectorAll('button[aria-pressed]')].find(x => !x.disabled); h?.click(); return h?.textContent.trim() || null })
+  await espera(300)
+  ok(Boolean(dia && hora) && await pulsar(c, 'Enviar solicitud'), `elige día (${dia}) y hora (${hora}), y envía la propuesta`)
   ok(/Se la hago llegar/.test(await texto(c)), 'dice que se la hace llegar (no «te confirmará en breve»)')
   ok(/te propone una cita/.test(avisos.at(-1)?.mensaje || ''), 'la propuesta de cita le llega al profesional')
   await c.goto(B + '/my-services', { waitUntil: 'networkidle0' }); await espera(1200)

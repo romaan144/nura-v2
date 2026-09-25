@@ -10,6 +10,33 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — La agenda: horas ya cogidas y una sola forma de pedir cita
+
+- **Pedido del fundador:** «No me convence el modo de ver disponibilidad y
+  pedir la cita. Deberían aparecer en las fichas de ejemplo días u horas
+  ya ocupados.»
+- **Agenda de ejemplo** (`horarios.js`: `ocupadasDeEjemplo`): en la demo,
+  cada profesional tiene horas ya cogidas por otros (entre el 15 % y el
+  60 % de su horario, y ~1 de cada 8 días completo). Sale siempre igual
+  para el mismo profesional y día. Fuera de la demo solo cuentan las citas
+  reales.
+- **Una sola hoja para pedir cita** (`components/ElegirCita.jsx`), la misma
+  en la ficha y en el chat (antes había dos, con reglas distintas):
+  - dos semanas a la vista; cada día dice «No trabaja», «Completo»,
+    «Terminado» (hoy, ya pasado) o cuántos huecos le quedan;
+  - horas por mañana / tarde / noche; las cogidas, tachadas; la que ya
+    pediste, en morado («tuya»);
+  - día **y** hora obligatorios (en la ficha se podía enviar sin hora).
+- **El próximo hueco, a la vista**: el botón «Disponibilidad» de la ficha
+  dice debajo «lun 28 11:00».
+- **Arreglos de paso**: «hoy» salía como ayer entre las 0:00 y las 2:00
+  (se usaba la hora UTC; ahora `isoLocal`); los botones Cancelar / Enviar
+  de la ficha se descolocaban (estilo inexistente); «Escribir a Dra.» y
+  «Dra. · 70 €»: ahora el nombre de pila salta el tratamiento en toda la
+  app (`getFirstName`, que ya existía y casi nadie usaba).
+- Pruebas: `test:matching` 171 (8 nuevas de agenda y nombre);
+  `recorrido:real` pide la cita con la hoja nueva.
+
 ## 2026-09-25 — Fuera de la demo, ninguna pantalla usa perfiles de ejemplo
 
 - Tras la búsqueda (entrada anterior), el resto: la ficha, el chat, «Mis
