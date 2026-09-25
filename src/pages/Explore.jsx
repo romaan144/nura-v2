@@ -6,7 +6,6 @@ import { Search, ArrowLeft, Loader2, SlidersHorizontal,
          Dumbbell, Baby, MapPin, Star, Laptop, Palette, Car, PartyPopper, Globe } from 'lucide-react'
 import { searchHelpers, getAllHelpers } from '../utils/supabase'
 import { HELPERS as LOCAL_DEMO_HELPERS } from '../data/helpers'
-import { DEMO_ENRICHMENTS } from '../data/demoEnrichments'
 import { analyzeNeed, matchHelpers } from '../utils/matching'
 import { useUser } from '../context/UserContext'
 import HelperCard from '../components/HelperCard'
