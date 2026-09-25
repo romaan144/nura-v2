@@ -25,7 +25,6 @@ import styles from './Home.module.css'
 import { PULSO_THRESHOLD, PULSO_DELAY, CONFIRMACION_THRESHOLD, CONFIRMACION_DELAY } from '../config'
 import { extractPersona } from '../utils/personas'
 import { proSignals } from '../utils/proSignals'
-import { HELPERS as LOCAL_FALLBACK_HELPERS } from '../data/helpers'
 import { fmtNota, fmtKm } from '../utils/formato'
 
 // ── La Comprensión Visible — lo que Nüra ha entendido, en chips ──

@@ -1,4 +1,5 @@
 import { avatarDe } from '../utils/avatar'
+import { DEMO_MODE } from '../config'
 export const HELPERS = [
   {
     id: 1,
@@ -2523,3 +2524,8 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     tags: ["decoración", "eventos", "floral", "temático", "bodas", "cumpleaños"],
   }
 ]
+// Los perfiles de ejemplo SOLO existen en la demo. Fuera de ella, ninguna
+// pantalla los consulta: con la demo apagada, una ficha, un chat o
+// «Siguiendo» nunca pueden enseñar a una persona inventada (y los id de
+// ejemplo, 1-12 y 2001+, no pueden tapar a un profesional real con el mismo id).
+export const HELPERS_DEMO = DEMO_MODE ? HELPERS : []

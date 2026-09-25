@@ -7,7 +7,7 @@ import ObraComposer from '../components/ObraComposer'
 import HelperCard from '../components/HelperCard'
 import { getConnectionStories, getDestacados } from '../data/connectionStories'
 import { getObra, obraAPost } from '../data/obraPosts'
-import { HELPERS } from '../data/helpers'
+import { HELPERS_DEMO as HELPERS } from '../data/helpers'
 import { CAT_HUMANA } from '../data/categorias'
 
 // ═══════════════════════════════════════════════════════════════
@@ -114,8 +114,12 @@ export default function Feed() {
         </h1>
         <div className="hilo" style={{ width: '64px', margin: 'var(--space-8) 0 var(--space-10)' }} />
         <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)', margin: 0, lineHeight: 1.5 }}>
-          <strong style={{ color: 'var(--ink)' }}>{pulso.voces} historias</strong> de{' '}
-          <strong style={{ color: 'var(--ink)' }}>{pulso.gente} personas</strong> que viven cerca de ti.
+          {pulso.voces === 0
+            ? 'Todavía no hay historias cerca de ti. Cuando alguien cuente cómo le fue, aparecerá aquí.'
+            : <>
+                <strong style={{ color: 'var(--ink)' }}>{pulso.voces} {pulso.voces === 1 ? 'historia' : 'historias'}</strong> de{' '}
+                <strong style={{ color: 'var(--ink)' }}>{pulso.gente} {pulso.gente === 1 ? 'persona' : 'personas'}</strong> que {pulso.gente === 1 ? 'vive' : 'viven'} cerca de ti.
+              </>}
         </p>
 
         <div style={{ display: 'flex', gap: 'var(--space-8)', marginTop: 'var(--space-12)' }}>
