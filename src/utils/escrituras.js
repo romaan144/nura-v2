@@ -87,12 +87,21 @@ export function ultimaLlave(helperId) {
  * nunca por el profesional a secas: el servidor solo devuelve la respuesta
  * de cada conversacion a quien tiene su llave.
  */
+// Cada vez que llegan respuestas se avisa a la app: si traen una cita
+// aceptada o rechazada, UserContext la marca en «Mis servicios».
+function anunciarRespuestas(lista) {
+  if (typeof window !== 'undefined' && lista.some(r => r.cita)) {
+    window.dispatchEvent(new CustomEvent('nura:respuestas', { detail: lista }))
+  }
+  return lista
+}
+
 export async function respuestasDe(helperId) {
   const llaves = llavesGuardadas()[String(helperId)] || []
   if (!porLaFuncion() || !llaves.length) return []
   try {
     const r = await llamarFuncion({ op: 'respuestas', llaves })
-    return r?.respuestas || []
+    return anunciarRespuestas((r?.respuestas || []).map(x => ({ ...x, helperId: String(helperId) })))
   } catch { return [] }
 }
 
@@ -106,7 +115,7 @@ export async function respuestasTodas() {
   if (!porLaFuncion() || !deLlave.size) return []
   try {
     const r = await llamarFuncion({ op: 'respuestas', llaves: [...deLlave.keys()].slice(-50) })
-    return (r?.respuestas || []).map(x => ({ ...x, helperId: deLlave.get(x.llave) }))
+    return anunciarRespuestas((r?.respuestas || []).map(x => ({ ...x, helperId: deLlave.get(x.llave) })))
   } catch { return [] }
 }
 
@@ -176,10 +185,26 @@ export async function abrirAviso(token) {
 }
 
 /** LA VUELTA: el profesional responde. Si falla, se dice — no se finge. */
-export async function responderAviso(token, respuesta) {
+/** `cita`: 'aceptada' | 'rechazada' si el aviso traía una propuesta de cita. */
+export async function responderAviso(token, respuesta, cita) {
   if (!porLaFuncion()) return { ok: false }
-  try { return await llamarFuncion({ op: 'responder-aviso', token, respuesta }) }
+  try { return await llamarFuncion({ op: 'responder-aviso', token, respuesta, ...(cita ? { cita } : {}) }) }
   catch { return { ok: false } }
+}
+
+// Las horas que un profesional ya tiene aceptadas (de cualquiera): solo día
+// y hora. Un minuto en memoria para no preguntar en cada toque.
+const ocupadasCache = new Map()
+export async function ocupadasDe(helperId) {
+  if (!porLaFuncion() || !/^\d+$/.test(String(helperId ?? ''))) return []
+  const ya = ocupadasCache.get(String(helperId))
+  if (ya && Date.now() - ya.t < 60000) return ya.lista
+  try {
+    const r = await llamarFuncion({ op: 'ocupadas', helperId: String(helperId) })
+    const lista = Array.isArray(r?.ocupadas) ? r.ocupadas : []
+    ocupadasCache.set(String(helperId), { t: Date.now(), lista })
+    return lista
+  } catch { return [] }
 }
 
 /**
@@ -196,10 +221,10 @@ export async function responderAviso(token, respuesta) {
 //   'nada'      — demo, no hay servidor
 const resultado = r => r?.ok ? 'ok' : (r?.estado >= 400 && r?.estado < 500 && r?.estado !== 408 && r?.estado !== 429 ? 'rechazado' : 'fallo')
 
-export async function encolarAviso(helperId, mensaje) {
+export async function encolarAviso(helperId, mensaje, cita) {
   if (!porLaFuncion()) return 'nada'
   try {
-    const r = await llamarFuncion({ op: 'encolar-aviso', helperId, mensaje })
+    const r = await llamarFuncion({ op: 'encolar-aviso', helperId, mensaje, ...(cita ? { cita } : {}) })
     if (r?.ok && r.lectura) guardarLlave(helperId, r.lectura)
     return resultado(r)
   }
@@ -284,16 +309,16 @@ export async function miPulso(sesion) {
  * nuevo se añade a su aviso (lo vera todo junto). Si ya contesto, se le
  * manda un aviso nuevo (`cuerpoNuevo`, con el contexto). Nunca bloquea.
  */
-export async function seguirConversacion(helperId, texto, cuerpoNuevo) {
+export async function seguirConversacion(helperId, texto, cuerpoNuevo, cita) {
   if (!porLaFuncion()) return 'nada'
   const ultima = (llavesGuardadas()[String(helperId)] || []).at(-1)
   try {
     if (ultima) {
-      const r = await llamarFuncion({ op: 'ampliar-aviso', llave: ultima, mensaje: texto })
+      const r = await llamarFuncion({ op: 'ampliar-aviso', llave: ultima, mensaje: texto, ...(cita ? { cita } : {}) })
       if (r?.ok) return 'ok'
       if (r?.estado !== 409 && r?.estado !== 404 && r?.estado !== 413) return resultado(r)
     }
-    return await encolarAviso(helperId, cuerpoNuevo)
+    return await encolarAviso(helperId, cuerpoNuevo, cita)
   } catch { return 'fallo' }
 }
 
@@ -368,8 +393,11 @@ export async function enviarPropuestaCita(helper, fecha, hora, nota, nombre) {
   try { cuando = new Date(fecha + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' }) } catch { /* fecha tal cual */ }
   const quien = nombre || 'Alguien'
   const texto = `${quien} te propone una cita: ${cuando}${hora ? ` a las ${hora}` : ''}.${nota?.trim() ? ` «${nota.trim()}»` : ''} ¿Te va bien?`
+  // La cita viaja con día y hora: así la acepta con un botón y la hora
+  // queda ocupada en su agenda para todos.
+  const cita = fecha && hora ? { fecha, hora } : undefined
   const hayConversacion = (llavesGuardadas()[String(helper.id)] || []).length > 0
-  if (hayConversacion) await seguirConversacion(helper.id, texto, `${texto}\n\n(Te escribe desde Nüra.)`)
-  else await encolarAviso(helper.id, `${texto}\n\n(Te escribe desde Nüra.)`)
+  if (hayConversacion) await seguirConversacion(helper.id, texto, `${texto}\n\n(Te escribe desde Nüra.)`, cita)
+  else await encolarAviso(helper.id, `${texto}\n\n(Te escribe desde Nüra.)`, cita)
   return true
 }

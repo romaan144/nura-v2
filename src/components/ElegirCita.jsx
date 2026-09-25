@@ -6,7 +6,9 @@
 // Cada día dice lo que hay: «No trabaja», «Completo» o cuántos huecos
 // quedan. Las horas, por mañana / tarde / noche; las cogidas, tachadas; la
 // que ya pediste, marcada como tuya.
+import { useEffect, useState } from 'react'
 import { useUser } from '../context/UserContext'
+import { ocupadasDe } from '../utils/escrituras'
 import { SectionLabel } from './ui'
 import { slotsDe, ocupacionesDe, huecosLibres, horarioDe, isoLocal, motivoSinHuecos, FRASE_SIN_HUECOS } from '../data/horarios'
 
@@ -19,7 +21,20 @@ function tramoDe(hora) {
 
 export default function ElegirCita({ helper, date, time, onDate, onTime }) {
   const { citas, services } = useUser()
-  const ocupadas = ocupacionesDe(citas, services)
+  // Las que ya ha aceptado con otras personas (servidor): solo día y hora.
+  const [deOtros, setDeOtros] = useState([])
+  useEffect(() => {
+    let vivo = true
+    ocupadasDe(helper?.id).then(l => { if (vivo) setDeOtros(l) })
+    return () => { vivo = false }
+  }, [helper?.id])
+  const mias = ocupacionesDe(citas, services)
+  const ocupadas = [
+    ...mias,
+    ...deOtros
+      .filter(o => !mias.some(m => String(m.helperId) === String(helper?.id) && m.fecha === o.fecha && m.hora === o.hora))
+      .map(o => ({ helperId: helper?.id, fecha: o.fecha, hora: o.hora, estado: 'confirmada', deOtro: true })),
+  ]
   const trabaja = horarioDe(helper).dias
 
   const dias = Array.from({ length: DIAS }, (_, i) => {
@@ -85,7 +100,7 @@ export default function ElegirCita({ helper, date, time, onDate, onTime }) {
                   {horas.map(({ hora, estado }) => {
                     const libre = estado === 'libre'
                     const sel = time === hora
-                    const que = estado === 'ocupada' ? 'ocupada' : estado === 'tuya' ? 'ya la pediste' : 'libre'
+                    const que = estado === 'ocupada' ? 'ocupada' : estado === 'tuya' ? 'es tuya' : 'libre'
                     return (
                       <button key={hora} type="button" disabled={!libre} aria-pressed={sel}
                         aria-label={`${hora}: ${que}`} title={libre ? '' : que}
@@ -105,7 +120,7 @@ export default function ElegirCita({ helper, date, time, onDate, onTime }) {
               </div>
             ))}
             <p style={{ margin: 0, fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)' }}>
-              Tachadas: ya las tiene cogidas.{slots.some(s => s.estado === 'tuya') ? ' En morado: la que ya le pediste.' : ''}
+              Tachadas: ya las tiene cogidas.{slots.some(s => s.estado === 'tuya') ? ' En morado: la tuya.' : ''}
             </p>
           </div>
         )}

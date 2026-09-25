@@ -216,7 +216,8 @@ for (const t of NEGATIVE) {
   const oc = ocupacionesDe([{ helperId: 1, fecha: lunes, hora: '17:00', estado: 'confirmada' }],
                            [{ helperId: 1, date: lunes, time: '18:00', status: 'pending' }])
   const sl = slotsDe(logo, lunes, oc)
-  const c = sl.find(x => x.hora === '17:00')?.estado === 'ocupada' &&
+  const c = sl.find(x => x.hora === '17:00')?.estado === 'tuya' &&   // suya, confirmada
+            slotsDe(logo, lunes, [{ helperId: 1, fecha: lunes, hora: '19:00', estado: 'confirmada', deOtro: true }]).find(x => x.hora === '19:00')?.estado === 'ocupada' &&
             sl.find(x => x.hora === '18:00')?.estado === 'tuya' &&   // la pidió esta persona
             // 16:00: libre, salvo que la agenda de ejemplo (demo) la dé por cogida
             sl.find(x => x.hora === '16:00')?.estado === (ocupadasDeEjemplo(logo, lunes).has('16:00') ? 'ocupada' : 'libre')

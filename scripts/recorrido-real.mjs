@@ -45,12 +45,21 @@ const sha = t => crypto.createHash('sha256').update(t).digest('hex')
 const azar = () => crypto.randomBytes(16).toString('hex')
 function backend(c) {
   const porLlave = l => avisos.find(a => a.lectura_hash === sha(l || ''))
+  const citaDe = x => x?.fecha && x?.hora ? { cita_fecha: x.fecha, cita_hora: x.hora, cita_estado: 'propuesta' } : {}
+  const citaSal = a => a.cita_fecha ? { fecha: a.cita_fecha, hora: a.cita_hora, estado: a.cita_estado } : null
   switch (c.op) {
-    case 'encolar-aviso': { const lectura = azar(); avisos.push({ helper_id: String(c.helperId), mensaje: c.mensaje, token: azar(), lectura_hash: sha(lectura), respuesta: null }); return { ok: true, alcanzable: true, lectura } }
-    case 'ampliar-aviso': { const a = porLlave(c.llave); if (!a) return { __estado: 404 }; if (a.respuesta) return { __estado: 409 }; a.mensaje += '\n\n—\n' + c.mensaje; return { ok: true } }
-    case 'abrir-aviso': { const a = avisos.find(x => x.token === c.token); return a ? { ok: true, aviso: { nombre: 'Carlos', mensaje: a.mensaje, respuesta: a.respuesta } } : { __estado: 404 } }
-    case 'responder-aviso': { const a = avisos.find(x => x.token === c.token); if (!a) return { __estado: 404 }; if (a.respuesta) return { __estado: 409 }; a.respuesta = c.respuesta; a.respondido_en = new Date().toISOString(); return { ok: true } }
-    case 'respuestas': { const hs = (c.llaves || []).map(sha); return { ok: true, respuestas: avisos.filter(a => hs.includes(a.lectura_hash) && a.respuesta).map(a => ({ llave: c.llaves[hs.indexOf(a.lectura_hash)], respuesta: a.respuesta, respondido_en: a.respondido_en })) } }
+    case 'encolar-aviso': { const lectura = azar(); avisos.push({ helper_id: String(c.helperId), mensaje: c.mensaje, token: azar(), lectura_hash: sha(lectura), respuesta: null, ...citaDe(c.cita) }); return { ok: true, alcanzable: true, lectura } }
+    case 'ampliar-aviso': { const a = porLlave(c.llave); if (!a) return { __estado: 404 }; if (a.respuesta) return { __estado: 409 }; a.mensaje += '\n\n—\n' + c.mensaje; Object.assign(a, citaDe(c.cita)); return { ok: true } }
+    case 'abrir-aviso': { const a = avisos.find(x => x.token === c.token); return a ? { ok: true, aviso: { nombre: 'Carlos', mensaje: a.mensaje, respuesta: a.respuesta, cita: citaSal(a) } } : { __estado: 404 } }
+    case 'responder-aviso': {
+      const a = avisos.find(x => x.token === c.token); if (!a) return { __estado: 404 }; if (a.respuesta) return { __estado: 409 }
+      if (c.cita === 'aceptada' && a.cita_estado === 'propuesta' && avisos.some(o => o !== a && o.helper_id === a.helper_id && o.cita_estado === 'aceptada' && o.cita_fecha === a.cita_fecha && o.cita_hora === a.cita_hora)) return { __estado: 409 }
+      a.respuesta = c.respuesta; a.respondido_en = new Date().toISOString()
+      if ((c.cita === 'aceptada' || c.cita === 'rechazada') && a.cita_estado === 'propuesta') a.cita_estado = c.cita
+      return { ok: true }
+    }
+    case 'respuestas': { const hs = (c.llaves || []).map(sha); return { ok: true, respuestas: avisos.filter(a => hs.includes(a.lectura_hash) && a.respuesta).map(a => ({ llave: c.llaves[hs.indexOf(a.lectura_hash)], respuesta: a.respuesta, respondido_en: a.respondido_en, cita: citaSal(a) })) } }
+    case 'ocupadas': return { ok: true, ocupadas: avisos.filter(a => a.helper_id === String(c.helperId) && a.cita_estado === 'aceptada').map(a => ({ fecha: a.cita_fecha, hora: a.cita_hora })) }
     case 'valorar': { const a = porLlave(c.llave); if (!a) return { __estado: 404 }; valoraciones.push({ helper_id: a.helper_id, ...c }); return { ok: true } }
     default: return { ok: true }
   }
@@ -151,6 +160,49 @@ try {
   ok(Boolean(dia && hora) && await pulsar(c, 'Enviar solicitud'), `elige día (${dia}) y hora (${hora}), y envía la propuesta`)
   ok(/Se la hago llegar/.test(await texto(c)), 'dice que se la hace llegar (no «te confirmará en breve»)')
   ok(/te propone una cita/.test(avisos.at(-1)?.mensaje || ''), 'la propuesta de cita le llega al profesional')
+  const conCita = avisos.find(a => a.cita_estado === 'propuesta')
+  ok(Boolean(conCita), 'y le llega con su día y su hora (no solo como texto)')
+
+  console.log('\n── El profesional acepta la cita con un botón ──')
+  const pro2 = await pagina()
+  await pro2.goto(B + '/r/' + conCita.token, { waitUntil: 'networkidle0' }); await espera(1000)
+  ok(/Te propone una cita/.test(await texto(pro2)), 'al abrir su enlace ve la cita propuesta')
+  ok(await pulsar(pro2, 'Aceptar la cita'), 'pulsa «Aceptar la cita»')
+  await espera(800)
+  ok(conCita.cita_estado === 'aceptada' && /Cita confirmada/.test(await texto(pro2)), 'la cita queda aceptada y se lo confirma')
+  await pro2.close(); await c.bringToFront()
+
+  console.log('\n── Quien la pidió la ve confirmada; otra persona ve la hora ocupada ──')
+  await c.goto(B + '/my-services', { waitUntil: 'networkidle0' }); await espera(2500)
+  ok(/Confirmado/.test(await texto(c)), 'en «Mis servicios» la cita sale Confirmada')
+  const otra = await (await b.createBrowserContext()).newPage()
+  await otra.setViewport({ width: 390, height: 844 })
+  await otra.setRequestInterception(true)
+  otra.on('request', r => {
+    const u = r.url()
+    const H = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': '*', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS' }
+    if (u.startsWith('https://funcion.ficticia.test')) {
+      if (r.method() === 'OPTIONS') return r.respond({ status: 204, headers: H })
+      const res = backend(JSON.parse(r.postData() || '{}'))
+      return r.respond({ status: res.__estado || 200, headers: H, contentType: 'application/json', body: JSON.stringify(res) })
+    }
+    if (!u.startsWith(B)) {
+      if (r.method() === 'OPTIONS') return r.respond({ status: 204, headers: H })
+      const id = (u.match(/[?&]id=eq\.(\d+)/) || [])[1]
+      return r.respond({ status: 200, headers: H, contentType: 'application/json', body: JSON.stringify(u.includes('/rest/v1/helpers') ? BD.filter(h => !id || String(h.id) === id) : []) })
+    }
+    r.continue()
+  })
+  await otra.evaluateOnNewDocument(() => localStorage.setItem('nura_user', JSON.stringify({ name: 'Otra', joined: new Date().toISOString() })))
+  await otra.goto(B + '/helper/' + conCita.helper_id, { waitUntil: 'networkidle0' }); await espera(1200)
+  await pulsar(otra, 'Disponibilidad'); await espera(800)
+  const fechaCita = conCita.cita_fecha
+  await otra.evaluate(f => { const d = new Date(f + 'T12:00:00'); const n = String(d.getDate()); const o = [...document.querySelectorAll('[role=option]')].find(x => (x.getAttribute('aria-label') || '').includes(' ' + n + ':')); o?.click() }, fechaCita)
+  await espera(1000)
+  const estadoHora = await otra.evaluate(h => [...document.querySelectorAll('button[aria-pressed]')].find(x => x.textContent.trim() === h)?.getAttribute('aria-label'), conCita.cita_hora)
+  ok(/ocupada/.test(estadoHora || ''), `otra persona ve esa hora ocupada en su agenda (${estadoHora})`)
+  await otra.close()
+
   await c.goto(B + '/my-services', { waitUntil: 'networkidle0' }); await espera(1200)
   ok(await pulsar(c, 'Marcar completado y valorar'), 'en «Mis servicios» se puede marcar hecho y valorar')
   await pulsar(c, 'Sí'); await pulsar(c, 'Paciente')

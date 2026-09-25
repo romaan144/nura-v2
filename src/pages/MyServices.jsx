@@ -63,6 +63,8 @@ const STATUS = {
   confirmed: { label: 'Confirmado',  color: 'var(--green)', bg: 'var(--green-light)' },
   completed: { label: 'Completado',  color: '#6B7280', bg: '#F9FAFB' },
   cancelled: { label: 'Cancelado',   color: 'var(--red)', bg: 'var(--red-light)' },
+  // El profesional contestó que esa hora no le va (su mensaje está en el chat).
+  rejected:  { label: 'Propón otra hora', color: '#B45309', bg: '#FFFBEB' },
 }
 
 const TABS = ['Todos', 'Próximos', 'Completados']

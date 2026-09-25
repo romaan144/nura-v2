@@ -10,6 +10,24 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-10-02 — Una cita aceptada ocupa la hora para todos
+
+- La cita que se pide (día y hora) **viaja con el aviso** al profesional.
+  En su enlace (`/r/…`) ve «Te propone una cita» con dos botones:
+  **Aceptar la cita** (manda «¡Hecho! Te espero el … a las …») o
+  **No me va bien** (le deja escrito el principio de otra propuesta).
+- Al aceptarla, **esa hora queda tachada para cualquiera** que mire su
+  agenda (op `ocupadas`: solo día y hora, nunca con quién). Quien la pidió
+  la ve «Confirmado» en «Mis servicios»; si la rechaza, «Propón otra hora».
+- Nunca dos citas a la misma hora: un índice único en la base de datos lo
+  impide aunque dos acepten a la vez. Si la hora ya estaba cogida, el
+  profesional lo ve y puede proponer otra.
+- Base de datos (migración `20261002000000_cita_aceptada_ocupa_la_hora.sql`,
+  aplicada): `avisos.cita_fecha`, `cita_hora`, `cita_estado`. Función
+  `helpers-write` v18 desplegada.
+- Pruebas: `test:avisos` 153, `test:matching` 173, `recorrido:real` con
+  los pasos nuevos (acepta → Confirmado → otro navegador ve la hora tachada).
+
 ## 2026-10-01 — Cada profesional marca su horario
 
 - **«Tu horario»** en la hoja de su ficha (`components/EditarHorario.jsx`):

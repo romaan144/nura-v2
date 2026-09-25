@@ -89,6 +89,11 @@ async function postgrest(url, init = {}) {
   }
   if (metodo === 'PATCH') {
     const cambios = JSON.parse(init.body)
+    // Como el índice único de la base real: una cita aceptada por hora.
+    if (tabla === 'avisos' && cambios.cita_estado === 'aceptada' && cumplen.some(f =>
+      db.avisos.some(o => o !== f && o.cita_estado === 'aceptada' && o.helper_id === f.helper_id && o.cita_fecha === f.cita_fecha && o.cita_hora === f.cita_hora))) {
+      return new Response('{"code":"23505"}', { status: 409 })
+    }
     for (const f of cumplen) Object.assign(f, cambios)
     return quiereFilas ? Response.json(cumplen) : new Response(null, { status: 204 })
   }
@@ -589,6 +594,48 @@ ok(cors === 'content-type', 'el CORS no admite la cabecera del secreto: un naveg
 
 // ── el guion administrativo, contra la funcion servida en local ─────────
 console.log('\n── npm run avisar ──')
+console.log('\n── La cita: se acepta con un botón y ocupa la hora para todos ──')
+{
+  db.helpers.push({ id: 900, name: 'Laura Cita', contacto: '611111111' })
+  const d = new Date(Date.now() + 5 * 864e5).toISOString().slice(0, 10)
+  let c1 = await llamar(funcion, { op: 'encolar-aviso', helperId: 900, mensaje: 'Te propone una cita', cita: { fecha: d, hora: '17:00' } })
+  const f1 = db.avisos.find(x => x.helper_id === '900')
+  ok(c1.estado === 200 && f1.cita_fecha === d && f1.cita_hora === '17:00' && f1.cita_estado === 'propuesta', 'la propuesta se guarda con su día y su hora')
+  let r = await llamar(funcion, { op: 'encolar-aviso', helperId: 900, mensaje: 'x', cita: { fecha: '2020-01-01', hora: '17:30' } })
+  ok(r.estado === 200 && !db.avisos.at(-1).cita_fecha, 'una cita mal formada (pasada, a y media) se ignora; el mensaje llega igual')
+  r = await llamar(funcion, { op: 'abrir-aviso', token: f1.token })
+  ok(r.datos.aviso.cita?.fecha === d && r.datos.aviso.cita?.estado === 'propuesta', 'al abrir el enlace, el profesional ve la cita propuesta')
+  r = await llamar(funcion, { op: 'ocupadas', helperId: 900 })
+  ok(r.estado === 200 && r.datos.ocupadas.length === 0, 'mientras no la acepta, la hora no está ocupada')
+  r = await llamar(funcion, { op: 'responder-aviso', token: f1.token, respuesta: 'Perfecto, te espero', cita: 'aceptada' })
+  ok(r.estado === 200 && f1.cita_estado === 'aceptada', 'la acepta con un botón')
+  r = await llamar(funcion, { op: 'ocupadas', helperId: 900 })
+  ok(r.datos.ocupadas.length === 1 && r.datos.ocupadas[0].hora === '17:00' && !r.texto.includes('Te propone'), 'y la hora sale ocupada para todos (solo día y hora, nada más)')
+  r = await llamar(funcion, { op: 'respuestas', llaves: [c1.datos.lectura] })
+  ok(r.datos.respuestas[0]?.cita?.estado === 'aceptada', 'quien la pidió ve que está aceptada')
+  const c2 = await llamar(funcion, { op: 'encolar-aviso', helperId: 900, mensaje: 'Otra persona, misma hora', cita: { fecha: d, hora: '17:00' } })
+  const f2 = db.avisos.filter(x => x.helper_id === '900').at(-1)
+  r = await llamar(funcion, { op: 'responder-aviso', token: f2.token, respuesta: 'Sí', cita: 'aceptada' })
+  ok(r.estado === 409 && r.datos.error === 'hora ocupada' && !f2.respuesta, 'aceptar otra cita a la misma hora → 409 «hora ocupada», y no se guarda nada')
+  r = await llamar(funcion, { op: 'responder-aviso', token: f2.token, respuesta: 'Esa hora no puedo, ¿a las 18?', cita: 'rechazada' })
+  ok(r.estado === 200 && f2.cita_estado === 'rechazada', 'la puede rechazar y proponer otra')
+  r = await llamar(funcion, { op: 'responder-aviso', token: f2.token, respuesta: 'otra vez', cita: 'aceptada' })
+  ok(r.estado === 409 && f2.cita_estado === 'rechazada', 'ya contestado: un segundo intento no cambia la cita')
+  const c3 = await llamar(funcion, { op: 'encolar-aviso', helperId: 900, mensaje: 'Sin cita' })
+  const f3 = db.avisos.filter(x => x.helper_id === '900').at(-1)
+  r = await llamar(funcion, { op: 'responder-aviso', token: f3.token, respuesta: 'Hola', cita: 'aceptada' })
+  ok(r.estado === 200 && !f3.cita_estado, 'sin cita propuesta, «aceptada» no inventa ninguna')
+  r = await llamar(funcion, { op: 'ampliar-aviso', llave: c3.datos.lectura, mensaje: 'Ahora sí, una cita', cita: { fecha: d, hora: '18:00' } })
+  ok(r.estado === 409, 'ampliar un aviso ya respondido sigue dando 409 (la app encola uno nuevo)')
+  const c4 = await llamar(funcion, { op: 'encolar-aviso', helperId: 900, mensaje: 'Hola' })
+  r = await llamar(funcion, { op: 'ampliar-aviso', llave: c4.datos.lectura, mensaje: 'Te propongo el martes', cita: { fecha: d, hora: '19:00' } })
+  const f4 = db.avisos.filter(x => x.helper_id === '900').at(-1)
+  ok(r.estado === 200 && f4.cita_hora === '19:00' && f4.cita_estado === 'propuesta', 'la cita también viaja al ampliar la conversación')
+  r = await llamar(funcion, { op: 'ocupadas', helperId: 'abc' })
+  ok(r.estado === 400, 'ocupadas sin un id válido → 400')
+  void c2
+}
+
 const servidor = http.createServer(async (req, res) => {
   let cuerpo = ''
   for await (const t of req) cuerpo += t
