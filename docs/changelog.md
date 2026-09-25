@@ -10,6 +10,20 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — Crear cuenta: el correo, comprobado
+
+- El correo de los avisos «te aviso si aparece alguien» sale de la cuenta,
+  así que donde se escribe es al crearla (`/entrar?modo=crear`). Con
+  «marta@gmial.com» el correo de confirmación nunca llegaba y la persona
+  se quedaba sin cuenta y sin avisos.
+- Ahora, al crear la cuenta: si el dominio parece mal escrito, «¿Querías
+  decir marta@gmail.com?» con un botón **Usar marta@gmail.com**; si vuelve
+  a pulsar con el suyo, se usa tal cual. Si le falta el final, se le dice.
+  No se llama a Supabase hasta que el correo está bien.
+- Misma pieza que el contacto del profesional (`contactoProfesional.js`).
+- Comprobado en el navegador (sugerencia, botón, insistir, incompleto);
+  accesibilidad a cero.
+
 ## 2026-09-25 — El contacto del profesional, comprobado
 
 - Es por donde le llega cada aviso, y se aceptaba cualquier cosa: un móvil
