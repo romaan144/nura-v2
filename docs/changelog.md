@@ -10,6 +10,24 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — Versión nueva con la app abierta: se recarga sola
+
+- Desde que las pantallas se cargan aparte, cada publicación les cambia el
+  nombre. Quien tenía Nüra abierta de antes pedía un archivo que ya no
+  existe al abrir otra pantalla, y veía un error. Ahora
+  (`src/utils/versionNueva.js`) la página se recarga **una vez** y sigue
+  en la pantalla que pidió, con la versión nueva. Tope: una recarga cada
+  30 s, para no entrar en bucle si el fallo es otro.
+- **La pantalla de error general era roja, con el código técnico, y su
+  único botón hacía `localStorage.clear()`**: borraba la sesión, los chats
+  y las búsquedas guardadas en el móvil. Retirada (`AppErrorBoundary`); la
+  app entera usa ya la amable («Algo fue mal por mi lado» · Volver ·
+  Reintentar), que no borra nada.
+- La precarga de pestañas ya no deja errores sin atender si falla.
+- Comprobado en el navegador quitando el archivo de Explorar con la app
+  abierta: con la versión nueva disponible, recarga y abre Explorar; si
+  sigue faltando, una sola recarga y la pantalla amable; datos intactos.
+
 ## 2026-09-25 — Primer paso para más ciudades
 
 - **El alta guardaba a TODOS los profesionales en Barcelona**

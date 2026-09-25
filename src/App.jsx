@@ -39,7 +39,7 @@ const Restablecer = lazy(() => import('./pages/Restablecer'))
 import Toast from './components/Toast'
 import PageTransition from './components/PageTransition'
 import './index.css'
-import AppErrorBoundary from './components/AppErrorBoundary'
+import ErrorBoundary from './components/ErrorBoundary'
 
 function AppRoutes() {
   // Entrada directa: un solo respiro del iso mientras arranca el JS
@@ -79,7 +79,8 @@ function AppRoutes() {
   // descarga en segundo plano cuando la app ya esta quieta: abrir primero
   // es rapido y cambiar de pestaña sigue siendo instantaneo.
   useEffect(() => {
-    const precargar = () => { import('./pages/Chats'); import('./pages/Profile'); import('./pages/Chat') }
+    // Si falla (red, versión nueva), no pasa nada: se pedirá al abrirla.
+    const precargar = () => { for (const p of [import('./pages/Chats'), import('./pages/Profile'), import('./pages/Chat')]) p.catch(() => {}) }
     const id = window.requestIdleCallback ? window.requestIdleCallback(precargar, { timeout: 4000 }) : setTimeout(precargar, 2500)
     return () => { window.cancelIdleCallback ? window.cancelIdleCallback(id) : clearTimeout(id) }
   }, [])
@@ -165,10 +166,12 @@ function leerDestino() {
 
 export default function App() {
   return (
-    <AppErrorBoundary>
+    // La pantalla de error amable (antes: una roja con el código y un botón
+    // que BORRABA todo lo guardado en el móvil, sesión incluida).
+    <ErrorBoundary>
       <BrowserRouter>
         <AppRoutes />
       </BrowserRouter>
-    </AppErrorBoundary>
+    </ErrorBoundary>
   )
 }
