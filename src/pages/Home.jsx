@@ -477,51 +477,6 @@ export default function Home() {
 
   useEffect(() => {
     let lines = getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas)
-    // If just came from onboarding with a name — magic first moment
-    let justOnboarded; try { justOnboarded = sessionStorage.getItem('nura_just_onboarded') } catch {}
-    if (justOnboarded) {
-      sessionStorage.removeItem('nura_just_onboarded')
-      const firstName = justOnboarded.split(' ')[0]
-      const hour = new Date().getHours()
-      const momentoDelDia = hour < 12 ? 'Buenos días' : hour < 20 ? 'Buenas tardes' : 'Buenas noches'
-      const ejemplos = hour < 12
-        ? ['Mi madre tiene Alzheimer y necesita cuidado mañanas', 'Técnico urgente hoy', 'Logopeda para niño de 5 años con dislalia']
-        : hour < 20
-        ? ['Niñera de confianza para niños de 3 y 6 años', 'Abogado laboralista — me han despedido', 'Psicóloga para ansiedad y ataques de pánico']
-        : ['Cuidadora nocturna para mi padre operado', 'Fontanero urgente — hay una fuga', 'Profesor de matemáticas para selectividad']
-      const welcomeMsg = {
-        id: 1, from: 'nura',
-        lines: [
-          `${momentoDelDia}, **${firstName}**. Soy Nüra.`,
-          `Cuéntame lo que necesitas. Encuentro a la persona exacta cerca de ti.`
-        ],
-        chips: ejemplos
-      }
-      setTimeout(() => setMessages([welcomeMsg]), 150)
-
-      // If user wrote their intent in onboarding, auto-send it
-      let intentQuery; try { intentQuery = sessionStorage.getItem('nura_intent_query') } catch {}
-      if (intentQuery) {
-        sessionStorage.removeItem('nura_intent_query')
-        // Show a teaser first — then auto-send
-        const teaserMsg = {
-          id: Date.now() + 0.1, from: 'nura',
-          lines: [`He visto lo que me contaste. Déjame buscarte la mejor opción ahora mismo.`]
-        }
-        setTimeout(() => {
-          setMessages(prev => [...prev, teaserMsg])
-          setTimeout(() => handleSend(intentQuery), 1200)
-        }, 1000)
-      } else {
-        // Auto-focus input after welcome so user can start immediately
-        setTimeout(() => {
-          const inp = document.querySelector('textarea, input[type="text"]')
-          if (inp) inp.focus()
-        }, 600)
-      }
-      return
-    }
-
     // If helper just registered
     let helperRegistered; try { helperRegistered = sessionStorage.getItem('nura_helper_registered') } catch {}
     if (helperRegistered) {

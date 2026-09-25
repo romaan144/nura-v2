@@ -54,7 +54,7 @@ export const ROLES = {
 }
 
 export const RUTAS = ['/', '/explore', '/feed', '/chats', '/siguiendo', '/my-services',
-  '/profile', '/profesionales', '/login', '/onboarding', '/register-helper', '/helper/1', '/helper/2020',
+  '/profile', '/profesionales', '/login', '/register-helper', '/helper/1', '/helper/2020',
   '/helper/9999', '/intro/1', '/intro/9999', '/chat/1', '/chat/2020', '/chat/9999', '/no-existe']
 
 // Piedra 10: el texto REAL con el que esta app avisa de un fallo.

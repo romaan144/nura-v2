@@ -188,10 +188,15 @@ Orden recomendado de decisión: **4 → 5 → 1 → 3 → 2**.
    `Auth insert · {public} · with_check: true` que habría dejado la puerta
    abierta con el RLS encendido. Queda `DEMO_MODE` y desplegar la función.
 5. ~~**Onboarding**~~ — **decidido y hecho el 2026-08-02: enchufado.**
+   **Retirado el 2026-09-25** por decisión del fundador: se entra directo a
+   la principal. `/onboarding` redirige a `/`.
 
 ---
 
 ## Onboarding enchufado (2026-08-02)
+
+> **Retirado el 2026-09-25** (ver changelog): ya no hay pantallas de
+> bienvenida. Lo que sigue queda como historia.
 
 `/onboarding` estaba enrutada, funcionaba entera y **nadie navegaba a
 ella**. Ahora un dispositivo virgen entra por ahí.

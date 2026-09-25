@@ -13,7 +13,7 @@ export default function DesktopSidebar() {
   const sinContestar = useSinContestar(user)
   const { total: respuestas } = useRespuestasNuevas()
 
-  const hideOn = ['/login', '/register-helper', '/splash', '/onboarding']
+  const hideOn = ['/login', '/register-helper', '/splash']
   if (hideOn.some(p => location.pathname.startsWith(p))) return null
 
   const tabs = [

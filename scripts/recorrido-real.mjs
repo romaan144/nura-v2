@@ -86,7 +86,6 @@ const escribir = async (p, t) => { await p.click(CAMPO, { clickCount: 3 }); awai
 try {
   const c = await pagina()
   await c.goto(B + '/', { waitUntil: 'networkidle0' })
-  await c.evaluate(() => localStorage.setItem('nura_onboarded', '1'))
   await c.goto(B + '/', { waitUntil: 'networkidle0' }); await espera(1200)
 
   console.log('\n── La familia busca y escribe ──')

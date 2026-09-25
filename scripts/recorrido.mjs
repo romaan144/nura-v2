@@ -9,7 +9,7 @@
 // completo roto igualmente.
 //
 // Dos recorridos, los dos lados del producto:
-//   · la persona que busca ayuda — onboarding, buscar, recomendación, chat
+//   · la persona que busca ayuda — entrar, buscar, recomendación, chat
 //   · el profesional            — alta de siete preguntas, y la vuelta
 //
 // Piedras aprendidas y aplicadas aquí:
@@ -78,20 +78,10 @@ console.log('\n── La persona que busca ayuda ──')
   await p.evaluate(() => { localStorage.clear(); sessionStorage.clear() })
   await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
   await espera(2400)
-  // Se busca una SEÑAL, no el texto exacto: la promesa cambio de "La IA que
-  // conecta personas reales" a "¿A quien llamarias para esto?" y la prueba
-  // fallo sin que el producto tuviera nada roto.
-  paso('el onboarding recibe', /llamarías|Cuéntamelo|HOLA/.test(await texto(p)))
-
-  await tocar(p, /Saltar/)
-  await espera(1600)
-  await escribirEn(p, 'Sergio')
-  await tocar(p, /Empezar/)
-  await espera(3600)
-  paso('entra y saluda por su nombre', /Sergio/.test(await texto(p)))
-  paso('guarda la fecha de alta', await p.evaluate(() => {
-    try { return !!JSON.parse(localStorage.getItem('nura_user') || '{}').joined } catch { return false }
-  }))
+  // Sin bienvenida (2026-09-25): un dispositivo nuevo entra directo a la
+  // principal, con el campo para buscar y sin preguntarle nada.
+  paso('entra directo, sin bienvenida', await p.evaluate(() =>
+    location.pathname === '/' && !!document.querySelector('textarea, input') && !/Saltar/.test(document.body.innerText)))
 
   await escribirEn(p, 'Mi hijo de 5 años no pronuncia la R', 'x => x.getBoundingClientRect().width > 100')
   await p.keyboard.press('Enter')
@@ -103,9 +93,25 @@ console.log('\n── La persona que busca ayuda ──')
   paso('recomienda a alguien', /quien mejor encaja|Mi recomendación|Escribir a/.test(t))
   paso('explica el porqué', /peques|cerca de ti|años/.test(t))
 
+  // Sin bienvenida no hay cuenta: para escribir se pide identificarse, y al
+  // terminar se vuelve al chat de quien eligió.
   await tocar(p, /Escribir a/)
+  await espera(2000)
+  paso('para escribir, pide identificarse', (await p.evaluate(() => location.pathname)) === '/login')
+  await p.type('input[type="tel"]', '612345678', { delay: 6 })
+  await tocar(p, /Continuar/)
+  await espera(1600)
+  await p.focus('input[aria-label="Código de verificación"]')
+  await p.keyboard.type('1234', { delay: 6 })
+  await tocar(p, /^Entrar$/)
+  await espera(1400)
+  await escribirEn(p, 'Sergio', 'x => /nombre/i.test(x.placeholder || "")')
+  await tocar(p, /Entrar en Nüra/)
   await espera(3000)
   paso('abre el chat', (await p.evaluate(() => location.pathname)).startsWith('/chat/'))
+  paso('guarda la fecha de alta', await p.evaluate(() => {
+    try { return !!JSON.parse(localStorage.getItem('nura_user') || '{}').joined } catch { return false }
+  }))
 
   await escribirEn(p, 'Hola, ¿tienes hueco?', 'x => /mensaje/i.test(x.placeholder || "")')
   await p.keyboard.press('Enter')
