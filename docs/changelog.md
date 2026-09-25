@@ -10,6 +10,25 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — El contacto del profesional, comprobado
+
+- Es por donde le llega cada aviso, y se aceptaba cualquier cosa: un móvil
+  con una cifra de menos o «marta@gmial.com» dejaban al profesional sin
+  avisos para siempre, sin que nadie lo notara.
+- `src/utils/contactoProfesional.js` (`revisarContacto`): móvil español de
+  9 cifras (con o sin +34/0034, espacios, guiones), número internacional
+  con +, o correo completo. Si falta algo, Nüra dice qué («le faltan
+  cifras: tiene 8 y un móvil tiene 9»). Si el correo parece tener una falta
+  en el dominio (gmial, hotmial, gmail.con…), sugiere el bueno; si la
+  persona reenvía el suyo tal cual, se acepta.
+- Se guarda limpio: «612 345 678» o el correo en minúsculas.
+- En el alta (última pregunta) y al editar la ficha.
+- `npm run test:matching`: 163 (11 nuevas de contacto).
+- Tropiezo corregido antes de publicar: el módulo nuevo se creó primero
+  como `utils/contacto.js`, que YA existía (destinos del chat), y lo
+  sobrescribió; el build lo detectó y se restauró desde git. `npm run lint`
+  no lo detecta: hay que pasar también `npm run build`.
+
 ## 2026-09-25 — La búsqueda aguanta faltas y catalán
 
 - 50 frases como se escriben en el móvil: con faltas («fontanro»,

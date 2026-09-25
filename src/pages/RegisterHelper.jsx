@@ -1,3 +1,4 @@
+import { revisarContacto } from '../utils/contactoProfesional'
 import { ciudadEnTexto } from '../data/ciudades'
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -85,6 +86,7 @@ export default function RegisterHelper() {
   const [typing, setTyping]       = useState(false)
   const [listening, setListening] = useState(false)
   const [done, setDone]           = useState(false)
+  const contactoRechazado = useRef('')
   // Lo que la IA ha ordenado de sus respuestas, esperando su «es correcto».
   const [propuesta, setPropuesta] = useState(null)
   const [topH, setTopH]           = useState(80)
@@ -109,10 +111,27 @@ export default function RegisterHelper() {
   }, [messages, typing])
 
   function sendMessage() {
-    const val = input.trim()
+    let val = input.trim()
     if (!val || typing) return
     setInput('')
     const q = QUESTIONS[qIdx]
+    // El contacto se comprueba: es por donde le llegarán los avisos.
+    if (q.id === 'contacto') {
+      const r = revisarContacto(val)
+      // Si le sugerimos otro correo y reenvía el suyo tal cual, es el bueno.
+      const insiste = r.sugerencia && contactoRechazado.current === val
+      if (!r.ok && !insiste) {
+        contactoRechazado.current = val
+        setMessages(prev => [...prev, { id: Date.now(), from: 'user', text: val }])
+        setTyping(true)
+        setTimeout(() => {
+          setTyping(false)
+          setMessages(prev => [...prev, { id: Date.now(), from: 'nura', text: r.motivo }])
+        }, 600)
+        return
+      }
+      val = r.ok ? r.valor : val.toLowerCase().replace(/\s+/g, '')
+    }
     const newAnswers = { ...answers, [q.id]: val }
     setAnswers(newAnswers)
     setMessages(prev => [...prev, { id: Date.now(), from: 'user', text: val }])

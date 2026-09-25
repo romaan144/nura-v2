@@ -476,6 +476,26 @@ for (const t of NEGATIVE) {
   console.log(`${(b || []).length > 0 ? '✓' : '✗'} sin ciudad no se filtra (${(b || []).length} resultados)`)
 }
 
+// ── El contacto del profesional (2026-09-25): por ahí le llegan los avisos ──
+{
+  const { revisarContacto } = await import(join(stage, 'utils/contactoProfesional.js'))
+  const casos = [
+    ['612 345 678', true, '612 345 678'], ['+34 612-345-678', true, '612 345 678'], ['0034612345678', true, '612 345 678'],
+    ['Marta@Gmail.com ', true, 'marta@gmail.com'], ['+44 7700 900123', true, '+447700900123'],
+    ['61234567', false], ['612345678901', false], ['marta@gmail', false], ['no tengo', false], ['', false],
+  ]
+  for (const [t, ok, valor] of casos) {
+    const r = revisarContacto(t)
+    const bien = r.ok === ok && (!ok || r.valor === valor)
+    if (!bien) failed++
+    console.log(`${bien ? '✓' : '✗'} contacto: «${t}» → ${r.ok ? r.valor : 'rechazado'}`)
+  }
+  const falta = revisarContacto('marta@gmial.com')
+  const bien = !falta.ok && falta.sugerencia === 'marta@gmail.com'
+  if (!bien) failed++
+  console.log(`${bien ? '✓' : '✗'} contacto: «marta@gmial.com» → sugiere ${falta.sugerencia}`)
+}
+
 // El total se contaba sumando los tres catalogos, asi que se quedo en 32
 // mientras las pruebas reales llegaban a 51: cada bloque añadido despues
 // (obra, agenda, silencios, interceptor, aviso) pasaba sin figurar. Un

@@ -1,3 +1,4 @@
+import { revisarContacto } from '../utils/contactoProfesional'
 import { ciudadEnTexto } from '../data/ciudades'
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
@@ -57,6 +58,12 @@ export default function EditarFicha({ onClose }) {
 
   async function guardar() {
     const limpio = Object.fromEntries(Object.entries(v).map(([k, x]) => [k, (x || '').trim()]))
+    // El contacto, comprobado (vacío se permite: puede quitarlo).
+    if (limpio.contacto) {
+      const r = revisarContacto(limpio.contacto)
+      if (!r.ok) { setFallo(r.motivo.replace(/ Si tu correo era.*$/, '')); return }
+      limpio.contacto = r.valor
+    }
     updateUser({ helperProfile: { ...hp, ...limpio } })
     if (!vinculada) { onClose(); return }
     // ── A LA FICHA PUBLICA (etapa 6b) ──────────────────────────────────
