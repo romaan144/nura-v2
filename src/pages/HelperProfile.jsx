@@ -1,3 +1,4 @@
+import { useTitulo } from '../utils/titulo'
 import PageHeader from '../components/PageHeader'
 import PostCard from '../components/PostCard'
 import { slotsDe, tieneHuecos, ocupacionesDe, motivoSinHuecos, FRASE_SIN_HUECOS } from '../data/horarios'
@@ -205,6 +206,7 @@ function HelperProfileInner() {
     ? { ...DEMO_ENRICHMENTS[h.id], ...h, qualitativeComments: h.qualitativeComments || DEMO_ENRICHMENTS[h.id].qualitativeComments }
     : h
   const [loading, setLoading] = useState(!h)
+  useTitulo(enrichedH?.name ? [enrichedH.name, enrichedH.specialty].filter(Boolean).join(' · ') : null)
   const [showConfirm, setShowConfirm] = useState(false)
   const [showRating, setShowRating]   = useState(false)
   const [showGate, setShowGate]       = useState(false)

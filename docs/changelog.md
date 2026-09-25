@@ -10,6 +10,16 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — Cada pantalla, su título; y robots.txt
+
+- **La pestaña del navegador dice dónde estás**: «Mis chats — Nüra»,
+  «Carlos Martínez Vidal · Logopeda infantil — Nüra», «Chat con Carlos —
+  Nüra»… Antes todas se llamaban igual. Sirve al historial, a los lectores
+  de pantalla (anuncian el título al cambiar de página) y a Google.
+  Todo en `src/utils/titulo.js`.
+- **`public/robots.txt`**: fichas y páginas públicas, sí; chats, enlaces de
+  respuesta, bajas de avisos y perfil propio, fuera de los buscadores.
+
 ## 2026-09-25 — Fuera las pantallas de bienvenida
 
 - **Decisión del fundador:** «Quiero quitar todo eso. Que entre
