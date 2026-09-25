@@ -22,6 +22,8 @@ mkdirSync(join(stage, 'utils'), { recursive: true })
 mkdirSync(join(stage, 'data'), { recursive: true })
 cpSync(join(root, 'src/utils'), join(stage, 'utils'), { recursive: true })
 cpSync(join(root, 'src/data'), join(stage, 'data'), { recursive: true })
+// La configuración (DEMO_MODE): la leen matching.js y supabase.js.
+cpSync(join(root, 'src/config.js'), join(stage, 'config.js'))
 // Los modulos reales (dicebear para los avatares locales) viven en el
 // node_modules del proyecto: se enlaza para que el escenario los resuelva.
 try {

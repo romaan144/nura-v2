@@ -10,6 +10,27 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — Fuera de la demo, nunca personas inventadas
+
+- **Hallazgo**: la búsqueda (y Explorar) mezclaba SIEMPRE los perfiles de
+  ejemplo (id ≥ 2000) con los reales, y si la base de datos tardaba más de
+  2,2 s o no respondía, recomendaba SOLO los de ejemplo (`data/helpers.js`).
+  Con la demo apagada, alguien con mala cobertura habría visto personas
+  inventadas como si fueran reales.
+- Ahora, **fuera de la demo**:
+  - solo profesionales de la base de datos;
+  - si no responde (red, servidor, 7,5 s): «Parece que te has quedado sin
+    conexión» con la búsqueda para reintentar; en Explorar, «No he podido
+    cargar esta categoría» + Reintentar;
+  - si responde y no hay nadie: «no tengo a nadie así», honesto.
+- `searchHelpers` distingue `[]` (no hay nadie) de `null` (no se pudo
+  preguntar). En la demo todo sigue igual.
+- `recorrido:real` (que simula producción) usaba sin saberlo los perfiles
+  de ejemplo: ahora su base de datos simulada tiene una logopeda real.
+- Comprobado en el navegador en modo real: sin red → «sin conexión»; base
+  vacía → «no hay nadie»; con una profesional → la recomienda; nunca sale
+  un perfil de ejemplo.
+
 ## 2026-09-25 — El profesional contesta con mala cobertura
 
 - **Abrir el enlace sin conexión decía «Este enlace ya no sirve»**: el

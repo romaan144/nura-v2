@@ -1,5 +1,6 @@
 import { avatarDe } from '../utils/avatar'
 import { ciudadEnTexto } from '../data/ciudades'
+import { DEMO_MODE } from '../config'
 // LA UNICA FUENTE. Estaban declaradas en TRES sitios y ya habian divergido:
 // aqui la clave nueva `sb_publishable_`, y en claudeApi.js (retirado) y
 // el JWT antiguo. Es decir, las LECTURAS iban con una credencial y las
@@ -251,10 +252,13 @@ export async function searchHelpers(category, keywords = []) {
     } else if (cats.length > 1) {
       url += `&category=in.(${cats.map(encodeURIComponent).join(',')})`
     }
-    const res = await fetch(url, { headers, signal: AbortSignal.timeout(2500) })
+    // [] = no hay nadie; null = NO SE PUDO PREGUNTAR (red, servidor). No es
+    // lo mismo, y fuera de la demo no se puede confundir.
+    const res = await fetch(url, { headers, signal: AbortSignal.timeout(DEMO_MODE ? 2500 : 7000) })
     if (!res.ok) return null
     const data = await res.json()
-    if (!Array.isArray(data) || data.length === 0) return null
+    if (!Array.isArray(data)) return null
+    if (data.length === 0) return []
     if (keywords?.length > 0) {
       const filtered = data.filter(h => {
         const text = [h.name, h.speciality, h.bio, h.zone, h.category, ...(Array.isArray(h.tags)?h.tags:[])].join(' ').toLowerCase()

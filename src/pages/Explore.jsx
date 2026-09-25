@@ -6,6 +6,7 @@ import { Search, ArrowLeft, Loader2, SlidersHorizontal,
          Dumbbell, Baby, MapPin, Star, Laptop, Palette, Car, PartyPopper, Globe } from 'lucide-react'
 import { searchHelpers, getAllHelpers } from '../utils/supabase'
 import { HELPERS as LOCAL_DEMO_HELPERS } from '../data/helpers'
+import { DEMO_MODE } from '../config'
 import { analyzeNeed, matchHelpers } from '../utils/matching'
 import { useUser } from '../context/UserContext'
 import HelperCard from '../components/HelperCard'
@@ -168,6 +169,7 @@ export default function Explore() {
   }, [location.key])
   const [categoryResults, setCategoryResults] = useState([])
   const [loadingCat,      setLoadingCat]     = useState(false)
+  const [sinRed,          setSinRed]         = useState(false)
   const [visibleCount,    setVisibleCount]   = useState(20)
   const [filterAvailable,   setFilterAvailable]   = useState(false)
   const [filterRating,      setFilterRating]      = useState(false)
@@ -210,10 +212,14 @@ export default function Explore() {
       const results = await Promise.all(
         cat.supabaseCategories.map(c => searchHelpers(c))
       )
-      // Inject local demo helpers (id >= 2000) that match this category — they appear first
-      const demoHelpers = LOCAL_DEMO_HELPERS.filter(h =>
+      // Fuera de la demo, si no contestó ninguna: es la conexión, no que
+      // no haya nadie.
+      if (!DEMO_MODE && results.every(r => r === null)) { setSinRed(true); setCategoryResults([]); setLoadingCat(false); return }
+      setSinRed(false)
+      // Los de ejemplo (id >= 2000) solo en la demo.
+      const demoHelpers = DEMO_MODE ? LOCAL_DEMO_HELPERS.filter(h =>
         h.id >= 2000 && cat.supabaseCategories.includes(h.category)
-      )
+      ) : []
 
       let merged = [...demoHelpers, ...results.flat().filter(Boolean)]
         .filter((h, i, arr) => arr.findIndex(x => x.id === h.id) === i)
@@ -451,6 +457,13 @@ export default function Explore() {
                   </div>
                 )}
               </>
+            ) : sinRed ? (
+              <EmptyState
+                title="No he podido cargar esta categoría."
+                hint="Parece un problema de conexión. Vuelve a intentarlo en un momento."
+                actionLabel="Reintentar"
+                onAction={() => openCategory(activeCategory)}
+              />
             ) : (
               <EmptyState
                 title="En esta categoría todavía no hay nadie cerca de ti."
