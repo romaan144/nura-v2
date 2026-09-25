@@ -10,6 +10,22 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — La ficha, con vista previa al compartirla
+
+- **`middleware.js` (middleware de Vercel, solo en `/helper/:id`)**: WhatsApp
+  y Google no ejecutan JavaScript; leían siempre «Nüra — Cuéntame qué
+  necesitas». Ahora la página llega con el nombre, el oficio, el barrio o
+  el principio de la bio, y la foto si es una foto de verdad (jpg/png/webp);
+  si no, la imagen de Nüra. Los textos van escapados.
+- **A prueba de fallos**: si Supabase no contesta en 1,5 s, la ficha no
+  existe o algo falla, se sirve la página de siempre.
+- **La imagen general (`og-image.png`) ya va con dirección completa**:
+  WhatsApp y Facebook no aceptan `/og-image.png` a secas, así que ni la
+  vista previa general enseñaba imagen.
+- Pruebas: `npm run test:vista` (16, sin red).
+- **Sin comprobar en Vercel** desde aquí (no se llega desde el entorno de
+  trabajo): se confirma compartiendo una ficha por WhatsApp tras publicar.
+
 ## 2026-09-25 — Cada pantalla, su título; y robots.txt
 
 - **La pestaña del navegador dice dónde estás**: «Mis chats — Nüra»,
