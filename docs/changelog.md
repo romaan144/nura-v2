@@ -2217,3 +2217,10 @@ registradas retroactivamente con su motivo:
 - «Nunca leemos tus chats» → «Nunca analizamos tus conversaciones ni lo que buscas». Los mensajes sí se guardan para avisar al profesional, así que «leer» no era exacto.
 - La política de privacidad ahora cuenta todo lo que se guarda: «Te aviso si aparece» (correo y permiso de avisos), valoraciones (solo se publica el resumen), recuentos sin texto, y los servicios que intervienen (Supabase, Resend, el navegador para las notificaciones, Anthropic para ordenar lo que el profesional escribe de sí mismo).
 - Nueva sección «Lo que nunca hacemos».
+
+## 2026-09-25 · La búsqueda usa lo que el profesional confirma de sí mismo
+- Si alguien pide «que hable catalán», «con coche», «por las tardes», «para niños» o una especialidad, sube quien lo ha confirmado en su ficha (`src/utils/pideDeclarado.js`).
+- Pesa menos que el oficio: ordena dentro de lo que encaja, no saca a nadie de su categoría. Declarar «no tengo coche» resta si se pide coche.
+- El porqué de la recomendación lo dice con su fuente: «según su ficha, habla catalán y tiene coche».
+- Una sola petición a `perfil_atributos` (solo `declarado`), con tope de 1,5 s; si no llega, el orden no cambia. Nada de la búsqueda se guarda.
+- 12 pruebas nuevas en `npm run test:matching` (112).

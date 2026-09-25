@@ -394,6 +394,36 @@ for (const t of NEGATIVE) {
   prueba('sin barrio, ninguna distancia (antes se inventaba)', sin.length > 0 && sin.every(h => h.distance == null))
 }
 
+// ── LO DECLARADO EN LA BUSQUEDA (2026-09-25) ─────────────────────────────
+// Lo que el profesional confirma de si mismo ordena cuando la persona lo
+// pide. Nunca saca a nadie de su oficio y nunca cuenta lo no confirmado.
+{
+  console.log('\n── Lo declarado ──')
+  const prueba = (texto, cond) => { console.log((cond ? '✓ ' : '✗ ') + texto); if (!cond) failed++ }
+  const { pideDeclarado, puntosDeclarados } = await import(join(stage, 'utils/pideDeclarado.js'))
+  const { reordenarPorDeclarado } = await import(join(stage, 'utils/matching.js'))
+  const p1 = pideDeclarado('Cuidadora que hable catalán y tenga coche para llevar a mi madre al médico por las tardes')
+  prueba('entiende idioma, coche y franja', p1.idiomas.includes('catalán') && p1.vehiculo && p1.disponibilidad.includes('tardes'))
+  prueba('«mi madre» con Alzheimer → personas mayores', pideDeclarado('mi madre tiene alzheimer').personas.includes('personas mayores'))
+  prueba('«mañana» (el día) no es «por las mañanas»', !pideDeclarado('necesito un fontanero mañana').disponibilidad.includes('mañanas'))
+  prueba('«por las mañanas» sí', pideDeclarado('alguien por las mañanas').disponibilidad.includes('mañanas'))
+  prueba('sin nada comprobable, no pide nada', (() => { const p = pideDeclarado('fontanero'); return !p.idiomas.length && !p.vehiculo && !p.disponibilidad.length && !p.personas.length })())
+  prueba('«inglés» se entiende sin tilde', pideDeclarado('profe que hable ingles').idiomas.includes('inglés'))
+
+  const attrs = [{ clave: 'idioma:catalán', valor: true }, { clave: 'vehiculo', valor: true }, { clave: 'disponibilidad:tardes', valor: true }]
+  const r = puntosDeclarados(attrs, p1)
+  prueba('suma por lo que pide y tiene declarado', r.score === 25 + 20 + 12 && r.motivos.includes('habla catalán') && r.motivos.includes('tiene coche'))
+  prueba('lo no declarado no suma', puntosDeclarados([], p1).score === 0)
+  prueba('declarar «no tengo coche» resta si lo pide', puntosDeclarados([{ clave: 'vehiculo', valor: false }], p1).score < 0)
+  prueba('lo declarado que no pide no suma', puntosDeclarados(attrs, pideDeclarado('cuidadora')).score === 0)
+
+  const candidatos = [{ id: 1, score: 100, category: 'cuidado' }, { id: 2, score: 80, category: 'cuidado' }]
+  const orden = reordenarPorDeclarado(candidatos, new Map([['2', attrs]]), p1)
+  prueba('quien tiene lo que pides sube, y se sabe por qué', orden[0].id === 2 && orden[0].__declarado?.length === 3)
+  const lejos = reordenarPorDeclarado([{ id: 1, score: 200 }, { id: 2, score: 80 }], new Map([['2', attrs]]), p1)
+  prueba('no da la vuelta a una diferencia grande (pesa menos que el oficio)', lejos[0].id === 1)
+}
+
 // El total se contaba sumando los tres catalogos, asi que se quedo en 32
 // mientras las pruebas reales llegaban a 51: cada bloque añadido despues
 // (obra, agenda, silencios, interceptor, aviso) pasaba sin figurar. Un
