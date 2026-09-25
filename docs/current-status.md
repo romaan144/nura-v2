@@ -30,7 +30,7 @@ actualizar por eso mismo.
 
 ### En producción (comprobado)
 
-- **Función `helpers-write` versión 10** (2026-09-24), 20 operaciones
+- **Función `helpers-write` versión 11** (2026-09-25), 20 operaciones
   (nuevas: `valorar`, `clave-push`, `crear-alerta`, `alertas`,
   `quitar-alerta`, `confirmar-declarado`, `mi-pulso`, `ampliar-aviso`).
 - **Captar profesionales**: enlace para compartir `/profesionales`
