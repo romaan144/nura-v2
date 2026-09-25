@@ -28,6 +28,7 @@ import OnboardingPage from './pages/Onboarding'
 const MyServices = lazy(() => import('./pages/MyServices'))
 const Responder = lazy(() => import('./pages/Responder'))
 const BajaAlerta = lazy(() => import('./pages/BajaAlerta'))
+const Profesionales = lazy(() => import('./pages/Profesionales'))
 import Siguiendo from './pages/Siguiendo'
 import Legal from './pages/Legal'
 // Carga PEREZOSA a proposito: estas dos pantallas traen la libreria de
@@ -146,6 +147,7 @@ function AppRoutes() {
                   de su aviso. Corta y sin cuenta a proposito. */}
               <Route path="/r/:token" element={<Responder />} />
               <Route path="/baja/:token" element={<BajaAlerta />} />
+              <Route path="/profesionales" element={<Profesionales />} />
               <Route path="/onboarding" element={<OnboardingPage />} />
               {/* Con sesion, /login lleva a donde iba (nura_return_to), no a Inicio:
                   si no, al entrar se perdia el chat que la persona queria abrir. */}

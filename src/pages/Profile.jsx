@@ -645,11 +645,14 @@ export default function Profile() {
             <h2 className={styles.titulo}>¿Tienes algo que ofrecer?</h2>
             <div className={styles.tarjeta}>
               <p className={styles.tarjetaTexto}>
-                Muchas personas de Nüra también ayudan a otras. Crea tu perfil profesional y empieza a recibir solicitudes.
+                ¿Ayudas a otras personas con lo que sabes hacer? Crea tu ficha y te llegarán los mensajes de quien te necesite.
               </p>
               <Button variant="secondary" full onClick={() => navigate('/register-helper')}
                 style={{marginTop:'var(--space-16)', color:'var(--purple-ink)'}}>
                 <User size={15} aria-hidden="true" /> Crear perfil profesional
+              </Button>
+              <Button variant="ghost" full onClick={() => navigate('/profesionales')} style={{marginTop:'var(--space-4)'}}>
+                Cómo funciona para profesionales
               </Button>
             </div>
           </section>

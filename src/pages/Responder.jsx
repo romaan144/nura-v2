@@ -146,7 +146,7 @@ export default function Responder() {
             {/* No se puede pedir un si sin ofrecer decir que no. */}
             <p style={{fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)', textAlign: 'center',
               margin: 'var(--space-12) 0 0', lineHeight: 1.5}}>
-              Si ahora no puedes, dilo sin más. Buscaré a otra persona.
+              Si ahora no puedes, dilo sin más: se lo haré saber enseguida.
             </p>
           </>
         )}

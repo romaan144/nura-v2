@@ -10,6 +10,22 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — Página para captar profesionales (/profesionales)
+
+- **Nueva página `/profesionales`**, para compartir por WhatsApp o en
+  persona: qué es Nüra, cómo funciona en 4 pasos, para qué oficios, lo que
+  Nüra no hace y que estamos empezando. Botones: crear ficha, compartir
+  con un compañero, entrar.
+- **Solo promete lo que la app hace hoy**: sin cifras de clientes. Se
+  revisó cada frase: «tú decides qué se publica» (la IA aún no está
+  activada), «nunca analizamos tus conversaciones» (el fundador ve el
+  texto al enviar los avisos a mano).
+- Corregido también: el enlace del profesional decía «Buscaré a otra
+  persona» si no podía atender (la app no lo hace sola) y el perfil
+  afirmaba «Muchas personas de Nüra también ayudan a otras».
+- El perfil de quien busca enlaza a «Cómo funciona para profesionales».
+- La página entra en las comprobaciones de accesibilidad (`medir`).
+
 ## 2026-09-24 — La búsqueda entiende el barrio (y deja de inventar distancias)
 
 - **Las tarjetas enseñaban una distancia inventada** («a 0,8 km») sin saber
