@@ -10,6 +10,20 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — Compartir una ficha, de verdad
+
+- **El botón de compartir de la ficha** abre en el móvil el menú del
+  sistema (WhatsApp, Telegram…) con «Te paso a Carlos, logopeda infantil.
+  Le puedes escribir por Nüra:» y el enlace. Donde no hay menú, copia.
+  Antes solo copiaba, y sin portapapeles (`navigator.clipboard` indefinido)
+  el botón se rompía (`undefined.then`).
+- **«Compartir mi ficha»** en el perfil de la profesional (con la ficha
+  vinculada): su tarjeta de visita para mandar a quien le pregunte, con la
+  vista previa de su nombre y oficio. `src/utils/compartir.js`.
+- **La imagen para compartir pasa a JPG** (`og-compartir.jpg`, 34 KB): la
+  PNG pesaba 219 KB y rompía la regla de la puerta de humo (60 KB). El
+  fallo entró en el cambio anterior porque no se pasó `npm run smoke`.
+
 ## 2026-09-25 — Nüra no es solo de Barcelona (lo que se comparte)
 
 - **Decisión del fundador:** «la app la usarán en más ciudades». La imagen

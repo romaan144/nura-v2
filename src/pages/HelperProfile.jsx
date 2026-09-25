@@ -17,6 +17,7 @@ import { recordarDestino, contextoDeChat, hayContexto } from '../utils/contacto'
 import styles from './HelperProfile.module.css'
 import { DEMO_ENRICHMENTS } from '../data/demoEnrichments'
 import { showToast } from '../components/Toast'
+import { compartirEnlace, enlaceDeFicha } from '../utils/compartir'
 import RegisterGate from '../components/RegisterGate'
 import { getHelperById } from '../utils/supabase'
 import { atributosDe, enviarPropuestaCita } from '../utils/escrituras'
@@ -281,9 +282,15 @@ function HelperProfileInner() {
     navigate(`/chat/${enrichedH.id}`, { state: contextoDeChat(h, location.state) })
   }
 
-  function handleShare() {
-    navigator.clipboard?.writeText(window.location.href)
-      .then(() => { setShared(true); showToast('Enlace copiado') })
+  async function handleShare() {
+    const nombre = enrichedH?.name?.split(' ')[0] || ''
+    const r = await compartirEnlace({
+      url: enlaceDeFicha(enrichedH?.id ?? id),
+      titulo: `${enrichedH?.name || 'Profesional'} en Nüra`,
+      texto: `Te paso a ${nombre}${enrichedH?.specialty ? ', ' + enrichedH.specialty.toLowerCase() : ''}. Le puedes escribir por Nüra:`,
+    })
+    if (r === 'copiado') { setShared(true); showToast('Enlace copiado') }
+    else if (r === 'fallo') showToast('No he podido copiar el enlace')
   }
 
   return (

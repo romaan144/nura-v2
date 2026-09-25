@@ -9,7 +9,7 @@ import { getObraDeHelper, obraAPost } from '../data/obraPosts'
 import { useNavigate } from 'react-router-dom'
 import { LogOut, Edit2, Check, X, Award, MessageCircle, ClipboardList, User, Phone, Star,
          UserPlus, UserCheck, ChevronRight, PenLine, Plus, Mail, CalendarDays, Search,
-         Shield, FileText, Trash2 } from 'lucide-react'
+         Shield, FileText, Trash2, Share2 } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import { Badge, StatBar } from '../components/ui'
 import HelperCard from '../components/HelperCard'
@@ -23,6 +23,8 @@ import FotoPerfil from '../components/FotoPerfil'
 import MisAlertas from '../components/MisAlertas'
 import LoQueSabeNura from '../components/LoQueSabeNura'
 import { quitarTodas } from '../utils/alertas'
+import { compartirEnlace, enlaceDeFicha } from '../utils/compartir'
+import { showToast } from '../components/Toast'
 
 // ── Tu semana: la voz de Nüra para quien trabaja ──
 // Gramática: frase humana primero, cifras discretas después, cero vanidad.
@@ -472,6 +474,24 @@ export default function Profile() {
                 style={{color:'var(--purple-ink)', boxShadow:'var(--alzado-reposo)', minHeight:48}}>
                 <Edit2 size={15} aria-hidden="true" /> Editar mi ficha
               </Button>
+
+              {/* Su ficha es su tarjeta de visita: se manda por WhatsApp a
+                  quien le pregunte, y al abrirla le pueden escribir. */}
+              {user.helperId != null && (
+                <Button variant="secondary" full
+                  onClick={async () => {
+                    const r = await compartirEnlace({
+                      url: enlaceDeFicha(user.helperId),
+                      titulo: `${user.name || 'Mi ficha'} en Nüra`,
+                      texto: 'Esta es mi ficha en Nüra. Me puedes escribir por aquí:',
+                    })
+                    if (r === 'copiado') showToast('Enlace de tu ficha copiado')
+                    else if (r === 'fallo') showToast('No he podido copiar el enlace')
+                  }}
+                  style={{boxShadow:'var(--alzado-reposo)', minHeight:48}}>
+                  <Share2 size={15} aria-hidden="true" /> Compartir mi ficha
+                </Button>
+              )}
 
               {/* La cita: es lo primero que leen, con su voz. */}
               {!proQuote ? (

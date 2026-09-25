@@ -49,7 +49,7 @@ export function conFicha(html, h, url) {
   } else {
     // La de Nüra, siempre con la direccion completa de ESTA web.
     for (const [a, k] of [['property', 'og:image'], ['property', 'og:image:secure_url'], ['name', 'twitter:image']])
-      out = poner(out, a, k, `${origen}/og-compartir.png`)
+      out = poner(out, a, k, `${origen}/og-compartir.jpg`)
   }
   out = poner(out, 'property', 'og:url', url)
   out = poner(out, 'name', 'twitter:title', `${titulo} — Nüra`)
