@@ -2252,3 +2252,8 @@ registradas retroactivamente con su motivo:
 - La notificación va vacía. `public/sw.js` pregunta a Nüra con las llaves que la app dejó en IndexedDB (`src/utils/esperando.js`) y enseña «Carlos te ha contestado», que abre ese chat. Si no hay respuesta nueva, es el aviso de «Te aviso si aparece».
 - «Borrar mis datos» borra también esa lista. Política de privacidad actualizada.
 - `helpers-write` v14 · migración `20260929000000_avisar_cuando_conteste.sql` aplicada. 6 pruebas nuevas (`npm run test:avisos`, 128) y el recorrido real comprueba que se ofrece. Comprobado en navegador con una notificación simulada.
+
+## 2026-09-25 · Tope general de correos automáticos
+- Revisión de seguridad de lo añadido hoy: `encolar-aviso` es público, y con el envío automático alguien podría hacer que Nüra mandara 5 correos a cada profesional de la lista.
+- Ahora hay además un tope GENERAL al día (`NURA_CORREOS_DIA`, 200 por defecto) con el contador atómico `sumar_uso`. Pasado el tope, los avisos siguen guardados y salen a mano. Si el contador falla, no se envía (cerrado por defecto).
+- `helpers-write` v15. 1 prueba nueva (`npm run test:avisos`, 129).
