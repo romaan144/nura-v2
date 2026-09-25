@@ -935,6 +935,30 @@ Deno.serve(async (req: Request) => {
     return ok ? json({ ok: true }, 200, cors) : json({ error: 'no guardado' }, 502, cors)
   }
 
+  // ── LA BANDEJA DE LA PROFESIONAL ──
+  // Quien le ha escrito, dentro de la app (antes solo por el enlace de cada
+  // aviso). Solo con sesion y solo los avisos de SU ficha (owner_id): el
+  // token de cada uno le deja contestar en /r/:token, como el enlace. Nunca
+  // sale quien escribio (no se guarda) ni su llave de lectura.
+  if (op === 'mis-avisos') {
+    const token = String(cuerpo.sesion || '')
+    if (!token) return json({ error: 'falta la sesion' }, 401, cors)
+    const u = await fetch(`${SUPABASE_URL}/auth/v1/user`, { headers: { apikey: SERVICE_KEY!, Authorization: `Bearer ${token}` } })
+    if (!u.ok) return json({ error: 'sesion no valida' }, 401, cors)
+    const usuario = await u.json()
+    if (!usuario?.id) return json({ error: 'sesion sin usuario' }, 401, cors)
+    const f = await fetch(`${SUPABASE_URL}/rest/v1/helpers?owner_id=eq.${usuario.id}&select=id&limit=1`, { headers: rest })
+    if (!f.ok) return json({ error: 'lectura rechazada', estado: f.status }, 502, cors)
+    const [ficha] = await f.json()
+    if (!ficha) return json({ error: 'sin ficha' }, 404, cors)
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/avisos?helper_id=eq.${encodeURIComponent(String(ficha.id))}&lectura_hash=not.is.null&select=id,mensaje,respuesta,fecha,respondido_en,token&order=id.desc&limit=50`,
+      { headers: rest },
+    )
+    if (!r.ok) return json({ error: 'lectura rechazada', estado: r.status }, 502, cors)
+    return json({ ok: true, avisos: await r.json() }, 200, cors)
+  }
+
   // ── EL PULSO: la semana de la profesional, con datos REALES ──
   // Antes el Pulso se inventaba las cifras con un numero al azar («9
   // personas buscaron…»). Ahora cuenta lo que ha pasado de verdad en 7 dias:

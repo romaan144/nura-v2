@@ -1,5 +1,7 @@
 # El lado del profesional no existe
 
+> **Actualizado 2026-09-25:** los mensajes ya viven en el servidor (`avisos`), el profesional recibe su aviso (por correo automático o WhatsApp) y contesta en `/r/:token`, y con cuenta tiene su bandeja «Te han escrito» en Chats. Lo de abajo es el diagnóstico original.
+
 *Conducido el ciclo completo del profesional dentro de la app, 2026-08-08.
 Sin tocar código: lo que falta no es un arreglo, es media aplicación.*
 
