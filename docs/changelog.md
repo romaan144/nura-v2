@@ -2296,3 +2296,8 @@ registradas retroactivamente con su motivo:
 - En `/r/:token`, botones que rellenan la respuesta (no la envían): «Tengo hueco», «Cuéntame más», «Ahora no puedo». Si el mensaje es una propuesta de cita: «Me va bien», «Proponer otro día», «No puedo».
 - El cursor queda al final para seguir escribiendo («Tengo hueco » → «los martes por la tarde»).
 - Comprobado en navegador: los dos juegos de botones y una respuesta enviada con la frase completada.
+
+## 2026-09-25 · La app carga menos al entrar
+- `Explore.jsx` importaba `demoEnrichments.js` (262 KB de contenido de la demo) sin usarlo, y eso lo metía en el archivo principal que todo el mundo descarga al abrir.
+- Quitada esa línea: el archivo principal pasa de 707 KB a 445 KB (150 → 137 KB comprimido) y el contenido de la demo solo se descarga en las pantallas que lo usan (ficha, carta de presentación, comunidad).
+- Rutas, botones, recorrido real y humo en verde. Lint: 130 (uno menos).
