@@ -201,7 +201,7 @@ for (const t of NEGATIVE) {
 
 // ── La Agenda: la disponibilidad no puede mentir ──
 {
-  const { slotsDe, tieneHuecos, ocupacionesDe } = await import('../src/data/horarios.js')
+  const { slotsDe, tieneHuecos, ocupacionesDe, ocupadasDeEjemplo } = await import(join(stage, 'data/horarios.js'))
   const logo = { id: 1, category: 'logopedia' }, tec = { id: 3, category: 'tecnico' }
   const lunes = '2026-07-06', domingo = '2026-07-05'
 
@@ -217,8 +217,9 @@ for (const t of NEGATIVE) {
                            [{ helperId: 1, date: lunes, time: '18:00', status: 'pending' }])
   const sl = slotsDe(logo, lunes, oc)
   const c = sl.find(x => x.hora === '17:00')?.estado === 'ocupada' &&
-            sl.find(x => x.hora === '18:00')?.estado === 'pendiente' &&
-            sl.find(x => x.hora === '16:00')?.estado === 'libre'
+            sl.find(x => x.hora === '18:00')?.estado === 'tuya' &&   // la pidió esta persona
+            // 16:00: libre, salvo que la agenda de ejemplo (demo) la dé por cogida
+            sl.find(x => x.hora === '16:00')?.estado === (ocupadasDeEjemplo(logo, lunes).has('16:00') ? 'ocupada' : 'libre')
   if (!c) failed++
   console.log(`${c ? '✓' : '✗'} [agenda] ocupacion real desde los DOS almacenes (citas + services)`)
 }
@@ -496,6 +497,29 @@ for (const t of NEGATIVE) {
   const bien = !falta.ok && falta.sugerencia === 'marta@gmail.com'
   if (!bien) failed++
   console.log(`${bien ? '✓' : '✗'} contacto: «marta@gmial.com» → sugiere ${falta.sugerencia}`)
+}
+
+// ── La agenda de los perfiles de ejemplo (2026-09-25) ──
+{
+  const H = await import(join(stage, 'data/horarios.js'))
+  const { getFirstName } = await import(join(stage, 'utils/name.js'))
+  const logopeda = { id: 2001, category: 'logopedia' }
+  const dias = Array.from({ length: 60 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() + i + 1); return H.isoLocal(d) })
+  const laborables = dias.filter(f => H.horarioDe(logopeda).dias.includes(new Date(f + 'T12:00:00').getDay()))
+  const igual = laborables.every(f => [...H.ocupadasDeEjemplo(logopeda, f)].join() === [...H.ocupadasDeEjemplo(logopeda, f)].join())
+  const cargas = laborables.map(f => H.ocupadasDeEjemplo(logopeda, f).size)
+  const total = H.horarioDe(logopeda).horas.length
+  const casos = [
+    ['la agenda de ejemplo sale igual al repetirla', igual],
+    ['hay días con horas ya cogidas', cargas.some(n => n > 0 && n < total)],
+    ['hay algún día completo', cargas.some(n => n === total)],
+    ['y días con huecos', cargas.some(n => n < total)],
+    ['un día que no trabaja no tiene horas', H.slotsDe(logopeda, dias.find(f => !laborables.includes(f)), []).length === 0],
+    ['hay un próximo hueco libre', !!H.proximoHueco(logopeda, [])],
+    ['la hora que pediste sale como tuya', (() => { const f = laborables[0]; const h = H.horarioDe(logopeda).horas[0]; return H.slotsDe(logopeda, f, [{ helperId: 2001, fecha: f, hora: h, estado: 'pendiente' }]).find(x => x.hora === h)?.estado === 'tuya' })()],
+    ['«Dra. Sara Martínez» → Sara', getFirstName('Dra. Sara Martínez') === 'Sara'],
+  ]
+  for (const [n, ok] of casos) { if (!ok) failed++; console.log(`${ok ? '✓' : '✗'} agenda: ${n}`) }
 }
 
 // El total se contaba sumando los tres catalogos, asi que se quedo en 32

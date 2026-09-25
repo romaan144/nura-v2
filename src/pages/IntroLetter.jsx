@@ -1,3 +1,4 @@
+import { getFirstName } from '../utils/name'
 import { useState, useRef, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, RotateCcw, Send, Sparkles } from 'lucide-react'
@@ -57,7 +58,7 @@ export default function IntroLetter() {
     </div>
   )
 
-  const firstName = helper.name?.split(' ')?.[0] || ''
+  const firstName = getFirstName(helper.name) || ''
 
   function handleRegenerate() {
     const next = regenCount % 2 === 0

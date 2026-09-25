@@ -1,7 +1,8 @@
 import { useTitulo } from '../utils/titulo'
 import PageHeader from '../components/PageHeader'
 import PostCard from '../components/PostCard'
-import { slotsDe, tieneHuecos, ocupacionesDe, motivoSinHuecos, FRASE_SIN_HUECOS } from '../data/horarios'
+import { proximoHueco, ocupacionesDe } from '../data/horarios'
+import ElegirCita from '../components/ElegirCita'
 import { Button, SectionLabel, Skeleton } from '../components/ui'
 import { getObraDeHelper, obraAPost } from '../data/obraPosts'
 import ErrorBoundary from '../components/ErrorBoundary'
@@ -32,13 +33,11 @@ import { DEMO_MODE } from '../config'
 
 
 function BookingModal({ helper, onClose, onBook, onNavigate }) {
-  const { citas, services } = useUser()
-  const ocupadas = ocupacionesDe(citas, services)   // la ocupacion real, de ambos almacenes
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
   const [note, setNote] = useState('')
   const [done, setDone] = useState(false)
-  const name = helper?.name?.split(' ')?.[0] || helper?.name || ''
+  const name = getFirstName(helper?.name)
 
   function confirm() {
     onBook?.(helper, date, time, note)   // fecha y hora, ya estructuradas
@@ -103,68 +102,15 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
             <h3 style={{fontSize:'var(--text-md)',fontWeight:800,margin:'0 0 var(--space-4)',color:'var(--ink-primary)',letterSpacing:'-0.3px'}}>Solicitar servicio</h3>
             <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:'0 0 var(--space-20)'}}>{name} · {helper?.price || 'Precio a consultar'}</p>
             <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)',marginBottom:'var(--space-20)'}}>
-              {/* Day pills */}
-              <div>
-                <SectionLabel tone="muted" style={{margin:'0 0 var(--space-8)',color:'var(--ink-tertiary)'}}>Fecha</SectionLabel>
-                <div className={styles.rowScroll}>
-                  {Array.from({length:7},(_,i)=>{
-                    const d=new Date(); d.setDate(d.getDate()+i)
-                    const iso=d.toISOString().split('T')[0]
-                    const abierto = tieneHuecos(helper, iso, ocupadas)
-                    const lbl=i===0?'Hoy':i===1?'Mañana':d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric'})
-                    return (
-                      <button key={i} onClick={()=>{ if(abierto){ setDate(iso); setTime(null) } }}
-                        disabled={!abierto} style={{
-                        flexShrink:0,padding:'var(--space-8) var(--space-14)',
-                        opacity: abierto ? 1 : 0.35,
-                        background:date===iso?'var(--purple)':'var(--surface-subtle)',
-                        color:date===iso?'white':'var(--ink-secondary)',
-                        border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
-                        cursor:'pointer',fontFamily:'inherit',transition:'all 0.15s',
-                        whiteSpace:'nowrap',
-                      }}>{lbl}</button>
-                    )
-                  })}
-                </div>
-              </div>
-              {/* Time pills */}
-              <div>
-                <SectionLabel tone="muted" style={{margin:'0 0 var(--space-8)',color:'var(--ink-tertiary)'}}>Hora</SectionLabel>
-                <div style={{display:'flex',gap:'var(--space-6)',flexWrap:'wrap'}}>
-                  {(() => {
-                    const slots = slotsDe(helper, date, ocupadas)
-                    if (!slots.length) return (
-                      <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:0}}>
-                        {FRASE_SIN_HUECOS[motivoSinHuecos(helper, date)]}
-                      </p>
-                    )
-                    return slots.map(({hora, estado}) => {
-                      const libre = estado === 'libre'
-                      const sel = time === hora
-                      return (
-                        <button key={hora} onClick={()=>{ if(libre) setTime(hora) }} disabled={!libre}
-                          title={libre ? '' : estado === 'ocupada' ? 'Ocupada' : 'Pendiente de confirmar'}
-                          style={{
-                            padding:'7px var(--space-12)',
-                            background: sel ? 'var(--purple)' : libre ? 'var(--surface-subtle)' : 'transparent',
-                            color: sel ? 'white' : libre ? 'var(--ink-secondary)' : 'var(--ink-tertiary)',
-                            border: libre ? 'none' : '1px dashed var(--ink-border)',
-                            textDecoration: estado === 'ocupada' ? 'line-through' : 'none',
-                            borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
-                            cursor: libre ? 'pointer' : 'default', fontFamily:'inherit',
-                          }}>{hora}</button>
-                      )
-                    })
-                  })()}
-                </div>
-              </div>
+              <ElegirCita helper={helper} date={date} time={time} onDate={setDate} onTime={setTime} />
               <textarea value={note} onChange={e=>setNote(e.target.value)}
                 placeholder="Detalles adicionales (opcional)..." rows={3}
                 style={{...style.input, resize:'none'}} />
             </div>
-            <div className={styles.rowGap8}>
-              <button onClick={onClose} style={{...style.btnSecondary,flex:1}}>Cancelar</button>
-              <Button variant="primary" onClick={confirm} disabled={!date}
+            <div style={{display:'flex', alignItems:'center', gap:'var(--space-8)'}}>
+              <button onClick={onClose} style={{...style.btnSecondary, width:'auto', flex:1}}>Cancelar</button>
+              {/* Día Y hora: una cita sin hora no es una cita (en el chat ya se exigía). */}
+              <Button variant="primary" onClick={confirm} disabled={!date || !time}
                 style={{flex:2}}>
                 Enviar solicitud
               </Button>
@@ -198,7 +144,7 @@ function HelperProfileInner() {
   const location   = useLocation()
   const [verTodaLaObra, setVerTodaLaObra] = useState(false)
   const [verTrayectoria, setVerTrayectoria] = useState(false)
-  const { user, addService } = useUser()
+  const { user, addService, citas, services } = useUser()
 
   const [h, setH]             = useState(location.state?.helper || null)
 
@@ -275,7 +221,9 @@ function HelperProfileInner() {
     </div>
   )
 
-  const firstName = enrichedH.name?.split(' ')?.[0] || ''
+  const firstName = getFirstName(enrichedH.name) || ''
+  // El próximo hueco libre, a la vista sin abrir la agenda.
+  const hueco = proximoHueco(enrichedH, ocupacionesDe(citas, services))
 
   // Primary education for hero display
   const mainEdu = enrichedH.education?.[0]
@@ -295,7 +243,7 @@ function HelperProfileInner() {
   }
 
   async function handleShare() {
-    const nombre = enrichedH?.name?.split(' ')[0] || ''
+    const nombre = getFirstName(enrichedH?.name) || ''
     const r = await compartirEnlace({
       url: enlaceDeFicha(enrichedH?.id ?? id),
       titulo: `${enrichedH?.name || 'Profesional'} en Nüra`,
@@ -782,9 +730,11 @@ function HelperProfileInner() {
     
       {/* La Barra de Accion: escribir esta siempre a un pulgar */}
       <div className={styles.actionBar}>
-        <Button variant="secondary" style={{flex:'0 1 38%'}}
-          onClick={() => user ? setShowConfirm(true) : setShowGate(true)}>
-          <Calendar size={14} /> Disponibilidad
+        <Button variant="secondary" style={{flex:'0 1 38%', flexDirection:'column', gap:0, lineHeight:1.15}}
+          onClick={() => user ? setShowConfirm(true) : setShowGate(true)}
+          aria-label={hueco ? `Disponibilidad. Próximo hueco: ${textoHueco(hueco)}` : 'Disponibilidad'}>
+          <span style={{display:'inline-flex', alignItems:'center', gap:'var(--space-6)'}}><Calendar size={14} /> Disponibilidad</span>
+          {hueco && <span style={{fontSize:11, fontWeight:600, color:'var(--green-ink, #067647)'}}>{textoHueco(hueco)}</span>}
         </Button>
         <Button variant="primary" style={{flex:'1 1 62%', boxShadow:'0 4px 16px var(--purple-30)'}}
           onClick={handleContact}>
@@ -793,6 +743,13 @@ function HelperProfileInner() {
       </div>
 </div>
   )
+}
+
+function textoHueco({ fecha, hora, dentro }) {
+  if (dentro === 0) return `Hoy ${hora}`
+  if (dentro === 1) return `Mañana ${hora}`
+  const d = new Date(fecha + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' }).replace('.', '')
+  return `${d} ${hora}`
 }
 
 function tiempoHumano(min) {

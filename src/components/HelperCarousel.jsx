@@ -1,3 +1,4 @@
+import { getFirstName } from '../utils/name'
 import { useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Star, Shield, MessageCircle, UserPlus, UserCheck, MapPin, Sparkles } from 'lucide-react'
@@ -68,7 +69,7 @@ function CarouselCard({ helper, isTopPick, matchReason }) {
 
       {/* Name + verified */}
       <div className={styles.name}>
-        {helper.name?.split(' ')?.[0]}
+        {getFirstName(helper.name)}
         {helper.dniVerified && (
           <Shield size={9} color="var(--green)" style={{ marginLeft: 3, verticalAlign: 'middle' }} />
         )}

@@ -1,3 +1,4 @@
+import { getFirstName } from '../utils/name'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
@@ -53,7 +54,7 @@ export default function Feed() {
     // El sello solo si la confirmacion es real
     confirmado: s.mine ? confirmadas.has(s.helper?.id) : !!s.confirmed,
     body: s.text,
-    mention: s.helper?.name?.split(' ')?.[0],
+    mention: getFirstName(s.helper?.name),
     kind: 'conexion',
     mine: s.mine,
   }))

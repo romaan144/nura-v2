@@ -160,7 +160,7 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
   const confirmedContacts = (contactedHelpers || []).filter(c => c?.confirmed === true)
   if (confirmedContacts.length > 0) {
     const last = confirmedContacts[confirmedContacts.length - 1]
-    const helperFirst = last.name?.split(' ')?.[0] || last.name
+    const helperFirst = getFirstName(last.name) || last.name
     // El Espejo — si este contacto está vinculado a una persona, preguntar por ella
     const linkedPersona = (personas || []).find(p => (p.contactedHelperIds || []).includes(last.id))
     if (linkedPersona) {
@@ -190,7 +190,7 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
   const pendingContacts = (contactedHelpers || []).filter(c => c?.id && c?.confirmed === undefined)
   if (pendingContacts.length > 0) {
     const last = pendingContacts[pendingContacts.length - 1]
-    const helperFirst = last.name?.split(' ')?.[0] || last.name
+    const helperFirst = getFirstName(last.name) || last.name
     return [
       saludo,
       `¿Pudiste resolver lo que necesitabas con **${helperFirst}**? ¿O buscamos otra persona?`
@@ -604,7 +604,7 @@ export default function Home() {
             lines: [(() => {
               const lp = (personas || []).find(p => (p.contactedHelperIds || []).includes(pending.id))
               const ci = (citas || []).slice().reverse().find(x => x.helperId === pending.id)
-              const hn = pending.name?.split(' ')?.[0] || pending.name
+              const hn = getFirstName(pending.name) || pending.name
               if (ci) return `¿Qué tal fue la visita del ${ci.label} con **${hn}**${lp ? ` para ${lp.label}` : ''}? ¿Pudisteis resolverlo?`
               return lp
                 ? `¿Pudiste resolver lo que necesitabas para ${lp.label} con **${hn}**?`
@@ -829,7 +829,7 @@ export default function Home() {
       // User confirms — guide to profile
       if (esBreve && (palabra('sí','si','vale','ok','ese','esa','bien','genial','perfecto') || t.includes('me convence'))) {
         const topMatch = lastMatches?.[0]
-        const firstName = topMatch?.name?.split(' ')?.[0] || ''
+        const firstName = getFirstName(topMatch?.name) || ''
         setTimeout(() => {
           setMessages(prev => [...prev, {
             id: Date.now(), from: 'nura',
@@ -1097,8 +1097,8 @@ export default function Home() {
         : 'profesionales'
       const top = matches?.[0]
       const zona = top?.zone || top?.city || 'Barcelona'
-      const topName = top?.name?.split(' ')?.[0] || ''
-      const topFirstName = top?.name?.split(' ')?.[0] || ''
+      const topName = getFirstName(top?.name) || ''
+      const topFirstName = getFirstName(top?.name) || ''
       // La Gramática de la Recomendación — humana, breve, segura
       const why = buildWhy(top, analysis)
       const urgentTail = analysis?.urgente ? ' — y puede estar allí hoy mismo' : ''

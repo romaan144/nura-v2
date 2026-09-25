@@ -1,10 +1,11 @@
+import { getFirstName } from '../utils/name'
 import { useTitulo } from '../utils/titulo'
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Send, Shield, Award, Calendar, Mic, MicOff } from 'lucide-react'
 import { HELPERS_DEMO as HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
-import { slotsDe, ocupacionesDe, motivoSinHuecos, FRASE_SIN_HUECOS } from '../data/horarios'
+import ElegirCita from '../components/ElegirCita'
 import { getHelperById } from '../utils/supabase'
 import { registrarConversacion, respuestasDe, enviarPropuestaCita, enviarAlProfesional, idsPendientes } from '../utils/escrituras'
 import { avisarCuandoConteste, movilPuedeAvisar, esIphoneSinInstalar } from '../utils/alertas'
@@ -101,19 +102,13 @@ function extractDateFromMessages(messages) {
 // ── Confirm Service Modal ─────────────────────────────────────────────────
 function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) {
   const navigate = useNavigate()
-  // LA AGENDA, tambien aqui. Esta hoja hardcodeaba las mismas ocho horas
-  // para todo el mundo, sin mirar el oficio, la ocupacion ni el reloj:
-  // medido a las 23:33, ofrecia los ocho huecos de HOY — los ocho ya
-  // pasados. Y podia reservar una hora ya cogida, que es justo el fallo
-  // que `ocupacionesDe` nacio para cerrar. La ficha del profesional si lo
-  // hacia bien: dos hojas de reserva con dos logicas era el problema.
-  const { citas, services } = useUser()
-  const ocupadas = ocupacionesDe(citas, services)
+  // El día y la hora se eligen con ElegirCita, la misma pieza que en la
+  // ficha: antes había dos hojas de reserva con dos lógicas distintas.
   const [date, setDate] = useState(prefillDate || '')
   const [time, setTime] = useState(prefillTime || '')
   const [note, setNote] = useState('')
   const [done, setDone] = useState(false)
-  const name = helper.name?.split(' ')?.[0] || helper.name
+  const name = getFirstName(helper.name) || helper.name
 
   if (done) return (
     <div style={{position:'fixed',inset:0,background: 'rgba(30,25,40,0.35)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:200,display:'flex',alignItems:'center',justifyContent:'center',padding:'var(--space-20)'}}>
@@ -176,64 +171,7 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
           </div>
         )}
         <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)',marginBottom:'var(--space-20)'}}>
-          {/* Day pills */}
-          <div>
-            <SectionLabel tone="muted" style={{margin:'0 0 var(--space-8)',color:'var(--ink-tertiary)'}}>Fecha</SectionLabel>
-            <div style={{display:'flex',gap:'var(--space-6)',overflowX:'auto',paddingBottom:'var(--space-4)'}}>
-              {Array.from({length:7},(_,i)=>{
-                const d=new Date(); d.setDate(d.getDate()+i)
-                const iso=d.toISOString().split('T')[0]
-                const lbl=i===0?'Hoy':i===1?'Mañana':d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric'})
-                return (
-                  <button key={i} onClick={()=>setDate(iso)} style={{
-                    flexShrink:0,padding:'var(--space-8) var(--space-14)',
-                    background:date===iso?'var(--purple)':'rgba(33,29,51,0.05)',
-                    color:date===iso?'white':'var(--ink-secondary)',
-                    border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
-                    cursor:'pointer',fontFamily:'inherit',transition:'all 0.15s',whiteSpace:'nowrap',
-                  }}>{lbl}</button>
-                )
-              })}
-            </div>
-          </div>
-          {/* Time pills */}
-          <div>
-            <SectionLabel tone="muted" style={{margin:'0 0 var(--space-8)',color:'var(--ink-tertiary)'}}>Hora</SectionLabel>
-            <div style={{display:'flex',gap:'var(--space-6)',flexWrap:'wrap'}}>
-              {(() => {
-                if (!date) return (
-                  <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:0}}>
-                    Elige antes un día.
-                  </p>
-                )
-                const slots = slotsDe(helper, date, ocupadas)
-                if (!slots.length) return (
-                  <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:0}}>
-                    {FRASE_SIN_HUECOS[motivoSinHuecos(helper, date)]}
-                  </p>
-                )
-                return slots.map(({hora, estado}) => {
-                  const libre = estado === 'libre'
-                  return (
-                    <button key={hora} onClick={()=>{ if(libre) setTime(hora) }} disabled={!libre}
-                      title={libre ? '' : estado === 'ocupada' ? 'Ocupada' : 'Pendiente de confirmar'}
-                      style={{
-                        padding:'7px var(--space-12)',
-                        background:time===hora?'var(--purple)':libre?'rgba(33,29,51,0.05)':'transparent',
-                        /* Las ocupadas ya dicen "no disponible" con el tachado y el
-                           borde discontinuo; el gris al 28% solo las hacia
-                           ilegibles. Se lee "17:00" y se ve que esta tomada. */
-                        color:time===hora?'white':libre?'var(--ink-secondary)':'var(--ink-tertiary)',
-                        border:libre?'none':'1px dashed rgba(33,29,51,0.18)',
-                        borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,
-                        cursor:libre?'pointer':'not-allowed',fontFamily:'inherit',transition:'all 0.15s',
-                        textDecoration:libre?'none':'line-through',
-                      }}>{hora}</button>
-                  )
-                })
-              })()}
-            </div>
-          </div>
+          <ElegirCita helper={helper} date={date} time={time} onDate={setDate} onTime={setTime} />
           <textarea value={note} onChange={e=>setNote(e.target.value)}
             placeholder="Detalles adicionales (opcional)..." rows={3}
             style={{padding:'var(--space-12) var(--space-16)',border:'1px solid rgba(33,29,51,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',resize:'none',fontFamily:'-apple-system,Inter,sans-serif',color:'var(--ink-primary)',background:'var(--surface-subtle)'}} />
@@ -245,7 +183,7 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
               se activaba igual. Se podia enviar una solicitud sin hora — y
               llegaba al profesional como "sabado, 5 de septiembre" a secas.
               Una cita sin hora no es una cita. */}
-          <button onClick={()=>{ onConfirm?.(date, time, note); setDone(true); notifyServiceConfirmed(helper.name?.split(' ')?.[0] || helper.name); haptic('success') }} disabled={!date || !time}
+          <button onClick={()=>{ onConfirm?.(date, time, note); setDone(true); notifyServiceConfirmed(getFirstName(helper.name) || helper.name); haptic('success') }} disabled={!date || !time}
             style={{flex:2,padding:'var(--space-14)',background:(date&&time)?'var(--purple)':'rgba(33,29,51,0.1)',color:(date&&time)?'white':'var(--ink-tertiary)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:(date&&time)?'pointer':'default',transition:'all 0.2s'}}>
             Enviar solicitud
           </button>
@@ -288,7 +226,7 @@ export default function Chat() {
     return () => window.removeEventListener('nura:pendientes', ver)
   }, [])
   const [intento, setIntento]   = useState(0)
-  useTitulo(helper?.name ? `Chat con ${helper.name.split(' ')[0]}` : null)
+  useTitulo(helper?.name ? `Chat con ${getFirstName(helper.name)}` : null)
   useEffect(() => {
     if (helper) return
     let vivo = true
@@ -343,7 +281,7 @@ export default function Chat() {
   // a alguien que aun no sabe que le han escrito.
   useEffect(() => {
     if (DEMO_MODE && messages.length === 0 && helper && !location.state?.introLetterText) {
-      const firstName = helper.name?.split(' ')?.[0] || helper.name
+      const firstName = getFirstName(helper.name) || helper.name
       const welcomeMsg = {
         id: 'welcome',
         from: 'helper',
@@ -456,7 +394,7 @@ export default function Chat() {
         // profesional fingiendo estar al otro lado.
         const greeting = DEMO_MODE
           ? getHelperReply(helper, 0, '')
-          : `Escríbele a ${helper.name?.split(' ')?.[0] || 'esta persona'}. Le aviso de que le has escrito y te traigo su respuesta aquí.`
+          : `Escríbele a ${getFirstName(helper.name) || 'esta persona'}. Le aviso de que le has escrito y te traigo su respuesta aquí.`
         const greetMsg = {
           id: Date.now(),
           // Lo dice Nüra, y se ve como de Nüra: con la foto del profesional
@@ -572,7 +510,7 @@ export default function Chat() {
     // lo honesto es decir que el mensaje esta enviado y que avisaremos.
     const isFirstContact = msgCount === 0
     if (!DEMO_MODE) {
-      const quien = helper.name?.split(' ')?.[0] || 'la persona'
+      const quien = getFirstName(helper.name) || 'la persona'
       // Solo se dice «enviado» cuando de verdad ha salido.
       envio.then(r => {
         if (r === 'fallo') {
@@ -627,7 +565,7 @@ export default function Chat() {
   // tocado) y deja la suscripcion en SU conversacion. Se dice lo que pasa.
   async function pedirAvisoRespuesta(msgId) {
     setMessages(prev => prev.map(m => m.id === msgId ? { ...m, chips: undefined } : m))
-    const nombre = helper?.name?.split(' ')?.[0] || 'la persona'
+    const nombre = getFirstName(helper?.name) || 'la persona'
     const r = await avisarCuandoConteste(helper?.id, nombre)
     const texto = r.ok ? `Hecho: cuando ${nombre} conteste, te llegará una notificación a este móvil.`
       : r.motivo === 'denegado' ? 'El móvil no ha dado permiso para notificaciones. Puedes activarlo en los ajustes del navegador; mientras, la respuesta te llega aquí.'

@@ -1,4 +1,5 @@
 import { avatarDe } from '../utils/avatar'
+import { getFirstName } from './name'
 
 // ── Contexto de precio por categoría (mercado Barcelona) ──────────────────
 // Usado por Nüra para contextualizar el precio de cada helper al usuario
@@ -30,7 +31,7 @@ export function getPriceContext(helper, categoria) {
   const isAbove = helperNum > ctx.hi
   const isAvg   = helperNum >= ctx.lo && helperNum <= ctx.hi
 
-  const helperName = helper.name?.split(' ')?.[0] || 'Este profesional'
+  const helperName = getFirstName(helper.name) || 'Este profesional'
   // Los precios de referencia son de Barcelona: fuera, no se compara.
   const ciudad = ciudadDe(helper)
   if (ciudad && ciudad !== 'Barcelona') return null

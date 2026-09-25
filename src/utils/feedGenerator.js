@@ -1,3 +1,4 @@
+import { getFirstName } from './name'
 // ── FEED GENERATOR ────────────────────────────────────────────────────────
 // Genera posts dinámicos y ricos desde datos reales de profesionales.
 // Determinístico por día — el feed cambia cada día pero es consistente.
@@ -128,7 +129,7 @@ function makeAvailabilityPost(helper, index) {
 
 function makeNewHelperPost(helper) {
   if (!helper.specialty) return null
-  const name = helper.name?.split(' ')?.[0] || 'Hola'
+  const name = getFirstName(helper.name) || 'Hola'
   return {
     id: `new_${helper.id}`,
     type: 'new_helper',
