@@ -105,6 +105,21 @@ const SOLO_CATEGORIA = [
   { q: 'quiero comer más sano', cat: 'salud' },
   { q: 'necesito traducir unos documentos al inglés', cat: 'idiomas' },
   { q: 'traducir mi título al inglés', cat: 'idiomas' },
+  // Barrido 2026-09-25: faltas, catalán y casos límite (38 de 50 → 50 de 50).
+  { q: 'fontanro urgente', cat: 'tecnico' },
+  { q: 'logopeta para mi hijo', cat: 'logopedia' },
+  { q: 'sicologa', cat: 'salud' },
+  { q: 'fisioterapueta', cat: 'salud' },
+  { q: 'cerragero', cat: 'tecnico' },
+  { q: 'busco un lampista', cat: 'tecnico' },
+  { q: 'necessito un fuster', cat: 'tecnico' },
+  { q: 'classes de repàs', cat: 'clases' },
+  { q: 'advocat', cat: 'legal' },
+  { q: 'gos', cat: 'mascotas' },
+  { q: 'monitor de tiempo libre', cat: 'cuidado' },
+  { q: 'canguro de gatos', cat: 'mascotas' },
+  { q: 'necesito limpiar mi casa mañana', cat: 'hogar' },
+  { q: 'fontaneros en Gràcia', cat: 'tecnico' },
 ]
 
 const HONESTY = ['asdfgh qwerty zzz', 'necesito algo no sé muy bien qué']
