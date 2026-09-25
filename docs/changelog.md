@@ -2291,3 +2291,8 @@ registradas retroactivamente con su motivo:
 - Al entrar, Nüra dice «Carlos te ha contestado» con «Leer la respuesta» (abre ese chat). Una vez por visita.
 - Arreglo: el saludo del chat vacío («Escríbele a…») ya no borra una respuesta que haya entrado antes que él.
 - Comprobado en navegador: inicio, insignia, lista, abrir el chat con la respuesta y que al leerla desaparece el aviso.
+
+## 2026-09-25 · Respuestas rápidas para la profesional
+- En `/r/:token`, botones que rellenan la respuesta (no la envían): «Tengo hueco», «Cuéntame más», «Ahora no puedo». Si el mensaje es una propuesta de cita: «Me va bien», «Proponer otro día», «No puedo».
+- El cursor queda al final para seguir escribiendo («Tengo hueco » → «los martes por la tarde»).
+- Comprobado en navegador: los dos juegos de botones y una respuesta enviada con la frase completada.
