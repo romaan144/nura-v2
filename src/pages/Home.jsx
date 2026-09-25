@@ -1013,7 +1013,9 @@ export default function Home() {
           registrarDemanda?.({ categoria: analysis.categoria, fecha: Date.now() })
           registrar('sin_cobertura', { categoria: analysis.categoria })
           setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
-            lines: [`Te he entendido: buscas ${queEs}. Ahora mismo no tengo a nadie así cerca de ti.`],
+            lines: [analysis.ciudad && analysis.ciudad !== 'Barcelona'
+              ? `Te he entendido: buscas ${queEs} en ${analysis.ciudad}. Nüra acaba de empezar y todavía no tengo a nadie allí.`
+              : `Te he entendido: buscas ${queEs}. Ahora mismo no tengo a nadie así cerca de ti.`],
             chips: [`Buscar ${alt.alt}`, 'Ampliar la zona', 'Avísame cuando tengas a alguien'] }])
           // Aqui NO se pregunta si recordar: solo se ven las opciones del
           // ultimo mensaje, y taparia estas.
@@ -1203,7 +1205,7 @@ export default function Home() {
       // ampliando aparecera alguien seria mentir dos veces.
       haptic('light')
       responde(
-        ['He mirado en toda Barcelona, no solo en tu barrio — todavia no tengo a nadie asi.'],
+        [`He mirado en toda ${window.__nuraLastAnalysis?.ciudad || 'la ciudad'}, no solo en tu barrio — todavía no tengo a nadie así.`],
         ['Avisame cuando tengas a alguien']
       )
       return

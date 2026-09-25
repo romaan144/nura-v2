@@ -67,7 +67,7 @@ export default function Siguiendo() {
                     <div className={styles.meta}>
                       <Star size={11} fill="var(--amber)" color="var(--amber)" /> {fmtNota(h.rating)}
                       <span>·</span>
-                      <MapPin size={11} /> {h.zone || 'Barcelona'}
+                      <MapPin size={11} /> {h.zone || h.city || 'Barcelona'}
                       <span>·</span>
                       {h.price && h.price !== 'Consultar' ? <strong>{h.price}</strong> : <span>Consultar</span>}
                     </div>

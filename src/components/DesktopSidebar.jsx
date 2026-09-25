@@ -61,7 +61,7 @@ export default function DesktopSidebar() {
       )}
 
       <div className={styles.footer}>
-        <p>Nüra · Barcelona · 2026</p>
+        <p>Nüra · 2026</p>
       </div>
     </aside>
   )

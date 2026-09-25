@@ -1,3 +1,4 @@
+import { ciudadEnTexto } from '../data/ciudades'
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
@@ -23,7 +24,7 @@ import { ordenarPerfil, confirmarDeclarado } from '../utils/declarado'
 const CAMPOS = [
   { k: 'specialty',      label: 'Tu especialidad',        ej: 'Logopeda infantil' },
   { k: 'formation',      label: 'Tu formación',           ej: 'Grado en Logopedia, UB', largo: true },
-  { k: 'zone',           label: 'Dónde trabajas',         ej: 'Gràcia, Barcelona' },
+  { k: 'zone',           label: 'Dónde trabajas',         ej: 'Barcelona, Gràcia · Madrid, Chamberí' },
   { k: 'price',          label: 'Tu tarifa',              ej: '45 € la sesión' },
   { k: 'differentiator', label: 'Qué te diferencia',      ej: 'Trabajo con juego, sin prisas', largo: true },
   { k: 'contacto',       label: 'Dónde te avisamos',      ej: 'Tu móvil o tu correo',
@@ -70,7 +71,8 @@ export default function EditarFicha({ onClose }) {
       const cambios = {
         specialty: limpio.specialty || '',
         bio: [limpio.formation, limpio.differentiator].filter(Boolean).join('. '),
-        zone: limpio.zone || 'Barcelona',
+        zone: limpio.zone || null,
+        ...(ciudadEnTexto(limpio.zone) ? { city: ciudadEnTexto(limpio.zone) } : {}),
         price: limpio.price || null,
         online: /online|las dos/i.test(limpio.modality || ''),
         contacto: limpio.contacto || null,

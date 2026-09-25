@@ -10,6 +10,28 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — Primer paso para más ciudades
+
+- **El alta guardaba a TODOS los profesionales en Barcelona**
+  (`city: 'Barcelona'` fijo) y preguntaba «¿En qué zona de Barcelona
+  trabajas?». Ahora pregunta «¿En qué ciudad y zona trabajas?» y la ciudad
+  se lee de la respuesta (`src/data/ciudades.js`: ~60 ciudades de España;
+  un barrio de Barcelona cuenta como Barcelona). Si no se reconoce, queda
+  sin ciudad en vez de inventar Barcelona. Igual al editar la ficha.
+- **La búsqueda entiende la ciudad**: «fontanero en Madrid» solo muestra a
+  quien trabaja en Madrid o atiende online. Si no hay nadie: «Nüra acaba
+  de empezar y todavía no tengo a nadie allí» (y se ofrece el aviso).
+  Sin ciudad en la frase, no se filtra. Las ambiguas (León, Granada,
+  Santander…) solo cuentan tras «en», «de», «por»…
+- Los precios de referencia son de Barcelona: fuera de Barcelona ya no se
+  compara con ellos.
+- Fuera «Barcelona» de textos que la daban por hecha (barra lateral del
+  ordenador, puerta de registro, «he mirado en toda Barcelona»).
+- `npm run test:matching`: 138 (15 nuevas de ciudad).
+- **Sigue pendiente**: los barrios con distancia y las alertas «cerca de»
+  solo existen para Barcelona; la página `/profesionales` habla de Barcelona
+  a propósito (es donde empieza).
+
 ## 2026-09-25 — Retirada la fila «Instala Nüra en tu móvil»
 
 - **Decisión del fundador:** «la idea es acabar haciendo la app, mi
