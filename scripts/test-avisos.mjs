@@ -435,6 +435,25 @@ console.log('\n── El aviso le llega solo al profesional con correo ──')
   await cargarFuncion(ENV)   // lo que viene despues, sin proveedor de correo
 }
 
+console.log('\n── Avísame cuando conteste ──')
+{
+  const SUB = { endpoint: 'https://fcm.googleapis.com/fcm/send/ficticio-resp', keys: { p256dh: 'x', auth: 'y' } }
+  let r = await llamarG(funcion, { op: 'encolar-aviso', helperId: 7, mensaje: 'Espero respuesta (ficticio)' })
+  const llave = r.datos.lectura, av = db.avisos.at(-1)
+  r = await llamarG(funcion, { op: 'avisar-respuesta', llave, push: { endpoint: 'https://atacante.test/x' } })
+  ok(r.estado === 400 && !av.push, 'solo servicios de notificaciones reales')
+  r = await llamarG(funcion, { op: 'avisar-respuesta', llave: '0'.repeat(32), push: SUB })
+  ok(r.estado === 404, 'con una llave inventada no se apunta nada')
+  r = await llamarG(funcion, { op: 'avisar-respuesta', llave, push: SUB })
+  ok(r.estado === 200 && av.push?.endpoint === SUB.endpoint, 'con su llave, deja su móvil en SU conversación')
+  const antes = tocados.length
+  r = await llamarG(funcion, { op: 'responder-aviso', token: av.token, respuesta: 'Hola, sí puedo (ficticio)' })
+  ok(r.estado === 200 && tocados.length === antes + 1 && tocados.at(-1).url === SUB.endpoint && !tocados.at(-1).init.body, 'al contestar, se toca ese móvil, sin contenido')
+  ok(av.push === null, 'y se olvida la suscripción: se usa una vez')
+  r = await llamarG(funcion, { op: 'avisar-respuesta', llave, push: SUB })
+  ok(r.estado === 404 && av.push === null, 'si ya contestó, no se apunta')
+}
+
 console.log('\n── Lo declarado: solo lo que confirma el profesional ──')
 {
   const bueno = [

@@ -2245,3 +2245,10 @@ registradas retroactivamente con su motivo:
 - Para volver a hacerlo todo a mano: secreto `NURA_AVISOS_MANUALES=1`.
 - El mensaje va escapado y la llave de lectura de quien escribe nunca va en el correo.
 - `helpers-write` v13. 8 pruebas nuevas (`npm run test:avisos`, 122).
+
+## 2026-09-25 · «Avísame cuando conteste»
+- Tras el primer mensaje a un profesional, el chat ofrece «Avísame cuando conteste» (solo si el móvil admite notificaciones; en iPhone, desde la pantalla de inicio). Nada se pide hasta tocarlo.
+- La suscripción del móvil se guarda en ESA conversación (op `avisar-respuesta`, con su llave de lectura) solo hasta que conteste: al responder, `responder-aviso` toca el móvil una vez y la borra.
+- La notificación va vacía. `public/sw.js` pregunta a Nüra con las llaves que la app dejó en IndexedDB (`src/utils/esperando.js`) y enseña «Carlos te ha contestado», que abre ese chat. Si no hay respuesta nueva, es el aviso de «Te aviso si aparece».
+- «Borrar mis datos» borra también esa lista. Política de privacidad actualizada.
+- `helpers-write` v14 · migración `20260929000000_avisar_cuando_conteste.sql` aplicada. 6 pruebas nuevas (`npm run test:avisos`, 128) y el recorrido real comprueba que se ofrece. Comprobado en navegador con una notificación simulada.
