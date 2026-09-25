@@ -207,6 +207,9 @@ function HelperProfileInner() {
     ? { ...DEMO_ENRICHMENTS[h.id], ...h, qualitativeComments: h.qualitativeComments || DEMO_ENRICHMENTS[h.id].qualitativeComments }
     : h
   const [loading, setLoading] = useState(!h)
+  // Sin red no es lo mismo que «no existe»: se ofrece reintentar.
+  const [sinRed, setSinRed]   = useState(false)
+  const [intento, setIntento] = useState(0)
   useTitulo(enrichedH?.name ? [enrichedH.name, enrichedH.specialty].filter(Boolean).join(' · ') : null)
   const [showConfirm, setShowConfirm] = useState(false)
   const [showRating, setShowRating]   = useState(false)
@@ -225,10 +228,10 @@ function HelperProfileInner() {
     if (!h) {
       const local = HELPERS.find(x => x && String(x.id) === String(id))
       if (local) { setH(local); setLoading(false); return }
-      getHelperById(id).then(r => { if (r) setH(r); setLoading(false) })
-        .catch(() => setLoading(false))
+      getHelperById(id).then(r => { if (r) setH(r); setSinRed(false); setLoading(false) })
+        .catch(() => { setSinRed(true); setLoading(false) })
     }
-  }, [id])
+  }, [id, intento])   // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) return (
     <div className={styles.page}>
@@ -249,13 +252,22 @@ function HelperProfileInner() {
       <div className={styles.notFound} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'var(--space-12)'}}>
         <div style={{fontSize:'var(--text-xl)'}}>🤍</div>
         <p style={{fontSize:'var(--text-base)',color:'var(--ink)',lineHeight:1.5,margin:0}}>
-          Esta persona ya no está en Nüra.
+          {sinRed ? 'No he podido cargar esta ficha.' : 'Esta persona ya no está en Nüra.'}
         </p>
         <p style={{fontSize:'var(--text-sm)',color:'var(--ink-secondary)',lineHeight:1.5,margin:0}}>
-          Puede que el enlace sea antiguo. Puedo buscarte a alguien ahora mismo.
+          {sinRed ? 'Parece un problema de conexión. Vuelve a intentarlo en un momento.'
+                  : 'Puede que el enlace sea antiguo. Puedo buscarte a alguien ahora mismo.'}
         </p>
-        <button onClick={() => navigate('/')} style={{marginTop:'var(--space-8)',padding:'var(--space-12) var(--space-24)',
-          background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',
+        {sinRed && (
+          <button onClick={() => { setLoading(true); setIntento(n => n + 1) }} style={{marginTop:'var(--space-8)',padding:'var(--space-12) var(--space-24)',
+            background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',
+            fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
+            Reintentar
+          </button>
+        )}
+        <button onClick={() => navigate('/')} style={{marginTop: sinRed ? 0 : 'var(--space-8)',padding:'var(--space-12) var(--space-24)',
+          ...(sinRed ? {background:'transparent',color:'var(--purple-ink)'} : {background:'var(--purple)',color:'white'}),
+          border:'none',borderRadius:'var(--radius-full)',
           fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
           Buscar a alguien
         </button>

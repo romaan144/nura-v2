@@ -279,15 +279,17 @@ export default function Chat() {
   // pantalla de 0 caracteres, sin cabecera ni salida, prometiendo algo que
   // no iba a llegar. Un callejon sin puerta es peor que un error.
   const [buscando, setBuscando] = useState(!helper)
+  const [sinRed, setSinRed]     = useState(false)
+  const [intento, setIntento]   = useState(0)
   useTitulo(helper?.name ? `Chat con ${helper.name.split(' ')[0]}` : null)
   useEffect(() => {
     if (helper) return
     let vivo = true
     getHelperById(id)
-      .then(h => { if (!vivo) return; if (h) setHelper(h); setBuscando(false) })
-      .catch(() => { if (vivo) setBuscando(false) })
+      .then(h => { if (!vivo) return; if (h) setHelper(h); setSinRed(false); setBuscando(false) })
+      .catch(() => { if (vivo) { setSinRed(true); setBuscando(false) } })
     return () => { vivo = false }
-  }, [id])   // eslint-disable-line react-hooks/exhaustive-deps
+  }, [id, intento])   // eslint-disable-line react-hooks/exhaustive-deps
 
   const [messages, setMessages] = useState(() => {
     const real = getChatHistory(id)
@@ -482,13 +484,22 @@ export default function Chat() {
       height:'100dvh',background:'var(--paper)',padding:'var(--space-32)',textAlign:'center',gap:'var(--space-12)'}}>
       <div style={{fontSize:'var(--text-xl)'}}>🤍</div>
       <p style={{fontSize:'var(--text-base)',color:'var(--ink)',lineHeight:1.5,margin:0}}>
-        Esta conversación ya no está disponible.
+        {sinRed ? 'No he podido abrir esta conversación.' : 'Esta conversación ya no está disponible.'}
       </p>
       <p style={{fontSize:'var(--text-sm)',color:'var(--ink-secondary)',lineHeight:1.5,margin:0}}>
-        Puede que el enlace sea antiguo. Puedo buscarte a alguien ahora mismo.
+        {sinRed ? 'Parece un problema de conexión. Vuelve a intentarlo en un momento.'
+                : 'Puede que el enlace sea antiguo. Puedo buscarte a alguien ahora mismo.'}
       </p>
-      <button onClick={() => navigate('/')} style={{marginTop:'var(--space-8)',padding:'var(--space-12) var(--space-24)',
-        background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',
+      {sinRed && (
+        <button onClick={() => { setBuscando(true); setIntento(n => n + 1) }} style={{marginTop:'var(--space-8)',padding:'var(--space-12) var(--space-24)',
+          background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',
+          fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
+          Reintentar
+        </button>
+      )}
+      <button onClick={() => navigate('/')} style={{marginTop: sinRed ? 0 : 'var(--space-8)',padding:'var(--space-12) var(--space-24)',
+        ...(sinRed ? {background:'transparent',color:'var(--purple-ink)'} : {background:'var(--purple)',color:'white'}),
+        border:'none',borderRadius:'var(--radius-full)',
         fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
         Buscar a alguien
       </button>
