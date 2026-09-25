@@ -34,7 +34,7 @@ function prueba(a) {
 }
 
 const GRUPOS = [
-  ['medido', 'Medido por Nüra', 'Con lo que pasa en la app. Nunca leemos tus chats.'],
+  ['medido', 'Medido por Nüra', 'Con lo que pasa en la app. Nunca analizamos tus conversaciones.'],
   ['clientes', 'Lo dicen tus clientes', 'Al terminar un servicio, con un toque.'],
   ['declarado', 'Lo cuentas tú', 'Lo confirmaste tú. Puedes quitar lo que ya no sea cierto.'],
 ]
@@ -65,7 +65,7 @@ export default function LoQueSabeNura({ helperId, estilos: s, puedeCorregir }) {
       <h2 id="lo-que-sabe" className={s.titulo}>Lo que Nüra sabe de ti</h2>
       {!attrs.length ? (
         <p className={s.tarjetaTexto}>
-          Aún nada. Cuando te escriban y te valoren, aparecerá aquí y en tu ficha, siempre con su prueba. Nunca leemos tus chats.
+          Aún nada. Cuando te escriban y te valoren, aparecerá aquí y en tu ficha, siempre con su prueba. Nunca analizamos tus conversaciones.
         </p>
       ) : (
         <div className={s.pila}>

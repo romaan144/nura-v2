@@ -215,7 +215,7 @@ export default function Profile() {
 
         <p style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', textAlign:'center',
           margin:'var(--space-20) 0 0', lineHeight:1.5}}>
-          {DEMO_MODE ? <>Tu teléfono no se muestra a nadie.<br />Solo sirve para entrar.</> : <>Nunca leemos tus chats ni guardamos lo que buscas.</>}
+          {DEMO_MODE ? <>Tu teléfono no se muestra a nadie.<br />Solo sirve para entrar.</> : <>Nunca analizamos tus conversaciones ni lo que buscas.</>}
         </p>
         {/* Quien busca sin cuenta tambien puede pedir «te aviso»: lo ve aqui. */}
         {!verAlertas && (

@@ -102,11 +102,11 @@ nocturno de comentarios nuevos, una búsqueda. Con cientos de profesionales:
 
 - **Profesional, al darse de alta**: «Nüra construye tu perfil con lo que
   tú escribes, con lo que ocurre en tus servicios (por ejemplo, cuánto
-  tardas en contestar) y con lo que opinan tus clientes. Nunca leemos tus
+  tardas en contestar) y con lo que opinan tus clientes. Nunca analizamos tus
   chats. Puedes ver y corregir todo, y decidir si apareces en búsquedas de
   empresas.»
 - **Cliente, al valorar**: «Tus respuestas ayudan a otros a elegir. Solo
-  se publican si lo aceptas. Nunca leemos tus chats ni guardamos lo que
+  se publican si lo aceptas. Nunca analizamos tus chats ni guardamos lo que
   buscas.»
 
 ## 10 · Recordar con permiso (aprobado 2026-09-24)

@@ -132,7 +132,7 @@ export default function RatingModal({ helper, onClose, onEnviado }) {
             <button className={styles.btn} onClick={submit} disabled={!algo || enviando}>
               {enviando ? 'Enviando…' : 'Enviar'}
             </button>
-            <p className={styles.privacidad}>Nunca leemos tus chats ni guardamos lo que buscas.</p>
+            <p className={styles.privacidad}>Nunca analizamos tus conversaciones ni lo que buscas.</p>
           </>
         ) : (
           <div className={styles.doneState} role="status">

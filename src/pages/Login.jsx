@@ -254,7 +254,7 @@ export default function Login() {
         <p style={S.confianza}>
           {DEMO_MODE
             ? <>Tu teléfono no se muestra a nadie.<br />Solo sirve para entrar.</>
-            : <>Nunca leemos tus chats ni guardamos lo que buscas.</>}
+            : <>Nunca analizamos tus conversaciones ni lo que buscas.</>}
         </p>
 
         <div style={S.sello}>{NURA_BUILD}</div>
