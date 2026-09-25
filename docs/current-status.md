@@ -30,7 +30,7 @@ actualizar por eso mismo.
 
 ### En producción (comprobado)
 
-- **Función `helpers-write` versión 13** (2026-09-25), 21 operaciones · avisos por correo automáticos
+- **Función `helpers-write` versión 14** (2026-09-25), 22 operaciones · avisos por correo automáticos
   (nuevas: `valorar`, `clave-push`, `crear-alerta`, `alertas`,
   `quitar-alerta`, `confirmar-declarado`, `mi-pulso`, `ampliar-aviso`).
 - **Captar profesionales**: enlace para compartir `/profesionales`

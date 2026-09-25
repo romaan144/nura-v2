@@ -76,6 +76,11 @@ function guardarLlave(helperId, llave) {
   } catch { /* sin almacenamiento no hay vuelta; el mensaje sigue enviado */ }
 }
 
+/** La llave de la conversacion mas reciente con ese profesional, o null. */
+export function ultimaLlave(helperId) {
+  return (llavesGuardadas()[String(helperId)] || []).at(-1) || null
+}
+
 /**
  * LA VUELTA, ultimo tramo: ¿me han respondido?
  * Se pregunta con las llaves de lectura de este movil para ese profesional,

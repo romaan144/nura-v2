@@ -107,6 +107,8 @@ try {
   await espera(800); await c.click(ENVIAR); await espera(1500)
   ok(avisos.length === 1, 'el primer mensaje genera un aviso para el profesional')
   ok(!/No tenemos forma de avisarte/.test(avisos[0]?.mensaje || ''), 'el aviso no le dice «no tenemos forma de avisarte» a quien lo está leyendo')
+  await espera(800)
+  ok((await texto(c)).includes('Avísame cuando conteste'), 'ofrece «Avísame cuando conteste» (nada se pide hasta tocarlo)')
   await escribir(c, 'Por cierto, vivimos en Gràcia.')
   ok(avisos.length === 1 && avisos[0].mensaje.includes('vivimos en Gràcia'), 'lo que escribe antes de que conteste se añade a su aviso')
 

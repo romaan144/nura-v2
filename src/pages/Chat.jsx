@@ -6,6 +6,7 @@ import { useUser } from '../context/UserContext'
 import { slotsDe, ocupacionesDe, motivoSinHuecos, FRASE_SIN_HUECOS } from '../data/horarios'
 import { getHelperById } from '../utils/supabase'
 import { registrarConversacion, encolarAviso, respuestasDe, seguirConversacion, enviarPropuestaCita } from '../utils/escrituras'
+import { avisarCuandoConteste, movilPuedeAvisar, esIphoneSinInstalar } from '../utils/alertas'
 import { notifyServiceConfirmed } from '../utils/notifications'
 import { haptic } from '../utils/haptic'
 import RatingModal from '../components/RatingModal'
@@ -253,6 +254,8 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
 }
 
 // ── Main Chat ─────────────────────────────────────────────────────────────
+const AVISAME = 'Avísame cuando conteste'
+
 export default function Chat() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -547,6 +550,9 @@ export default function Chat() {
         setTimeout(() => setMessages(prev => [...prev, {
           id: Date.now() + 1, from: 'nura', time: new Date().toISOString(),
           text: `Mensaje enviado. Aviso a ${helper.name?.split(' ')?.[0] || 'la persona'} de que le has escrito; en cuanto responda te llega aquí.`,
+          // Solo si este movil puede recibir notificaciones (en iPhone, desde
+          // la pantalla de inicio). Nada se pide hasta que lo toque.
+          chips: movilPuedeAvisar() && !esIphoneSinInstalar() ? [AVISAME] : undefined,
         }]), 700)
       }
       return
@@ -581,6 +587,19 @@ export default function Chat() {
         }, 800)
       }
     }, delay)
+  }
+
+  // «Avísame cuando conteste»: pide permiso (solo ahora, porque lo ha
+  // tocado) y deja la suscripcion en SU conversacion. Se dice lo que pasa.
+  async function pedirAvisoRespuesta(msgId) {
+    setMessages(prev => prev.map(m => m.id === msgId ? { ...m, chips: undefined } : m))
+    const nombre = helper?.name?.split(' ')?.[0] || 'la persona'
+    const r = await avisarCuandoConteste(helper?.id, nombre)
+    const texto = r.ok ? `Hecho: cuando ${nombre} conteste, te llegará una notificación a este móvil.`
+      : r.motivo === 'denegado' ? 'El móvil no ha dado permiso para notificaciones. Puedes activarlo en los ajustes del navegador; mientras, la respuesta te llega aquí.'
+      : r.motivo === 'ya-contesto' ? `${nombre} ya te ha contestado: lo tienes aquí.`
+      : 'No he podido activarlo ahora. La respuesta te llegará aquí igualmente.'
+    setMessages(prev => [...prev, { id: Date.now(), from: 'nura', time: new Date().toISOString(), text: texto }])
   }
 
   function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() } }
@@ -817,6 +836,7 @@ export default function Chat() {
                         onClick={() => {
                           if (chip === 'Confirmar reserva') { setShowConfirm(true); return }
                           if (chip === 'Todavía no') return
+                          if (chip === AVISAME) { pedirAvisoRespuesta(msg.id); return }
                           sendMessage(chip)
                         }}
                         style={{

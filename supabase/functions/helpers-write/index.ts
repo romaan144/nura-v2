@@ -685,7 +685,33 @@ Deno.serve(async (req: Request) => {
       const [av] = ya.ok ? await ya.json() : []
       return av ? json({ error: 'ya respondido' }, 409, cors) : json({ error: 'no existe' }, 404, cors)
     }
+    // Si quien escribio pidio «avisame cuando conteste», se le toca el movil
+    // (sin contenido) y se olvida su suscripcion: ya no hace falta.
+    if (filas[0]?.push) {
+      const vapid = await llavesVapid()
+      if (vapid) await tocarMovil(filas[0].push, vapid)
+      await fetch(`${SUPABASE_URL}/rest/v1/avisos?id=eq.${filas[0].id}`, {
+        method: 'PATCH', headers: { ...rest, Prefer: 'return=minimal' }, body: JSON.stringify({ push: null }),
+      })
+    }
     return json({ ok: true }, 200, cors)
+  }
+
+  // ── «AVISAME CUANDO CONTESTE» ──
+  // Quien escribio (con SU llave de lectura) deja la suscripcion de su movil
+  // en ESE aviso. Solo mientras no haya respuesta; al responder se usa una
+  // vez y se borra. Solo servicios de notificaciones reales (PUSH_OK).
+  if (op === 'avisar-respuesta') {
+    const llave = String(cuerpo.llave ?? '')
+    const p = cuerpo.push as { endpoint?: unknown, keys?: unknown } | undefined
+    if (!FORMATO_LLAVE.test(llave)) return json({ error: 'no existe' }, 404, cors)
+    if (!p || typeof p.endpoint !== 'string' || !PUSH_OK.test(p.endpoint)) return json({ error: 'suscripcion no valida' }, 400, cors)
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/avisos?lectura_hash=eq.${hex(await sha256(llave))}&respuesta=is.null`, {
+      method: 'PATCH', headers: { ...rest, Prefer: 'return=representation' },
+      body: JSON.stringify({ push: { endpoint: p.endpoint.slice(0, 1000), keys: p.keys ?? null } }),
+    })
+    if (!r.ok) return json({ error: 'no guardado', estado: r.status }, 502, cors)
+    return (await r.json()).length ? json({ ok: true }, 200, cors) : json({ error: 'no existe o ya respondido' }, 404, cors)
   }
 
   // ── SEGUIR LA CONVERSACION ──

@@ -7,7 +7,9 @@
 // Este movil guarda, por cada alerta, la llave con la que se consulta y se
 // borra (`nura_alertas`). Empieza por `nura_`: «Borrar mis datos» la borra.
 
-import { porLaFuncion, llamarFuncion } from './escrituras'
+import { porLaFuncion, llamarFuncion, ultimaLlave } from './escrituras'
+import { apuntarEspera, borrarEsperas } from './esperando'
+import { EDGE_URL } from '../config'
 import { categoriasEnBD } from './matching'
 
 const CLAVE = 'nura_alertas'
@@ -147,4 +149,24 @@ export async function quitarPorBaja(baja) {
 /** Antes de «Borrar mis datos»: quita tambien del servidor. */
 export async function quitarTodas() {
   await Promise.all(alertasGuardadas().map(a => quitarAlerta(a.llave)))
+  borrarEsperas()   // y a quien esperaba respuesta («Avísame cuando conteste»)
+}
+
+/**
+ * «Avísame cuando conteste»: una notificación en ESTE móvil cuando el
+ * profesional responda a la última conversación. Devuelve
+ * { ok } o { ok: false, motivo: 'no-disponible' | 'denegado' | 'sin-llave' | 'error' }.
+ */
+export async function avisarCuandoConteste(helperId, nombre) {
+  if (!porLaFuncion()) return { ok: false, motivo: 'no-disponible' }
+  const llave = ultimaLlave(helperId)
+  if (!llave) return { ok: false, motivo: 'sin-llave' }
+  const r = await suscribirMovil()
+  if (!r.suscripcion) return { ok: false, motivo: r.motivo || 'error' }
+  try {
+    const s = await llamarFuncion({ op: 'avisar-respuesta', llave, push: r.suscripcion })
+    if (!s?.ok) return { ok: false, motivo: s?.estado === 404 ? 'ya-contesto' : 'error' }
+  } catch { return { ok: false, motivo: 'error' } }
+  await apuntarEspera({ llave, helperId, nombre }, EDGE_URL)
+  return { ok: true }
 }
