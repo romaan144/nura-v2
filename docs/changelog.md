@@ -10,6 +10,20 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — Sin conexión no es «ya no está en Nüra»
+
+- `getHelperById` devolvía `null` tanto si la ficha no existía como si
+  fallaba la red. Con mala cobertura, un enlace compartido decía «Esta
+  persona ya no está en Nüra» de alguien que sí estaba. Ahora un fallo de
+  red o del servidor **lanza**, y ficha y chat dicen «No he podido cargar
+  esta ficha / abrir esta conversación. Parece un problema de conexión»
+  con un botón **Reintentar**. «Ya no está» queda solo para cuando de
+  verdad no existe.
+- Espera máxima de 2,5 s → 6 s: en el móvil con poca cobertura 2,5 s daban
+  el error a menudo (mientras, se ve el esqueleto de carga).
+- Comprobado en el navegador: sin red → reintentar → carga; no existe →
+  «ya no está»; en ficha y en chat.
+
 ## 2026-09-25 — Compartir una ficha, de verdad
 
 - **El botón de compartir de la ficha** abre en el móvil el menú del

@@ -264,13 +264,14 @@ export async function searchHelpers(category, keywords = []) {
   } catch(e) { console.error('Supabase searchHelpers:', e); return null }
 }
 
+// null = la ficha NO EXISTE. Un fallo de red o del servidor LANZA: antes
+// ambos daban null, y con mala cobertura un enlace compartido decia «Esta
+// persona ya no está en Nüra» de alguien que sí estaba.
 export async function getHelperById(id) {
-  try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/helpers?id=eq.${id}&select=${columnasHelpers()}&limit=1`, { headers, signal: AbortSignal.timeout(2500) })
-    if (!res.ok) return null
-    const data = await res.json()
-    return data?.[0] ? normalize(data[0]) : null
-  } catch { return null }
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/helpers?id=eq.${id}&select=${columnasHelpers()}&limit=1`, { headers, signal: AbortSignal.timeout(6000) })
+  if (!res.ok) throw new Error(`helpers ${res.status}`)
+  const data = await res.json()
+  return data?.[0] ? normalize(data[0]) : null
 }
 
 export async function getAllHelpers() {
