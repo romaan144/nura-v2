@@ -75,8 +75,9 @@ export function slotsDe(helper, fechaISO, citas = []) {
     .filter(hora => !esHoy || parseInt(hora, 10) > ahora.getHours())
     .map(hora => {
       const c = suyas.find(x => x.hora === hora)
-      // 'tuya': la ha pedido esta persona y espera respuesta.
-      if (c) return { hora, estado: c.estado === 'confirmada' ? 'ocupada' : 'tuya' }
+      // 'tuya': la ha pedido esta persona (pendiente o ya confirmada).
+      // 'ocupada': la tiene aceptada con otra persona.
+      if (c) return { hora, estado: c.deOtro ? 'ocupada' : 'tuya' }
       return { hora, estado: deOtros.has(hora) ? 'ocupada' : 'libre' }
     })
 }
@@ -159,11 +160,12 @@ export const FRASE_SIN_HUECOS = {
  * dejaria huecos falsamente libres. Aqui se normalizan a una sola forma.
  */
 export function ocupacionesDe(citas = [], services = []) {
-  const a = (citas || []).map(c => ({
+  // Las rechazadas y las canceladas ya no ocupan nada.
+  const a = (citas || []).filter(c => c.estado !== 'rechazada').map(c => ({
     helperId: c.helperId, fecha: c.fecha, hora: c.hora,
     estado: c.estado === 'confirmada' ? 'confirmada' : 'pendiente',
   }))
-  const b = (services || []).map(s => ({
+  const b = (services || []).filter(s => s.status !== 'rejected' && s.status !== 'cancelled').map(s => ({
     helperId: s.helperId, fecha: s.date, hora: s.time,
     estado: s.status === 'confirmed' ? 'confirmada' : 'pendiente',
   }))
