@@ -31,9 +31,30 @@ export const HORARIO_POR_CATEGORIA = {
 
 const POR_DEFECTO = { dias: L_V, horas: franja(9, 19) }
 
-export function horarioDe(helper) {
-  return helper?.horario || HORARIO_POR_CATEGORIA[helper?.category] || POR_DEFECTO
+// Todas las horas que se pueden marcar al elegir el horario propio.
+export const HORAS_POSIBLES = franja(7, 23)
+export const DIAS_SEMANA = [
+  { n: 1, corto: 'L', largo: 'lunes' }, { n: 2, corto: 'M', largo: 'martes' },
+  { n: 3, corto: 'X', largo: 'miércoles' }, { n: 4, corto: 'J', largo: 'jueves' },
+  { n: 5, corto: 'V', largo: 'viernes' }, { n: 6, corto: 'S', largo: 'sábado' },
+  { n: 0, corto: 'D', largo: 'domingo' },
+]
+
+/** Un horario marcado por el profesional, limpio; o null si no vale. */
+export function horarioValido(h) {
+  if (!h || !Array.isArray(h.dias) || !Array.isArray(h.horas)) return null
+  const dias = [...new Set(h.dias.map(Number).filter(d => d >= 0 && d <= 6))].sort()
+  const horas = HORAS_POSIBLES.filter(x => h.horas.includes(x))
+  return dias.length && horas.length ? { dias, horas } : null
 }
+
+/** El del propio profesional si lo marcó; si no, el típico de su oficio. */
+export function horarioDe(helper) {
+  return horarioValido(helper?.horario) || HORARIO_POR_CATEGORIA[helper?.category] || POR_DEFECTO
+}
+
+/** El horario que Nüra supone para su oficio (punto de partida al editarlo). */
+export const horarioDelOficio = categoria => HORARIO_POR_CATEGORIA[categoria] || POR_DEFECTO
 
 /**
  * Las horas de un profesional en un dia, con su estado real.

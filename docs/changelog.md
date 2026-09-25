@@ -10,6 +10,23 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-10-01 — Cada profesional marca su horario
+
+- **«Tu horario»** en la hoja de su ficha (`components/EditarHorario.jsx`):
+  días (L M X J V S D) y horas de 7:00 a 22:00, con atajos (Mañanas,
+  Tardes, Mañana y tarde, Todo el día). Parte del típico de su oficio.
+  Es lo que ve quien le pide cita; si no lo marca, se usa el del oficio.
+- Base de datos (migración `20261001000000_horario_del_profesional.sql`,
+  aplicada): columna `helpers.horario` (jsonb, con comprobación de forma),
+  visible para todos; la profesional con cuenta puede cambiarla en SU fila.
+- **Arreglo importante:** la profesional con cuenta no tenía permiso para
+  cambiar `city`, y desde el cambio de ciudades (2026-09-25) la hoja la
+  enviaba al detectar una ciudad en la zona: **el guardado entero fallaba**.
+  Concedido `update (city)`.
+- `horarioDe` valida el horario guardado; uno roto no rompe la agenda.
+- Pruebas: `test:matching` 173. En el navegador: parte del horario de
+  logopeda, se cambia, y a la base de datos llegan `horario` y `city`.
+
 ## 2026-09-25 — La agenda: horas ya cogidas y una sola forma de pedir cita
 
 - **Pedido del fundador:** «No me convence el modo de ver disponibilidad y

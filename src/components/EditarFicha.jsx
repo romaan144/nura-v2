@@ -1,6 +1,9 @@
 import { revisarContacto } from '../utils/contactoProfesional'
 import { ciudadEnTexto } from '../data/ciudades'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import EditarHorario from './EditarHorario'
+import { horarioValido, horarioDelOficio } from '../data/horarios'
+import { analyzeNeed } from '../utils/matching'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 import { useUser } from '../context/UserContext'
@@ -38,7 +41,18 @@ export default function EditarFicha({ onClose }) {
   const hp = user?.helperProfile || {}
   const [v, setV] = useState(() => Object.fromEntries(
     [...CAMPOS.map(c => [c.k, hp[c.k] || '']), ['modality', hp.modality || '']]))
-  const cambiado = Object.keys(v).some(k => (v[k] || '').trim() !== (hp[k] || '').trim())
+  // El horario: el suyo si ya lo marcó; si no, el típico de su oficio como
+  // punto de partida (se sabe el oficio por su especialidad).
+  const [horario, setHorario] = useState(() => horarioValido(hp.horario) || horarioDelOficio(null))
+  useEffect(() => {
+    if (horarioValido(hp.horario)) return
+    let vivo = true
+    analyzeNeed(hp.specialty || '').then(a => { if (vivo && a?.categoria) setHorario(horarioDelOficio(a.categoria)) })
+    return () => { vivo = false }
+  }, [])   // eslint-disable-line react-hooks/exhaustive-deps
+  const horarioOk = horarioValido(horario)
+  const horarioCambiado = JSON.stringify(horarioOk) !== JSON.stringify(horarioValido(hp.horario))
+  const cambiado = Object.keys(v).some(k => (v[k] || '').trim() !== (hp[k] || '').trim()) || horarioCambiado
 
   const vinculada = user?.helperId != null
   const [guardando, setGuardando] = useState(false)
@@ -64,7 +78,8 @@ export default function EditarFicha({ onClose }) {
       if (!r.ok) { setFallo(r.motivo.replace(/ Si tu correo era.*$/, '')); return }
       limpio.contacto = r.valor
     }
-    updateUser({ helperProfile: { ...hp, ...limpio } })
+    if (!horarioOk) { setFallo('Marca al menos un día y una hora de tu horario.'); return }
+    updateUser({ helperProfile: { ...hp, ...limpio, horario: horarioOk } })
     if (!vinculada) { onClose(); return }
     // ── A LA FICHA PUBLICA (etapa 6b) ──────────────────────────────────
     // Con la ficha vinculada, el cambio se escribe en Supabase con la sesion
@@ -83,6 +98,7 @@ export default function EditarFicha({ onClose }) {
         price: limpio.price || null,
         online: /online|las dos/i.test(limpio.modality || ''),
         contacto: limpio.contacto || null,
+        horario: horarioOk,
       }
       const { data, error } = await cuentas.from('helpers').update(cambios).eq('id', user.helperId).select('id')
       if (error || !data?.length) throw error || new Error('ninguna fila')
@@ -168,6 +184,8 @@ export default function EditarFicha({ onClose }) {
             })}
           </div>
         </div>
+
+        <EditarHorario valor={horario} onCambio={setHorario} />
         </>}
       </div>
 
