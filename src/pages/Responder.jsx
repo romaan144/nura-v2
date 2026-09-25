@@ -21,6 +21,22 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { abrirAviso, responderAviso, misAvisos, porLaFuncion } from '../utils/escrituras'
 import { refrescarSinContestar } from '../utils/sinContestar'
 
+// RESPUESTAS RAPIDAS: en el movil escribir cuesta. Rellenan la caja (no
+// envian): la profesional las retoca y decide. Si el mensaje es una
+// propuesta de cita, las del sí/no a esa cita.
+function rapidasPara(mensaje) {
+  if (/te propone una cita/i.test(String(mensaje || ''))) return [
+    ['Me va bien', '¡Perfecto! Me va bien ese día y a esa hora. Nos vemos.'],
+    ['Proponer otro día', 'Ese momento no me va bien. ¿Te iría bien el '],
+    ['No puedo', 'Lo siento, estos días no tengo hueco. Si quieres, Nüra te ayuda a encontrar a otra persona.'],
+  ]
+  return [
+    ['Tengo hueco', 'Hola, sí, puedo ayudarte. Tengo hueco '],
+    ['Cuéntame más', 'Hola, gracias por escribirme. Para ayudarte mejor, ¿me cuentas un poco más sobre '],
+    ['Ahora no puedo', 'Hola, gracias por escribirme. Ahora mismo no tengo hueco. Si quieres, Nüra te ayuda a encontrar a otra persona.'],
+  ]
+}
+
 // Una pantalla por mensaje: al pasar al siguiente (otro token) se monta de
 // nuevo, limpia, sin arrastrar lo escrito en el anterior.
 export default function Responder() {
@@ -178,6 +194,17 @@ function ResponderAviso({ token }) {
               fontWeight: 700, color: 'var(--ink-secondary)', margin: '0 0 var(--space-8)'}}>
               Tu respuesta
             </label>
+            <div role="group" aria-label="Respuestas rápidas" style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-6)', margin: '0 0 var(--space-10)' }}>
+              {rapidasPara(aviso?.mensaje).map(([etiqueta, frase]) => (
+                <button key={etiqueta} type="button"
+                  onClick={() => { setTexto(frase); requestAnimationFrame(() => { const t = document.getElementById('respuesta'); t?.focus(); t?.setSelectionRange(frase.length, frase.length) }) }}
+                  style={{ minHeight: 36, padding: '0 var(--space-12)', borderRadius: 'var(--radius-full)', cursor: 'pointer',
+                    border: '1px solid var(--ink-border)', background: 'white', color: 'var(--ink-primary)',
+                    fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 600 }}>
+                  {etiqueta}
+                </button>
+              ))}
+            </div>
             <textarea id="respuesta" value={texto} onChange={e => setTexto(e.target.value)} rows={5}
               placeholder="Puedes decir si tienes hueco, cuándo, o simplemente que ahora no puedes."
               style={{width: '100%', boxSizing: 'border-box', padding: 'var(--space-12) var(--space-14)',
