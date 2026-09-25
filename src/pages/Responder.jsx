@@ -16,7 +16,7 @@
 // 3. SIN VENDER NADA. Ni banners, ni "descarga la app", ni "completa tu
 //    perfil". Ha venido a contestar a alguien que le necesita.
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { abrirAviso, responderAviso, misAvisos, porLaFuncion } from '../utils/escrituras'
 import { refrescarSinContestar } from '../utils/sinContestar'
@@ -45,9 +45,14 @@ export default function Responder() {
 }
 
 function ResponderAviso({ token }) {
-  const [estado, setEstado] = useState('cargando')   // cargando|listo|enviado|fallo|error
+  const [estado, setEstado] = useState('cargando')   // cargando|listo|enviado|fallo|error|sinred
   const [aviso, setAviso] = useState(null)
-  const [texto, setTexto] = useState('')
+  // Lo que lleva escrito se guarda en este móvil: si cierra la página o se
+  // queda sin cobertura, no tiene que escribirlo otra vez.
+  const BORRADOR = 'nura_borrador_' + token
+  const [texto, setTexto] = useState(() => { try { return localStorage.getItem(BORRADOR) || '' } catch { return '' } })
+  const [intento, setIntento] = useState(0)
+  const enviandoRef = useRef(false)
   const [enviando, setEnviando] = useState(false)
   const navigate = useNavigate()
   // Despues de contestar (y SOLO despues: la regla 3 sigue en pie mientras
@@ -64,10 +69,23 @@ function ResponderAviso({ token }) {
         // Si ya contesto, no se le pide otra vez.
         setEstado(r.aviso.respuesta ? 'enviado' : 'listo')
         if (r.aviso.respuesta) setTexto(r.aviso.respuesta)
-      } else setEstado('error')
+      } else setEstado(r?.sinRed ? 'sinred' : 'error')
     })
     return () => { vivo = false }
-  }, [token])
+  }, [token, intento])
+
+  useEffect(() => {
+    if (estado !== 'listo' && estado !== 'fallo') return
+    try { texto.trim() ? localStorage.setItem(BORRADOR, texto) : localStorage.removeItem(BORRADOR) } catch { /* sin almacenamiento */ }
+  }, [texto, estado, BORRADOR])
+
+  // Si falló por la conexión, sale sola en cuanto vuelva.
+  useEffect(() => {
+    if (estado !== 'fallo') return
+    const alVolver = () => enviar()
+    window.addEventListener('online', alVolver)
+    return () => window.removeEventListener('online', alVolver)
+  })
 
   useEffect(() => {
     if (estado !== 'enviado' || !porLaFuncion()) return
@@ -84,14 +102,21 @@ function ResponderAviso({ token }) {
   }, [estado, token])
 
   async function enviar() {
-    if (!texto.trim() || enviando) return
+    // El ref, no solo el estado: dos toques (o dos avisos de «vuelve la
+    // conexión») en el mismo instante verían `enviando` aún en false.
+    if (!texto.trim() || enviandoRef.current) return
+    enviandoRef.current = true
     setEnviando(true)
     const r = await responderAviso(token, texto.trim())
+    enviandoRef.current = false
     setEnviando(false)
     // Si falla, se dice. Un "enviado" falso deja a una familia esperando
     // una respuesta que no existe.
     setEstado(r?.ok ? 'enviado' : 'fallo')
-    if (r?.ok) refrescarSinContestar()   // uno menos en su barra
+    if (r?.ok) {
+      refrescarSinContestar()   // uno menos en su barra
+      try { localStorage.removeItem(BORRADOR) } catch { /* nada */ }
+    }
   }
 
   const marco = {
@@ -114,6 +139,24 @@ function ResponderAviso({ token }) {
   if (estado === 'cargando') {
     return <div style={{...marco, justifyContent: 'center'}}>
       <img src="/logo-iso.png" alt="" style={{width: 40, opacity: 0.35}} />
+    </div>
+  }
+
+  if (estado === 'sinred') {
+    return <div style={{...marco, justifyContent: 'center'}}>
+      <div style={{...caja, textAlign: 'center'}}>
+        <p style={{fontSize: 'var(--text-md)', fontWeight: 700, color: 'var(--ink-primary)', margin: '0 0 var(--space-8)'}}>
+          No he podido abrir el mensaje
+        </p>
+        <p style={{fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)', margin: '0 0 var(--space-16)', lineHeight: 1.6}}>
+          Parece un problema de conexión. El mensaje sigue esperándote.
+        </p>
+        <button onClick={() => { setEstado('cargando'); setIntento(n => n + 1) }}
+          style={{ width: '100%', minHeight: 48, border: 'none', cursor: 'pointer', borderRadius: 'var(--radius-full)',
+            background: 'var(--purple)', color: 'white', fontFamily: 'inherit', fontSize: 'var(--text-base)', fontWeight: 700 }}>
+          Reintentar
+        </button>
+      </div>
     </div>
   }
 
@@ -214,7 +257,9 @@ function ResponderAviso({ token }) {
 
             {estado === 'fallo' && (
               <p style={{fontSize: 'var(--text-sm)', color: 'var(--red)', margin: 'var(--space-8) 0 0'}}>
-                No he podido enviarla. Inténtalo otra vez en un momento.
+                {typeof navigator !== 'undefined' && navigator.onLine === false
+                  ? 'Sin conexión. Tu respuesta está guardada: la envío en cuanto vuelva.'
+                  : 'No he podido enviarla. Tu respuesta está guardada: inténtalo otra vez en un momento.'}
               </p>
             )}
 
