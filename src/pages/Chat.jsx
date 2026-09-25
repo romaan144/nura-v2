@@ -7,6 +7,7 @@ import { slotsDe, ocupacionesDe, motivoSinHuecos, FRASE_SIN_HUECOS } from '../da
 import { getHelperById } from '../utils/supabase'
 import { registrarConversacion, encolarAviso, respuestasDe, seguirConversacion, enviarPropuestaCita } from '../utils/escrituras'
 import { avisarCuandoConteste, movilPuedeAvisar, esIphoneSinInstalar } from '../utils/alertas'
+import { marcarVistas } from '../utils/respuestasNuevas'
 import { notifyServiceConfirmed } from '../utils/notifications'
 import { haptic } from '../utils/haptic'
 import RatingModal from '../components/RatingModal'
@@ -309,6 +310,7 @@ export default function Chat() {
     let vivo = true
     const mirar = () => respuestasDe(helper.id).then(rs => {
       if (!vivo || !rs.length) return
+      marcarVistas(rs.map(r => r.llave))   // las esta viendo: ya no son «nuevas»
       setMessages(prev => {
         const yaEstan = new Set(prev.filter(m => m.__deAviso).map(m => m.text))
         const nuevas = rs
@@ -337,7 +339,7 @@ export default function Chat() {
         text: `Hola, soy ${firstName}. Vi que me encontraste a través de Nüra. ¿En qué puedo ayudarte?`,
         time: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
       }
-      setTimeout(() => setMessages([welcomeMsg]), 800)
+      setTimeout(() => setMessages(prev => prev.length ? prev : [welcomeMsg]), 800)
     }
   }, [helper])
   const hasHistory = (getChatHistory(id)?.length > 0) || (location.state?.demoHistory?.length > 0)
@@ -452,7 +454,9 @@ export default function Chat() {
           text: greeting,
           time: new Date().toISOString()
         }
-        setMessages([greetMsg])
+        // Sin pisar lo que ya haya llegado (una respuesta del profesional
+        // que entro antes que el saludo): el saludo nunca borra nada.
+        setMessages(prev => prev.length ? prev : [greetMsg])
       }, delay)
     }
   }, [helper?.id])

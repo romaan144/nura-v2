@@ -3,6 +3,7 @@ import { Search, MessageCircle, User } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import { DEMO_MODE } from '../config'
 import { useSinContestar } from '../utils/sinContestar'
+import { useRespuestasNuevas } from '../utils/respuestasNuevas'
 import styles from './BottomNav.module.css'
 
 const TABS = [
@@ -33,7 +34,9 @@ export default function BottomNav() {
   // A la profesional le cuentan tambien los mensajes que le han escrito y
   // aun no ha contestado (su bandeja «Te han escrito»).
   const sinContestar = useSinContestar(user)
-  const effectiveUnread = (DEMO_MODE && !(chats?.length > 0) ? totalUnreadChats + 1 : totalUnreadChats) + sinContestar
+  // Y a quien busca, las respuestas de profesionales que aun no ha visto.
+  const { total: respuestas } = useRespuestasNuevas()
+  const effectiveUnread = (DEMO_MODE && !(chats?.length > 0) ? totalUnreadChats + 1 : totalUnreadChats) + sinContestar + respuestas
 
   if (HIDE_ON.some(p => location.pathname.startsWith(p))) return null
 

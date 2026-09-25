@@ -10,6 +10,7 @@ import styles from './Chats.module.css'
 import { DEMO_MODE } from '../config'
 import { Badge } from '../components/ui'
 import BandejaProfesional from '../components/BandejaProfesional'
+import { useRespuestasNuevas } from '../utils/respuestasNuevas'
 
 // ── REALISTIC DEMO CONVERSATIONS ─────────────────────────────────────────
 // These simulate what the app looks like with active users.
@@ -130,6 +131,7 @@ export default function Chats() {
   const navigate  = useNavigate()
   const { chats, markRead, helpersCache, getChatHistory, personas, contactedHelpers, citas, user } = useUser()
   const [search, setSearch] = useState('')
+  const { porHelper: respuestasNuevas } = useRespuestasNuevas()
 
   function getHelper(id) {
     return helpersCache?.[id]
@@ -198,7 +200,7 @@ export default function Chats() {
           const isDemo = demosToShow.some(d => d.helperId === chat.helperId)
           return (
             <button key={i}
-              className={`${styles.chatRow} ${chat.unread > 0 ? styles.chatUnread : ''}`}
+              className={`${styles.chatRow} ${chat.unread > 0 || respuestasNuevas[String(chat.helperId)] ? styles.chatUnread : ''}`}
               onClick={() => {
                 markRead?.(chat.helperId)
                 // For demo chats, pass history in state so Chat page shows it
@@ -251,8 +253,14 @@ export default function Chats() {
                   )
                 })()}
                 <div className={styles.chatBottom}>
-                  <span className={styles.chatLastMsg}>{chat.lastMsg}</span>
-                  {chat.unread > 0 && <span className={styles.unreadBadge}>{chat.unread}</span>}
+                  <span className={styles.chatLastMsg}>
+                    {respuestasNuevas[String(chat.helperId)]
+                      ? <strong style={{ color: 'var(--purple)' }}>Te ha contestado · tócalo para leerlo</strong>
+                      : chat.lastMsg}
+                  </span>
+                  {(chat.unread > 0 || respuestasNuevas[String(chat.helperId)]) && (
+                    <span className={styles.unreadBadge}>{(chat.unread || 0) + (respuestasNuevas[String(chat.helperId)] || 0)}</span>
+                  )}
                 </div>
               </div>
             </button>
