@@ -51,6 +51,34 @@ avisos seguirán yendo **vacíos**: Apple tampoco verá qué busca nadie.
 4. **Textos y reglas de negocio en un solo sitio**, no repartidos por
    pantallas: facilita reutilizarlos.
 
+## 3b. Cuando la app esté en la App Store: invitar a descargarla
+
+**Decisión del fundador (2026-09-25):** hasta que exista la app no se invita
+a instalar la web. Cuando exista, **sí** debe salir un aviso para
+descargarla que lleve a la App Store. Cómo hacerlo:
+
+1. **Banner nativo de Safari (una línea).** En `index.html`:
+   `<meta name="apple-itunes-app" content="app-id=IDENTIFICADOR, app-argument=URL-ACTUAL">`.
+   Safari enseña arriba la barra oficial de Apple con «Abrir» / «Ver» y,
+   si ya la tienen, abre la app en la misma pantalla (con los enlaces
+   universales del apartado 2). Solo funciona en Safari.
+2. **Aviso propio para el resto** (Chrome en iPhone, apps de mensajería
+   que abren enlaces dentro): una tarjeta discreta abajo con «Descarga Nüra
+   para iPhone» → `https://apps.apple.com/app/idIDENTIFICADOR`.
+   - Solo en iPhone/iPad, nunca en ordenador ni Android (mientras no haya
+     app de Android).
+   - Se puede cerrar, y cerrada no vuelve en 30 días.
+   - No en mitad de algo: ni en el chat, ni en `/r/` (quien contesta desde
+     el enlace), ni en el alta del profesional.
+3. **Base ya hecha:** la fila «Instala Nüra en tu móvil» (retirada el
+   2026-09-25, ver changelog) detectaba iPhone, si ya estaba instalada y
+   cómo mostrarlo en el perfil. Está en el historial de git
+   (`src/components/InstalarApp.jsx`, `src/utils/instalar.js`): se recupera
+   y se cambia «añadir a pantalla de inicio» por el enlace a la App Store.
+
+Lo único que hace falta para activarlo es el **identificador de la app en
+la App Store**, que Apple da al publicarla.
+
 ## 4. Lo que pedirá Apple (App Store)
 
 - **Borrar la cuenta desde dentro de la app.** Ya existe
