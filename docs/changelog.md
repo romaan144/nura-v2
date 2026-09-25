@@ -2270,3 +2270,9 @@ registradas retroactivamente con su motivo:
 - Canal aparte: el mismo `public/sw.js` registrado con ámbito `/pro/`. Así el trabajador sabe que el aviso es «Te han escrito en Nüra» (abre Chats) sin que el aviso lleve nada.
 - Servidor: tabla `avisos_pro` (una suscripción por ficha, solo service_role), op `avisos-pro` (con sesión y solo SU ficha), y `encolar-aviso` toca ese móvil. Si el móvil ya no la acepta, se borra. «Borrar mi cuenta» también la borra.
 - `helpers-write` v17 · migración `20260930000000_avisos_al_profesional.sql` aplicada. 7 pruebas nuevas (`npm run test:avisos`, 139). Comprobado en navegador con un aviso simulado en cada canal.
+
+## 2026-09-25 · La profesional ve cuántos mensajes tiene sin contestar
+- `src/utils/sinContestar.js`: un solo recuento real (op `mis-avisos`, con su sesión) compartido por la barra de abajo, el menú lateral y el inicio. Se actualiza al abrir, al volver a la app, cada 2 minutos y justo después de contestar. Fuera de la demo y solo para profesionales con cuenta.
+- La insignia de Chats suma esos mensajes.
+- Al entrar, Nüra le dice «Tienes N mensajes sin contestar» con «Contestar ahora» (lleva a su bandeja). Una vez por visita.
+- Comprobado en navegador: mensaje, insignia «2» y navegación a Chats.

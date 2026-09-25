@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { Search, MessageCircle, User } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import { DEMO_MODE } from '../config'
+import { useSinContestar } from '../utils/sinContestar'
 import styles from './BottomNav.module.css'
 
 const TABS = [
@@ -28,8 +29,11 @@ export default function BottomNav() {
   const { totalUnreadChats } = useUser()
   // El «1» de Elena (conversacion de ejemplo) SOLO en la demo. Fuera de
   // ella era un mensaje sin leer que no existia, el primer dia de alguien.
-  const { chats } = useUser()
-  const effectiveUnread = DEMO_MODE && !(chats?.length > 0) ? totalUnreadChats + 1 : totalUnreadChats
+  const { chats, user } = useUser()
+  // A la profesional le cuentan tambien los mensajes que le han escrito y
+  // aun no ha contestado (su bandeja «Te han escrito»).
+  const sinContestar = useSinContestar(user)
+  const effectiveUnread = (DEMO_MODE && !(chats?.length > 0) ? totalUnreadChats + 1 : totalUnreadChats) + sinContestar
 
   if (HIDE_ON.some(p => location.pathname.startsWith(p))) return null
 

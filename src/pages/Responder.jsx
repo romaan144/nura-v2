@@ -19,6 +19,7 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { abrirAviso, responderAviso } from '../utils/escrituras'
+import { refrescarSinContestar } from '../utils/sinContestar'
 
 export default function Responder() {
   const { token } = useParams()
@@ -49,6 +50,7 @@ export default function Responder() {
     // Si falla, se dice. Un "enviado" falso deja a una familia esperando
     // una respuesta que no existe.
     setEstado(r?.ok ? 'enviado' : 'fallo')
+    if (r?.ok) refrescarSinContestar()   // uno menos en su barra
   }
 
   const marco = {

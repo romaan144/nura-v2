@@ -2,19 +2,21 @@ import { avatarDe } from '../utils/avatar'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Search, MessageCircle, User, UserCheck } from 'lucide-react'
 import { useUser } from '../context/UserContext'
+import { useSinContestar } from '../utils/sinContestar'
 import styles from './DesktopSidebar.module.css'
 
 export default function DesktopSidebar() {
   const navigate = useNavigate()
   const location = useLocation()
   const { totalUnreadChats, user } = useUser()
+  const sinContestar = useSinContestar(user)
 
   const hideOn = ['/login', '/register-helper', '/splash', '/onboarding']
   if (hideOn.some(p => location.pathname.startsWith(p))) return null
 
   const tabs = [
     { path: '/', icon: <Search size={20} />, label: 'Nüra' },
-    { path: '/chats', icon: <MessageCircle size={20} />, label: 'Chats', badge: totalUnreadChats },
+    { path: '/chats', icon: <MessageCircle size={20} />, label: 'Chats', badge: totalUnreadChats + sinContestar },
     { path: '/siguiendo', icon: <UserCheck size={20} />, label: 'Siguiendo' },
     { path: '/profile', icon: <User size={20} />, label: 'Mi perfil' },
   ]
