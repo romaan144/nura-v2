@@ -2232,3 +2232,8 @@ registradas retroactivamente con su motivo:
 - El correo y «Mis avisos» dicen «cerca de Gràcia».
 - `helpers-write` v11 · migración `20260928000000_alerta_con_barrio.sql` aplicada.
 - 8 pruebas nuevas en `npm run test:avisos` (111), incluida una que comprueba que la lista de barrios del servidor y la de la app coinciden.
+
+## 2026-09-25 · Renovar «Te aviso si aparece»
+- Cuando a un aviso le quedan 14 días o menos, «Mis avisos» enseña «Renovar 3 meses más». Da 3 meses desde hoy (nunca acumula más).
+- Solo con la llave del móvil y solo si el aviso sigue vivo: lo caducado ya se borró y no revive.
+- `helpers-write` v12 (op `renovar-alerta`). 4 pruebas nuevas (`npm run test:avisos`, 114). Comprobado en navegador: el botón cabe en una línea y la fecha cambia al pulsarlo.

@@ -121,6 +121,20 @@ export async function quitarAlerta(llave) {
   catch { return false }
 }
 
+/** ¿Le quedan 14 dias o menos? Entonces se ofrece renovarla. */
+export const caducaPronto = a => Boolean(a?.caduca_en) && new Date(a.caduca_en) - Date.now() < 14 * 864e5
+
+/** Tres meses mas desde hoy. Devuelve la nueva fecha, o null si no se pudo. */
+export async function renovarAlerta(llave) {
+  if (!porLaFuncion()) return null
+  try {
+    const r = await llamarFuncion({ op: 'renovar-alerta', llave })
+    if (!r?.ok) return null
+    guardar(alertasGuardadas().map(a => a.llave === llave ? { ...a, caduca_en: r.caduca_en } : a))
+    return r.caduca_en
+  } catch { return null }
+}
+
 /** Desde el enlace «dejar de avisarme» del correo. */
 export async function quitarPorBaja(baja) {
   if (!porLaFuncion()) return { ok: false }
