@@ -2284,3 +2284,10 @@ registradas retroactivamente con su motivo:
 - Solo después de contestar: mientras escribe, la pantalla sigue sin vender nada.
 - Cada mensaje monta la pantalla de nuevo (lo escrito no se arrastra al siguiente).
 - Comprobado en navegador en los dos casos.
+
+## 2026-09-25 · Quien busca se entera de que le han contestado
+- `src/utils/respuestasNuevas.js`: una sola pregunta con todas las llaves de lectura del móvil (`respuestasTodas`) y un recuento de respuestas aún no vistas («vista» = ha abierto ese chat). Al abrir, al volver y cada 2 minutos. Fuera de la demo.
+- La insignia de Chats (barra y lateral) las suma; en la lista, esa conversación dice «Te ha contestado · tócalo para leerlo».
+- Al entrar, Nüra dice «Carlos te ha contestado» con «Leer la respuesta» (abre ese chat). Una vez por visita.
+- Arreglo: el saludo del chat vacío («Escríbele a…») ya no borra una respuesta que haya entrado antes que él.
+- Comprobado en navegador: inicio, insignia, lista, abrir el chat con la respuesta y que al leerla desaparece el aviso.

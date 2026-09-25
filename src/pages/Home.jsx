@@ -18,6 +18,7 @@ import { scheduleLocalNotification, notifySearchAbandoned } from '../utils/notif
 import { registrar } from '../utils/analitica'
 import AlertaSheet from '../components/AlertaSheet'
 import { useSinContestar } from '../utils/sinContestar'
+import { useRespuestasNuevas } from '../utils/respuestasNuevas'
 import RatingModal from '../components/RatingModal'
 import { tieneAlerta, misAlertas, alertasGuardadas } from '../utils/alertas'
 import styles from './Home.module.css'
@@ -374,11 +375,12 @@ const HELPER_SUGGESTIONS = [
 
 
 const CONTESTAR = 'Contestar ahora'
+const LEER_RESPUESTA = 'Leer la respuesta'
 
 export default function Home() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { user, addSearch, searchHistory, favorites, helpersCache, nuraChatMessages, setNuraChatMessages, nuraLastMatches, setNuraLastMatches, cacheHelpers, contactedHelpers, confirmContact, following, personas, upsertPersona, citas, addStory , registrarDemanda, hasRated } = useUser()
+  const { chats: chatsUsuario, user, addSearch, searchHistory, favorites, helpersCache, nuraChatMessages, setNuraChatMessages, nuraLastMatches, setNuraLastMatches, cacheHelpers, contactedHelpers, confirmContact, following, personas, upsertPersona, citas, addStory , registrarDemanda, hasRated } = useUser()
   // messages persisted in context so they survive navigation
   const messages = nuraChatMessages
   const setMessages = setNuraChatMessages
@@ -416,6 +418,25 @@ export default function Home() {
         : `Tienes **${sinContestar} mensajes sin contestar**. Quienes te escribieron están esperando tu respuesta.`],
       chips: [CONTESTAR] }])
   }, [sinContestar, messages?.length, setMessages])
+
+  // QUIEN BUSCA, AL ENTRAR: si un profesional le ha contestado y aun no lo
+  // ha leido, se lo digo con su nombre. Una vez por visita.
+  const { lista: respuestasSinVer } = useRespuestasNuevas()
+  const avisadoRespuestas = useRef(false)
+  const respuestaAbrir = useRef(null)
+  useEffect(() => {
+    if (user?.isHelper || !respuestasSinVer.length || avisadoRespuestas.current || !messages?.length) return
+    avisadoRespuestas.current = true
+    const ids = [...new Set(respuestasSinVer.map(r => String(r.helperId)))]
+    respuestaAbrir.current = ids[0]
+    const nombre = id => (chatsUsuario || []).find(c => String(c.helperId) === id)?.helperName?.split(' ')?.[0] || 'Un profesional'
+    const nombres = ids.map(nombre)
+    setMessages(prev => [...(prev || []), { id: Date.now() + 92, from: 'nura',
+      lines: [ids.length === 1
+        ? `**${nombres[0]}** te ha contestado. Tienes su respuesta en el chat.`
+        : `Te han contestado **${nombres.slice(0, -1).join(', ')} y ${nombres.at(-1)}**. Tienes sus respuestas en Chats.`],
+      chips: [LEER_RESPUESTA] }])
+  }, [respuestasSinVer, messages?.length, setMessages, user?.isHelper, chatsUsuario])
   // Tras «Sí, genial»: la ventana de valorar a ese profesional.
   const [valorar, setValorar] = useState(null)
   // Si ha llegado alguien que esta persona esperaba, se le dice al abrir
@@ -1189,6 +1210,7 @@ export default function Home() {
 
   function handleChip(chip) {
     if (chip === CONTESTAR) { navigate('/chats'); return }
+    if (chip === LEER_RESPUESTA) { navigate(respuestaAbrir.current ? `/chat/${respuestaAbrir.current}` : '/chats'); return }
     const responde = (lines, chips) =>
       setMessages(prev => [...prev, { id: Date.now(), from: 'nura', lines, chips }])
 

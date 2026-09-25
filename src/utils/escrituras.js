@@ -96,6 +96,20 @@ export async function respuestasDe(helperId) {
   } catch { return [] }
 }
 
+/**
+ * Todas las respuestas de todas las conversaciones de este movil, en una
+ * sola pregunta: [{ llave, helperId, respuesta, respondido_en }].
+ */
+export async function respuestasTodas() {
+  const todas = llavesGuardadas()
+  const deLlave = new Map(Object.entries(todas).flatMap(([h, ls]) => ls.map(l => [l, h])))
+  if (!porLaFuncion() || !deLlave.size) return []
+  try {
+    const r = await llamarFuncion({ op: 'respuestas', llaves: [...deLlave.keys()].slice(-50) })
+    return (r?.respuestas || []).map(x => ({ ...x, helperId: deLlave.get(x.llave) }))
+  } catch { return [] }
+}
+
 // Llaves ya usadas para valorar: cada conversacion se valora una vez.
 const VALORADAS = 'nura_llaves_valoradas'
 
