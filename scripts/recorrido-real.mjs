@@ -58,6 +58,9 @@ function backend(c) {
 
 const b = await puppeteer.launch({ executablePath: CHROME, args: ['--no-sandbox'] })
 const errores = []
+const BD = [{ id: 7001, name: 'Laura Vidal Soler', specialty: 'Logopeda infantil', category: 'logopedia', zone: 'Gràcia',
+  bio: 'Logopeda infantil: dislalias, la r y la s, con juego.', rating: 4.9, reviews: 12, services: 30,
+  available: true, presential: true, online: false, verified: true, tags: ['logopedia infantil', 'dislalia'] }]
 async function pagina() {
   const p = await b.newPage()
   await p.setViewport({ width: 390, height: 844 })
@@ -70,8 +73,19 @@ async function pagina() {
       const res = backend(JSON.parse(r.postData() || '{}'))
       return r.respond({ status: res.__estado || 200, headers: H, contentType: 'application/json', body: JSON.stringify(res) })
     }
-    // Sin red: la busqueda usa los profesionales locales de la app.
-    if (!u.startsWith(B)) return r.respond({ status: 200, headers: H, contentType: 'application/json', body: '[]' })
+    // La base de datos simulada tiene UNA logopeda real. Antes respondia
+    // vacia y la busqueda tiraba de los perfiles de ejemplo de la app; fuera
+    // de la demo eso ya no pasa (no se recomiendan personas inventadas).
+    if (!u.startsWith(B)) {
+      if (r.method() === 'OPTIONS') return r.respond({ status: 204, headers: H })
+      let cuerpo = []
+      if (u.includes('/rest/v1/helpers')) {
+        const id = (u.match(/[?&]id=eq\.(\d+)/) || [])[1]
+        const cat = decodeURIComponent((u.match(/category=(?:ilike\.|in\.\()([^&)]+)/) || [])[1] || '')
+        cuerpo = (id ? BD.filter(h => String(h.id) === id) : BD.filter(h => !cat || cat.split(',').includes(h.category)))
+      }
+      return r.respond({ status: 200, headers: H, contentType: 'application/json', body: JSON.stringify(cuerpo) })
+    }
     r.continue()
   })
   p.on('pageerror', e => errores.push(e.message))

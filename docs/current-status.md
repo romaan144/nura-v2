@@ -909,7 +909,9 @@ obligatorio antes de lanzar)** dependen de saber quién es el profesional.
 - ~~`chat_log` legible con la clave pública~~ — **la columna no existe**.
 - ~~`nura_demanda_no_cubierta` solo en local~~ — la demanda sin cubrir ya
   llega a Supabase como evento `sin_cobertura` (tabla `eventos`).
-- **`DEMO_MODE` sigue en `true`** y no aísla la base de datos. Correcto
+- **`DEMO_MODE` sigue en `true`** y no aísla la base de datos. Al apagarlo (2026-09-25) la
+  búsqueda y Explorar dejan de usar los perfiles de ejemplo de `data/helpers.js`:
+  solo salen los de la base de datos. Correcto
   mientras la app sea una simulación; se apaga al lanzar.
 - ~~3 pantallas construidas y sin ruta~~ — **retiradas el 2026-09-24**
   (`HowItWorks`, `MomentoCero`, `Splash`), por decisión del fundador.

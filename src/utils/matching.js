@@ -47,6 +47,7 @@ export function getPriceContext(helper, categoria) {
 import { HELPERS as LOCAL_HELPERS } from '../data/helpers'
 import { obraSignal } from '../data/obraPosts'
 import { searchHelpers } from './supabase'
+import { DEMO_MODE } from '../config'
 import { barrioEnTexto, barrioDeZona, kmEntre } from '../data/barrios'
 import { ciudadEnTexto, ciudadDe } from '../data/ciudades'
 import { pideDeclarado, puntosDeclarados, declaradosDe, pideAlgo } from './pideDeclarado'
@@ -697,28 +698,33 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
   let pool = []
   let hayServidor = false
 
-  // Always include demo helpers (id >= 2000) that match the category
-  const demoPool = LOCAL_HELPERS
+  // LOS PROFESIONALES DE EJEMPLO SOLO EN LA DEMO. Antes se mezclaban
+  // siempre con los reales y, si la base de datos no contestaba a tiempo, se
+  // recomendaban SOLO los de ejemplo: fuera de la demo, alguien con mala
+  // cobertura habria visto personas inventadas como si fueran reales.
+  const demoPool = DEMO_MODE ? LOCAL_HELPERS
     .filter(h => h?.id >= 2000 && toApp(h?.category) === analysis.categoria)
-    .map(normalizeHelper).filter(Boolean)
+    .map(normalizeHelper).filter(Boolean) : []
 
-  // Try Supabase
+  let remote
   try {
-    let remote = []
-    try {
-      const timeoutSb = new Promise(res => setTimeout(() => res([]), 2200))
-      remote = (await Promise.race([searchHelpers(categoriasEnBD(analysis.categoria), analysis.palabrasClave), timeoutSb])) || []
-    } catch (e) { console.error('[Nüra] Supabase no disponible — pool local activo:', e); remote = [] }
-    if (remote && remote.length > 0) {
-      pool = [...demoPool, ...remote.map(normalizeHelper).filter(Boolean)]
-      hayServidor = true
-    }
-  } catch (e) {
-    console.warn('Supabase error:', e)
+    const SIN_RESPUESTA = Symbol('sin respuesta')
+    const espera = new Promise(res => setTimeout(() => res(SIN_RESPUESTA), DEMO_MODE ? 2200 : 7500))
+    const r = await Promise.race([searchHelpers(categoriasEnBD(analysis.categoria), analysis.palabrasClave), espera])
+    remote = r === SIN_RESPUESTA ? null : r
+  } catch (e) { console.error('[Nüra] Supabase no disponible:', e); remote = null }
+  if (remote?.length) {
+    pool = [...demoPool, ...remote.map(normalizeHelper).filter(Boolean)]
+    hayServidor = true
+  } else if (!DEMO_MODE) {
+    // Sin respuesta: se dice que es la conexión (Home lo reconoce por «network»).
+    if (remote === null) throw new Error('network: la base de datos no ha respondido')
+    // Respondió y no hay nadie: se dice con honestidad, sin inventar.
+    pool = []
   }
 
-  // Fallback to all local
-  if (pool.length === 0) {
+  // Solo en la demo: el conjunto local de ejemplo cuando no hay servidor.
+  if (DEMO_MODE && pool.length === 0) {
     pool = LOCAL_HELPERS.filter(Boolean).map(normalizeHelper).filter(Boolean)
   }
 
