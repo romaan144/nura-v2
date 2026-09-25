@@ -1,7 +1,7 @@
 import { avatarDe } from '../utils/avatar'
 import { useNavigate } from 'react-router-dom'
 import { UserCheck, UserPlus, Star, MapPin } from 'lucide-react'
-import { HELPERS } from '../data/helpers'
+import { HELPERS_DEMO as HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
 import { DEMO_MODE } from '../config'
 import PageHeader from '../components/PageHeader'

@@ -10,6 +10,27 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — Fuera de la demo, ninguna pantalla usa perfiles de ejemplo
+
+- Tras la búsqueda (entrada anterior), el resto: la ficha, el chat, «Mis
+  chats», «Siguiendo» y la carta de presentación buscaban PRIMERO en los
+  perfiles de ejemplo de `data/helpers.js`. Sus id (1-12 y 2001+) chocarían
+  con profesionales reales cuando la base pase de 2000: el enlace de una
+  ficha real enseñaría a una persona inventada.
+- Nuevo `HELPERS_DEMO` (= los de ejemplo en la demo, vacío fuera). Lo usan
+  todas esas pantallas; también las historias de vecinos y los destacados
+  de Novedades (`connectionStories.js`), las publicaciones de ejemplo
+  (`obraPosts.js`, que además ordenaban la búsqueda) y los datos
+  enriquecidos de ejemplo (`DEMO_ENRICHMENTS`).
+- Novedades vacía ya no dice «0 historias de 0 personas»: «Todavía no hay
+  historias cerca de ti…».
+- Comprobado en el navegador en modo real abriendo los enlaces de los
+  perfiles de ejemplo (/helper/1, /helper/2001, /chat/1, /intro/2001…):
+  «ya no está» en todos; Novedades y Siguiendo, sin nadie inventado.
+- Tropiezo: `IntroLetter` usaba `DEMO_MODE` sin importarlo; el build no lo
+  ve y el total del lint no cambió (se arregló otro aviso a la vez). Se vio
+  comparando los avisos uno a uno: hay que diferenciar, no contar.
+
 ## 2026-09-25 — Fuera de la demo, nunca personas inventadas
 
 - **Hallazgo**: la búsqueda (y Explorar) mezclaba SIEMPRE los perfiles de

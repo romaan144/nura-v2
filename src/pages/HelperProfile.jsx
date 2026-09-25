@@ -10,7 +10,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Star, Shield, MapPin, MessageCircle, Calendar,
          Share2, UserPlus, UserCheck, Briefcase, BookOpen, Award,
          CheckCircle, Check, Globe, Zap, ChevronRight, Clock, ThumbsUp, ShieldCheck } from 'lucide-react'
-import { HELPERS } from '../data/helpers'
+import { HELPERS_DEMO as HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
 import RatingModal from '../components/RatingModal'
 import { recordarDestino, contextoDeChat, hayContexto } from '../utils/contacto'
@@ -203,7 +203,7 @@ function HelperProfileInner() {
   const [h, setH]             = useState(location.state?.helper || null)
 
   // Merge demo enrichment for rich profiles
-  const enrichedH = h && h.id >= 2000 && DEMO_ENRICHMENTS[h.id]
+  const enrichedH = h && DEMO_MODE && h.id >= 2000 && DEMO_ENRICHMENTS[h.id]
     ? { ...DEMO_ENRICHMENTS[h.id], ...h, qualitativeComments: h.qualitativeComments || DEMO_ENRICHMENTS[h.id].qualitativeComments }
     : h
   const [loading, setLoading] = useState(!h)

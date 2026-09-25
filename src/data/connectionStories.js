@@ -6,7 +6,8 @@
 // se construyen desde la especialidad real de cada profesional
 // para que texto y tarjeta nunca se contradigan.
 // ═══════════════════════════════════════════════════════════════
-import { HELPERS } from './helpers'
+// Solo en la demo: son historias de perfiles de ejemplo.
+import { HELPERS_DEMO as HELPERS } from './helpers'
 import { DEMO_ENRICHMENTS } from './demoEnrichments'
 
 const NEED_BY_CAT = {
