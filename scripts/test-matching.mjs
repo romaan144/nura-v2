@@ -518,6 +518,13 @@ for (const t of NEGATIVE) {
     ['hay un próximo hueco libre', !!H.proximoHueco(logopeda, [])],
     ['la hora que pediste sale como tuya', (() => { const f = laborables[0]; const h = H.horarioDe(logopeda).horas[0]; return H.slotsDe(logopeda, f, [{ helperId: 2001, fecha: f, hora: h, estado: 'pendiente' }]).find(x => x.hora === h)?.estado === 'tuya' })()],
     ['«Dra. Sara Martínez» → Sara', getFirstName('Dra. Sara Martínez') === 'Sara'],
+    ['su horario propio manda sobre el del oficio', (() => {
+      const propia = { id: 9, category: 'logopedia', horario: { dias: [6], horas: ['10:00', '11:00'] } }
+      const sab = dias.find(f => new Date(f + 'T12:00:00').getDay() === 6)
+      const lun = dias.find(f => new Date(f + 'T12:00:00').getDay() === 1)
+      return H.slotsDe(propia, sab, []).map(x => x.hora).join() === '10:00,11:00' && H.slotsDe(propia, lun, []).length === 0
+    })()],
+    ['un horario roto no rompe nada: se usa el del oficio', H.horarioDe({ category: 'logopedia', horario: { dias: [], horas: 'x' } }).horas.join() === H.horarioDelOficio('logopedia').horas.join()],
   ]
   for (const [n, ok] of casos) { if (!ok) failed++; console.log(`${ok ? '✓' : '✗'} agenda: ${n}`) }
 }

@@ -145,6 +145,8 @@ function normalize(h) {
     zone: h.zone || h.city || 'Barcelona',
     // Sin ciudad guardada se lee de su zona; si no se sabe, no se inventa.
     city: h.city || ciudadEnTexto(h.zone) || null,
+    // Su horario, si lo marcó (null = el de su oficio).
+    horario: h.horario || null,
     distance: parseFloat(h.distance) || 1.5, // Default 1.5km — honest fallback
     rating: parseFloat(h.rating) || 4.5,
     reviews: parseInt(h.reviews) || 0,
