@@ -10,6 +10,19 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — Retirada la fila «Instala Nüra en tu móvil»
+
+- **Decisión del fundador:** «la idea es acabar haciendo la app, mi
+  intención no es que la gente tenga la app de acceso directo de la página
+  web». No se invita a instalar la web en la pantalla de inicio: la
+  experiencia de app será la app de iOS (`docs/app-ios.md`).
+- Se quitan `InstalarApp.jsx` e `instalar.js`. Se quedan los iconos bien
+  hechos (no invitan a nada; solo evitan que se vea mal a quien lo haga
+  por su cuenta).
+- Sigue la frase de la hoja de alertas que explica que en iPhone los avisos
+  solo llegan desde la pantalla de inicio: es la única forma de que llegue
+  un aviso web en iPhone hasta que exista la app.
+
 ## 2026-09-25 — «Instala Nüra en tu móvil», en el perfil
 
 - En iPhone, instalar Nüra en la pantalla de inicio es la ÚNICA forma de
