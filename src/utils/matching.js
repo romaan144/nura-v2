@@ -45,6 +45,7 @@ import { HELPERS as LOCAL_HELPERS } from '../data/helpers'
 import { obraSignal } from '../data/obraPosts'
 import { searchHelpers } from './supabase'
 import { barrioEnTexto, barrioDeZona, kmEntre } from '../data/barrios'
+import { pideDeclarado, puntosDeclarados, declaradosDe, pideAlgo } from './pideDeclarado'
 
 // ── SEMANTIC EXPANSION MAP ────────────────────────────────────────────────
 // Maps everyday expressions → canonical keywords
@@ -550,6 +551,9 @@ export function analyzeNeed(userText) {
     // El barrio que nombra («cerca de Gràcia»), o null. Solo para ordenar
     // esta busqueda: no se guarda en ningun sitio.
     zona: barrioEnTexto(userText),
+    // Lo que pide que un profesional puede haber declarado («que hable
+    // catalán», «con coche», «por las tardes»). Solo ordena esta busqueda.
+    pide: pideDeclarado(userText, propias),
     resumen: resumenMap[categoria] || 'Busca ayuda',
     palabrasClave,
     palabrasPropias,
@@ -604,6 +608,7 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
   const required = levelOrder[analysis.nivelRequerido] ?? 1
 
   let pool = []
+  let hayServidor = false
 
   // Always include demo helpers (id >= 2000) that match the category
   const demoPool = LOCAL_HELPERS
@@ -619,6 +624,7 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
     } catch (e) { console.error('[Nüra] Supabase no disponible — pool local activo:', e); remote = [] }
     if (remote && remote.length > 0) {
       pool = [...demoPool, ...remote.map(normalizeHelper).filter(Boolean)]
+      hayServidor = true
     }
   } catch (e) {
     console.warn('Supabase error:', e)
@@ -722,5 +728,24 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
   if (!analysis?.categoria || analysis.categoria === 'otro') return []
   const finalPool = withContent.length > 0 ? withContent : sorted
   const compatibles = finalPool.filter(h => toApp(h?.category) === analysis.categoria)
+  // LO DECLARADO. Si pide algo comprobable («que hable catalán», «con
+  // coche»), se miran los datos que los mejores candidatos confirmaron de si
+  // mismos y se reordena. Una sola peticion, con tope de tiempo: si no
+  // llega, el orden se queda como estaba.
+  if (hayServidor && pideAlgo(analysis.pide)) {
+    const candidatos = compatibles.slice(0, 30)
+    const declarados = await declaradosDe(candidatos.map(h => h.id))
+    if (declarados.size) {
+      return reordenarPorDeclarado(candidatos, declarados, analysis.pide).slice(0, limit)
+    }
+  }
   return compatibles.slice(0, limit)
+}
+
+/** Suma lo declarado a la puntuacion y guarda el motivo para contarlo. */
+export function reordenarPorDeclarado(candidatos, declarados, pide) {
+  return candidatos.map(h => {
+    const { score, motivos } = puntosDeclarados(declarados.get(String(h.id)), pide)
+    return score ? { ...h, score: h.score + score, __declarado: motivos } : h
+  }).sort((a, b) => b.score - a.score)
 }

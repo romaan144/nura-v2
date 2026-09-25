@@ -51,6 +51,13 @@ function buildWhy(helper, analysis) {
   // solo lo puede decir quien tiene el dato.
   const txt = `${helper?.specialty || ''} ${helper?.bio || ''} ${(helper?.tags || []).join(' ')}`.toLowerCase()
 
+  // 0. Lo que pidio y el profesional confirmo de si mismo («habla catalán»,
+  // «tiene coche»). Se dice de donde sale: lo ha declarado el, no Nüra.
+  if (helper?.__declarado?.length) {
+    const d = helper.__declarado.slice(0, 2)
+    parts.push(`según su ficha, ${d.join(' y ')}`)
+  }
+
   // 1. El anclaje al problema, con la palabra que uso la persona
   // La palabra tiene que ser un SUSTANTIVO que nombre el problema, no un
   // verbo suelto: "no pronuncia la R" daba "trabaja exactamente eso:
@@ -81,6 +88,8 @@ function buildWhy(helper, analysis) {
   }
 
   if (helper?.__obra && parts.length < 2) parts.push('ha contado un caso muy parecido al tuyo')
+  // «según su ficha, habla catalán y tiene coche y está a…» → con coma
+  if (helper?.__declarado?.length === 2 && parts.length > 1) parts[0] = parts[0].replace(' y ', ', ')
   return parts.slice(0, 2).join(' y ') || 'encaja con lo que necesitas'
 }
 
