@@ -6,7 +6,7 @@ import { useState as useStateObra } from 'react'
 import ObraComposer from '../components/ObraComposer'
 import PostCard from '../components/PostCard'
 import { getObraDeHelper, obraAPost } from '../data/obraPosts'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { LogOut, Edit2, Check, X, Award, MessageCircle, ClipboardList, User, Phone, Star,
          UserPlus, UserCheck, ChevronRight, PenLine, Plus, Mail, CalendarDays, Search,
          Shield, FileText, Trash2, Share2 } from 'lucide-react'
@@ -100,6 +100,14 @@ export default function Profile() {
   const [campoDraft, setCampoDraft] = useState('')
   const [confirmarSalida, setConfirmarSalida] = useState(false)
   const [editarAbierto, setEditarAbierto] = useState(false)
+  // «Bloquear días u horas» desde Mi agenda llega con ese encargo: la hoja
+  // se abre en ese apartado. Al cerrarla se borra, para que no vuelva a abrirse.
+  const location = useLocation()
+  const pideBloqueos = location.state?.editar === 'bloqueos'
+  const cerrarEditar = () => {
+    setEditarAbierto(false)
+    if (pideBloqueos) navigate(location.pathname, { replace: true, state: null })
+  }
   const [borrarAbierto, setBorrarAbierto] = useState(false)
   const [vinculo, setVinculo] = useState('')
   const [borrando, setBorrando] = useState(false)
@@ -771,7 +779,7 @@ export default function Profile() {
       </div>
     </div>
     {composerOpen && <ObraComposer onClose={() => setComposerOpen(false)} />}
-    {editarAbierto && <EditarFicha onClose={() => setEditarAbierto(false)} />}
+    {(editarAbierto || pideBloqueos) && <EditarFicha foco={pideBloqueos ? 'bloqueos' : undefined} onClose={cerrarEditar} />}
     </>
   )
 }

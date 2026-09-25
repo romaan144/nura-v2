@@ -48,6 +48,64 @@ export function horarioValido(h) {
   return dias.length && horas.length ? { dias, horas } : null
 }
 
+// ── LOS BLOQUEOS: días u horas sueltas en que no puede ──────────────────
+// [{ fecha: '2026-10-09' }] = el día entero; con `horas`, solo esas horas.
+// Solo se guarda cuándo, nunca por qué: quien mira la agenda solo ve
+// «ocupada» o «No disponible».
+
+/** Los bloqueos guardados, limpios: fechas válidas, sin repetir, en orden. */
+export function bloqueosValidos(b) {
+  if (!Array.isArray(b)) return []
+  const porFecha = new Map()
+  for (const x of b.slice(0, 200)) {
+    const fecha = String(x?.fecha || '')
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha) || Number.isNaN(Date.parse(fecha))) continue
+    const horas = Array.isArray(x.horas) ? HORAS_POSIBLES.filter(h => x.horas.includes(h)) : null
+    if (horas && !horas.length) continue
+    const ya = porFecha.get(fecha)
+    // Si algo bloquea el día entero, gana el día entero.
+    if (ya === null || horas === null) porFecha.set(fecha, null)
+    else porFecha.set(fecha, [...new Set([...(ya || []), ...horas])])
+  }
+  return [...porFecha.entries()].sort(([a], [b]) => a.localeCompare(b))
+    .map(([fecha, horas]) => horas ? { fecha, horas: HORAS_POSIBLES.filter(h => horas.includes(h)) } : { fecha })
+}
+
+/** Lo bloqueado ese día: 'dia' (entero), un Set de horas, o null. */
+export function bloqueoDe(helper, fechaISO) {
+  const b = bloqueosValidos(helper?.bloqueos).find(x => x.fecha === fechaISO)
+  if (!b) return null
+  return b.horas ? new Set(b.horas) : 'dia'
+}
+
+/** Bloquea o desbloquea el día entero. Devuelve la lista nueva. */
+export function alternarDia(bloqueos, fechaISO) {
+  const lista = bloqueosValidos(bloqueos)
+  const b = lista.find(x => x.fecha === fechaISO)
+  if (b && !b.horas) return lista.filter(x => x !== b)
+  return bloqueosValidos([...lista.filter(x => x !== b), { fecha: fechaISO }])
+}
+
+/**
+ * Bloquea o desbloquea una hora de ese día. `horasDelDia` son las que
+ * trabaja: quitar una hora a un día entero lo deja en «todas menos esa», y
+ * bloquearlas todas pasa a ser el día entero.
+ */
+export function alternarHora(bloqueos, fechaISO, hora, horasDelDia = []) {
+  const lista = bloqueosValidos(bloqueos)
+  const b = lista.find(x => x.fecha === fechaISO)
+  const antes = !b ? [] : b.horas ? b.horas : [...horasDelDia]
+  const ahora = antes.includes(hora) ? antes.filter(h => h !== hora) : [...antes, hora]
+  const resto = lista.filter(x => x !== b)
+  if (!ahora.length) return resto
+  const entero = horasDelDia.length && horasDelDia.every(h => ahora.includes(h))
+  return bloqueosValidos([...resto, entero ? { fecha: fechaISO } : { fecha: fechaISO, horas: ahora }])
+}
+
+/** Quita los bloqueos de días que ya han pasado (no sirven para nada). */
+export const bloqueosVigentes = (b, ahora = new Date()) =>
+  bloqueosValidos(b).filter(x => x.fecha >= isoLocal(ahora))
+
 /** El del propio profesional si lo marcó; si no, el típico de su oficio. */
 export function horarioDe(helper) {
   return horarioValido(helper?.horario) || HORARIO_POR_CATEGORIA[helper?.category] || POR_DEFECTO
@@ -65,6 +123,8 @@ export function slotsDe(helper, fechaISO, citas = []) {
   const h = horarioDe(helper)
   const dia = new Date(fechaISO + 'T12:00:00').getDay()
   if (!h.dias.includes(dia)) return []
+  const bloqueo = bloqueoDe(helper, fechaISO)
+  if (bloqueo === 'dia') return []
 
   const suyas = (citas || []).filter(c => String(c.helperId) === String(helper?.id) && c.fecha === fechaISO)
   const ahora = new Date()
@@ -78,7 +138,8 @@ export function slotsDe(helper, fechaISO, citas = []) {
       // 'tuya': la ha pedido esta persona (pendiente o ya confirmada).
       // 'ocupada': la tiene aceptada con otra persona.
       if (c) return { hora, estado: c.deOtro ? 'ocupada' : 'tuya' }
-      return { hora, estado: deOtros.has(hora) ? 'ocupada' : 'libre' }
+      // Una hora que ha bloqueado se ve como cualquier otra ocupada.
+      return { hora, estado: deOtros.has(hora) || bloqueo?.has(hora) ? 'ocupada' : 'libre' }
     })
 }
 
@@ -144,12 +205,14 @@ export function motivoSinHuecos(helper, fechaISO) {
   const h = horarioDe(helper)
   const dia = new Date(fechaISO + 'T12:00:00').getDay()
   if (!h.dias.includes(dia)) return 'cerrado'
+  if (bloqueoDe(helper, fechaISO) === 'dia') return 'bloqueado'
   if (fechaISO === isoLocal()) return 'tarde'
   return 'completo'
 }
 
 export const FRASE_SIN_HUECOS = {
   cerrado:  'Ese día no trabaja. Prueba con otro.',
+  bloqueado: 'Ese día no está disponible. Prueba con otro.',
   tarde:    'Por hoy ya ha terminado. Prueba con mañana.',
   completo: 'Ese día lo tiene completo.',
 }

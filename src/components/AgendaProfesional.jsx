@@ -4,7 +4,7 @@
 // canceladas. Al tocar una, se abre su aviso (/r/:token) para contestarla.
 // Sale de los mismos avisos que la bandeja: no pide nada más al servidor.
 import { useNavigate } from 'react-router-dom'
-import { CalendarDays } from 'lucide-react'
+import { CalendarDays, CalendarOff } from 'lucide-react'
 import { agendaDe, isoLocal } from '../data/horarios'
 
 const DIAS = 14
@@ -42,6 +42,12 @@ export default function AgendaProfesional({ avisos }) {
           </span>
         )}
       </h2>
+      <button type="button" onClick={() => navigate('/profile', { state: { editar: 'bloqueos' } })}
+        style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-6)', minHeight: 36, padding: '0 var(--space-12)',
+          margin: '0 0 var(--space-10)', borderRadius: 'var(--radius-full)', border: '1px solid var(--ink-border, rgba(33,29,51,0.16))',
+          background: 'white', color: 'var(--ink-primary)', fontFamily: 'inherit', fontSize: 'var(--text-xs)', fontWeight: 600, cursor: 'pointer' }}>
+        <CalendarOff size={14} aria-hidden="true" /> Bloquear días u horas
+      </button>
       {!dias.length ? (
         <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)', margin: 0 }}>
           No tienes citas en los próximos {DIAS} días. Cuando alguien te proponga una, la verás aquí.

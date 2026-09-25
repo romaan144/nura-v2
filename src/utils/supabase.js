@@ -147,6 +147,8 @@ function normalize(h) {
     city: h.city || ciudadEnTexto(h.zone) || null,
     // Su horario, si lo marcó (null = el de su oficio).
     horario: h.horario || null,
+    // Días u horas sueltas en que no puede (vacaciones, un médico…).
+    bloqueos: Array.isArray(h.bloqueos) ? h.bloqueos : [],
     distance: parseFloat(h.distance) || 1.5, // Default 1.5km — honest fallback
     rating: parseFloat(h.rating) || 4.5,
     reviews: parseInt(h.reviews) || 0,

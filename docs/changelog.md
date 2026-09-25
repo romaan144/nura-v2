@@ -10,6 +10,26 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-10-05 — Bloquear días u horas sueltas
+
+- En «Editar mi ficha», debajo de «Tu horario», el profesional tiene
+  **«Días u horas que no puedes»** (`components/EditarBloqueos.jsx`): elige
+  un día de los próximos 60 y marca «No puedo en todo el día» o solo
+  algunas horas. Lista de lo bloqueado, con ✕ para quitarlo.
+- Atajo desde «Mi agenda»: **«Bloquear días u horas»** abre la hoja ya en
+  ese apartado.
+- Para quien pide cita: el día entero sale **«No disponible»**; las horas
+  sueltas, tachadas como cualquier hora ocupada. Nunca se dice el motivo:
+  solo se guarda cuándo.
+- Base de datos (migración `20261004000000_bloqueos_del_profesional.sql`,
+  aplicada): `helpers.bloqueos` (lista), visible para todos, solo la
+  profesional con cuenta puede cambiar la suya. Los días pasados se
+  olvidan al guardar.
+- Lógica en `data/horarios.js` (`bloqueosValidos`, `bloqueoDe`,
+  `alternarDia`, `alternarHora`), con 12 pruebas (`test:matching` 203).
+  Probado en el navegador: bloquea → guarda → otra persona ve el día «No
+  disponible» y la hora ocupada.
+
 ## 2026-10-04 — «Mi agenda» del profesional
 
 - En «Chats», encima de «Te han escrito», el profesional con cuenta ve

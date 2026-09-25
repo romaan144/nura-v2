@@ -2,7 +2,8 @@ import { revisarContacto } from '../utils/contactoProfesional'
 import { ciudadEnTexto } from '../data/ciudades'
 import { useState, useEffect } from 'react'
 import EditarHorario from './EditarHorario'
-import { horarioValido, horarioDelOficio } from '../data/horarios'
+import EditarBloqueos from './EditarBloqueos'
+import { horarioValido, horarioDelOficio, bloqueosVigentes } from '../data/horarios'
 import { analyzeNeed } from '../utils/matching'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
@@ -36,7 +37,8 @@ const CAMPOS = [
 ]
 const MODOS = ['Presencial', 'Online', 'Las dos']
 
-export default function EditarFicha({ onClose }) {
+/** `foco`: 'bloqueos' abre la hoja ya en «Días u horas que no puedes». */
+export default function EditarFicha({ onClose, foco }) {
   const { user, updateUser } = useUser()
   const hp = user?.helperProfile || {}
   const [v, setV] = useState(() => Object.fromEntries(
@@ -52,7 +54,15 @@ export default function EditarFicha({ onClose }) {
   }, [])   // eslint-disable-line react-hooks/exhaustive-deps
   const horarioOk = horarioValido(horario)
   const horarioCambiado = JSON.stringify(horarioOk) !== JSON.stringify(horarioValido(hp.horario))
-  const cambiado = Object.keys(v).some(k => (v[k] || '').trim() !== (hp[k] || '').trim()) || horarioCambiado
+  // Días u horas sueltas que no puede (los pasados se van solos al guardar).
+  const [bloqueos, setBloqueos] = useState(() => bloqueosVigentes(hp.bloqueos))
+  const bloqueosCambiados = JSON.stringify(bloqueos) !== JSON.stringify(bloqueosVigentes(hp.bloqueos))
+  const cambiado = Object.keys(v).some(k => (v[k] || '').trim() !== (hp[k] || '').trim()) || horarioCambiado || bloqueosCambiados
+  useEffect(() => {
+    if (foco !== 'bloqueos') return
+    const t = setTimeout(() => document.getElementById('bloqueos')?.scrollIntoView({ block: 'start' }), 150)
+    return () => clearTimeout(t)
+  }, [foco])
 
   const vinculada = user?.helperId != null
   const [guardando, setGuardando] = useState(false)
@@ -79,7 +89,7 @@ export default function EditarFicha({ onClose }) {
       limpio.contacto = r.valor
     }
     if (!horarioOk) { setFallo('Marca al menos un día y una hora de tu horario.'); return }
-    updateUser({ helperProfile: { ...hp, ...limpio, horario: horarioOk } })
+    updateUser({ helperProfile: { ...hp, ...limpio, horario: horarioOk, bloqueos } })
     if (!vinculada) { onClose(); return }
     // ── A LA FICHA PUBLICA (etapa 6b) ──────────────────────────────────
     // Con la ficha vinculada, el cambio se escribe en Supabase con la sesion
@@ -99,6 +109,7 @@ export default function EditarFicha({ onClose }) {
         online: /online|las dos/i.test(limpio.modality || ''),
         contacto: limpio.contacto || null,
         horario: horarioOk,
+        bloqueos,
       }
       const { data, error } = await cuentas.from('helpers').update(cambios).eq('id', user.helperId).select('id')
       if (error || !data?.length) throw error || new Error('ninguna fila')
@@ -186,6 +197,7 @@ export default function EditarFicha({ onClose }) {
         </div>
 
         <EditarHorario valor={horario} onCambio={setHorario} />
+        <EditarBloqueos valor={bloqueos} horario={horarioOk || horarioDelOficio(null)} onCambio={setBloqueos} />
         </>}
       </div>
 
