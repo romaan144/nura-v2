@@ -2264,3 +2264,9 @@ registradas retroactivamente con su motivo:
 - Nueva op `mis-avisos`: solo con sesión y solo los avisos de SU ficha (`owner_id`); nunca la llave de lectura de quien escribió.
 - `helpers-write` v16. 3 pruebas nuevas (`npm run test:avisos`, 132). Comprobado en navegador.
 - `docs/lado-profesional.md` era de agosto: la bandeja que pedía ya existe.
+
+## 2026-09-25 · «Avísame cuando me escriban» (la profesional)
+- En su bandeja «Te han escrito», la profesional puede activar una notificación en su móvil cuando alguien le escribe (y quitarla). Nada se pide hasta que lo toca.
+- Canal aparte: el mismo `public/sw.js` registrado con ámbito `/pro/`. Así el trabajador sabe que el aviso es «Te han escrito en Nüra» (abre Chats) sin que el aviso lleve nada.
+- Servidor: tabla `avisos_pro` (una suscripción por ficha, solo service_role), op `avisos-pro` (con sesión y solo SU ficha), y `encolar-aviso` toca ese móvil. Si el móvil ya no la acepta, se borra. «Borrar mi cuenta» también la borra.
+- `helpers-write` v17 · migración `20260930000000_avisos_al_profesional.sql` aplicada. 7 pruebas nuevas (`npm run test:avisos`, 139). Comprobado en navegador con un aviso simulado en cada canal.

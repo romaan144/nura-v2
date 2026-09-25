@@ -29,7 +29,7 @@ function ok(cond, texto) {
 }
 
 // ── la base de datos ficticia ───────────────────────────────────────────
-const db = { helpers: [], avisos: [], valoraciones: [], alertas: [], ajustes: [], perfil_atributos: [], eventos: [] }
+const db = { helpers: [], avisos: [], valoraciones: [], alertas: [], ajustes: [], perfil_atributos: [], eventos: [], avisos_pro: [] }
 const peticionesBD = []   // todo lo que la funcion le pide a "Supabase"
 
 function coincide(fila, campo, cond) {
@@ -542,6 +542,24 @@ console.log('\n── El Pulso: cifras de verdad, solo de la ficha propia ──
   const lista = r.datos?.avisos || []
   ok(r.estado === 200 && lista.some(a => a.id === 80) && !lista.some(a => a.helper_id === '999' || a.id === 81), 've los mensajes de SU ficha, nunca los de otra (aunque el móvil pida otra)')
   ok(lista.find(a => a.id === 80)?.token === 't'.repeat(32) && !JSON.stringify(lista).includes('h80'), 'con el enlace para contestar, sin la llave de quien escribió')
+
+  // «Avísame cuando me escriban»: la notificación le llega a la profesional
+  const SUBP = { endpoint: 'https://fcm.googleapis.com/fcm/send/ficticio-pro', keys: { p256dh: 'x', auth: 'y' } }
+  r = await llamarG(funcion, { op: 'avisos-pro', push: SUBP })
+  ok(r.estado === 401, 'sin sesión no se apunta ningún móvil')
+  r = await llamarG(funcion, { op: 'avisos-pro', sesion: 'sesion-confirmada', push: { endpoint: 'https://atacante.test/x' } })
+  ok(r.estado === 400 && !db.avisos_pro.length, 'solo servicios de notificaciones reales')
+  r = await llamarG(funcion, { op: 'avisos-pro', sesion: 'sesion-confirmada', helperId: 999, push: SUBP })
+  ok(r.estado === 200 && db.avisos_pro.length === 1 && db.avisos_pro[0].helper_id === '777', 'se apunta en SU ficha (no en la que diga el móvil)')
+  r = await llamarG(funcion, { op: 'avisos-pro', sesion: 'sesion-confirmada', push: SUBP })
+  ok(db.avisos_pro.length === 1, 'una por ficha: volver a pedirlo no la duplica')
+  const antesP = tocados.length
+  await llamarG(funcion, { op: 'encolar-aviso', helperId: 777, mensaje: 'Te escribo (ficticio)' })
+  ok(tocados.length === antesP + 1 && tocados.at(-1).url === SUBP.endpoint && !tocados.at(-1).init.body, 'cuando alguien le escribe, se toca su móvil, sin contenido')
+  await llamarG(funcion, { op: 'encolar-aviso', helperId: 999, mensaje: 'A otra (ficticio)' })
+  ok(tocados.length === antesP + 1, 'no se le avisa de mensajes a otras fichas')
+  r = await llamarG(funcion, { op: 'avisos-pro', sesion: 'sesion-confirmada', quitar: true })
+  ok(r.estado === 200 && !db.avisos_pro.length, 'y lo puede quitar')
 }
 
 

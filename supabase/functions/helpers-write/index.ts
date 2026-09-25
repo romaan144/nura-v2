@@ -340,6 +340,20 @@ async function avisoPorCorreo(avisoId: unknown, helperId: string, h: { name?: un
   } catch { return false }
 }
 
+/** Alguien ha escrito a esta ficha: si su profesional lo pidio, se le toca el movil. */
+async function avisarPro(helperId: string) {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/avisos_pro?helper_id=eq.${encodeURIComponent(helperId)}&select=push`, { headers: rest })
+    if (!r.ok) return
+    const [s] = await r.json()
+    if (!s?.push) return
+    const vapid = await llavesVapid()
+    if (vapid && !(await tocarMovil(s.push, vapid))) {
+      await fetch(`${SUPABASE_URL}/rest/v1/avisos_pro?helper_id=eq.${encodeURIComponent(helperId)}`, { method: 'DELETE', headers: rest })
+    }
+  } catch { /* el mensaje ya esta guardado: una notificacion perdida no lo deshace */ }
+}
+
 // ── LO DECLARADO (perfil vivo §4) ───────────────────────────────────────
 // La IA (funcion `perfil-ia`) PROPONE; aqui solo entra lo que el profesional
 // CONFIRMA. Vocabulario cerrado (el de perfil-ia): cualquier otra clave se
@@ -608,6 +622,7 @@ Deno.serve(async (req: Request) => {
     // Si el profesional dio un CORREO, el aviso le llega solo (sin esperar a
     // `npm run avisar`). Los moviles siguen por WhatsApp, a mano.
     const enviado = nuevo?.id !== undefined ? await avisoPorCorreo(nuevo.id, String(id), h, mensaje, token) : false
+    await avisarPro(String(id))
     return json({ ok: true, alcanzable: Boolean(h?.contacto), lectura, enviado }, 200, cors)
   }
 
@@ -959,6 +974,35 @@ Deno.serve(async (req: Request) => {
     return json({ ok: true, avisos: await r.json() }, 200, cors)
   }
 
+  // ── «AVISAME CUANDO ME ESCRIBAN» (la profesional, en su movil) ──
+  // Con sesion y solo para SU ficha. `push` la guarda (una por ficha: la
+  // del ultimo movil); `quitar: true` la borra.
+  if (op === 'avisos-pro') {
+    const token = String(cuerpo.sesion || '')
+    if (!token) return json({ error: 'falta la sesion' }, 401, cors)
+    const u = await fetch(`${SUPABASE_URL}/auth/v1/user`, { headers: { apikey: SERVICE_KEY!, Authorization: `Bearer ${token}` } })
+    if (!u.ok) return json({ error: 'sesion no valida' }, 401, cors)
+    const usuario = await u.json()
+    if (!usuario?.id) return json({ error: 'sesion sin usuario' }, 401, cors)
+    const f = await fetch(`${SUPABASE_URL}/rest/v1/helpers?owner_id=eq.${usuario.id}&select=id&limit=1`, { headers: rest })
+    if (!f.ok) return json({ error: 'lectura rechazada', estado: f.status }, 502, cors)
+    const [ficha] = await f.json()
+    if (!ficha) return json({ error: 'sin ficha' }, 404, cors)
+    const hid = encodeURIComponent(String(ficha.id))
+    const p = cuerpo.push as { endpoint?: unknown, keys?: unknown } | undefined
+    if (cuerpo.quitar !== true && (!p || typeof p.endpoint !== 'string' || !PUSH_OK.test(p.endpoint))) {
+      return json({ error: 'suscripcion no valida' }, 400, cors)
+    }
+    const del = await fetch(`${SUPABASE_URL}/rest/v1/avisos_pro?helper_id=eq.${hid}`, { method: 'DELETE', headers: rest })
+    if (!del.ok && del.status !== 404) return json({ error: 'no guardado', estado: del.status }, 502, cors)
+    if (cuerpo.quitar === true) return json({ ok: true, activo: false }, 200, cors)
+    const ins = await fetch(`${SUPABASE_URL}/rest/v1/avisos_pro`, {
+      method: 'POST', headers: { ...rest, Prefer: 'return=minimal' },
+      body: JSON.stringify({ helper_id: String(ficha.id), push: { endpoint: (p!.endpoint as string).slice(0, 1000), keys: p!.keys ?? null } }),
+    })
+    return ins.ok ? json({ ok: true, activo: true }, 200, cors) : json({ error: 'no guardado', estado: ins.status }, 502, cors)
+  }
+
   // ── EL PULSO: la semana de la profesional, con datos REALES ──
   // Antes el Pulso se inventaba las cifras con un numero al azar («9
   // personas buscaron…»). Ahora cuenta lo que ha pasado de verdad en 7 dias:
@@ -1060,7 +1104,7 @@ Deno.serve(async (req: Request) => {
       if (!av.ok && av.status !== 404) return json({ error: 'no se pudieron borrar los avisos', estado: av.status }, 502, cors)
       // Lo que se sabe de ella (perfil vivo): opiniones y atributos. 404 = la
       // tabla aun no existe: no hay nada que borrar.
-      for (const t of ['valoraciones', 'perfil_atributos']) {
+      for (const t of ['valoraciones', 'perfil_atributos', 'avisos_pro']) {
         const r = await fetch(`${SUPABASE_URL}/rest/v1/${t}?helper_id=eq.${encodeURIComponent(String(f.id))}`, { method: 'DELETE', headers: rest })
         if (!r.ok && r.status !== 404) return json({ error: 'no se pudo borrar ' + t, estado: r.status }, 502, cors)
       }
