@@ -161,7 +161,7 @@ export const FRASE_SIN_HUECOS = {
  */
 export function ocupacionesDe(citas = [], services = []) {
   // Las rechazadas y las canceladas ya no ocupan nada.
-  const a = (citas || []).filter(c => c.estado !== 'rechazada').map(c => ({
+  const a = (citas || []).filter(c => c.estado !== 'rechazada' && c.estado !== 'cancelada').map(c => ({
     helperId: c.helperId, fecha: c.fecha, hora: c.hora,
     estado: c.estado === 'confirmada' ? 'confirmada' : 'pendiente',
   }))
@@ -174,4 +174,30 @@ export function ocupacionesDe(citas = [], services = []) {
 
 export function tieneHuecos(helper, fechaISO, citas = []) {
   return slotsDe(helper, fechaISO, citas).some(s => s.estado === 'libre')
+}
+
+/**
+ * EL RECORDATORIO: la cita CONFIRMADA más cercana que empieza en las
+ * próximas 24 horas (y aún no ha empezado), o null. Mira las dos listas
+ * donde vive una cita (servicios y citas del chat) sin repetirla.
+ */
+export function citaEn24h(services = [], citas = [], ahora = new Date()) {
+  const todas = [
+    ...(services || []).filter(s => s.status === 'confirmed').map(s => ({
+      helperId: s.helperId, helperName: s.helperName, specialty: s.specialty, avatarUrl: s.avatarUrl, fecha: s.date, hora: s.time,
+    })),
+    ...(citas || []).filter(c => c.estado === 'confirmada').map(c => ({
+      helperId: c.helperId, helperName: c.helperName, fecha: c.fecha, hora: c.hora,
+    })),
+  ].filter(c => c.helperId != null && /^\d{4}-\d{2}-\d{2}$/.test(String(c.fecha || '')) && /^\d{1,2}:\d{2}$/.test(String(c.hora || '')))
+  const t0 = ahora.getTime()
+  const cerca = todas
+    .map(c => ({ ...c, cuando: new Date(`${c.fecha}T${c.hora.padStart(5, '0')}:00`).getTime() }))
+    .filter(c => c.cuando > t0 && c.cuando - t0 <= 24 * 3600e3)
+    .sort((a, b) => a.cuando - b.cuando)
+  if (!cerca.length) return null
+  // La misma cita puede estar en las dos listas: se juntan sus datos.
+  const [p] = cerca
+  const gemela = cerca.find(c => c !== p && String(c.helperId) === String(p.helperId) && c.fecha === p.fecha && c.hora === p.hora)
+  return gemela ? { ...gemela, ...Object.fromEntries(Object.entries(p).filter(([, v]) => v != null)) } : p
 }

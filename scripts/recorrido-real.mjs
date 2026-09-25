@@ -60,6 +60,12 @@ function backend(c) {
     }
     case 'respuestas': { const hs = (c.llaves || []).map(sha); return { ok: true, respuestas: avisos.filter(a => hs.includes(a.lectura_hash) && a.respuesta).map(a => ({ llave: c.llaves[hs.indexOf(a.lectura_hash)], respuesta: a.respuesta, respondido_en: a.respondido_en, cita: citaSal(a) })) } }
     case 'ocupadas': return { ok: true, ocupadas: avisos.filter(a => a.helper_id === String(c.helperId) && a.cita_estado === 'aceptada').map(a => ({ fecha: a.cita_fecha, hora: a.cita_hora })) }
+    case 'cancelar-cita': {
+      const hs = (c.llaves || []).map(sha)
+      const a = avisos.find(x => hs.includes(x.lectura_hash) && x.cita_fecha === c.fecha && x.cita_hora === c.hora && ['propuesta', 'aceptada'].includes(x.cita_estado))
+      if (!a) return { __estado: 404 }
+      a.cita_estado = 'cancelada'; return { ok: true }
+    }
     case 'valorar': { const a = porLlave(c.llave); if (!a) return { __estado: 404 }; valoraciones.push({ helper_id: a.helper_id, ...c }); return { ok: true } }
     default: return { ok: true }
   }
@@ -210,6 +216,48 @@ try {
   await pulsar(c, 'Enviar'); await espera(1500)
   ok(valoraciones.length === 1 && valoraciones[0].helper_id === avisos[0].helper_id && valoraciones[0].volveria === true,
     'la valoración llega al servidor, de la conversación real con ese profesional')
+
+  console.log('\n── Otra cita: el recordatorio del día antes y cancelarla ──')
+  await c.goto(B + '/helper/' + conCita.helper_id, { waitUntil: 'networkidle0' }); await espera(1500)
+  ok(await pulsar(c, 'Disponibilidad'), 'desde la ficha, «Disponibilidad»')
+  await c.evaluate(() => { const d = [...document.querySelectorAll('[role=option]')].find(x => !x.disabled); d?.click() }); await espera(500)
+  await c.evaluate(() => { const h = [...document.querySelectorAll('button[aria-pressed]')].find(x => !x.disabled); h?.click() }); await espera(300)
+  const antes = avisos.length
+  ok(await pulsar(c, 'Enviar solicitud'), 'pide otra cita')
+  await espera(1200)
+  const segunda = avisos.slice(antes).find(a => a.cita_estado === 'propuesta')
+  ok(Boolean(segunda), 'la segunda propuesta llega con su día y su hora')
+  const pro3 = await pagina()
+  await pro3.goto(B + '/r/' + segunda.token, { waitUntil: 'networkidle0' }); await espera(1000)
+  await pulsar(pro3, 'Aceptar la cita'); await espera(800)
+  ok(segunda.cita_estado === 'aceptada', 'el profesional la acepta')
+  const fN = segunda.cita_fecha, hN = segunda.cita_hora
+  await c.bringToFront()
+  await c.goto(B + '/my-services', { waitUntil: 'networkidle0' }); await espera(2500)
+  // El reloj de este navegador se adelanta a 2 horas antes de la cita: así
+  // se ve el recordatorio sin esperar al día de antes (los datos, intactos).
+  const adelanto = new Date(`${fN}T${hN}:00`).getTime() - 2 * 3600e3 - Date.now()
+  await c.evaluateOnNewDocument(ms => {
+    const D = Date
+    class Reloj extends D { constructor(...a) { if (a.length) super(...a); else super(D.now() + ms) } static now() { return D.now() + ms } }
+    window.Date = Reloj
+  }, adelanto)
+  await c.goto(B + '/', { waitUntil: 'networkidle0' }); await espera(2000)
+  const aviso = await texto(c)
+  ok(/Tu cita/.test(aviso) && new RegExp(`(Hoy|Mañana) a las ${hN}`).test(aviso) && /Con Laura/.test(aviso), `en Inicio sale el recordatorio: «${(aviso.match(/(Hoy|Mañana) a las \d\d:\d\d/) || [''])[0]}», con Laura`)
+  ok(await pulsar(c, 'Cancelar la cita'), 'pulsa «Cancelar la cita»')
+  ok(/¿Cancelar la cita\?/.test(await texto(c)) && segunda.cita_estado === 'aceptada', 'pide confirmación antes de cancelar nada')
+  ok(await pulsar(c, 'Sí, cancelar'), 'confirma')
+  await espera(800)
+  ok(segunda.cita_estado === 'cancelada', 'la cita queda cancelada en el servidor')
+  ok(!/Tu cita/.test(await texto(c)), 'y el recordatorio desaparece')
+  await c.goto(B + '/my-services', { waitUntil: 'networkidle0' }); await espera(1500)
+  ok(/Cancelado/.test(await texto(c)), 'en «Mis servicios» sale Cancelado')
+  const pro4 = await pagina()
+  await pro4.goto(B + '/r/' + segunda.token, { waitUntil: 'networkidle0' }); await espera(1000)
+  ok(/Cita cancelada/.test(await texto(pro4)) && /vuelve a estar libre/.test(await texto(pro4)), 'el profesional ve en su enlace que se ha cancelado')
+  await pro4.close(); await pro3.close()
+  ok(!backend({ op: 'ocupadas', helperId: segunda.helper_id }).ocupadas.some(o => o.fecha === fN && o.hora === hN), 'y esa hora ya no sale ocupada para nadie')
 } catch (e) {
   ok(false, 'el recorrido se ha roto: ' + e.message)
 } finally {

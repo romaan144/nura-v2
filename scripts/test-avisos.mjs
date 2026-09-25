@@ -633,7 +633,27 @@ console.log('\n── La cita: se acepta con un botón y ocupa la hora para todo
   ok(r.estado === 200 && f4.cita_hora === '19:00' && f4.cita_estado === 'propuesta', 'la cita también viaja al ampliar la conversación')
   r = await llamar(funcion, { op: 'ocupadas', helperId: 'abc' })
   ok(r.estado === 400, 'ocupadas sin un id válido → 400')
-  void c2
+
+  console.log('\n── Cancelar la cita: solo quien la pidió, y la hora queda libre ──')
+  r = await llamar(funcion, { op: 'cancelar-cita', llaves: [c2.datos.lectura], fecha: d, hora: '17:00' })
+  ok(r.estado === 404 && f1.cita_estado === 'aceptada', 'con la llave de OTRA conversación no se cancela nada')
+  r = await llamar(funcion, { op: 'cancelar-cita', llaves: ['0'.repeat(32)], fecha: d, hora: '17:00' })
+  ok(r.estado === 404 && f1.cita_estado === 'aceptada', 'con una llave inventada tampoco')
+  r = await llamar(funcion, { op: 'cancelar-cita', llaves: [c1.datos.lectura], fecha: d, hora: '17:30' })
+  ok(r.estado === 404 && f1.cita_estado === 'aceptada', 'una hora mal formada → 404, nada cambia')
+  r = await llamar(funcion, { op: 'cancelar-cita', llaves: [c1.datos.lectura], fecha: d, hora: '17:00' })
+  ok(r.estado === 200 && f1.cita_estado === 'cancelada', 'quien la pidió la cancela con su llave')
+  r = await llamar(funcion, { op: 'ocupadas', helperId: 900 })
+  ok(r.datos.ocupadas.length === 0, 'y la hora vuelve a estar libre para todos')
+  r = await llamar(funcion, { op: 'abrir-aviso', token: f1.token })
+  ok(r.datos.aviso.cita?.estado === 'cancelada', 'el profesional ve en su enlace que se ha cancelado')
+  r = await llamar(funcion, { op: 'cancelar-cita', llaves: [c1.datos.lectura], fecha: d, hora: '17:00' })
+  ok(r.estado === 404, 'cancelar dos veces → 404 (ya no hay nada que cancelar)')
+  const c5 = await llamar(funcion, { op: 'encolar-aviso', helperId: 900, mensaje: 'Otra persona, la hora que ha quedado libre', cita: { fecha: d, hora: '17:00' } })
+  const f5 = db.avisos.filter(x => x.helper_id === '900').at(-1)
+  r = await llamar(funcion, { op: 'responder-aviso', token: f5.token, respuesta: 'Sí', cita: 'aceptada' })
+  ok(r.estado === 200 && f5.cita_estado === 'aceptada', 'otra persona puede quedarse ahora esa hora')
+  void c5
 }
 
 const servidor = http.createServer(async (req, res) => {
