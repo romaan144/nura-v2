@@ -10,6 +10,20 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — Iconos de la app instalada, bien hechos
+
+- El manifiesto declaraba `logo-iso.png` (180×180, fondo transparente)
+  como si fuera de 192 y de 512, y además «maskable». Resultado: en
+  iPhone, al añadir Nüra a la pantalla de inicio, el fondo transparente
+  sale **negro**; en Android el icono «maskable» sin margen se recorta.
+- Nuevos: `icono-192.png`, `icono-512.png`, `icono-maskable-512.png`
+  (con fondo y margen de seguridad) y `apple-touch-icon.png` (180, fondo
+  claro). Todos bajo 60 kB. Los avisos del móvil usan `icono-192.png`.
+- Chrome no ponía pegas antes ni ahora (`getInstallabilityErrors` vacío):
+  la mejora es de cómo se ve, no de si se puede instalar.
+- Límite: el único logo que hay es de 180 px; los de 512 están ampliados.
+  Con el logo original en alta resolución (o SVG) quedarían más nítidos.
+
 ## 2026-09-25 — Sin conexión no es «ya no está en Nüra»
 
 - `getHelperById` devolvía `null` tanto si la ficha no existía como si

@@ -58,7 +58,7 @@ self.addEventListener('push', e => {
     if (self.registration.scope.endsWith('/pro/')) {
       return self.registration.showNotification('Te han escrito en Nüra', {
         body: 'Tócalo para leerlo y contestar.',
-        icon: '/logo-iso.png', badge: '/logo-iso.png', tag: 'nura-te-han-escrito',
+        icon: '/icono-192.png', badge: '/logo-iso.png', tag: 'nura-te-han-escrito',
         data: { url: '/chats' },
       })
     }
@@ -67,13 +67,13 @@ self.addEventListener('push', e => {
       const [p] = listos
       return self.registration.showNotification(`${p.nombre || 'Un profesional'} te ha contestado`, {
         body: 'Tócalo para leer la respuesta en Nüra.',
-        icon: '/logo-iso.png', badge: '/logo-iso.png', tag: 'nura-respuesta-' + p.helperId,
+        icon: '/icono-192.png', badge: '/logo-iso.png', tag: 'nura-respuesta-' + p.helperId,
         data: { url: '/chat/' + encodeURIComponent(p.helperId) },
       })
     }
     return self.registration.showNotification('Ha llegado alguien a Nüra', {
       body: 'Encaja con lo que buscabas. Tócalo para verlo.',
-      icon: '/logo-iso.png', badge: '/logo-iso.png', tag: 'nura-alerta',
+      icon: '/icono-192.png', badge: '/logo-iso.png', tag: 'nura-alerta',
       data: { url: '/profile?alertas=1' },
     })
   })())
