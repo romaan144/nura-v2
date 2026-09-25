@@ -813,6 +813,20 @@ Deno.serve(async (req: Request) => {
     })) }, 200, cors)
   }
 
+  // Renovar una alerta que va a caducar: 3 meses mas desde HOY (nunca mas).
+  // Solo con la llave del movil y solo si sigue viva: lo caducado se borro.
+  if (op === 'renovar-alerta') {
+    const llave = String(cuerpo.llave ?? '')
+    if (!FORMATO_LLAVE.test(llave)) return json({ error: 'no existe' }, 404, cors)
+    const ahora = new Date()
+    const caduca_en = new Date(ahora.getTime() + 90 * 864e5).toISOString()
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/alertas?llave_hash=eq.${hex(await sha256(llave))}&caduca_en=gt.${ahora.toISOString()}`, {
+      method: 'PATCH', headers: { ...rest, Prefer: 'return=representation' }, body: JSON.stringify({ caduca_en }),
+    })
+    if (!r.ok) return json({ error: 'no renovada', estado: r.status }, 502, cors)
+    return (await r.json()).length ? json({ ok: true, caduca_en }, 200, cors) : json({ error: 'no existe' }, 404, cors)
+  }
+
   // Borrar una alerta: con la llave del movil o con el enlace del correo.
   if (op === 'quitar-alerta') {
     const llave = String(cuerpo.llave ?? ''), baja = String(cuerpo.baja ?? '')

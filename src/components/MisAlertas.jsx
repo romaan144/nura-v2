@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Bell, Mail, X, ChevronRight } from 'lucide-react'
-import { misAlertas, quitarAlerta, marcarVistas, alertasGuardadas } from '../utils/alertas'
+import { misAlertas, quitarAlerta, marcarVistas, alertasGuardadas, caducaPronto, renovarAlerta } from '../utils/alertas'
 
 // «Te aviso si aparece: …» (docs/perfil-vivo.md §10, punto 4). Lo que Nüra
 // recuerda de quien busca, visible y con su botón para quitarlo. Usa las
@@ -26,6 +26,11 @@ export default function MisAlertas({ estilos: s, destacar = false }) {
 
   if (!lista.length) return null
 
+  async function renovar(llave) {
+    const caduca_en = await renovarAlerta(llave)
+    setLista(l => l.map(a => a.llave === llave ? { ...a, caduca_en: caduca_en || a.caduca_en, fallo: !caduca_en } : a))
+  }
+
   async function quitar(llave) {
     setLista(l => l.filter(a => a.llave !== llave))
     await quitarAlerta(llave)
@@ -48,6 +53,14 @@ export default function MisAlertas({ estilos: s, destacar = false }) {
                   {[a.canales?.movil && 'Notificación', a.canales?.correo && 'correo'].filter(Boolean).join(' y ') || 'Lo verás aquí'}
                   {a.caduca_en ? ` · hasta el ${fecha(a.caduca_en)}` : ''}
                 </span>
+                {caducaPronto(a) && (
+                  <button onClick={() => renovar(a.llave)}
+                    style={{ alignSelf: 'flex-start', marginTop: 'var(--space-6)', minHeight: 36, padding: '0 var(--space-12)',
+                      borderRadius: 'var(--radius-full)', border: '1px solid var(--purple)', background: 'transparent',
+                      color: 'var(--purple)', fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 600, cursor: 'pointer' }}>
+                    {a.fallo ? 'No se pudo. Reintentar' : 'Renovar 3 meses más'}
+                  </button>
+                )}
               </span>
               <button className={s.quitar} onClick={() => quitar(a.llave)} aria-label={`Dejar de avisarme de ${a.que}`}>
                 <X size={16} />
@@ -71,7 +84,7 @@ export default function MisAlertas({ estilos: s, destacar = false }) {
           )
         })}
       </div>
-      <p className={s.pie}>Solo guardo el oficio, nunca lo que escribiste. Cada aviso se borra solo a los 3 meses.</p>
+      <p className={s.pie}>Solo guardo el oficio, nunca lo que escribiste. Cada aviso se borra solo a los 3 meses; antes te dejo renovarlo.</p>
     </section>
   )
 }

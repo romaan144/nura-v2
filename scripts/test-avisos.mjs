@@ -345,6 +345,21 @@ console.log('\n── Te aviso si aparece alguien ──')
   await llamarG(funcion, { op: 'alta', payload: { name: 'Una Más', category: 'logopedia' } })
   ok(!db.alertas.some(f => f.id === 99), 'las alertas caducadas se borran')
 
+  // Renovar: 3 meses desde hoy, solo con su llave
+  const filaMovil = db.alertas.find(f => f.categorias.includes('logopedia') && f.correo === null)
+  filaMovil.caduca_en = new Date(Date.now() + 5 * 864e5).toISOString()
+  r = await llamarG(funcion, { op: 'renovar-alerta', llave: llaveMovil })
+  const dias = (new Date(filaMovil.caduca_en) - Date.now()) / 864e5
+  ok(r.estado === 200 && dias > 89 && dias <= 90, `renovar da 3 meses más desde hoy (${Math.round(dias)} días)`)
+  r = await llamarG(funcion, { op: 'renovar-alerta', llave: '0'.repeat(32) })
+  ok(r.estado === 404, 'una llave inventada no renueva nada')
+  r = await llamarG(funcion, { op: 'crear-alerta', categorias: ['canguro'], que: 'Canguro' })
+  const llaveVieja = r.datos.llave, vieja = db.alertas.at(-1)
+  vieja.caduca_en = '2020-01-01T00:00:00Z'
+  r = await llamarG(funcion, { op: 'renovar-alerta', llave: llaveVieja })
+  ok(r.estado === 404 && vieja.caduca_en === '2020-01-01T00:00:00Z', 'lo ya caducado no revive')
+  db.alertas = db.alertas.filter(f => f !== vieja)
+
   // Quitar
   r = await llamarG(funcion, { op: 'quitar-alerta', llave: llaveMovil })
   ok(r.estado === 200 && !db.alertas.some(f => f.categorias.includes('logopedia') && f.correo === null), 'se quita con la llave del móvil')
