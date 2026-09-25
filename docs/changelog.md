@@ -2237,3 +2237,11 @@ registradas retroactivamente con su motivo:
 - Cuando a un aviso le quedan 14 días o menos, «Mis avisos» enseña «Renovar 3 meses más». Da 3 meses desde hoy (nunca acumula más).
 - Solo con la llave del móvil y solo si el aviso sigue vivo: lo caducado ya se borró y no revive.
 - `helpers-write` v12 (op `renovar-alerta`). 4 pruebas nuevas (`npm run test:avisos`, 114). Comprobado en navegador: el botón cabe en una línea y la fecha cambia al pulsarlo.
+
+## 2026-09-25 · El aviso le llega solo al profesional que dio un correo
+- Si el contacto del profesional es un correo y Resend está configurado, el mensaje le llega al momento por correo, con un botón «Responder» a su enlace `/r/…` (sin cuenta). Queda como enviado y ya no sale en `npm run avisar --pendientes`.
+- Los contactos de móvil siguen por WhatsApp, a mano, como hasta ahora.
+- Tope: 5 correos por hora al mismo profesional; el resto espera al envío manual.
+- Para volver a hacerlo todo a mano: secreto `NURA_AVISOS_MANUALES=1`.
+- El mensaje va escapado y la llave de lectura de quien escribe nunca va en el correo.
+- `helpers-write` v13. 8 pruebas nuevas (`npm run test:avisos`, 122).

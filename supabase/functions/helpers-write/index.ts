@@ -293,6 +293,38 @@ async function avisarAlertas(h: { id?: unknown, name?: unknown, specialty?: unkn
   } catch { /* el alta ya esta hecha: un aviso perdido no la deshace */ }
 }
 
+// ── EL AVISO AL PROFESIONAL, POR CORREO ─────────────────────────────────
+// Solo si dio un correo como contacto y hay proveedor (Resend). Con
+// NURA_AVISOS_MANUALES=1 se apaga y todo vuelve a `npm run avisar`. Tope por
+// profesional: si en la ultima hora ya se le enviaron 5, el resto espera al
+// envio manual (nadie puede usar Nüra para llenarle el buzon).
+const MAX_CORREOS_HORA = 5
+const esCorreo = (c: string) => /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(c.trim())
+
+async function avisoPorCorreo(avisoId: unknown, helperId: string, h: { name?: unknown, contacto?: unknown } | null, mensaje: string, token: string): Promise<boolean> {
+  try {
+    const contacto = String(h?.contacto || '').trim()
+    if (!esCorreo(contacto) || Deno.env.get('NURA_AVISOS_MANUALES') === '1') return false
+    if (!Deno.env.get('RESEND_API_KEY') || !Deno.env.get('NURA_EMAIL_FROM')) return false
+    const hace1h = new Date(Date.now() - 3600e3).toISOString()
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/avisos?helper_id=eq.${encodeURIComponent(helperId)}&estado=eq.enviado&enviado_en=gt.${hace1h}&select=id`, { headers: rest })
+    if (!r.ok || (await r.json()).length >= MAX_CORREOS_HORA) return false
+    const origen = ORIGENES[0] || ''
+    const nombre = String(h?.name || '').split(' ')[0]
+    const ok = await enviarCorreo(contacto, 'Alguien te busca en Nüra',
+      `<p>Hola${nombre ? ' ' + escHtml(nombre) : ''}:</p><p>Alguien te ha escrito en Nüra:</p>` +
+      `<blockquote style="margin:0;padding:12px 16px;border-left:3px solid #7c3aed;background:#f6f3ff;white-space:pre-wrap">${escHtml(mensaje)}</blockquote>` +
+      `<p><a href="${origen}/r/${token}" style="display:inline-block;padding:12px 20px;background:#7c3aed;color:#fff;border-radius:999px;text-decoration:none;font-weight:600">Responder</a></p>` +
+      `<p style="color:#777;font-size:13px">No hace falta cuenta: el enlace es solo tuyo. No lo compartas.</p>`)
+    if (!ok) return false
+    await fetch(`${SUPABASE_URL}/rest/v1/avisos?id=eq.${avisoId}`, {
+      method: 'PATCH', headers: { ...rest, Prefer: 'return=minimal' },
+      body: JSON.stringify({ estado: 'enviado', enviado_en: new Date().toISOString() }),
+    })
+    return true
+  } catch { return false }
+}
+
 // ── LO DECLARADO (perfil vivo §4) ───────────────────────────────────────
 // La IA (funcion `perfil-ia`) PROPONE; aqui solo entra lo que el profesional
 // CONFIRMA. Vocabulario cerrado (el de perfil-ia): cualquier otra clave se
@@ -540,9 +572,10 @@ Deno.serve(async (req: Request) => {
     // La llave de lectura sale UNA vez, hacia quien escribio; aqui solo
     // queda su resumen. Ver "LLAVES DE LOS AVISOS" arriba.
     const lectura = llaveAleatoria()
+    const token = llaveAleatoria()
     const res = await fetch(`${SUPABASE_URL}/rest/v1/avisos`, {
       method: 'POST',
-      headers: { ...rest, Prefer: 'return=minimal' },
+      headers: { ...rest, Prefer: 'return=representation' },
       body: JSON.stringify({
         helper_id: String(id),
         helper_nombre: h?.name ?? null,
@@ -551,12 +584,16 @@ Deno.serve(async (req: Request) => {
         estado: 'pendiente',
         // La llave de vuelta: va en el enlace y deja al profesional abrir y
         // responder SIN cuenta. Quien lo tiene es quien recibio el mensaje.
-        token: llaveAleatoria(),
+        token,
         lectura_hash: hex(await sha256(lectura)),
       }),
     })
     if (!res.ok) return json({ error: 'aviso no encolado', estado: res.status }, 502, cors)
-    return json({ ok: true, alcanzable: Boolean(h?.contacto), lectura }, 200, cors)
+    const [nuevo] = await res.json()
+    // Si el profesional dio un CORREO, el aviso le llega solo (sin esperar a
+    // `npm run avisar`). Los moviles siguen por WhatsApp, a mano.
+    const enviado = nuevo?.id !== undefined ? await avisoPorCorreo(nuevo.id, String(id), h, mensaje, token) : false
+    return json({ ok: true, alcanzable: Boolean(h?.contacto), lectura, enviado }, 200, cors)
   }
 
   // ── los avisos pendientes, con su enlace ya montado ──

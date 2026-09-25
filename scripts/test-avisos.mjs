@@ -405,6 +405,36 @@ console.log('\n── Te aviso si aparece, cerca de tu barrio ──')
   ok(enServidor.length === enApp.length && enApp.every((x, i) => x === enServidor[i]), `los barrios del servidor y de la app coinciden (${enServidor.length}/${enApp.length})`)
 }
 
+console.log('\n── El aviso le llega solo al profesional con correo ──')
+{
+  const RESEND = { RESEND_API_KEY: 're_ficticia', NURA_EMAIL_FROM: 'Nüra <avisos@ficticio.test>' }
+  const conCorreo = await cargarFuncion({ ...ENV, ...RESEND })
+  db.helpers.push({ id: 800, name: 'Correo Ficticia', contacto: 'profesional@ficticio.test' })
+  const antes = correos.length
+  let r = await llamarG(conCorreo, { op: 'encolar-aviso', helperId: 800, mensaje: 'Hola <script>x</script>, ¿tienes hueco?' })
+  const av = db.avisos.at(-1)
+  const c = correos.at(-1)
+  ok(r.estado === 200 && r.datos.enviado === true && correos.length === antes + 1 && c.to[0] === 'profesional@ficticio.test', 'con correo y proveedor, el aviso sale solo')
+  ok(c.html.includes('/r/' + av.token) && c.html.includes('&lt;script&gt;') && !c.html.includes('<script>'), 'lleva su enlace para responder y el mensaje escapado')
+  ok(av.estado === 'enviado' && av.enviado_en, 'queda como enviado (no vuelve a salir en «pendientes»)')
+  ok(!c.html.includes(r.datos.lectura), 'la llave de lectura de quien escribe no va en el correo')
+
+  r = await llamarG(conCorreo, { op: 'encolar-aviso', helperId: 7, mensaje: 'Para un móvil' })
+  ok(r.datos.enviado === false && db.avisos.at(-1).estado === 'pendiente' && correos.length === antes + 1, 'si el contacto es un móvil, sigue a mano (WhatsApp)')
+  const sinProveedor = await cargarFuncion(ENV)
+  r = await llamarG(sinProveedor, { op: 'encolar-aviso', helperId: 800, mensaje: 'Sin proveedor' })
+  ok(r.datos.enviado === false && db.avisos.at(-1).estado === 'pendiente', 'sin proveedor de correo no se envía nada')
+  const manual = await cargarFuncion({ ...ENV, ...RESEND, NURA_AVISOS_MANUALES: '1' })
+  r = await llamarG(manual, { op: 'encolar-aviso', helperId: 800, mensaje: 'Modo manual' })
+  ok(r.datos.enviado === false && correos.length === antes + 1, 'con NURA_AVISOS_MANUALES=1 todo vuelve a ser manual')
+
+  const otraVez = await cargarFuncion({ ...ENV, ...RESEND })
+  for (let i = 0; i < 6; i++) await llamarG(otraVez, { op: 'encolar-aviso', helperId: 800, mensaje: 'Otro ' + i })
+  const enviados = db.avisos.filter(a => a.helper_id === '800' && a.estado === 'enviado').length
+  ok(enviados === 5, `como mucho 5 correos por hora al mismo profesional (${enviados}); el resto espera`)
+  await cargarFuncion(ENV)   // lo que viene despues, sin proveedor de correo
+}
+
 console.log('\n── Lo declarado: solo lo que confirma el profesional ──')
 {
   const bueno = [
