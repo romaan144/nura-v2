@@ -10,6 +10,23 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — La búsqueda aguanta faltas y catalán
+
+- 50 frases como se escriben en el móvil: con faltas («fontanro»,
+  «sicologa», «logopeta»), muy cortas («fisio», «gestor»), coloquiales
+  («xq no me va el wifi») y en catalán («lampista», «advocat», «gos»).
+  Acertaba 38; ahora 50.
+- **Corrección de faltas prudente** (`corregirOficios`): solo hacia
+  nombres de oficio, solo palabras de 6 letras o más que Nüra no conoce, y
+  a una letra de distancia (dos en palabras largas; cuenta el cambio de
+  orden de dos letras). Los plurales no se tocan. Comprobado que palabras
+  corrientes («mañana», «ayudar», «pintura»…) no cambian.
+- Vocabulario en catalán: lampista, fuster, paleta, manyà, advocat, gos,
+  gat, cangur, classes, repàs, gent gran…
+- «Monitor de tiempo libre» va a cuidado (no a entrenador) y «canguro de
+  gatos» a mascotas (el animal manda).
+- `npm run test:matching`: 152 (14 nuevas).
+
 ## 2026-09-25 — Versión nueva con la app abierta: se recarga sola
 
 - Desde que las pantallas se cargan aparte, cada publicación les cambia el
