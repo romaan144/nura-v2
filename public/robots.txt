@@ -1,0 +1,11 @@
+# Las fichas y las páginas públicas, sí. Los chats, las respuestas por
+# enlace y las bajas de avisos son privados: fuera de los buscadores.
+User-agent: *
+Disallow: /chat/
+Disallow: /chats
+Disallow: /r/
+Disallow: /baja/
+Disallow: /intro/
+Disallow: /restablecer
+Disallow: /profile
+Disallow: /my-services

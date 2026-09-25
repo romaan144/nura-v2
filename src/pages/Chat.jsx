@@ -1,3 +1,4 @@
+import { useTitulo } from '../utils/titulo'
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Send, Shield, Award, Calendar, Mic, MicOff } from 'lucide-react'
@@ -278,6 +279,7 @@ export default function Chat() {
   // pantalla de 0 caracteres, sin cabecera ni salida, prometiendo algo que
   // no iba a llegar. Un callejon sin puerta es peor que un error.
   const [buscando, setBuscando] = useState(!helper)
+  useTitulo(helper?.name ? `Chat con ${helper.name.split(' ')[0]}` : null)
   useEffect(() => {
     if (helper) return
     let vivo = true

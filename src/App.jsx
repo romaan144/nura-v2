@@ -1,6 +1,7 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useUser } from './context/UserContext'
+import { ponerTitulo, tituloDeRuta } from './utils/titulo'
 
 import { NURA_BUILD } from './config'
 console.log('[Nüra] build', NURA_BUILD)   // preflight-ok: el sello es como se sabe QUE hay desplegado; no lleva dato de nadie
@@ -53,6 +54,12 @@ function AppRoutes() {
   // ── La primera vez ──
   // Sin pantallas de bienvenida (decisión del fundador, 2026-09-25): se
   // entra directo a la principal; buscar o crear cuenta, cuando uno quiera.
+
+  // El título de la pestaña, por pantalla (las de datos ponen el suyo).
+  useEffect(() => {
+    const t = tituloDeRuta(location.pathname)
+    if (t !== undefined) ponerTitulo(t)
+  }, [location.pathname])
 
   // ── Las pestañas viven ──
   // Montadas siempre tras su primera visita; solo alternan visibilidad.

@@ -1,3 +1,4 @@
+import { useTitulo } from '../utils/titulo'
 import { useParams } from 'react-router-dom'
 import PageHeader from '../components/PageHeader'
 import styles from './Siguiendo.module.css'
@@ -49,6 +50,7 @@ const DOCS = {
 export default function Legal() {
   const { doc } = useParams()
   const d = DOCS[doc] || DOCS.privacidad
+  useTitulo(d.titulo)
   const conCorreo = t => CONTACTO_EMAIL ? t.replaceAll('[correo de contacto]', CONTACTO_EMAIL) : t
   return (
     <div className={styles.page}>
