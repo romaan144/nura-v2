@@ -50,6 +50,14 @@ async function postgrest(url, init = {}) {
   const metodo = init.method || 'GET'
   peticionesBD.push({ url, metodo, cuerpo: init.body ?? '', cabeceras: JSON.stringify(init.headers ?? {}) })
   const tabla = u.pathname.replace('/rest/v1/', '')
+  // El contador atomico de la base real (sumar_uso): suma 1 y devuelve el total.
+  if (tabla === 'rpc/sumar_uso') {
+    const { p_clave } = JSON.parse(init.body)
+    let f = db.ajustes.find(x => x.clave === p_clave)
+    if (!f) db.ajustes.push(f = { clave: p_clave, valor: 0 })
+    f.valor += 1
+    return Response.json(f.valor)
+  }
   if (!db[tabla]) return new Response('[]', { status: 404 })
   const filtros = [...u.searchParams].filter(([k]) => !['select', 'order', 'limit', 'on_conflict'].includes(k))
   const cumplen = db[tabla].filter(f => filtros.every(([k, c]) => coincide(f, k, c)))
@@ -432,6 +440,16 @@ console.log('\n── El aviso le llega solo al profesional con correo ──')
   for (let i = 0; i < 6; i++) await llamarG(otraVez, { op: 'encolar-aviso', helperId: 800, mensaje: 'Otro ' + i })
   const enviados = db.avisos.filter(a => a.helper_id === '800' && a.estado === 'enviado').length
   ok(enviados === 5, `como mucho 5 correos por hora al mismo profesional (${enviados}); el resto espera`)
+
+  // Tope general al día: pasado, los avisos quedan pendientes (salen a mano)
+  const conTope = await cargarFuncion({ ...ENV, ...RESEND, NURA_CORREOS_DIA: '2' })
+  db.helpers.push({ id: 801, name: 'Otra Correo', contacto: 'otra@ficticio.test' }, { id: 802, name: 'Tercera Correo', contacto: 'tercera@ficticio.test' })
+  db.ajustes = db.ajustes.filter(f => !String(f.clave).startsWith('correos_aviso:'))
+  const r1 = await llamarG(conTope, { op: 'encolar-aviso', helperId: 801, mensaje: 'uno' })
+  const r2 = await llamarG(conTope, { op: 'encolar-aviso', helperId: 802, mensaje: 'dos' })
+  const r3 = await llamarG(conTope, { op: 'encolar-aviso', helperId: 801, mensaje: 'tres' })
+  ok(r1.datos.enviado && r2.datos.enviado && r3.datos.enviado === false && db.avisos.at(-1).estado === 'pendiente',
+    'hay un tope general de correos al día; pasado, el aviso queda para el envío manual')
   await cargarFuncion(ENV)   // lo que viene despues, sin proveedor de correo
 }
 

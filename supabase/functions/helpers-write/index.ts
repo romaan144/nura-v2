@@ -297,8 +297,22 @@ async function avisarAlertas(h: { id?: unknown, name?: unknown, specialty?: unkn
 // Solo si dio un correo como contacto y hay proveedor (Resend). Con
 // NURA_AVISOS_MANUALES=1 se apaga y todo vuelve a `npm run avisar`. Tope por
 // profesional: si en la ultima hora ya se le enviaron 5, el resto espera al
-// envio manual (nadie puede usar Nüra para llenarle el buzon).
+// envio manual (nadie puede usar Nüra para llenarle el buzon). Y un tope
+// GENERAL al dia (NURA_CORREOS_DIA, 200 por defecto): encolar es publico, y
+// sin el alguien podria mandar 5 correos a cada profesional de la lista.
+// Pasado el tope, los avisos siguen guardados y salen a mano.
 const MAX_CORREOS_HORA = 5
+const MAX_CORREOS_DIA = Number(Deno.env.get('NURA_CORREOS_DIA') || 200)
+
+/** Suma 1 al contador `clave` (atomico, en `ajustes`). Sin contador: Infinity (cerrado). */
+async function sumarUso(clave: string): Promise<number> {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/sumar_uso`, {
+      method: 'POST', headers: rest, body: JSON.stringify({ p_clave: clave }),
+    })
+    return r.ok ? Number(await r.json()) : Infinity
+  } catch { return Infinity }
+}
 const esCorreo = (c: string) => /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(c.trim())
 
 async function avisoPorCorreo(avisoId: unknown, helperId: string, h: { name?: unknown, contacto?: unknown } | null, mensaje: string, token: string): Promise<boolean> {
@@ -309,6 +323,7 @@ async function avisoPorCorreo(avisoId: unknown, helperId: string, h: { name?: un
     const hace1h = new Date(Date.now() - 3600e3).toISOString()
     const r = await fetch(`${SUPABASE_URL}/rest/v1/avisos?helper_id=eq.${encodeURIComponent(helperId)}&estado=eq.enviado&enviado_en=gt.${hace1h}&select=id`, { headers: rest })
     if (!r.ok || (await r.json()).length >= MAX_CORREOS_HORA) return false
+    if ((await sumarUso(`correos_aviso:${new Date().toISOString().slice(0, 10)}`)) > MAX_CORREOS_DIA) return false
     const origen = ORIGENES[0] || ''
     const nombre = String(h?.name || '').split(' ')[0]
     const ok = await enviarCorreo(contacto, 'Alguien te busca en Nüra',
