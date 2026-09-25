@@ -42,6 +42,17 @@ const ALIAS = { matematicas: 'clases', limpieza: 'hogar', educacion: 'clases' }
 const cat_ = c => ALIAS[c] || c
 
 const GOLDEN = [
+  // Barrido del 2026-09-25: 60 frases nuevas, 45 acertadas. Estas fallaban.
+  { q: 'quiero montar una tienda online', cat: 'tecnologia' },
+  { q: 'necesito que alguien me pinte el piso', cat: 'tecnico' },
+  { q: 'que me planchen la ropa', cat: 'hogar' },
+  { q: 'necesito ayuda para mudarme el sábado', cat: 'hogar' },
+  { q: 'estoy pasando una mala racha y necesito hablar con alguien', cat: 'salud' },
+  { q: 'papeles para la residencia', cat: 'legal' },
+  { q: 'cambiar el grifo de la cocina', cat: 'tecnico' },
+  { q: 'cortar el césped y podar', cat: 'hogar' },
+  { q: 'mi hijo tiene tdah y necesita apoyo con los deberes', cat: 'clases' },
+  { q: 'ayuda con el ordenador para mi abuela', cat: 'tecnologia' },
   { q: 'Sesión de entrenamiento personal', cat: 'entrenador' },
   { q: 'Necesito un cerrajero urgente', cat: 'tecnico' },
   { q: 'Logopeda infantil', cat: 'logopedia' },
@@ -93,6 +104,7 @@ const SOLO_CATEGORIA = [
   { q: 'busco quien me planche la ropa', cat: 'hogar' },
   { q: 'quiero comer más sano', cat: 'salud' },
   { q: 'necesito traducir unos documentos al inglés', cat: 'idiomas' },
+  { q: 'traducir mi título al inglés', cat: 'idiomas' },
 ]
 const HONESTY = ['asdfgh qwerty zzz', 'necesito algo no sé muy bien qué']
 const NEGATIVE = [
