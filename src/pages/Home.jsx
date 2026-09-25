@@ -1597,9 +1597,10 @@ export default function Home() {
               : 'No he podido guardarlo ahora. Vuelve a probar en un momento.')
             else {
               const vias = [r.canales?.movil && 'con una notificación', r.canales?.correo && 'por correo'].filter(Boolean)
+              const que = alerta.que.toLowerCase() + (r.cerca ? ` cerca de ${r.cerca}` : '')
               lineas.push(vias.length
-                ? `Hecho. Si llega alguien de ${alerta.que.toLowerCase()}, te aviso ${vias.join(' y ')}.`
-                : `Hecho. Si llega alguien de ${alerta.que.toLowerCase()}, lo verás en tu perfil al abrir Nüra.`)
+                ? `Hecho. Si llega alguien de ${que}, te aviso ${vias.join(' y ')}.`
+                : `Hecho. Si llega alguien de ${que}, lo verás en tu perfil al abrir Nüra.`)
               if (r.motivoMovil === 'denegado') lineas.push('El móvil no ha dado permiso para notificaciones: puedes activarlo en los ajustes del navegador.')
               else if (r.motivoMovil === 'error') lineas.push('No he podido activar las notificaciones en este móvil ahora.')
               if (r.canales?.correo && !r.correoActivo) lineas.push('Los correos aún se están poniendo en marcha: mientras tanto lo verás en tu perfil.')

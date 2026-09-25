@@ -40,7 +40,7 @@ export default function AlertaSheet({ categoria, que, zona, onClose, onHecho }) 
     }
     const r = await crearAlerta({ categoria, que, movil: suscripcion, sesion, zona: soloCerca ? zona : null })
     setGuardando(false)
-    onHecho?.({ ...r, motivoMovil, pidioCorreo: porCorreo && Boolean(correo) })
+    onHecho?.({ ...r, motivoMovil, pidioCorreo: porCorreo && Boolean(correo), cerca: soloCerca ? zona.nombre : null })
   }
 
   // En el cuerpo de la pagina: dentro de Buscar quedaba debajo de la barra.
