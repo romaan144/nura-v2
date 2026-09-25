@@ -9,6 +9,7 @@
 //
 // Requiere Node 22.18+ (ejecuta TypeScript quitando los tipos).
 
+import { readFileSync } from 'node:fs'
 import http from 'node:http'
 import { spawn } from 'node:child_process'
 import { fileURLToPath, pathToFileURL } from 'node:url'
@@ -286,8 +287,8 @@ console.log('\n── Te aviso si aparece alguien ──')
   const llaveMovil = r.datos.llave
   ok(!JSON.stringify(db.alertas).includes(llaveMovil), 'la llave de la alerta no se guarda tal cual')
   const fila = db.alertas.at(-1)
-  ok(Object.keys(fila).every(k => ['id','fecha','caduca_en','encontrados','categorias','que','correo','push','llave_hash','baja'].includes(k)),
-    'la alerta guarda solo oficio, canales y llaves: ninguna frase')
+  ok(Object.keys(fila).every(k => ['id','fecha','caduca_en','encontrados','categorias','que','correo','push','llave_hash','baja','zona'].includes(k)) && fila.zona === null,
+    'la alerta guarda solo oficio, canales y llaves: ninguna frase (ni barrio si no lo pidió)')
 
   r = await llamarG(funcion, { op: 'crear-alerta', categorias: ['logopedia'], que: 'x', push: { endpoint: 'https://atacante.test/robar' } })
   ok(r.estado === 400, `una «suscripción» a una web cualquiera se rechaza → 400 (dio ${r.estado})`)
@@ -354,6 +355,40 @@ console.log('\n── Te aviso si aparece alguien ──')
   ok(r.estado === 404, 'quitar dos veces → 404')
 }
 
+
+console.log('\n── Te aviso si aparece, cerca de tu barrio ──')
+{
+  const SUB = { endpoint: 'https://fcm.googleapis.com/fcm/send/ficticio-zona', keys: { p256dh: 'x', auth: 'y' } }
+  db.alertas = []
+  let r = await llamarG(funcion, { op: 'crear-alerta', categorias: ['fisioterapia'], que: 'Fisioterapia', push: SUB, zona: { nombre: 'Gràcia', lat: 0, lng: 0 } })
+  const llave = r.datos?.llave
+  const fila = db.alertas.at(-1)
+  ok(r.estado === 200 && fila.zona?.nombre === 'Gràcia' && fila.zona.lat === 41.4036, 'guarda el barrio con SU centro (no el que mande el móvil)')
+  await llamarG(funcion, { op: 'crear-alerta', categorias: ['fisioterapia'], que: 'Fisioterapia', zona: { nombre: 'Calle Falsa 123' } })
+  ok(db.alertas.at(-1).zona === null, 'un barrio que no está en la lista no se guarda')
+  db.alertas.pop()
+
+  const avisos = () => (db.alertas.find(f => f.zona)?.encontrados || []).length
+  await llamarG(funcion, { op: 'alta', payload: { name: 'Lejana Ficticia', category: 'fisioterapia', zone: 'Badalona' } })
+  ok(avisos() === 0, 'no avisa de quien trabaja lejos (Badalona)')
+  await llamarG(funcion, { op: 'alta', payload: { name: 'Cercana Ficticia', category: 'fisioterapia', zone: 'Vallcarca y alrededores' } })
+  ok(avisos() === 1, 'sí avisa de quien trabaja cerca (Vallcarca)')
+  await llamarG(funcion, { op: 'alta', payload: { name: 'Toda Ficticia', category: 'fisioterapia', zone: 'Toda Barcelona' } })
+  ok(avisos() === 2, 'sí avisa de quien va a toda Barcelona')
+  await llamarG(funcion, { op: 'alta', payload: { name: 'Online Ficticia', category: 'fisioterapia', zone: 'Badalona', online: true } })
+  ok(avisos() === 3, 'sí avisa de quien trabaja online, aunque esté lejos')
+  await llamarG(funcion, { op: 'alta', payload: { name: 'Sin Zona', category: 'fisioterapia', zone: 'por ahí' } })
+  ok(avisos() === 4, 'si no se entiende su zona, avisa (mejor uno de más que perderlo)')
+  r = await llamarG(funcion, { op: 'alertas', llaves: [llave] })
+  ok(r.datos?.alertas?.[0]?.zona === 'Gràcia' && !JSON.stringify(r.datos).includes('41.40'), 'el móvil ve el barrio de su aviso, sin coordenadas')
+
+  // La lista del servidor es la misma que la de la app.
+  const { BARRIOS } = await import(new URL('../src/data/barrios.js', import.meta.url))
+  const fuente = readFileSync(new URL('../supabase/functions/helpers-write/index.ts', import.meta.url), 'utf8')
+  const enServidor = [...fuente.matchAll(/^  \['((?:[^'\\]|\\')*)', ([\d.]+), ([\d.]+), \[/gm)].map(m => `${m[1].replace(/\\'/g, "'")}|${Number(m[2])}|${Number(m[3])}`)
+  const enApp = BARRIOS.map(b => `${b.nombre}|${b.lat}|${b.lng}`)
+  ok(enServidor.length === enApp.length && enApp.every((x, i) => x === enServidor[i]), `los barrios del servidor y de la app coinciden (${enServidor.length}/${enApp.length})`)
+}
 
 console.log('\n── Lo declarado: solo lo que confirma el profesional ──')
 {

@@ -160,11 +160,102 @@ async function enviarCorreo(para: string, asunto: string, html: string): Promise
   } catch { return false }
 }
 
+// ── EL BARRIO DE UNA ALERTA ─────────────────────────────────────────────
+// Copia de src/data/barrios.js (nombre, lat, lng, alias). Una prueba de
+// `npm run test:avisos` comprueba que las dos listas coinciden. Sirve para
+// no avisar de alguien que trabaja lejos de donde lo necesitan.
+const BARRIOS: [string, number, number, string[]][] = [
+  ['Gràcia', 41.4036, 2.1560, ['gracia', 'vila de gracia']],
+  ['Vallcarca', 41.4130, 2.1440, ['vallcarca']],
+  ['El Putxet', 41.4080, 2.1420, ['putxet', 'el putxet']],
+  ['Eixample', 41.3888, 2.1590, ['eixample', "l'eixample", 'ensanche']],
+  ['Dreta de l\'Eixample', 41.3950, 2.1680, ['dreta eixample', "dreta de l'eixample", 'derecha del ensanche']],
+  ['Esquerra de l\'Eixample', 41.3850, 2.1520, ['esquerra eixample', "esquerra de l'eixample", 'izquierda del ensanche']],
+  ['Sagrada Família', 41.4036, 2.1744, ['sagrada familia']],
+  ['Fort Pienc', 41.3960, 2.1820, ['fort pienc']],
+  ['Sant Antoni', 41.3780, 2.1610, ['sant antoni', 'san antonio']],
+  ['Sarrià', 41.4000, 2.1220, ['sarria']],
+  ['Sant Gervasi', 41.4010, 2.1390, ['sant gervasi', 'san gervasio', 'sarria sant gervasi', 'sarria-sant gervasi']],
+  ['La Bonanova', 41.4050, 2.1300, ['bonanova', 'la bonanova']],
+  ['Pedralbes', 41.3890, 2.1120, ['pedralbes']],
+  ['Les Corts', 41.3850, 2.1300, ['les corts', 'las corts']],
+  ['Sants', 41.3750, 2.1370, ['sants']],
+  ['Hostafrancs', 41.3750, 2.1430, ['hostafrancs']],
+  ['Poble Sec', 41.3730, 2.1620, ['poble sec', 'poble-sec', 'pueblo seco']],
+  ['Montjuïc', 41.3640, 2.1580, ['montjuic']],
+  ['Raval', 41.3800, 2.1690, ['raval', 'el raval']],
+  ['Gòtic', 41.3830, 2.1770, ['gotic', 'barri gotic', 'barrio gotico', 'gotico']],
+  ['Born', 41.3850, 2.1830, ['born', 'el born', 'la ribera', 'sant pere']],
+  ['Ciutat Vella', 41.3820, 2.1760, ['ciutat vella', 'ciudad vieja', 'centro de barcelona', 'casco antiguo']],
+  ['Barceloneta', 41.3800, 2.1890, ['barceloneta', 'la barceloneta']],
+  ['Vila Olímpica', 41.3890, 2.1970, ['vila olimpica', 'villa olimpica']],
+  ['Poblenou', 41.4000, 2.2000, ['poblenou', 'poble nou', 'pueblo nuevo']],
+  ['Diagonal Mar', 41.4090, 2.2160, ['diagonal mar']],
+  ['Sant Martí', 41.4180, 2.1990, ['sant marti', 'san marti', 'san martin']],
+  ['Glòries', 41.4030, 2.1870, ['glories']],
+  ['Clot', 41.4090, 2.1870, ['clot', 'el clot']],
+  ['La Verneda', 41.4240, 2.2020, ['verneda', 'la verneda']],
+  ['La Sagrera', 41.4230, 2.1900, ['sagrera', 'la sagrera']],
+  ['Sant Andreu', 41.4350, 2.1900, ['sant andreu', 'san andres']],
+  ['Guinardó', 41.4180, 2.1700, ['guinardo', 'el guinardo']],
+  ['Horta', 41.4300, 2.1600, ['horta']],
+  ['Horta-Guinardó', 41.4200, 2.1650, ['horta guinardo', 'horta-guinardo']],
+  ['El Carmel', 41.4230, 2.1550, ['carmel', 'el carmel', 'el carmelo']],
+  ['Nou Barris', 41.4420, 2.1770, ['nou barris']],
+  ['Verdun', 41.4430, 2.1730, ['verdun']],
+  ['L\'Hospitalet', 41.3597, 2.0997, ['hospitalet', "l'hospitalet", 'hospitalet de llobregat']],
+  ['Badalona', 41.4500, 2.2474, ['badalona']],
+  ['Esplugues', 41.3760, 2.0880, ['esplugues', 'esplugues de llobregat']],
+  ['Santa Coloma', 41.4520, 2.2080, ['santa coloma', 'santa coloma de gramenet']],
+]
+const RADIO_ALERTA_KM = 5
+const sinTildes = (s: string) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[’`]/g, "'")
+const ALIAS_BARRIOS = BARRIOS.flatMap(b => b[3].map(a => ({ a: sinTildes(a), b }))).sort((x, y) => y.a.length - x.a.length)
+
+/** El barrio que nombra la zona de un profesional, o null. */
+function barrioDeTexto(texto: string): [string, number, number, string[]] | null {
+  const t = ' ' + sinTildes(texto).replace(/[^a-z0-9' -]/g, ' ') + ' '
+  for (const { a, b } of ALIAS_BARRIOS) {
+    if (new RegExp(`[^a-z0-9']${a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[^a-z0-9']`).test(t)) return b
+  }
+  const exacto = BARRIOS.find(b => sinTildes(b[0]) === sinTildes(texto).trim())
+  return exacto || null
+}
+
+function kmEntre(la1: number, ln1: number, la2: number, ln2: number): number {
+  const R = 6371, rad = (x: number) => x * Math.PI / 180
+  const dLat = rad(la2 - la1), dLng = rad(ln2 - ln1)
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(la1)) * Math.cos(rad(la2)) * Math.sin(dLng / 2) ** 2
+  return 2 * R * Math.asin(Math.sqrt(h))
+}
+
+/**
+ * ¿Le vale a esta alerta un profesional de esta zona? Si no se sabe (zona
+ * sin barrio conocido, «toda Barcelona», online), SI: mejor un aviso de mas
+ * que perder al unico que ha llegado.
+ */
+function cercaDeLaAlerta(zonaAlerta: { lat?: unknown, lng?: unknown } | null, h: { zone?: unknown, online?: unknown }): boolean {
+  if (!zonaAlerta || typeof zonaAlerta.lat !== 'number' || typeof zonaAlerta.lng !== 'number') return true
+  if (h.online === true) return true
+  const zona = String(h.zone || '')
+  if (/toda barcelona|toda la ciudad|cualquier zona|me desplazo/i.test(sinTildes(zona))) return true
+  const b = barrioDeTexto(zona)
+  if (!b) return true
+  return kmEntre(zonaAlerta.lat, zonaAlerta.lng, b[1], b[2]) <= RADIO_ALERTA_KM
+}
+
+/** El barrio que manda la app para una alerta: solo si es uno de la lista. */
+function zonaDeAlerta(entrada: unknown): { nombre: string, lat: number, lng: number } | null {
+  const nombre = String((entrada as { nombre?: unknown })?.nombre ?? '')
+  const b = BARRIOS.find(x => x[0] === nombre)
+  return b ? { nombre: b[0], lat: b[1], lng: b[2] } : null
+}
+
 /**
  * Ha llegado un profesional: avisa a quien lo estaba esperando. Nunca hace
  * fallar el alta: si algo no sale, el profesional queda dado de alta igual.
  */
-async function avisarAlertas(h: { id?: unknown, name?: unknown, specialty?: unknown, category?: unknown }) {
+async function avisarAlertas(h: { id?: unknown, name?: unknown, specialty?: unknown, category?: unknown, zone?: unknown, online?: unknown }) {
   try {
     const cat = String(h?.category || '')
     if (!CATEGORIA_OK.test(cat) || h?.id === undefined) return
@@ -172,11 +263,12 @@ async function avisarAlertas(h: { id?: unknown, name?: unknown, specialty?: unkn
     // De paso se borran las caducadas: caducar es borrar, no esconder.
     await fetch(`${SUPABASE_URL}/rest/v1/alertas?caduca_en=lt.${ahora}`, { method: 'DELETE', headers: rest })
     const r = await fetch(
-      `${SUPABASE_URL}/rest/v1/alertas?categorias=cs.{${cat}}&caduca_en=gt.${ahora}&select=id,que,correo,push,baja,encontrados`,
+      `${SUPABASE_URL}/rest/v1/alertas?categorias=cs.{${cat}}&caduca_en=gt.${ahora}&select=id,que,correo,push,baja,encontrados,zona`,
       { headers: rest },
     )
     if (!r.ok) return
-    const alertas = await r.json()
+    // Si la pidio para un barrio, solo cuenta quien trabaja cerca.
+    const alertas = (await r.json()).filter((a: { zona?: { lat?: unknown, lng?: unknown } | null }) => cercaDeLaAlerta(a.zona ?? null, h))
     if (!alertas.length) return
     const vapid = alertas.some((a: { push?: unknown }) => a.push) ? await llavesVapid() : null
     const nombre = String(h.name || '').split(' ')[0] || 'Alguien'
@@ -188,7 +280,7 @@ async function avisarAlertas(h: { id?: unknown, name?: unknown, specialty?: unkn
       if (a.push && vapid && !(await tocarMovil(a.push, vapid))) cambios.push = null
       if (a.correo) {
         await enviarCorreo(a.correo, `Ha llegado a Nüra: ${oficio || a.que}`,
-          `<p>Hola:</p><p>Nos pediste que te avisáramos si llegaba a Nüra alguien de <b>${escHtml(a.que)}</b>.</p>` +
+          `<p>Hola:</p><p>Nos pediste que te avisáramos si llegaba a Nüra alguien de <b>${escHtml(a.que)}</b>${a.zona?.nombre ? ` cerca de ${escHtml(a.zona.nombre)}` : ''}.</p>` +
           `<p><b>${escHtml(nombre)}</b>${oficio ? ` (${escHtml(oficio)})` : ''} acaba de darse de alta.</p>` +
           `<p><a href="${origen}/helper/${encodeURIComponent(String(h.id))}">Ver su ficha</a></p>` +
           `<p style="color:#777;font-size:13px">¿Ya no lo necesitas? <a href="${origen}/baja/${a.baja}">Deja de avisarme</a>. ` +
@@ -692,7 +784,7 @@ Deno.serve(async (req: Request) => {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/alertas`, {
       method: 'POST',
       headers: { ...rest, Prefer: 'return=representation' },
-      body: JSON.stringify({ categorias, que, correo, push, llave_hash: hex(await sha256(llave)), baja: llaveAleatoria() }),
+      body: JSON.stringify({ categorias, que, correo, push, zona: zonaDeAlerta(cuerpo.zona), llave_hash: hex(await sha256(llave)), baja: llaveAleatoria() }),
     })
     if (!res.ok) return json({ error: 'no guardada', estado: res.status }, 502, cors)
     const [fila] = await res.json()
@@ -709,14 +801,14 @@ Deno.serve(async (req: Request) => {
     if (!llaves.length) return json({ ok: true, alertas: [] }, 200, cors)
     const resumenes = await Promise.all(llaves.map(async l => hex(await sha256(l))))
     const r = await fetch(
-      `${SUPABASE_URL}/rest/v1/alertas?llave_hash=in.(${resumenes.join(',')})&caduca_en=gt.${new Date().toISOString()}&select=llave_hash,que,caduca_en,encontrados,correo,push`,
+      `${SUPABASE_URL}/rest/v1/alertas?llave_hash=in.(${resumenes.join(',')})&caduca_en=gt.${new Date().toISOString()}&select=llave_hash,que,caduca_en,encontrados,correo,push,zona`,
       { headers: rest },
     )
     if (!r.ok) return json({ error: 'lectura rechazada', estado: r.status }, 502, cors)
     const deLlave = new Map(resumenes.map((h, i) => [h, llaves[i]]))
-    const filas: { llave_hash: string, que: string, caduca_en: string, encontrados: unknown[], correo: string | null, push: unknown }[] = await r.json()
+    const filas: { llave_hash: string, que: string, caduca_en: string, encontrados: unknown[], correo: string | null, push: unknown, zona: { nombre?: string } | null }[] = await r.json()
     return json({ ok: true, alertas: filas.map(f => ({
-      llave: deLlave.get(f.llave_hash), que: f.que, caduca_en: f.caduca_en, encontrados: f.encontrados || [],
+      llave: deLlave.get(f.llave_hash), que: f.que, zona: f.zona?.nombre ?? null, caduca_en: f.caduca_en, encontrados: f.encontrados || [],
       canales: { movil: Boolean(f.push), correo: Boolean(f.correo) },
     })) }, 200, cors)
   }

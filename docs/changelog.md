@@ -2224,3 +2224,11 @@ registradas retroactivamente con su motivo:
 - El porqué de la recomendación lo dice con su fuente: «según su ficha, habla catalán y tiene coche».
 - Una sola petición a `perfil_atributos` (solo `declarado`), con tope de 1,5 s; si no llega, el orden no cambia. Nada de la búsqueda se guarda.
 - 12 pruebas nuevas en `npm run test:matching` (112).
+
+## 2026-09-25 · «Te aviso si aparece», cerca de tu barrio
+- Si la persona buscaba en un barrio («cerca de Gràcia»), la hoja ofrece «Solo si trabaja cerca de Gràcia» (marcado por defecto, se puede quitar).
+- Se guarda solo el nombre del barrio y su centro aproximado (lo pone el servidor, no el móvil); nunca una dirección.
+- Al darse de alta alguien, solo se avisa si trabaja a 5 km o menos, online o en toda Barcelona. Si su zona no se entiende, se avisa igual (mejor uno de más que perderlo).
+- El correo y «Mis avisos» dicen «cerca de Gràcia».
+- `helpers-write` v11 · migración `20260928000000_alerta_con_barrio.sql` aplicada.
+- 8 pruebas nuevas en `npm run test:avisos` (111), incluida una que comprueba que la lista de barrios del servidor y la de la app coinciden.
