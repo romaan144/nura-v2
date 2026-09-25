@@ -35,7 +35,7 @@ export const PULSO_DELAY = DEMO_MODE ? 5000 : 1000
 
 
 // Sello de build visible — para verificar qué versión corre el dispositivo
-export const NURA_BUILD = '2026.07.09-m'
+export const NURA_BUILD = '2026.07.09-n'
 
 // ── CONTACTO ─────────────────────────────────────────────────────────────
 // El correo al que una persona escribe para pedir ayuda o que se borre su

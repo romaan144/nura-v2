@@ -884,8 +884,8 @@ Ocho etapas, en diseño y funciones. Una por cada **"sigue"**.
 | 3 | Ajustes, lo legal primero | ✅ hecha · faltan correo y revisión legal |
 | 4 | Diseño del perfil de usuario | ✅ hecha |
 | 5 | Diseño del perfil de profesional | ✅ hecha |
-| 6 | Identidad del profesional | ✅ hecha · **falta SQL y desplegar la función** |
-| 7 | La foto | ✅ hecha · **falta SQL (apartado 1b)** |
+| 6 | Identidad del profesional | ✅ hecha · SQL ✅ · función ✅ |
+| 7 | La foto | ✅ hecha · SQL ✅ |
 | 8 | Sin cuenta, y repaso final | ✅ hecha |
 
 **El hallazgo de fondo**: Nüra no tiene autenticación real. Editar la ficha

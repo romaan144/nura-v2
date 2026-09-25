@@ -206,7 +206,21 @@ function normalize(h) {
 // tiene que avisarle.
 // (`chat_log` sigue en la lista aunque la tabla real NO lo tenga: si algun
 //  dia se añade, no debe empezar a viajar por olvido.)
-const COLUMNAS_OCULTAS = ['chat_log', 'contacto']
+const COLUMNAS_OCULTAS = ['chat_log', 'contacto', 'owner_id']
+
+// ── LAS COLUMNAS PUBLICAS, FIJAS (2026-09-23) ────────────────────────────
+// El descubrimiento de abajo NUNCA funcionaba: con la clave publica nueva
+// (sb_publishable_…), la raiz /rest/v1/ devuelve 401. Asi que la app pedia
+// SIEMPRE select=* — y con eso el CONTACTO de cada profesional viajaba al
+// navegador de cualquier visitante.
+// El SQL de cuentas (docs/lanzamiento-cuentas.md) quito el permiso de leer
+// contacto y owner_id. Desde entonces select=* FALLA ENTERO (401): el dia que
+// se apagara la demo, la app no habria podido leer ni un profesional.
+// Esta lista se obtuvo preguntando a la base de datos columna por columna
+// (select=<col>&limit=0, sin traer filas): 27 legibles, 2 privadas, y
+// pedidas juntas responden 200. Si se añade una columna publica a la tabla,
+// se añade aqui.
+const COLUMNAS_PUBLICAS = 'id,name,avatar,avatarColor,avatarUrl,specialty,category,tags,rating,zone,price,bio,city,presential,online,available,verified,dniVerified,founder,reviews,services,responseTime,completionRate,qualificationLevel,distance,languages,experience'
 let columnasCache = null
 let descubrimiento = null
 
@@ -231,15 +245,16 @@ async function descubrirColumnas() {
 // justo cuando la red va mal. Precio: `chat_log` viaja una vez por sesion en
 // lugar de en todas las lecturas.
 export function columnasHelpers() {
-  return columnasCache || '*'
+  // Nunca '*': incluye columnas privadas y la base de datos rechaza la
+  // peticion entera.
+  return columnasCache || COLUMNAS_PUBLICAS
 }
 
 descubrimiento = descubrirColumnas()
   .then(c => {
-    columnasCache = c || '*'
-    if (!c) console.warn('[Nüra] esquema no descubierto: se pide select=* (chat_log viaja al navegador)')
+    columnasCache = c || COLUMNAS_PUBLICAS
   })
-  .catch(() => { columnasCache = '*' })
+  .catch(() => { columnasCache = COLUMNAS_PUBLICAS })
 
 export async function searchHelpers(category, keywords = []) {
   try {
