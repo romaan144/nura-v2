@@ -21,7 +21,7 @@ ok('el resto de la página, intacto', h1.replace(/<head>[\s\S]*<\/head>/, '') ==
 const malo = { name: '"><script>alert(1)</script>', specialty: '<b>x</b>', avatarUrl: 'javascript:alert(1)' }
 const h2 = conFicha(html, malo, 'https://nura.test/helper/8')
 ok('nombre con código: escapado', !h2.includes('<script>alert') && h2.includes('&lt;script&gt;'))
-ok('foto rara → imagen de Nüra', meta(h2, 'og:image') === 'https://nura.test/og-nura.png' && meta(h2, 'twitter:image') === 'https://nura.test/og-nura.png')
+ok('foto rara → imagen de Nüra', meta(h2, 'og:image') === 'https://nura.test/og-compartir.png' && meta(h2, 'twitter:image') === 'https://nura.test/og-compartir.png')
 ok('imagen de Nüra: con sus medidas', meta(h2, 'og:image:width') === '1200')
 ok('su foto: sin las medidas de la de Nüra', !meta(h1, 'og:image:width') && meta(h1, 'og:image:secure_url') === marta.avatarUrl && meta(h1, 'twitter:image') === marta.avatarUrl)
 ok('sin bio: frase con oficio y barrio', meta(conFicha(html, { name: 'A', specialty: 'Fontanero', zone: 'Sants' }, 'https://n.t/helper/1'), 'og:description') === 'Fontanero en Sants. Escríbele por Nüra.')

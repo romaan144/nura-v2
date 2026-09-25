@@ -10,6 +10,19 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — Nüra no es solo de Barcelona (lo que se comparte)
+
+- **Decisión del fundador:** «la app la usarán en más ciudades». La imagen
+  para compartir decía «Cerca de ti, en Barcelona»; ahora «Cerca de ti,
+  cuando lo necesitas» (`public/og-compartir.png`, nombre nuevo para
+  saltarse la copia que guarda WhatsApp).
+- Fuera «Barcelona» del título de la pestaña, de la descripción para
+  buscadores y del texto de respaldo de la vista previa de una ficha.
+- **Pendiente (más grande):** la app sigue pensada para una sola ciudad:
+  245 menciones a Barcelona en `src/`, y los barrios (`data/barrios.js`),
+  la zona de las alertas y los textos de la búsqueda son de Barcelona.
+  Abrir otra ciudad exige convertir eso en una lista de ciudades.
+
 ## 2026-09-25 — Imagen nueva para compartir (og-nura.png)
 
 - El fundador: «No aparece la miniatura bien». La imagen de antes llevaba

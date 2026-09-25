@@ -27,9 +27,9 @@ const recortar = (s, n) => {
 export function conFicha(html, h, url) {
   const origen = new URL(url).origin
   const oficio = h.specialty || ''
-  const barrio = h.zone || h.city || 'Barcelona'
+  const barrio = h.zone || h.city || ''
   const titulo = [h.name, oficio].filter(Boolean).join(' · ')
-  const desc = recortar(h.bio, 150) || `${oficio ? oficio + ' en ' : 'En '}${barrio}. Escríbele por Nüra.`
+  const desc = recortar(h.bio, 150) || `${[oficio, barrio].filter(Boolean).join(' en ') || 'Profesional'}. Escríbele por Nüra.`
   const foto = /^https:\/\/[^"<>\s]+\.(jpe?g|png|webp)(\?[^"<>\s]*)?$/i.test(h.avatarUrl || '')
     ? h.avatarUrl : null
   const poner = (html, atributo, clave, valor) => html.replace(
@@ -49,7 +49,7 @@ export function conFicha(html, h, url) {
   } else {
     // La de Nüra, siempre con la direccion completa de ESTA web.
     for (const [a, k] of [['property', 'og:image'], ['property', 'og:image:secure_url'], ['name', 'twitter:image']])
-      out = poner(out, a, k, `${origen}/og-nura.png`)
+      out = poner(out, a, k, `${origen}/og-compartir.png`)
   }
   out = poner(out, 'property', 'og:url', url)
   out = poner(out, 'name', 'twitter:title', `${titulo} — Nüra`)
