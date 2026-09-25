@@ -835,6 +835,29 @@ Deno.serve(async (req: Request) => {
     return json({ ok: true, ocupadas: filas.map(f => ({ fecha: f.cita_fecha, hora: f.cita_hora })) }, 200, cors)
   }
 
+  // ── CANCELAR LA CITA (quien la pidió) ──
+  // Solo con SUS llaves de lectura de esa conversación: nadie más puede
+  // cancelar la cita de otro. La hora vuelve a quedar libre para todos (el
+  // índice único solo cuenta las aceptadas) y al profesional se le toca el
+  // móvil si lo pidió; al abrir su enlace ve que se ha cancelado.
+  if (op === 'cancelar-cita') {
+    const llaves = Array.isArray(cuerpo.llaves)
+      ? [...new Set(cuerpo.llaves.map(String).filter(l => FORMATO_LLAVE.test(l)))].slice(0, 20)
+      : []
+    const x = citaDe({ fecha: cuerpo.fecha, hora: cuerpo.hora })
+    if (!llaves.length || !x) return json({ error: 'no existe' }, 404, cors)
+    const resumenes = await Promise.all(llaves.map(async l => hex(await sha256(l))))
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/avisos?lectura_hash=in.(${resumenes.join(',')})&cita_fecha=eq.${x.cita_fecha}&cita_hora=eq.${encodeURIComponent(x.cita_hora)}&cita_estado=in.(propuesta,aceptada)`,
+      { method: 'PATCH', headers: { ...rest, Prefer: 'return=representation' }, body: JSON.stringify({ cita_estado: 'cancelada' }) },
+    )
+    if (!r.ok) return json({ error: 'no guardado', estado: r.status }, 502, cors)
+    const filas: { helper_id: string }[] = await r.json()
+    if (!filas.length) return json({ error: 'no existe' }, 404, cors)
+    await avisarPro(String(filas[0].helper_id))
+    return json({ ok: true }, 200, cors)
+  }
+
   // ── el usuario pregunta si ya le han respondido ──
   // Solo con SUS llaves de lectura: cada una abre la respuesta de UNA
   // conversacion. Preguntar por un profesional ya no devuelve nada: antes

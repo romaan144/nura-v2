@@ -530,6 +530,25 @@ for (const t of NEGATIVE) {
   for (const [n, ok] of casos) { if (!ok) failed++; console.log(`${ok ? '✓' : '✗'} agenda: ${n}`) }
 }
 
+// ── El recordatorio y la cita cancelada (2026-10-03) ──
+{
+  const H = await import(join(stage, 'data/horarios.js'))
+  const ahora = new Date(2026, 9, 3, 10, 30)          // 3 oct, 10:30
+  const s = (date, time, status = 'confirmed', helperId = 7) => ({ helperId, helperName: 'Laura Gómez', specialty: 'Logopeda', date, time, status })
+  const casos = [
+    ['confirmada mañana a las 9 → sale', H.citaEn24h([s('2026-10-04', '09:00')], [], ahora)?.hora === '09:00'],
+    ['a más de 24 horas → no sale', H.citaEn24h([s('2026-10-04', '11:00')], [], ahora) === null],
+    ['ya empezada → no sale', H.citaEn24h([s('2026-10-03', '10:00')], [], ahora) === null],
+    ['pendiente (sin confirmar) → no sale', H.citaEn24h([s('2026-10-03', '17:00', 'pending')], [], ahora) === null],
+    ['cancelada → no sale', H.citaEn24h([s('2026-10-03', '17:00', 'cancelled')], [], ahora) === null],
+    ['de dos, sale la más cercana', H.citaEn24h([s('2026-10-04', '08:00'), s('2026-10-03', '12:00')], [], ahora)?.fecha === '2026-10-03'],
+    ['una cita del chat confirmada también cuenta', H.citaEn24h([], [{ helperId: 7, helperName: 'Laura', fecha: '2026-10-03', hora: '18:00', estado: 'confirmada' }], ahora)?.hora === '18:00'],
+    ['la misma cita en las dos listas: guarda la especialidad', H.citaEn24h([s('2026-10-03', '18:00')], [{ helperId: 7, helperName: 'Laura', fecha: '2026-10-03', hora: '18:00', estado: 'confirmada' }], ahora)?.specialty === 'Logopeda'],
+    ['una cita cancelada ya no ocupa la hora', H.ocupacionesDe([{ helperId: 7, fecha: '2026-10-03', hora: '18:00', estado: 'cancelada' }], [s('2026-10-03', '19:00', 'cancelled')]).length === 0],
+  ]
+  for (const [n, ok] of casos) { if (!ok) failed++; console.log(`${ok ? '✓' : '✗'} recordatorio: ${n}`) }
+}
+
 // El total se contaba sumando los tres catalogos, asi que se quedo en 32
 // mientras las pruebas reales llegaban a 51: cada bloque añadido despues
 // (obra, agenda, silencios, interceptor, aviso) pasaba sin figurar. Un

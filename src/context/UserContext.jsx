@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { SEED_COMMENTS, SEED_REACCIONES } from '../data/obraPosts'
+import { cancelarCitaServidor } from '../utils/escrituras'
 
 const UserContext = createContext(null)
 
@@ -75,13 +76,13 @@ export function UserProvider({ children }) {
       const de = (hid, f, h) => hechas.find(r => String(r.helperId) === String(hid) && r.cita.fecha === f && r.cita.hora === h)
       setServices(prev => prev.map(s => {
         const r = de(s.helperId, s.date, s.time)
-        if (!r || s.status === 'completed') return s
+        if (!r || s.status === 'completed' || s.status === 'cancelled') return s
         const status = r.cita.estado === 'aceptada' ? 'confirmed' : 'rejected'
         return s.status === status ? s : { ...s, status }
       }))
       setCitas(prev => {
         const nuevas = prev.map(c => {
-          const r = de(c.helperId, c.fecha, c.hora)
+          const r = c.estado === 'cancelada' ? null : de(c.helperId, c.fecha, c.hora)
           const estado = r ? (r.cita.estado === 'aceptada' ? 'confirmada' : 'rechazada') : c.estado
           return estado === c.estado ? c : { ...c, estado }
         })
@@ -372,6 +373,23 @@ export function UserProvider({ children }) {
     return nueva
   }
 
+  // CANCELAR UNA CITA. Primero se avisa al servidor (la hora vuelve a
+  // quedar libre para todos y el profesional lo ve); si no hay conexión no
+  // se toca nada y se devuelve 'fallo' para que la pantalla lo diga. En demo
+  // o sin conversación guardada ('nada'), solo cambia en este móvil.
+  async function cancelarCita({ helperId, fecha, hora }) {
+    const r = await cancelarCitaServidor(helperId, fecha, hora)
+    if (r === 'fallo') return r
+    const es = (hid, f, h) => String(hid) === String(helperId) && f === fecha && h === hora
+    setServices(prev => prev.map(s => es(s.helperId, s.date, s.time) && s.status !== 'completed' ? { ...s, status: 'cancelled' } : s))
+    setCitas(prev => {
+      const nuevas = prev.map(c => es(c.helperId, c.fecha, c.hora) ? { ...c, estado: 'cancelada' } : c)
+      save('nura_citas', nuevas)
+      return nuevas
+    })
+    return r
+  }
+
   function confirmContact(helperId, confirmed) {
     const updated = contactedHelpers.map(c =>
       (c.id || c) === helperId ? { ...c, confirmed, confirmedAt: Date.now() } : c
@@ -391,7 +409,7 @@ export function UserProvider({ children }) {
       searchHistory, addSearch,
       contactedHelpers, confirmContact,
       personas, upsertPersona, linkPersonaContact, removePersona,
-      citas, addCita,
+      citas, addCita, cancelarCita,
       myStories, addStory,
       addComment, commentsFor,
       toggleUtil, utilesDe, meSirve,

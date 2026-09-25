@@ -10,6 +10,25 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-10-03 — Recordatorio de la cita y cancelarla
+
+- **Recordatorio en Inicio** (`components/RecordatorioCita.jsx`): cuando
+  falta un día o menos para una cita confirmada, sale arriba «Tu cita ·
+  Mañana a las 17:00 · Con Laura», con «Escribir a Laura» y «Cancelar la
+  cita». Se puede cerrar (para esa cita). Sale solo, sin notificaciones.
+- **Cancelar**, desde el recordatorio o desde «Mis servicios» (cualquier
+  cita pendiente o confirmada que no haya pasado). Pide confirmación. Sin
+  conexión no cambia nada y lo dice.
+- Al cancelar, **la hora vuelve a quedar libre para todos** y el
+  profesional ve en su enlace «Cita cancelada». Solo puede cancelar quien
+  la pidió (con la llave de su conversación). Op `cancelar-cita`,
+  `helpers-write` v19 desplegada; migración
+  `20261003000000_cita_cancelada.sql` aplicada (nuevo estado `cancelada`).
+- Arreglo: una cita del chat cancelada seguía ocupando su hora en la agenda.
+- Pruebas: `test:avisos` 161, `test:matching` 182 (9 del recordatorio), y
+  `recorrido:real` con el camino entero: acepta → recordatorio → cancela →
+  el profesional lo ve → la hora queda libre.
+
 ## 2026-10-02 — Una cita aceptada ocupa la hora para todos
 
 - La cita que se pide (día y hora) **viaja con el aviso** al profesional.

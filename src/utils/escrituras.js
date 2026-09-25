@@ -208,6 +208,23 @@ export async function ocupadasDe(helperId) {
 }
 
 /**
+ * CANCELAR LA CITA. Con las llaves de lectura de este móvil para ese
+ * profesional (solo quien la pidió puede). La hora vuelve a quedar libre
+ * para todos. Devuelve 'ok' | 'fallo' | 'rechazado' | 'nada' (demo).
+ */
+export async function cancelarCitaServidor(helperId, fecha, hora) {
+  if (!porLaFuncion()) return 'nada'
+  const llaves = llavesGuardadas()[String(helperId)] || []
+  if (!llaves.length) return 'nada'
+  try {
+    const r = await llamarFuncion({ op: 'cancelar-cita', llaves, fecha, hora })
+    ocupadasCache.delete(String(helperId))
+    // 404: ya no había nada que cancelar (nunca llegó, o ya se canceló).
+    return r?.estado === 404 ? 'nada' : resultado(r)
+  } catch { return 'fallo' }
+}
+
+/**
  * Encolar el aviso a un profesional. **No bloquea ni avisa de fallos**: si
  * no sale, la persona no debe enterarse — su mensaje ya esta enviado.
  *

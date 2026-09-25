@@ -26,6 +26,7 @@ import { PULSO_THRESHOLD, PULSO_DELAY, CONFIRMACION_THRESHOLD, CONFIRMACION_DELA
 import { extractPersona } from '../utils/personas'
 import { proSignals } from '../utils/proSignals'
 import { fmtNota, fmtKm } from '../utils/formato'
+import RecordatorioCita from '../components/RecordatorioCita'
 
 // ── La Comprensión Visible — lo que Nüra ha entendido, en chips ──
 const PERSONA_CHIP = {
@@ -1355,6 +1356,7 @@ export default function Home() {
 
       <div className={styles.messages} ref={scrollerRef}
         style={{paddingTop: topH + 'px'}}>
+        <RecordatorioCita />
         {messages.map((msg, msgIdx) => {
           const prevMsg = messages[msgIdx - 1]
           const prevHadResults = prevMsg?.results?.length > 0
