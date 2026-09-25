@@ -10,6 +10,19 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — Fuera las pantallas de bienvenida
+
+- **Decisión del fundador:** «Quiero quitar todo eso. Que entre
+  directamente y ya si eso ya buscarás o te registrarás.» Se retiran las
+  pantallas que preguntaban qué buscas y cómo te llamas.
+- Al abrir Nüra se entra directo a la principal. Buscar no pide nada; el
+  nombre se pide solo cuando alguien quiere **escribir** a un profesional,
+  y al terminar vuelve a ese chat.
+- Quien ofrece servicios se da de alta desde el Perfil o desde
+  `/profesionales`, como ya se podía.
+- `/onboarding` redirige a `/` (por si alguien la tenía guardada).
+  Archivo principal: 294 → 289 KB.
+
 ## 2026-09-25 — La búsqueda entiende más formas de pedir
 
 - **60 frases nuevas escritas como las diría alguien** («se me ha roto la

@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useUser } from './context/UserContext'
 
 import { NURA_BUILD } from './config'
@@ -24,7 +24,6 @@ import BottomNav from './components/BottomNav'
 import AppShell from './components/AppShell'
 import DesktopSidebar from './components/DesktopSidebar'
 import ScrollToTop from './components/ScrollToTop'
-import OnboardingPage from './pages/Onboarding'
 const MyServices = lazy(() => import('./pages/MyServices'))
 const Responder = lazy(() => import('./pages/Responder'))
 const BajaAlerta = lazy(() => import('./pages/BajaAlerta'))
@@ -50,35 +49,10 @@ function AppRoutes() {
   }, [])
   const location = useLocation()
   const { user } = useUser()
-  const navigate = useNavigate()
 
   // ── La primera vez ──
-  // `/onboarding` estaba enrutada, funcionaba entera y NADIE navegaba a
-  // ella: solo aparecia en tres listas de "ocultar la barra aqui". Un
-  // dispositivo virgen entraba directo a Home y la promesa de marca no se
-  // veia nunca.
-  // Solo desde la raiz: un enlace profundo (una ficha compartida, un chat)
-  // no debe secuestrarse. Y solo una vez: se marca al MOSTRARLA, no al
-  // terminarla, para que abandonar a medias no deje a nadie atrapado.
-  useEffect(() => {
-    if (user) return
-    if (location.pathname !== '/') return
-    // COMPROBAR QUE EL ALMACENAMIENTO PERSISTE DE VERDAD, no solo que no
-    // lanza. En navegacion privada de iOS y en algunos contextos embebidos,
-    // `setItem` no falla pero no guarda: entonces `nura_onboarded` nunca
-    // queda escrito y el onboarding se repite EN CADA ENTRADA. La persona
-    // se queda atrapada en la primera pantalla para siempre.
-    // Si no podemos garantizar la salida, no metemos a nadie.
-    let visto = null
-    try {
-      const sonda = '__nura_probe'
-      localStorage.setItem(sonda, '1')
-      if (localStorage.getItem(sonda) !== '1') return   // no persiste: no redirigir
-      localStorage.removeItem(sonda)
-      visto = localStorage.getItem('nura_onboarded')
-    } catch { return }
-    if (!visto) navigate('/onboarding', { replace: true })
-  }, [user, location.pathname])   // eslint-disable-line react-hooks/exhaustive-deps
+  // Sin pantallas de bienvenida (decisión del fundador, 2026-09-25): se
+  // entra directo a la principal; buscar o crear cuenta, cuando uno quiera.
 
   // ── Las pestañas viven ──
   // Montadas siempre tras su primera visita; solo alternan visibilidad.
@@ -159,7 +133,7 @@ function AppRoutes() {
               <Route path="/r/:token" element={<Responder />} />
               <Route path="/baja/:token" element={<BajaAlerta />} />
               <Route path="/profesionales" element={<Profesionales />} />
-              <Route path="/onboarding" element={<OnboardingPage />} />
+              <Route path="/onboarding" element={<Navigate to="/" replace />} />
               {/* Con sesion, /login lleva a donde iba (nura_return_to), no a Inicio:
                   si no, al entrar se perdia el chat que la persona queria abrir. */}
               <Route path="/login" element={user ? <Navigate to={leerDestino()} replace /> : <Login />} />

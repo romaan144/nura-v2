@@ -196,9 +196,9 @@ if (conVh.length) {
 
 // ── 8. Pantallas construidas que no ve nadie ──
 // No bloquea: decidir si se enchufan o se retiran es del fundador. Pero
-// deben estar DELANTE, no dormidas. `/onboarding` esta enrutada y funciona
-// entera —lleva la frase de marca y la bifurcacion de profesional— y
-// NADIE navega a ella: solo aparece en listas de "ocultar la barra aqui".
+// deben estar DELANTE, no dormidas. (`/onboarding` estuvo enrutada y
+// nadie llegaba; se retiró el 2026-09-25 por decisión del fundador.)
+//
 {
   const app = readFileSync('src/App.jsx', 'utf8')
   // Emparejar cada componente con SU ruta real: `HelperProfile` vive en

@@ -2,7 +2,7 @@
 //
 // La pagina que el fundador comparte (por WhatsApp, en persona) para que
 // los primeros profesionales entiendan que es Nüra y se den de alta.
-// Enlace: /profesionales. No pasa por la bienvenida (solo la raiz lo hace).
+// Enlace: /profesionales.
 //
 // REGLA: solo se promete lo que la app hace HOY. Ni cifras de clientes, ni
 // «reciben X contactos al mes»: todavia no hay gente real, y es lo primero

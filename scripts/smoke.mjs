@@ -201,7 +201,7 @@ try {
   // quedaba sin el "En Nüra desde marzo" de su perfil. Nadie lo decidio:
   // es el patron "dos caminos, dos reglas" que ya habia dado tres fallos.
   {
-    const puertas = ['src/pages/Login.jsx', 'src/pages/Onboarding.jsx', 'src/pages/RegisterHelper.jsx']
+    const puertas = ['src/pages/Login.jsx', 'src/pages/RegisterHelper.jsx']
     const sinFecha = []
     for (const f of puertas) {
       let t; try { t = readFileSync(f, 'utf8') } catch { continue }
