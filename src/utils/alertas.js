@@ -45,7 +45,7 @@ const aBytes = b64 => {
  * Pide permiso y suscribe este movil. Devuelve la suscripcion, o
  * { motivo } si no se puede: 'no-disponible' | 'denegado' | 'error'.
  */
-export async function suscribirMovil() {
+export async function suscribirMovil(ambito = '/') {
   if (!movilPuedeAvisar() || !porLaFuncion()) return { motivo: 'no-disponible' }
   // Con tiempo maximo: si el movil no contesta, se guarda la alerta igual
   // (se vera en el perfil) en vez de dejar «Guardando…» para siempre.
@@ -54,8 +54,11 @@ export async function suscribirMovil() {
     const permiso = await conTope(Notification.requestPermission(), 60000)
     if (permiso !== 'granted') return { motivo: 'denegado' }
     return await conTope((async () => {
-      const reg = await navigator.serviceWorker.register('/sw.js')
-      await navigator.serviceWorker.ready
+      // `ambito` separa los canales: '/pro/' es el de «te han escrito» de la
+      // profesional (el trabajador sabe por su ambito que aviso enseñar).
+      const reg = await navigator.serviceWorker.register('/sw.js', { scope: ambito })
+      if (ambito === '/') await navigator.serviceWorker.ready
+      else if (!reg.active) await new Promise(ok => { const w = reg.installing || reg.waiting; if (!w) return ok(); w.addEventListener('statechange', () => w.state === 'activated' && ok()) })
       const ya = await reg.pushManager.getSubscription()
       if (ya) return { suscripcion: ya.toJSON() }
       const r = await llamarFuncion({ op: 'clave-push' })
@@ -169,4 +172,33 @@ export async function avisarCuandoConteste(helperId, nombre) {
   } catch { return { ok: false, motivo: 'error' } }
   await apuntarEspera({ llave, helperId, nombre }, EDGE_URL)
   return { ok: true }
+}
+
+// ── «Avísame cuando me escriban» (la profesional) ─────────────────────────
+// Un canal aparte (ámbito '/pro/') para que el trabajador sepa que el aviso
+// es «te han escrito» sin que viaje nada en él.
+const AVISOS_PRO = 'nura_avisos_pro'
+export const avisosProActivos = () => { try { return localStorage.getItem(AVISOS_PRO) === '1' } catch { return false } }
+
+export async function activarAvisosPro(sesion) {
+  if (!porLaFuncion() || !sesion) return { ok: false, motivo: 'no-disponible' }
+  const r = await suscribirMovil('/pro/')
+  if (!r.suscripcion) return { ok: false, motivo: r.motivo || 'error' }
+  try {
+    const s = await llamarFuncion({ op: 'avisos-pro', sesion, push: r.suscripcion })
+    if (!s?.ok) return { ok: false, motivo: 'error' }
+  } catch { return { ok: false, motivo: 'error' } }
+  try { localStorage.setItem(AVISOS_PRO, '1') } catch { /* sin memoria: el servidor ya lo tiene */ }
+  return { ok: true }
+}
+
+export async function desactivarAvisosPro(sesion) {
+  try { localStorage.removeItem(AVISOS_PRO) } catch { /* nada */ }
+  try {
+    const reg = await navigator.serviceWorker?.getRegistration('/pro/')
+    await (await reg?.pushManager.getSubscription())?.unsubscribe()
+    await reg?.unregister()
+  } catch { /* si no se puede, el servidor lo borra igual */ }
+  if (!porLaFuncion() || !sesion) return false
+  try { return Boolean((await llamarFuncion({ op: 'avisos-pro', sesion, quitar: true }))?.ok) } catch { return false }
 }

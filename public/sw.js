@@ -10,6 +10,9 @@
 //     Se sabe preguntando a Nüra con las llaves de lectura que la app dejo en
 //     IndexedDB (src/utils/esperando.js). Solo este movil tiene esas llaves.
 //   · «Ha llegado alguien» — «Te aviso si aparece».
+//   · «Te han escrito» — la profesional que pidio «Avísame cuando me
+//     escriban». Llega por OTRO canal (este mismo fichero registrado con
+//     ambito /pro/), asi que se sabe cual es sin que el aviso diga nada.
 
 self.addEventListener('install', () => self.skipWaiting())
 self.addEventListener('activate', e => e.waitUntil(self.clients.claim()))
@@ -51,6 +54,14 @@ async function contestados() {
 
 self.addEventListener('push', e => {
   e.waitUntil((async () => {
+    // El canal de la profesional (ambito /pro/): alguien le ha escrito.
+    if (self.registration.scope.endsWith('/pro/')) {
+      return self.registration.showNotification('Te han escrito en Nüra', {
+        body: 'Tócalo para leerlo y contestar.',
+        icon: '/logo-iso.png', badge: '/logo-iso.png', tag: 'nura-te-han-escrito',
+        data: { url: '/chats' },
+      })
+    }
     const listos = await contestados()
     if (listos.length) {
       const [p] = listos
