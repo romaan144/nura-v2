@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
-import { X, Bell, Mail, Check } from 'lucide-react'
+import { X, Bell, Mail, Check, MapPin } from 'lucide-react'
 import styles from './AlertaSheet.module.css'
 import { crearAlerta, suscribirMovil, movilPuedeAvisar, esIphoneSinInstalar } from '../utils/alertas'
 
@@ -14,13 +14,15 @@ function correoDeLaCuenta() {
   catch { return '' }
 }
 
-export default function AlertaSheet({ categoria, que, onClose, onHecho }) {
+export default function AlertaSheet({ categoria, que, zona, onClose, onHecho }) {
   const navigate = useNavigate()
   const correo = correoDeLaCuenta()
   const puedeMovil = movilPuedeAvisar() && !esIphoneSinInstalar()
   const [movil, setMovil] = useState(puedeMovil)
   const [porCorreo, setPorCorreo] = useState(Boolean(correo))
   const [guardando, setGuardando] = useState(false)
+  // Si buscaba en un barrio, por defecto solo avisa de quien trabaja cerca.
+  const [soloCerca, setSoloCerca] = useState(Boolean(zona?.nombre))
 
   async function confirmar() {
     if (guardando) return
@@ -36,7 +38,7 @@ export default function AlertaSheet({ categoria, que, onClose, onHecho }) {
       const { sesionActual } = await import('../utils/cuenta')
       sesion = (await sesionActual())?.access_token || null
     }
-    const r = await crearAlerta({ categoria, que, movil: suscripcion, sesion })
+    const r = await crearAlerta({ categoria, que, movil: suscripcion, sesion, zona: soloCerca ? zona : null })
     setGuardando(false)
     onHecho?.({ ...r, motivoMovil, pidioCorreo: porCorreo && Boolean(correo) })
   }
@@ -48,12 +50,24 @@ export default function AlertaSheet({ categoria, que, onClose, onHecho }) {
         <button className={styles.close} onClick={onClose} aria-label="Cerrar"><X size={16} /></button>
         <div className={styles.icono}><Bell size={24} /></div>
         <h3 id="alerta-titulo" className={styles.title}>¿Te aviso si llega alguien?</h3>
-        <p className={styles.desc}>Cuando se dé de alta en Nüra alguien de <b>{que.toLowerCase()}</b>, te lo digo.</p>
+        <p className={styles.desc}>Cuando se dé de alta en Nüra alguien de <b>{que.toLowerCase()}</b>{soloCerca ? <> cerca de <b>{zona.nombre}</b></> : null}, te lo digo.</p>
 
         <div className={styles.guardo}>
           <p className={styles.guardoTit}>Solo guardo esto</p>
-          <p className={styles.guardoTxt}>«{que}». No guardo lo que escribiste. Se borra solo a los 3 meses, o cuando quieras desde tu perfil.</p>
+          <p className={styles.guardoTxt}>«{que}»{soloCerca ? ` y el barrio (${zona.nombre})` : ''}. No guardo lo que escribiste. Se borra solo a los 3 meses, o cuando quieras desde tu perfil.</p>
         </div>
+
+        {zona?.nombre && (
+          <button type="button" className={`${styles.canal} ${soloCerca ? styles.canalOn : ''}`}
+            aria-pressed={soloCerca} onClick={() => setSoloCerca(v => !v)}>
+            <MapPin size={18} />
+            <span className={styles.canalTxt}>
+              <span className={styles.canalTit}>Solo si trabaja cerca de {zona.nombre}</span>
+              <span className={styles.canalNota}>A 5 km o menos, online o en toda Barcelona.</span>
+            </span>
+            <span className={styles.check}>{soloCerca && <Check size={14} />}</span>
+          </button>
+        )}
 
         <p className={styles.pregunta}>¿Cómo te aviso?</p>
         <button type="button" className={`${styles.canal} ${movil ? styles.canalOn : ''}`}

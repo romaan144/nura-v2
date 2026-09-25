@@ -1015,7 +1015,7 @@ export default function Home() {
         }
           const alt = alternativas[analysis.categoria] || alternativas.otro
           const queEs = (CAT_HUMANA[analysis.categoria] || 'eso').toLowerCase()
-          sinCoberturaRef.current = { categoria: analysis.categoria, que: CAT_HUMANA[analysis.categoria] || queEs }
+          sinCoberturaRef.current = { categoria: analysis.categoria, que: CAT_HUMANA[analysis.categoria] || queEs, zona: analysis.zona || null }
           registrarDemanda?.({ categoria: analysis.categoria, fecha: Date.now() })
           registrar('sin_cobertura', { categoria: analysis.categoria })
           setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
@@ -1586,7 +1586,7 @@ export default function Home() {
       {showGate && <RegisterGate reason={gateReason} onClose={() => setShowGate(false)} />}
       {valorar && <RatingModal helper={valorar} onClose={() => setValorar(null)} />}
       {alerta && (
-        <AlertaSheet categoria={alerta.categoria} que={alerta.que}
+        <AlertaSheet categoria={alerta.categoria} que={alerta.que} zona={alerta.zona}
           onClose={() => setAlerta(null)}
           onHecho={r => {
             setAlerta(null)

@@ -68,15 +68,17 @@ export async function suscribirMovil() {
  * Guarda la alerta. `movil`: la suscripcion (o null). `sesion`: el token de
  * la cuenta si quiere correo; el servidor saca el correo de ahi.
  */
-export async function crearAlerta({ categoria, que, movil, sesion }) {
+export async function crearAlerta({ categoria, que, movil, sesion, zona }) {
   if (!porLaFuncion()) return { ok: false, motivo: 'sin-servidor' }
   try {
     const r = await llamarFuncion({
       op: 'crear-alerta', categorias: categoriasEnBD(categoria), que,
       push: movil || undefined, sesion: sesion || undefined,
+      // Solo el nombre del barrio: el servidor pone el centro del barrio.
+      zona: zona?.nombre ? { nombre: zona.nombre } : undefined,
     })
     if (!r?.ok) return { ok: false, motivo: r?.estado === 429 ? 'demasiadas' : 'error' }
-    guardar([...alertasGuardadas(), { llave: r.llave, que, categoria, creada: new Date().toISOString(),
+    guardar([...alertasGuardadas(), { llave: r.llave, que, categoria, zona: zona?.nombre || null, creada: new Date().toISOString(),
       caduca_en: r.caduca_en, canales: r.canales, visto: 0 }])
     return { ok: true, canales: r.canales, correoActivo: r.correoActivo }
   } catch { return { ok: false, motivo: 'error' } }

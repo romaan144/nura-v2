@@ -43,7 +43,7 @@ export default function MisAlertas({ estilos: s, destacar = false }) {
                 {a.canales?.correo && !a.canales?.movil ? <Mail size={17} /> : <Bell size={17} />}
               </span>
               <span className={s.filaTexto}>
-                <span className={s.filaTitulo}>{a.que}</span>
+                <span className={s.filaTitulo}>{a.que}{a.zona ? ` · cerca de ${a.zona}` : ''}</span>
                 <span className={s.filaDetalle}>
                   {[a.canales?.movil && 'Notificación', a.canales?.correo && 'correo'].filter(Boolean).join(' y ') || 'Lo verás aquí'}
                   {a.caduca_en ? ` · hasta el ${fecha(a.caduca_en)}` : ''}
