@@ -1,4 +1,13 @@
 {
+  "git": {
+    "deploymentEnabled": {
+      "main": true,
+      "claude/**": false
+    }
+  },
+  "github": {
+    "silent": true
+  },
   "rewrites": [
     {
       "source": "/((?!assets/).*)",
