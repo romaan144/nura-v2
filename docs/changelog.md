@@ -10,6 +10,19 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-25 — La búsqueda entiende más formas de pedir
+
+- **60 frases nuevas escritas como las diría alguien** («se me ha roto la
+  lavadora», «papeles para la residencia», «cortar el césped»…): acertaba
+  45, ahora 55. Las 5 que quedan van a un oficio razonable (el pintor está
+  en técnicos, el fotógrafo de boda en diseño).
+- **Arreglados**: mudanzas, planchado, jardinería, trámites de extranjería,
+  tiendas online, traducciones de títulos, «mala racha», TDAH y deberes,
+  «el grifo de la cocina» (ya no va a reformas) y «ayuda con el ordenador
+  para mi abuela» (ya no va a cuidados: manda lo que se pide, no para quién).
+- Las 11 corregidas entran en la suite fija (`npm run test:matching`,
+  ahora 123) para que no vuelvan a romperse.
+
 ## 2026-09-25 — Las pantallas secundarias se cargan aparte
 
 - **Explorar, chat, perfil, mis chats, Siguiendo, textos legales, entrar y

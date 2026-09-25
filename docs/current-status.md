@@ -112,7 +112,9 @@ Sin esto no se envía ningún correo y la app lo dice.
    profesionales reales, que dejan su contacto al darse de alta.
 4. ~~La pantalla de invitado del perfil~~ — hecha el 2026-09-24.
 5. **Comprensión de la búsqueda**: funciona por listas de palabras. Con 25
-   frases reales nuevas acierta 17 (2026-09-24). Cada forma nueva de decir
+   frases reales nuevas acierta 17 (2026-09-24); con otras 60 nuevas, 45
+   antes del ajuste y 55 después (2026-09-25; las 5 restantes van a un
+   oficio razonable). Cada forma nueva de decir
    algo hay que añadirla a mano. Mejorarlo de verdad (por ejemplo, con un
    modelo de lenguaje que entienda la frase) es decisión del fundador.
 6. **Perfil vivo** (`docs/perfil-vivo.md`): diseño propuesto, pendiente de
