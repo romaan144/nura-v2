@@ -9,6 +9,7 @@ import { HELPERS } from '../data/helpers'
 import styles from './Chats.module.css'
 import { DEMO_MODE } from '../config'
 import { Badge } from '../components/ui'
+import BandejaProfesional from '../components/BandejaProfesional'
 
 // ── REALISTIC DEMO CONVERSATIONS ─────────────────────────────────────────
 // These simulate what the app looks like with active users.
@@ -127,7 +128,7 @@ function formatChatTime(isoStr) {
 
 export default function Chats() {
   const navigate  = useNavigate()
-  const { chats, markRead, helpersCache, getChatHistory, personas, contactedHelpers, citas } = useUser()
+  const { chats, markRead, helpersCache, getChatHistory, personas, contactedHelpers, citas, user } = useUser()
   const [search, setSearch] = useState('')
 
   function getHelper(id) {
@@ -173,8 +174,10 @@ export default function Chats() {
         </div>
       </div>
 
+      {user?.isHelper && !DEMO_MODE && <BandejaProfesional />}
+
       <div className={styles.list}>
-        {allChats.length === 0 && (
+        {allChats.length === 0 && !user?.isHelper && (
           <EmptyState
             title="Cuando conectes con alguien, vuestra conversación vivirá aquí."
             hint="Cuéntale a Nüra qué necesitas y ella encontrará a la persona."

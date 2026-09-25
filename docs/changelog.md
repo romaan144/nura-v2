@@ -2257,3 +2257,10 @@ registradas retroactivamente con su motivo:
 - Revisión de seguridad de lo añadido hoy: `encolar-aviso` es público, y con el envío automático alguien podría hacer que Nüra mandara 5 correos a cada profesional de la lista.
 - Ahora hay además un tope GENERAL al día (`NURA_CORREOS_DIA`, 200 por defecto) con el contador atómico `sumar_uso`. Pasado el tope, los avisos siguen guardados y salen a mano. Si el contador falla, no se envía (cerrado por defecto).
 - `helpers-write` v15. 1 prueba nueva (`npm run test:avisos`, 129).
+
+## 2026-09-25 · «Te han escrito»: la bandeja de la profesional
+- En Chats, la profesional con cuenta ve todo lo que le han escrito: lo que falta por contestar primero (con el número), lo contestado debajo. Al tocarlo contesta en `/r/:token`, la misma pantalla del enlace.
+- Sin sesión, se le invita a entrar con su cuenta (vuelve a Chats al entrar).
+- Nueva op `mis-avisos`: solo con sesión y solo los avisos de SU ficha (`owner_id`); nunca la llave de lectura de quien escribió.
+- `helpers-write` v16. 3 pruebas nuevas (`npm run test:avisos`, 132). Comprobado en navegador.
+- `docs/lado-profesional.md` era de agosto: la bandeja que pedía ya existe.

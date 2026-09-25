@@ -236,6 +236,15 @@ export async function borrarCuenta(token) {
  * que salio recomendada, mensajes recibidos y contestados). Necesita su
  * sesion. Devuelve null si no se puede saber: entonces no se enseñan cifras.
  */
+/** La bandeja de la profesional: lo que le han escrito (solo de SU ficha). */
+export async function misAvisos(sesion) {
+  if (!porLaFuncion() || !sesion) return null
+  try {
+    const r = await llamarFuncion({ op: 'mis-avisos', sesion })
+    return r?.ok ? r.avisos || [] : null
+  } catch { return null }
+}
+
 export async function miPulso(sesion) {
   if (!porLaFuncion() || !sesion) return null
   try {

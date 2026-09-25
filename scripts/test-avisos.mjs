@@ -530,6 +530,18 @@ console.log('\n── El Pulso: cifras de verdad, solo de la ficha propia ──
   ok(p?.apariciones === 1, 'cuenta solo las veces que salió SU ficha, no la que diga el móvil')
   ok(p?.recibidos === 2 && p?.respondidos === 1, 'mensajes de esta semana: recibidos y contestados')
   ok(!JSON.stringify(r.datos).includes('mensaje'), 'el Pulso no devuelve ningún mensaje ni frase de nadie')
+
+  // La bandeja: quien le ha escrito, solo con su sesión y solo lo suyo
+  db.avisos.push(
+    { id: 80, helper_id: '777', mensaje: 'Para la 777 (ficticio)', token: 't'.repeat(32), lectura_hash: 'h80', fecha: hoy, respuesta: null },
+    { id: 81, helper_id: '999', mensaje: 'Para OTRA (ficticio)', token: 'o'.repeat(32), lectura_hash: 'h81', fecha: hoy, respuesta: null },
+  )
+  r = await llamarG(funcion, { op: 'mis-avisos' })
+  ok(r.estado === 401, 'sin sesión no hay bandeja → 401')
+  r = await llamarG(funcion, { op: 'mis-avisos', sesion: 'sesion-confirmada', helperId: 999 })
+  const lista = r.datos?.avisos || []
+  ok(r.estado === 200 && lista.some(a => a.id === 80) && !lista.some(a => a.helper_id === '999' || a.id === 81), 've los mensajes de SU ficha, nunca los de otra (aunque el móvil pida otra)')
+  ok(lista.find(a => a.id === 80)?.token === 't'.repeat(32) && !JSON.stringify(lista).includes('h80'), 'con el enlace para contestar, sin la llave de quien escribió')
 }
 
 
