@@ -2212,3 +2212,8 @@ registradas retroactivamente con su motivo:
 
 *Formato de nuevas entradas:*
 `## AAAA-MM-DD — Título` seguido de viñetas `- **Decisión** — motivo.`
+
+## 2026-09-25 · Privacidad: decir exactamente lo que se hace
+- «Nunca leemos tus chats» → «Nunca analizamos tus conversaciones ni lo que buscas». Los mensajes sí se guardan para avisar al profesional, así que «leer» no era exacto.
+- La política de privacidad ahora cuenta todo lo que se guarda: «Te aviso si aparece» (correo y permiso de avisos), valoraciones (solo se publica el resumen), recuentos sin texto, y los servicios que intervienen (Supabase, Resend, el navegador para las notificaciones, Anthropic para ordenar lo que el profesional escribe de sí mismo).
+- Nueva sección «Lo que nunca hacemos».
