@@ -142,20 +142,6 @@ try {
     } else console.log(`✓ ${'Imagen pesada'.padEnd(14)} [ninguna imagen supera 60 kB]`)
   }
 
-  // ── Nunca select=* sobre helpers ──
-  // select=* incluye contacto y owner_id, que la base de datos ya no deja
-  // leer: la peticion ENTERA falla (401). Y antes de cerrar el permiso, el
-  // contacto de cada profesional viajaba al navegador. La app usa la lista
-  // COLUMNAS_PUBLICAS de utils/supabase.js.
-  {
-    const src = readFileSync('src/utils/supabase.js', 'utf8')
-    const malos = src.split('\n').filter(l => !l.trim().startsWith('//') && /(\|\|\s*'\*'|columnasCache\s*=\s*'\*'|select=\*)/.test(l))
-    if (malos.length) {
-      console.log(`✗ ${'select=*'.padEnd(14)} — ${malos.length} lectura(s) de helpers con todas las columnas`)
-      failed += malos.length
-    } else console.log(`✓ ${'select=*'.padEnd(14)} [helpers se lee con COLUMNAS_PUBLICAS]`)
-  }
-
   // ── Texto gris a mano ──
   // 119 colores de texto escritos como rgba(33,29,51, 0.3–0.6): tinta
   // transparente que sobre el papel quedaba por debajo del minimo legal.

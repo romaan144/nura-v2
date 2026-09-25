@@ -101,35 +101,6 @@ select policyname from pg_policies where tablename = 'helpers';
 
 ---
 
-## 1 · El SQL · ✅ *ejecutado por el fundador (2026-09-23)*
-
-Verificado desde la app en producción, sin traer datos personales:
-la lectura pública funciona; `contacto` y `owner_id` están **prohibidos**;
-`avatarUrl` se lee.
-
-### Lo que el SQL rompió, y lo que destapó
-
-**Rompió `select=*`.** Con el contacto sin permiso, pedir "todas las
-columnas" falla entero (401). Y la app pedía justo eso, porque:
-
-**Destapó una fuga que ya existía.** La app intentaba descubrir las columnas
-en `/rest/v1/`, pero con la clave pública nueva (`sb_publishable_…`) esa
-ruta **siempre** devuelve 401. Así que **siempre** acababa pidiendo
-`select=*` — y con eso **el contacto de cada profesional viajaba al
-navegador de cualquier visitante**. El SQL cerró la fuga.
-
-La app en vivo no se enteró porque está en **modo demo** (usa profesionales
-de ejemplo). Habría saltado el día de apagar la demo: **ni una ficha se
-habría podido leer**.
-
-**Arreglado**: `COLUMNAS_PUBLICAS` en `utils/supabase.js`, obtenida
-preguntando columna por columna (`select=<col>&limit=0`, sin traer filas):
-**27 legibles, 2 privadas, 11 que no existen**. Las tres lecturas reales de
-la app (100, 1 y 1.000 fichas) probadas contra producción: todas 200, y
-ninguna trae el contacto. Guardia en la Cuarta Puerta contra `select=*`,
-probado devolviendo el fallo.
-
-## 2 · Volver a desplegar la función · ✅ *hecho (2026-09-23)*
 ## 2 · Volver a desplegar la función · ✅ *hecho (2026-09-23; versión 4 el 2026-09-24)*
 
 Desplegada desde el Chrome del fundador. Se trajo el código de GitHub y se
