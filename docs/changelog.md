@@ -10,6 +10,16 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-10-15 — El servidor lee la ciudad entre comas de la zona
+
+- Los avisos «Te aviso si aparece» reconocen ya «Russafa, Valencia» o
+  «Centro (Granada)» como esa ciudad, igual que la app desde el 2026-10-14.
+  Antes, un profesional sin ciudad guardada con esa zona contaba como
+  «ciudad desconocida» y avisaba a quien esperaba en cualquier ciudad.
+- Función `helpers-write` v24 (mismas operaciones), desplegada y comparada
+  con el repositorio. Prueba nueva en `test:avisos` (192), comprobada
+  también al revés: sin el cambio, falla.
+
 ## 2026-10-14 — «Tu ciudad» en «Editar mi ficha» del profesional
 
 - La ficha tiene un campo **«Tu ciudad»**, debajo de «Dónde trabajas».

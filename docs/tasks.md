@@ -14,15 +14,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · El servidor lee la ciudad entre comas de la zona
+### Última tarea integrada · El servidor lee la ciudad entre comas de la zona
 
-**Responsable:** Claude. **Rama:** `claude/funny-clarke-e6m64r`, desde `main` (b541ac3).
-**Objetivo:** que los avisos «Te aviso si aparece» reconozcan «Russafa, Valencia» como Valencia (igual que la app desde el 2026-10-14). Función `helpers-write` v24.
-**Archivos previstos:** `supabase/functions/helpers-write/index.ts`, `scripts/test-avisos.mjs`, documentación.
-
-### Última tarea integrada · «Tu ciudad» en «Editar mi ficha» del profesional
-
-Integrada el 2026-09-26 (ver `docs/changelog.md`, 2026-10-14). Tocó `src/components/EditarFicha.jsx` (un campo más con el mismo estilo que los demás), `src/data/ciudades.js`, `src/pages/RegisterHelper.jsx` y `src/utils/supabase.js` (solo para leer la ciudad de la zona con `ciudadDeZona`) y `scripts/test-matching.mjs`. Esos archivos quedan libres.
+Integrada el 2026-09-26 (ver `docs/changelog.md`, 2026-10-15). Tocó `supabase/functions/helpers-write/index.ts` (v24) y `scripts/test-avisos.mjs`. Esos archivos quedan libres.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
