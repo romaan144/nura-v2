@@ -1,5 +1,5 @@
 import { avatarDe } from '../utils/avatar'
-import { ciudadEnTexto } from '../data/ciudades'
+import { ciudadDeZona } from '../data/ciudades'
 import { DEMO_MODE } from '../config'
 // LA UNICA FUENTE. Estaban declaradas en TRES sitios y ya habian divergido:
 // aqui la clave nueva `sb_publishable_`, y en claudeApi.js (retirado) y
@@ -144,7 +144,7 @@ function normalize(h) {
     price: h.price || null,
     zone: h.zone || h.city || 'Barcelona',
     // Sin ciudad guardada se lee de su zona; si no se sabe, no se inventa.
-    city: h.city || ciudadEnTexto(h.zone) || null,
+    city: h.city || ciudadDeZona(h.zone) || null,
     // Su horario, si lo marcó (null = el de su oficio).
     horario: h.horario || null,
     // Días u horas sueltas en que no puede (vacaciones, un médico…).

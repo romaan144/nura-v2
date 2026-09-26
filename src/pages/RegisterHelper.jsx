@@ -1,5 +1,5 @@
 import { revisarContacto } from '../utils/contactoProfesional'
-import { ciudadEnTexto, faltaCiudad, ciudadDeRespuesta } from '../data/ciudades'
+import { ciudadDeZona, faltaCiudad, ciudadDeRespuesta } from '../data/ciudades'
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Send, Mic, MicOff } from 'lucide-react'
@@ -32,7 +32,7 @@ async function saveHelperToSupabase(answers, declarado = []) {
       // La ciudad, de lo que escribe: antes TODOS quedaban en Barcelona.
       zone: (answers.zone || '').trim() || null,
       // Si la zona no la dice («Chamberí»), la que contestó al preguntársela.
-      city: ciudadEnTexto(answers.zone) || answers.ciudad || null,
+      city: ciudadDeZona(answers.zone) || answers.ciudad || null,
       price: answers.price || null, category: inferredCategory,
       presential: true, online: (answers.modality || '').toLowerCase().includes('online'),
       // COLUMNAS EN camelCase: la tabla real de Supabase usa `dniVerified`,

@@ -458,7 +458,20 @@ for (const t of NEGATIVE) {
 
 // ── La ciudad (2026-09-25): Nüra se usará en más ciudades ──
 {
-  const { ciudadEnTexto, hayEnLaCiudad, faltaCiudad, ciudadDeRespuesta } = await import(join(stage, 'data/ciudades.js'))
+  const { ciudadEnTexto, hayEnLaCiudad, faltaCiudad, ciudadDeRespuesta, ciudadAlGuardar, ciudadDeZona } = await import(join(stage, 'data/ciudades.js'))
+  for (const [campo, zona, esp] of [['Madrid', 'Chamberí', 'Madrid'], ['', 'Madrid, Chamberí', 'Madrid'], ['', 'Chamberí', null],
+    ['toledo', 'centro', 'Toledo'], ['bcn', 'Gràcia', 'Barcelona']]) {
+    const r = ciudadAlGuardar(campo, zona).ciudad ?? null
+    if (r !== esp) failed++
+    console.log(`${r === esp ? '✓' : '✗'} editar ficha: «${campo}» + «${zona}» → ${r}`)
+  }
+  for (const [z, esp] of [['Russafa, Valencia', 'Valencia'], ['Chamberí · Madrid', 'Madrid'], ['Centro (Granada)', 'Granada'],
+    ['Valencia', 'Valencia'], ['Gràcia', 'Barcelona'], ['con Valencia, mi perra', null], ['Chamberí', null]]) {
+    const r = ciudadDeZona(z)
+    if (r !== esp) failed++
+    console.log(`${r === esp ? '✓' : '✗'} zona: «${z}» → ${r}${r === esp ? '' : ` (esperado ${esp})`}`)
+  }
+  { const r = ciudadAlGuardar('123', 'Chamberí'); if (!r.error) failed++; console.log(`${r.error ? '✓' : '✗'} editar ficha: «123» no se guarda como ciudad`) }
   for (const [z, esp] of [['Chamberí', true], ['Madrid, Chamberí', false], ['Gràcia y alrededores', false], ['solo online', false],
     ['por videollamada', false], ['el centro, me desplazo', true], ['', false]]) {
     if (faltaCiudad(z) !== esp) failed++

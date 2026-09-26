@@ -53,8 +53,24 @@ export function ciudadEnTexto(texto) {
   return barrioEnTexto(texto) ? 'Barcelona' : null
 }
 
+/**
+ * La ciudad que dice la ZONA de un profesional. Como ciudadEnTexto, y
+ * además un trozo entre comas que sea solo una ciudad: en «Russafa,
+ * Valencia» es la ciudad, aunque «Valencia» a secas pueda ser un nombre.
+ */
+export function ciudadDeZona(zona) {
+  const directa = ciudadEnTexto(zona)
+  if (directa) return directa
+  for (const trozo of String(zona || '').split(/[,·(/)]/)) {
+    const t = sinTildes(trozo).replace(/[^a-z0-9' -]/g, ' ').replace(/\s+/g, ' ').trim()
+    const c = t && TODAS.find(x => x.a === t)
+    if (c) return c.nombre
+  }
+  return null
+}
+
 /** La ciudad de un profesional: la guardada, o la que se lee en su zona. */
-export const ciudadDe = h => h?.city || ciudadEnTexto(h?.zone) || null
+export const ciudadDe = h => h?.city || ciudadDeZona(h?.zone) || null
 
 /**
  * ¿Hay en esta lista alguien que trabaje en esa ciudad (o atienda online)?
@@ -73,7 +89,7 @@ export function hayEnLaCiudad(lista, ciudad) {
  */
 export function faltaCiudad(zona) {
   const t = String(zona || '').trim()
-  if (!t || ciudadEnTexto(t)) return false
+  if (!t || ciudadDeZona(t)) return false
   return !/\b(online|on-line|a distancia|en remoto|remoto|videollamada)\b/i.test(sinTildes(t))
 }
 
@@ -90,4 +106,16 @@ export function ciudadDeRespuesta(texto) {
   if (!/^[\p{L}][\p{L} '’-]{1,39}$/u.test(limpio)) return null
   if (/^(no se|ni idea|no lo se|ninguna|nada|varias|toda espana|espana)$/.test(sinTildes(limpio))) return null
   return limpio.charAt(0).toUpperCase() + limpio.slice(1)
+}
+
+/**
+ * La ciudad que se guarda al editar la ficha. Manda lo que escriba en «Tu
+ * ciudad»; si lo deja vacío, la que diga su zona (o ninguna).
+ * Devuelve { ciudad } o { error } si lo escrito no parece una ciudad.
+ */
+export function ciudadAlGuardar(campo, zona) {
+  const t = String(campo || '').trim()
+  if (!t) return { ciudad: ciudadDeZona(zona) || null }
+  const ciudad = ciudadDeRespuesta(t)
+  return ciudad ? { ciudad } : { error: 'Escribe solo el nombre de tu ciudad. Por ejemplo: Madrid.' }
 }
