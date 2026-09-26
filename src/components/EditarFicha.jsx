@@ -3,7 +3,8 @@ import { ciudadEnTexto } from '../data/ciudades'
 import { useState, useEffect } from 'react'
 import EditarHorario from './EditarHorario'
 import EditarBloqueos from './EditarBloqueos'
-import { horarioValido, horarioDelOficio, bloqueosVigentes } from '../data/horarios'
+import { horarioValido, horarioDelOficio, bloqueosVigentes, citasAfectadas } from '../data/horarios'
+import { misAvisos, anularCitas } from '../utils/escrituras'
 import { analyzeNeed } from '../utils/matching'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
@@ -70,6 +71,24 @@ export default function EditarFicha({ onClose, foco }) {
   // Tras guardar: lo que la IA ha ordenado del texto nuevo, para confirmar.
   const [propuesta, setPropuesta] = useState(null)
 
+  // SUS CITAS CONFIRMADAS: para avisar si bloquea un día en que ya tiene
+  // una. Solo con la ficha vinculada (el servidor las da con su sesión).
+  const [misCitas, setMisCitas] = useState([])
+  useEffect(() => {
+    if (!vinculada) return
+    let vivo = true
+    ;(async () => {
+      const { sesionActual } = await import('../utils/cuenta')
+      const lista = await misAvisos((await sesionActual())?.access_token)
+      if (vivo && Array.isArray(lista)) setMisCitas(lista.filter(a => a.cita_estado === 'aceptada'))
+    })()
+    return () => { vivo = false }
+  }, [vinculada])
+  const citasConfirmadas = misCitas.map(a => ({ fecha: a.cita_fecha, hora: a.cita_hora }))
+  // Al guardar, si lo bloqueado choca con citas: se pregunta antes.
+  const [chocan, setChocan] = useState(null)
+  const [notaCitas, setNotaCitas] = useState('')
+
   async function confirmar(elegidos) {
     setGuardando(true); setFallo('')
     const { sesionActual } = await import('../utils/cuenta')
@@ -80,7 +99,10 @@ export default function EditarFicha({ onClose, foco }) {
     else setFallo('Tu ficha está guardada, pero esto no se ha podido guardar. Vuelve a probar en un momento.')
   }
 
-  async function guardar() {
+  /** `cancelarCitas`: undefined = aún no ha decidido; true / false = su respuesta. */
+  async function guardar(cancelarCitas) {
+    const afectadas = citasAfectadas(bloqueos, misCitas)
+    if (cancelarCitas === undefined && afectadas.length) { setChocan(afectadas); setFallo(''); return }
     const limpio = Object.fromEntries(Object.entries(v).map(([k, x]) => [k, (x || '').trim()]))
     // El contacto, comprobado (vacío se permite: puede quitarlo).
     if (limpio.contacto) {
@@ -113,6 +135,18 @@ export default function EditarFicha({ onClose, foco }) {
       }
       const { data, error } = await cuentas.from('helpers').update(cambios).eq('id', user.helperId).select('id')
       if (error || !data?.length) throw error || new Error('ninguna fila')
+      // Las citas que chocan con lo bloqueado, si ha dicho que las cancele.
+      if (cancelarCitas && afectadas.length) {
+        const { sesionActual } = await import('../utils/cuenta')
+        const hechas = await anularCitas((await sesionActual())?.access_token, afectadas.map(c => c.id), notaCitas)
+        if (!hechas) {
+          setChocan(null)
+          setFallo('Tu ficha está guardada, pero las citas no se han podido cancelar. Revisa tu conexión y vuelve a guardar.')
+          return
+        }
+        setMisCitas(prev => prev.filter(a => !hechas.includes(a.id)))
+      }
+      setChocan(null)
       // Lo declarado (perfil vivo §4): con el texto nuevo, la IA propone
       // datos concretos y ella confirma. Sin IA, se cierra como antes.
       const items = await ordenarPerfil([cambios.specialty, limpio.formation, limpio.zone, limpio.differentiator].filter(Boolean).join('. '))
@@ -156,7 +190,48 @@ export default function EditarFicha({ onClose, foco }) {
           {vinculada ? 'Lo que cambies se publica en tu ficha.' : 'Por ahora, estos cambios se guardan en tu móvil.'}
         </p>
 
-        {propuesta ? (
+        {chocan ? (
+          <div role="group" aria-labelledby="chocan-titulo">
+            <p id="chocan-titulo" style={{ margin: '0 0 var(--space-8)', fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--ink-primary)' }}>
+              {chocan.length === 1 ? 'Ya tienes una cita en lo que bloqueas' : `Ya tienes ${chocan.length} citas en lo que bloqueas`}
+            </p>
+            <ul style={{ margin: '0 0 var(--space-12)', padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
+              {chocan.map(c => (
+                <li key={c.id} style={{ padding: 'var(--space-10) var(--space-12)', border: '1px solid var(--ink-border)', borderRadius: 'var(--radius-card)',
+                  background: 'white', fontSize: 'var(--text-sm)', color: 'var(--ink-primary)' }}>
+                  {new Date(c.fecha + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })} a las {c.hora}
+                </li>
+              ))}
+            </ul>
+            <p style={{ margin: '0 0 var(--space-12)', fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)', lineHeight: 1.5 }}>
+              {chocan.length === 1
+                ? 'Puedes cancelarla: esa persona lo verá en Nüra y la hora quedará libre. O guardar sin tocarla y hablarlo tú.'
+                : 'Puedes cancelarlas: esas personas lo verán en Nüra y las horas quedarán libres. O guardar sin tocarlas y hablarlo tú.'}
+            </p>
+            <label htmlFor="f-nota-citas" style={{ display: 'block', margin: '0 0 var(--space-6)', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--ink-primary)' }}>
+              {chocan.length === 1 ? 'Un mensaje para esa persona (si quieres)' : 'Un mensaje para esas personas (si quieres)'}
+            </label>
+            <textarea id="f-nota-citas" rows={3} maxLength={300} value={notaCitas} placeholder="Me ha surgido un imprevisto. ¿Te iría bien otro día?"
+              onChange={e => setNotaCitas(e.target.value)} style={campo} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)', marginTop: 'var(--space-12)' }}>
+              <button type="button" onClick={() => guardar(true)} disabled={guardando}
+                style={{ minHeight: 48, border: 'none', borderRadius: 'var(--radius-full)', cursor: 'pointer', fontFamily: 'inherit',
+                  fontSize: 'var(--text-sm)', fontWeight: 700, background: 'var(--purple)', color: 'white' }}>
+                {guardando ? 'Guardando…' : chocan.length === 1 ? 'Cancelar la cita y guardar' : 'Cancelar las citas y guardar'}
+              </button>
+              <button type="button" onClick={() => guardar(false)} disabled={guardando}
+                style={{ minHeight: 48, border: '1px solid var(--ink-border)', borderRadius: 'var(--radius-full)', cursor: 'pointer', fontFamily: 'inherit',
+                  fontSize: 'var(--text-sm)', fontWeight: 600, background: 'white', color: 'var(--ink-primary)' }}>
+                {chocan.length === 1 ? 'Guardar sin cancelarla' : 'Guardar sin cancelarlas'}
+              </button>
+              <button type="button" onClick={() => setChocan(null)} disabled={guardando}
+                style={{ minHeight: 44, border: 'none', borderRadius: 'var(--radius-full)', cursor: 'pointer', fontFamily: 'inherit',
+                  fontSize: 'var(--text-sm)', fontWeight: 600, background: 'none', color: 'var(--ink-secondary)' }}>
+                Volver a la ficha
+              </button>
+            </div>
+          </div>
+        ) : propuesta ? (
           <div>
             <p style={{ margin: '0 0 var(--space-12)', fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--ink-primary)' }}>
               Guardado. He ordenado lo que cuentas para que te encuentren mejor. ¿Es correcto?
@@ -197,13 +272,13 @@ export default function EditarFicha({ onClose, foco }) {
         </div>
 
         <EditarHorario valor={horario} onCambio={setHorario} />
-        <EditarBloqueos valor={bloqueos} horario={horarioOk || horarioDelOficio(null)} onCambio={setBloqueos} />
+        <EditarBloqueos valor={bloqueos} horario={horarioOk || horarioDelOficio(null)} onCambio={setBloqueos} citas={citasConfirmadas} />
         </>}
       </div>
 
       {fallo && <p role="alert" style={{ margin: 0, padding: 'var(--space-10) var(--space-16) 0', fontSize: 'var(--text-sm)',
         color: 'var(--red-ink)', lineHeight: 1.45 }}>{fallo}</p>}
-      {!propuesta && <div style={{ display: 'flex', gap: 'var(--space-8)',
+      {!propuesta && !chocan && <div style={{ display: 'flex', gap: 'var(--space-8)',
         padding: 'var(--space-12) var(--space-16) max(env(safe-area-inset-bottom, 0px), var(--space-16))',
         borderTop: '1px solid var(--ink-border)', background: 'var(--paper)' }}>
         <button onClick={onClose} style={{ flex: 1, minHeight: 48, background: 'none',
@@ -211,7 +286,7 @@ export default function EditarFicha({ onClose, foco }) {
           fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--ink-secondary)' }}>
           Cancelar
         </button>
-        <button onClick={guardar} disabled={!cambiado || guardando} style={{ flex: 2, minHeight: 48, border: 'none',
+        <button onClick={() => guardar()} disabled={!cambiado || guardando} style={{ flex: 2, minHeight: 48, border: 'none',
           borderRadius: 'var(--radius-full)', cursor: cambiado ? 'pointer' : 'default',
           fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 700,
           background: cambiado ? 'var(--purple)' : 'rgba(33,29,51,0.08)',

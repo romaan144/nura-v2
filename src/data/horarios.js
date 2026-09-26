@@ -296,3 +296,23 @@ export function agendaDe(avisos = [], ahora = new Date(), dias = 14) {
   }
   return porDia
 }
+
+/**
+ * LAS CITAS QUE CHOCAN CON LO BLOQUEADO: de los avisos del profesional
+ * (op `mis-avisos`), las citas confirmadas de hoy en adelante que caen en
+ * un día bloqueado entero o en una hora bloqueada. Así, antes de guardar,
+ * la app puede decirle «ese día tienes una cita» y ofrecerle cancelarla.
+ * @returns {{id:number, fecha:string, hora:string, token?:string}[]} por fecha y hora
+ */
+export function citasAfectadas(bloqueos = [], avisos = [], ahora = new Date()) {
+  const hoy = isoLocal(ahora)
+  const lista = bloqueosValidos(bloqueos)
+  return (avisos || [])
+    .filter(a => a?.cita_estado === 'aceptada' && a.cita_fecha >= hoy && a.cita_hora)
+    .filter(a => {
+      const b = lista.find(x => x.fecha === a.cita_fecha)
+      return b && (!b.horas || b.horas.includes(a.cita_hora))
+    })
+    .map(a => ({ id: a.id, fecha: a.cita_fecha, hora: a.cita_hora, token: a.token }))
+    .sort((x, y) => (x.fecha + x.hora.padStart(5, '0')).localeCompare(y.fecha + y.hora.padStart(5, '0')))
+}

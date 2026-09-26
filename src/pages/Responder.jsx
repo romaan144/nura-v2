@@ -223,7 +223,7 @@ function ResponderAviso({ token }) {
             borderRadius: 'var(--radius-card)', padding: 'var(--space-14) var(--space-16)', margin: '0 0 var(--space-16)' }}>
             <p style={{ margin: '0 0 var(--space-4)', fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--red-ink)' }}>Cita cancelada</p>
             <p style={{ margin: 0, fontSize: 'var(--text-sm)', color: 'var(--ink-primary)', lineHeight: 1.5 }}>
-              Ha cancelado la cita del {cuandoCita(aviso.cita).replace(' · ', ' a las ')}. Esa hora vuelve a estar libre en tu agenda.
+              {aviso.cita.cancela === 'profesional' ? 'Cancelaste' : 'Ha cancelado'} la cita del {cuandoCita(aviso.cita).replace(' · ', ' a las ')}. Esa hora vuelve a estar libre en tu agenda.
             </p>
           </div>
         )}

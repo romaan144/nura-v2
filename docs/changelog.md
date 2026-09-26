@@ -10,6 +10,30 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-10-06 — Bloquear un día con citas: se avisa y se puede cancelar
+
+- En «Días u horas que no puedes», al elegir un día con una cita
+  confirmada sale «Ese día tienes una cita confirmada a las 17:00», y en la
+  lista de bloqueos, «Tienes cita a las 17:00».
+- Al guardar un bloqueo que choca con citas, la ficha **pregunta antes**:
+  lista de citas afectadas, un mensaje opcional para esa persona y tres
+  salidas: «Cancelar la cita y guardar», «Guardar sin cancelarla» o
+  «Volver a la ficha».
+- Si la cancela, quien la pidió la ve en «Mis servicios» como Cancelado,
+  con «Laura ha cancelado la cita» y la nota; el recordatorio desaparece y
+  la hora queda libre. En su enlace, el profesional lee «Cancelaste…».
+- Servidor (`helpers-write` v21, desplegada): operación `anular-cita`
+  (con sesión, solo citas de SU ficha; los ids ajenos no cambian nada).
+  `cancelar-cita` anota que la canceló el cliente; `respuestas`,
+  `abrir-aviso` y `mis-avisos` dicen quién la canceló (y la nota).
+- Base de datos (migración `20261006000000_cita_cancelada_por_el_profesional.sql`,
+  aplicada): `avisos.cita_cancela` ('cliente' | 'profesional') y
+  `avisos.cita_nota` (hasta 300 caracteres).
+- Pruebas: `test:matching` 208 (5 nuevas de `citasAfectadas`),
+  `test:avisos` 170 (8 nuevas), y en el navegador los tres caminos
+  (cancelar con nota, guardar sin cancelar, volver) y lo que ve la otra
+  persona. Pantallas con el diseño integral de Codex conservado.
+
 ## 2026-10-05 — Bloquear días u horas sueltas
 
 - En «Editar mi ficha», debajo de «Tu horario», el profesional tiene

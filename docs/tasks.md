@@ -14,20 +14,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · Aviso al bloquear un día con citas confirmadas
+### Última tarea integrada · Aviso al bloquear un día con citas confirmadas
 
-**Responsable:** Claude. **Rama:** `claude/funny-clarke-e6m64r`. **Base:** `main` en `e5a75c4` (con el diseño integral ya integrado).
-
-**Objetivo:** si un profesional bloquea un día u hora en el que ya tiene una cita confirmada, la app se lo dice antes de guardar («Ese día tienes una cita a las 17:00») y le ofrece cancelarla avisando a esa persona. Quien pidió la cita la ve cancelada por el profesional, con su motivo si lo escribe, y la hora queda libre.
-
-**Archivos previstos:**
-
-- Lógica y datos: `src/data/horarios.js`, `src/utils/escrituras.js`, `src/context/UserContext.jsx`.
-- Servidor: `supabase/functions/helpers-write/index.ts` (operación nueva para que el profesional, con su sesión, cancele una cita suya) y una migración nueva en `supabase/migrations/`.
-- Pantallas, solo para añadir el aviso y los textos, conservando clases, tokens y estructura del diseño integral: `src/components/EditarBloqueos.jsx`, `src/components/EditarFicha.jsx`, `src/pages/MyServices.jsx`, `src/components/RecordatorioCita.jsx`.
-- Pruebas y registro: `scripts/test-matching.mjs`, `scripts/test-avisos.mjs`, `docs/changelog.md`, `docs/current-status.md`.
-
-Si Codex necesita alguna de estas pantallas mientras la tarea siga abierta, coordinar antes; al integrarla se quita este apartado.
+Integrada el 2026-09-26 (ver `docs/changelog.md`, 2026-10-06). Tocó, sin cambiar su presentación: `EditarBloqueos.jsx`, `EditarFicha.jsx` (paso «Ya tienes una cita en lo que bloqueas»), `MyServices.jsx` (texto de cita cancelada por el profesional) y `Responder.jsx` (texto «Cancelaste…»). Esos archivos quedan libres.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 

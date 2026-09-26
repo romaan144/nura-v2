@@ -15,8 +15,12 @@ const nombreDia = fecha => {
   } catch { return fecha }
 }
 
-/** `horario`: el que tiene marcado ahora (para saber qué días y horas trabaja). */
-export default function EditarBloqueos({ valor, horario, onCambio }) {
+/**
+ * `horario`: el que tiene marcado ahora (para saber qué días y horas trabaja).
+ * `citas`: sus citas confirmadas ({ fecha, hora }), para avisar si bloquea
+ * un día o una hora en que ya tiene una.
+ */
+export default function EditarBloqueos({ valor, horario, onCambio, citas = [] }) {
   const [dia, setDia] = useState('')
   const lista = bloqueosVigentes(valor)
   const dias = Array.from({ length: DIAS }, (_, i) => {
@@ -26,6 +30,9 @@ export default function EditarBloqueos({ valor, horario, onCambio }) {
   const delDia = dia ? lista.find(b => b.fecha === dia) : null
   const enteroDia = delDia && !delDia.horas
   const horaBloqueada = h => enteroDia || Boolean(delDia?.horas?.includes(h))
+  const citasDe = fecha => citas.filter(c => c.fecha === fecha).map(c => c.hora)
+  const citasDelDia = dia ? citasDe(dia) : []
+  const chocan = b => citasDe(b.fecha).filter(h => !b.horas || b.horas.includes(h))
 
   const chip = (on, extra) => ({
     minHeight: 40, borderRadius: 'var(--radius-full)', cursor: 'pointer', fontFamily: 'inherit',
@@ -73,6 +80,12 @@ export default function EditarBloqueos({ valor, horario, onCambio }) {
       {dia && (
         <div style={{ padding: 'var(--space-12)', borderRadius: 'var(--radius-card)', background: 'var(--surface-subtle)', marginBottom: 'var(--space-10)' }}>
           <p style={{ margin: '0 0 var(--space-8)', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--ink-primary)' }}>{nombreDia(dia)}</p>
+          {citasDelDia.length > 0 && (
+            <p role="status" style={{ margin: '0 0 var(--space-8)', fontSize: 'var(--text-xs)', color: '#B45309', lineHeight: 1.45 }}>
+              Ese día tienes {citasDelDia.length === 1 ? 'una cita confirmada' : `${citasDelDia.length} citas confirmadas`} a las {citasDelDia.join(', ')}.
+              Si lo bloqueas, al guardar podrás cancelarla y avisar a esa persona.
+            </p>
+          )}
           <button type="button" aria-pressed={Boolean(enteroDia)} onClick={() => onCambio(alternarDia(lista, dia))}
             style={chip(enteroDia, { width: '100%', marginBottom: 'var(--space-8)' })}>
             {enteroDia ? 'Todo el día bloqueado · Desbloquear' : 'No puedo en todo el día'}
@@ -82,7 +95,7 @@ export default function EditarBloqueos({ valor, horario, onCambio }) {
             {horario.horas.map(h => {
               const on = horaBloqueada(h)
               return (
-                <button key={h} type="button" aria-pressed={on} aria-label={`${h}: ${on ? 'bloqueada' : 'libre'}`}
+                <button key={h} type="button" aria-pressed={on} aria-label={`${h}: ${on ? 'bloqueada' : 'libre'}${citasDelDia.includes(h) ? ', tienes una cita' : ''}`}
                   onClick={() => onCambio(alternarHora(lista, dia, h, horario.horas))}
                   style={chip(on, { padding: 0, textDecoration: on ? 'line-through' : 'none' })}>{h}</button>
               )
@@ -98,6 +111,11 @@ export default function EditarBloqueos({ valor, horario, onCambio }) {
               border: '1px solid var(--ink-border)', borderRadius: 'var(--radius-card)', background: 'white' }}>
               <span style={{ flex: 1, fontSize: 'var(--text-sm)', color: 'var(--ink-primary)' }}>
                 <strong>{nombreDia(b.fecha)}</strong> · {b.horas ? b.horas.join(', ') : 'todo el día'}
+                {chocan(b).length > 0 && (
+                  <span style={{ display: 'block', fontSize: 'var(--text-xs)', color: '#B45309' }}>
+                    Tienes cita a las {chocan(b).join(', ')}
+                  </span>
+                )}
               </span>
               <button type="button" aria-label={`Quitar el bloqueo del ${nombreDia(b.fecha)}`}
                 onClick={() => onCambio(lista.filter(x => x.fecha !== b.fecha))}

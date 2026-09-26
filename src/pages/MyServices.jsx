@@ -204,6 +204,13 @@ export default function MyServices() {
                       <span>{formatDate(s.date)}{s.time ? ` · ${s.time}` : ''}</span>
                     </div>
                     {s.note && <div className={styles.note}>"{s.note}"</div>}
+                    {/* La canceló el profesional: se dice, con su nota si la dejó. */}
+                    {s.status === 'cancelled' && s.canceladaPor === 'profesional' && (
+                      <div className={styles.note} role="status" style={{ whiteSpace: 'normal' }}>
+                        {s.helperName?.split(' ')?.[0] || 'El profesional'} ha cancelado la cita. Esa hora ya no está reservada.
+                        {s.notaCancelacion && <> «{s.notaCancelacion}»</>}
+                      </div>
+                    )}
                   </div>
 
                   {/* Right */}

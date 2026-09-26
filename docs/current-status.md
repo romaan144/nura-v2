@@ -34,13 +34,14 @@ actualizar por eso mismo.
 
 ### En producción (comprobado)
 
-- **Función `helpers-write` versión 20** (2026-09-25), 26 operaciones · avisos por correo automáticos
-  (citas: `ocupadas` y `cancelar-cita`; `mis-avisos` devuelve la cita de
-  cada aviso. Antes: `valorar`, `clave-push`, `crear-alerta`, `alertas`,
+- **Función `helpers-write` versión 21** (2026-09-26), 27 operaciones · avisos por correo automáticos
+  (citas: `ocupadas`, `cancelar-cita` y `anular-cita` —el profesional
+  cancela una suya—; `mis-avisos` devuelve la cita de cada aviso. Antes: `valorar`, `clave-push`, `crear-alerta`, `alertas`,
   `quitar-alerta`, `confirmar-declarado`, `mi-pulso`, `ampliar-aviso`).
 - **Base de datos**: citas en `avisos` (`cita_fecha`, `cita_hora`,
-  `cita_estado`, una sola aceptada por hora) y `helpers.horario` /
-  `helpers.bloqueos` (migraciones del 2026-10-01 al 2026-10-04, aplicadas).
+  `cita_estado`, una sola aceptada por hora; `cita_cancela` y `cita_nota`)
+  y `helpers.horario` / `helpers.bloqueos` (migraciones del 2026-10-01 al
+  2026-10-06, aplicadas).
 - **Captar profesionales**: enlace para compartir `/profesionales`
   (https://nura-v2-two.vercel.app/profesionales). Si se configura
   `CONTACTO_EMAIL` en `src/config.js`, la página muestra el correo.
