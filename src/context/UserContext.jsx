@@ -103,7 +103,12 @@ export function UserProvider({ children }) {
     save('nura_user', userData)
   }
 
-  function addService(helper, date, time, note) {
+  /**
+   * `sustituye`: el id de la cita cancelada (o rechazada) a la que reemplaza.
+   * La antigua queda marcada con la nueva hora, para decir «ya has pedido
+   * otra» en vez de volver a ofrecer el botón.
+   */
+  function addService(helper, date, time, note, sustituye = null) {
     const service = {
       id: Date.now(),
       helperId: helper.id,
@@ -119,8 +124,10 @@ export function UserProvider({ children }) {
       price: helper.price,
       status: 'pending',
       createdAt: new Date().toISOString(),
+      ...(sustituye != null ? { sustituye } : {}),
     }
-    setServices(prev => [service, ...prev])
+    setServices(prev => [service, ...prev.map(s => sustituye != null && s.id === sustituye
+      ? { ...s, reprogramada: { date, time } } : s)])
     return service
   }
 
