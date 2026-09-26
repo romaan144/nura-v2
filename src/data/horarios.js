@@ -285,7 +285,7 @@ export function agendaDe(avisos = [], ahora = new Date(), dias = 14) {
     : null
   const citas = (avisos || [])
     .filter(a => a?.cita_fecha && a?.cita_hora && a.cita_fecha >= hoy && a.cita_fecha <= hasta)
-    .map(a => ({ id: a.id, token: a.token, fecha: a.cita_fecha, hora: a.cita_hora, estado: estadoDe(a), mensaje: a.mensaje }))
+    .map(a => ({ id: a.id, token: a.token, fecha: a.cita_fecha, hora: a.cita_hora, estado: estadoDe(a), mensaje: a.mensaje, cancela: a.cita_cancela ?? null }))
     .filter(c => c.estado)
     .sort((x, y) => (x.fecha + x.hora.padStart(5, '0')).localeCompare(y.fecha + y.hora.padStart(5, '0')))
   const porDia = []
@@ -314,5 +314,20 @@ export function citasAfectadas(bloqueos = [], avisos = [], ahora = new Date()) {
       return b && (!b.horas || b.horas.includes(a.cita_hora))
     })
     .map(a => ({ id: a.id, fecha: a.cita_fecha, hora: a.cita_hora, token: a.token }))
+    .sort((x, y) => (x.fecha + x.hora.padStart(5, '0')).localeCompare(y.fecha + y.hora.padStart(5, '0')))
+}
+
+/**
+ * LAS CANCELACIONES QUE EL PROFESIONAL AÚN NO HA VISTO: citas que quien
+ * las pidió ha cancelado (`cita_cancela === 'cliente'`), de hoy en
+ * adelante, cuyo id no está en `vistas`. Las que canceló él mismo no son
+ * novedad. Ordenadas por fecha y hora.
+ */
+export function cancelacionesNuevas(avisos = [], vistas = [], ahora = new Date()) {
+  const hoy = isoLocal(ahora)
+  const ya = new Set((vistas || []).map(String))
+  return (avisos || [])
+    .filter(a => a?.cita_estado === 'cancelada' && a.cita_cancela === 'cliente' && a.cita_fecha >= hoy && a.cita_hora && !ya.has(String(a.id)))
+    .map(a => ({ id: a.id, token: a.token, fecha: a.cita_fecha, hora: a.cita_hora }))
     .sort((x, y) => (x.fecha + x.hora.padStart(5, '0')).localeCompare(y.fecha + y.hora.padStart(5, '0')))
 }

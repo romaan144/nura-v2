@@ -640,6 +640,27 @@ for (const t of NEGATIVE) {
   for (const [n, ok] of casos) { if (!ok) failed++; console.log(`${ok ? '✓' : '✗'} citas y bloqueos: ${n}`) }
 }
 
+// ── El profesional se entera de las cancelaciones (2026-10-08) ──
+{
+  const H = await import(join(stage, 'data/horarios.js'))
+  const ahora = new Date(2026, 9, 3, 10, 0)
+  const av = (id, fecha, hora, estado, cancela) => ({ id, token: 't' + id, cita_fecha: fecha, cita_hora: hora, cita_estado: estado, cita_cancela: cancela })
+  const avisos = [
+    av(1, '2026-10-06', '17:00', 'cancelada', 'cliente'), av(2, '2026-10-04', '9:00', 'cancelada', 'cliente'),
+    av(3, '2026-10-05', '10:00', 'cancelada', 'profesional'), av(4, '2026-10-01', '17:00', 'cancelada', 'cliente'),
+    av(5, '2026-10-05', '12:00', 'aceptada', null), { id: 6, mensaje: 'sin cita' },
+  ]
+  const n = H.cancelacionesNuevas(avisos, [], ahora)
+  const casos = [
+    ['las que canceló quien las pidió, en orden de fecha', n.map(c => c.id).join() === '2,1'],
+    ['las que canceló él mismo no son novedad', !n.some(c => c.id === 3)],
+    ['ni las pasadas, ni las que siguen en pie', !n.some(c => [4, 5, 6].includes(c.id))],
+    ['las ya vistas dejan de salir', H.cancelacionesNuevas(avisos, [2], ahora).map(c => c.id).join() === '1' && H.cancelacionesNuevas(avisos, ['1', '2'], ahora).length === 0],
+    ['en la agenda, cada cancelada dice quién la canceló', H.agendaDe(avisos, ahora).flatMap(d => d.citas).find(c => c.id === 3)?.cancela === 'profesional'],
+  ]
+  for (const [nombre, ok] of casos) { if (!ok) failed++; console.log(`${ok ? '✓' : '✗'} cancelaciones: ${nombre}`) }
+}
+
 // El total se contaba sumando los tres catalogos, asi que se quedo en 32
 // mientras las pruebas reales llegaban a 51: cada bloque añadido despues
 // (obra, agenda, silencios, interceptor, aviso) pasaba sin figurar. Un

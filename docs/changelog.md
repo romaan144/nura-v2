@@ -10,6 +10,23 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-10-08 — El profesional se entera cuando le cancelan una cita
+
+- Arriba en «Mi agenda», un aviso: «Te han cancelado una cita · Mañana a
+  las 17:00. Esa hora vuelve a estar libre», con «Entendido» para darlo por
+  visto (se recuerda en ese móvil).
+- El número rojo de «Chats» suma esas cancelaciones sin ver a los mensajes
+  sin contestar (`utils/sinContestar.js`); la barra, el menú lateral y el
+  inicio ya leían ese recuento, así que no se han tocado.
+- En la lista de «Mi agenda», las que canceló el propio profesional dicen
+  «La cancelaste»; las de la otra persona, «Cancelada».
+- Solo cuentan las que canceló quien pidió la cita, de hoy en adelante.
+  Lógica en `cancelacionesNuevas` (`data/horarios.js`), con 5 pruebas
+  (`test:matching` 213). Sin cambios de servidor ni de datos: `mis-avisos`
+  ya decía quién canceló (v21).
+- Probado en el navegador (versión real, sin demo): aviso, número 2 → 1
+  tras «Entendido», y no reaparece al volver a abrir la app.
+
 ## 2026-10-07 — «Elegir otra hora» cuando cancelan una cita
 
 - En «Mis servicios», una cita cancelada por el profesional o marcada
