@@ -14,19 +14,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · Cambiar la hora de una cita
+### Última tarea integrada · Cambiar la hora de una cita
 
-**Responsable:** Claude. **Rama:** `claude/funny-clarke-e6m64r`. **Base:** `main` en `15be007`.
-
-**Objetivo:** quien pidió una cita (pendiente o confirmada, aún por llegar) puede «Cambiar la hora» desde «Mis servicios»: se abre la agenda del profesional, elige la nueva y, al enviarla, la antigua se cancela (su hora queda libre) y al profesional le llega «quiere cambiar su cita del … al …». Sin conexión no se cambia nada y se dice.
-
-**Archivos previstos:** `src/pages/MyServices.jsx` (botón junto a «Cancelar la cita»), `src/pages/HelperProfile.jsx` (hoja de pedir cita: título, aviso de la cita que se cambia y espera al envío), `src/utils/escrituras.js` (texto de la propuesta de cambio), `docs/changelog.md`. Con las clases y tokens del diseño integral.
-
-Si Codex necesita alguno de estos archivos mientras la tarea siga abierta, coordinar antes; al integrarla se quita este apartado.
-
-### Última tarea integrada · El profesional se entera cuando le cancelan una cita
-
-Integrada el 2026-09-26 (ver `docs/changelog.md`, 2026-10-08). Tocó `src/data/horarios.js`, `src/utils/sinContestar.js` y `src/components/AgendaProfesional.jsx` (aviso con los tokens del diseño integral). No se tocaron la barra, el menú lateral ni el inicio. Esos archivos quedan libres.
+Integrada el 2026-09-26 (ver `docs/changelog.md`, 2026-10-09). Tocó, sin cambiar su presentación: `MyServices.jsx` (botón «Cambiar la hora»), `HelperProfile.jsx` (la hoja de pedir cita espera al envío y dice si es un cambio) y `src/utils/escrituras.js` (texto de la propuesta de cambio). Esos archivos quedan libres.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 

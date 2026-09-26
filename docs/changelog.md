@@ -10,6 +10,24 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-10-09 — Cambiar la hora de una cita
+
+- En «Mis servicios», cada cita pendiente o confirmada que aún no ha
+  llegado tiene **«Cambiar la hora»**, junto a «Cancelar la cita».
+- Abre la agenda del profesional con el título «Cambiar la hora» y el
+  aviso «Tu cita con Laura del martes, 29 de septiembre a las 17:00 se
+  cancelará al enviar la nueva hora». Botón: «Cambiar a esta hora».
+- Al enviar: primero se cancela la antigua (su hora queda libre para
+  todos) y después al profesional le llega «Marta quiere cambiar su cita
+  del martes, 29 de septiembre a las 17:00 al sábado, 26 de septiembre a
+  las 16:00. ¿Te va bien?», con los botones de aceptar o no.
+- Sin conexión: «Sin conexión: tu cita sigue como estaba. Prueba otra
+  vez.» y no se envía ni se cambia nada.
+- En «Mis servicios», la antigua queda Cancelada con «Ya has pedido otra
+  hora» y la nueva, Pendiente.
+- Sin cambios de servidor ni de datos (usa `cancelar-cita` y la propuesta
+  de siempre). Probado en el navegador con conexión y sin ella.
+
 ## 2026-10-08 — El profesional se entera cuando le cancelan una cita
 
 - Arriba en «Mi agenda», un aviso: «Te han cancelado una cita · Mañana a

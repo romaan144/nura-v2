@@ -32,15 +32,27 @@ import { DEMO_MODE } from '../config'
 // ── HELPERS ─────────────────────────────────────────────────────────────────
 
 
-function BookingModal({ helper, onClose, onBook, onNavigate }) {
+/** `cambia`: { date, time } de la cita que se está cambiando de hora, si lo es. */
+function BookingModal({ helper, onClose, onBook, onNavigate, cambia: cambiaAlAbrir = null }) {
+  // Se fija al abrir: al enviar, la cita antigua pasa a cancelada y la ficha
+  // deja de pasarla, pero esta hoja sigue siendo un cambio hasta cerrarse.
+  const [cambia] = useState(cambiaAlAbrir)
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
   const [note, setNote] = useState('')
   const [done, setDone] = useState(false)
+  const [enviando, setEnviando] = useState(false)
+  const [fallo, setFallo] = useState('')
   const name = getFirstName(helper?.name)
+  const diaLargo = d => { try { return new Date(d + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' }) } catch { return d } }
 
-  function confirm() {
-    onBook?.(helper, date, time, note)   // fecha y hora, ya estructuradas
+  // Espera a `onBook`: al cambiar la hora, primero se cancela la antigua y,
+  // si no se puede (sin conexión), no se envía nada y se dice.
+  async function confirm() {
+    setEnviando(true); setFallo('')
+    const r = await onBook?.(helper, date, time, note)   // fecha y hora, ya estructuradas
+    setEnviando(false)
+    if (r === 'fallo') { setFallo('Sin conexión: tu cita sigue como estaba. Prueba otra vez.'); return }
     setDone(true)
   }
 
@@ -74,7 +86,7 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
             </div>
             <div>
               <h3 style={{fontSize:'var(--text-heading)',fontWeight:800,margin:'0 0 var(--space-4)',color:'var(--ink-primary)',letterSpacing:'-0.3px'}}>
-                ¡Solicitud enviada!
+                {cambia ? '¡Cambio enviado!' : '¡Solicitud enviada!'}
               </h3>
               <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:0,lineHeight:1.6}}>
                 {DEMO_MODE ? `${name} recibirá tu solicitud y confirmará en breve.` : `Se la hago llegar a ${name}. Su respuesta te llegará en el chat.`}
@@ -99,8 +111,12 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
           </div>
         ) : (
           <>
-            <h3 style={{fontSize:'var(--text-md)',fontWeight:800,margin:'0 0 var(--space-4)',color:'var(--ink-primary)',letterSpacing:'-0.3px'}}>Solicitar servicio</h3>
-            <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:'0 0 var(--space-20)'}}>{name} · {helper?.price || 'Precio a consultar'}</p>
+            <h3 style={{fontSize:'var(--text-md)',fontWeight:800,margin:'0 0 var(--space-4)',color:'var(--ink-primary)',letterSpacing:'-0.3px'}}>{cambia ? 'Cambiar la hora' : 'Solicitar servicio'}</h3>
+            <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:'0 0 var(--space-20)'}}>
+              {cambia
+                ? `Tu cita con ${name} del ${diaLargo(cambia.date)}${cambia.time ? ` a las ${cambia.time}` : ''} se cancelará al enviar la nueva hora.`
+                : `${name} · ${helper?.price || 'Precio a consultar'}`}
+            </p>
             <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)',marginBottom:'var(--space-20)'}}>
               <ElegirCita helper={helper} date={date} time={time} onDate={setDate} onTime={setTime} />
               <textarea value={note} onChange={e=>setNote(e.target.value)}
@@ -110,11 +126,12 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
             <div style={{display:'flex', alignItems:'center', gap:'var(--space-8)'}}>
               <button onClick={onClose} style={{...style.btnSecondary, width:'auto', flex:1}}>Cancelar</button>
               {/* Día Y hora: una cita sin hora no es una cita (en el chat ya se exigía). */}
-              <Button variant="primary" onClick={confirm} disabled={!date || !time}
+              <Button variant="primary" onClick={confirm} disabled={!date || !time || enviando}
                 style={{flex:2}}>
-                Enviar solicitud
+                {enviando ? 'Enviando…' : cambia ? 'Cambiar a esta hora' : 'Enviar solicitud'}
               </Button>
             </div>
+            {fallo && <p role="alert" style={{margin:'var(--space-10) 0 0',fontSize:'var(--text-sm)',color:'var(--red-ink)',lineHeight:1.45}}>{fallo}</p>}
           </>
         )}
       </div>
@@ -144,7 +161,7 @@ function HelperProfileInner() {
   const location   = useLocation()
   const [verTodaLaObra, setVerTodaLaObra] = useState(false)
   const [verTrayectoria, setVerTrayectoria] = useState(false)
-  const { user, addService, citas, services } = useUser()
+  const { user, addService, cancelarCita, citas, services } = useUser()
 
   const [h, setH]             = useState(location.state?.helper || null)
 
@@ -160,6 +177,10 @@ function HelperProfileInner() {
   // «Elegir otra hora» (Mis servicios) llega con el id de la cita cancelada:
   // la agenda se abre sola y la cita nueva la sustituye.
   const otraHora = location.state?.otraHora ?? null
+  // «Cambiar la hora»: además, la cita antigua (aún en pie) se cancela al
+  // enviar la nueva, y al profesional le llega como un cambio.
+  const vieja = otraHora != null && location.state?.cambiar ? (services || []).find(s => s.id === otraHora) : null
+  const cambia = vieja && ['pending', 'confirmed'].includes(vieja.status) ? { date: vieja.date, time: vieja.time } : null
   const [showConfirm, setShowConfirm] = useState(() => otraHora != null)
   const [showRating, setShowRating]   = useState(false)
   const [showGate, setShowGate]       = useState(false)
@@ -729,12 +750,20 @@ function HelperProfileInner() {
             if (otraHora != null) {
               const resto = { ...(location.state || {}) }
               delete resto.otraHora
+              delete resto.cambiar
               navigate(location.pathname, { replace: true, state: resto })
             }
           }}
-          onBook={(hh, date, time, note) => {
+          cambia={cambia}
+          onBook={async (hh, date, time, note) => {
+            // Cambiar la hora: primero se cancela la antigua (su hora queda
+            // libre). Sin conexión no se toca nada.
+            if (cambia) {
+              const r = await cancelarCita({ helperId: vieja.helperId, fecha: vieja.date, hora: vieja.time })
+              if (r === 'fallo') return 'fallo'
+            }
             addService(hh, date, time, note, otraHora)
-            if (!DEMO_MODE) enviarPropuestaCita(hh, date, time, note, user?.name?.split(' ')?.[0])
+            if (!DEMO_MODE) enviarPropuestaCita(hh, date, time, note, user?.name?.split(' ')?.[0], cambia ? { fecha: cambia.date, hora: cambia.time } : null)
           }}
           onNavigate={navigate}
         />

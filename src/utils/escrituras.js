@@ -419,12 +419,17 @@ if (typeof window !== 'undefined') {
  * breve»: al profesional no le llegaba nada. Ahora viaja por el mismo camino
  * que los mensajes, y su respuesta vuelve al chat.
  */
-export async function enviarPropuestaCita(helper, fecha, hora, nota, nombre) {
+/** `antes`: { fecha, hora } de la cita que se cambia (si es un cambio de hora). */
+export async function enviarPropuestaCita(helper, fecha, hora, nota, nombre, antes = null) {
   if (!porLaFuncion() || helper?.id == null) return false
-  let cuando = fecha
-  try { cuando = new Date(fecha + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' }) } catch { /* fecha tal cual */ }
+  const dia = f => { try { return new Date(f + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' }) } catch { return f } }
+  const cuando = dia(fecha)
   const quien = nombre || 'Alguien'
-  const texto = `${quien} te propone una cita: ${cuando}${hora ? ` a las ${hora}` : ''}.${nota?.trim() ? ` «${nota.trim()}»` : ''} ¿Te va bien?`
+  const extra = nota?.trim() ? ` «${nota.trim()}»` : ''
+  // Si cambia una cita que ya tenía, se dice: la antigua ya está cancelada.
+  const texto = antes?.fecha
+    ? `${quien} quiere cambiar su cita del ${dia(antes.fecha)}${antes.hora ? ` a las ${antes.hora}` : ''} al ${cuando}${hora ? ` a las ${hora}` : ''}.${extra} ¿Te va bien?`
+    : `${quien} te propone una cita: ${cuando}${hora ? ` a las ${hora}` : ''}.${extra} ¿Te va bien?`
   // La cita viaja con día y hora: así la acepta con un botón y la hora
   // queda ocupada en su agenda para todos.
   const cita = fecha && hora ? { fecha, hora } : undefined
