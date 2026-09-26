@@ -10,6 +10,24 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-10-11 — «Tu ciudad» en el perfil; la búsqueda la tiene en cuenta
+
+- Aclaración: la búsqueda ya filtraba por ciudad cuando la frase la nombra
+  («fontanero en Madrid»). Lo que faltaba era saber dónde está la persona
+  cuando no lo dice.
+- En el perfil, «Lo tuyo» tiene **«Tu ciudad»**: la persona la elige (se
+  entiende «valencia», «bcn»…; si no se conoce: «No conozco esa ciudad»).
+  Se puede quitar. No se deduce de lo que busca: la memoria es con
+  consentimiento.
+- Si su búsqueda no nombra ciudad, salen **primero** quienes trabajan en su
+  ciudad o atienden online, y detrás el resto: no se esconde a nadie. Si
+  la frase nombra otra ciudad, manda la frase.
+- Lógica en `utils/matching.js` (`puntosCiudad`, `ciudadElegida`), con 6
+  pruebas (`test:matching` 224). Probado en el navegador con una búsqueda
+  real y su control: con Madrid elegida sale primero la fontanera de Madrid;
+  sin ciudad, el de Barcelona mejor valorado.
+- Solo en este móvil: la ciudad se guarda con el resto del perfil local.
+
 ## 2026-10-10 — Un solo aviso cuando cambian la hora de una cita
 
 - Cuando quien pidió una cita le cambia la hora, el profesional ve en «Mi

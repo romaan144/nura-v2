@@ -10,7 +10,8 @@ import { getObraDeHelper, obraAPost } from '../data/obraPosts'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { LogOut, Edit2, Check, X, Award, MessageCircle, ClipboardList, User, Phone, Star,
          UserPlus, UserCheck, ChevronRight, PenLine, Plus, Mail, CalendarDays, Search,
-         Shield, FileText, Trash2, Share2 } from 'lucide-react'
+         Shield, FileText, Trash2, Share2, MapPin } from 'lucide-react'
+import { CIUDADES, ciudadEnTexto } from '../data/ciudades'
 import { useUser } from '../context/UserContext'
 import { Badge, StatBar } from '../components/ui'
 import HelperCard from '../components/HelperCard'
@@ -99,6 +100,9 @@ export default function Profile() {
   const [composerOpen, setComposerOpen] = useStateObra(false)
   const [campoAbierto, setCampoAbierto] = useState(null)
   const [campoDraft, setCampoDraft] = useState('')
+  const [ciudadAbierta, setCiudadAbierta] = useState(false)
+  const [ciudadDraft, setCiudadDraft] = useState('')
+  const [ciudadFallo, setCiudadFallo] = useState('')
   const [confirmarSalida, setConfirmarSalida] = useState(false)
   const [editarAbierto, setEditarAbierto] = useState(false)
   // «Bloquear días u horas» desde Mi agenda llega con ese encargo: la hoja
@@ -272,6 +276,18 @@ export default function Profile() {
   // Un boton desactivado se ve apagado pero se LEE: el de la primitiva baja
   // la opacidad y dejaba blanco sobre lila claro, ilegible.
   const apagado = { background: 'rgba(33,29,51,0.08)', color: 'var(--ink-tertiary)', opacity: 1 }
+
+  // «TU CIUDAD»: la elige la persona (no se deduce de lo que busca). Solo
+  // ordena sus búsquedas: primero quien trabaja allí o atiende online.
+  const guardarCiudad = () => {
+    const c = ciudadEnTexto(ciudadDraft.trim()) || ciudadEnTexto('en ' + ciudadDraft.trim())
+    if (!c) { setCiudadFallo('No conozco esa ciudad. Escríbela como «Madrid» o «Valencia».'); return }
+    updateUser({ ciudad: c }); setCiudadAbierta(false); setCiudadFallo('')
+    showToast(`Hecho: buscaré primero en ${c}.`)
+  }
+  const quitarCiudad = () => {
+    updateUser({ ciudad: null }); setCiudadAbierta(false); setCiudadFallo('')
+  }
   const entrada = ms => ({ animation: `fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) ${ms}ms both` })
 
   let correoAcceso = ''
@@ -660,7 +676,33 @@ export default function Profile() {
                   ? (favCount === 1 ? 'Sigues a 1 profesional' : `Sigues a ${favCount} profesionales`)
                   : 'Guarda a quien te interese'}
                 onClick={() => navigate('/siguiendo')} />
+              {!user.isHelper && !ciudadAbierta && (
+                <Fila icono={MapPin} titulo={user.ciudad ? `Tu ciudad: ${user.ciudad}` : 'Tu ciudad'}
+                  detalle={user.ciudad ? 'Te enseño primero a quien trabaja allí' : 'Dime dónde buscas y te enseño primero a quien trabaja allí'}
+                  envolver onClick={() => { setCiudadAbierta(true); setCiudadDraft(user.ciudad || ''); setCiudadFallo('') }} />
+              )}
             </div>
+            {!user.isHelper && ciudadAbierta && (
+              <div className={styles.tarjeta}>
+                <label htmlFor="campo-ciudad" className={styles.tarjetaTitulo}>Tu ciudad</label>
+                <p className={styles.tarjetaTexto} style={{margin:'0 0 var(--space-10)'}}>
+                  Cuando busques sin decir dónde, te enseño primero a quien trabaja allí o atiende online. No escondo a nadie.
+                </p>
+                <input id="campo-ciudad" className={styles.campo} autoFocus value={ciudadDraft} placeholder="Madrid, Valencia, Barcelona…"
+                  list="ciudades-nura" autoComplete="off"
+                  onChange={e => { setCiudadDraft(e.target.value); setCiudadFallo('') }}
+                  onKeyDown={e => { if (e.key === 'Enter') guardarCiudad(); if (e.key === 'Escape') setCiudadAbierta(false) }} />
+                <datalist id="ciudades-nura">{CIUDADES.map(([c]) => <option key={c} value={c} />)}</datalist>
+                {ciudadFallo && <p role="alert" className={styles.tarjetaTexto} style={{margin:'var(--space-8) 0 0', color:'var(--red-ink)'}}>{ciudadFallo}</p>}
+                <div className={styles.acciones}>
+                  <Button variant="secondary" onClick={() => setCiudadAbierta(false)} style={{flex:1}}>Cancelar</Button>
+                  <Button variant="primary" disabled={!ciudadDraft.trim()} onClick={guardarCiudad} style={{flex:2, ...(ciudadDraft.trim() ? {} : apagado)}}>Guardar</Button>
+                </div>
+                {user.ciudad && (
+                  <Button variant="ghost" full onClick={quitarCiudad} style={{marginTop:'var(--space-6)'}}>Quitar mi ciudad</Button>
+                )}
+              </div>
+            )}
           </div>
         </section>
 
