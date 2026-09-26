@@ -452,6 +452,21 @@ function citaDe(c: unknown): { cita_fecha: string, cita_hora: string, cita_estad
   return { cita_fecha: fecha, cita_hora: hora, cita_estado: 'propuesta' }
 }
 
+/**
+ * Si la propuesta CAMBIA una cita anterior (quien la pidió le cambia la
+ * hora): de qué día y hora viene, «AAAA-MM-DD HH:00». Solo acompaña a una
+ * cita válida; si no, null (la propuesta nueva borra un cambio anterior).
+ */
+function cambiaDeDe(cita: unknown, antes: unknown): { cita_cambia_de: string | null, cita_cancela?: null, cita_nota?: null } {
+  if (!citaDe(cita)) return { cita_cambia_de: null }
+  const x = antes as { fecha?: unknown, hora?: unknown } | null
+  const fecha = String(x?.fecha ?? ''), hora = String(x?.hora ?? '')
+  const ok = /^\d{4}-\d{2}-\d{2}$/.test(fecha) && /^([01]?\d|2[0-3]):00$/.test(hora)
+  // Una propuesta nueva limpia lo que dijera una cancelación anterior del
+  // MISMO aviso (al ampliar uno aún sin respuesta).
+  return { cita_cambia_de: ok ? `${fecha} ${hora}` : null, cita_cancela: null, cita_nota: null }
+}
+
 /** El enlace que abre el canal del profesional con el mensaje ya escrito. */
 function enlaceDe(contacto: string, mensaje: string): string {
   const c = contacto.trim()
@@ -629,6 +644,7 @@ Deno.serve(async (req: Request) => {
         token,
         lectura_hash: hex(await sha256(lectura)),
         ...(citaDe(cuerpo.cita) ?? {}),
+        ...(citaDe(cuerpo.cita) ? cambiaDeDe(cuerpo.cita, cuerpo.cambiaDe) : {}),
       }),
     })
     if (!res.ok) return json({ error: 'aviso no encolado', estado: res.status }, 502, cors)
@@ -813,7 +829,7 @@ Deno.serve(async (req: Request) => {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/avisos?id=eq.${av.id}&respuesta=is.null`, {
       method: 'PATCH', headers: { ...rest, Prefer: 'return=representation' },
       // Una propuesta de cita nueva sustituye a la anterior (sin aceptar).
-      body: JSON.stringify({ mensaje: nuevo, ...(citaDe(cuerpo.cita) ?? {}) }),
+      body: JSON.stringify({ mensaje: nuevo, ...(citaDe(cuerpo.cita) ?? {}), ...(citaDe(cuerpo.cita) ? cambiaDeDe(cuerpo.cita, cuerpo.cambiaDe) : {}) }),
     })
     if (!res.ok) return json({ error: 'no guardado', estado: res.status }, 502, cors)
     return (await res.json()).length ? json({ ok: true }, 200, cors) : json({ error: 'ya respondido' }, 409, cors)
@@ -849,7 +865,9 @@ Deno.serve(async (req: Request) => {
     const resumenes = await Promise.all(llaves.map(async l => hex(await sha256(l))))
     const r = await fetch(
       `${SUPABASE_URL}/rest/v1/avisos?lectura_hash=in.(${resumenes.join(',')})&cita_fecha=eq.${x.cita_fecha}&cita_hora=eq.${encodeURIComponent(x.cita_hora)}&cita_estado=in.(propuesta,aceptada)`,
-      { method: 'PATCH', headers: { ...rest, Prefer: 'return=representation' }, body: JSON.stringify({ cita_estado: 'cancelada', cita_cancela: 'cliente' }) },
+      // `motivo: 'cambio'`: la cancela para pedir otra hora (el profesional
+      // verá un cambio, no una cancelación a secas).
+      { method: 'PATCH', headers: { ...rest, Prefer: 'return=representation' }, body: JSON.stringify({ cita_estado: 'cancelada', cita_cancela: cuerpo.motivo === 'cambio' ? 'cambio' : 'cliente' }) },
     )
     if (!r.ok) return json({ error: 'no guardado', estado: r.status }, 502, cors)
     const filas: { helper_id: string }[] = await r.json()
@@ -1053,7 +1071,7 @@ Deno.serve(async (req: Request) => {
     const [ficha] = await f.json()
     if (!ficha) return json({ error: 'sin ficha' }, 404, cors)
     const r = await fetch(
-      `${SUPABASE_URL}/rest/v1/avisos?helper_id=eq.${encodeURIComponent(String(ficha.id))}&lectura_hash=not.is.null&select=id,mensaje,respuesta,fecha,respondido_en,token,cita_fecha,cita_hora,cita_estado,cita_cancela&order=id.desc&limit=50`,
+      `${SUPABASE_URL}/rest/v1/avisos?helper_id=eq.${encodeURIComponent(String(ficha.id))}&lectura_hash=not.is.null&select=id,mensaje,respuesta,fecha,respondido_en,token,cita_fecha,cita_hora,cita_estado,cita_cancela,cita_cambia_de&order=id.desc&limit=50`,
       { headers: rest },
     )
     if (!r.ok) return json({ error: 'lectura rechazada', estado: r.status }, 502, cors)

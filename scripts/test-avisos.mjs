@@ -677,6 +677,29 @@ console.log('\n── La cita: se acepta con un botón y ocupa la hora para todo
   ok(r.estado === 200 && !r.datos.canceladas.length, 'cancelarla otra vez no cambia nada')
   r = await llamar(funcion, { op: 'anular-cita', sesion: 'sesion-confirmada', ids: ['x'] })
   ok(r.estado === 400, 'sin ids válidos → 400')
+
+  console.log('\n── Cambiar la hora: se anota como cambio, no como cancelación ──')
+  const c7 = await llamar(funcion, { op: 'encolar-aviso', helperId: 900, mensaje: 'Cita para cambiar', cita: { fecha: d, hora: '11:00' } })
+  const f7 = db.avisos.at(-1)
+  await llamar(funcion, { op: 'responder-aviso', token: f7.token, respuesta: 'Te espero', cita: 'aceptada' })
+  r = await llamar(funcion, { op: 'cancelar-cita', llaves: [c7.datos.lectura], fecha: d, hora: '11:00', motivo: 'cambio' })
+  ok(r.estado === 200 && f7.cita_estado === 'cancelada' && f7.cita_cancela === 'cambio', 'la antigua se cancela «por cambio»')
+  r = await llamar(funcion, { op: 'encolar-aviso', helperId: 900, mensaje: 'Marta quiere cambiar su cita', cita: { fecha: d, hora: '12:00' }, cambiaDe: { fecha: d, hora: '11:00' } })
+  const f8 = db.avisos.at(-1)
+  ok(f8.cita_hora === '12:00' && f8.cita_estado === 'propuesta' && f8.cita_cambia_de === `${d} 11:00`, 'la propuesta nueva guarda de qué hora viene')
+  r = await llamar(funcion, { op: 'encolar-aviso', helperId: 900, mensaje: 'x', cambiaDe: { fecha: d, hora: '11:00' } })
+  ok(!db.avisos.at(-1).cita_cambia_de, 'sin cita nueva, «cambiaDe» no se guarda')
+  r = await llamar(funcion, { op: 'encolar-aviso', helperId: 900, mensaje: 'x', cita: { fecha: d, hora: '13:00' }, cambiaDe: { fecha: 'ayer', hora: '11:30' } })
+  ok(db.avisos.at(-1).cita_cambia_de === null, 'un «cambiaDe» mal formado se ignora')
+  const c9 = await llamar(funcion, { op: 'encolar-aviso', helperId: 900, mensaje: 'Aún sin respuesta', cita: { fecha: d, hora: '14:00' } })
+  const f9 = db.avisos.at(-1)
+  await llamar(funcion, { op: 'cancelar-cita', llaves: [c9.datos.lectura], fecha: d, hora: '14:00', motivo: 'cambio' })
+  r = await llamar(funcion, { op: 'ampliar-aviso', llave: c9.datos.lectura, mensaje: 'Mejor a las 15', cita: { fecha: d, hora: '15:00' }, cambiaDe: { fecha: d, hora: '14:00' } })
+  ok(r.estado === 200 && f9.cita_estado === 'propuesta' && f9.cita_hora === '15:00' && f9.cita_cambia_de === `${d} 14:00` && f9.cita_cancela === null, 'si aún no había respuesta, el mismo aviso pasa a la hora nueva y olvida la cancelación')
+  await llamar(funcion, { op: 'encolar-aviso', helperId: suya.id, mensaje: 'Cambio para la profesional con cuenta', cita: { fecha: d, hora: '16:00' }, cambiaDe: { fecha: d, hora: '10:00' } })
+  const fS = db.avisos.at(-1); fS.lectura_hash = fS.lectura_hash || 'hS'
+  r = await llamarG(funcion, { op: 'mis-avisos', sesion: 'sesion-confirmada' })
+  ok(r.estado === 200 && (r.datos.avisos || []).find(a => a.id === fS.id)?.cita_cambia_de === `${d} 10:00`, 'la bandeja del profesional trae de qué hora viene cada cambio')
   void c5
 }
 

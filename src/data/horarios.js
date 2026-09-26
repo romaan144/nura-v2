@@ -331,3 +331,22 @@ export function cancelacionesNuevas(avisos = [], vistas = [], ahora = new Date()
     .map(a => ({ id: a.id, token: a.token, fecha: a.cita_fecha, hora: a.cita_hora }))
     .sort((x, y) => (x.fecha + x.hora.padStart(5, '0')).localeCompare(y.fecha + y.hora.padStart(5, '0')))
 }
+
+/**
+ * LOS CAMBIOS DE HORA QUE EL PROFESIONAL AÚN NO HA VISTO: propuestas sin
+ * contestar que sustituyen a una cita anterior (`cita_cambia_de`), de hoy en
+ * adelante. Van en UN aviso («del martes a las 17:00 al sábado a las
+ * 16:00»), no como una cancelación y una propuesta sueltas.
+ * @returns {{id, token, fecha, hora, antes: {fecha, hora}}[]}
+ */
+export function cambiosNuevos(avisos = [], vistas = [], ahora = new Date()) {
+  const hoy = isoLocal(ahora)
+  const ya = new Set((vistas || []).map(String))
+  return (avisos || [])
+    .filter(a => a?.cita_cambia_de && a.cita_estado === 'propuesta' && !a.respuesta && a.cita_fecha >= hoy && a.cita_hora && !ya.has(String(a.id)))
+    .map(a => {
+      const [fecha, hora] = String(a.cita_cambia_de).split(' ')
+      return { id: a.id, token: a.token, fecha: a.cita_fecha, hora: a.cita_hora, antes: { fecha, hora } }
+    })
+    .sort((x, y) => (x.fecha + x.hora.padStart(5, '0')).localeCompare(y.fecha + y.hora.padStart(5, '0')))
+}

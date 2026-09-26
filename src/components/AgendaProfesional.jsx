@@ -5,8 +5,8 @@
 // Sale de los mismos avisos que la bandeja: no pide nada más al servidor.
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { CalendarDays, CalendarOff, CalendarX } from 'lucide-react'
-import { agendaDe, isoLocal, cancelacionesNuevas } from '../data/horarios'
+import { CalendarDays, CalendarOff, CalendarX, CalendarClock } from 'lucide-react'
+import { agendaDe, isoLocal, cancelacionesNuevas, cambiosNuevos } from '../data/horarios'
 import { cancelacionesVistas, marcarCancelacionesVistas } from '../utils/sinContestar'
 
 const DIAS = 14
@@ -38,6 +38,12 @@ export default function AgendaProfesional({ avisos }) {
   const nuevas = cancelacionesNuevas(avisos, vistas, ahora)
   const entendido = () => {
     marcarCancelacionesVistas(nuevas.map(c => c.id))
+    setVistas(cancelacionesVistas())
+  }
+  // Cambios de hora: UN aviso por cambio (no cancelación + propuesta sueltas).
+  const cambios = cambiosNuevos(avisos, vistas, ahora)
+  const cambiosVistos = () => {
+    marcarCancelacionesVistas(cambios.map(c => c.id))
     setVistas(cancelacionesVistas())
   }
 
@@ -72,6 +78,34 @@ export default function AgendaProfesional({ avisos }) {
           </button>
         </div>
       )}
+      {cambios.length > 0 && (
+        <div role="status" style={{ margin: '0 0 var(--space-12)', padding: 'var(--space-12)', borderRadius: 'var(--radius-card)',
+          background: 'var(--surface-subtle)', border: '1px solid var(--ink-border, rgba(33,29,51,0.16))' }}>
+          <p style={{ margin: '0 0 var(--space-6)', display: 'flex', alignItems: 'center', gap: 'var(--space-6)', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--ink-primary)' }}>
+            <CalendarClock size={16} aria-hidden="true" />
+            {cambios.length === 1 ? 'Te han cambiado una cita' : `Te han cambiado ${cambios.length} citas`}
+          </p>
+          <ul style={{ listStyle: 'none', margin: '0 0 var(--space-10)', padding: 0, display: 'flex', flexDirection: 'column', gap: 'var(--space-8)' }}>
+            {cambios.map(c => (
+              <li key={c.id} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-8)', flexWrap: 'wrap', fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)', lineHeight: 1.45 }}>
+                <span style={{ flex: '1 1 12rem' }}>
+                  Pasa de {tituloDia(c.antes.fecha, ahora).toLowerCase()} a las {c.antes.hora} a {tituloDia(c.fecha, ahora).toLowerCase()} a las {c.hora}.
+                </span>
+                <button type="button" onClick={() => navigate(`/r/${c.token}`)}
+                  style={{ minHeight: 36, padding: '0 var(--space-12)', borderRadius: 'var(--radius-full)', border: '1px solid var(--purple)',
+                    background: 'white', color: 'var(--purple)', fontFamily: 'inherit', fontSize: 'var(--text-xs)', fontWeight: 700, cursor: 'pointer' }}>
+                  Contestar
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button type="button" onClick={cambiosVistos}
+            style={{ minHeight: 36, padding: '0 var(--space-14)', borderRadius: 'var(--radius-full)', border: 'none',
+              background: 'var(--purple)', color: 'white', fontFamily: 'inherit', fontSize: 'var(--text-xs)', fontWeight: 700, cursor: 'pointer' }}>
+            Entendido
+          </button>
+        </div>
+      )}
       <button type="button" onClick={() => navigate('/profile', { state: { editar: 'bloqueos' } })}
         style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-6)', minHeight: 36, padding: '0 var(--space-12)',
           margin: '0 0 var(--space-10)', borderRadius: 'var(--radius-full)', border: '1px solid var(--ink-border, rgba(33,29,51,0.16))',
@@ -91,7 +125,9 @@ export default function AgendaProfesional({ avisos }) {
               </h3>
               <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
                 {d.citas.map(c => {
-                  const e = c.estado === 'cancelada' && c.cancela === 'profesional' ? { ...ESTADO.cancelada, texto: 'La cancelaste' } : ESTADO[c.estado]
+                  const e = c.estado === 'cancelada' && c.cancela === 'profesional' ? { ...ESTADO.cancelada, texto: 'La cancelaste' }
+                    : c.estado === 'cancelada' && c.cancela === 'cambio' ? { ...ESTADO.cancelada, texto: 'Cambiada' }
+                    : ESTADO[c.estado]
                   const cancelada = c.estado === 'cancelada'
                   return (
                     <li key={c.id}>
