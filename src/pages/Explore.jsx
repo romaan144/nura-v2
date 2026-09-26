@@ -328,6 +328,11 @@ export default function Explore() {
       />
 
       <div className={styles.body}>
+        <div className="nura-page-intro">
+          <span className="nura-eyebrow">Tu próxima conexión</span>
+          <h1>Personas que pueden ayudarte</h1>
+          <p>Busca por lo que necesitas o descubre cada especialidad.</p>
+        </div>
 
         {/* ── SEARCH BAR ──────────────────────────────────── */}
         <div className={styles.searchWrap}>
@@ -336,13 +341,14 @@ export default function Explore() {
             <input
               ref={inputRef}
               className={styles.searchInput}
+              aria-label="Buscar profesionales"
               placeholder="Cuéntale a Nüra qué necesitas…"
               value={searchText}
               onChange={e => setSearchText(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSearch(e)}
             />
             {(searchText || isListView) && (
-              <button type="button" className={styles.clearBtn} onClick={clearSearch}>
+              <button type="button" aria-label="Limpiar búsqueda" className={styles.clearBtn} onClick={clearSearch}>
                 ✕
               </button>
             )}

@@ -75,7 +75,7 @@ export default function Entrar() {
   return (
     <div className={styles.page}>
       <PageHeader showBack />
-      <div className={styles.content}>
+      <div className={`${styles.content} nura-auth-card`}>
         <h1 className={styles.title}>{titulo}</h1>
         <p style={{ margin: '0 0 var(--space-20)', fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)', lineHeight: 1.5 }}>
           {modo === 'crear' && volver ? 'Con tu correo te aviso cuando llegue alguien que buscas. Solo lo usamos para eso y para entrar.'

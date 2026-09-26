@@ -159,3 +159,15 @@
   font-weight: 600;
 }
 .sendBtn { border-radius: var(--radius-full); font-weight: 700; }
+
+/* Nüra · dirección visual compartida, septiembre 2026. */
+
+.header { width: 100%; max-width: 800px; margin: 0 auto; padding: 18px 20px; }
+.back { width: 44px; height: 44px; }
+.headerTitle { font-family: var(--font-voice); }
+.scroll { width: 100%; padding-left: max(20px, calc((100% - 740px)/2)); padding-right: max(20px, calc((100% - 740px)/2)); padding-top: 24px; }
+.introBlock { margin-bottom: 24px; }
+.helperChip { padding: 18px; }
+.letterCard { padding: 24px; border: 1px solid var(--ink-border); box-shadow: var(--shadow-sm); }
+.letterCard:focus-within { border-color: var(--purple); }
+.letterText { min-height: 160px; line-height: 1.8; }

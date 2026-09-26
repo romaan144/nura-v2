@@ -1,8 +1,8 @@
-import { avatarDe } from '../utils/avatar'
+import UserAvatar from '../components/UserAvatar'
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { CAT_HUMANA } from '../data/categorias'
-import { Compass, Send, Mic, MicOff, RotateCcw, UserRound } from 'lucide-react'
+import { Compass, Send, Mic, MicOff, RotateCcw, UserRound, ArrowUpRight, Heart, Home as House, Sparkles } from 'lucide-react'
 import { analyzeNeed, matchHelpers, getPriceContext } from '../utils/matching'
 import { barrioEnTexto } from '../data/barrios'
 import { getFirstName } from '../utils/name'
@@ -138,7 +138,7 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
 
   if (!user) return [
     `Hola. Soy **Nüra**.`,
-    `Describe lo que necesitas. Encontraremos a la persona adecuada.`,
+    `Encuentra a quien puede ayudarte.`,
   ]
 
   // ── La Memoria Viva ─────────────────────────────────────────────────
@@ -1274,8 +1274,45 @@ export default function Home() {
   }, [])
 
 
+  const isWelcome = nuraChatMessages.length <= 1
+  const composer = (<>
+        <div className={styles.inputCapsule}>
+          <input ref={inputRef} className={styles.input} aria-label="Cuéntale a Nüra qué necesitas"
+            placeholder={corrigiendo ? 'Dime qué he entendido mal…' : forWhom === 'familia' ? 'Cuéntame qué le pasa...' : forWhom === 'hogar' ? 'Cuéntame qué necesita tu hogar...' : (searchHistory?.length ? 'Cuéntame qué necesitas...' : 'Cuéntale a Nüra qué necesitas…')}
+            value={input} onChange={e => setInput(e.target.value)}
+            onKeyDown={handleKey} readOnly={false} />
+          {input.trim()
+            ? <button className={styles.sendBtn} onClick={() => handleSend()} aria-label="Enviar mensaje"><Send size={16} /></button>
+            : <button className={`${styles.sendBtn} ${listening ? styles.micActive : styles.micBtn}`} onClick={toggleMic} aria-label={listening ? 'Detener dictado' : 'Dictar por voz'}>
+                {listening ? <MicOff size={16} /> : <Mic size={16} />}
+              </button>
+          }
+        </div>
+
+        {/* ── PARA QUIEN NO SABE QUE ESCRIBIR ────────────────────────────
+            Profesionales deja de ser una pestaña (ver docs/revision-profunda.md):
+            era una segunda puerta a la misma cosa — su buscador ya mandaba
+            aqui—. Pero SI aportaba algo real: ver que hay sin saber que
+            pedir, con 13 categorias y sus especialidades.
+            Eso no se pierde. Vive aqui, bajo la capsula, donde alguien lo
+            busca cuando se queda en blanco. Sin ocupar pantalla. */}
+        {nuraChatMessages.length <= 1 && (
+          <button onClick={() => navigate('/explore')} className={styles.browseBelow}>
+            <Compass size={15} color="var(--purple)" style={{flexShrink:0}} />
+            {/* Decision del fundador. Paso por "Ver a quien puedes
+                encontrar" —con la tilde de "quién" perdida— y por "Ver con
+                qué te puedo ayudar". Se queda en el nombre llano: quien
+                llega aqui sabe lo que va a ver. */}
+            <span style={{fontSize:'var(--text-sm)', fontWeight:600, color:'var(--purple-ink)'}}>
+              Buscar profesionales
+            </span>
+          </button>
+        )}
+
+  </>)
+
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} ${isWelcome ? styles.pageWelcome : ''} ${user ? styles.pageReturning : ''}`}>
       {/* New search button — appears when chat has content */}
 
 
@@ -1289,32 +1326,14 @@ export default function Home() {
             asi que no añade un lenguaje nuevo a la barra. */}
         <div style={{display:'flex', alignItems:'center', pointerEvents:'all'}}>
           <button onClick={() => navigate('/explore')}
-            aria-label="Buscar profesionales"
-            style={{
-              /* UN CIRCULO GRIS CON UNA BRUJULA NO DICE NADA: nadie sabe
-                 que hace hasta tocarlo. Con el morado de Nüra y la palabra
-                 escrita, se lee de un vistazo. Es la unica accion de marca
-                 de la barra, asi que no compite con nada. */
-              /* Medido: con "Profesionales" el boton ocupaba 138px y
-                 comprimia el logo de la barra. Y "Buscar" a secas confunde:
-                 la capsula de abajo tambien busca. "Ver todos" es corto y
-                 dice lo que hace — abre la lista entera. */
-              display:'flex', alignItems:'center', gap:'var(--space-6)',
-              height:42, padding:'0 var(--space-12)',
-              background:'var(--purple)', color:'white', border:'none',
-              borderRadius:'var(--radius-full)',
-              boxShadow:'0 1px 2px rgba(33,29,51,0.05), 0 6px 16px -8px rgba(123,47,255,0.45)',
-              fontSize:'var(--text-sm)', fontWeight:700, fontFamily:'inherit',
-              cursor:'pointer', whiteSpace:'nowrap',
-              WebkitTapHighlightColor:'transparent',
-            }}>
+            aria-label="Buscar profesionales" className={styles.browseTop}>
             <Compass size={16} />
             Ver todos
           </button>
         </div>
 
         <div className={styles.logoBubble}>
-          <img src="/logo-text.png" alt="Nüra" className={styles.headerLogo} />
+          <span className={styles.wordmark}>Nüra</span>
         </div>
         <div style={{display:'flex',alignItems:'center',justifyContent:'flex-end',gap:'var(--space-8)',pointerEvents:'all'}}>
           {messages.length > 1 && (
@@ -1345,7 +1364,7 @@ export default function Home() {
             style={{position:'static',transform:'none',padding:'0',width:'42px',height:'42px',borderRadius:'50%',overflow:'hidden',display:'flex',alignItems:'center',justifyContent:'center',pointerEvents:'all'}}
             onClick={() => navigate('/profile')}>
             {user?.name
-              ? <img src={avatarDe(encodeURIComponent(user.name))} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+              ? <UserAvatar user={user} decorative className={styles.userAvatar} />
               : <UserRound size={20} color="rgba(33,29,51,0.4)" strokeWidth={1.5} />
             }
           </button>
@@ -1366,7 +1385,8 @@ export default function Home() {
              de bienvenida dejaba 368px muertos arriba — mas de un tercio de
              pantalla en blanco antes de que empezara nada. Ahi el saludo
              sube y respira. */
-          <div key={msg.id} style={{marginTop: msgIdx === 0 ? (nuraChatMessages.length <= 1 ? 'var(--space-32)' : 'auto') : msg.from === 'user' ? 'var(--chat-gap-md)' : 'var(--chat-gap)'}} ref={msg.results?.length ? resultRef : undefined}>
+          <div key={msg.id} className={msgIdx === 0 && isWelcome ? styles.welcomeBlock : undefined} style={{marginTop: msgIdx === 0 ? (nuraChatMessages.length <= 1 ? 'var(--space-32)' : 'auto') : msg.from === 'user' ? 'var(--chat-gap-md)' : 'var(--chat-gap)'}} ref={msg.results?.length ? resultRef : undefined}>
+            {msgIdx === 0 && isWelcome && <p className={styles.welcomeEyebrow}>PERSONAS QUE HACEN BIEN</p>}
             <div className={`${styles.msgRow} ${msg.from === 'user' ? styles.msgRowUser : ''} ${spacingClass}`}>
               {msg.from === 'nura' && (
                 firstOfNuraRun ? (
@@ -1379,7 +1399,9 @@ export default function Home() {
               )}
               <div className={`${styles.bubble} ${msg.from === 'user' ? styles.bubbleUser : styles.bubbleNura} ${msgIdx === 0 && msg.from !== 'user' ? styles.greeting : ''} ${msgIdx === 0 && msg.from !== 'user' && nuraChatMessages.length > 1 ? styles.greetingRetirado : ''}`}>
                 {msg.text && <p>{msg.text}</p>}
-                {msg.lines?.map((line, i) => <p key={i}>{formatLine(line)}</p>)}
+                {msg.lines?.map((line, i) => <p key={i}
+                  role={msgIdx === 0 && i === 1 && isWelcome ? 'heading' : undefined}
+                  aria-level={msgIdx === 0 && i === 1 && isWelcome ? 1 : undefined}>{formatLine(line)}</p>)}
                 {msg.loading && <div className={styles.typingDots}><span /><span /><span /></div>}
 
               {msg.quickOptions && (
@@ -1399,6 +1421,8 @@ export default function Home() {
               )}
               </div>
             </div>
+
+            {msgIdx === 0 && isWelcome && <div className={styles.welcomeComposer}>{composer}</div>}
 
             {msg.results && (
               <div className={styles.carouselBlock}>
@@ -1511,9 +1535,12 @@ export default function Home() {
           )
           if (showSuggestions) return (
             <div className={styles.suggestions}>
+              <p className={styles.suggestionsLabel}>Puedes empezar por aquí</p>
               {(suggestions||[]).map((s, i) => (
                 <button key={i} className={styles.suggestion} onClick={() => handleSend(s.text)}>
+                  <span className={styles.suggestionMark} aria-hidden="true">{i === 0 ? <Heart size={18} /> : i === 1 ? <House size={18} /> : <Sparkles size={18} />}</span>
                   <span className={styles.suggestionText}>{s.text}</span>
+                  <ArrowUpRight size={16} className={styles.suggestionArrow} aria-hidden="true" />
                 </button>
               ))}
             </div>
@@ -1529,55 +1556,7 @@ export default function Home() {
         <div ref={bottomRef} />
       </div>
 
-      {/* Floating bottom — suggestions + input capsule only */}
-      <div className={styles.floatBottom}>
-
-
-        <div className={styles.inputCapsule}>
-          <input ref={inputRef} className={styles.input} aria-label="Cuéntale a Nüra qué necesitas"
-            placeholder={corrigiendo ? 'Dime qué he entendido mal…' : forWhom === 'familia' ? 'Cuéntame qué le pasa...' : forWhom === 'hogar' ? 'Cuéntame qué necesita tu hogar...' : (searchHistory?.length ? 'Cuéntame qué necesitas...' : 'Cuéntale a Nüra qué necesitas…')}
-            value={input} onChange={e => setInput(e.target.value)}
-            onKeyDown={handleKey} readOnly={false} />
-          {input.trim()
-            ? <button className={styles.sendBtn} onClick={() => handleSend()} aria-label="Enviar mensaje"><Send size={16} /></button>
-            : <button className={`${styles.sendBtn} ${listening ? styles.micActive : styles.micBtn}`} onClick={toggleMic} aria-label={listening ? 'Detener dictado' : 'Dictar por voz'}>
-                {listening ? <MicOff size={16} /> : <Mic size={16} />}
-              </button>
-          }
-        </div>
-
-        {/* ── PARA QUIEN NO SABE QUE ESCRIBIR ────────────────────────────
-            Profesionales deja de ser una pestaña (ver docs/revision-profunda.md):
-            era una segunda puerta a la misma cosa — su buscador ya mandaba
-            aqui—. Pero SI aportaba algo real: ver que hay sin saber que
-            pedir, con 13 categorias y sus especialidades.
-            Eso no se pierde. Vive aqui, bajo la capsula, donde alguien lo
-            busca cuando se queda en blanco. Sin ocupar pantalla. */}
-        {nuraChatMessages.length <= 1 && (
-          <button onClick={() => navigate('/explore')} style={{
-            /* NO ES UNA TERCERA BURBUJA. Al convertirlo en tarjeta quedaron
-               TRES bloques blancos de ~60px apilados en los ultimos 220px de
-               pantalla —capsula, este y la barra—, con el mismo fondo y casi
-               la misma altura. Parecian hermanos haciendo cosas distintas.
-               Aqui no hay fondo ni sombra: es una frase con su brujula,
-               subordinada a la capsula. El peso lo da el texto, no la caja. */
-            display:'flex', alignItems:'center', justifyContent:'center',
-            gap:'var(--space-8)', alignSelf:'center',
-            marginTop:'var(--space-12)', padding:'var(--space-8) var(--space-12)',
-            background:'none', border:'none', cursor:'pointer',
-            fontFamily:'inherit', pointerEvents:'all',
-          }}>
-            <Compass size={15} color="var(--purple)" style={{flexShrink:0}} />
-            {/* Decision del fundador. Paso por "Ver a quien puedes
-                encontrar" —con la tilde de "quién" perdida— y por "Ver con
-                qué te puedo ayudar". Se queda en el nombre llano: quien
-                llega aqui sabe lo que va a ver. */}
-            <span style={{fontSize:'var(--text-sm)', fontWeight:600, color:'var(--purple-ink)'}}>
-              Buscar profesionales
-            </span>
-          </button>
-        )}
-      </div>
+      {!isWelcome && <div className={styles.floatBottom}>{composer}</div>}
 
       {showGate && <RegisterGate reason={gateReason} onClose={() => setShowGate(false)} />}
       {valorar && <RatingModal helper={valorar} onClose={() => setValorar(null)} />}

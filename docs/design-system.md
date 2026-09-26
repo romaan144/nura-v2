@@ -1,7 +1,7 @@
 # NÜRA 2 — SISTEMA DE DISEÑO
 
 > Identidad visual y reglas de diseño. La fuente de verdad de los **valores**
-> (colores, tamaños, tiempos) es el código: `src/index.css` y
+> (colores, tamaños, tiempos) es el código: `src/index.css`, `src/design-system.css` y
 > `src/components/ui/index.jsx`. Este documento fija nombres, reglas y criterios —
 > no duplica literales. Última actualización: 2026-07-04
 
@@ -10,6 +10,10 @@ sigue:** consistencia → claridad → rapidez de comprensión → facilidad →
 Sistemas, no componentes.
 
 ---
+
+## Actualización visual · 2026-09-25
+
+La dirección vigente se documenta en `diseno-integral.md`. Los ajustes de valores comunes viven en `src/design-system.css`, importado después de la base. Los módulos de cada pantalla mantienen su estructura específica. Esta actualización prevalece sobre medidas y efectos históricos descritos abajo.
 
 ## 1. Tokens
 

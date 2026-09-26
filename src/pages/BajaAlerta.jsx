@@ -32,7 +32,7 @@ export default function BajaAlerta() {
   return (
     <div className={styles.page}>
       <PageHeader showBack />
-      <main style={{ maxWidth: 420, margin: '0 auto', padding: 'var(--space-32) var(--space-20)', textAlign: 'center' }}>
+      <main className="nura-auth-card nura-service-flow" style={{ maxWidth: 420, margin: '0 auto', padding: 'var(--space-32) var(--space-20)', textAlign: 'center' }}>
         <div aria-hidden="true" style={{ width: 64, height: 64, borderRadius: '50%', margin: '0 auto var(--space-16)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--purple-05)', color: 'var(--purple)' }}>
           <BellOff size={28} />

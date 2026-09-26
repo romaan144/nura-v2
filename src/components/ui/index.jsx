@@ -121,7 +121,7 @@ export function StatBar({ stats, style }) {
 // ═══════════════════════════════════════════════════════════════
 export function Button({
   variant = 'primary', full = false, disabled = false,
-  onClick, children, style, ...rest
+  onClick, children, style, className = '', ...rest
 }) {
   const base = {
     display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
@@ -144,6 +144,7 @@ export function Button({
   return (
     <button
       type="button"
+      className={`nura-button ${className}`}
       disabled={disabled}
       onClick={disabled ? undefined : onClick}
       style={{ ...base, ...(skins[variant] || skins.primary), ...style }}
@@ -170,7 +171,7 @@ export function Button({
  */
 export function SectionTitle({ children, style, className }) {
   return (
-    <h2 className={className} style={{
+    <h2 className={`nura-section-title ${className || ''}`} style={{
       fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--ink-primary)',
       letterSpacing: '-0.2px', lineHeight: 1.3, margin: '0 0 var(--space-10)',
       ...style,

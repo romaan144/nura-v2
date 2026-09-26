@@ -299,7 +299,7 @@ function HelperProfileInner() {
         {/* ══════════════════════════════════════════════════
             HERO EDITORIAL — la persona, no el formulario
             ══════════════════════════════════════════════════ */}
-        <div className={`${styles.hero} aurora`}>
+        <div className={styles.hero}>
 
           {/* Avatar grande — protagonista */}
           <div style={{

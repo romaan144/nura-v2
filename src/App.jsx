@@ -38,6 +38,7 @@ const Restablecer = lazy(() => import('./pages/Restablecer'))
 import Toast from './components/Toast'
 import PageTransition from './components/PageTransition'
 import './index.css'
+import './design-system.css'
 import AppErrorBoundary from './components/AppErrorBoundary'
 
 function AppRoutes() {
@@ -94,7 +95,7 @@ function AppRoutes() {
       <DesktopSidebar />
 
       <AppShell>
-      <div className="desktopMain">
+      <div className="desktopMain" data-screen={location.pathname.split('/')[1] || 'home'} data-layout={['/login', '/register-helper'].includes(location.pathname) ? 'focus' : 'app'}>
         {/* Pestañas vivas: montadas tras su primera visita, visibles según ruta.
             Solo Inicio va en el archivo principal: el resto se descarga al
             visitarlas por primera vez (la app abre antes). */}

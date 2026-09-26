@@ -103,13 +103,14 @@ completamente integrada — nunca varias a medias.
 
 ## 6. Varias herramientas, ramas y publicación (2026-09-24)
 
-**Quién hace qué**
-- **Sergio** decide producto y lanzamiento. Las explicaciones, en español
-  claro y sin tecnicismos innecesarios.
-- **Claude Code** implementa, prueba y publica.
-- **Codex** se usa en momentos puntuales. Si interviene, la tarea tiene un
-  solo responsable, cada herramienta trabaja en su propia rama y nunca se
-  tocan a la vez los mismos archivos.
+**Quién hace qué · acuerdo vigente del 2026-09-25**
+- **Sergio** decide producto; recibe explicaciones en español claro.
+- **Claude Code** mantiene funcionalidades, lógica y datos.
+- **Codex** mantiene el diseño de toda la aplicación, empezando por Inicio.
+- **Autorización de Sergio:** los cambios de diseño se implementan, integran y publican sin aprobación estética previa de Sergio ni de Claude. Se verifican técnicamente antes de publicar. Esta autorización sustituye cualquier paso anterior de aprobación estética.
+- El registro compartido vive en GitHub: `docs/tasks.md`, `docs/diseno-integral.md`, este documento y el historial. No hace falta una tercera app para este flujo.
+- Cada tarea tiene un responsable y una rama. No editar al mismo tiempo los mismos archivos: los JSX mezclan presentación y comportamiento. Antes de integrar, actualizar y comprobar que no se pierde trabajo ajeno.
+- Claude se entera al traer y leer los cambios de GitHub al comienzo de su siguiente turno; no hay un aviso automático entre las conversaciones.
 
 **Antes de empezar**
 - Leer primero «Estado actual» en `current-status.md`: es lo único

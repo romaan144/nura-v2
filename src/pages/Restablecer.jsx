@@ -41,7 +41,7 @@ export default function Restablecer() {
   return (
     <div className={styles.page}>
       <PageHeader showBack />
-      <div className={styles.content}>
+      <div className={`${styles.content} nura-auth-card`}>
         <h1 className={styles.title}>Contraseña nueva</h1>
         {estado === 'comprobando' && <p style={{ color: 'var(--ink-tertiary)', fontSize: 'var(--text-sm)' }}>Comprobando el enlace…</p>}
         {estado === 'sinEnlace' && (

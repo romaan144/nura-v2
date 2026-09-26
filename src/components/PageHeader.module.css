@@ -72,3 +72,9 @@
   from { opacity: 0; transform: translateY(-6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+.header { max-width: 1040px; margin-inline: auto; padding-inline: var(--space-16); }
+.logoPill { background: var(--paper-veil); backdrop-filter: blur(20px); box-shadow: none; border: 1px solid transparent; padding: var(--space-10) var(--space-20); }
+.circleBtn { width: 44px; height: 44px; background: white; border-color: var(--ink-border); box-shadow: var(--shadow-xs); }
+.circleBtn:hover { background: var(--purple-05); color: var(--purple-ink); }
+.wordmark { font-family: var(--font-voice); font-size: var(--text-lg); font-weight: 750; letter-spacing: -1.1px; line-height: 1.25; }

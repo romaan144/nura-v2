@@ -78,3 +78,21 @@
 .sendBtn:disabled { background: #ddd; color: #aaa; }
 .micBtn { background: transparent; color: #999; box-shadow: none; }
 .micActive { background: var(--red, #ef4444); color: white; }
+
+/* Nüra · dirección visual compartida, septiembre 2026. */
+
+.page { background: radial-gradient(ellipse at 50% 0, var(--purple-05), transparent 60%), var(--paper); }
+.header, .inputWrap { max-width: 800px; margin-left: auto; margin-right: auto; }
+.messages { padding-left: max(20px, calc((100% - 740px)/2)); padding-right: max(20px, calc((100% - 740px)/2)); }
+.msgRow { flex-shrink: 0; margin-bottom: 6px; }
+.bubble { line-height: 1.7; }
+.bubbleUser { background: var(--purple-ink); }
+.bubbleNura { background: white; border-color: var(--ink-border); }
+.logoPill { box-shadow: none; border-color: var(--ink-border); }
+.inputCapsule { min-height: 58px; border-color: var(--ink-border); }
+.input { min-width: 0; }
+.sendBtn, .plusBtn, .back { width: 44px; height: 44px; }
+
+
+/* El foco lo dibuja la cápsula completa, sin un segundo marco interior. */
+.input:focus-visible { outline: none; }

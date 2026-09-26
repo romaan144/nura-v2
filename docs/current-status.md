@@ -10,6 +10,10 @@
 
 ---
 
+## Diseño y trabajo compartido (2026-09-25)
+
+Sergio encarga a Codex el diseño integral y a Claude las funcionalidades. Los cambios visuales tienen autorización de integración y publicación tras las pruebas, sin revisión estética previa. Leer `docs/tasks.md` y `docs/diseno-integral.md` antes de editar pantallas. La presencia de este apartado en una rama no certifica su despliegue: comprobar integración y Vercel.
+
 ## Estado actual (2026-09-24)
 
 > Todo lo que hay en este apartado está **comprobado contra el código y
