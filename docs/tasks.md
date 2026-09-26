@@ -14,15 +14,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · El alta pregunta la ciudad si no se deduce de la zona
+### Última tarea integrada · El alta pregunta la ciudad si la zona no la dice
 
-**Responsable:** Claude. **Rama:** `claude/funny-clarke-e6m64r`, desde `main` (28f076b).
-**Objetivo:** si al darse de alta alguien contesta solo «Chamberí» (sin ciudad reconocible), Nüra le pregunta en qué ciudad está y la guarda en su ficha (`city`), para que la búsqueda y los avisos por ciudad le cuenten bien.
-**Archivos previstos:** `src/pages/RegisterHelper.jsx` (solo la conversación y los datos del alta; sin cambiar la presentación), `src/data/ciudades.js`, `scripts/test-matching.mjs`, documentación.
-
-### Última tarea integrada · «Te aviso si aparece alguien» en cualquier ciudad
-
-Integrada el 2026-09-26 (ver `docs/changelog.md`, 2026-10-12). Tocó `supabase/functions/helpers-write/index.ts` (v23), `supabase/migrations/20261012000000_alertas_por_ciudad.sql`, `src/utils/alertas.js`, `src/data/ciudades.js`, `src/components/AlertaSheet.jsx` y `src/components/MisAlertas.jsx` (solo textos), `src/pages/Home.jsx` (un mensaje y los datos del aviso; sin cambiar la presentación), `scripts/test-avisos.mjs`, `scripts/test-matching.mjs`. Esos archivos quedan libres.
+Integrada el 2026-09-26 (ver `docs/changelog.md`, 2026-10-13). Tocó `src/pages/RegisterHelper.jsx` (solo la conversación y los datos del alta; misma presentación), `src/data/ciudades.js` y `scripts/test-matching.mjs`. Esos archivos quedan libres.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 

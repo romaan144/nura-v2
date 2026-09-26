@@ -458,7 +458,18 @@ for (const t of NEGATIVE) {
 
 // ── La ciudad (2026-09-25): Nüra se usará en más ciudades ──
 {
-  const { ciudadEnTexto, hayEnLaCiudad } = await import(join(stage, 'data/ciudades.js'))
+  const { ciudadEnTexto, hayEnLaCiudad, faltaCiudad, ciudadDeRespuesta } = await import(join(stage, 'data/ciudades.js'))
+  for (const [z, esp] of [['Chamberí', true], ['Madrid, Chamberí', false], ['Gràcia y alrededores', false], ['solo online', false],
+    ['por videollamada', false], ['el centro, me desplazo', true], ['', false]]) {
+    if (faltaCiudad(z) !== esp) failed++
+    console.log(`${faltaCiudad(z) === esp ? '✓' : '✗'} alta: «${z}» ${esp ? 'pide' : 'no pide'} la ciudad`)
+  }
+  for (const [t, esp] of [['madrid', 'Madrid'], ['En Valencia', 'Valencia'], ['toledo', 'Toledo'], ['bcn', 'Barcelona'],
+    ['no sé', null], ['123', null], ['león', 'León']]) {
+    const r = ciudadDeRespuesta(t)
+    if (r !== esp) failed++
+    console.log(`${r === esp ? '✓' : '✗'} alta: la ciudad «${t}» → ${r}${r === esp ? '' : ` (esperado ${esp})`}`)
+  }
   for (const [nombre, lista, ciudad, esp] of [
     ['nadie en Madrid si todos son de Barcelona', [{ zone: 'Gràcia' }, { city: 'Barcelona' }], 'Madrid', false],
     ['alguien en Madrid por su zona', [{ zone: 'Gràcia' }, { zone: 'Chamberí, Madrid' }], 'Madrid', true],
