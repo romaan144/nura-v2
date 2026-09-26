@@ -3,9 +3,11 @@
 // los próximos 14 días, por día y por hora: confirmadas, por contestar y
 // canceladas. Al tocar una, se abre su aviso (/r/:token) para contestarla.
 // Sale de los mismos avisos que la bandeja: no pide nada más al servidor.
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { CalendarDays, CalendarOff } from 'lucide-react'
-import { agendaDe, isoLocal } from '../data/horarios'
+import { CalendarDays, CalendarOff, CalendarX } from 'lucide-react'
+import { agendaDe, isoLocal, cancelacionesNuevas } from '../data/horarios'
+import { cancelacionesVistas, marcarCancelacionesVistas } from '../utils/sinContestar'
 
 const DIAS = 14
 
@@ -31,6 +33,13 @@ export default function AgendaProfesional({ avisos }) {
   const ahora = new Date()
   const dias = agendaDe(avisos, ahora, DIAS)
   const porContestar = dias.flatMap(d => d.citas).filter(c => c.estado === 'por-contestar').length
+  // Las que le han cancelado y aún no ha visto: arriba, hasta «Entendido».
+  const [vistas, setVistas] = useState(cancelacionesVistas)
+  const nuevas = cancelacionesNuevas(avisos, vistas, ahora)
+  const entendido = () => {
+    marcarCancelacionesVistas(nuevas.map(c => c.id))
+    setVistas(cancelacionesVistas())
+  }
 
   return (
     <section aria-labelledby="agenda-titulo" style={{ margin: '0 0 var(--space-20)' }}>
@@ -42,6 +51,27 @@ export default function AgendaProfesional({ avisos }) {
           </span>
         )}
       </h2>
+      {nuevas.length > 0 && (
+        <div role="status" style={{ margin: '0 0 var(--space-12)', padding: 'var(--space-12)', borderRadius: 'var(--radius-card)',
+          background: 'var(--surface-subtle)', border: '1px solid var(--ink-border, rgba(33,29,51,0.16))' }}>
+          <p style={{ margin: '0 0 var(--space-6)', display: 'flex', alignItems: 'center', gap: 'var(--space-6)', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--ink-primary)' }}>
+            <CalendarX size={16} aria-hidden="true" />
+            {nuevas.length === 1 ? 'Te han cancelado una cita' : `Te han cancelado ${nuevas.length} citas`}
+          </p>
+          <ul style={{ listStyle: 'none', margin: '0 0 var(--space-10)', padding: 0, display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            {nuevas.map(c => (
+              <li key={c.id} style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)', lineHeight: 1.45 }}>
+                {tituloDia(c.fecha, ahora)} a las {c.hora}. Esa hora vuelve a estar libre.
+              </li>
+            ))}
+          </ul>
+          <button type="button" onClick={entendido}
+            style={{ minHeight: 36, padding: '0 var(--space-14)', borderRadius: 'var(--radius-full)', border: 'none',
+              background: 'var(--purple)', color: 'white', fontFamily: 'inherit', fontSize: 'var(--text-xs)', fontWeight: 700, cursor: 'pointer' }}>
+            Entendido
+          </button>
+        </div>
+      )}
       <button type="button" onClick={() => navigate('/profile', { state: { editar: 'bloqueos' } })}
         style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-6)', minHeight: 36, padding: '0 var(--space-12)',
           margin: '0 0 var(--space-10)', borderRadius: 'var(--radius-full)', border: '1px solid var(--ink-border, rgba(33,29,51,0.16))',
@@ -61,7 +91,7 @@ export default function AgendaProfesional({ avisos }) {
               </h3>
               <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
                 {d.citas.map(c => {
-                  const e = ESTADO[c.estado]
+                  const e = c.estado === 'cancelada' && c.cancela === 'profesional' ? { ...ESTADO.cancelada, texto: 'La cancelaste' } : ESTADO[c.estado]
                   const cancelada = c.estado === 'cancelada'
                   return (
                     <li key={c.id}>
