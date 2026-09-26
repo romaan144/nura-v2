@@ -211,6 +211,11 @@ export default function MyServices() {
                         {s.notaCancelacion && <> «{s.notaCancelacion}»</>}
                       </div>
                     )}
+                    {s.reprogramada && (
+                      <div className={styles.note} role="status" style={{ whiteSpace: 'normal' }}>
+                        Ya has pedido otra hora: {formatDate(s.reprogramada.date)}{s.reprogramada.time ? ` · ${s.reprogramada.time}` : ''}.
+                      </div>
+                    )}
                   </div>
 
                   {/* Right */}
@@ -262,6 +267,17 @@ export default function MyServices() {
                       </button>
                     </div>
                   )
+                )}
+
+                {/* Cancelada por el profesional o «esa hora no le va»: elegir
+                    otra hora sin volver a buscarle. Si ya la pidió, se dice. */}
+                {((s.status === 'cancelled' && s.canceladaPor === 'profesional') || s.status === 'rejected') && !s.reprogramada && (
+                  <div className={styles.postActions}>
+                    <button className={styles.actionBtn}
+                      onClick={e => { e.stopPropagation(); navigate(`/helper/${s.helperId}`, { state: { otraHora: s.id } }) }}>
+                      <Calendar size={12} /> Elegir otra hora
+                    </button>
+                  </div>
                 )}
 
                 {/* Completed + not yet rated → rate CTA */}

@@ -157,7 +157,10 @@ function HelperProfileInner() {
   const [sinRed, setSinRed]   = useState(false)
   const [intento, setIntento] = useState(0)
   useTitulo(enrichedH?.name ? [enrichedH.name, enrichedH.specialty].filter(Boolean).join(' · ') : null)
-  const [showConfirm, setShowConfirm] = useState(false)
+  // «Elegir otra hora» (Mis servicios) llega con el id de la cita cancelada:
+  // la agenda se abre sola y la cita nueva la sustituye.
+  const otraHora = location.state?.otraHora ?? null
+  const [showConfirm, setShowConfirm] = useState(() => otraHora != null)
   const [showRating, setShowRating]   = useState(false)
   const [showGate, setShowGate]       = useState(false)
   const [shared, setShared]           = useState(false)
@@ -716,12 +719,21 @@ function HelperProfileInner() {
           a la ficha (o a Inicio) y tenía que buscar el botón otra vez. */}
       {showGate && <RegisterGate reason="contact" volverA={`/chat/${enrichedH.id}`} onClose={() => setShowGate(false)} />}
       {showRating && <RatingModal helper={h} onClose={() => setShowRating(false)} />}
-      {showConfirm && (
+      {showConfirm && h && (
         <BookingModal
           helper={h}
-          onClose={() => setShowConfirm(false)}
+          onClose={() => {
+            setShowConfirm(false)
+            // El encargo de «Elegir otra hora» se usa una vez: volver atrás
+            // en el historial no debe reabrir la agenda.
+            if (otraHora != null) {
+              const resto = { ...(location.state || {}) }
+              delete resto.otraHora
+              navigate(location.pathname, { replace: true, state: resto })
+            }
+          }}
           onBook={(hh, date, time, note) => {
-            addService(hh, date, time, note)
+            addService(hh, date, time, note, otraHora)
             if (!DEMO_MODE) enviarPropuestaCita(hh, date, time, note, user?.name?.split(' ')?.[0])
           }}
           onNavigate={navigate}

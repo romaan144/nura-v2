@@ -10,6 +10,22 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-10-07 — «Elegir otra hora» cuando cancelan una cita
+
+- En «Mis servicios», una cita cancelada por el profesional o marcada
+  «Propón otra hora» tiene el botón **«Elegir otra hora»**: abre la ficha
+  del profesional con su agenda ya desplegada, sin volver a buscarle.
+- Al pedir la nueva hora, la tarjeta antigua dice «Ya has pedido otra
+  hora: miércoles, 30 de septiembre · 16:00» y deja de ofrecer el botón;
+  la cita nueva sale Pendiente y le llega al profesional con su día y hora.
+- La agenda solo se abre sola al llegar desde ese botón: entrar en la
+  ficha de otra forma, o volver atrás en el historial, no la reabre.
+- Sin cambios en el servidor ni en la base de datos. Pantallas con la
+  presentación del diseño integral conservada (clases `actionBtn` y
+  `note` de la tarjeta).
+- Probado en el navegador con la versión real (sin demo): el botón, la
+  agenda abierta, el envío, la tarjeta antigua y volver atrás.
+
 ## 2026-10-06 — Bloquear un día con citas: se avisa y se puede cancelar
 
 - En «Días u horas que no puedes», al elegir un día con una cita
