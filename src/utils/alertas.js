@@ -73,7 +73,7 @@ export async function suscribirMovil(ambito = '/') {
  * Guarda la alerta. `movil`: la suscripcion (o null). `sesion`: el token de
  * la cuenta si quiere correo; el servidor saca el correo de ahi.
  */
-export async function crearAlerta({ categoria, que, movil, sesion, zona }) {
+export async function crearAlerta({ categoria, que, movil, sesion, zona, ciudad }) {
   if (!porLaFuncion()) return { ok: false, motivo: 'sin-servidor' }
   try {
     const r = await llamarFuncion({
@@ -81,17 +81,23 @@ export async function crearAlerta({ categoria, que, movil, sesion, zona }) {
       push: movil || undefined, sesion: sesion || undefined,
       // Solo el nombre del barrio: el servidor pone el centro del barrio.
       zona: zona?.nombre ? { nombre: zona.nombre } : undefined,
+      // Sin barrio, la ciudad (el servidor solo acepta las de la lista).
+      ciudad: !zona?.nombre && ciudad ? ciudad : undefined,
     })
     if (!r?.ok) return { ok: false, motivo: r?.estado === 429 ? 'demasiadas' : 'error' }
-    guardar([...alertasGuardadas(), { llave: r.llave, que, categoria, zona: zona?.nombre || null, creada: new Date().toISOString(),
+    guardar([...alertasGuardadas(), { llave: r.llave, que, categoria, zona: zona?.nombre || null, ciudad: !zona?.nombre && ciudad ? ciudad : null, creada: new Date().toISOString(),
       caduca_en: r.caduca_en, canales: r.canales, visto: 0 }])
     return { ok: true, canales: r.canales, correoActivo: r.correoActivo }
   } catch { return { ok: false, motivo: 'error' } }
 }
 
-/** ¿Ya hay una alerta de este oficio en este movil? */
-export function tieneAlerta(categoria) {
-  return alertasGuardadas().some(a => a.categoria === categoria && (!a.caduca_en || new Date(a.caduca_en) > new Date()))
+/**
+ * ¿Ya hay una alerta de este oficio en este movil que cubra esa ciudad? Una
+ * sin ciudad ni barrio cubre todas; una de Barcelona no cubre Madrid.
+ */
+export function tieneAlerta(categoria, ciudad = null) {
+  return alertasGuardadas().some(a => a.categoria === categoria && (!a.caduca_en || new Date(a.caduca_en) > new Date())
+    && (!ciudad || (a.ciudad || null) === ciudad || (!a.ciudad && !a.zona)))
 }
 
 /**

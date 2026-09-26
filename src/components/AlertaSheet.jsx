@@ -14,7 +14,7 @@ function correoDeLaCuenta() {
   catch { return '' }
 }
 
-export default function AlertaSheet({ categoria, que, zona, onClose, onHecho }) {
+export default function AlertaSheet({ categoria, que, zona, ciudad, onClose, onHecho }) {
   const navigate = useNavigate()
   const correo = correoDeLaCuenta()
   const puedeMovil = movilPuedeAvisar() && !esIphoneSinInstalar()
@@ -23,6 +23,8 @@ export default function AlertaSheet({ categoria, que, zona, onClose, onHecho }) 
   const [guardando, setGuardando] = useState(false)
   // Si buscaba en un barrio, por defecto solo avisa de quien trabaja cerca.
   const [soloCerca, setSoloCerca] = useState(Boolean(zona?.nombre))
+  // Sin barrio, la ciudad donde busca: solo avisa de quien trabaja allí u online.
+  const enCiudad = !soloCerca && ciudad ? ciudad : null
 
   async function confirmar() {
     if (guardando) return
@@ -38,9 +40,9 @@ export default function AlertaSheet({ categoria, que, zona, onClose, onHecho }) 
       const { sesionActual } = await import('../utils/cuenta')
       sesion = (await sesionActual())?.access_token || null
     }
-    const r = await crearAlerta({ categoria, que, movil: suscripcion, sesion, zona: soloCerca ? zona : null })
+    const r = await crearAlerta({ categoria, que, movil: suscripcion, sesion, zona: soloCerca ? zona : null, ciudad: enCiudad })
     setGuardando(false)
-    onHecho?.({ ...r, motivoMovil, pidioCorreo: porCorreo && Boolean(correo), cerca: soloCerca ? zona.nombre : null })
+    onHecho?.({ ...r, motivoMovil, pidioCorreo: porCorreo && Boolean(correo), cerca: soloCerca ? zona.nombre : null, ciudad: enCiudad })
   }
 
   // En el cuerpo de la pagina: dentro de Buscar quedaba debajo de la barra.
@@ -50,11 +52,11 @@ export default function AlertaSheet({ categoria, que, zona, onClose, onHecho }) 
         <button className={styles.close} onClick={onClose} aria-label="Cerrar"><X size={16} /></button>
         <div className={styles.icono}><Bell size={24} /></div>
         <h3 id="alerta-titulo" className={styles.title}>¿Te aviso si llega alguien?</h3>
-        <p className={styles.desc}>Cuando se dé de alta en Nüra alguien de <b>{que.toLowerCase()}</b>{soloCerca ? <> cerca de <b>{zona.nombre}</b></> : null}, te lo digo.</p>
+        <p className={styles.desc}>Cuando se dé de alta en Nüra alguien de <b>{que.toLowerCase()}</b>{soloCerca ? <> cerca de <b>{zona.nombre}</b></> : enCiudad ? <> en <b>{enCiudad}</b> (o que atienda online)</> : null}, te lo digo.</p>
 
         <div className={styles.guardo}>
           <p className={styles.guardoTit}>Solo guardo esto</p>
-          <p className={styles.guardoTxt}>«{que}»{soloCerca ? ` y el barrio (${zona.nombre})` : ''}. No guardo lo que escribiste. Se borra solo a los 3 meses, o cuando quieras desde tu perfil.</p>
+          <p className={styles.guardoTxt}>«{que}»{soloCerca ? ` y el barrio (${zona.nombre})` : enCiudad ? ` y la ciudad (${enCiudad})` : ''}. No guardo lo que escribiste. Se borra solo a los 3 meses, o cuando quieras desde tu perfil.</p>
         </div>
 
         {zona?.nombre && (

@@ -10,6 +10,26 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-10-12 — «Te aviso si aparece alguien» en cualquier ciudad
+
+- Si alguien busca en una ciudad donde aún no hay nadie de eso, Nüra se lo
+  dice claro y le ofrece el aviso **para esa ciudad**. Dos casos: la nombra
+  en la frase («canguro en Madrid», sin resultados) o la eligió en «Tu
+  ciudad» y todos los que encajan trabajan en otra: se enseñan igual, con
+  «En Madrid todavía no tengo a nadie de…» y «Avísame cuando tengas a alguien».
+- La alerta guarda solo el nombre de la ciudad (columna `alertas.ciudad`;
+  el servidor solo acepta una de la lista de la app). Avisa de quien trabaja
+  allí o atiende online; si no se sabe la ciudad del profesional, avisa
+  (mejor uno de más). Con barrio manda el barrio, como antes.
+- Arreglo de paso: un aviso de barrio de Barcelona ya no avisa de quien
+  trabaja en otra ciudad lejana (antes, una zona sin barrio conocido, como
+  «Chamberí, Madrid», contaba como cerca).
+- Una alerta de Barcelona ya no impide pedir otra para Madrid del mismo oficio.
+- Función `helpers-write` v23 (misma lista de operaciones). Comprobado con
+  `npm run test:avisos` (incluye que la lista de ciudades del servidor y de
+  la app coinciden), `test:matching` y un navegador real contra un servidor
+  simulado. No se ha probado contra el Supabase real desde aquí.
+
 ## 2026-10-11 — «Tu ciudad» en el perfil; la búsqueda la tiene en cuenta
 
 - Aclaración: la búsqueda ya filtraba por ciudad cuando la frase la nombra

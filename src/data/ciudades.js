@@ -55,3 +55,13 @@ export function ciudadEnTexto(texto) {
 
 /** La ciudad de un profesional: la guardada, o la que se lee en su zona. */
 export const ciudadDe = h => h?.city || ciudadEnTexto(h?.zone) || null
+
+/**
+ * ¿Hay en esta lista alguien que trabaje en esa ciudad (o atienda online)?
+ * Sirve para decir con claridad «en Madrid aún no tengo a nadie» aunque la
+ * búsqueda haya encontrado profesionales en otras ciudades.
+ */
+export function hayEnLaCiudad(lista, ciudad) {
+  if (!ciudad) return true
+  return (lista || []).some(h => h?.online || ciudadDe(h) === ciudad)
+}

@@ -2,6 +2,7 @@ import UserAvatar from '../components/UserAvatar'
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { CAT_HUMANA } from '../data/categorias'
+import { hayEnLaCiudad } from '../data/ciudades'
 import { Compass, Send, Mic, MicOff, RotateCcw, UserRound, ArrowUpRight, Heart, Home as House, Sparkles } from 'lucide-react'
 import { analyzeNeed, matchHelpers, getPriceContext } from '../utils/matching'
 import { barrioEnTexto } from '../data/barrios'
@@ -1009,12 +1010,14 @@ export default function Home() {
         }
           const alt = alternativas[analysis.categoria] || alternativas.otro
           const queEs = (CAT_HUMANA[analysis.categoria] || 'eso').toLowerCase()
-          sinCoberturaRef.current = { categoria: analysis.categoria, que: CAT_HUMANA[analysis.categoria] || queEs, zona: analysis.zona || null }
+          // La ciudad donde busca: la que nombra o la de su perfil.
+          const ciudadBusca = analysis.ciudad || analysis.ciudadElegida || null
+          sinCoberturaRef.current = { categoria: analysis.categoria, que: CAT_HUMANA[analysis.categoria] || queEs, zona: analysis.zona || null, ciudad: ciudadBusca }
           registrarDemanda?.({ categoria: analysis.categoria, fecha: Date.now() })
           registrar('sin_cobertura', { categoria: analysis.categoria })
           setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
-            lines: [analysis.ciudad && analysis.ciudad !== 'Barcelona'
-              ? `Te he entendido: buscas ${queEs} en ${analysis.ciudad}. Nüra acaba de empezar y todavía no tengo a nadie allí.`
+            lines: [ciudadBusca && ciudadBusca !== 'Barcelona'
+              ? `Te he entendido: buscas ${queEs} en ${ciudadBusca}. Nüra acaba de empezar y todavía no tengo a nadie allí.`
               : `Te he entendido: buscas ${queEs}. Ahora mismo no tengo a nadie así cerca de ti.`],
             chips: [`Buscar ${alt.alt}`, 'Ampliar la zona', 'Avísame cuando tengas a alguien'] }])
           // Aqui NO se pregunta si recordar: solo se ven las opciones del
@@ -1131,7 +1134,18 @@ export default function Home() {
           : ['Ampliar búsqueda', 'Cambiar zona', 'Online también']
       }
       setMessages(prev => [...prev, resultMsg])
-      preguntarSiRecordar()
+      // SU CIUDAD SIN NADIE: eligió Madrid en su perfil y todos los que
+      // encajan trabajan en otra ciudad. Se le dice claro y se le ofrece el
+      // aviso para su ciudad (en vez de preguntar si recordar: taparía esto).
+      const ciudadSuya = !analysis?.ciudad && analysis?.ciudadElegida
+      if (ciudadSuya && analysis?.categoria && analysis.categoria !== 'otro' && !hayEnLaCiudad(matches, ciudadSuya)) {
+        const queEs = CAT_HUMANA[analysis.categoria] || 'eso'
+        sinCoberturaRef.current = { categoria: analysis.categoria, que: queEs, zona: null, ciudad: ciudadSuya }
+        registrar('sin_cobertura', { categoria: analysis.categoria })
+        setMessages(prev => [...prev, { id: Date.now() + 3, from: 'nura',
+          lines: [`En ${ciudadSuya} todavía no tengo a nadie de ${queEs.toLowerCase()}: los que te enseño trabajan en otra ciudad. Nüra acaba de empezar allí.`],
+          chips: ['Avísame cuando tengas a alguien'] }])
+      } else preguntarSiRecordar()
       setLoading(false)
     } catch (err) {
       searchSeqRef.current++  // invalida temporizadores huérfanos de esta búsqueda
@@ -1217,8 +1231,8 @@ export default function Home() {
       haptic('light')
       const pend = sinCoberturaRef.current
       if (!pend) { responde(['Cuéntame otra vez qué necesitas y te digo si puedo avisarte.']); return }
-      if (tieneAlerta(pend.categoria)) {
-        responde([`Ya te aviso si llega alguien de ${pend.que.toLowerCase()}. Lo tienes en tu perfil.`])
+      if (tieneAlerta(pend.categoria, pend.zona ? null : pend.ciudad)) {
+        responde([`Ya te aviso si llega alguien de ${pend.que.toLowerCase()}${!pend.zona && pend.ciudad ? ` en ${pend.ciudad}` : ''}. Lo tienes en tu perfil.`])
         return
       }
       setAlerta(pend)
@@ -1564,7 +1578,7 @@ export default function Home() {
       {showGate && <RegisterGate reason={gateReason} onClose={() => setShowGate(false)} />}
       {valorar && <RatingModal helper={valorar} onClose={() => setValorar(null)} />}
       {alerta && (
-        <AlertaSheet categoria={alerta.categoria} que={alerta.que} zona={alerta.zona}
+        <AlertaSheet categoria={alerta.categoria} que={alerta.que} zona={alerta.zona} ciudad={alerta.ciudad}
           onClose={() => setAlerta(null)}
           onHecho={r => {
             setAlerta(null)
@@ -1575,7 +1589,7 @@ export default function Home() {
               : 'No he podido guardarlo ahora. Vuelve a probar en un momento.')
             else {
               const vias = [r.canales?.movil && 'con una notificación', r.canales?.correo && 'por correo'].filter(Boolean)
-              const que = alerta.que.toLowerCase() + (r.cerca ? ` cerca de ${r.cerca}` : '')
+              const que = alerta.que.toLowerCase() + (r.cerca ? ` cerca de ${r.cerca}` : r.ciudad ? ` en ${r.ciudad}` : '')
               lineas.push(vias.length
                 ? `Hecho. Si llega alguien de ${que}, te aviso ${vias.join(' y ')}.`
                 : `Hecho. Si llega alguien de ${que}, lo verás en tu perfil al abrir Nüra.`)
