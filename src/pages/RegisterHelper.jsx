@@ -1,5 +1,5 @@
 import { revisarContacto } from '../utils/contactoProfesional'
-import { ciudadEnTexto } from '../data/ciudades'
+import { ciudadEnTexto, faltaCiudad, ciudadDeRespuesta } from '../data/ciudades'
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Send, Mic, MicOff } from 'lucide-react'
@@ -30,7 +30,9 @@ async function saveHelperToSupabase(answers, declarado = []) {
       // Es la credencial que gana la confianza — va en la bio publica.
       bio: [answers.formation, answers.differentiator].map(x => (x || '').trim()).filter(Boolean).join('. '),
       // La ciudad, de lo que escribe: antes TODOS quedaban en Barcelona.
-      zone: (answers.zone || '').trim() || null, city: ciudadEnTexto(answers.zone),
+      zone: (answers.zone || '').trim() || null,
+      // Si la zona no la dice («Chamberí»), la que contestó al preguntársela.
+      city: ciudadEnTexto(answers.zone) || answers.ciudad || null,
       price: answers.price || null, category: inferredCategory,
       presential: true, online: (answers.modality || '').toLowerCase().includes('online'),
       // COLUMNAS EN camelCase: la tabla real de Supabase usa `dniVerified`,
@@ -87,6 +89,10 @@ export default function RegisterHelper() {
   const [listening, setListening] = useState(false)
   const [done, setDone]           = useState(false)
   const contactoRechazado = useRef('')
+  // Tras «¿En qué ciudad y zona trabajas?», si contesta solo «Chamberí» se
+  // le pregunta la ciudad: sin ella no le encuentra quien busca en Madrid.
+  const pidiendoCiudad = useRef(false)
+  const ciudadInsistida = useRef(false)
   // Lo que la IA ha ordenado de sus respuestas, esperando su «es correcto».
   const [propuesta, setPropuesta] = useState(null)
   const [topH, setTopH]           = useState(80)
@@ -115,6 +121,29 @@ export default function RegisterHelper() {
     if (!val || typing) return
     setInput('')
     const q = QUESTIONS[qIdx]
+    if (pidiendoCiudad.current) {
+      const ciudad = ciudadDeRespuesta(val)
+      setMessages(prev => [...prev, { id: Date.now(), from: 'user', text: val }])
+      setTyping(true)
+      // Una sola vez se insiste; si tampoco, se sigue sin ciudad (no se atasca).
+      if (!ciudad && !ciudadInsistida.current) {
+        ciudadInsistida.current = true
+        setTimeout(() => {
+          setTyping(false)
+          setMessages(prev => [...prev, { id: Date.now(), from: 'nura', text: 'Dime solo el nombre de la ciudad. Por ejemplo: Madrid.' }])
+        }, 600)
+        return
+      }
+      pidiendoCiudad.current = false
+      const conCiudad = ciudad ? { ...answers, ciudad } : answers
+      setAnswers(conCiudad)
+      setTimeout(() => {
+        setTyping(false)
+        setMessages(prev => [...prev, { id: Date.now(), from: 'nura', text: QUESTIONS[qIdx + 1].text.replace('{name}', conCiudad.name || '') }])
+        setQIdx(qIdx + 1)
+      }, 800)
+      return
+    }
     // El contacto se comprueba: es por donde le llegarán los avisos.
     if (q.id === 'contacto') {
       const r = revisarContacto(val)
@@ -135,6 +164,16 @@ export default function RegisterHelper() {
     const newAnswers = { ...answers, [q.id]: val }
     setAnswers(newAnswers)
     setMessages(prev => [...prev, { id: Date.now(), from: 'user', text: val }])
+    if (q.id === 'zone' && faltaCiudad(val)) {
+      pidiendoCiudad.current = true
+      setTyping(true)
+      setTimeout(() => {
+        setTyping(false)
+        setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+          text: "¿Y en qué ciudad está esa zona? Así te encuentra quien busca allí." }])
+      }, 800)
+      return
+    }
     const next = qIdx + 1
     if (next < QUESTIONS.length) {
       setTyping(true)

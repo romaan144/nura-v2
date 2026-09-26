@@ -10,6 +10,22 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-10-13 — El alta pregunta la ciudad si la zona no la dice
+
+- Si al darse de alta alguien contesta solo «Chamberí» o «el centro», Nüra
+  pregunta: «¿Y en qué ciudad está esa zona?». La respuesta se guarda en su
+  ficha (`city`): una de la lista si la reconoce («madrid» → Madrid) o su
+  propio texto con mayúscula («toledo» → Toledo).
+- Motivo: sin ciudad, la búsqueda no le enseñaba primero a quien busca en
+  su ciudad y los avisos de esa ciudad le trataban como «ciudad desconocida».
+- No se pregunta si la zona ya dice la ciudad («Madrid, Chamberí»), si es un
+  barrio de Barcelona («Gràcia») o si solo trabaja online. Si no sabe o no
+  quiere decirla, se insiste una vez y luego se sigue sin ciudad: el alta no
+  se atasca.
+- Comprobado con `test:matching` (242), un navegador real con el alta
+  completa contra un servidor simulado (qué ciudad llega en cada caso) y el
+  recorrido real. Solo cambia la conversación: la presentación es la misma.
+
 ## 2026-10-12 — «Te aviso si aparece alguien» en cualquier ciudad
 
 - Si alguien busca en una ciudad donde aún no hay nadie de eso, Nüra se lo

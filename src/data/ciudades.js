@@ -65,3 +65,29 @@ export function hayEnLaCiudad(lista, ciudad) {
   if (!ciudad) return true
   return (lista || []).some(h => h?.online || ciudadDe(h) === ciudad)
 }
+
+/**
+ * Al darse de alta: ¿hay que preguntarle la ciudad? Sí si su zona no dice
+ * ninguna que conozcamos («Chamberí», «el centro»). No si solo trabaja
+ * online: entonces la ciudad da igual.
+ */
+export function faltaCiudad(zona) {
+  const t = String(zona || '').trim()
+  if (!t || ciudadEnTexto(t)) return false
+  return !/\b(online|on-line|a distancia|en remoto|remoto|videollamada)\b/i.test(sinTildes(t))
+}
+
+/**
+ * La ciudad que contesta a «¿en qué ciudad está?». Una de la lista si la
+ * reconoce («madrid», «en Valencia»); si no, su propio texto limpio y con
+ * mayúscula («Toledo»). null si no parece un nombre.
+ */
+export function ciudadDeRespuesta(texto) {
+  const t = String(texto || '').trim()
+  const conocida = ciudadEnTexto(t) || ciudadEnTexto('en ' + t)
+  if (conocida) return conocida
+  const limpio = t.replace(/^(en|de|la ciudad de)\s+/i, '').replace(/[.!]+$/, '').trim()
+  if (!/^[\p{L}][\p{L} '’-]{1,39}$/u.test(limpio)) return null
+  if (/^(no se|ni idea|no lo se|ninguna|nada|varias|toda espana|espana)$/.test(sinTildes(limpio))) return null
+  return limpio.charAt(0).toUpperCase() + limpio.slice(1)
+}
