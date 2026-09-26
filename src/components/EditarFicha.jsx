@@ -1,5 +1,5 @@
 import { revisarContacto } from '../utils/contactoProfesional'
-import { ciudadEnTexto } from '../data/ciudades'
+import { ciudadDeZona, ciudadAlGuardar } from '../data/ciudades'
 import { useState, useEffect } from 'react'
 import EditarHorario from './EditarHorario'
 import EditarBloqueos from './EditarBloqueos'
@@ -31,6 +31,10 @@ const CAMPOS = [
   { k: 'specialty',      label: 'Tu especialidad',        ej: 'Logopeda infantil' },
   { k: 'formation',      label: 'Tu formación',           ej: 'Grado en Logopedia, UB', largo: true },
   { k: 'zone',           label: 'Dónde trabajas',         ej: 'Barcelona, Gràcia · Madrid, Chamberí' },
+  // Sin ella, quien busca en su ciudad no la ve primero. Si su zona nombra
+  // una ciudad, se rellena sola al escribirla.
+  { k: 'ciudad',         label: 'Tu ciudad',              ej: 'Madrid',
+    ayuda: 'Así te encuentra primero quien busca en tu ciudad.' },
   { k: 'price',          label: 'Tu tarifa',              ej: '45 € la sesión' },
   { k: 'differentiator', label: 'Qué te diferencia',      ej: 'Trabajo con juego, sin prisas', largo: true },
   { k: 'contacto',       label: 'Dónde te avisamos',      ej: 'Tu móvil o tu correo',
@@ -41,7 +45,9 @@ const MODOS = ['Presencial', 'Online', 'Las dos']
 /** `foco`: 'bloqueos' abre la hoja ya en «Días u horas que no puedes». */
 export default function EditarFicha({ onClose, foco }) {
   const { user, updateUser } = useUser()
-  const hp = user?.helperProfile || {}
+  const perfil = user?.helperProfile || {}
+  // La ciudad: la que guardó, o la que dice su zona (fichas de antes).
+  const hp = { ...perfil, ciudad: perfil.ciudad || ciudadDeZona(perfil.zone) || '' }
   const [v, setV] = useState(() => Object.fromEntries(
     [...CAMPOS.map(c => [c.k, hp[c.k] || '']), ['modality', hp.modality || '']]))
   // El horario: el suyo si ya lo marcó; si no, el típico de su oficio como
@@ -111,6 +117,9 @@ export default function EditarFicha({ onClose, foco }) {
       limpio.contacto = r.valor
     }
     if (!horarioOk) { setFallo('Marca al menos un día y una hora de tu horario.'); return }
+    const suCiudad = ciudadAlGuardar(limpio.ciudad, limpio.zone)
+    if (suCiudad.error) { setFallo(suCiudad.error); return }
+    limpio.ciudad = suCiudad.ciudad || ''
     updateUser({ helperProfile: { ...hp, ...limpio, horario: horarioOk, bloqueos } })
     if (!vinculada) { onClose(); return }
     // ── A LA FICHA PUBLICA (etapa 6b) ──────────────────────────────────
@@ -126,7 +135,7 @@ export default function EditarFicha({ onClose, foco }) {
         specialty: limpio.specialty || '',
         bio: [limpio.formation, limpio.differentiator].filter(Boolean).join('. '),
         zone: limpio.zone || null,
-        ...(ciudadEnTexto(limpio.zone) ? { city: ciudadEnTexto(limpio.zone) } : {}),
+        city: limpio.ciudad || null,
         price: limpio.price || null,
         online: /online|las dos/i.test(limpio.modality || ''),
         contacto: limpio.contacto || null,
@@ -247,7 +256,12 @@ export default function EditarFicha({ onClose, foco }) {
               ? <textarea id={'f-' + c.k} rows={3} value={v[c.k]} placeholder={c.ej}
                   onChange={e => setV({ ...v, [c.k]: e.target.value })} style={campo} />
               : <input id={'f-' + c.k} value={v[c.k]} placeholder={c.ej}
-                  onChange={e => setV({ ...v, [c.k]: e.target.value })} style={campo} />}
+                  onChange={e => {
+                    const nuevo = { ...v, [c.k]: e.target.value }
+                    // Si la zona nombra una ciudad, «Tu ciudad» la sigue.
+                    if (c.k === 'zone' && ciudadDeZona(e.target.value)) nuevo.ciudad = ciudadDeZona(e.target.value)
+                    setV(nuevo)
+                  }} style={campo} />}
             {c.ayuda && <p style={{ margin: 'var(--space-6) 0 0', fontSize: 'var(--text-xs)',
               color: 'var(--ink-tertiary)', lineHeight: 1.45 }}>{c.ayuda}</p>}
           </div>

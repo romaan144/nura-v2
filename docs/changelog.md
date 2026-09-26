@@ -10,6 +10,28 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-10-14 — «Tu ciudad» en «Editar mi ficha» del profesional
+
+- La ficha tiene un campo **«Tu ciudad»**, debajo de «Dónde trabajas».
+  Al abrir muestra la guardada o la que dice su zona. Si la profesional
+  escribe en la zona una que se reconoce («Russafa, Valencia»), el campo
+  la sigue solo.
+- Motivo: antes la ciudad solo se actualizaba si la zona la nombraba. Si
+  alguien se mudaba y escribía solo «Chamberí», su ficha seguía en Barcelona.
+- Al guardar manda lo escrito en «Tu ciudad» (reconocida o con mayúscula:
+  «toledo» → Toledo); si lo deja vacío, la de su zona. Algo que no parece
+  una ciudad («123») no se guarda: se le dice «Escribe solo el nombre de tu
+  ciudad».
+- Arreglo de paso: una ciudad entre comas en la zona cuenta aunque también
+  sea un nombre («Russafa, Valencia», «Centro (Granada)»). Lo usan la
+  búsqueda, el alta y la ficha (`ciudadDeZona`). La frase de quien busca
+  sigue con la regla prudente de antes.
+- La base de datos ya permitía a la profesional cambiar `city` en su fila
+  (migración del 2026-10-01): sin cambios en el servidor.
+- Comprobado con `test:matching` (255), un navegador real con una
+  profesional simulada (qué se guarda en su ficha en tres casos) y el
+  recorrido real. El campo usa el mismo estilo que los demás de la hoja.
+
 ## 2026-10-13 — El alta pregunta la ciudad si la zona no la dice
 
 - Si al darse de alta alguien contesta solo «Chamberí» o «el centro», Nüra

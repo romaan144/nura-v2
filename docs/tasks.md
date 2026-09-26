@@ -14,15 +14,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · «Tu ciudad» en «Editar mi ficha» del profesional
+### Última tarea integrada · «Tu ciudad» en «Editar mi ficha» del profesional
 
-**Responsable:** Claude. **Rama:** `claude/funny-clarke-e6m64r`, desde `main` (f93a3f3).
-**Objetivo:** que la profesional vea y cambie su ciudad al editar la ficha. Hoy, si se muda y escribe solo «Chamberí», su ficha sigue diciendo Barcelona.
-**Archivos previstos:** `src/components/EditarFicha.jsx` (un campo más con el mismo estilo que los demás), `src/data/ciudades.js`, `scripts/test-matching.mjs`, documentación.
-
-### Última tarea integrada · El alta pregunta la ciudad si la zona no la dice
-
-Integrada el 2026-09-26 (ver `docs/changelog.md`, 2026-10-13). Tocó `src/pages/RegisterHelper.jsx` (solo la conversación y los datos del alta; misma presentación), `src/data/ciudades.js` y `scripts/test-matching.mjs`. Esos archivos quedan libres.
+Integrada el 2026-09-26 (ver `docs/changelog.md`, 2026-10-14). Tocó `src/components/EditarFicha.jsx` (un campo más con el mismo estilo que los demás), `src/data/ciudades.js`, `src/pages/RegisterHelper.jsx` y `src/utils/supabase.js` (solo para leer la ciudad de la zona con `ciudadDeZona`) y `scripts/test-matching.mjs`. Esos archivos quedan libres.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
