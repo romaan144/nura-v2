@@ -14,6 +14,16 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
+### Tarea activa · Elegir otra hora cuando cancelan una cita
+
+**Responsable:** Claude. **Rama:** `claude/funny-clarke-e6m64r`. **Base:** `main` en `df9ae72`.
+
+**Objetivo:** cuando el profesional cancela una cita o contesta que esa hora no le va, quien la pidió tiene en «Mis servicios» un botón «Elegir otra hora» que abre la ficha del profesional con su agenda ya desplegada. Al pedir la nueva hora, la tarjeta antigua indica que ya se ha pedido otra.
+
+**Archivos previstos** (solo lógica y el botón, con clases y tokens del diseño integral): `src/pages/MyServices.jsx`, `src/pages/HelperProfile.jsx` (abrir la agenda al llegar desde ese botón), `src/context/UserContext.jsx` (enlazar la cita nueva con la cancelada), `docs/changelog.md`.
+
+Si Codex necesita alguno de estos archivos mientras la tarea siga abierta, coordinar antes; al integrarla se quita este apartado.
+
 ### Última tarea integrada · Aviso al bloquear un día con citas confirmadas
 
 Integrada el 2026-09-26 (ver `docs/changelog.md`, 2026-10-06). Tocó, sin cambiar su presentación: `EditarBloqueos.jsx`, `EditarFicha.jsx` (paso «Ya tienes una cita en lo que bloqueas»), `MyServices.jsx` (texto de cita cancelada por el profesional) y `Responder.jsx` (texto «Cancelaste…»). Esos archivos quedan libres.
