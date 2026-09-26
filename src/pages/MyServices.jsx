@@ -262,6 +262,10 @@ export default function MyServices() {
                   ) : (
                     <div className={styles.postActions}>
                       <button className={styles.actionBtnSecondary}
+                        onClick={e => { e.stopPropagation(); navigate(`/helper/${s.helperId}`, { state: { otraHora: s.id, cambiar: true } }) }}>
+                        <Calendar size={11} /> Cambiar la hora
+                      </button>
+                      <button className={styles.actionBtnSecondary}
                         onClick={e => { e.stopPropagation(); setACancelar(s.id) }}>
                         Cancelar la cita
                       </button>
