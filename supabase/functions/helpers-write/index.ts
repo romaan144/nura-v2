@@ -270,7 +270,7 @@ const CIUDAD_AMBIGUA = new Set(['granada', 'santander', 'leon', 'palma', 'valenc
 const ALIAS_CIUDADES = CIUDADES.flatMap(([nombre, ...alias]) => alias.map(a => ({ a, nombre }))).sort((x, y) => y.a.length - x.a.length)
 const escReg = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
-/** La ciudad que nombra un texto (la zona de un profesional), o null. Un barrio de Barcelona cuenta. */
+/** La ciudad que nombra la zona de un profesional, o null. Un barrio de Barcelona cuenta. */
 function ciudadDeTexto(texto: string): string | null {
   if (!texto) return null
   const t = ' ' + sinTildes(texto).replace(/[^a-z0-9' -]/g, ' ').replace(/\s+/g, ' ') + ' '
@@ -278,6 +278,13 @@ function ciudadDeTexto(texto: string): string | null {
     if (!new RegExp(`[^a-z0-9']${escReg(a)}[^a-z0-9']`).test(t)) continue
     if (!CIUDAD_AMBIGUA.has(a) || t.trim() === a) return nombre
     if (new RegExp(`(^| )(en|de|por|desde|cerca de|zona|ciudad de|provincia de) ${escReg(a)}[^a-z0-9']`).test(t)) return nombre
+  }
+  // Un trozo entre comas que sea solo una ciudad: en «Russafa, Valencia» es
+  // la ciudad aunque «Valencia» pueda ser un nombre (como ciudadDeZona en la app).
+  for (const trozo of texto.split(/[,·(/)]/)) {
+    const x = sinTildes(trozo).replace(/[^a-z0-9' -]/g, ' ').replace(/\s+/g, ' ').trim()
+    const c = x && ALIAS_CIUDADES.find(y => y.a === x)
+    if (c) return c.nombre
   }
   return barrioDeTexto(texto) ? 'Barcelona' : null
 }
