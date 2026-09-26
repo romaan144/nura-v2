@@ -682,6 +682,31 @@ for (const t of NEGATIVE) {
   for (const [nombre, ok] of casos) { if (!ok) failed++; console.log(`${ok ? '✓' : '✗'} cambios de hora: ${nombre}`) }
 }
 
+// ── «Tu ciudad»: la elige la persona y ordena sus búsquedas (2026-10-11) ──
+{
+  const M = await import(join(stage, 'utils/matching.js'))
+  const madrid = { id: 1, city: 'Madrid' }, bcn = { id: 2, zone: 'Gràcia' }, online = { id: 3, city: 'Barcelona', online: true }, sinCiudad = { id: 4 }
+  const antes = globalThis.localStorage
+  const guardado = {}
+  globalThis.localStorage = { getItem: k => guardado[k] ?? null, setItem: (k, v) => { guardado[k] = String(v) } }
+  const sinElegir = (await M.analyzeNeed('necesito un fontanero')).ciudadElegida
+  guardado.nura_user = JSON.stringify({ name: 'Marta', ciudad: 'Madrid' })
+  const elegida = (await M.analyzeNeed('necesito un fontanero')).ciudadElegida
+  const nombrada = await M.analyzeNeed('necesito un fontanero en Valencia')
+  guardado.nura_user = 'esto no es json'
+  const rota = (await M.analyzeNeed('necesito un fontanero')).ciudadElegida
+  globalThis.localStorage = antes
+  const casos = [
+    ['sin ciudad elegida, no se ordena por ciudad', sinElegir === null && M.puntosCiudad(bcn, null) === 0],
+    ['la ciudad elegida en el perfil llega a la búsqueda', elegida === 'Madrid'],
+    ['si la frase nombra otra ciudad, manda la frase', nombrada.ciudad === 'Valencia' && nombrada.ciudadElegida === null],
+    ['los de su ciudad y los online suben; los de otra, bajan', M.puntosCiudad(madrid, 'Madrid') > 0 && M.puntosCiudad(online, 'Madrid') > 0 && M.puntosCiudad(bcn, 'Madrid') < 0],
+    ['quien no dice su ciudad no sube ni baja', M.puntosCiudad(sinCiudad, 'Madrid') === 0],
+    ['un perfil guardado roto no rompe la búsqueda', rota === null],
+  ]
+  for (const [nombre, ok] of casos) { if (!ok) failed++; console.log(`${ok ? '✓' : '✗'} tu ciudad: ${nombre}`) }
+}
+
 // El total se contaba sumando los tres catalogos, asi que se quedo en 32
 // mientras las pruebas reales llegaban a 51: cada bloque añadido despues
 // (obra, agenda, silencios, interceptor, aviso) pasaba sin figurar. Un

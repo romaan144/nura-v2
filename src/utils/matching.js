@@ -51,6 +51,22 @@ import { searchHelpers } from './supabase'
 import { DEMO_MODE } from '../config'
 import { barrioEnTexto, barrioDeZona, kmEntre } from '../data/barrios'
 import { ciudadEnTexto, ciudadDe } from '../data/ciudades'
+
+// ── SU CIUDAD ─────────────────────────────────────────────────────────────
+// La que la persona ELIGE en su perfil («Tu ciudad»). No se deduce de lo que
+// busca: la memoria es con consentimiento. Solo ordena: si su búsqueda no
+// nombra ciudad, salen primero quienes trabajan allí o atienden online, y
+// detrás el resto. No esconde a nadie.
+function ciudadElegida() {
+  try { return JSON.parse(globalThis.localStorage?.getItem('nura_user') || 'null')?.ciudad || null } catch { return null }
+}
+
+/** Puntos por ciudad elegida: sube a los de su ciudad y a los online. */
+export function puntosCiudad(h, ciudad) {
+  if (!ciudad) return 0
+  if (h?.online || ciudadDe(h) === ciudad) return 40
+  return ciudadDe(h) ? -40 : 0
+}
 import { pideDeclarado, puntosDeclarados, declaradosDe, pideAlgo } from './pideDeclarado'
 
 // ── SEMANTIC EXPANSION MAP ────────────────────────────────────────────────
@@ -640,6 +656,8 @@ export function analyzeNeed(userTextOriginal) {
     // La ciudad que nombra («fontanero en Madrid»), o null. Si la nombra,
     // solo entra quien trabaja allí o atiende online.
     ciudad: ciudadEnTexto(userText),
+    // La que eligió en su perfil. Solo cuenta si la frase no nombra otra.
+    ciudadElegida: ciudadEnTexto(userText) ? null : ciudadElegida(),
     // Lo que pide que un profesional puede haber declarado («que hable
     // catalán», «con coche», «por las tardes»). Solo ordena esta busqueda.
     pide: pideDeclarado(userText, propias),
@@ -808,6 +826,8 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
       else if (km <= 5) score += 3
       else if (!h.online) score -= 8
     }
+    // SU CIUDAD (la elegida en el perfil), si la frase no nombra ninguna.
+    score += puntosCiudad(h, !analysis.ciudad && analysis.ciudadElegida)
     const os = obraSignal(h.id, analysis)
     score += os.score
     return { ...h, score, __obra: os.best, distance: km, distanciaDesde: km != null ? analysis.zona.nombre : null }
