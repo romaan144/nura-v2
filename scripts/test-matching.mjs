@@ -618,6 +618,28 @@ for (const t of NEGATIVE) {
   for (const [n, ok] of casos) { if (!ok) failed++; console.log(`${ok ? '✓' : '✗'} bloqueos: ${n}`) }
 }
 
+// ── Bloquear un día con citas confirmadas (2026-10-06) ──
+{
+  const H = await import(join(stage, 'data/horarios.js'))
+  const ahora = new Date(2026, 9, 3, 10, 0)
+  const av = (id, fecha, hora, estado = 'aceptada') => ({ id, token: 't' + id, cita_fecha: fecha, cita_hora: hora, cita_estado: estado })
+  const avisos = [
+    av(1, '2026-10-05', '17:00'), av(2, '2026-10-05', '10:00'), av(3, '2026-10-06', '17:00'),
+    av(4, '2026-10-06', '18:00'), av(5, '2026-10-05', '12:00', 'propuesta'), av(6, '2026-10-05', '9:00', 'cancelada'),
+    av(7, '2026-10-01', '17:00'), { id: 8, mensaje: 'sin cita' },
+  ]
+  const bloqueos = [{ fecha: '2026-10-05' }, { fecha: '2026-10-06', horas: ['18:00'] }, { fecha: '2026-10-01' }]
+  const af = H.citasAfectadas(bloqueos, avisos, ahora)
+  const casos = [
+    ['día entero bloqueado: salen sus citas confirmadas, por hora', af.filter(c => c.fecha === '2026-10-05').map(c => c.id).join() === '2,1'],
+    ['hora bloqueada: solo la cita de esa hora', af.filter(c => c.fecha === '2026-10-06').map(c => c.id).join() === '4'],
+    ['las propuestas, canceladas y pasadas no cuentan', !af.some(c => [5, 6, 7, 8].includes(c.id))],
+    ['sin bloqueos, ninguna', H.citasAfectadas([], avisos, ahora).length === 0],
+    ['trae el id para poder cancelarla', af.every(c => Number.isInteger(c.id))],
+  ]
+  for (const [n, ok] of casos) { if (!ok) failed++; console.log(`${ok ? '✓' : '✗'} citas y bloqueos: ${n}`) }
+}
+
 // El total se contaba sumando los tres catalogos, asi que se quedo en 32
 // mientras las pruebas reales llegaban a 51: cada bloque añadido despues
 // (obra, agenda, silencios, interceptor, aviso) pasaba sin figurar. Un

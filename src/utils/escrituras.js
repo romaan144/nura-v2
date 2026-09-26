@@ -305,6 +305,21 @@ export async function borrarCuenta(token) {
  * sesion. Devuelve null si no se puede saber: entonces no se enseñan cifras.
  */
 /** La bandeja de la profesional: lo que le han escrito (solo de SU ficha). */
+/**
+ * EL PROFESIONAL CANCELA CITAS SUYAS (p. ej., al bloquear ese día). Con su
+ * sesión: el servidor solo toca avisos de SU ficha. `nota` le llega a quien
+ * la pidió. Devuelve los ids cancelados, o null si no se pudo.
+ */
+export async function anularCitas(sesion, ids, nota) {
+  if (!porLaFuncion() || !sesion || !ids?.length) return null
+  try {
+    const r = await llamarFuncion({ op: 'anular-cita', sesion, ids, ...(nota?.trim() ? { nota: nota.trim() } : {}) })
+    if (!r?.ok) return null
+    ocupadasCache.clear()
+    return r.canceladas || []
+  } catch { return null }
+}
+
 export async function misAvisos(sesion) {
   if (!porLaFuncion() || !sesion) return null
   try {

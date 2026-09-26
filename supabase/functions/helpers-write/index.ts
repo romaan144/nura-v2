@@ -692,7 +692,7 @@ Deno.serve(async (req: Request) => {
     if (!token) return json({ error: 'falta token' }, 400, cors)
     if (!FORMATO_LLAVE.test(token)) return json({ error: 'no existe' }, 404, cors)
     const lec = await fetch(
-      `${SUPABASE_URL}/rest/v1/avisos?token=eq.${encodeURIComponent(token)}&select=id,helper_id,helper_nombre,mensaje,respuesta,fecha,cita_fecha,cita_hora,cita_estado&limit=1`,
+      `${SUPABASE_URL}/rest/v1/avisos?token=eq.${encodeURIComponent(token)}&select=id,helper_id,helper_nombre,mensaje,respuesta,fecha,cita_fecha,cita_hora,cita_estado,cita_cancela&limit=1`,
       { headers: rest },
     )
     if (!lec.ok) return json({ error: 'lectura rechazada', estado: lec.status }, 502, cors)
@@ -701,7 +701,7 @@ Deno.serve(async (req: Request) => {
     return json({ ok: true, aviso: {
       id: av.id, nombre: av.helper_nombre, mensaje: av.mensaje,
       respuesta: av.respuesta ?? null, fecha: av.fecha,
-      cita: av.cita_fecha ? { fecha: av.cita_fecha, hora: av.cita_hora, estado: av.cita_estado } : null,
+      cita: av.cita_fecha ? { fecha: av.cita_fecha, hora: av.cita_hora, estado: av.cita_estado, cancela: av.cita_cancela ?? null } : null,
     } }, 200, cors)
   }
 
@@ -849,7 +849,7 @@ Deno.serve(async (req: Request) => {
     const resumenes = await Promise.all(llaves.map(async l => hex(await sha256(l))))
     const r = await fetch(
       `${SUPABASE_URL}/rest/v1/avisos?lectura_hash=in.(${resumenes.join(',')})&cita_fecha=eq.${x.cita_fecha}&cita_hora=eq.${encodeURIComponent(x.cita_hora)}&cita_estado=in.(propuesta,aceptada)`,
-      { method: 'PATCH', headers: { ...rest, Prefer: 'return=representation' }, body: JSON.stringify({ cita_estado: 'cancelada' }) },
+      { method: 'PATCH', headers: { ...rest, Prefer: 'return=representation' }, body: JSON.stringify({ cita_estado: 'cancelada', cita_cancela: 'cliente' }) },
     )
     if (!r.ok) return json({ error: 'no guardado', estado: r.status }, 502, cors)
     const filas: { helper_id: string }[] = await r.json()
@@ -871,15 +871,15 @@ Deno.serve(async (req: Request) => {
     if (!llaves.length) return json({ ok: true, respuestas: [] }, 200, cors)
     const resumenes = await Promise.all(llaves.map(async l => hex(await sha256(l))))
     const lec = await fetch(
-      `${SUPABASE_URL}/rest/v1/avisos?lectura_hash=in.(${resumenes.join(',')})&respuesta=not.is.null&select=lectura_hash,respuesta,respondido_en,cita_fecha,cita_hora,cita_estado`,
+      `${SUPABASE_URL}/rest/v1/avisos?lectura_hash=in.(${resumenes.join(',')})&respuesta=not.is.null&select=lectura_hash,respuesta,respondido_en,cita_fecha,cita_hora,cita_estado,cita_cancela,cita_nota`,
       { headers: rest },
     )
     if (!lec.ok) return json({ error: 'lectura rechazada', estado: lec.status }, 502, cors)
     const deLlave = new Map(resumenes.map((r, i) => [r, llaves[i]]))
-    const filas: { lectura_hash: string, respuesta: string, respondido_en: string, cita_fecha?: string, cita_hora?: string, cita_estado?: string }[] = await lec.json()
+    const filas: { lectura_hash: string, respuesta: string, respondido_en: string, cita_fecha?: string, cita_hora?: string, cita_estado?: string, cita_cancela?: string | null, cita_nota?: string | null }[] = await lec.json()
     return json({ ok: true, respuestas: filas.map(f => ({
       llave: deLlave.get(f.lectura_hash), respuesta: f.respuesta, respondido_en: f.respondido_en,
-      cita: f.cita_fecha ? { fecha: f.cita_fecha, hora: f.cita_hora, estado: f.cita_estado } : null,
+      cita: f.cita_fecha ? { fecha: f.cita_fecha, hora: f.cita_hora, estado: f.cita_estado, cancela: f.cita_cancela ?? null, nota: f.cita_nota ?? null } : null,
     })) }, 200, cors)
   }
 
@@ -1053,11 +1053,43 @@ Deno.serve(async (req: Request) => {
     const [ficha] = await f.json()
     if (!ficha) return json({ error: 'sin ficha' }, 404, cors)
     const r = await fetch(
-      `${SUPABASE_URL}/rest/v1/avisos?helper_id=eq.${encodeURIComponent(String(ficha.id))}&lectura_hash=not.is.null&select=id,mensaje,respuesta,fecha,respondido_en,token,cita_fecha,cita_hora,cita_estado&order=id.desc&limit=50`,
+      `${SUPABASE_URL}/rest/v1/avisos?helper_id=eq.${encodeURIComponent(String(ficha.id))}&lectura_hash=not.is.null&select=id,mensaje,respuesta,fecha,respondido_en,token,cita_fecha,cita_hora,cita_estado,cita_cancela&order=id.desc&limit=50`,
       { headers: rest },
     )
     if (!r.ok) return json({ error: 'lectura rechazada', estado: r.status }, 502, cors)
     return json({ ok: true, avisos: await r.json() }, 200, cors)
+  }
+
+  // ── EL PROFESIONAL CANCELA CITAS SUYAS ──
+  // Por ejemplo, al bloquear un día en el que ya había aceptado alguna. Solo
+  // con sesión y solo avisos de SU ficha (owner_id): los ids que mande el
+  // móvil que no sean suyos no cambian nada. La hora vuelve a quedar libre y
+  // quien la pidió lo ve (con la nota, si la escribe) al preguntar por sus
+  // respuestas.
+  if (op === 'anular-cita') {
+    const token = String(cuerpo.sesion || '')
+    if (!token) return json({ error: 'falta la sesion' }, 401, cors)
+    const ids = Array.isArray(cuerpo.ids)
+      ? [...new Set(cuerpo.ids.map(Number).filter(n => Number.isInteger(n) && n > 0))].slice(0, 50)
+      : []
+    if (!ids.length) return json({ error: 'faltan las citas' }, 400, cors)
+    const nota = String(cuerpo.nota ?? '').trim().slice(0, 300) || null
+    const u = await fetch(`${SUPABASE_URL}/auth/v1/user`, { headers: { apikey: SERVICE_KEY!, Authorization: `Bearer ${token}` } })
+    if (!u.ok) return json({ error: 'sesion no valida' }, 401, cors)
+    const usuario = await u.json()
+    if (!usuario?.id) return json({ error: 'sesion sin usuario' }, 401, cors)
+    const f = await fetch(`${SUPABASE_URL}/rest/v1/helpers?owner_id=eq.${usuario.id}&select=id&limit=1`, { headers: rest })
+    if (!f.ok) return json({ error: 'lectura rechazada', estado: f.status }, 502, cors)
+    const [ficha] = await f.json()
+    if (!ficha) return json({ error: 'sin ficha' }, 404, cors)
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/avisos?helper_id=eq.${encodeURIComponent(String(ficha.id))}&id=in.(${ids.join(',')})&cita_estado=in.(propuesta,aceptada)`,
+      { method: 'PATCH', headers: { ...rest, Prefer: 'return=representation' },
+        body: JSON.stringify({ cita_estado: 'cancelada', cita_cancela: 'profesional', cita_nota: nota }) },
+    )
+    if (!r.ok) return json({ error: 'no guardado', estado: r.status }, 502, cors)
+    const filas: { id: number }[] = await r.json()
+    return json({ ok: true, canceladas: filas.map(x => x.id) }, 200, cors)
   }
 
   // ── «AVISAME CUANDO ME ESCRIBAN» (la profesional, en su movil) ──

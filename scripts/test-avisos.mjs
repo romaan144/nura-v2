@@ -654,6 +654,29 @@ console.log('\n── La cita: se acepta con un botón y ocupa la hora para todo
   const f5 = db.avisos.filter(x => x.helper_id === '900').at(-1)
   r = await llamar(funcion, { op: 'responder-aviso', token: f5.token, respuesta: 'Sí', cita: 'aceptada' })
   ok(r.estado === 200 && f5.cita_estado === 'aceptada', 'otra persona puede quedarse ahora esa hora')
+  r = await llamar(funcion, { op: 'respuestas', llaves: [c1.datos.lectura] })
+  ok(r.datos.respuestas[0]?.cita?.estado === 'cancelada' && r.datos.respuestas[0]?.cita?.cancela === 'cliente', 'queda anotado que la canceló quien la pidió')
+
+  console.log('\n── El profesional cancela una cita suya (al bloquear ese día) ──')
+  const suya = db.helpers.find(h => h.owner_id === 'u1')
+  const c6 = await llamar(funcion, { op: 'encolar-aviso', helperId: suya.id, mensaje: 'Cita con la profesional con cuenta', cita: { fecha: d, hora: '10:00' } })
+  const f6 = db.avisos.at(-1)
+  await llamar(funcion, { op: 'responder-aviso', token: f6.token, respuesta: 'Te espero', cita: 'aceptada' })
+  r = await llamar(funcion, { op: 'anular-cita', ids: [f6.id] })
+  ok(r.estado === 401 && f6.cita_estado === 'aceptada', 'sin sesión no se cancela nada')
+  r = await llamar(funcion, { op: 'anular-cita', sesion: 'sesion-confirmada', ids: [f5.id] })
+  ok(r.estado === 200 && !r.datos.canceladas.length && f5.cita_estado === 'aceptada', 'la cita de OTRA profesional no se toca aunque el móvil mande su id')
+  r = await llamar(funcion, { op: 'anular-cita', sesion: 'sesion-confirmada', ids: [f6.id], nota: '  Me ha surgido un imprevisto, ¿te va el jueves?  ' })
+  ok(r.estado === 200 && r.datos.canceladas[0] === f6.id && f6.cita_estado === 'cancelada' && f6.cita_cancela === 'profesional', 'la profesional cancela la suya con su sesión')
+  r = await llamar(funcion, { op: 'respuestas', llaves: [c6.datos.lectura] })
+  const cc = r.datos.respuestas[0]?.cita
+  ok(cc?.estado === 'cancelada' && cc?.cancela === 'profesional' && cc?.nota === 'Me ha surgido un imprevisto, ¿te va el jueves?', 'quien la pidió ve que la canceló la profesional, con su nota')
+  r = await llamar(funcion, { op: 'ocupadas', helperId: suya.id })
+  ok(!r.datos.ocupadas.some(o => o.fecha === d && o.hora === '10:00'), 'y la hora vuelve a estar libre')
+  r = await llamar(funcion, { op: 'anular-cita', sesion: 'sesion-confirmada', ids: [f6.id] })
+  ok(r.estado === 200 && !r.datos.canceladas.length, 'cancelarla otra vez no cambia nada')
+  r = await llamar(funcion, { op: 'anular-cita', sesion: 'sesion-confirmada', ids: ['x'] })
+  ok(r.estado === 400, 'sin ids válidos → 400')
   void c5
 }
 

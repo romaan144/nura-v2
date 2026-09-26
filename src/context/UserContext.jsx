@@ -68,22 +68,26 @@ export function UserProvider({ children }) {
 
   // LA CITA, CONTESTADA. Cuando llegan las respuestas de los profesionales
   // (utils/escrituras.js avisa con «nura:respuestas») y una trae la cita
-  // aceptada o rechazada, se marca aquí: «Mis servicios» y la agenda lo ven.
+  // aceptada, rechazada o cancelada por el profesional, se marca aquí:
+  // «Mis servicios», el recordatorio y la agenda lo ven.
   useEffect(() => {
     const aplicar = e => {
-      const hechas = (e.detail || []).filter(r => r.cita && r.helperId && (r.cita.estado === 'aceptada' || r.cita.estado === 'rechazada'))
+      const porPro = r => r.cita.estado === 'cancelada' && r.cita.cancela === 'profesional'
+      const hechas = (e.detail || []).filter(r => r.cita && r.helperId && (r.cita.estado === 'aceptada' || r.cita.estado === 'rechazada' || porPro(r)))
       if (!hechas.length) return
       const de = (hid, f, h) => hechas.find(r => String(r.helperId) === String(hid) && r.cita.fecha === f && r.cita.hora === h)
       setServices(prev => prev.map(s => {
         const r = de(s.helperId, s.date, s.time)
         if (!r || s.status === 'completed' || s.status === 'cancelled') return s
+        // La canceló el profesional: se guarda quién y su nota, para decirlo.
+        if (porPro(r)) return { ...s, status: 'cancelled', canceladaPor: 'profesional', notaCancelacion: r.cita.nota || null }
         const status = r.cita.estado === 'aceptada' ? 'confirmed' : 'rejected'
         return s.status === status ? s : { ...s, status }
       }))
       setCitas(prev => {
         const nuevas = prev.map(c => {
           const r = c.estado === 'cancelada' ? null : de(c.helperId, c.fecha, c.hora)
-          const estado = r ? (r.cita.estado === 'aceptada' ? 'confirmada' : 'rechazada') : c.estado
+          const estado = r ? (porPro(r) ? 'cancelada' : r.cita.estado === 'aceptada' ? 'confirmada' : 'rechazada') : c.estado
           return estado === c.estado ? c : { ...c, estado }
         })
         save('nura_citas', nuevas)
