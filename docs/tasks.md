@@ -14,6 +14,16 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
+### Tarea activa · El profesional se entera cuando le cancelan una cita
+
+**Responsable:** Claude. **Rama:** `claude/funny-clarke-e6m64r`. **Base:** `main` en `2216403`.
+
+**Objetivo:** cuando quien pidió una cita la cancela, el profesional lo ve al momento: el número de «Chats» lo cuenta y, arriba en «Mi agenda», un aviso dice «Han cancelado la cita del jueves a las 17:00 · Esa hora vuelve a estar libre», con «Entendido» para darlo por visto.
+
+**Archivos previstos:** `src/data/horarios.js` y `src/utils/sinContestar.js` (lógica y recuento; la barra, el menú lateral y el inicio no se tocan: ya leen ese recuento), `src/components/AgendaProfesional.jsx` (el aviso, con los tokens del diseño integral), `scripts/test-matching.mjs`, `docs/changelog.md`.
+
+Si Codex necesita alguno de estos archivos mientras la tarea siga abierta, coordinar antes; al integrarla se quita este apartado.
+
 ### Última tarea integrada · Elegir otra hora cuando cancelan una cita
 
 Integrada el 2026-09-26 (ver `docs/changelog.md`, 2026-10-07). Tocó, sin cambiar su presentación: `MyServices.jsx` (botón «Elegir otra hora» y nota «Ya has pedido otra hora»), `HelperProfile.jsx` (abre la agenda al llegar desde ese botón) y `UserContext.jsx`. Esos archivos quedan libres.
