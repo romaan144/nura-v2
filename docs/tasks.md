@@ -14,6 +14,13 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
+### Tarea activa · La búsqueda entiende el OFICIO, no solo la categoría
+
+**Responsable:** Claude. **Rama:** `claude/funny-clarke-e6m64r`, desde `main` (5790adc).
+**Motivo:** prioridad del fundador. «reparar altavoces 2.1» devolvió un fontanero: la búsqueda elige una categoría amplia («técnico» mezcla fontaneros, cerrajeros, fotógrafos, SEO e informáticos) y dentro gana el mejor valorado.
+**Objetivo:** entender qué oficio concreto hace falta (electricista, informático, reparación de electrónica…), buscarlo por especialidad en toda la base (no por categoría) y, si no hay nadie de ese oficio, decirlo y ofrecer lo más parecido. Medido con una batería amplia de frases reales.
+**Archivos previstos:** nuevo `src/data/oficios.js`, `src/utils/matching.js`, `src/utils/supabase.js`, `src/pages/Home.jsx` (solo el texto de los mensajes de resultado; sin cambiar la presentación), nuevos `scripts/test-busqueda.mjs` y `scripts/fixtures/profesionales.json`, `package.json` (un guion), documentación.
+
 ### Última tarea integrada · El servidor lee la ciudad entre comas de la zona
 
 Integrada el 2026-09-26 (ver `docs/changelog.md`, 2026-10-15). Tocó `supabase/functions/helpers-write/index.ts` (v24) y `scripts/test-avisos.mjs`. Esos archivos quedan libres.
