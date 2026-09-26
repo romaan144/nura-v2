@@ -163,12 +163,18 @@ export default function Chats() {
   return (
     <div className={styles.page}>
       <PageHeader />
+      <div className="nura-page-intro">
+        <span className="nura-eyebrow">Cada conexión empieza aquí</span>
+        <h1>Tus conversaciones</h1>
+        <p>Un espacio para hablar, preguntar y dar el siguiente paso.</p>
+      </div>
 
       <div className={styles.searchWrap}>
         <div className={styles.searchBox}>
           <Search size={14} color="rgba(33,29,51,0.35)" />
           <input
             className={styles.searchInput}
+            aria-label="Buscar conversaciones"
             placeholder="Buscar conversaciones..."
             value={search}
             onChange={e => setSearch(e.target.value)}

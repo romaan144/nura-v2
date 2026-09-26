@@ -18,4 +18,6 @@ export default defineConfig([
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
   },
+  // Las rutas de Vercel se ejecutan en Node, no en el navegador.
+  { files: ['api/**/*.js'], languageOptions: { globals: globals.node } },
 ])

@@ -208,7 +208,7 @@ export default function RegisterHelper() {
         </button>
 
         <div className={styles.logoBubble}>
-          <img src="/logo-text.png" alt="Nüra" className={styles.headerLogo} />
+          <span className="nura-wordmark">Nüra</span>
           <span style={{
             width: 1, height: 14, background: 'rgba(33,29,51,0.12)',
             display: 'inline-block', margin: '0 var(--space-8)', flexShrink: 0

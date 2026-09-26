@@ -1,0 +1,106 @@
+/* Nüra · sistema visual compartido, septiembre de 2026.
+   Se aplica a las pantallas reales. Sin cambios en datos, permisos o rutas. */
+:root {
+  --font-ui: 'Inter Variable', 'Inter', -apple-system, sans-serif;
+  --font-voice: 'Plus Jakarta Sans Variable', 'Inter Variable', sans-serif;
+  --paper: #F5F5F9;
+  --paper-rgb: 245,245,249;
+  --paper-veil: rgba(var(--paper-rgb), .94);
+  --paper-veil-soft: rgba(var(--paper-rgb), .88);
+  --surface-card: #fff;
+  --ink-border: rgba(33,29,51,.09);
+  --surface-subtle: rgba(33,29,51,.035);
+  --rule: #E5E2EC;
+  --radius-md: 20px;
+  --radius-card: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --text-display: clamp(30px, 5vw, 46px);
+  --text-page-title: 28px;
+  --text-input: 16px;
+  --space-40: 40px;
+  --space-48: 48px;
+  --space-64: 64px;
+  --motion-curve: cubic-bezier(.22,1,.36,1);
+  --motion-fast: 180ms;
+  --motion-enter: 360ms;
+  --shadow-xs: 0 2px 6px rgba(33,29,51,.035);
+  --shadow-sm: 0 2px 4px rgba(33,29,51,.025), 0 8px 24px -16px rgba(33,29,51,.16);
+  --shadow-md: 0 8px 32px -12px rgba(33,29,51,.16);
+  --alzado-reposo: var(--shadow-sm);
+  --alzado-pulsado: 0 1px 3px rgba(33,29,51,.05);
+  --alzado-flota: 0 2px 5px rgba(33,29,51,.035), 0 14px 40px -16px rgba(76,44,121,.2);
+  --sidebar-width: 216px;
+}
+body, button, input, textarea, select { font-family: var(--font-ui); }
+body { background: var(--paper); font-size: var(--text-base); }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { transition: background var(--motion-fast) var(--motion-curve), box-shadow var(--motion-fast) var(--motion-curve), transform var(--motion-fast) var(--motion-curve); }
+button:focus-visible, a:focus-visible, [role='button']:focus-visible {
+  outline: 3px solid var(--purple-ink); outline-offset: 4px;
+}
+input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 2px solid var(--purple); outline-offset: 3px;
+}
+input, textarea { caret-color: var(--purple); }
+input::placeholder, textarea::placeholder { color: var(--ink-tertiary); opacity: .85; }
+::selection { background: var(--purple-20); color: var(--ink); }
+.nura-button { box-shadow: var(--shadow-xs); }
+.nura-button:hover:not(:disabled) { filter: brightness(.98); box-shadow: var(--shadow-sm); }
+.nura-button:active:not(:disabled) { transform: translateY(1px); }
+.nura-section-title { font-family: var(--font-voice); }
+.desktopMain { height: 100dvh; }
+
+/* Los elementos fijos quedan dentro de su área de aplicación. La barra
+   lateral no cubre el contenido ni desplaza la navegación del móvil. */
+@media (min-width: 768px) {
+  body { display: block; background: var(--paper); }
+  #root { display: block; max-width: none; box-shadow: none; }
+  .desktopMain {
+    position: fixed; inset: 0 0 0 var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width)); height: 100dvh;
+    transform: translateZ(0); isolation: isolate;
+  }
+  .desktopMain[data-layout='focus'] { left: 0; width: 100%; }
+  .desktopMain[data-layout='app'] { --nav-h: 0px; --reserva-nav: var(--space-32); }
+  .desktopMain input, .desktopMain textarea { font-size: var(--text-input); }
+}
+@media (max-width: 767px) {
+  input:not([type='checkbox']):not([type='radio']), textarea, select { font-size: max(16px, 1em); }
+}
+
+/* El movimiento es una respuesta breve; la preferencia del dispositivo
+   apaga tanto las entradas como las animaciones antiguas inline. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important; animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important; transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Nüra · dirección visual compartida, septiembre 2026. */
+
+.nura-page-intro { max-width: 960px; margin: 0 auto; padding: 16px 20px 24px; }
+.nura-page-intro h1 { font-family: var(--font-voice); font-size: var(--text-page-title); line-height: 1.2; letter-spacing: -.9px; margin: 0 0 10px; color: var(--ink); }
+.nura-page-intro p { font-size: var(--text-sm); line-height: 1.6; color: var(--ink-secondary); margin: 0; }
+.nura-eyebrow { display: block; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--purple-ink); margin-bottom: 12px; }
+.nura-feed > div { max-width: 760px; margin-left: auto !important; margin-right: auto !important; }
+.nura-feed .aurora { background: none; }
+.nura-feed .aurora h1 { font-size: var(--text-page-title) !important; }
+.nura-feed .hilo { display: none; }
+.nura-feed .aurora p { margin-top: 10px !important; }
+.nura-feed button { min-height: 44px; }
+.nura-auth-card { width: calc(100% - 32px); max-width: 480px !important; margin: 20px auto 32px !important; padding: 28px !important; background: white; border: 1px solid var(--ink-border); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); }
+.nura-auth-card input { min-height: 50px; background: var(--paper) !important; }
+.nura-auth-card button { min-height: 44px; }
+.nura-wordmark { display: block; font-family: var(--font-voice); font-size: 26px; font-weight: 800; letter-spacing: -1px; color: var(--ink); }
+.nura-service-flow h1 { font-family: var(--font-voice); }
+.nura-service-flow textarea { border-radius: var(--radius-card); }
+@media (min-width: 768px) {
+ .nura-page-intro { padding-top: 24px; }
+ .nura-auth-card { margin-top: 40px !important; padding: 36px !important; }
+}
+
+
+span.nura-user-initials { display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: var(--purple-05); color: var(--purple-ink); font-family: var(--font-voice); font-weight: 650; }

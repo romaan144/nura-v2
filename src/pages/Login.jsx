@@ -32,11 +32,11 @@ const S = {
        (BottomNav.jsx:14 HIDE_ON), asi que reservarla dejaba ~90px muertos. */
     padding: 'var(--space-32) var(--space-20) var(--space-32)',
   },
-  inner: { maxWidth: '360px', width: '100%', margin: 'auto' },
+  inner: { maxWidth: '420px', width: '100%', margin: 'auto' },
 
   logo: {
     width: '60px', height: '60px', display: 'block', margin: '0 auto',
-    animation: 'pulse 3s ease-in-out infinite',
+    animation: 'fadeInUp .36s ease both',
   },
   wordmark: { height: '26px', display: 'block', margin: 'var(--space-14) auto var(--space-6)' },
   lema: {
@@ -50,7 +50,7 @@ const S = {
     backdropFilter: 'blur(24px) saturate(180%)',
     border: '1px solid var(--ink-border)',
     borderRadius: 'var(--radius-md)',
-    boxShadow: '0 8px 32px rgba(33,29,51,0.07)',
+    boxShadow: 'var(--shadow-md)',
     padding: 'var(--space-24) var(--space-20)',
   },
   pasos: { display: 'flex', gap: 'var(--space-6)', marginBottom: 'var(--space-24)' },
@@ -61,7 +61,7 @@ const S = {
   }),
 
   titulo: {
-    fontFamily: 'var(--font-voice)', fontSize: 'var(--text-heading)', fontWeight: 700,
+    fontFamily: 'var(--font-voice)', fontSize: 'var(--text-page-title)', fontWeight: 700,
     letterSpacing: '-0.6px', color: 'var(--ink)', margin: '0 0 var(--space-6)',
     textAlign: 'center',
   },
@@ -176,7 +176,7 @@ export default function Login() {
     <div style={S.page}>
       <div style={S.inner}>
         <img src="/logo-iso.png" alt="" style={S.logo} />
-        <img src="/logo-text.png" alt="Nüra" style={S.wordmark} />
+        <span className="nura-wordmark" style={{textAlign: 'center', margin: '12px auto 6px'}}>Nüra</span>
         <p style={S.lema}>Encuentra a la persona adecuada</p>
 
         <div style={S.card}>

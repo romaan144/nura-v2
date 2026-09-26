@@ -110,3 +110,23 @@
   padding: 60px 20px;
   animation: fadeUp 0.22s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
+
+/* Nüra · dirección visual compartida, septiembre 2026. */
+
+.page { padding-bottom: var(--reserva-nav); }
+.content { max-width: 820px; margin: 0 auto; padding: 20px 20px 32px; }
+.title { font-size: var(--text-page-title); margin-bottom: 12px; }
+.card { border-color: var(--ink-border); box-shadow: var(--shadow-xs); }
+.list { gap: 14px; }
+@media (hover: hover) { .card:hover { border-color: var(--purple-20); box-shadow: var(--shadow-sm); } }
+
+
+/* Nüra · dirección visual compartida, septiembre 2026. */
+
+.sub { line-height: 1.6; color: var(--ink-secondary); }
+.card { padding: 20px; gap: 8px; }
+.cardLeft { min-width: 0; }
+.cardLeft > div { min-width: 0; }
+.name, .spec { overflow-wrap: anywhere; }
+.followBtn { width: 44px; height: 44px; background: var(--purple-05); color: var(--purple-ink); }
+@media (min-width: 768px) and (max-width: 1000px) { .list { grid-template-columns: 1fr; } }

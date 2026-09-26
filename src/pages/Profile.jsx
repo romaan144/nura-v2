@@ -1,3 +1,4 @@
+import UserAvatar from '../components/UserAvatar'
 import { avatarDe } from '../utils/avatar'
 import { useState, useEffect } from 'react'
 import PageHeader from '../components/PageHeader'
@@ -160,7 +161,7 @@ export default function Profile() {
          (a diferencia de Login, donde se oculta). */
       padding: 'var(--space-32) var(--space-20) var(--reserva-nav)',
     }}>
-      <div style={{maxWidth:'360px', width:'100%', margin:'auto'}}>
+      <div style={{maxWidth:'420px', width:'100%', margin:'auto'}}>
         {/* Desde la notificacion «ha llegado alguien»: eso primero. */}
         {verAlertas && (
           <div style={{margin:'0 calc(var(--space-20) * -1) var(--space-16)'}}>
@@ -168,9 +169,8 @@ export default function Profile() {
           </div>
         )}
         <img src="/logo-iso.png" alt="" style={{width:'60px', height:'60px', display:'block',
-          margin:'0 auto', animation:'pulse 3s ease-in-out infinite'}} />
-        <img src="/logo-text.png" alt="Nüra" style={{height:'26px', display:'block',
-          margin:'var(--space-14) auto var(--space-6)'}} />
+          margin:'0 auto', animation:'fadeInUp .36s ease both'}} />
+        <span className="nura-wordmark" style={{textAlign:'center', margin:'12px auto 6px'}}>Nüra</span>
         <p style={{fontSize:'var(--text-sm)', color:'var(--ink-secondary)', textAlign:'center',
           margin:'0 0 var(--space-28)', letterSpacing:'-0.1px'}}>
           Encuentra a la persona adecuada
@@ -343,10 +343,7 @@ export default function Profile() {
         {/* ── LA CABECERA: como la de una ficha ───────────────────── */}
         <header className={styles.hero} style={entrada(0)}>
           <div className={styles.avatarWrap}>
-            <img
-              src={user.avatar || avatarDe(encodeURIComponent(user.name || 'user'))}
-              alt={user.name} className={styles.avatar}
-            />
+            <UserAvatar user={user} className={styles.avatar} />
             {user.isHelper && (
               <div className={styles.avatarBadge} aria-hidden="true">
                 <Award size={13} color="white" />

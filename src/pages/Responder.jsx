@@ -147,7 +147,7 @@ function ResponderAviso({ token }) {
   }
 
   const marco = {
-    minHeight: '100dvh', background: 'var(--paper)',
+    height: '100dvh', overflowY: 'auto', background: 'var(--paper)',
     display: 'flex', flexDirection: 'column', alignItems: 'center',
     padding: 'max(env(safe-area-inset-top,0px),24px) var(--space-20) var(--space-32)',
   }
@@ -158,9 +158,9 @@ function ResponderAviso({ token }) {
     background: 'rgba(255,255,255,0.96)',
     WebkitBackdropFilter: 'blur(20px) saturate(160%)',
     backdropFilter: 'blur(20px) saturate(160%)',
-    borderRadius: 'var(--radius-md)', border: '1px solid rgba(255,255,255,0.6)',
+    borderRadius: 'var(--radius-xl)', border: '1px solid var(--ink-border)',
     boxShadow: 'var(--alzado-flota)',
-    padding: 'var(--space-20)',
+    padding: 'var(--space-28)',
   }
 
   if (estado === 'cargando') {
@@ -204,8 +204,8 @@ function ResponderAviso({ token }) {
   const nombre = (aviso?.nombre || '').split(' ')[0]
 
   return (
-    <div style={marco}>
-      <img src="/logo-text.png" alt="Nüra" style={{height: 22, opacity: 0.8, margin: '0 0 var(--space-24)'}} />
+    <div className="nura-service-flow" style={marco}>
+      <span className="nura-wordmark" style={{marginBottom: 24}}>Nüra</span>
       <div style={caja}>
         <p style={{fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)', margin: '0 0 var(--space-12)'}}>
           {nombre ? `Hola ${nombre}, alguien te necesita.` : 'Alguien te necesita.'}

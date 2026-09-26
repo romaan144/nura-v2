@@ -419,6 +419,13 @@
 - **`public/robots.txt`**: fichas y páginas públicas, sí; chats, enlaces de
   respuesta, bajas de avisos y perfil propio, fuera de los buscadores.
 
+## 2026-09-25 — Diseño integral y reparto entre Codex y Claude
+
+- **Decisión de Sergio:** Codex se ocupa del diseño de toda la app y Claude de funcionalidades. Los cambios de diseño se integran y publican tras las pruebas, sin aprobación estética previa. Coordinación por repositorio y documentos compartidos.
+- Inicio da protagonismo a la necesidad y al buscador; navegación, perfiles, listados, mensajes, formularios y pantallas secundarias comparten colores, tipografía, radios y estados. Se conserva la entrada directa y la lógica existente.
+- Se añade `src/design-system.css` como extensión común de los tokens; fotos reales o iniciales para la identidad de la cuenta. Adaptación al móvil y ordenador y respeto a movimiento reducido.
+- Pruebas y límites de la comprobación: `diseno-integral.md`. El lint general conserva deuda previa; su configuración reconoce ahora el entorno Node de las rutas de Vercel.
+
 ## 2026-09-25 — Fuera las pantallas de bienvenida
 
 - **Decisión del fundador:** «Quiero quitar todo eso. Que entre

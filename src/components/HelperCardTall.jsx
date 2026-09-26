@@ -66,7 +66,8 @@ export default function HelperCardTall({ helper, small = false }) {
   }
 
   return (
-    <div onClick={handleTap} role="button" aria-label={`Ver perfil de ${helper.name}`}
+    <div onClick={handleTap} role="button" tabIndex={0}
+      onKeyDown={e => { if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); handleTap() } }} aria-label={`Ver perfil de ${helper.name}`}
       style={{
         /* LA TARJETA DEL HALLAZGO. Es la superficie mas importante de Nüra
            —el momento en que aparece una persona— y se usa en tres sitios.
@@ -77,7 +78,7 @@ export default function HelperCardTall({ helper, small = false }) {
         background: 'rgba(255,255,255,0.96)',
         WebkitBackdropFilter: 'blur(20px) saturate(160%)',
         backdropFilter: 'blur(20px) saturate(160%)',
-        border: '1px solid rgba(255,255,255,0.6)',
+        border: '1px solid var(--ink-border)',
         borderRadius: 'var(--radius-md)',
         boxShadow: 'var(--alzado-reposo)',
         padding: small ? 'var(--space-14) var(--space-10) var(--space-12)' : 'var(--space-24) var(--space-20) var(--space-20)',

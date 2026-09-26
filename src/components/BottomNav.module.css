@@ -108,3 +108,12 @@
 @media (min-width: 768px) {
   .nav { display: none; }
 }
+
+/* Una isla compacta; sus 62px conservan el contrato de reserva. */
+.nav { max-width: 340px; margin-inline: auto; background: rgba(255,255,255,.94); border: 1px solid var(--ink-border); padding: var(--space-6); box-shadow: var(--alzado-flota); }
+.tab { min-height: 48px; padding: var(--space-6) var(--space-8); border-radius: var(--radius-full); gap: var(--space-4); }
+.tabActive { background: var(--purple-05); }
+.tabActive .iconWrap { background: none; }
+.tabActive svg { transform: none; }
+.label { font-family: var(--font-ui); font-weight: 550; }
+.badge { background: var(--purple-ink); }

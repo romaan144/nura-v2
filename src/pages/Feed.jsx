@@ -102,7 +102,7 @@ export default function Feed() {
     // tenia contenedor y scrolleaba `desktopMain`, el elemento que envuelve
     // TODAS las pestañas (montadas a la vez): su scroll no estaba aislado.
     // La reserva inferior vive solo aqui, en un token medido.
-    <div style={{
+    <div className="nura-feed" style={{
       height: '100%', overflowY: 'auto', overflowX: 'hidden', overscrollBehaviorY: 'contain',
       WebkitOverflowScrolling: 'touch',
       background: 'var(--paper)',

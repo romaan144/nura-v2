@@ -183,3 +183,22 @@
   font-size: var(--text-sm);
   animation: fadeUp 0.22s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
+
+/* Nüra · dirección visual compartida, septiembre 2026. */
+
+.page { padding-left: max(0px, calc((100% - 800px)/2)); padding-right: max(0px, calc((100% - 800px)/2)); }
+.searchWrap { padding: 0 20px 16px; background: transparent; }
+.searchBox { border-radius: var(--radius-full); min-height: 54px; padding: 10px 18px; box-shadow: none; }
+.searchInput { min-width: 0; }
+.list { padding: 0 20px; gap: 12px; }
+.chatRow { padding: 20px; border-color: var(--ink-border); }
+.chatUnread { border-left: 3px solid var(--purple); padding-left: 18px; }
+.avatarImg, .avatar { width: 52px; height: 52px; box-shadow: none; }
+.chatName { font-family: var(--font-voice); }
+.chatLastMsg { line-height: 1.6; }
+.emptyIso { animation: none; }
+@media (hover: hover) { .chatRow:hover { border-color: var(--purple-20); box-shadow: var(--shadow-md); } }
+
+
+/* El foco lo dibuja la cápsula completa, sin un segundo marco interior. */
+.searchInput:focus-visible { outline: none; }

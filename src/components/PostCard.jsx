@@ -47,7 +47,7 @@ export default function PostCard({ post }) {
       background: 'rgba(255,255,255,0.96)',
       WebkitBackdropFilter: 'blur(20px) saturate(160%)',
       backdropFilter: 'blur(20px) saturate(160%)',
-      border: '1px solid rgba(255,255,255,0.6)',
+      border: '1px solid var(--ink-border)',
       borderRadius: 'var(--radius-md)',
       boxShadow: 'var(--alzado-reposo)',
       padding: 'var(--space-16)',
