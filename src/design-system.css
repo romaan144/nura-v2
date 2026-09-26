@@ -103,4 +103,4 @@ input::placeholder, textarea::placeholder { color: var(--ink-tertiary); opacity:
 }
 
 
-.nura-user-initials { display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: var(--purple-05); color: var(--purple-ink); font-family: var(--font-voice); font-weight: 650; }
+span.nura-user-initials { display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: var(--purple-05); color: var(--purple-ink); font-family: var(--font-voice); font-weight: 650; }

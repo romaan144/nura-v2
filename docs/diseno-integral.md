@@ -1,7 +1,7 @@
 # Nüra · diseño compartido de la aplicación
 
-Actualizado el 25 de septiembre de 2026. Responsable: Codex.
-Base de esta entrega: `a436ece` de `main`. Se conserva la entrada directa a Inicio decidida por Sergio.
+Actualizado el 26 de septiembre de 2026. Responsable: Codex.
+Base inicial: `a436ece`; integrada posteriormente con `cb6d6c1` de `main`, incluyendo agenda, bloqueos, recordatorios, mensajes sin conexión y validaciones nuevas de Claude. Se conserva la entrada directa a Inicio decidida por Sergio.
 
 ## Dirección visual
 
@@ -43,13 +43,14 @@ Los datos ficticios de revisión viven fuera del repositorio de la app, en servi
 ## Verificación
 
 - Compilación de producción.
-- Suite de búsqueda: 123/123.
-- Suite de avisos existente con servidor y base de datos ficticios.
+- Suite de búsqueda tras integrar Claude: 203/203.
+- Suite de avisos con servidor y base de datos ficticios: 162/162. Suite de vista previa al compartir: correcta.
 - Smoke: 8 pantallas × 2 escenarios y 120 profesionales × 2 tamaños.
 - Recorridos en navegador a 390 px y 1280 px, con comprobación adicional a 360 px. Búsqueda → ficha; edición del nombre; bandeja → chat y mensaje simulado; rutas secundarias y estados vacíos.
+- Tras integrar Claude, se repite el recorrido de las pantallas afectadas y la selección de horarios y bloqueos en «Editar mi ficha», sin guardar cambios reales.
 - Revisión adicional con demo desactivada y servidor ficticio: Inicio, acceso, catálogo, chats vacíos y perfil invitado/profesional.
 - No se prueba un restablecimiento de contraseña real, un token real de respuesta ni la entrega de correos: requieren credenciales o acciones ajenas a un rediseño.
-- El lint general ya tenía 115 errores y 7 avisos en la base. Se corrige el entorno Node de `api/` en ESLint (sin modificar esa API); los demás hallazgos heredados se registran para Claude. No se desactivan reglas para ocultarlos. La puerta `no-undef` debe quedar a cero.
+- El lint general de `cb6d6c1` tiene 113 errores y 6 avisos; esta entrega deja 112 errores y 6 avisos, sin hallazgos nuevos. Se corrige el entorno Node de `api/` en ESLint (sin modificar esa API); los demás hallazgos heredados se registran para Claude. No se desactivan reglas para ocultarlos. La puerta `no-undef` queda a cero.
 
 ## Continuidad con Claude
 
