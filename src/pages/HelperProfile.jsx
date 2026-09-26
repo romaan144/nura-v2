@@ -759,7 +759,7 @@ function HelperProfileInner() {
             // Cambiar la hora: primero se cancela la antigua (su hora queda
             // libre). Sin conexión no se toca nada.
             if (cambia) {
-              const r = await cancelarCita({ helperId: vieja.helperId, fecha: vieja.date, hora: vieja.time })
+              const r = await cancelarCita({ helperId: vieja.helperId, fecha: vieja.date, hora: vieja.time, motivo: 'cambio' })
               if (r === 'fallo') return 'fallo'
             }
             addService(hh, date, time, note, otraHora)

@@ -10,6 +10,25 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-10-10 — Un solo aviso cuando cambian la hora de una cita
+
+- Cuando quien pidió una cita le cambia la hora, el profesional ve en «Mi
+  agenda» **un solo aviso**: «Te han cambiado una cita · Pasa de martes, 29
+  de septiembre a las 17:00 a miércoles, 30 de septiembre a las 16:00», con
+  «Contestar» (abre la propuesta para aceptarla) y «Entendido». Ya no sale
+  además «Te han cancelado una cita».
+- En la lista, la hora antigua dice «Cambiada · Hora libre». El número de
+  «Chats» cuenta solo la propuesta por contestar (1, no 2).
+- Servidor (`helpers-write` v22, desplegada y comparada con el
+  repositorio): `cancelar-cita` acepta `motivo: 'cambio'`; `encolar-aviso` y
+  `ampliar-aviso` guardan `cambiaDe` (de qué hora viene) y una propuesta
+  nueva limpia las marcas de una cancelación anterior del mismo aviso;
+  `mis-avisos` devuelve `cita_cambia_de`.
+- Base de datos (migración `20261010000000_cita_cambiada.sql`, aplicada):
+  `cita_cancela` admite 'cambio'; columna `avisos.cita_cambia_de`.
+- Pruebas: `test:matching` 218 (5 nuevas), `test:avisos` 176 (6 nuevas) y
+  en el navegador los dos lados (quien cambia y el profesional).
+
 ## 2026-10-09 — Cambiar la hora de una cita
 
 - En «Mis servicios», cada cita pendiente o confirmada que aún no ha

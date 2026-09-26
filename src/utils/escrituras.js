@@ -212,12 +212,13 @@ export async function ocupadasDe(helperId) {
  * profesional (solo quien la pidió puede). La hora vuelve a quedar libre
  * para todos. Devuelve 'ok' | 'fallo' | 'rechazado' | 'nada' (demo).
  */
-export async function cancelarCitaServidor(helperId, fecha, hora) {
+/** `motivo: 'cambio'`: se cancela para pedir otra hora (el profesional verá un cambio). */
+export async function cancelarCitaServidor(helperId, fecha, hora, motivo) {
   if (!porLaFuncion()) return 'nada'
   const llaves = llavesGuardadas()[String(helperId)] || []
   if (!llaves.length) return 'nada'
   try {
-    const r = await llamarFuncion({ op: 'cancelar-cita', llaves, fecha, hora })
+    const r = await llamarFuncion({ op: 'cancelar-cita', llaves, fecha, hora, ...(motivo === 'cambio' ? { motivo } : {}) })
     ocupadasCache.delete(String(helperId))
     // 404: ya no había nada que cancelar (nunca llegó, o ya se canceló).
     return r?.estado === 404 ? 'nada' : resultado(r)
@@ -238,10 +239,11 @@ export async function cancelarCitaServidor(helperId, fecha, hora) {
 //   'nada'      — demo, no hay servidor
 const resultado = r => r?.ok ? 'ok' : (r?.estado >= 400 && r?.estado < 500 && r?.estado !== 408 && r?.estado !== 429 ? 'rechazado' : 'fallo')
 
-export async function encolarAviso(helperId, mensaje, cita) {
+/** `cambiaDe`: { fecha, hora } de la cita que esta propuesta sustituye (cambio de hora). */
+export async function encolarAviso(helperId, mensaje, cita, cambiaDe) {
   if (!porLaFuncion()) return 'nada'
   try {
-    const r = await llamarFuncion({ op: 'encolar-aviso', helperId, mensaje, ...(cita ? { cita } : {}) })
+    const r = await llamarFuncion({ op: 'encolar-aviso', helperId, mensaje, ...(cita ? { cita } : {}), ...(cita && cambiaDe ? { cambiaDe } : {}) })
     if (r?.ok && r.lectura) guardarLlave(helperId, r.lectura)
     return resultado(r)
   }
@@ -341,16 +343,16 @@ export async function miPulso(sesion) {
  * nuevo se añade a su aviso (lo vera todo junto). Si ya contesto, se le
  * manda un aviso nuevo (`cuerpoNuevo`, con el contexto). Nunca bloquea.
  */
-export async function seguirConversacion(helperId, texto, cuerpoNuevo, cita) {
+export async function seguirConversacion(helperId, texto, cuerpoNuevo, cita, cambiaDe) {
   if (!porLaFuncion()) return 'nada'
   const ultima = (llavesGuardadas()[String(helperId)] || []).at(-1)
   try {
     if (ultima) {
-      const r = await llamarFuncion({ op: 'ampliar-aviso', llave: ultima, mensaje: texto, ...(cita ? { cita } : {}) })
+      const r = await llamarFuncion({ op: 'ampliar-aviso', llave: ultima, mensaje: texto, ...(cita ? { cita } : {}), ...(cita && cambiaDe ? { cambiaDe } : {}) })
       if (r?.ok) return 'ok'
       if (r?.estado !== 409 && r?.estado !== 404 && r?.estado !== 413) return resultado(r)
     }
-    return await encolarAviso(helperId, cuerpoNuevo, cita)
+    return await encolarAviso(helperId, cuerpoNuevo, cita, cambiaDe)
   } catch { return 'fallo' }
 }
 
@@ -434,7 +436,9 @@ export async function enviarPropuestaCita(helper, fecha, hora, nota, nombre, ant
   // queda ocupada en su agenda para todos.
   const cita = fecha && hora ? { fecha, hora } : undefined
   const hayConversacion = (llavesGuardadas()[String(helper.id)] || []).length > 0
-  if (hayConversacion) await seguirConversacion(helper.id, texto, `${texto}\n\n(Te escribe desde Nüra.)`, cita)
-  else await encolarAviso(helper.id, `${texto}\n\n(Te escribe desde Nüra.)`, cita)
+  // Si es un cambio de hora, la propuesta dice de qué cita viene.
+  const cambiaDe = antes?.fecha && antes?.hora ? { fecha: antes.fecha, hora: antes.hora } : undefined
+  if (hayConversacion) await seguirConversacion(helper.id, texto, `${texto}\n\n(Te escribe desde Nüra.)`, cita, cambiaDe)
+  else await encolarAviso(helper.id, `${texto}\n\n(Te escribe desde Nüra.)`, cita, cambiaDe)
   return true
 }

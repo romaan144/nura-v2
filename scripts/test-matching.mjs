@@ -661,6 +661,27 @@ for (const t of NEGATIVE) {
   for (const [nombre, ok] of casos) { if (!ok) failed++; console.log(`${ok ? '✓' : '✗'} cancelaciones: ${nombre}`) }
 }
 
+// ── Un solo aviso cuando cambian la hora (2026-10-10) ──
+{
+  const H = await import(join(stage, 'data/horarios.js'))
+  const ahora = new Date(2026, 9, 3, 10, 0)
+  const avisos = [
+    { id: 1, token: 't1', cita_fecha: '2026-10-06', cita_hora: '17:00', cita_estado: 'cancelada', cita_cancela: 'cambio', respuesta: 'Te espero' },
+    { id: 2, token: 't2', cita_fecha: '2026-10-08', cita_hora: '16:00', cita_estado: 'propuesta', cita_cambia_de: '2026-10-06 17:00', respuesta: null },
+    { id: 3, token: 't3', cita_fecha: '2026-10-09', cita_hora: '10:00', cita_estado: 'propuesta', cita_cambia_de: '2026-10-07 9:00', respuesta: 'Vale' },
+    { id: 4, token: 't4', cita_fecha: '2026-10-09', cita_hora: '12:00', cita_estado: 'propuesta', respuesta: null },
+  ]
+  const cam = H.cambiosNuevos(avisos, [], ahora)
+  const casos = [
+    ['un cambio sin contestar sale con su hora antigua y la nueva', cam.length === 1 && cam[0].id === 2 && cam[0].antes.fecha === '2026-10-06' && cam[0].antes.hora === '17:00' && cam[0].hora === '16:00'],
+    ['la cancelada «por cambio» no sale como cancelación', H.cancelacionesNuevas(avisos, [], ahora).length === 0],
+    ['ya contestado, o una propuesta normal, no es un cambio nuevo', !cam.some(c => [3, 4].includes(c.id))],
+    ['visto, deja de salir', H.cambiosNuevos(avisos, [2], ahora).length === 0],
+    ['en la agenda, la antigua dice que fue por cambio', H.agendaDe(avisos, ahora).flatMap(d => d.citas).find(c => c.id === 1)?.cancela === 'cambio'],
+  ]
+  for (const [nombre, ok] of casos) { if (!ok) failed++; console.log(`${ok ? '✓' : '✗'} cambios de hora: ${nombre}`) }
+}
+
 // El total se contaba sumando los tres catalogos, asi que se quedo en 32
 // mientras las pruebas reales llegaban a 51: cada bloque añadido despues
 // (obra, agenda, silencios, interceptor, aviso) pasaba sin figurar. Un

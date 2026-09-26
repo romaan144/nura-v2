@@ -388,8 +388,8 @@ export function UserProvider({ children }) {
   // quedar libre para todos y el profesional lo ve); si no hay conexión no
   // se toca nada y se devuelve 'fallo' para que la pantalla lo diga. En demo
   // o sin conversación guardada ('nada'), solo cambia en este móvil.
-  async function cancelarCita({ helperId, fecha, hora }) {
-    const r = await cancelarCitaServidor(helperId, fecha, hora)
+  async function cancelarCita({ helperId, fecha, hora, motivo }) {
+    const r = await cancelarCitaServidor(helperId, fecha, hora, motivo)
     if (r === 'fallo') return r
     const es = (hid, f, h) => String(hid) === String(helperId) && f === fecha && h === hora
     setServices(prev => prev.map(s => es(s.helperId, s.date, s.time) && s.status !== 'completed' ? { ...s, status: 'cancelled' } : s))
