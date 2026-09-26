@@ -1,7 +1,7 @@
 import { avatarDe } from '../utils/avatar'
 import { useNavigate } from 'react-router-dom'
 import { UserCheck, UserPlus, Star, MapPin } from 'lucide-react'
-import { HELPERS } from '../data/helpers'
+import { HELPERS_DEMO as HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
 import { DEMO_MODE } from '../config'
 import PageHeader from '../components/PageHeader'
@@ -67,7 +67,7 @@ export default function Siguiendo() {
                     <div className={styles.meta}>
                       <Star size={11} fill="var(--amber)" color="var(--amber)" /> {fmtNota(h.rating)}
                       <span>·</span>
-                      <MapPin size={11} /> {h.zone || 'Barcelona'}
+                      <MapPin size={11} /> {h.zone || h.city || 'Barcelona'}
                       <span>·</span>
                       {h.price && h.price !== 'Consultar' ? <strong>{h.price}</strong> : <span>Consultar</span>}
                     </div>

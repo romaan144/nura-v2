@@ -16,7 +16,7 @@
 // 3. SIN VENDER NADA. Ni banners, ni "descarga la app", ni "completa tu
 //    perfil". Ha venido a contestar a alguien que le necesita.
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { abrirAviso, responderAviso, misAvisos, porLaFuncion } from '../utils/escrituras'
 import { refrescarSinContestar } from '../utils/sinContestar'
@@ -39,15 +39,36 @@ function rapidasPara(mensaje) {
 
 // Una pantalla por mensaje: al pasar al siguiente (otro token) se monta de
 // nuevo, limpia, sin arrastrar lo escrito en el anterior.
+// «lunes 28 de septiembre · 16:00»
+function cuandoCita(c) {
+  try { return `${new Date(c.fecha + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })} · ${c.hora}` }
+  catch { return `${c.fecha} · ${c.hora}` }
+}
+
 export default function Responder() {
   const { token } = useParams()
   return <ResponderAviso key={token} token={token} />
 }
 
 function ResponderAviso({ token }) {
-  const [estado, setEstado] = useState('cargando')   // cargando|listo|enviado|fallo|error
+  const [estado, setEstado] = useState('cargando')   // cargando|listo|enviado|fallo|error|sinred
   const [aviso, setAviso] = useState(null)
-  const [texto, setTexto] = useState('')
+  // Lo que lleva escrito se guarda en este móvil: si cierra la página o se
+  // queda sin cobertura, no tiene que escribirlo otra vez.
+  const BORRADOR = 'nura_borrador_' + token
+  const [texto, setTexto] = useState(() => { try { return localStorage.getItem(BORRADOR) || '' } catch { return '' } })
+  const [intento, setIntento] = useState(0)
+  // La cita propuesta: 'aceptada' | 'rechazada' | null (aún no ha decidido).
+  const [decision, setDecision] = useState(null)
+  const [ocupada, setOcupada] = useState(false)
+  // «Aceptar la cita» envía en cuanto la decisión está puesta.
+  const enviarAceptando = useRef(false)
+  useEffect(() => {
+    if (decision !== 'aceptada' || !enviarAceptando.current) return
+    enviarAceptando.current = false
+    enviar(`¡Hecho! Te espero el ${aviso?.cita ? cuandoCita(aviso.cita).replace(' · ', ' a las ') : 'día que dices'}.`)
+  }, [decision])   // eslint-disable-line react-hooks/exhaustive-deps
+  const enviandoRef = useRef(false)
   const [enviando, setEnviando] = useState(false)
   const navigate = useNavigate()
   // Despues de contestar (y SOLO despues: la regla 3 sigue en pie mientras
@@ -64,10 +85,23 @@ function ResponderAviso({ token }) {
         // Si ya contesto, no se le pide otra vez.
         setEstado(r.aviso.respuesta ? 'enviado' : 'listo')
         if (r.aviso.respuesta) setTexto(r.aviso.respuesta)
-      } else setEstado('error')
+      } else setEstado(r?.sinRed ? 'sinred' : 'error')
     })
     return () => { vivo = false }
-  }, [token])
+  }, [token, intento])
+
+  useEffect(() => {
+    if (estado !== 'listo' && estado !== 'fallo') return
+    try { texto.trim() ? localStorage.setItem(BORRADOR, texto) : localStorage.removeItem(BORRADOR) } catch { /* sin almacenamiento */ }
+  }, [texto, estado, BORRADOR])
+
+  // Si falló por la conexión, sale sola en cuanto vuelva.
+  useEffect(() => {
+    if (estado !== 'fallo') return
+    const alVolver = () => enviar()
+    window.addEventListener('online', alVolver)
+    return () => window.removeEventListener('online', alVolver)
+  })
 
   useEffect(() => {
     if (estado !== 'enviado' || !porLaFuncion()) return
@@ -83,15 +117,33 @@ function ResponderAviso({ token }) {
     return () => { vivo = false }
   }, [estado, token])
 
-  async function enviar() {
-    if (!texto.trim() || enviando) return
+  // `forzado`: el texto que manda el botón «Aceptar la cita» si no ha escrito nada.
+  async function enviar(forzado) {
+    const cuerpo = (texto.trim() || forzado || '').trim()
+    // El ref, no solo el estado: dos toques (o dos avisos de «vuelve la
+    // conexión») en el mismo instante verían `enviando` aún en false.
+    if (!cuerpo || enviandoRef.current) return
+    enviandoRef.current = true
     setEnviando(true)
-    const r = await responderAviso(token, texto.trim())
+    const r = await responderAviso(token, cuerpo, decision || undefined)
+    enviandoRef.current = false
     setEnviando(false)
+    // Esa hora ya la tiene aceptada con otra persona: no se guarda nada y
+    // se le pide que proponga otra.
+    if (r?.estado === 409 && decision === 'aceptada') {
+      setDecision('rechazada'); setOcupada(true)
+      if (!texto.trim()) setTexto(`Esa hora ya la tengo ocupada. ¿Te iría bien `)
+      requestAnimationFrame(() => document.getElementById('respuesta')?.focus())
+      return
+    }
     // Si falla, se dice. Un "enviado" falso deja a una familia esperando
     // una respuesta que no existe.
     setEstado(r?.ok ? 'enviado' : 'fallo')
-    if (r?.ok) refrescarSinContestar()   // uno menos en su barra
+    if (r?.ok && r.cita === 'hora ocupada') setOcupada(true)
+    if (r?.ok) {
+      refrescarSinContestar()   // uno menos en su barra
+      try { localStorage.removeItem(BORRADOR) } catch { /* nada */ }
+    }
   }
 
   const marco = {
@@ -114,6 +166,24 @@ function ResponderAviso({ token }) {
   if (estado === 'cargando') {
     return <div style={{...marco, justifyContent: 'center'}}>
       <img src="/logo-iso.png" alt="" style={{width: 40, opacity: 0.35}} />
+    </div>
+  }
+
+  if (estado === 'sinred') {
+    return <div style={{...marco, justifyContent: 'center'}}>
+      <div style={{...caja, textAlign: 'center'}}>
+        <p style={{fontSize: 'var(--text-md)', fontWeight: 700, color: 'var(--ink-primary)', margin: '0 0 var(--space-8)'}}>
+          No he podido abrir el mensaje
+        </p>
+        <p style={{fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)', margin: '0 0 var(--space-16)', lineHeight: 1.6}}>
+          Parece un problema de conexión. El mensaje sigue esperándote.
+        </p>
+        <button onClick={() => { setEstado('cargando'); setIntento(n => n + 1) }}
+          style={{ width: '100%', minHeight: 48, border: 'none', cursor: 'pointer', borderRadius: 'var(--radius-full)',
+            background: 'var(--purple)', color: 'white', fontFamily: 'inherit', fontSize: 'var(--text-base)', fontWeight: 700 }}>
+          Reintentar
+        </button>
+      </div>
     </div>
   }
 
@@ -148,11 +218,31 @@ function ResponderAviso({ token }) {
           color: 'var(--ink-primary)', whiteSpace: 'pre-wrap',
         }}>{aviso?.mensaje}</div>
 
+        {aviso?.cita?.estado === 'cancelada' && (
+          <div role="status" style={{ border: '1px solid var(--ink-border)', background: 'var(--surface-subtle)',
+            borderRadius: 'var(--radius-card)', padding: 'var(--space-14) var(--space-16)', margin: '0 0 var(--space-16)' }}>
+            <p style={{ margin: '0 0 var(--space-4)', fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--red-ink)' }}>Cita cancelada</p>
+            <p style={{ margin: 0, fontSize: 'var(--text-sm)', color: 'var(--ink-primary)', lineHeight: 1.5 }}>
+              Ha cancelado la cita del {cuandoCita(aviso.cita).replace(' · ', ' a las ')}. Esa hora vuelve a estar libre en tu agenda.
+            </p>
+          </div>
+        )}
+
         {estado === 'enviado' ? (
           <div style={{textAlign: 'center', padding: 'var(--space-12) 0'}}>
             <p style={{fontSize: 'var(--text-md)', fontWeight: 700, color: 'var(--green)', margin: '0 0 var(--space-8)'}}>
-              Respuesta enviada
+              {decision === 'aceptada' && !ocupada ? 'Cita confirmada' : 'Respuesta enviada'}
             </p>
+            {decision === 'aceptada' && !ocupada && aviso?.cita && (
+              <p style={{fontSize: 'var(--text-base)', fontWeight: 600, color: 'var(--ink-primary)', margin: '0 0 var(--space-8)', textTransform: 'capitalize'}}>
+                {cuandoCita(aviso.cita)}
+              </p>
+            )}
+            {ocupada && (
+              <p style={{fontSize: 'var(--text-sm)', color: 'var(--red-ink)', margin: '0 0 var(--space-8)'}}>
+                Tu respuesta ha llegado, pero esa hora acababa de ocuparse: la cita no ha quedado confirmada.
+              </p>
+            )}
             <p style={{fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)', margin: 0, lineHeight: 1.6}}>
               Se la hago llegar. Si quiere seguir contigo, te aviso.
             </p>
@@ -190,6 +280,38 @@ function ResponderAviso({ token }) {
           </div>
         ) : (
           <>
+            {aviso?.cita?.estado === 'propuesta' && decision !== 'rechazada' && (
+              <div style={{ border: '1px solid var(--purple-30, rgba(123,47,255,0.3))', background: 'var(--purple-05, #F7F3FF)',
+                borderRadius: 'var(--radius-card)', padding: 'var(--space-14) var(--space-16)', margin: '0 0 var(--space-16)' }}>
+                <p style={{ margin: '0 0 var(--space-4)', fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--purple-ink)' }}>Te propone una cita</p>
+                <p style={{ margin: '0 0 var(--space-12)', fontSize: 'var(--text-md)', fontWeight: 700, color: 'var(--ink-primary)', textTransform: 'capitalize' }}>
+                  {cuandoCita(aviso.cita)}
+                </p>
+                <div style={{ display: 'flex', gap: 'var(--space-8)' }}>
+                  <button type="button" disabled={enviando}
+                    onClick={() => { setDecision('aceptada'); enviarAceptando.current = true }}
+                    style={{ flex: 1, minHeight: 44, border: 'none', borderRadius: 'var(--radius-full)', cursor: 'pointer',
+                      background: 'var(--purple)', color: 'white', fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 700 }}>
+                    {enviando && decision === 'aceptada' ? 'Confirmando…' : 'Aceptar la cita'}
+                  </button>
+                  <button type="button" disabled={enviando}
+                    onClick={() => {
+                      setDecision('rechazada')
+                      if (!texto.trim()) setTexto('Esa hora no me va bien. ¿Te iría bien ')
+                      requestAnimationFrame(() => { const t = document.getElementById('respuesta'); t?.focus(); t?.setSelectionRange(t.value.length, t.value.length) })
+                    }}
+                    style={{ flex: 1, minHeight: 44, border: '1px solid var(--ink-border)', borderRadius: 'var(--radius-full)', cursor: 'pointer',
+                      background: 'white', color: 'var(--ink-primary)', fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 600 }}>
+                    No me va bien
+                  </button>
+                </div>
+              </div>
+            )}
+            {decision === 'rechazada' && aviso?.cita && (
+              <p style={{ margin: '0 0 var(--space-10)', fontSize: 'var(--text-sm)', color: ocupada ? 'var(--red-ink)' : 'var(--ink-secondary)', lineHeight: 1.5 }}>
+                {ocupada ? 'Esa hora ya la tienes aceptada con otra persona. ' : ''}Dile qué otro día u hora te va bien.
+              </p>
+            )}
             <label htmlFor="respuesta" style={{display: 'block', fontSize: 'var(--text-sm)',
               fontWeight: 700, color: 'var(--ink-secondary)', margin: '0 0 var(--space-8)'}}>
               Tu respuesta
@@ -214,7 +336,9 @@ function ResponderAviso({ token }) {
 
             {estado === 'fallo' && (
               <p style={{fontSize: 'var(--text-sm)', color: 'var(--red)', margin: 'var(--space-8) 0 0'}}>
-                No he podido enviarla. Inténtalo otra vez en un momento.
+                {typeof navigator !== 'undefined' && navigator.onLine === false
+                  ? 'Sin conexión. Tu respuesta está guardada: la envío en cuanto vuelva.'
+                  : 'No he podido enviarla. Tu respuesta está guardada: inténtalo otra vez en un momento.'}
               </p>
             )}
 

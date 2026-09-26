@@ -1,4 +1,5 @@
 import { avatarDe } from '../utils/avatar'
+import { getFirstName } from './name'
 
 // ── Contexto de precio por categoría (mercado Barcelona) ──────────────────
 // Usado por Nüra para contextualizar el precio de cada helper al usuario
@@ -30,7 +31,10 @@ export function getPriceContext(helper, categoria) {
   const isAbove = helperNum > ctx.hi
   const isAvg   = helperNum >= ctx.lo && helperNum <= ctx.hi
 
-  const helperName = helper.name?.split(' ')?.[0] || 'Este profesional'
+  const helperName = getFirstName(helper.name) || 'Este profesional'
+  // Los precios de referencia son de Barcelona: fuera, no se compara.
+  const ciudad = ciudadDe(helper)
+  if (ciudad && ciudad !== 'Barcelona') return null
 
   if (isBelow) {
     return `El precio de ${ctx.label} en Barcelona es ${ctx.lo}–${ctx.hi}€/${ctx.unit}. ${helperName} cobra ${helperNum}€ — por debajo de la media.`
@@ -44,7 +48,9 @@ export function getPriceContext(helper, categoria) {
 import { HELPERS as LOCAL_HELPERS } from '../data/helpers'
 import { obraSignal } from '../data/obraPosts'
 import { searchHelpers } from './supabase'
+import { DEMO_MODE } from '../config'
 import { barrioEnTexto, barrioDeZona, kmEntre } from '../data/barrios'
+import { ciudadEnTexto, ciudadDe } from '../data/ciudades'
 import { pideDeclarado, puntosDeclarados, declaradosDe, pideAlgo } from './pideDeclarado'
 
 // ── SEMANTIC EXPANSION MAP ────────────────────────────────────────────────
@@ -65,6 +71,9 @@ const SEMANTIC_MAP = {
   'bebé': 'bebé niñera cuidado niños',
   'recién nacido': 'bebé niñera cuidado',
   'canguro': 'canguro niñera niños cuidado',
+  // Canguro de animales: el animal manda (si no, «canguro» arrastra a cuidado de niños).
+  'canguro de gatos': 'gato mascota cuidar mascota pet sitter mi gato',
+  'canguro de perros': 'perro mascota cuidar mascota pet sitter mi perro',
 
   // ── VERBOS ──────────────────────────────────────────────────────────
   // La gente dice lo que quiere HACER, no el oficio: "quiero aprender a
@@ -220,7 +229,9 @@ const CATEGORY_KEYWORDS = {
     // «el grifo de la cocina»: 'cocina' suma en hogar como tallo de 'cocinero'.
     'grifo de la cocina','fregadero',
     'avería','instalación','grifo','tubería','luz','calefacción','aire acondicionado',
-    'pintor','pintar','pinte','pinten','pintarme','cerrajero','electrodoméstico','lavadora','nevera','frigorífico','horno',
+    'pintor','pintar','pinte','pinten','pintarme','cerrajero',
+    // En catalán: lampista (fontanero), fuster (carpintero), paleta (albañil), manyà (cerrajero).
+    'lampista','fuster','paleta','manya','electricitat','avaria','electrodoméstico','lavadora','nevera','frigorífico','horno',
     'microondas','persiana','puerta','cerradura','ventana','gotera','humedad',
     'desatascar','wc','inodoro','ducha','bañera','radiador','termo','mecánico',
     'albañil','yesero','escayola','azulejo','parquet','suelo','techo','pared',
@@ -229,6 +240,9 @@ const CATEGORY_KEYWORDS = {
     'cristales','planchar','planchen','planche','sucio','polvo','mancha','fregona','desorden',
     'organizar el piso','organizar la casa','organizar mi casa'],
   cuidado: ['asistente personal','ayuda a domicilio','asistencia domiciliaria',
+    'cangur','cuidar la meva mare','avi','avia','gent gran',
+    // «monitor de tiempo libre» iba a entrenador por 'monitor'.
+    'tiempo libre','monitor de tiempo libre','monitora de tiempo libre','colonias','casal',
     'cuidar','cuidadora','mayor','anciano','anciana','abuelo','abuela',
     'acompañar','acompañamiento','geriatría','dependencia','niños','bebé','niñera',
     'enfermera','auxiliar','residencia','alzheimer','parkinson','discapacidad',
@@ -236,14 +250,15 @@ const CATEGORY_KEYWORDS = {
     'confía','de confianza','mañanas','entre semana','demencia','postoperatorio','demencia'],
   // "cuidadora de animales" caia en `cuidado` (personas) porque `cuidadora`
   // pesaba mas que `animales`. Estas frases lo desempatan.
-  mascotas: ['cuidadora de animales','cuidador de animales','cuidar animales',
+  mascotas: ['gos','gossos','gat','gats','canguro de gatos','canguro de perros','cuidadora de animales','cuidador de animales','cuidar animales',
     'cuidadora de perros','cuidador de perros','cuidadora de gatos',
     'pet sitter','cuidar mascota','vacaciones mascota','alojamiento animal',
     'perro','gato','mascota','animal','pasear','veterinario','adiestramiento',
     'cachorro','felino','canino','pájaro','conejo','perrita','gatito','paseo','pasea','pasee','paseos','paseador','mi perro','mi gato'],
   // "lengua y literatura española" caia en `logopedia` por la palabra
   // `lengua`. Es una asignatura, no un problema del habla.
-  matematicas: ['lengua y literatura','literatura','lengua castellana','sintaxis',
+  matematicas: ['classes','repas','classes de repas','reforc',
+    'lengua y literatura','literatura','lengua castellana','sintaxis',
     'comentario de texto','chino','mandarín','biología','geología','historia','ciencias sociales',
     'dibujo','dibujo artístico','arte','ebau','selectividad','acceso universidad',
     'matemáticas','mates','clases','profesor','refuerzo','estudiar',
@@ -278,7 +293,7 @@ const CATEGORY_KEYWORDS = {
     // 'hablar'), «mancha en la piel» con limpieza, «conducta» con cuidado.
     'triste','tristeza','deprimido','deprimida','piel','lunar',
     'conducta','problemas de conducta','comportamiento'],
-  legal: ['abogado','abogada','asesor legal','asesoría','contrato','demanda',
+  legal: ['advocat','advocada','gestoria','abogado','abogada','asesor legal','asesoría','contrato','demanda',
     'asesor fiscal','fiscal','hacienda','renta','declaración','impuestos','gestoría',
     'asesor financiero','finanzas','autónomo','autonomo','nómina','nomina',
     'divorcio','herencia','testamento','deuda','hipoteca','alquiler','multa',
@@ -349,6 +364,60 @@ const PRESENTIAL_KEYWORDS = ['casa','domicilio','presencial','venir','viene','zo
   'cerca','barrio','a domicilio','en persona']
 const ONLINE_KEYWORDS = ['online','videoconferencia','remoto','internet','videollamada',
   'zoom','google meet','a distancia']
+
+// ── FALTAS DE ORTOGRAFÍA EN EL OFICIO ─────────────────────────────────────
+// En el móvil se escribe «fontanro», «sicologa», «logopeta». Se corrige
+// SOLO hacia nombres de oficio, SOLO palabras de 6 letras o más que Nüra no
+// conoce, y SOLO a una letra de distancia (dos si la palabra es larga).
+// Así «mañana» no se convierte en nada: no es un oficio.
+const OFICIOS = ['fontanero','fontanera','electricista','cerrajero','carpintero','albañil','pintora',
+  'jardinero','jardinera','logopeda','psicologo','psicologa','fisioterapeuta','nutricionista',
+  'dietista','abogado','abogada','informatico','informatica','entrenador','entrenadora','profesor',
+  'profesora','canguro','niñera','cuidadora','cuidador','veterinario','masajista','osteopata',
+  'traductor','traductora','limpiadora','mudanza','psiquiatra','dermatologo','pediatra','podologo',
+  'podologa','peluquera','peluquero','arquitecto','arquitecta','fontaneria','electricidad','limpieza',
+  'matematicas','cuidadora','paseador','adiestrador','mecanico','gestoria','asesoria','psicologia','fisioterapia']
+  .map(w => w.normalize('NFD').replace(/[\u0300-\u036f]/g, ''))
+
+// Distancia de edición con trasposición («fisioterapueta» está a una).
+function distancia(a, b, tope) {
+  if (Math.abs(a.length - b.length) > tope) return tope + 1
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)])
+  for (let j = 1; j <= b.length; j++) d[0][j] = j
+  for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) {
+    const c = a[i - 1] === b[j - 1] ? 0 : 1
+    d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + c)
+    if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1)
+  }
+  return d[a.length][b.length]
+}
+
+const NO_CORREGIR = new Set(['cuidados', 'cuidadas', 'pintura'])
+let vocabulario = null
+function corregirOficios(texto) {
+  if (!texto) return texto
+  if (!vocabulario) {
+    vocabulario = new Set()
+    const meter = s => normalize(s).split(' ').forEach(w => w && vocabulario.add(w))
+    Object.values(CATEGORY_KEYWORDS).flat().forEach(meter)
+    Object.values(DOMAIN_ANCHORS).flat().forEach(meter)
+    Object.entries(SEMANTIC_MAP).forEach(([k, v]) => { meter(k); meter(v) })
+  }
+  return texto.replace(/[\p{L}]+/gu, palabra => {
+    const w = normalize(palabra)
+    if (w.length < 6 || vocabulario.has(w) || NO_CORREGIR.has(w)) return palabra
+    // Plurales («fontaneros»): ya los entiende el tallo, no son faltas.
+    if (OFICIOS.some(o => w.startsWith(o))) return palabra
+    const tope = w.length >= 10 ? 2 : 1
+    let mejor = null, dMejor = tope + 1, empate = false
+    for (const o of OFICIOS) {
+      const d = distancia(w, o, tope)
+      if (d < dMejor) { mejor = o; dMejor = d; empate = false }
+      else if (d === dMejor && o !== mejor) empate = true
+    }
+    return mejor && !empate ? mejor : palabra
+  })
+}
 
 // ── TEXT NORMALIZATION ─────────────────────────────────────────────────────
 function normalize(text) {
@@ -443,19 +512,19 @@ function hitStem(textWords, kw) {
 // deciden los empates: 'mascotas' manda sobre el verbo genérico 'cuidado';
 // 'abuela' manda sobre 'pasear'. Las acciones acompañan; el dominio decide.
 const DOMAIN_ANCHORS = {
-  mascotas: ['mascota','mascotas','perro','perros','perrito','gato','gatos','gatito','cachorro','animal','animales','paseador','adiestrador','veterinario'],
-  cuidado: ['niño','niños','niña','bebé','hijo','hija','madre','padre','abuelo','abuela','mayor','mayores','anciano','anciana','alzheimer','dependiente','canguro','niñera','cuidadora','cuidador','hijos','hijas'],
-  matematicas: ['deberes','tdah','dislexia','inglés','matemáticas','mates','idioma','idiomas','guitarra','piano','selectividad','francés','alemán','profesor','profesora','profe','academia'],
+  mascotas: ['gos','gossos','gat','gats','mascota','mascotas','perro','perros','perrito','gato','gatos','gatito','cachorro','animal','animales','paseador','adiestrador','veterinario'],
+  cuidado: ['tiempo libre','cangur','niño','niños','niña','bebé','hijo','hija','madre','padre','abuelo','abuela','mayor','mayores','anciano','anciana','alzheimer','dependiente','canguro','niñera','cuidadora','cuidador','hijos','hijas'],
+  matematicas: ['classes','deberes','tdah','dislexia','inglés','matemáticas','mates','idioma','idiomas','guitarra','piano','selectividad','francés','alemán','profesor','profesora','profe','academia'],
   // 'cocina' ya no es ancla: «cambiar el grifo de la cocina» se iba a hogar
   // (reformas y cocineros) en vez de al fontanero. La reforma ya la ancla 'reforma'.
   hogar: ['reforma','obra','jardín','jardinero','piscina','mudanza','mudarme','mudarnos','baño','decorador','césped','podar'],
   limpieza: ['limpieza','plancha','planchar','cristales','planche','plancharme','planchen'],
-  tecnico: ['fontanero','electricista','cerrajero','caldera','enchufe','fuga','persiana','instalación','instalador','grifo','llaves','váter','atascado','atasco'],
+  tecnico: ['lampista','fuster','fontanero','electricista','cerrajero','caldera','enchufe','fuga','persiana','instalación','instalador','grifo','llaves','váter','atascado','atasco'],
   // 'pediatra' decide: «pediatra para mi bebé» caia en `cuidado` (canguros) por «bebé».
   salud: ['hablar con alguien','mala racha','pediatra','pediatría','fisioterapeuta','fisio','psicólogo','psicóloga','nutricionista','masajista','ansiedad','espalda','triste','tristeza','piel','tobillo','esguince','conducta'],
   logopedia: ['logopeda','tartamudez','pronunciación'],
   entrenador: ['pádel','padel','monitor','tenis','entrenador','entrenadora','entrenamiento','gimnasio','gym','fitness','yoga','pilates','crossfit'],
-  legal: ['papeles','extranjería','arraigo','nacionalidad','abogado','abogada','gestor','gestoría','contrato','despido','renta','herencia','despedido','despedida','casero','casera','fianza','inquilino','heredé','heredar'],
+  legal: ['advocat','advocada','papeles','extranjería','arraigo','nacionalidad','abogado','abogada','gestor','gestoría','contrato','despido','renta','herencia','despedido','despedida','casero','casera','fianza','inquilino','heredé','heredar'],
   // Barrido de frases reales (2026-09-24): «un logo para mi negocio» iba a
   // logopedia (el tallo de 'logo' es el principio de 'logopeda') y
   // «traducir unos documentos al inglés» a clases (por 'inglés').
@@ -480,7 +549,10 @@ function senalesDe(expandido, original) {
   }
 }
 
-export function analyzeNeed(userText) {
+export function analyzeNeed(userTextOriginal) {
+  // Faltas en el nombre del oficio («fontanro», «sicologa»): se corrigen
+  // antes de todo lo demás.
+  const userText = corregirOficios(userTextOriginal)
   // Expand text with semantic synonyms first
   const expanded = expandText(userText)
   const normExpanded = normalize(expanded)
@@ -509,7 +581,9 @@ export function analyzeNeed(userText) {
     for (const anchor of (DOMAIN_ANCHORS[cat] || [])) {
       const na = normalize(anchor)
       if (hitWord(normOriginal, na)) {  // exactas: los tallos devolverían el sangrado genérico
-        score += 4
+        // El animal decide: «canguro de gatos» es para el gato, no para
+        // personas. Pesa un poco más que el ancla de cuidado.
+        score += cat === 'mascotas' ? 6 : 4
         catBestKw[cat] = anchor
         break
       }
@@ -563,6 +637,9 @@ export function analyzeNeed(userText) {
     // El barrio que nombra («cerca de Gràcia»), o null. Solo para ordenar
     // esta busqueda: no se guarda en ningun sitio.
     zona: barrioEnTexto(userText),
+    // La ciudad que nombra («fontanero en Madrid»), o null. Si la nombra,
+    // solo entra quien trabaja allí o atiende online.
+    ciudad: ciudadEnTexto(userText),
     // Lo que pide que un profesional puede haber declarado («que hable
     // catalán», «con coche», «por las tardes»). Solo ordena esta busqueda.
     pide: pideDeclarado(userText, propias),
@@ -622,28 +699,33 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
   let pool = []
   let hayServidor = false
 
-  // Always include demo helpers (id >= 2000) that match the category
-  const demoPool = LOCAL_HELPERS
+  // LOS PROFESIONALES DE EJEMPLO SOLO EN LA DEMO. Antes se mezclaban
+  // siempre con los reales y, si la base de datos no contestaba a tiempo, se
+  // recomendaban SOLO los de ejemplo: fuera de la demo, alguien con mala
+  // cobertura habria visto personas inventadas como si fueran reales.
+  const demoPool = DEMO_MODE ? LOCAL_HELPERS
     .filter(h => h?.id >= 2000 && toApp(h?.category) === analysis.categoria)
-    .map(normalizeHelper).filter(Boolean)
+    .map(normalizeHelper).filter(Boolean) : []
 
-  // Try Supabase
+  let remote
   try {
-    let remote = []
-    try {
-      const timeoutSb = new Promise(res => setTimeout(() => res([]), 2200))
-      remote = (await Promise.race([searchHelpers(categoriasEnBD(analysis.categoria), analysis.palabrasClave), timeoutSb])) || []
-    } catch (e) { console.error('[Nüra] Supabase no disponible — pool local activo:', e); remote = [] }
-    if (remote && remote.length > 0) {
-      pool = [...demoPool, ...remote.map(normalizeHelper).filter(Boolean)]
-      hayServidor = true
-    }
-  } catch (e) {
-    console.warn('Supabase error:', e)
+    const SIN_RESPUESTA = Symbol('sin respuesta')
+    const espera = new Promise(res => setTimeout(() => res(SIN_RESPUESTA), DEMO_MODE ? 2200 : 7500))
+    const r = await Promise.race([searchHelpers(categoriasEnBD(analysis.categoria), analysis.palabrasClave), espera])
+    remote = r === SIN_RESPUESTA ? null : r
+  } catch (e) { console.error('[Nüra] Supabase no disponible:', e); remote = null }
+  if (remote?.length) {
+    pool = [...demoPool, ...remote.map(normalizeHelper).filter(Boolean)]
+    hayServidor = true
+  } else if (!DEMO_MODE) {
+    // Sin respuesta: se dice que es la conexión (Home lo reconoce por «network»).
+    if (remote === null) throw new Error('network: la base de datos no ha respondido')
+    // Respondió y no hay nadie: se dice con honestidad, sin inventar.
+    pool = []
   }
 
-  // Fallback to all local
-  if (pool.length === 0) {
+  // Solo en la demo: el conjunto local de ejemplo cuando no hay servidor.
+  if (DEMO_MODE && pool.length === 0) {
     pool = LOCAL_HELPERS.filter(Boolean).map(normalizeHelper).filter(Boolean)
   }
 
@@ -739,7 +821,10 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
   // Sin comprensión (categoria 'otro') no hay recomendaciones: honestidad > confianza falsa.
   if (!analysis?.categoria || analysis.categoria === 'otro') return []
   const finalPool = withContent.length > 0 ? withContent : sorted
-  const compatibles = finalPool.filter(h => toApp(h?.category) === analysis.categoria)
+  // LA CIUDAD. Quien busca en Madrid no quiere un fontanero de Barcelona.
+  // Si no la nombra, no se filtra (hoy casi todo es Barcelona).
+  const enSuCiudad = h => !analysis.ciudad || h.online || ciudadDe(h) === analysis.ciudad
+  const compatibles = finalPool.filter(h => toApp(h?.category) === analysis.categoria && enSuCiudad(h))
   // LO DECLARADO. Si pide algo comprobable («que hable catalán», «con
   // coche»), se miran los datos que los mejores candidatos confirmaron de si
   // mismos y se reordena. Una sola peticion, con tope de tiempo: si no

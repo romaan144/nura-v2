@@ -10,6 +10,415 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-10-05 — Bloquear días u horas sueltas
+
+- En «Editar mi ficha», debajo de «Tu horario», el profesional tiene
+  **«Días u horas que no puedes»** (`components/EditarBloqueos.jsx`): elige
+  un día de los próximos 60 y marca «No puedo en todo el día» o solo
+  algunas horas. Lista de lo bloqueado, con ✕ para quitarlo.
+- Atajo desde «Mi agenda»: **«Bloquear días u horas»** abre la hoja ya en
+  ese apartado.
+- Para quien pide cita: el día entero sale **«No disponible»**; las horas
+  sueltas, tachadas como cualquier hora ocupada. Nunca se dice el motivo:
+  solo se guarda cuándo.
+- Base de datos (migración `20261004000000_bloqueos_del_profesional.sql`,
+  aplicada): `helpers.bloqueos` (lista), visible para todos, solo la
+  profesional con cuenta puede cambiar la suya. Los días pasados se
+  olvidan al guardar.
+- Lógica en `data/horarios.js` (`bloqueosValidos`, `bloqueoDe`,
+  `alternarDia`, `alternarHora`), con 12 pruebas (`test:matching` 203).
+  Probado en el navegador: bloquea → guarda → otra persona ve el día «No
+  disponible» y la hora ocupada.
+
+## 2026-10-04 — «Mi agenda» del profesional
+
+- En «Chats», encima de «Te han escrito», el profesional con cuenta ve
+  **Mi agenda** (`components/AgendaProfesional.jsx`): sus citas de hoy a 14
+  días, por día («Hoy», «Mañana», «Lunes, 28 de septiembre») y por hora.
+- Cada cita dice su estado: **Confirmada**, **Por contestar**, **Sin
+  confirmar** (contestó con texto pero no la aceptó) o **Cancelada** (tachada,
+  «Hora libre»). Las rechazadas no salen. Contador «N por contestar».
+- Al tocar una, se abre su aviso para aceptarla o contestar.
+- Sale de los mismos datos que la bandeja: `mis-avisos` ahora devuelve
+  también día, hora y estado de la cita (`helpers-write` v20 desplegada).
+- Lógica en `agendaDe` (`data/horarios.js`), con 9 pruebas en
+  `test:matching` (191). `test:avisos` 162. Probado en el navegador como
+  profesional con sesión.
+- Como la bandeja, solo se ve con el modo demo apagado.
+
+## 2026-10-03 — Recordatorio de la cita y cancelarla
+
+- **Recordatorio en Inicio** (`components/RecordatorioCita.jsx`): cuando
+  falta un día o menos para una cita confirmada, sale arriba «Tu cita ·
+  Mañana a las 17:00 · Con Laura», con «Escribir a Laura» y «Cancelar la
+  cita». Se puede cerrar (para esa cita). Sale solo, sin notificaciones.
+- **Cancelar**, desde el recordatorio o desde «Mis servicios» (cualquier
+  cita pendiente o confirmada que no haya pasado). Pide confirmación. Sin
+  conexión no cambia nada y lo dice.
+- Al cancelar, **la hora vuelve a quedar libre para todos** y el
+  profesional ve en su enlace «Cita cancelada». Solo puede cancelar quien
+  la pidió (con la llave de su conversación). Op `cancelar-cita`,
+  `helpers-write` v19 desplegada; migración
+  `20261003000000_cita_cancelada.sql` aplicada (nuevo estado `cancelada`).
+- Arreglo: una cita del chat cancelada seguía ocupando su hora en la agenda.
+- Pruebas: `test:avisos` 161, `test:matching` 182 (9 del recordatorio), y
+  `recorrido:real` con el camino entero: acepta → recordatorio → cancela →
+  el profesional lo ve → la hora queda libre.
+
+## 2026-10-02 — Una cita aceptada ocupa la hora para todos
+
+- La cita que se pide (día y hora) **viaja con el aviso** al profesional.
+  En su enlace (`/r/…`) ve «Te propone una cita» con dos botones:
+  **Aceptar la cita** (manda «¡Hecho! Te espero el … a las …») o
+  **No me va bien** (le deja escrito el principio de otra propuesta).
+- Al aceptarla, **esa hora queda tachada para cualquiera** que mire su
+  agenda (op `ocupadas`: solo día y hora, nunca con quién). Quien la pidió
+  la ve «Confirmado» en «Mis servicios»; si la rechaza, «Propón otra hora».
+- Nunca dos citas a la misma hora: un índice único en la base de datos lo
+  impide aunque dos acepten a la vez. Si la hora ya estaba cogida, el
+  profesional lo ve y puede proponer otra.
+- Base de datos (migración `20261002000000_cita_aceptada_ocupa_la_hora.sql`,
+  aplicada): `avisos.cita_fecha`, `cita_hora`, `cita_estado`. Función
+  `helpers-write` v18 desplegada.
+- Pruebas: `test:avisos` 153, `test:matching` 173, `recorrido:real` con
+  los pasos nuevos (acepta → Confirmado → otro navegador ve la hora tachada).
+
+## 2026-10-01 — Cada profesional marca su horario
+
+- **«Tu horario»** en la hoja de su ficha (`components/EditarHorario.jsx`):
+  días (L M X J V S D) y horas de 7:00 a 22:00, con atajos (Mañanas,
+  Tardes, Mañana y tarde, Todo el día). Parte del típico de su oficio.
+  Es lo que ve quien le pide cita; si no lo marca, se usa el del oficio.
+- Base de datos (migración `20261001000000_horario_del_profesional.sql`,
+  aplicada): columna `helpers.horario` (jsonb, con comprobación de forma),
+  visible para todos; la profesional con cuenta puede cambiarla en SU fila.
+- **Arreglo importante:** la profesional con cuenta no tenía permiso para
+  cambiar `city`, y desde el cambio de ciudades (2026-09-25) la hoja la
+  enviaba al detectar una ciudad en la zona: **el guardado entero fallaba**.
+  Concedido `update (city)`.
+- `horarioDe` valida el horario guardado; uno roto no rompe la agenda.
+- Pruebas: `test:matching` 173. En el navegador: parte del horario de
+  logopeda, se cambia, y a la base de datos llegan `horario` y `city`.
+
+## 2026-09-25 — La agenda: horas ya cogidas y una sola forma de pedir cita
+
+- **Pedido del fundador:** «No me convence el modo de ver disponibilidad y
+  pedir la cita. Deberían aparecer en las fichas de ejemplo días u horas
+  ya ocupados.»
+- **Agenda de ejemplo** (`horarios.js`: `ocupadasDeEjemplo`): en la demo,
+  cada profesional tiene horas ya cogidas por otros (entre el 15 % y el
+  60 % de su horario, y ~1 de cada 8 días completo). Sale siempre igual
+  para el mismo profesional y día. Fuera de la demo solo cuentan las citas
+  reales.
+- **Una sola hoja para pedir cita** (`components/ElegirCita.jsx`), la misma
+  en la ficha y en el chat (antes había dos, con reglas distintas):
+  - dos semanas a la vista; cada día dice «No trabaja», «Completo»,
+    «Terminado» (hoy, ya pasado) o cuántos huecos le quedan;
+  - horas por mañana / tarde / noche; las cogidas, tachadas; la que ya
+    pediste, en morado («tuya»);
+  - día **y** hora obligatorios (en la ficha se podía enviar sin hora).
+- **El próximo hueco, a la vista**: el botón «Disponibilidad» de la ficha
+  dice debajo «lun 28 11:00».
+- **Arreglos de paso**: «hoy» salía como ayer entre las 0:00 y las 2:00
+  (se usaba la hora UTC; ahora `isoLocal`); los botones Cancelar / Enviar
+  de la ficha se descolocaban (estilo inexistente); «Escribir a Dra.» y
+  «Dra. · 70 €»: ahora el nombre de pila salta el tratamiento en toda la
+  app (`getFirstName`, que ya existía y casi nadie usaba).
+- Pruebas: `test:matching` 171 (8 nuevas de agenda y nombre);
+  `recorrido:real` pide la cita con la hoja nueva.
+
+## 2026-09-25 — Fuera de la demo, ninguna pantalla usa perfiles de ejemplo
+
+- Tras la búsqueda (entrada anterior), el resto: la ficha, el chat, «Mis
+  chats», «Siguiendo» y la carta de presentación buscaban PRIMERO en los
+  perfiles de ejemplo de `data/helpers.js`. Sus id (1-12 y 2001+) chocarían
+  con profesionales reales cuando la base pase de 2000: el enlace de una
+  ficha real enseñaría a una persona inventada.
+- Nuevo `HELPERS_DEMO` (= los de ejemplo en la demo, vacío fuera). Lo usan
+  todas esas pantallas; también las historias de vecinos y los destacados
+  de Novedades (`connectionStories.js`), las publicaciones de ejemplo
+  (`obraPosts.js`, que además ordenaban la búsqueda) y los datos
+  enriquecidos de ejemplo (`DEMO_ENRICHMENTS`).
+- Novedades vacía ya no dice «0 historias de 0 personas»: «Todavía no hay
+  historias cerca de ti…».
+- Comprobado en el navegador en modo real abriendo los enlaces de los
+  perfiles de ejemplo (/helper/1, /helper/2001, /chat/1, /intro/2001…):
+  «ya no está» en todos; Novedades y Siguiendo, sin nadie inventado.
+- Tropiezo: `IntroLetter` usaba `DEMO_MODE` sin importarlo; el build no lo
+  ve y el total del lint no cambió (se arregló otro aviso a la vez). Se vio
+  comparando los avisos uno a uno: hay que diferenciar, no contar.
+
+## 2026-09-25 — Fuera de la demo, nunca personas inventadas
+
+- **Hallazgo**: la búsqueda (y Explorar) mezclaba SIEMPRE los perfiles de
+  ejemplo (id ≥ 2000) con los reales, y si la base de datos tardaba más de
+  2,2 s o no respondía, recomendaba SOLO los de ejemplo (`data/helpers.js`).
+  Con la demo apagada, alguien con mala cobertura habría visto personas
+  inventadas como si fueran reales.
+- Ahora, **fuera de la demo**:
+  - solo profesionales de la base de datos;
+  - si no responde (red, servidor, 7,5 s): «Parece que te has quedado sin
+    conexión» con la búsqueda para reintentar; en Explorar, «No he podido
+    cargar esta categoría» + Reintentar;
+  - si responde y no hay nadie: «no tengo a nadie así», honesto.
+- `searchHelpers` distingue `[]` (no hay nadie) de `null` (no se pudo
+  preguntar). En la demo todo sigue igual.
+- `recorrido:real` (que simula producción) usaba sin saberlo los perfiles
+  de ejemplo: ahora su base de datos simulada tiene una logopeda real.
+- Comprobado en el navegador en modo real: sin red → «sin conexión»; base
+  vacía → «no hay nadie»; con una profesional → la recomienda; nunca sale
+  un perfil de ejemplo.
+
+## 2026-09-25 — El profesional contesta con mala cobertura
+
+- **Abrir el enlace sin conexión decía «Este enlace ya no sirve»**: el
+  profesional creía que el mensaje ya no valía. Ahora `abrirAviso` distingue
+  «sin red» (sin respuesta o error del servidor) de «el enlace no vale»
+  (4xx) y enseña «No he podido abrir el mensaje. Parece un problema de
+  conexión. El mensaje sigue esperándote» con **Reintentar**.
+- **Lo que escribe se guarda en el móvil** (`nura_borrador_<token>`): si
+  cierra la página o se le corta, al volver sigue ahí. Se borra al enviarse.
+- **Si falla por la conexión, sale sola al volver** («Sin conexión. Tu
+  respuesta está guardada: la envío en cuanto vuelva»). Un seguro evita que
+  dos avisos de «hay conexión» la manden dos veces.
+- Comprobado en el navegador: abrir sin red → reintentar → abre; recargar
+  conserva el borrador; enviar sin red → vuelve la red → «Respuesta
+  enviada», una sola vez, y borrador limpio.
+
+## 2026-09-25 — Mensajes sin conexión: se guardan y salen solos
+
+- **Sin conexión, el aviso al profesional se perdía en silencio** y el chat
+  decía igualmente «Mensaje enviado. Aviso a Carlos…». El profesional no
+  se enteraba nunca y la persona creía que sí.
+- Ahora (`escrituras.js`: `enviarAlProfesional`, `reenviarPendientes`):
+  - si no sale, se guarda en `nura_pendientes` y el chat lo marca
+    «Pendiente de enviar»; Nüra dice «Ahora mismo no hay conexión. Tu
+    mensaje está guardado y se lo envío a Carlos en cuanto vuelva»;
+  - al volver la conexión (y al abrir la app) salen solos **en orden**: el
+    primero abre la conversación y los siguientes la amplían;
+  - «Mensaje enviado» solo se dice cuando de verdad ha salido;
+  - si el servidor lo rechaza (4xx) no se reintenta en bucle.
+- `encolarAviso` y `seguirConversacion` devuelven ya el resultado
+  ('ok' | 'fallo' | 'rechazado' | 'nada') en vez de nada.
+- Comprobado en el navegador en modo real con el servidor simulado: sin
+  red → dos pendientes; vuelve la red → llegan `encolar-aviso` y
+  `ampliar-aviso` en orden y desaparecen las marcas.
+
+## 2026-09-25 — Crear cuenta: el correo, comprobado
+
+- El correo de los avisos «te aviso si aparece alguien» sale de la cuenta,
+  así que donde se escribe es al crearla (`/entrar?modo=crear`). Con
+  «marta@gmial.com» el correo de confirmación nunca llegaba y la persona
+  se quedaba sin cuenta y sin avisos.
+- Ahora, al crear la cuenta: si el dominio parece mal escrito, «¿Querías
+  decir marta@gmail.com?» con un botón **Usar marta@gmail.com**; si vuelve
+  a pulsar con el suyo, se usa tal cual. Si le falta el final, se le dice.
+  No se llama a Supabase hasta que el correo está bien.
+- Misma pieza que el contacto del profesional (`contactoProfesional.js`).
+- Comprobado en el navegador (sugerencia, botón, insistir, incompleto);
+  accesibilidad a cero.
+
+## 2026-09-25 — El contacto del profesional, comprobado
+
+- Es por donde le llega cada aviso, y se aceptaba cualquier cosa: un móvil
+  con una cifra de menos o «marta@gmial.com» dejaban al profesional sin
+  avisos para siempre, sin que nadie lo notara.
+- `src/utils/contactoProfesional.js` (`revisarContacto`): móvil español de
+  9 cifras (con o sin +34/0034, espacios, guiones), número internacional
+  con +, o correo completo. Si falta algo, Nüra dice qué («le faltan
+  cifras: tiene 8 y un móvil tiene 9»). Si el correo parece tener una falta
+  en el dominio (gmial, hotmial, gmail.con…), sugiere el bueno; si la
+  persona reenvía el suyo tal cual, se acepta.
+- Se guarda limpio: «612 345 678» o el correo en minúsculas.
+- En el alta (última pregunta) y al editar la ficha.
+- `npm run test:matching`: 163 (11 nuevas de contacto).
+- Tropiezo corregido antes de publicar: el módulo nuevo se creó primero
+  como `utils/contacto.js`, que YA existía (destinos del chat), y lo
+  sobrescribió; el build lo detectó y se restauró desde git. `npm run lint`
+  no lo detecta: hay que pasar también `npm run build`.
+
+## 2026-09-25 — La búsqueda aguanta faltas y catalán
+
+- 50 frases como se escriben en el móvil: con faltas («fontanro»,
+  «sicologa», «logopeta»), muy cortas («fisio», «gestor»), coloquiales
+  («xq no me va el wifi») y en catalán («lampista», «advocat», «gos»).
+  Acertaba 38; ahora 50.
+- **Corrección de faltas prudente** (`corregirOficios`): solo hacia
+  nombres de oficio, solo palabras de 6 letras o más que Nüra no conoce, y
+  a una letra de distancia (dos en palabras largas; cuenta el cambio de
+  orden de dos letras). Los plurales no se tocan. Comprobado que palabras
+  corrientes («mañana», «ayudar», «pintura»…) no cambian.
+- Vocabulario en catalán: lampista, fuster, paleta, manyà, advocat, gos,
+  gat, cangur, classes, repàs, gent gran…
+- «Monitor de tiempo libre» va a cuidado (no a entrenador) y «canguro de
+  gatos» a mascotas (el animal manda).
+- `npm run test:matching`: 152 (14 nuevas).
+
+## 2026-09-25 — Versión nueva con la app abierta: se recarga sola
+
+- Desde que las pantallas se cargan aparte, cada publicación les cambia el
+  nombre. Quien tenía Nüra abierta de antes pedía un archivo que ya no
+  existe al abrir otra pantalla, y veía un error. Ahora
+  (`src/utils/versionNueva.js`) la página se recarga **una vez** y sigue
+  en la pantalla que pidió, con la versión nueva. Tope: una recarga cada
+  30 s, para no entrar en bucle si el fallo es otro.
+- **La pantalla de error general era roja, con el código técnico, y su
+  único botón hacía `localStorage.clear()`**: borraba la sesión, los chats
+  y las búsquedas guardadas en el móvil. Retirada (`AppErrorBoundary`); la
+  app entera usa ya la amable («Algo fue mal por mi lado» · Volver ·
+  Reintentar), que no borra nada.
+- La precarga de pestañas ya no deja errores sin atender si falla.
+- Comprobado en el navegador quitando el archivo de Explorar con la app
+  abierta: con la versión nueva disponible, recarga y abre Explorar; si
+  sigue faltando, una sola recarga y la pantalla amable; datos intactos.
+
+## 2026-09-25 — Primer paso para más ciudades
+
+- **El alta guardaba a TODOS los profesionales en Barcelona**
+  (`city: 'Barcelona'` fijo) y preguntaba «¿En qué zona de Barcelona
+  trabajas?». Ahora pregunta «¿En qué ciudad y zona trabajas?» y la ciudad
+  se lee de la respuesta (`src/data/ciudades.js`: ~60 ciudades de España;
+  un barrio de Barcelona cuenta como Barcelona). Si no se reconoce, queda
+  sin ciudad en vez de inventar Barcelona. Igual al editar la ficha.
+- **La búsqueda entiende la ciudad**: «fontanero en Madrid» solo muestra a
+  quien trabaja en Madrid o atiende online. Si no hay nadie: «Nüra acaba
+  de empezar y todavía no tengo a nadie allí» (y se ofrece el aviso).
+  Sin ciudad en la frase, no se filtra. Las ambiguas (León, Granada,
+  Santander…) solo cuentan tras «en», «de», «por»…
+- Los precios de referencia son de Barcelona: fuera de Barcelona ya no se
+  compara con ellos.
+- Fuera «Barcelona» de textos que la daban por hecha (barra lateral del
+  ordenador, puerta de registro, «he mirado en toda Barcelona»).
+- `npm run test:matching`: 138 (15 nuevas de ciudad).
+- **Sigue pendiente**: los barrios con distancia y las alertas «cerca de»
+  solo existen para Barcelona; la página `/profesionales` habla de Barcelona
+  a propósito (es donde empieza).
+
+## 2026-09-25 — Retirada la fila «Instala Nüra en tu móvil»
+
+- **Decisión del fundador:** «la idea es acabar haciendo la app, mi
+  intención no es que la gente tenga la app de acceso directo de la página
+  web». No se invita a instalar la web en la pantalla de inicio: la
+  experiencia de app será la app de iOS (`docs/app-ios.md`).
+- Se quitan `InstalarApp.jsx` e `instalar.js`. Se quedan los iconos bien
+  hechos (no invitan a nada; solo evitan que se vea mal a quien lo haga
+  por su cuenta).
+- Sigue la frase de la hoja de alertas que explica que en iPhone los avisos
+  solo llegan desde la pantalla de inicio: es la única forma de que llegue
+  un aviso web en iPhone hasta que exista la app.
+
+## 2026-09-25 — «Instala Nüra en tu móvil», en el perfil
+
+- En iPhone, instalar Nüra en la pantalla de inicio es la ÚNICA forma de
+  recibir avisos, y solo se explicaba de pasada al crear una alerta.
+- Nueva fila en el perfil (con cuenta, en Ajustes; sin cuenta, bajo la
+  tarjeta de crear cuenta). No aparece si ya está instalada. Nada salta
+  solo: se explica al tocarla.
+  - **Android/Chrome**: un toque abre el cuadro de instalar del navegador
+    (se guarda el aviso `beforeinstallprompt` al arrancar,
+    `src/utils/instalar.js`).
+  - **iPhone**: tres pasos (Compartir → Añadir a pantalla de inicio → abrir
+    desde el icono).
+  - **Otros**: menú del navegador → Instalar aplicación.
+- Comprobado en el navegador en los cuatro casos; accesibilidad a cero.
+- De paso: `var(--space-40)` no existe (los tokens llegan a 32); usarlo
+  anula el `padding` entero sin avisar.
+
+## 2026-09-25 — Iconos de la app instalada, bien hechos
+
+- El manifiesto declaraba `logo-iso.png` (180×180, fondo transparente)
+  como si fuera de 192 y de 512, y además «maskable». Resultado: en
+  iPhone, al añadir Nüra a la pantalla de inicio, el fondo transparente
+  sale **negro**; en Android el icono «maskable» sin margen se recorta.
+- Nuevos: `icono-192.png`, `icono-512.png`, `icono-maskable-512.png`
+  (con fondo y margen de seguridad) y `apple-touch-icon.png` (180, fondo
+  claro). Todos bajo 60 kB. Los avisos del móvil usan `icono-192.png`.
+- Chrome no ponía pegas antes ni ahora (`getInstallabilityErrors` vacío):
+  la mejora es de cómo se ve, no de si se puede instalar.
+- Límite: el único logo que hay es de 180 px; los de 512 están ampliados.
+  Con el logo original en alta resolución (o SVG) quedarían más nítidos.
+
+## 2026-09-25 — Sin conexión no es «ya no está en Nüra»
+
+- `getHelperById` devolvía `null` tanto si la ficha no existía como si
+  fallaba la red. Con mala cobertura, un enlace compartido decía «Esta
+  persona ya no está en Nüra» de alguien que sí estaba. Ahora un fallo de
+  red o del servidor **lanza**, y ficha y chat dicen «No he podido cargar
+  esta ficha / abrir esta conversación. Parece un problema de conexión»
+  con un botón **Reintentar**. «Ya no está» queda solo para cuando de
+  verdad no existe.
+- Espera máxima de 2,5 s → 6 s: en el móvil con poca cobertura 2,5 s daban
+  el error a menudo (mientras, se ve el esqueleto de carga).
+- Comprobado en el navegador: sin red → reintentar → carga; no existe →
+  «ya no está»; en ficha y en chat.
+
+## 2026-09-25 — Compartir una ficha, de verdad
+
+- **El botón de compartir de la ficha** abre en el móvil el menú del
+  sistema (WhatsApp, Telegram…) con «Te paso a Carlos, logopeda infantil.
+  Le puedes escribir por Nüra:» y el enlace. Donde no hay menú, copia.
+  Antes solo copiaba, y sin portapapeles (`navigator.clipboard` indefinido)
+  el botón se rompía (`undefined.then`).
+- **«Compartir mi ficha»** en el perfil de la profesional (con la ficha
+  vinculada): su tarjeta de visita para mandar a quien le pregunte, con la
+  vista previa de su nombre y oficio. `src/utils/compartir.js`.
+- **La imagen para compartir pasa a JPG** (`og-compartir.jpg`, 34 KB): la
+  PNG pesaba 219 KB y rompía la regla de la puerta de humo (60 KB). El
+  fallo entró en el cambio anterior porque no se pasó `npm run smoke`.
+
+## 2026-09-25 — Nüra no es solo de Barcelona (lo que se comparte)
+
+- **Decisión del fundador:** «la app la usarán en más ciudades». La imagen
+  para compartir decía «Cerca de ti, en Barcelona»; ahora «Cerca de ti,
+  cuando lo necesitas» (`public/og-compartir.png`, nombre nuevo para
+  saltarse la copia que guarda WhatsApp).
+- Fuera «Barcelona» del título de la pestaña, de la descripción para
+  buscadores y del texto de respaldo de la vista previa de una ficha.
+- **Pendiente (más grande):** la app sigue pensada para una sola ciudad:
+  245 menciones a Barcelona en `src/`, y los barrios (`data/barrios.js`),
+  la zona de las alertas y los textos de la búsqueda son de Barcelona.
+  Abrir otra ciudad exige convertir eso en una lista de ciudades.
+
+## 2026-09-25 — Imagen nueva para compartir (og-nura.png)
+
+- El fundador: «No aparece la miniatura bien». La imagen de antes llevaba
+  escrita una dirección vieja (`nura-app-pied.vercel.app`) y, al recortarla
+  en cuadrado como hace WhatsApp en pequeño, se veía un trozo de chat.
+- **`public/og-nura.png`** (1200×630, 218 KB, bajo el límite de WhatsApp):
+  logo, «Nüra», «Encuentra a la persona adecuada · Cerca de ti, en
+  Barcelona». Todo en el centro, así que el recorte cuadrado se ve entero.
+  Nombre nuevo para que WhatsApp no tire de la copia vieja.
+- Se añaden `og:image:width/height/type/secure_url/alt`: sin medidas,
+  WhatsApp a veces no enseña la imagen la primera vez que ve un enlace.
+- En una ficha con foto real se quitan esas medidas (son las de la imagen
+  de Nüra) y se usa su foto también en `secure_url` y Twitter.
+
+## 2026-09-25 — La ficha, con vista previa al compartirla
+
+- **`middleware.js` (middleware de Vercel, solo en `/helper/:id`)**: WhatsApp
+  y Google no ejecutan JavaScript; leían siempre «Nüra — Cuéntame qué
+  necesitas». Ahora la página llega con el nombre, el oficio, el barrio o
+  el principio de la bio, y la foto si es una foto de verdad (jpg/png/webp);
+  si no, la imagen de Nüra. Los textos van escapados.
+- **A prueba de fallos**: si Supabase no contesta en 1,5 s, la ficha no
+  existe o algo falla, se sirve la página de siempre.
+- **La imagen general (`og-image.png`) ya va con dirección completa**:
+  WhatsApp y Facebook no aceptan `/og-image.png` a secas, así que ni la
+  vista previa general enseñaba imagen.
+- Pruebas: `npm run test:vista` (16, sin red).
+- **Sin comprobar en Vercel** desde aquí (no se llega desde el entorno de
+  trabajo): se confirma compartiendo una ficha por WhatsApp tras publicar.
+
+## 2026-09-25 — Cada pantalla, su título; y robots.txt
+
+- **La pestaña del navegador dice dónde estás**: «Mis chats — Nüra»,
+  «Carlos Martínez Vidal · Logopeda infantil — Nüra», «Chat con Carlos —
+  Nüra»… Antes todas se llamaban igual. Sirve al historial, a los lectores
+  de pantalla (anuncian el título al cambiar de página) y a Google.
+  Todo en `src/utils/titulo.js`.
+- **`public/robots.txt`**: fichas y páginas públicas, sí; chats, enlaces de
+  respuesta, bajas de avisos y perfil propio, fuera de los buscadores.
+
 ## 2026-09-25 — Diseño integral y reparto entre Codex y Claude
 
 - **Decisión de Sergio:** Codex se ocupa del diseño de toda la app y Claude de funcionalidades. Los cambios de diseño se integran y publican tras las pruebas, sin aprobación estética previa. Coordinación por repositorio y documentos compartidos.

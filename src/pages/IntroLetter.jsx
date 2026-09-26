@@ -1,9 +1,11 @@
+import { getFirstName } from '../utils/name'
 import { useState, useRef, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, RotateCcw, Send, Sparkles } from 'lucide-react'
 import { useUser } from '../context/UserContext'
-import { HELPERS } from '../data/helpers'
+import { HELPERS_DEMO as HELPERS } from '../data/helpers'
 import { DEMO_ENRICHMENTS } from '../data/demoEnrichments'
+import { DEMO_MODE } from '../config'
 import { buildIntroLetter, regenerateIntroLetter } from '../utils/introLetter'
 import styles from './IntroLetter.module.css'
 
@@ -15,7 +17,7 @@ export default function IntroLetter() {
   const textareaRef = useRef(null)
 
   const passedHelper = location.state?.helper
-  const helper = passedHelper && passedHelper.id >= 2000 && DEMO_ENRICHMENTS[passedHelper.id]
+  const helper = passedHelper && DEMO_MODE && passedHelper.id >= 2000 && DEMO_ENRICHMENTS[passedHelper.id]
     ? { ...DEMO_ENRICHMENTS[passedHelper.id], ...passedHelper }
     : passedHelper || HELPERS.find(h => String(h.id) === String(id))
 
@@ -56,7 +58,7 @@ export default function IntroLetter() {
     </div>
   )
 
-  const firstName = helper.name?.split(' ')?.[0] || ''
+  const firstName = getFirstName(helper.name) || ''
 
   function handleRegenerate() {
     const next = regenCount % 2 === 0

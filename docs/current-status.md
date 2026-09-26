@@ -118,7 +118,8 @@ Sin esto no se envía ningún correo y la app lo dice.
 5. **Comprensión de la búsqueda**: funciona por listas de palabras. Con 25
    frases reales nuevas acierta 17 (2026-09-24); con otras 60 nuevas, 45
    antes del ajuste y 55 después (2026-09-25; las 5 restantes van a un
-   oficio razonable). Cada forma nueva de decir
+   oficio razonable); con 50 escritas «de móvil» (faltas, catalán), 38 → 50
+   con una corrección de faltas hacia nombres de oficio. Cada forma nueva de decir
    algo hay que añadirla a mano. Mejorarlo de verdad (por ejemplo, con un
    modelo de lenguaje que entienda la frase) es decisión del fundador.
 6. **Perfil vivo** (`docs/perfil-vivo.md`): diseño propuesto, pendiente de
@@ -912,7 +913,9 @@ obligatorio antes de lanzar)** dependen de saber quién es el profesional.
 - ~~`chat_log` legible con la clave pública~~ — **la columna no existe**.
 - ~~`nura_demanda_no_cubierta` solo en local~~ — la demanda sin cubrir ya
   llega a Supabase como evento `sin_cobertura` (tabla `eventos`).
-- **`DEMO_MODE` sigue en `true`** y no aísla la base de datos. Correcto
+- **`DEMO_MODE` sigue en `true`** y no aísla la base de datos. Al apagarlo (2026-09-25) la
+  búsqueda y Explorar dejan de usar los perfiles de ejemplo de `data/helpers.js`:
+  solo salen los de la base de datos. Correcto
   mientras la app sea una simulación; se apaga al lanzar.
 - ~~3 pantallas construidas y sin ruta~~ — **retiradas el 2026-09-24**
   (`HowItWorks`, `MomentoCero`, `Splash`), por decisión del fundador.

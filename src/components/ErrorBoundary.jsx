@@ -1,4 +1,5 @@
 import { Component } from 'react'
+import { esVersionVieja, recargarPorVersionNueva } from '../utils/versionNueva'
 
 export default class ErrorBoundary extends Component {
   constructor(props) {
@@ -8,7 +9,12 @@ export default class ErrorBoundary extends Component {
   static getDerivedStateFromError(error) {
     return { error }
   }
+  componentDidCatch(error) {
+    // Versión nueva publicada con la app abierta: se recarga sola.
+    if (esVersionVieja(error) && recargarPorVersionNueva()) this.setState({ recargando: true })
+  }
   render() {
+    if (this.state.recargando) return null
     if (this.state.error) {
       return (
         <div style={{

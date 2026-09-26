@@ -1,6 +1,7 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useUser } from './context/UserContext'
+import { ponerTitulo, tituloDeRuta } from './utils/titulo'
 
 import { NURA_BUILD } from './config'
 console.log('[Nüra] build', NURA_BUILD)   // preflight-ok: el sello es como se sabe QUE hay desplegado; no lleva dato de nadie
@@ -39,7 +40,7 @@ import Toast from './components/Toast'
 import PageTransition from './components/PageTransition'
 import './index.css'
 import './design-system.css'
-import AppErrorBoundary from './components/AppErrorBoundary'
+import ErrorBoundary from './components/ErrorBoundary'
 
 function AppRoutes() {
   // Entrada directa: un solo respiro del iso mientras arranca el JS
@@ -54,6 +55,12 @@ function AppRoutes() {
   // ── La primera vez ──
   // Sin pantallas de bienvenida (decisión del fundador, 2026-09-25): se
   // entra directo a la principal; buscar o crear cuenta, cuando uno quiera.
+
+  // El título de la pestaña, por pantalla (las de datos ponen el suyo).
+  useEffect(() => {
+    const t = tituloDeRuta(location.pathname)
+    if (t !== undefined) ponerTitulo(t)
+  }, [location.pathname])
 
   // ── Las pestañas viven ──
   // Montadas siempre tras su primera visita; solo alternan visibilidad.
@@ -73,7 +80,8 @@ function AppRoutes() {
   // descarga en segundo plano cuando la app ya esta quieta: abrir primero
   // es rapido y cambiar de pestaña sigue siendo instantaneo.
   useEffect(() => {
-    const precargar = () => { import('./pages/Chats'); import('./pages/Profile'); import('./pages/Chat') }
+    // Si falla (red, versión nueva), no pasa nada: se pedirá al abrirla.
+    const precargar = () => { for (const p of [import('./pages/Chats'), import('./pages/Profile'), import('./pages/Chat')]) p.catch(() => {}) }
     const id = window.requestIdleCallback ? window.requestIdleCallback(precargar, { timeout: 4000 }) : setTimeout(precargar, 2500)
     return () => { window.cancelIdleCallback ? window.cancelIdleCallback(id) : clearTimeout(id) }
   }, [])
@@ -159,10 +167,12 @@ function leerDestino() {
 
 export default function App() {
   return (
-    <AppErrorBoundary>
+    // La pantalla de error amable (antes: una roja con el código y un botón
+    // que BORRABA todo lo guardado en el móvil, sesión incluida).
+    <ErrorBoundary>
       <BrowserRouter>
         <AppRoutes />
       </BrowserRouter>
-    </AppErrorBoundary>
+    </ErrorBoundary>
   )
 }

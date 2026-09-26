@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import PageHeader from '../components/PageHeader'
 import styles from './Siguiendo.module.css'
 import { crearCuenta, entrar, pedirRestablecer, sesionActual, MIN_CONTRASENA } from '../utils/cuenta'
 import { reclamarFicha } from '../utils/escrituras'
 import { useUser } from '../context/UserContext'
+import { revisarContacto } from '../utils/contactoProfesional'
 
 // ── ENTRAR / CREAR ACCESO / OLVIDÉ LA CONTRASEÑA ─────────────────────────
 // Etapa 6 de docs/estudio-perfil.md: correo y contraseña, como casi todas
@@ -33,6 +34,10 @@ export default function Entrar() {
   const [error, setError] = useState('')
   const [aviso, setAviso] = useState('')
   const [enviando, setEnviando] = useState(false)
+  // Correo con falta en el dominio («gmial.com»): se sugiere el bueno. Si
+  // lo vuelve a enviar igual, se respeta (puede que sea así de verdad).
+  const [sugerencia, setSugerencia] = useState(null)
+  const insistido = useRef('')
 
   const titulo = { entrar: 'Entrar', crear: 'Crea tu acceso', olvido: 'Restablecer contraseña' }[modo]
   const listo = email.includes('@') && (modo === 'olvido' || pass.length >= (modo === 'crear' ? MIN_CONTRASENA : 1))
@@ -40,7 +45,19 @@ export default function Entrar() {
 
   async function enviar() {
     if (!listo || enviando) return
-    setEnviando(true); setError(''); setAviso('')
+    setError(''); setAviso(''); setSugerencia(null)
+    if (modo === 'crear') {
+      const c = revisarContacto(email)
+      if (!c.ok && !(c.sugerencia && insistido.current === email.trim())) {
+        insistido.current = email.trim()
+        if (c.sugerencia) setSugerencia(c.sugerencia)
+        setError(c.sugerencia
+          ? `¿Querías decir ${c.sugerencia}? Si no, vuelve a pulsar el botón y lo usaremos tal cual.`
+          : 'Ese correo no parece completo. Escríbelo entero, así: nombre@gmail.com')
+        return
+      }
+    }
+    setEnviando(true)
     const r = modo === 'entrar' ? await entrar(email, pass)
       : modo === 'crear' ? await crearCuenta(email, pass)
       : await pedirRestablecer(email)
@@ -103,6 +120,13 @@ export default function Entrar() {
           )}
 
           {error && <p role="alert" style={{ margin: 'var(--space-10) 0 0', fontSize: 'var(--text-sm)', color: 'var(--red-ink)', lineHeight: 1.45 }}>{error}</p>}
+          {sugerencia && (
+            <button type="button" onClick={() => { setEmail(sugerencia); setSugerencia(null); setError('') }}
+              style={{ marginTop: 'var(--space-8)', padding: 'var(--space-8) var(--space-14)', minHeight: 40, background: 'var(--purple-10, #F1ECFF)',
+                color: 'var(--purple-ink)', border: 'none', borderRadius: 'var(--radius-full)', fontSize: 'var(--text-sm)', fontWeight: 600, cursor: 'pointer' }}>
+              Usar {sugerencia}
+            </button>
+          )}
           {aviso && <p role="status" style={{ margin: 'var(--space-10) 0 0', fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)', lineHeight: 1.5 }}>{aviso}</p>}
 
           <button type="submit" disabled={!listo || enviando}

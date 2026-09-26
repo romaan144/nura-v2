@@ -1,4 +1,10 @@
-import { useState } from 'react'
+import { revisarContacto } from '../utils/contactoProfesional'
+import { ciudadEnTexto } from '../data/ciudades'
+import { useState, useEffect } from 'react'
+import EditarHorario from './EditarHorario'
+import EditarBloqueos from './EditarBloqueos'
+import { horarioValido, horarioDelOficio, bloqueosVigentes } from '../data/horarios'
+import { analyzeNeed } from '../utils/matching'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 import { useUser } from '../context/UserContext'
@@ -23,7 +29,7 @@ import { ordenarPerfil, confirmarDeclarado } from '../utils/declarado'
 const CAMPOS = [
   { k: 'specialty',      label: 'Tu especialidad',        ej: 'Logopeda infantil' },
   { k: 'formation',      label: 'Tu formación',           ej: 'Grado en Logopedia, UB', largo: true },
-  { k: 'zone',           label: 'Dónde trabajas',         ej: 'Gràcia, Barcelona' },
+  { k: 'zone',           label: 'Dónde trabajas',         ej: 'Barcelona, Gràcia · Madrid, Chamberí' },
   { k: 'price',          label: 'Tu tarifa',              ej: '45 € la sesión' },
   { k: 'differentiator', label: 'Qué te diferencia',      ej: 'Trabajo con juego, sin prisas', largo: true },
   { k: 'contacto',       label: 'Dónde te avisamos',      ej: 'Tu móvil o tu correo',
@@ -31,12 +37,32 @@ const CAMPOS = [
 ]
 const MODOS = ['Presencial', 'Online', 'Las dos']
 
-export default function EditarFicha({ onClose }) {
+/** `foco`: 'bloqueos' abre la hoja ya en «Días u horas que no puedes». */
+export default function EditarFicha({ onClose, foco }) {
   const { user, updateUser } = useUser()
   const hp = user?.helperProfile || {}
   const [v, setV] = useState(() => Object.fromEntries(
     [...CAMPOS.map(c => [c.k, hp[c.k] || '']), ['modality', hp.modality || '']]))
-  const cambiado = Object.keys(v).some(k => (v[k] || '').trim() !== (hp[k] || '').trim())
+  // El horario: el suyo si ya lo marcó; si no, el típico de su oficio como
+  // punto de partida (se sabe el oficio por su especialidad).
+  const [horario, setHorario] = useState(() => horarioValido(hp.horario) || horarioDelOficio(null))
+  useEffect(() => {
+    if (horarioValido(hp.horario)) return
+    let vivo = true
+    analyzeNeed(hp.specialty || '').then(a => { if (vivo && a?.categoria) setHorario(horarioDelOficio(a.categoria)) })
+    return () => { vivo = false }
+  }, [])   // eslint-disable-line react-hooks/exhaustive-deps
+  const horarioOk = horarioValido(horario)
+  const horarioCambiado = JSON.stringify(horarioOk) !== JSON.stringify(horarioValido(hp.horario))
+  // Días u horas sueltas que no puede (los pasados se van solos al guardar).
+  const [bloqueos, setBloqueos] = useState(() => bloqueosVigentes(hp.bloqueos))
+  const bloqueosCambiados = JSON.stringify(bloqueos) !== JSON.stringify(bloqueosVigentes(hp.bloqueos))
+  const cambiado = Object.keys(v).some(k => (v[k] || '').trim() !== (hp[k] || '').trim()) || horarioCambiado || bloqueosCambiados
+  useEffect(() => {
+    if (foco !== 'bloqueos') return
+    const t = setTimeout(() => document.getElementById('bloqueos')?.scrollIntoView({ block: 'start' }), 150)
+    return () => clearTimeout(t)
+  }, [foco])
 
   const vinculada = user?.helperId != null
   const [guardando, setGuardando] = useState(false)
@@ -56,7 +82,14 @@ export default function EditarFicha({ onClose }) {
 
   async function guardar() {
     const limpio = Object.fromEntries(Object.entries(v).map(([k, x]) => [k, (x || '').trim()]))
-    updateUser({ helperProfile: { ...hp, ...limpio } })
+    // El contacto, comprobado (vacío se permite: puede quitarlo).
+    if (limpio.contacto) {
+      const r = revisarContacto(limpio.contacto)
+      if (!r.ok) { setFallo(r.motivo.replace(/ Si tu correo era.*$/, '')); return }
+      limpio.contacto = r.valor
+    }
+    if (!horarioOk) { setFallo('Marca al menos un día y una hora de tu horario.'); return }
+    updateUser({ helperProfile: { ...hp, ...limpio, horario: horarioOk, bloqueos } })
     if (!vinculada) { onClose(); return }
     // ── A LA FICHA PUBLICA (etapa 6b) ──────────────────────────────────
     // Con la ficha vinculada, el cambio se escribe en Supabase con la sesion
@@ -70,10 +103,13 @@ export default function EditarFicha({ onClose }) {
       const cambios = {
         specialty: limpio.specialty || '',
         bio: [limpio.formation, limpio.differentiator].filter(Boolean).join('. '),
-        zone: limpio.zone || 'Barcelona',
+        zone: limpio.zone || null,
+        ...(ciudadEnTexto(limpio.zone) ? { city: ciudadEnTexto(limpio.zone) } : {}),
         price: limpio.price || null,
         online: /online|las dos/i.test(limpio.modality || ''),
         contacto: limpio.contacto || null,
+        horario: horarioOk,
+        bloqueos,
       }
       const { data, error } = await cuentas.from('helpers').update(cambios).eq('id', user.helperId).select('id')
       if (error || !data?.length) throw error || new Error('ninguna fila')
@@ -159,6 +195,9 @@ export default function EditarFicha({ onClose }) {
             })}
           </div>
         </div>
+
+        <EditarHorario valor={horario} onCambio={setHorario} />
+        <EditarBloqueos valor={bloqueos} horario={horarioOk || horarioDelOficio(null)} onCambio={setBloqueos} />
         </>}
       </div>
 

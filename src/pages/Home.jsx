@@ -25,8 +25,8 @@ import styles from './Home.module.css'
 import { PULSO_THRESHOLD, PULSO_DELAY, CONFIRMACION_THRESHOLD, CONFIRMACION_DELAY } from '../config'
 import { extractPersona } from '../utils/personas'
 import { proSignals } from '../utils/proSignals'
-import { HELPERS as LOCAL_FALLBACK_HELPERS } from '../data/helpers'
 import { fmtNota, fmtKm } from '../utils/formato'
+import RecordatorioCita from '../components/RecordatorioCita'
 
 // ── La Comprensión Visible — lo que Nüra ha entendido, en chips ──
 const PERSONA_CHIP = {
@@ -161,7 +161,7 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
   const confirmedContacts = (contactedHelpers || []).filter(c => c?.confirmed === true)
   if (confirmedContacts.length > 0) {
     const last = confirmedContacts[confirmedContacts.length - 1]
-    const helperFirst = last.name?.split(' ')?.[0] || last.name
+    const helperFirst = getFirstName(last.name) || last.name
     // El Espejo — si este contacto está vinculado a una persona, preguntar por ella
     const linkedPersona = (personas || []).find(p => (p.contactedHelperIds || []).includes(last.id))
     if (linkedPersona) {
@@ -191,7 +191,7 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
   const pendingContacts = (contactedHelpers || []).filter(c => c?.id && c?.confirmed === undefined)
   if (pendingContacts.length > 0) {
     const last = pendingContacts[pendingContacts.length - 1]
-    const helperFirst = last.name?.split(' ')?.[0] || last.name
+    const helperFirst = getFirstName(last.name) || last.name
     return [
       saludo,
       `¿Pudiste resolver lo que necesitabas con **${helperFirst}**? ¿O buscamos otra persona?`
@@ -605,7 +605,7 @@ export default function Home() {
             lines: [(() => {
               const lp = (personas || []).find(p => (p.contactedHelperIds || []).includes(pending.id))
               const ci = (citas || []).slice().reverse().find(x => x.helperId === pending.id)
-              const hn = pending.name?.split(' ')?.[0] || pending.name
+              const hn = getFirstName(pending.name) || pending.name
               if (ci) return `¿Qué tal fue la visita del ${ci.label} con **${hn}**${lp ? ` para ${lp.label}` : ''}? ¿Pudisteis resolverlo?`
               return lp
                 ? `¿Pudiste resolver lo que necesitabas para ${lp.label} con **${hn}**?`
@@ -830,7 +830,7 @@ export default function Home() {
       // User confirms — guide to profile
       if (esBreve && (palabra('sí','si','vale','ok','ese','esa','bien','genial','perfecto') || t.includes('me convence'))) {
         const topMatch = lastMatches?.[0]
-        const firstName = topMatch?.name?.split(' ')?.[0] || ''
+        const firstName = getFirstName(topMatch?.name) || ''
         setTimeout(() => {
           setMessages(prev => [...prev, {
             id: Date.now(), from: 'nura',
@@ -1013,7 +1013,9 @@ export default function Home() {
           registrarDemanda?.({ categoria: analysis.categoria, fecha: Date.now() })
           registrar('sin_cobertura', { categoria: analysis.categoria })
           setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
-            lines: [`Te he entendido: buscas ${queEs}. Ahora mismo no tengo a nadie así cerca de ti.`],
+            lines: [analysis.ciudad && analysis.ciudad !== 'Barcelona'
+              ? `Te he entendido: buscas ${queEs} en ${analysis.ciudad}. Nüra acaba de empezar y todavía no tengo a nadie allí.`
+              : `Te he entendido: buscas ${queEs}. Ahora mismo no tengo a nadie así cerca de ti.`],
             chips: [`Buscar ${alt.alt}`, 'Ampliar la zona', 'Avísame cuando tengas a alguien'] }])
           // Aqui NO se pregunta si recordar: solo se ven las opciones del
           // ultimo mensaje, y taparia estas.
@@ -1096,8 +1098,8 @@ export default function Home() {
         : 'profesionales'
       const top = matches?.[0]
       const zona = top?.zone || top?.city || 'Barcelona'
-      const topName = top?.name?.split(' ')?.[0] || ''
-      const topFirstName = top?.name?.split(' ')?.[0] || ''
+      const topName = getFirstName(top?.name) || ''
+      const topFirstName = getFirstName(top?.name) || ''
       // La Gramática de la Recomendación — humana, breve, segura
       const why = buildWhy(top, analysis)
       const urgentTail = analysis?.urgente ? ' — y puede estar allí hoy mismo' : ''
@@ -1203,7 +1205,7 @@ export default function Home() {
       // ampliando aparecera alguien seria mentir dos veces.
       haptic('light')
       responde(
-        ['He mirado en toda Barcelona, no solo en tu barrio — todavia no tengo a nadie asi.'],
+        [`He mirado en toda ${window.__nuraLastAnalysis?.ciudad || 'la ciudad'}, no solo en tu barrio — todavía no tengo a nadie así.`],
         ['Avisame cuando tengas a alguien']
       )
       return
@@ -1373,6 +1375,7 @@ export default function Home() {
 
       <div className={styles.messages} ref={scrollerRef}
         style={{paddingTop: topH + 'px'}}>
+        <RecordatorioCita />
         {messages.map((msg, msgIdx) => {
           const prevMsg = messages[msgIdx - 1]
           const prevHadResults = prevMsg?.results?.length > 0

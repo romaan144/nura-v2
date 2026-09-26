@@ -87,12 +87,21 @@ export function ultimaLlave(helperId) {
  * nunca por el profesional a secas: el servidor solo devuelve la respuesta
  * de cada conversacion a quien tiene su llave.
  */
+// Cada vez que llegan respuestas se avisa a la app: si traen una cita
+// aceptada o rechazada, UserContext la marca en «Mis servicios».
+function anunciarRespuestas(lista) {
+  if (typeof window !== 'undefined' && lista.some(r => r.cita)) {
+    window.dispatchEvent(new CustomEvent('nura:respuestas', { detail: lista }))
+  }
+  return lista
+}
+
 export async function respuestasDe(helperId) {
   const llaves = llavesGuardadas()[String(helperId)] || []
   if (!porLaFuncion() || !llaves.length) return []
   try {
     const r = await llamarFuncion({ op: 'respuestas', llaves })
-    return r?.respuestas || []
+    return anunciarRespuestas((r?.respuestas || []).map(x => ({ ...x, helperId: String(helperId) })))
   } catch { return [] }
 }
 
@@ -106,7 +115,7 @@ export async function respuestasTodas() {
   if (!porLaFuncion() || !deLlave.size) return []
   try {
     const r = await llamarFuncion({ op: 'respuestas', llaves: [...deLlave.keys()].slice(-50) })
-    return (r?.respuestas || []).map(x => ({ ...x, helperId: deLlave.get(x.llave) }))
+    return anunciarRespuestas((r?.respuestas || []).map(x => ({ ...x, helperId: deLlave.get(x.llave) })))
   } catch { return [] }
 }
 
@@ -167,15 +176,52 @@ export async function atributosDe(helperId) {
 /** LA VUELTA: abrir el aviso con el token del enlace. Sin cuenta. */
 export async function abrirAviso(token) {
   if (!porLaFuncion()) return { ok: false }
-  try { return await llamarFuncion({ op: 'abrir-aviso', token }) }
-  catch { return { ok: false } }
+  // `sinRed`: no se pudo preguntar (no es que el enlace no valga).
+  try {
+    const r = await llamarFuncion({ op: 'abrir-aviso', token })
+    return r?.ok || (r?.estado >= 400 && r?.estado < 500) ? r : { ...r, sinRed: true }
+  }
+  catch { return { ok: false, sinRed: true } }
 }
 
 /** LA VUELTA: el profesional responde. Si falla, se dice — no se finge. */
-export async function responderAviso(token, respuesta) {
+/** `cita`: 'aceptada' | 'rechazada' si el aviso traía una propuesta de cita. */
+export async function responderAviso(token, respuesta, cita) {
   if (!porLaFuncion()) return { ok: false }
-  try { return await llamarFuncion({ op: 'responder-aviso', token, respuesta }) }
+  try { return await llamarFuncion({ op: 'responder-aviso', token, respuesta, ...(cita ? { cita } : {}) }) }
   catch { return { ok: false } }
+}
+
+// Las horas que un profesional ya tiene aceptadas (de cualquiera): solo día
+// y hora. Un minuto en memoria para no preguntar en cada toque.
+const ocupadasCache = new Map()
+export async function ocupadasDe(helperId) {
+  if (!porLaFuncion() || !/^\d+$/.test(String(helperId ?? ''))) return []
+  const ya = ocupadasCache.get(String(helperId))
+  if (ya && Date.now() - ya.t < 60000) return ya.lista
+  try {
+    const r = await llamarFuncion({ op: 'ocupadas', helperId: String(helperId) })
+    const lista = Array.isArray(r?.ocupadas) ? r.ocupadas : []
+    ocupadasCache.set(String(helperId), { t: Date.now(), lista })
+    return lista
+  } catch { return [] }
+}
+
+/**
+ * CANCELAR LA CITA. Con las llaves de lectura de este móvil para ese
+ * profesional (solo quien la pidió puede). La hora vuelve a quedar libre
+ * para todos. Devuelve 'ok' | 'fallo' | 'rechazado' | 'nada' (demo).
+ */
+export async function cancelarCitaServidor(helperId, fecha, hora) {
+  if (!porLaFuncion()) return 'nada'
+  const llaves = llavesGuardadas()[String(helperId)] || []
+  if (!llaves.length) return 'nada'
+  try {
+    const r = await llamarFuncion({ op: 'cancelar-cita', llaves, fecha, hora })
+    ocupadasCache.delete(String(helperId))
+    // 404: ya no había nada que cancelar (nunca llegó, o ya se canceló).
+    return r?.estado === 404 ? 'nada' : resultado(r)
+  } catch { return 'fallo' }
 }
 
 /**
@@ -185,13 +231,21 @@ export async function responderAviso(token, respuesta) {
  * Se encola en el PRIMER mensaje de una conversacion, no al abrir el chat:
  * avisar por cada ojeada a una ficha seria ruido para el profesional.
  */
-export async function encolarAviso(helperId, mensaje) {
-  if (!porLaFuncion()) return
+// Resultado de mandar algo al profesional:
+//   'ok'        — llegó al servidor
+//   'fallo'     — sin conexión o el servidor no respondió: se puede reintentar
+//   'rechazado' — el servidor lo rechazó (4xx): reintentar no lo arregla
+//   'nada'      — demo, no hay servidor
+const resultado = r => r?.ok ? 'ok' : (r?.estado >= 400 && r?.estado < 500 && r?.estado !== 408 && r?.estado !== 429 ? 'rechazado' : 'fallo')
+
+export async function encolarAviso(helperId, mensaje, cita) {
+  if (!porLaFuncion()) return 'nada'
   try {
-    const r = await llamarFuncion({ op: 'encolar-aviso', helperId, mensaje })
+    const r = await llamarFuncion({ op: 'encolar-aviso', helperId, mensaje, ...(cita ? { cita } : {}) })
     if (r?.ok && r.lectura) guardarLlave(helperId, r.lectura)
+    return resultado(r)
   }
-  catch { /* el aviso se pierde; el mensaje del usuario no */ }
+  catch { return 'fallo' }
 }
 
 /**
@@ -272,17 +326,76 @@ export async function miPulso(sesion) {
  * nuevo se añade a su aviso (lo vera todo junto). Si ya contesto, se le
  * manda un aviso nuevo (`cuerpoNuevo`, con el contexto). Nunca bloquea.
  */
-export async function seguirConversacion(helperId, texto, cuerpoNuevo) {
-  if (!porLaFuncion()) return
+export async function seguirConversacion(helperId, texto, cuerpoNuevo, cita) {
+  if (!porLaFuncion()) return 'nada'
   const ultima = (llavesGuardadas()[String(helperId)] || []).at(-1)
   try {
     if (ultima) {
-      const r = await llamarFuncion({ op: 'ampliar-aviso', llave: ultima, mensaje: texto })
-      if (r?.ok) return
-      if (r?.estado !== 409 && r?.estado !== 404 && r?.estado !== 413) return
+      const r = await llamarFuncion({ op: 'ampliar-aviso', llave: ultima, mensaje: texto, ...(cita ? { cita } : {}) })
+      if (r?.ok) return 'ok'
+      if (r?.estado !== 409 && r?.estado !== 404 && r?.estado !== 413) return resultado(r)
     }
-    await encolarAviso(helperId, cuerpoNuevo)
-  } catch { /* el mensaje queda en el chat; el aviso se pierde */ }
+    return await encolarAviso(helperId, cuerpoNuevo, cita)
+  } catch { return 'fallo' }
+}
+
+// ── LOS MENSAJES QUE NO SALIERON ──────────────────────────────────────────
+// Sin conexión, el aviso al profesional se perdía en silencio mientras el
+// chat decía «Mensaje enviado». Ahora se guarda aquí, el chat lo marca como
+// pendiente y sale solo al volver la conexión, EN ORDEN (el primero abre la
+// conversación; los siguientes la amplían).
+const PENDIENTES = 'nura_pendientes'
+const leerPendientes = () => { try { return JSON.parse(localStorage.getItem(PENDIENTES) || '[]') || [] } catch { return [] } }
+const guardarPendientes = l => {
+  try { localStorage.setItem(PENDIENTES, JSON.stringify(l.slice(-50))) } catch { /* sin almacenamiento */ }
+  if (typeof window !== 'undefined') window.dispatchEvent(new Event('nura:pendientes'))
+}
+
+/** Los ids de los mensajes del chat que aún no han salido. */
+export const idsPendientes = () => new Set(leerPendientes().map(p => p.msgId))
+
+const mandar = p => p.primero
+  ? encolarAviso(p.helperId, p.cuerpo)
+  : seguirConversacion(p.helperId, p.mensaje, p.cuerpoNuevo)
+
+let reenviando = null
+/** Intenta mandar los pendientes, en orden. Para en el primero que falle. */
+export function reenviarPendientes() {
+  if (reenviando) return reenviando
+  reenviando = (async () => {
+    try {
+      for (;;) {
+        const [p] = leerPendientes()
+        if (!p) return
+        const r = await mandar(p)
+        if (r === 'fallo') return
+        guardarPendientes(leerPendientes().filter(x => x.msgId !== p.msgId))
+      }
+    } finally { reenviando = null }
+  })()
+  return reenviando
+}
+
+/**
+ * Manda al profesional lo que se escribe en el chat. Si no sale, queda
+ * pendiente. Devuelve el resultado ('ok' | 'fallo' | 'rechazado' | 'nada').
+ * { msgId, helperId, primero, mensaje, cuerpo, cuerpoNuevo }
+ */
+export async function enviarAlProfesional(p) {
+  // Si ya hay pendientes, este va detrás: el orden importa.
+  if (leerPendientes().length) {
+    guardarPendientes([...leerPendientes(), p])
+    await reenviarPendientes()
+    return idsPendientes().has(p.msgId) ? 'fallo' : 'ok'
+  }
+  const r = await mandar(p)
+  if (r === 'fallo') guardarPendientes([...leerPendientes(), p])
+  return r
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('online', () => { reenviarPendientes() })
+  setTimeout(() => { if (leerPendientes().length) reenviarPendientes() }, 3000)
 }
 
 /**
@@ -297,8 +410,11 @@ export async function enviarPropuestaCita(helper, fecha, hora, nota, nombre) {
   try { cuando = new Date(fecha + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' }) } catch { /* fecha tal cual */ }
   const quien = nombre || 'Alguien'
   const texto = `${quien} te propone una cita: ${cuando}${hora ? ` a las ${hora}` : ''}.${nota?.trim() ? ` «${nota.trim()}»` : ''} ¿Te va bien?`
+  // La cita viaja con día y hora: así la acepta con un botón y la hora
+  // queda ocupada en su agenda para todos.
+  const cita = fecha && hora ? { fecha, hora } : undefined
   const hayConversacion = (llavesGuardadas()[String(helper.id)] || []).length > 0
-  if (hayConversacion) await seguirConversacion(helper.id, texto, `${texto}\n\n(Te escribe desde Nüra.)`)
-  else await encolarAviso(helper.id, `${texto}\n\n(Te escribe desde Nüra.)`)
+  if (hayConversacion) await seguirConversacion(helper.id, texto, `${texto}\n\n(Te escribe desde Nüra.)`, cita)
+  else await encolarAviso(helper.id, `${texto}\n\n(Te escribe desde Nüra.)`, cita)
   return true
 }

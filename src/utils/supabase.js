@@ -1,4 +1,6 @@
 import { avatarDe } from '../utils/avatar'
+import { ciudadEnTexto } from '../data/ciudades'
+import { DEMO_MODE } from '../config'
 // LA UNICA FUENTE. Estaban declaradas en TRES sitios y ya habian divergido:
 // aqui la clave nueva `sb_publishable_`, y en claudeApi.js (retirado) y
 // el JWT antiguo. Es decir, las LECTURAS iban con una credencial y las
@@ -141,7 +143,12 @@ function normalize(h) {
     bio: h.bio || '',
     price: h.price || null,
     zone: h.zone || h.city || 'Barcelona',
-    city: h.city || 'Barcelona',
+    // Sin ciudad guardada se lee de su zona; si no se sabe, no se inventa.
+    city: h.city || ciudadEnTexto(h.zone) || null,
+    // Su horario, si lo marcó (null = el de su oficio).
+    horario: h.horario || null,
+    // Días u horas sueltas en que no puede (vacaciones, un médico…).
+    bloqueos: Array.isArray(h.bloqueos) ? h.bloqueos : [],
     distance: parseFloat(h.distance) || 1.5, // Default 1.5km — honest fallback
     rating: parseFloat(h.rating) || 4.5,
     reviews: parseInt(h.reviews) || 0,
@@ -249,10 +256,13 @@ export async function searchHelpers(category, keywords = []) {
     } else if (cats.length > 1) {
       url += `&category=in.(${cats.map(encodeURIComponent).join(',')})`
     }
-    const res = await fetch(url, { headers, signal: AbortSignal.timeout(2500) })
+    // [] = no hay nadie; null = NO SE PUDO PREGUNTAR (red, servidor). No es
+    // lo mismo, y fuera de la demo no se puede confundir.
+    const res = await fetch(url, { headers, signal: AbortSignal.timeout(DEMO_MODE ? 2500 : 7000) })
     if (!res.ok) return null
     const data = await res.json()
-    if (!Array.isArray(data) || data.length === 0) return null
+    if (!Array.isArray(data)) return null
+    if (data.length === 0) return []
     if (keywords?.length > 0) {
       const filtered = data.filter(h => {
         const text = [h.name, h.speciality, h.bio, h.zone, h.category, ...(Array.isArray(h.tags)?h.tags:[])].join(' ').toLowerCase()
@@ -264,13 +274,14 @@ export async function searchHelpers(category, keywords = []) {
   } catch(e) { console.error('Supabase searchHelpers:', e); return null }
 }
 
+// null = la ficha NO EXISTE. Un fallo de red o del servidor LANZA: antes
+// ambos daban null, y con mala cobertura un enlace compartido decia «Esta
+// persona ya no está en Nüra» de alguien que sí estaba.
 export async function getHelperById(id) {
-  try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/helpers?id=eq.${id}&select=${columnasHelpers()}&limit=1`, { headers, signal: AbortSignal.timeout(2500) })
-    if (!res.ok) return null
-    const data = await res.json()
-    return data?.[0] ? normalize(data[0]) : null
-  } catch { return null }
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/helpers?id=eq.${id}&select=${columnasHelpers()}&limit=1`, { headers, signal: AbortSignal.timeout(6000) })
+  if (!res.ok) throw new Error(`helpers ${res.status}`)
+  const data = await res.json()
+  return data?.[0] ? normalize(data[0]) : null
 }
 
 export async function getAllHelpers() {

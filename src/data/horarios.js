@@ -1,3 +1,5 @@
+import { DEMO_MODE } from '../config'
+
 // ═══════════════════════════════════════════════════════════════
 // LA AGENDA — disponibilidad real, por horas.
 // Antes: ocho horas fijas escritas a mano, iguales para los 123
@@ -29,29 +31,167 @@ export const HORARIO_POR_CATEGORIA = {
 
 const POR_DEFECTO = { dias: L_V, horas: franja(9, 19) }
 
-export function horarioDe(helper) {
-  return helper?.horario || HORARIO_POR_CATEGORIA[helper?.category] || POR_DEFECTO
+// Todas las horas que se pueden marcar al elegir el horario propio.
+export const HORAS_POSIBLES = franja(7, 23)
+export const DIAS_SEMANA = [
+  { n: 1, corto: 'L', largo: 'lunes' }, { n: 2, corto: 'M', largo: 'martes' },
+  { n: 3, corto: 'X', largo: 'miércoles' }, { n: 4, corto: 'J', largo: 'jueves' },
+  { n: 5, corto: 'V', largo: 'viernes' }, { n: 6, corto: 'S', largo: 'sábado' },
+  { n: 0, corto: 'D', largo: 'domingo' },
+]
+
+/** Un horario marcado por el profesional, limpio; o null si no vale. */
+export function horarioValido(h) {
+  if (!h || !Array.isArray(h.dias) || !Array.isArray(h.horas)) return null
+  const dias = [...new Set(h.dias.map(Number).filter(d => d >= 0 && d <= 6))].sort()
+  const horas = HORAS_POSIBLES.filter(x => h.horas.includes(x))
+  return dias.length && horas.length ? { dias, horas } : null
 }
+
+// ── LOS BLOQUEOS: días u horas sueltas en que no puede ──────────────────
+// [{ fecha: '2026-10-09' }] = el día entero; con `horas`, solo esas horas.
+// Solo se guarda cuándo, nunca por qué: quien mira la agenda solo ve
+// «ocupada» o «No disponible».
+
+/** Los bloqueos guardados, limpios: fechas válidas, sin repetir, en orden. */
+export function bloqueosValidos(b) {
+  if (!Array.isArray(b)) return []
+  const porFecha = new Map()
+  for (const x of b.slice(0, 200)) {
+    const fecha = String(x?.fecha || '')
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha) || Number.isNaN(Date.parse(fecha))) continue
+    const horas = Array.isArray(x.horas) ? HORAS_POSIBLES.filter(h => x.horas.includes(h)) : null
+    if (horas && !horas.length) continue
+    const ya = porFecha.get(fecha)
+    // Si algo bloquea el día entero, gana el día entero.
+    if (ya === null || horas === null) porFecha.set(fecha, null)
+    else porFecha.set(fecha, [...new Set([...(ya || []), ...horas])])
+  }
+  return [...porFecha.entries()].sort(([a], [b]) => a.localeCompare(b))
+    .map(([fecha, horas]) => horas ? { fecha, horas: HORAS_POSIBLES.filter(h => horas.includes(h)) } : { fecha })
+}
+
+/** Lo bloqueado ese día: 'dia' (entero), un Set de horas, o null. */
+export function bloqueoDe(helper, fechaISO) {
+  const b = bloqueosValidos(helper?.bloqueos).find(x => x.fecha === fechaISO)
+  if (!b) return null
+  return b.horas ? new Set(b.horas) : 'dia'
+}
+
+/** Bloquea o desbloquea el día entero. Devuelve la lista nueva. */
+export function alternarDia(bloqueos, fechaISO) {
+  const lista = bloqueosValidos(bloqueos)
+  const b = lista.find(x => x.fecha === fechaISO)
+  if (b && !b.horas) return lista.filter(x => x !== b)
+  return bloqueosValidos([...lista.filter(x => x !== b), { fecha: fechaISO }])
+}
+
+/**
+ * Bloquea o desbloquea una hora de ese día. `horasDelDia` son las que
+ * trabaja: quitar una hora a un día entero lo deja en «todas menos esa», y
+ * bloquearlas todas pasa a ser el día entero.
+ */
+export function alternarHora(bloqueos, fechaISO, hora, horasDelDia = []) {
+  const lista = bloqueosValidos(bloqueos)
+  const b = lista.find(x => x.fecha === fechaISO)
+  const antes = !b ? [] : b.horas ? b.horas : [...horasDelDia]
+  const ahora = antes.includes(hora) ? antes.filter(h => h !== hora) : [...antes, hora]
+  const resto = lista.filter(x => x !== b)
+  if (!ahora.length) return resto
+  const entero = horasDelDia.length && horasDelDia.every(h => ahora.includes(h))
+  return bloqueosValidos([...resto, entero ? { fecha: fechaISO } : { fecha: fechaISO, horas: ahora }])
+}
+
+/** Quita los bloqueos de días que ya han pasado (no sirven para nada). */
+export const bloqueosVigentes = (b, ahora = new Date()) =>
+  bloqueosValidos(b).filter(x => x.fecha >= isoLocal(ahora))
+
+/** El del propio profesional si lo marcó; si no, el típico de su oficio. */
+export function horarioDe(helper) {
+  return horarioValido(helper?.horario) || HORARIO_POR_CATEGORIA[helper?.category] || POR_DEFECTO
+}
+
+/** El horario que Nüra supone para su oficio (punto de partida al editarlo). */
+export const horarioDelOficio = categoria => HORARIO_POR_CATEGORIA[categoria] || POR_DEFECTO
 
 /**
  * Las horas de un profesional en un dia, con su estado real.
  * @returns {{hora:string, estado:'libre'|'pendiente'|'ocupada'}[]}
  */
 export function slotsDe(helper, fechaISO, citas = []) {
+  if (!fechaISO) return []
   const h = horarioDe(helper)
   const dia = new Date(fechaISO + 'T12:00:00').getDay()
   if (!h.dias.includes(dia)) return []
+  const bloqueo = bloqueoDe(helper, fechaISO)
+  if (bloqueo === 'dia') return []
 
   const suyas = (citas || []).filter(c => String(c.helperId) === String(helper?.id) && c.fecha === fechaISO)
   const ahora = new Date()
-  const esHoy = fechaISO === ahora.toISOString().split('T')[0]
+  const esHoy = fechaISO === isoLocal(ahora)
+  const deOtros = ocupadasDeEjemplo(helper, fechaISO)
 
   return h.horas
     .filter(hora => !esHoy || parseInt(hora, 10) > ahora.getHours())
     .map(hora => {
       const c = suyas.find(x => x.hora === hora)
-      return { hora, estado: !c ? 'libre' : (c.estado === 'confirmada' ? 'ocupada' : 'pendiente') }
+      // 'tuya': la ha pedido esta persona (pendiente o ya confirmada).
+      // 'ocupada': la tiene aceptada con otra persona.
+      if (c) return { hora, estado: c.deOtro ? 'ocupada' : 'tuya' }
+      // Una hora que ha bloqueado se ve como cualquier otra ocupada.
+      return { hora, estado: deOtros.has(hora) || bloqueo?.has(hora) ? 'ocupada' : 'libre' }
     })
+}
+
+/** La fecha de HOY (o de `d`) en la hora de aquí, «2026-09-25». Con
+ *  toISOString, entre las 0:00 y las 2:00 «hoy» salía como ayer (UTC). */
+export function isoLocal(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+// ── LA AGENDA DE LOS PERFILES DE EJEMPLO ─────────────────────────────────
+// Una agenda con todas las horas libres no parece de nadie. En la demo,
+// cada profesional tiene horas ya cogidas por otros clientes: unas pocas
+// sueltas, bastantes algunos días, y algún día completo. Sale siempre igual
+// para el mismo profesional y el mismo día (no cambia al recargar).
+// Fuera de la demo no se inventa nada: solo cuentan las citas reales.
+function numeroDe(texto) {
+  let n = 2166136261
+  for (let i = 0; i < texto.length; i++) { n ^= texto.charCodeAt(i); n = Math.imul(n, 16777619) }
+  return n >>> 0
+}
+function azar(semilla) {
+  let a = semilla
+  return () => {
+    a = (a + 0x6D2B79F5) | 0
+    let t = Math.imul(a ^ (a >>> 15), 1 | a)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+export function ocupadasDeEjemplo(helper, fechaISO) {
+  if (!DEMO_MODE || helper?.id == null || !fechaISO) return new Set()
+  const horas = horarioDe(helper).horas
+  const r = azar(numeroDe(`${helper.id}|${fechaISO}`))
+  if (r() < 0.12) return new Set(horas)                 // día completo
+  const carga = 0.15 + r() * 0.45                        // entre 15 % y 60 %
+  return new Set(horas.filter(() => r() < carga))
+}
+
+/** Cuántas horas libres le quedan ese día (0 si no trabaja o está lleno). */
+export function huecosLibres(helper, fechaISO, citas = []) {
+  return slotsDe(helper, fechaISO, citas).filter(s => s.estado === 'libre').length
+}
+
+/** El primer hueco libre en los próximos `dias` días: { fecha, hora } o null. */
+export function proximoHueco(helper, citas = [], dias = 14) {
+  for (let i = 0; i < dias; i++) {
+    const d = new Date(); d.setDate(d.getDate() + i)
+    const f = isoLocal(d)
+    const s = slotsDe(helper, f, citas).find(x => x.estado === 'libre')
+    if (s) return { fecha: f, hora: s.hora, dentro: i }
+  }
+  return null
 }
 
 /**
@@ -65,13 +205,14 @@ export function motivoSinHuecos(helper, fechaISO) {
   const h = horarioDe(helper)
   const dia = new Date(fechaISO + 'T12:00:00').getDay()
   if (!h.dias.includes(dia)) return 'cerrado'
-  const ahora = new Date()
-  if (fechaISO === ahora.toISOString().split('T')[0]) return 'tarde'
+  if (bloqueoDe(helper, fechaISO) === 'dia') return 'bloqueado'
+  if (fechaISO === isoLocal()) return 'tarde'
   return 'completo'
 }
 
 export const FRASE_SIN_HUECOS = {
   cerrado:  'Ese día no trabaja. Prueba con otro.',
+  bloqueado: 'Ese día no está disponible. Prueba con otro.',
   tarde:    'Por hoy ya ha terminado. Prueba con mañana.',
   completo: 'Ese día lo tiene completo.',
 }
@@ -82,11 +223,12 @@ export const FRASE_SIN_HUECOS = {
  * dejaria huecos falsamente libres. Aqui se normalizan a una sola forma.
  */
 export function ocupacionesDe(citas = [], services = []) {
-  const a = (citas || []).map(c => ({
+  // Las rechazadas y las canceladas ya no ocupan nada.
+  const a = (citas || []).filter(c => c.estado !== 'rechazada' && c.estado !== 'cancelada').map(c => ({
     helperId: c.helperId, fecha: c.fecha, hora: c.hora,
     estado: c.estado === 'confirmada' ? 'confirmada' : 'pendiente',
   }))
-  const b = (services || []).map(s => ({
+  const b = (services || []).filter(s => s.status !== 'rejected' && s.status !== 'cancelled').map(s => ({
     helperId: s.helperId, fecha: s.date, hora: s.time,
     estado: s.status === 'confirmed' ? 'confirmada' : 'pendiente',
   }))
@@ -95,4 +237,62 @@ export function ocupacionesDe(citas = [], services = []) {
 
 export function tieneHuecos(helper, fechaISO, citas = []) {
   return slotsDe(helper, fechaISO, citas).some(s => s.estado === 'libre')
+}
+
+/**
+ * EL RECORDATORIO: la cita CONFIRMADA más cercana que empieza en las
+ * próximas 24 horas (y aún no ha empezado), o null. Mira las dos listas
+ * donde vive una cita (servicios y citas del chat) sin repetirla.
+ */
+export function citaEn24h(services = [], citas = [], ahora = new Date()) {
+  const todas = [
+    ...(services || []).filter(s => s.status === 'confirmed').map(s => ({
+      helperId: s.helperId, helperName: s.helperName, specialty: s.specialty, avatarUrl: s.avatarUrl, fecha: s.date, hora: s.time,
+    })),
+    ...(citas || []).filter(c => c.estado === 'confirmada').map(c => ({
+      helperId: c.helperId, helperName: c.helperName, fecha: c.fecha, hora: c.hora,
+    })),
+  ].filter(c => c.helperId != null && /^\d{4}-\d{2}-\d{2}$/.test(String(c.fecha || '')) && /^\d{1,2}:\d{2}$/.test(String(c.hora || '')))
+  const t0 = ahora.getTime()
+  const cerca = todas
+    .map(c => ({ ...c, cuando: new Date(`${c.fecha}T${c.hora.padStart(5, '0')}:00`).getTime() }))
+    .filter(c => c.cuando > t0 && c.cuando - t0 <= 24 * 3600e3)
+    .sort((a, b) => a.cuando - b.cuando)
+  if (!cerca.length) return null
+  // La misma cita puede estar en las dos listas: se juntan sus datos.
+  const [p] = cerca
+  const gemela = cerca.find(c => c !== p && String(c.helperId) === String(p.helperId) && c.fecha === p.fecha && c.hora === p.hora)
+  return gemela ? { ...gemela, ...Object.fromEntries(Object.entries(p).filter(([, v]) => v != null)) } : p
+}
+
+/**
+ * LA AGENDA DEL PROFESIONAL: sus citas de hoy a `dias` días, por día y
+ * por hora, a partir de los avisos que le han llegado (op `mis-avisos`).
+ * Estados que ve:
+ *   · 'confirmada'     la aceptó
+ *   · 'por-contestar'  se la han propuesto y aún no ha respondido
+ *   · 'sin-decidir'    respondió con texto pero sin aceptar ni rechazar
+ *   · 'cancelada'      la canceló quien la pidió (la hora vuelve a estar libre)
+ * Las que rechazó no salen: no son citas.
+ */
+export function agendaDe(avisos = [], ahora = new Date(), dias = 14) {
+  const hoy = isoLocal(ahora)
+  const tope = new Date(ahora); tope.setDate(tope.getDate() + dias)
+  const hasta = isoLocal(tope)
+  const estadoDe = a => a.cita_estado === 'aceptada' ? 'confirmada'
+    : a.cita_estado === 'cancelada' ? 'cancelada'
+    : a.cita_estado === 'propuesta' ? (a.respuesta ? 'sin-decidir' : 'por-contestar')
+    : null
+  const citas = (avisos || [])
+    .filter(a => a?.cita_fecha && a?.cita_hora && a.cita_fecha >= hoy && a.cita_fecha <= hasta)
+    .map(a => ({ id: a.id, token: a.token, fecha: a.cita_fecha, hora: a.cita_hora, estado: estadoDe(a), mensaje: a.mensaje }))
+    .filter(c => c.estado)
+    .sort((x, y) => (x.fecha + x.hora.padStart(5, '0')).localeCompare(y.fecha + y.hora.padStart(5, '0')))
+  const porDia = []
+  for (const c of citas) {
+    const ultimo = porDia.at(-1)
+    if (ultimo?.fecha === c.fecha) ultimo.citas.push(c)
+    else porDia.push({ fecha: c.fecha, citas: [c] })
+  }
+  return porDia
 }

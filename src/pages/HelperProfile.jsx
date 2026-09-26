@@ -1,6 +1,8 @@
+import { useTitulo } from '../utils/titulo'
 import PageHeader from '../components/PageHeader'
 import PostCard from '../components/PostCard'
-import { slotsDe, tieneHuecos, ocupacionesDe, motivoSinHuecos, FRASE_SIN_HUECOS } from '../data/horarios'
+import { proximoHueco, ocupacionesDe } from '../data/horarios'
+import ElegirCita from '../components/ElegirCita'
 import { Button, SectionLabel, Skeleton } from '../components/ui'
 import { getObraDeHelper, obraAPost } from '../data/obraPosts'
 import ErrorBoundary from '../components/ErrorBoundary'
@@ -9,13 +11,14 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Star, Shield, MapPin, MessageCircle, Calendar,
          Share2, UserPlus, UserCheck, Briefcase, BookOpen, Award,
          CheckCircle, Check, Globe, Zap, ChevronRight, Clock, ThumbsUp, ShieldCheck } from 'lucide-react'
-import { HELPERS } from '../data/helpers'
+import { HELPERS_DEMO as HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
 import RatingModal from '../components/RatingModal'
 import { recordarDestino, contextoDeChat, hayContexto } from '../utils/contacto'
 import styles from './HelperProfile.module.css'
 import { DEMO_ENRICHMENTS } from '../data/demoEnrichments'
 import { showToast } from '../components/Toast'
+import { compartirEnlace, enlaceDeFicha } from '../utils/compartir'
 import RegisterGate from '../components/RegisterGate'
 import { getHelperById } from '../utils/supabase'
 import { atributosDe, enviarPropuestaCita } from '../utils/escrituras'
@@ -30,13 +33,11 @@ import { DEMO_MODE } from '../config'
 
 
 function BookingModal({ helper, onClose, onBook, onNavigate }) {
-  const { citas, services } = useUser()
-  const ocupadas = ocupacionesDe(citas, services)   // la ocupacion real, de ambos almacenes
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
   const [note, setNote] = useState('')
   const [done, setDone] = useState(false)
-  const name = helper?.name?.split(' ')?.[0] || helper?.name || ''
+  const name = getFirstName(helper?.name)
 
   function confirm() {
     onBook?.(helper, date, time, note)   // fecha y hora, ya estructuradas
@@ -101,68 +102,15 @@ function BookingModal({ helper, onClose, onBook, onNavigate }) {
             <h3 style={{fontSize:'var(--text-md)',fontWeight:800,margin:'0 0 var(--space-4)',color:'var(--ink-primary)',letterSpacing:'-0.3px'}}>Solicitar servicio</h3>
             <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:'0 0 var(--space-20)'}}>{name} · {helper?.price || 'Precio a consultar'}</p>
             <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)',marginBottom:'var(--space-20)'}}>
-              {/* Day pills */}
-              <div>
-                <SectionLabel tone="muted" style={{margin:'0 0 var(--space-8)',color:'var(--ink-tertiary)'}}>Fecha</SectionLabel>
-                <div className={styles.rowScroll}>
-                  {Array.from({length:7},(_,i)=>{
-                    const d=new Date(); d.setDate(d.getDate()+i)
-                    const iso=d.toISOString().split('T')[0]
-                    const abierto = tieneHuecos(helper, iso, ocupadas)
-                    const lbl=i===0?'Hoy':i===1?'Mañana':d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric'})
-                    return (
-                      <button key={i} onClick={()=>{ if(abierto){ setDate(iso); setTime(null) } }}
-                        disabled={!abierto} style={{
-                        flexShrink:0,padding:'var(--space-8) var(--space-14)',
-                        opacity: abierto ? 1 : 0.35,
-                        background:date===iso?'var(--purple)':'var(--surface-subtle)',
-                        color:date===iso?'white':'var(--ink-secondary)',
-                        border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
-                        cursor:'pointer',fontFamily:'inherit',transition:'all 0.15s',
-                        whiteSpace:'nowrap',
-                      }}>{lbl}</button>
-                    )
-                  })}
-                </div>
-              </div>
-              {/* Time pills */}
-              <div>
-                <SectionLabel tone="muted" style={{margin:'0 0 var(--space-8)',color:'var(--ink-tertiary)'}}>Hora</SectionLabel>
-                <div style={{display:'flex',gap:'var(--space-6)',flexWrap:'wrap'}}>
-                  {(() => {
-                    const slots = slotsDe(helper, date, ocupadas)
-                    if (!slots.length) return (
-                      <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:0}}>
-                        {FRASE_SIN_HUECOS[motivoSinHuecos(helper, date)]}
-                      </p>
-                    )
-                    return slots.map(({hora, estado}) => {
-                      const libre = estado === 'libre'
-                      const sel = time === hora
-                      return (
-                        <button key={hora} onClick={()=>{ if(libre) setTime(hora) }} disabled={!libre}
-                          title={libre ? '' : estado === 'ocupada' ? 'Ocupada' : 'Pendiente de confirmar'}
-                          style={{
-                            padding:'7px var(--space-12)',
-                            background: sel ? 'var(--purple)' : libre ? 'var(--surface-subtle)' : 'transparent',
-                            color: sel ? 'white' : libre ? 'var(--ink-secondary)' : 'var(--ink-tertiary)',
-                            border: libre ? 'none' : '1px dashed var(--ink-border)',
-                            textDecoration: estado === 'ocupada' ? 'line-through' : 'none',
-                            borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
-                            cursor: libre ? 'pointer' : 'default', fontFamily:'inherit',
-                          }}>{hora}</button>
-                      )
-                    })
-                  })()}
-                </div>
-              </div>
+              <ElegirCita helper={helper} date={date} time={time} onDate={setDate} onTime={setTime} />
               <textarea value={note} onChange={e=>setNote(e.target.value)}
                 placeholder="Detalles adicionales (opcional)..." rows={3}
                 style={{...style.input, resize:'none'}} />
             </div>
-            <div className={styles.rowGap8}>
-              <button onClick={onClose} style={{...style.btnSecondary,flex:1}}>Cancelar</button>
-              <Button variant="primary" onClick={confirm} disabled={!date}
+            <div style={{display:'flex', alignItems:'center', gap:'var(--space-8)'}}>
+              <button onClick={onClose} style={{...style.btnSecondary, width:'auto', flex:1}}>Cancelar</button>
+              {/* Día Y hora: una cita sin hora no es una cita (en el chat ya se exigía). */}
+              <Button variant="primary" onClick={confirm} disabled={!date || !time}
                 style={{flex:2}}>
                 Enviar solicitud
               </Button>
@@ -196,15 +144,19 @@ function HelperProfileInner() {
   const location   = useLocation()
   const [verTodaLaObra, setVerTodaLaObra] = useState(false)
   const [verTrayectoria, setVerTrayectoria] = useState(false)
-  const { user, addService } = useUser()
+  const { user, addService, citas, services } = useUser()
 
   const [h, setH]             = useState(location.state?.helper || null)
 
   // Merge demo enrichment for rich profiles
-  const enrichedH = h && h.id >= 2000 && DEMO_ENRICHMENTS[h.id]
+  const enrichedH = h && DEMO_MODE && h.id >= 2000 && DEMO_ENRICHMENTS[h.id]
     ? { ...DEMO_ENRICHMENTS[h.id], ...h, qualitativeComments: h.qualitativeComments || DEMO_ENRICHMENTS[h.id].qualitativeComments }
     : h
   const [loading, setLoading] = useState(!h)
+  // Sin red no es lo mismo que «no existe»: se ofrece reintentar.
+  const [sinRed, setSinRed]   = useState(false)
+  const [intento, setIntento] = useState(0)
+  useTitulo(enrichedH?.name ? [enrichedH.name, enrichedH.specialty].filter(Boolean).join(' · ') : null)
   const [showConfirm, setShowConfirm] = useState(false)
   const [showRating, setShowRating]   = useState(false)
   const [showGate, setShowGate]       = useState(false)
@@ -222,10 +174,10 @@ function HelperProfileInner() {
     if (!h) {
       const local = HELPERS.find(x => x && String(x.id) === String(id))
       if (local) { setH(local); setLoading(false); return }
-      getHelperById(id).then(r => { if (r) setH(r); setLoading(false) })
-        .catch(() => setLoading(false))
+      getHelperById(id).then(r => { if (r) setH(r); setSinRed(false); setLoading(false) })
+        .catch(() => { setSinRed(true); setLoading(false) })
     }
-  }, [id])
+  }, [id, intento])   // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) return (
     <div className={styles.page}>
@@ -246,13 +198,22 @@ function HelperProfileInner() {
       <div className={styles.notFound} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'var(--space-12)'}}>
         <div style={{fontSize:'var(--text-xl)'}}>🤍</div>
         <p style={{fontSize:'var(--text-base)',color:'var(--ink)',lineHeight:1.5,margin:0}}>
-          Esta persona ya no está en Nüra.
+          {sinRed ? 'No he podido cargar esta ficha.' : 'Esta persona ya no está en Nüra.'}
         </p>
         <p style={{fontSize:'var(--text-sm)',color:'var(--ink-secondary)',lineHeight:1.5,margin:0}}>
-          Puede que el enlace sea antiguo. Puedo buscarte a alguien ahora mismo.
+          {sinRed ? 'Parece un problema de conexión. Vuelve a intentarlo en un momento.'
+                  : 'Puede que el enlace sea antiguo. Puedo buscarte a alguien ahora mismo.'}
         </p>
-        <button onClick={() => navigate('/')} style={{marginTop:'var(--space-8)',padding:'var(--space-12) var(--space-24)',
-          background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',
+        {sinRed && (
+          <button onClick={() => { setLoading(true); setIntento(n => n + 1) }} style={{marginTop:'var(--space-8)',padding:'var(--space-12) var(--space-24)',
+            background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',
+            fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
+            Reintentar
+          </button>
+        )}
+        <button onClick={() => navigate('/')} style={{marginTop: sinRed ? 0 : 'var(--space-8)',padding:'var(--space-12) var(--space-24)',
+          ...(sinRed ? {background:'transparent',color:'var(--purple-ink)'} : {background:'var(--purple)',color:'white'}),
+          border:'none',borderRadius:'var(--radius-full)',
           fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
           Buscar a alguien
         </button>
@@ -260,7 +221,9 @@ function HelperProfileInner() {
     </div>
   )
 
-  const firstName = enrichedH.name?.split(' ')?.[0] || ''
+  const firstName = getFirstName(enrichedH.name) || ''
+  // El próximo hueco libre, a la vista sin abrir la agenda.
+  const hueco = proximoHueco(enrichedH, ocupacionesDe(citas, services))
 
   // Primary education for hero display
   const mainEdu = enrichedH.education?.[0]
@@ -279,9 +242,15 @@ function HelperProfileInner() {
     navigate(`/chat/${enrichedH.id}`, { state: contextoDeChat(h, location.state) })
   }
 
-  function handleShare() {
-    navigator.clipboard?.writeText(window.location.href)
-      .then(() => { setShared(true); showToast('Enlace copiado') })
+  async function handleShare() {
+    const nombre = getFirstName(enrichedH?.name) || ''
+    const r = await compartirEnlace({
+      url: enlaceDeFicha(enrichedH?.id ?? id),
+      titulo: `${enrichedH?.name || 'Profesional'} en Nüra`,
+      texto: `Te paso a ${nombre}${enrichedH?.specialty ? ', ' + enrichedH.specialty.toLowerCase() : ''}. Le puedes escribir por Nüra:`,
+    })
+    if (r === 'copiado') { setShared(true); showToast('Enlace copiado') }
+    else if (r === 'fallo') showToast('No he podido copiar el enlace')
   }
 
   return (
@@ -761,9 +730,11 @@ function HelperProfileInner() {
     
       {/* La Barra de Accion: escribir esta siempre a un pulgar */}
       <div className={styles.actionBar}>
-        <Button variant="secondary" style={{flex:'0 1 38%'}}
-          onClick={() => user ? setShowConfirm(true) : setShowGate(true)}>
-          <Calendar size={14} /> Disponibilidad
+        <Button variant="secondary" style={{flex:'0 1 38%', flexDirection:'column', gap:0, lineHeight:1.15}}
+          onClick={() => user ? setShowConfirm(true) : setShowGate(true)}
+          aria-label={hueco ? `Disponibilidad. Próximo hueco: ${textoHueco(hueco)}` : 'Disponibilidad'}>
+          <span style={{display:'inline-flex', alignItems:'center', gap:'var(--space-6)'}}><Calendar size={14} /> Disponibilidad</span>
+          {hueco && <span style={{fontSize:11, fontWeight:600, color:'var(--green-ink, #067647)'}}>{textoHueco(hueco)}</span>}
         </Button>
         <Button variant="primary" style={{flex:'1 1 62%', boxShadow:'0 4px 16px var(--purple-30)'}}
           onClick={handleContact}>
@@ -772,6 +743,13 @@ function HelperProfileInner() {
       </div>
 </div>
   )
+}
+
+function textoHueco({ fecha, hora, dentro }) {
+  if (dentro === 0) return `Hoy ${hora}`
+  if (dentro === 1) return `Mañana ${hora}`
+  const d = new Date(fecha + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric' }).replace('.', '')
+  return `${d} ${hora}`
 }
 
 function tiempoHumano(min) {

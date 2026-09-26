@@ -1,3 +1,4 @@
+import { getFirstName } from '../utils/name'
 import { useState } from 'react'
 import { Star, X, CheckCircle, ThumbsUp, ThumbsDown } from 'lucide-react'
 import { useUser } from '../context/UserContext'
@@ -16,7 +17,7 @@ import { ETIQUETA_CUALIDAD, cualidadesPara, MAX_CUALIDADES } from '../utils/cual
 // «Mis servicios» ({helperId, helperName, category…}).
 export default function RatingModal({ helper, onClose, onEnviado }) {
   const id = helper.helperId ?? helper.id
-  const nombre = (helper.helperName ?? helper.name ?? '').split(' ')[0] || 'este profesional'
+  const nombre = getFirstName(helper.helperName ?? helper.name ?? '') || 'este profesional'
   const opciones = cualidadesPara(helper.category)
 
   const [volveria, setVolveria] = useState(null)

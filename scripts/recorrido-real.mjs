@@ -45,12 +45,27 @@ const sha = t => crypto.createHash('sha256').update(t).digest('hex')
 const azar = () => crypto.randomBytes(16).toString('hex')
 function backend(c) {
   const porLlave = l => avisos.find(a => a.lectura_hash === sha(l || ''))
+  const citaDe = x => x?.fecha && x?.hora ? { cita_fecha: x.fecha, cita_hora: x.hora, cita_estado: 'propuesta' } : {}
+  const citaSal = a => a.cita_fecha ? { fecha: a.cita_fecha, hora: a.cita_hora, estado: a.cita_estado } : null
   switch (c.op) {
-    case 'encolar-aviso': { const lectura = azar(); avisos.push({ helper_id: String(c.helperId), mensaje: c.mensaje, token: azar(), lectura_hash: sha(lectura), respuesta: null }); return { ok: true, alcanzable: true, lectura } }
-    case 'ampliar-aviso': { const a = porLlave(c.llave); if (!a) return { __estado: 404 }; if (a.respuesta) return { __estado: 409 }; a.mensaje += '\n\n—\n' + c.mensaje; return { ok: true } }
-    case 'abrir-aviso': { const a = avisos.find(x => x.token === c.token); return a ? { ok: true, aviso: { nombre: 'Carlos', mensaje: a.mensaje, respuesta: a.respuesta } } : { __estado: 404 } }
-    case 'responder-aviso': { const a = avisos.find(x => x.token === c.token); if (!a) return { __estado: 404 }; if (a.respuesta) return { __estado: 409 }; a.respuesta = c.respuesta; a.respondido_en = new Date().toISOString(); return { ok: true } }
-    case 'respuestas': { const hs = (c.llaves || []).map(sha); return { ok: true, respuestas: avisos.filter(a => hs.includes(a.lectura_hash) && a.respuesta).map(a => ({ llave: c.llaves[hs.indexOf(a.lectura_hash)], respuesta: a.respuesta, respondido_en: a.respondido_en })) } }
+    case 'encolar-aviso': { const lectura = azar(); avisos.push({ helper_id: String(c.helperId), mensaje: c.mensaje, token: azar(), lectura_hash: sha(lectura), respuesta: null, ...citaDe(c.cita) }); return { ok: true, alcanzable: true, lectura } }
+    case 'ampliar-aviso': { const a = porLlave(c.llave); if (!a) return { __estado: 404 }; if (a.respuesta) return { __estado: 409 }; a.mensaje += '\n\n—\n' + c.mensaje; Object.assign(a, citaDe(c.cita)); return { ok: true } }
+    case 'abrir-aviso': { const a = avisos.find(x => x.token === c.token); return a ? { ok: true, aviso: { nombre: 'Carlos', mensaje: a.mensaje, respuesta: a.respuesta, cita: citaSal(a) } } : { __estado: 404 } }
+    case 'responder-aviso': {
+      const a = avisos.find(x => x.token === c.token); if (!a) return { __estado: 404 }; if (a.respuesta) return { __estado: 409 }
+      if (c.cita === 'aceptada' && a.cita_estado === 'propuesta' && avisos.some(o => o !== a && o.helper_id === a.helper_id && o.cita_estado === 'aceptada' && o.cita_fecha === a.cita_fecha && o.cita_hora === a.cita_hora)) return { __estado: 409 }
+      a.respuesta = c.respuesta; a.respondido_en = new Date().toISOString()
+      if ((c.cita === 'aceptada' || c.cita === 'rechazada') && a.cita_estado === 'propuesta') a.cita_estado = c.cita
+      return { ok: true }
+    }
+    case 'respuestas': { const hs = (c.llaves || []).map(sha); return { ok: true, respuestas: avisos.filter(a => hs.includes(a.lectura_hash) && a.respuesta).map(a => ({ llave: c.llaves[hs.indexOf(a.lectura_hash)], respuesta: a.respuesta, respondido_en: a.respondido_en, cita: citaSal(a) })) } }
+    case 'ocupadas': return { ok: true, ocupadas: avisos.filter(a => a.helper_id === String(c.helperId) && a.cita_estado === 'aceptada').map(a => ({ fecha: a.cita_fecha, hora: a.cita_hora })) }
+    case 'cancelar-cita': {
+      const hs = (c.llaves || []).map(sha)
+      const a = avisos.find(x => hs.includes(x.lectura_hash) && x.cita_fecha === c.fecha && x.cita_hora === c.hora && ['propuesta', 'aceptada'].includes(x.cita_estado))
+      if (!a) return { __estado: 404 }
+      a.cita_estado = 'cancelada'; return { ok: true }
+    }
     case 'valorar': { const a = porLlave(c.llave); if (!a) return { __estado: 404 }; valoraciones.push({ helper_id: a.helper_id, ...c }); return { ok: true } }
     default: return { ok: true }
   }
@@ -58,6 +73,9 @@ function backend(c) {
 
 const b = await puppeteer.launch({ executablePath: CHROME, args: ['--no-sandbox'] })
 const errores = []
+const BD = [{ id: 7001, name: 'Laura Vidal Soler', specialty: 'Logopeda infantil', category: 'logopedia', zone: 'Gràcia',
+  bio: 'Logopeda infantil: dislalias, la r y la s, con juego.', rating: 4.9, reviews: 12, services: 30,
+  available: true, presential: true, online: false, verified: true, tags: ['logopedia infantil', 'dislalia'] }]
 async function pagina() {
   const p = await b.newPage()
   await p.setViewport({ width: 390, height: 844 })
@@ -70,8 +88,19 @@ async function pagina() {
       const res = backend(JSON.parse(r.postData() || '{}'))
       return r.respond({ status: res.__estado || 200, headers: H, contentType: 'application/json', body: JSON.stringify(res) })
     }
-    // Sin red: la busqueda usa los profesionales locales de la app.
-    if (!u.startsWith(B)) return r.respond({ status: 200, headers: H, contentType: 'application/json', body: '[]' })
+    // La base de datos simulada tiene UNA logopeda real. Antes respondia
+    // vacia y la busqueda tiraba de los perfiles de ejemplo de la app; fuera
+    // de la demo eso ya no pasa (no se recomiendan personas inventadas).
+    if (!u.startsWith(B)) {
+      if (r.method() === 'OPTIONS') return r.respond({ status: 204, headers: H })
+      let cuerpo = []
+      if (u.includes('/rest/v1/helpers')) {
+        const id = (u.match(/[?&]id=eq\.(\d+)/) || [])[1]
+        const cat = decodeURIComponent((u.match(/category=(?:ilike\.|in\.\()([^&)]+)/) || [])[1] || '')
+        cuerpo = (id ? BD.filter(h => String(h.id) === id) : BD.filter(h => !cat || cat.split(',').includes(h.category)))
+      }
+      return r.respond({ status: 200, headers: H, contentType: 'application/json', body: JSON.stringify(cuerpo) })
+    }
     r.continue()
   })
   p.on('pageerror', e => errores.push(e.message))
@@ -129,17 +158,57 @@ try {
 
   console.log('\n── Propone una cita, la marca hecha y valora ──')
   ok(await pulsar(c, 'Contratar'), 'en el chat, «Contratar»')
-  const dias = await c.evaluate(() => [...document.querySelectorAll('button')].map(b => b.textContent.trim()).filter(t => /^(Mañana|(lun|mar|mié|jue|vie|sáb|dom) \d+)$/.test(t)))
-  let dia = null, hora = null
-  for (const d of dias) {   // el primer dia en que trabaja (un sabado puede no tener huecos)
-    await pulsar(c, d)
-    hora = await c.evaluate(() => [...document.querySelectorAll('button')].map(b => b.textContent.trim()).find(t => /^\d\d:\d\d$/.test(t)))
-    if (hora) { dia = d; break }
-  }
-  if (hora) await pulsar(c, hora)
-  ok(await pulsar(c, 'Enviar solicitud'), `elige día (${dia}) y hora (${hora}), y envía la propuesta`)
+  // La hoja de cita (ElegirCita): el primer día con huecos y su primera hora libre.
+  const dia = await c.evaluate(() => { const d = [...document.querySelectorAll('[role=option]')].find(x => !x.disabled); d?.click(); return d?.getAttribute('aria-label') || null })
+  await espera(500)
+  const hora = await c.evaluate(() => { const h = [...document.querySelectorAll('button[aria-pressed]')].find(x => !x.disabled); h?.click(); return h?.textContent.trim() || null })
+  await espera(300)
+  ok(Boolean(dia && hora) && await pulsar(c, 'Enviar solicitud'), `elige día (${dia}) y hora (${hora}), y envía la propuesta`)
   ok(/Se la hago llegar/.test(await texto(c)), 'dice que se la hace llegar (no «te confirmará en breve»)')
   ok(/te propone una cita/.test(avisos.at(-1)?.mensaje || ''), 'la propuesta de cita le llega al profesional')
+  const conCita = avisos.find(a => a.cita_estado === 'propuesta')
+  ok(Boolean(conCita), 'y le llega con su día y su hora (no solo como texto)')
+
+  console.log('\n── El profesional acepta la cita con un botón ──')
+  const pro2 = await pagina()
+  await pro2.goto(B + '/r/' + conCita.token, { waitUntil: 'networkidle0' }); await espera(1000)
+  ok(/Te propone una cita/.test(await texto(pro2)), 'al abrir su enlace ve la cita propuesta')
+  ok(await pulsar(pro2, 'Aceptar la cita'), 'pulsa «Aceptar la cita»')
+  await espera(800)
+  ok(conCita.cita_estado === 'aceptada' && /Cita confirmada/.test(await texto(pro2)), 'la cita queda aceptada y se lo confirma')
+  await pro2.close(); await c.bringToFront()
+
+  console.log('\n── Quien la pidió la ve confirmada; otra persona ve la hora ocupada ──')
+  await c.goto(B + '/my-services', { waitUntil: 'networkidle0' }); await espera(2500)
+  ok(/Confirmado/.test(await texto(c)), 'en «Mis servicios» la cita sale Confirmada')
+  const otra = await (await b.createBrowserContext()).newPage()
+  await otra.setViewport({ width: 390, height: 844 })
+  await otra.setRequestInterception(true)
+  otra.on('request', r => {
+    const u = r.url()
+    const H = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': '*', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS' }
+    if (u.startsWith('https://funcion.ficticia.test')) {
+      if (r.method() === 'OPTIONS') return r.respond({ status: 204, headers: H })
+      const res = backend(JSON.parse(r.postData() || '{}'))
+      return r.respond({ status: res.__estado || 200, headers: H, contentType: 'application/json', body: JSON.stringify(res) })
+    }
+    if (!u.startsWith(B)) {
+      if (r.method() === 'OPTIONS') return r.respond({ status: 204, headers: H })
+      const id = (u.match(/[?&]id=eq\.(\d+)/) || [])[1]
+      return r.respond({ status: 200, headers: H, contentType: 'application/json', body: JSON.stringify(u.includes('/rest/v1/helpers') ? BD.filter(h => !id || String(h.id) === id) : []) })
+    }
+    r.continue()
+  })
+  await otra.evaluateOnNewDocument(() => localStorage.setItem('nura_user', JSON.stringify({ name: 'Otra', joined: new Date().toISOString() })))
+  await otra.goto(B + '/helper/' + conCita.helper_id, { waitUntil: 'networkidle0' }); await espera(1200)
+  await pulsar(otra, 'Disponibilidad'); await espera(800)
+  const fechaCita = conCita.cita_fecha
+  await otra.evaluate(f => { const d = new Date(f + 'T12:00:00'); const n = String(d.getDate()); const o = [...document.querySelectorAll('[role=option]')].find(x => (x.getAttribute('aria-label') || '').includes(' ' + n + ':')); o?.click() }, fechaCita)
+  await espera(1000)
+  const estadoHora = await otra.evaluate(h => [...document.querySelectorAll('button[aria-pressed]')].find(x => x.textContent.trim() === h)?.getAttribute('aria-label'), conCita.cita_hora)
+  ok(/ocupada/.test(estadoHora || ''), `otra persona ve esa hora ocupada en su agenda (${estadoHora})`)
+  await otra.close()
+
   await c.goto(B + '/my-services', { waitUntil: 'networkidle0' }); await espera(1200)
   ok(await pulsar(c, 'Marcar completado y valorar'), 'en «Mis servicios» se puede marcar hecho y valorar')
   await pulsar(c, 'Sí'); await pulsar(c, 'Paciente')
@@ -147,6 +216,48 @@ try {
   await pulsar(c, 'Enviar'); await espera(1500)
   ok(valoraciones.length === 1 && valoraciones[0].helper_id === avisos[0].helper_id && valoraciones[0].volveria === true,
     'la valoración llega al servidor, de la conversación real con ese profesional')
+
+  console.log('\n── Otra cita: el recordatorio del día antes y cancelarla ──')
+  await c.goto(B + '/helper/' + conCita.helper_id, { waitUntil: 'networkidle0' }); await espera(1500)
+  ok(await pulsar(c, 'Disponibilidad'), 'desde la ficha, «Disponibilidad»')
+  await c.evaluate(() => { const d = [...document.querySelectorAll('[role=option]')].find(x => !x.disabled); d?.click() }); await espera(500)
+  await c.evaluate(() => { const h = [...document.querySelectorAll('button[aria-pressed]')].find(x => !x.disabled); h?.click() }); await espera(300)
+  const antes = avisos.length
+  ok(await pulsar(c, 'Enviar solicitud'), 'pide otra cita')
+  await espera(1200)
+  const segunda = avisos.slice(antes).find(a => a.cita_estado === 'propuesta')
+  ok(Boolean(segunda), 'la segunda propuesta llega con su día y su hora')
+  const pro3 = await pagina()
+  await pro3.goto(B + '/r/' + segunda.token, { waitUntil: 'networkidle0' }); await espera(1000)
+  await pulsar(pro3, 'Aceptar la cita'); await espera(800)
+  ok(segunda.cita_estado === 'aceptada', 'el profesional la acepta')
+  const fN = segunda.cita_fecha, hN = segunda.cita_hora
+  await c.bringToFront()
+  await c.goto(B + '/my-services', { waitUntil: 'networkidle0' }); await espera(2500)
+  // El reloj de este navegador se adelanta a 2 horas antes de la cita: así
+  // se ve el recordatorio sin esperar al día de antes (los datos, intactos).
+  const adelanto = new Date(`${fN}T${hN}:00`).getTime() - 2 * 3600e3 - Date.now()
+  await c.evaluateOnNewDocument(ms => {
+    const D = Date
+    class Reloj extends D { constructor(...a) { if (a.length) super(...a); else super(D.now() + ms) } static now() { return D.now() + ms } }
+    window.Date = Reloj
+  }, adelanto)
+  await c.goto(B + '/', { waitUntil: 'networkidle0' }); await espera(2000)
+  const aviso = await texto(c)
+  ok(/Tu cita/.test(aviso) && new RegExp(`(Hoy|Mañana) a las ${hN}`).test(aviso) && /Con Laura/.test(aviso), `en Inicio sale el recordatorio: «${(aviso.match(/(Hoy|Mañana) a las \d\d:\d\d/) || [''])[0]}», con Laura`)
+  ok(await pulsar(c, 'Cancelar la cita'), 'pulsa «Cancelar la cita»')
+  ok(/¿Cancelar la cita\?/.test(await texto(c)) && segunda.cita_estado === 'aceptada', 'pide confirmación antes de cancelar nada')
+  ok(await pulsar(c, 'Sí, cancelar'), 'confirma')
+  await espera(800)
+  ok(segunda.cita_estado === 'cancelada', 'la cita queda cancelada en el servidor')
+  ok(!/Tu cita/.test(await texto(c)), 'y el recordatorio desaparece')
+  await c.goto(B + '/my-services', { waitUntil: 'networkidle0' }); await espera(1500)
+  ok(/Cancelado/.test(await texto(c)), 'en «Mis servicios» sale Cancelado')
+  const pro4 = await pagina()
+  await pro4.goto(B + '/r/' + segunda.token, { waitUntil: 'networkidle0' }); await espera(1000)
+  ok(/Cita cancelada/.test(await texto(pro4)) && /vuelve a estar libre/.test(await texto(pro4)), 'el profesional ve en su enlace que se ha cancelado')
+  await pro4.close(); await pro3.close()
+  ok(!backend({ op: 'ocupadas', helperId: segunda.helper_id }).ocupadas.some(o => o.fecha === fN && o.hora === hN), 'y esa hora ya no sale ocupada para nadie')
 } catch (e) {
   ok(false, 'el recorrido se ha roto: ' + e.message)
 } finally {

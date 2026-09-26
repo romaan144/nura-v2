@@ -439,6 +439,19 @@ function limpiarAlta(entrada: Record<string, unknown>) {
   return salida
 }
 
+// ── LA CITA PROPUESTA ─────────────────────────────────────────────────────
+// Viaja con el aviso: día (AAAA-MM-DD, de hoy a 120 días) y hora en punto.
+// Solo así el profesional puede aceptarla con un botón y esa hora queda
+// ocupada para todos. Si no vale, se ignora (el mensaje llega igual).
+function citaDe(c: unknown): { cita_fecha: string, cita_hora: string, cita_estado: 'propuesta' } | null {
+  const x = c as { fecha?: unknown, hora?: unknown } | null
+  const fecha = String(x?.fecha ?? ''), hora = String(x?.hora ?? '')
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha) || !/^([01]?\d|2[0-3]):00$/.test(hora)) return null
+  const t = Date.parse(fecha + 'T12:00:00Z')
+  if (!Number.isFinite(t) || t < Date.now() - 2 * 864e5 || t > Date.now() + 120 * 864e5) return null
+  return { cita_fecha: fecha, cita_hora: hora, cita_estado: 'propuesta' }
+}
+
 /** El enlace que abre el canal del profesional con el mensaje ya escrito. */
 function enlaceDe(contacto: string, mensaje: string): string {
   const c = contacto.trim()
@@ -615,6 +628,7 @@ Deno.serve(async (req: Request) => {
         // responder SIN cuenta. Quien lo tiene es quien recibio el mensaje.
         token,
         lectura_hash: hex(await sha256(lectura)),
+        ...(citaDe(cuerpo.cita) ?? {}),
       }),
     })
     if (!res.ok) return json({ error: 'aviso no encolado', estado: res.status }, 502, cors)
@@ -678,7 +692,7 @@ Deno.serve(async (req: Request) => {
     if (!token) return json({ error: 'falta token' }, 400, cors)
     if (!FORMATO_LLAVE.test(token)) return json({ error: 'no existe' }, 404, cors)
     const lec = await fetch(
-      `${SUPABASE_URL}/rest/v1/avisos?token=eq.${encodeURIComponent(token)}&select=id,helper_id,helper_nombre,mensaje,respuesta,fecha&limit=1`,
+      `${SUPABASE_URL}/rest/v1/avisos?token=eq.${encodeURIComponent(token)}&select=id,helper_id,helper_nombre,mensaje,respuesta,fecha,cita_fecha,cita_hora,cita_estado&limit=1`,
       { headers: rest },
     )
     if (!lec.ok) return json({ error: 'lectura rechazada', estado: lec.status }, 502, cors)
@@ -687,6 +701,7 @@ Deno.serve(async (req: Request) => {
     return json({ ok: true, aviso: {
       id: av.id, nombre: av.helper_nombre, mensaje: av.mensaje,
       respuesta: av.respuesta ?? null, fecha: av.fecha,
+      cita: av.cita_fecha ? { fecha: av.cita_fecha, hora: av.cita_hora, estado: av.cita_estado } : null,
     } }, 200, cors)
   }
 
@@ -697,6 +712,24 @@ Deno.serve(async (req: Request) => {
     if (!token) return json({ error: 'falta token' }, 400, cors)
     if (!respuesta) return json({ error: 'falta respuesta' }, 400, cors)
     if (!FORMATO_LLAVE.test(token)) return json({ error: 'no existe' }, 404, cors)
+    // La cita propuesta, aceptada o rechazada con un botón. Solo cambia si
+    // HABÍA una cita propuesta en este aviso (`cita_estado=eq.propuesta`).
+    const decision = cuerpo.cita === 'aceptada' || cuerpo.cita === 'rechazada' ? cuerpo.cita : null
+    if (decision === 'aceptada') {
+      // Esa hora, ¿la tiene ya aceptada con otra persona?
+      const lec = await fetch(
+        `${SUPABASE_URL}/rest/v1/avisos?token=eq.${encodeURIComponent(token)}&select=helper_id,cita_fecha,cita_hora,cita_estado&limit=1`,
+        { headers: rest },
+      )
+      const [av] = lec.ok ? await lec.json() : []
+      if (av?.cita_estado === 'propuesta') {
+        const choca = await fetch(
+          `${SUPABASE_URL}/rest/v1/avisos?helper_id=eq.${encodeURIComponent(String(av.helper_id))}&cita_fecha=eq.${av.cita_fecha}&cita_hora=eq.${encodeURIComponent(av.cita_hora)}&cita_estado=eq.aceptada&select=id&limit=1`,
+          { headers: rest },
+        )
+        if (choca.ok && (await choca.json()).length) return json({ error: 'hora ocupada' }, 409, cors)
+      }
+    }
     // Se responde UNA vez: `respuesta=is.null` impide reescribir una
     // respuesta ya dada (antes cualquiera con el token podia cambiarla).
     const res = await fetch(
@@ -715,6 +748,17 @@ Deno.serve(async (req: Request) => {
       const [av] = ya.ok ? await ya.json() : []
       return av ? json({ error: 'ya respondido' }, 409, cors) : json({ error: 'no existe' }, 404, cors)
     }
+    // La cita, aparte y DESPUÉS de guardar la respuesta (una sola vez: si ya
+    // estaba respondido, arriba se ha salido). Si justo otra persona se quedó
+    // esa hora, el índice único lo impide (409): la cita queda sin aceptar.
+    let citaOcupada = false
+    if (decision) {
+      const c = await fetch(
+        `${SUPABASE_URL}/rest/v1/avisos?id=eq.${filas[0].id}&cita_estado=eq.propuesta`,
+        { method: 'PATCH', headers: { ...rest, Prefer: 'return=minimal' }, body: JSON.stringify({ cita_estado: decision }) },
+      )
+      citaOcupada = c.status === 409
+    }
     // Si quien escribio pidio «avisame cuando conteste», se le toca el movil
     // (sin contenido) y se olvida su suscripcion: ya no hace falta.
     if (filas[0]?.push) {
@@ -724,7 +768,7 @@ Deno.serve(async (req: Request) => {
         method: 'PATCH', headers: { ...rest, Prefer: 'return=minimal' }, body: JSON.stringify({ push: null }),
       })
     }
-    return json({ ok: true }, 200, cors)
+    return json(citaOcupada ? { ok: true, cita: 'hora ocupada' } : { ok: true }, 200, cors)
   }
 
   // ── «AVISAME CUANDO CONTESTE» ──
@@ -767,10 +811,51 @@ Deno.serve(async (req: Request) => {
     if (nuevo.length > 6000) return json({ error: 'demasiado largo' }, 413, cors)
     // `respuesta=is.null` tambien aqui: si contesta justo ahora, no se pisa.
     const res = await fetch(`${SUPABASE_URL}/rest/v1/avisos?id=eq.${av.id}&respuesta=is.null`, {
-      method: 'PATCH', headers: { ...rest, Prefer: 'return=representation' }, body: JSON.stringify({ mensaje: nuevo }),
+      method: 'PATCH', headers: { ...rest, Prefer: 'return=representation' },
+      // Una propuesta de cita nueva sustituye a la anterior (sin aceptar).
+      body: JSON.stringify({ mensaje: nuevo, ...(citaDe(cuerpo.cita) ?? {}) }),
     })
     if (!res.ok) return json({ error: 'no guardado', estado: res.status }, 502, cors)
     return (await res.json()).length ? json({ ok: true }, 200, cors) : json({ error: 'ya respondido' }, 409, cors)
+  }
+
+  // ── LAS HORAS OCUPADAS DE UN PROFESIONAL ──
+  // Las citas que ha aceptado, de hoy en adelante: solo día y hora, nada de
+  // con quién. Así su agenda las tacha para cualquiera que la mire.
+  if (op === 'ocupadas') {
+    const id = String(cuerpo.helperId ?? '')
+    if (!/^\d{1,12}$/.test(id)) return json({ error: 'falta helperId' }, 400, cors)
+    const hoy = new Date(Date.now() - 864e5).toISOString().slice(0, 10)
+    const lec = await fetch(
+      `${SUPABASE_URL}/rest/v1/avisos?helper_id=eq.${id}&cita_estado=eq.aceptada&cita_fecha=gt.${hoy}&select=cita_fecha,cita_hora&limit=500`,
+      { headers: rest },
+    )
+    if (!lec.ok) return json({ error: 'lectura rechazada', estado: lec.status }, 502, cors)
+    const filas: { cita_fecha: string, cita_hora: string }[] = await lec.json()
+    return json({ ok: true, ocupadas: filas.map(f => ({ fecha: f.cita_fecha, hora: f.cita_hora })) }, 200, cors)
+  }
+
+  // ── CANCELAR LA CITA (quien la pidió) ──
+  // Solo con SUS llaves de lectura de esa conversación: nadie más puede
+  // cancelar la cita de otro. La hora vuelve a quedar libre para todos (el
+  // índice único solo cuenta las aceptadas) y al profesional se le toca el
+  // móvil si lo pidió; al abrir su enlace ve que se ha cancelado.
+  if (op === 'cancelar-cita') {
+    const llaves = Array.isArray(cuerpo.llaves)
+      ? [...new Set(cuerpo.llaves.map(String).filter(l => FORMATO_LLAVE.test(l)))].slice(0, 20)
+      : []
+    const x = citaDe({ fecha: cuerpo.fecha, hora: cuerpo.hora })
+    if (!llaves.length || !x) return json({ error: 'no existe' }, 404, cors)
+    const resumenes = await Promise.all(llaves.map(async l => hex(await sha256(l))))
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/avisos?lectura_hash=in.(${resumenes.join(',')})&cita_fecha=eq.${x.cita_fecha}&cita_hora=eq.${encodeURIComponent(x.cita_hora)}&cita_estado=in.(propuesta,aceptada)`,
+      { method: 'PATCH', headers: { ...rest, Prefer: 'return=representation' }, body: JSON.stringify({ cita_estado: 'cancelada' }) },
+    )
+    if (!r.ok) return json({ error: 'no guardado', estado: r.status }, 502, cors)
+    const filas: { helper_id: string }[] = await r.json()
+    if (!filas.length) return json({ error: 'no existe' }, 404, cors)
+    await avisarPro(String(filas[0].helper_id))
+    return json({ ok: true }, 200, cors)
   }
 
   // ── el usuario pregunta si ya le han respondido ──
@@ -786,14 +871,15 @@ Deno.serve(async (req: Request) => {
     if (!llaves.length) return json({ ok: true, respuestas: [] }, 200, cors)
     const resumenes = await Promise.all(llaves.map(async l => hex(await sha256(l))))
     const lec = await fetch(
-      `${SUPABASE_URL}/rest/v1/avisos?lectura_hash=in.(${resumenes.join(',')})&respuesta=not.is.null&select=lectura_hash,respuesta,respondido_en`,
+      `${SUPABASE_URL}/rest/v1/avisos?lectura_hash=in.(${resumenes.join(',')})&respuesta=not.is.null&select=lectura_hash,respuesta,respondido_en,cita_fecha,cita_hora,cita_estado`,
       { headers: rest },
     )
     if (!lec.ok) return json({ error: 'lectura rechazada', estado: lec.status }, 502, cors)
     const deLlave = new Map(resumenes.map((r, i) => [r, llaves[i]]))
-    const filas: { lectura_hash: string, respuesta: string, respondido_en: string }[] = await lec.json()
+    const filas: { lectura_hash: string, respuesta: string, respondido_en: string, cita_fecha?: string, cita_hora?: string, cita_estado?: string }[] = await lec.json()
     return json({ ok: true, respuestas: filas.map(f => ({
       llave: deLlave.get(f.lectura_hash), respuesta: f.respuesta, respondido_en: f.respondido_en,
+      cita: f.cita_fecha ? { fecha: f.cita_fecha, hora: f.cita_hora, estado: f.cita_estado } : null,
     })) }, 200, cors)
   }
 
@@ -967,7 +1053,7 @@ Deno.serve(async (req: Request) => {
     const [ficha] = await f.json()
     if (!ficha) return json({ error: 'sin ficha' }, 404, cors)
     const r = await fetch(
-      `${SUPABASE_URL}/rest/v1/avisos?helper_id=eq.${encodeURIComponent(String(ficha.id))}&lectura_hash=not.is.null&select=id,mensaje,respuesta,fecha,respondido_en,token&order=id.desc&limit=50`,
+      `${SUPABASE_URL}/rest/v1/avisos?helper_id=eq.${encodeURIComponent(String(ficha.id))}&lectura_hash=not.is.null&select=id,mensaje,respuesta,fecha,respondido_en,token,cita_fecha,cita_hora,cita_estado&order=id.desc&limit=50`,
       { headers: rest },
     )
     if (!r.ok) return json({ error: 'lectura rechazada', estado: r.status }, 502, cors)

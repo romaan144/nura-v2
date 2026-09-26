@@ -7,10 +7,10 @@ import { useState as useStateObra } from 'react'
 import ObraComposer from '../components/ObraComposer'
 import PostCard from '../components/PostCard'
 import { getObraDeHelper, obraAPost } from '../data/obraPosts'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { LogOut, Edit2, Check, X, Award, MessageCircle, ClipboardList, User, Phone, Star,
          UserPlus, UserCheck, ChevronRight, PenLine, Plus, Mail, CalendarDays, Search,
-         Shield, FileText, Trash2 } from 'lucide-react'
+         Shield, FileText, Trash2, Share2 } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import { Badge, StatBar } from '../components/ui'
 import HelperCard from '../components/HelperCard'
@@ -24,6 +24,8 @@ import FotoPerfil from '../components/FotoPerfil'
 import MisAlertas from '../components/MisAlertas'
 import LoQueSabeNura from '../components/LoQueSabeNura'
 import { quitarTodas } from '../utils/alertas'
+import { compartirEnlace, enlaceDeFicha } from '../utils/compartir'
+import { showToast } from '../components/Toast'
 
 // ── Tu semana: la voz de Nüra para quien trabaja ──
 // Gramática: frase humana primero, cifras discretas después, cero vanidad.
@@ -99,6 +101,14 @@ export default function Profile() {
   const [campoDraft, setCampoDraft] = useState('')
   const [confirmarSalida, setConfirmarSalida] = useState(false)
   const [editarAbierto, setEditarAbierto] = useState(false)
+  // «Bloquear días u horas» desde Mi agenda llega con ese encargo: la hoja
+  // se abre en ese apartado. Al cerrarla se borra, para que no vuelva a abrirse.
+  const location = useLocation()
+  const pideBloqueos = location.state?.editar === 'bloqueos'
+  const cerrarEditar = () => {
+    setEditarAbierto(false)
+    if (pideBloqueos) navigate(location.pathname, { replace: true, state: null })
+  }
   const [borrarAbierto, setBorrarAbierto] = useState(false)
   const [vinculo, setVinculo] = useState('')
   const [borrando, setBorrando] = useState(false)
@@ -470,6 +480,24 @@ export default function Profile() {
                 <Edit2 size={15} aria-hidden="true" /> Editar mi ficha
               </Button>
 
+              {/* Su ficha es su tarjeta de visita: se manda por WhatsApp a
+                  quien le pregunte, y al abrirla le pueden escribir. */}
+              {user.helperId != null && (
+                <Button variant="secondary" full
+                  onClick={async () => {
+                    const r = await compartirEnlace({
+                      url: enlaceDeFicha(user.helperId),
+                      titulo: `${user.name || 'Mi ficha'} en Nüra`,
+                      texto: 'Esta es mi ficha en Nüra. Me puedes escribir por aquí:',
+                    })
+                    if (r === 'copiado') showToast('Enlace de tu ficha copiado')
+                    else if (r === 'fallo') showToast('No he podido copiar el enlace')
+                  }}
+                  style={{boxShadow:'var(--alzado-reposo)', minHeight:48}}>
+                  <Share2 size={15} aria-hidden="true" /> Compartir mi ficha
+                </Button>
+              )}
+
               {/* La cita: es lo primero que leen, con su voz. */}
               {!proQuote ? (
                 <div className={styles.tarjeta}>
@@ -748,7 +776,7 @@ export default function Profile() {
       </div>
     </div>
     {composerOpen && <ObraComposer onClose={() => setComposerOpen(false)} />}
-    {editarAbierto && <EditarFicha onClose={() => setEditarAbierto(false)} />}
+    {(editarAbierto || pideBloqueos) && <EditarFicha foco={pideBloqueos ? 'bloqueos' : undefined} onClose={cerrarEditar} />}
     </>
   )
 }

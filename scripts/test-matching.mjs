@@ -22,6 +22,8 @@ mkdirSync(join(stage, 'utils'), { recursive: true })
 mkdirSync(join(stage, 'data'), { recursive: true })
 cpSync(join(root, 'src/utils'), join(stage, 'utils'), { recursive: true })
 cpSync(join(root, 'src/data'), join(stage, 'data'), { recursive: true })
+// La configuración (DEMO_MODE): la leen matching.js y supabase.js.
+cpSync(join(root, 'src/config.js'), join(stage, 'config.js'))
 // Los modulos reales (dicebear para los avatares locales) viven en el
 // node_modules del proyecto: se enlaza para que el escenario los resuelva.
 try {
@@ -105,7 +107,23 @@ const SOLO_CATEGORIA = [
   { q: 'quiero comer más sano', cat: 'salud' },
   { q: 'necesito traducir unos documentos al inglés', cat: 'idiomas' },
   { q: 'traducir mi título al inglés', cat: 'idiomas' },
+  // Barrido 2026-09-25: faltas, catalán y casos límite (38 de 50 → 50 de 50).
+  { q: 'fontanro urgente', cat: 'tecnico' },
+  { q: 'logopeta para mi hijo', cat: 'logopedia' },
+  { q: 'sicologa', cat: 'salud' },
+  { q: 'fisioterapueta', cat: 'salud' },
+  { q: 'cerragero', cat: 'tecnico' },
+  { q: 'busco un lampista', cat: 'tecnico' },
+  { q: 'necessito un fuster', cat: 'tecnico' },
+  { q: 'classes de repàs', cat: 'clases' },
+  { q: 'advocat', cat: 'legal' },
+  { q: 'gos', cat: 'mascotas' },
+  { q: 'monitor de tiempo libre', cat: 'cuidado' },
+  { q: 'canguro de gatos', cat: 'mascotas' },
+  { q: 'necesito limpiar mi casa mañana', cat: 'hogar' },
+  { q: 'fontaneros en Gràcia', cat: 'tecnico' },
 ]
+
 const HONESTY = ['asdfgh qwerty zzz', 'necesito algo no sé muy bien qué']
 const NEGATIVE = [
   { q: 'Sesión de entrenamiento personal', forbid: 'tecnico' },
@@ -183,7 +201,7 @@ for (const t of NEGATIVE) {
 
 // ── La Agenda: la disponibilidad no puede mentir ──
 {
-  const { slotsDe, tieneHuecos, ocupacionesDe } = await import('../src/data/horarios.js')
+  const { slotsDe, tieneHuecos, ocupacionesDe, ocupadasDeEjemplo } = await import(join(stage, 'data/horarios.js'))
   const logo = { id: 1, category: 'logopedia' }, tec = { id: 3, category: 'tecnico' }
   const lunes = '2026-07-06', domingo = '2026-07-05'
 
@@ -198,9 +216,11 @@ for (const t of NEGATIVE) {
   const oc = ocupacionesDe([{ helperId: 1, fecha: lunes, hora: '17:00', estado: 'confirmada' }],
                            [{ helperId: 1, date: lunes, time: '18:00', status: 'pending' }])
   const sl = slotsDe(logo, lunes, oc)
-  const c = sl.find(x => x.hora === '17:00')?.estado === 'ocupada' &&
-            sl.find(x => x.hora === '18:00')?.estado === 'pendiente' &&
-            sl.find(x => x.hora === '16:00')?.estado === 'libre'
+  const c = sl.find(x => x.hora === '17:00')?.estado === 'tuya' &&   // suya, confirmada
+            slotsDe(logo, lunes, [{ helperId: 1, fecha: lunes, hora: '19:00', estado: 'confirmada', deOtro: true }]).find(x => x.hora === '19:00')?.estado === 'ocupada' &&
+            sl.find(x => x.hora === '18:00')?.estado === 'tuya' &&   // la pidió esta persona
+            // 16:00: libre, salvo que la agenda de ejemplo (demo) la dé por cogida
+            sl.find(x => x.hora === '16:00')?.estado === (ocupadasDeEjemplo(logo, lunes).has('16:00') ? 'ocupada' : 'libre')
   if (!c) failed++
   console.log(`${c ? '✓' : '✗'} [agenda] ocupacion real desde los DOS almacenes (citas + services)`)
 }
@@ -434,6 +454,168 @@ for (const t of NEGATIVE) {
   prueba('quien tiene lo que pides sube, y se sabe por qué', orden[0].id === 2 && orden[0].__declarado?.length === 3)
   const lejos = reordenarPorDeclarado([{ id: 1, score: 200 }, { id: 2, score: 80 }], new Map([['2', attrs]]), p1)
   prueba('no da la vuelta a una diferencia grande (pesa menos que el oficio)', lejos[0].id === 1)
+}
+
+// ── La ciudad (2026-09-25): Nüra se usará en más ciudades ──
+{
+  const { ciudadEnTexto } = await import(join(stage, 'data/ciudades.js'))
+  const casos = [
+    ['fontanero en Madrid', 'Madrid'], ['busco canguro en valència', 'Valencia'], ['canguro en Valencia', 'Valencia'],
+    ['logopeda cerca de Gràcia', 'Barcelona'], ['clases de inglés', null], ['Chamberí, Madrid', 'Madrid'],
+    ['mi hijo León necesita un logopeda', null], ['vivo en León y busco fisio', 'León'], ['Granada', 'Granada'],
+    ['quiero una granada', null], ['Palma de Mallorca', 'Palma'], ['toda Barcelona', 'Barcelona'], ['bcn', 'Barcelona'],
+  ]
+  for (const [t, esp] of casos) {
+    const r = ciudadEnTexto(t)
+    if (r !== esp) failed++
+    console.log(`${r === esp ? '✓' : '✗'} ciudad: «${t}» → ${r}${r === esp ? '' : ` (esperado ${esp})`}`)
+  }
+  const a = await analyzeNeed('fontanero urgente en Madrid')
+  const m = await matchHelpers(a, 6)
+  const fuera = (m || []).filter(h => !h.online && (h.city || 'Barcelona') !== 'Madrid')
+  if (!(a.ciudad === 'Madrid' && fuera.length === 0)) failed++
+  console.log(`${a.ciudad === 'Madrid' && fuera.length === 0 ? '✓' : '✗'} buscar en Madrid no da técnicos de Barcelona (${(m || []).length} resultados, ${fuera.length} de fuera)`)
+  const b = await matchHelpers(await analyzeNeed('fontanero urgente'), 4)
+  if (!(b || []).length) failed++
+  console.log(`${(b || []).length > 0 ? '✓' : '✗'} sin ciudad no se filtra (${(b || []).length} resultados)`)
+}
+
+// ── El contacto del profesional (2026-09-25): por ahí le llegan los avisos ──
+{
+  const { revisarContacto } = await import(join(stage, 'utils/contactoProfesional.js'))
+  const casos = [
+    ['612 345 678', true, '612 345 678'], ['+34 612-345-678', true, '612 345 678'], ['0034612345678', true, '612 345 678'],
+    ['Marta@Gmail.com ', true, 'marta@gmail.com'], ['+44 7700 900123', true, '+447700900123'],
+    ['61234567', false], ['612345678901', false], ['marta@gmail', false], ['no tengo', false], ['', false],
+  ]
+  for (const [t, ok, valor] of casos) {
+    const r = revisarContacto(t)
+    const bien = r.ok === ok && (!ok || r.valor === valor)
+    if (!bien) failed++
+    console.log(`${bien ? '✓' : '✗'} contacto: «${t}» → ${r.ok ? r.valor : 'rechazado'}`)
+  }
+  const falta = revisarContacto('marta@gmial.com')
+  const bien = !falta.ok && falta.sugerencia === 'marta@gmail.com'
+  if (!bien) failed++
+  console.log(`${bien ? '✓' : '✗'} contacto: «marta@gmial.com» → sugiere ${falta.sugerencia}`)
+}
+
+// ── La agenda de los perfiles de ejemplo (2026-09-25) ──
+{
+  const H = await import(join(stage, 'data/horarios.js'))
+  const { getFirstName } = await import(join(stage, 'utils/name.js'))
+  const logopeda = { id: 2001, category: 'logopedia' }
+  const dias = Array.from({ length: 60 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() + i + 1); return H.isoLocal(d) })
+  const laborables = dias.filter(f => H.horarioDe(logopeda).dias.includes(new Date(f + 'T12:00:00').getDay()))
+  const igual = laborables.every(f => [...H.ocupadasDeEjemplo(logopeda, f)].join() === [...H.ocupadasDeEjemplo(logopeda, f)].join())
+  const cargas = laborables.map(f => H.ocupadasDeEjemplo(logopeda, f).size)
+  const total = H.horarioDe(logopeda).horas.length
+  const casos = [
+    ['la agenda de ejemplo sale igual al repetirla', igual],
+    ['hay días con horas ya cogidas', cargas.some(n => n > 0 && n < total)],
+    ['hay algún día completo', cargas.some(n => n === total)],
+    ['y días con huecos', cargas.some(n => n < total)],
+    ['un día que no trabaja no tiene horas', H.slotsDe(logopeda, dias.find(f => !laborables.includes(f)), []).length === 0],
+    ['hay un próximo hueco libre', !!H.proximoHueco(logopeda, [])],
+    ['la hora que pediste sale como tuya', (() => { const f = laborables[0]; const h = H.horarioDe(logopeda).horas[0]; return H.slotsDe(logopeda, f, [{ helperId: 2001, fecha: f, hora: h, estado: 'pendiente' }]).find(x => x.hora === h)?.estado === 'tuya' })()],
+    ['«Dra. Sara Martínez» → Sara', getFirstName('Dra. Sara Martínez') === 'Sara'],
+    ['su horario propio manda sobre el del oficio', (() => {
+      const propia = { id: 9, category: 'logopedia', horario: { dias: [6], horas: ['10:00', '11:00'] } }
+      const sab = dias.find(f => new Date(f + 'T12:00:00').getDay() === 6)
+      const lun = dias.find(f => new Date(f + 'T12:00:00').getDay() === 1)
+      return H.slotsDe(propia, sab, []).map(x => x.hora).join() === '10:00,11:00' && H.slotsDe(propia, lun, []).length === 0
+    })()],
+    ['un horario roto no rompe nada: se usa el del oficio', H.horarioDe({ category: 'logopedia', horario: { dias: [], horas: 'x' } }).horas.join() === H.horarioDelOficio('logopedia').horas.join()],
+  ]
+  for (const [n, ok] of casos) { if (!ok) failed++; console.log(`${ok ? '✓' : '✗'} agenda: ${n}`) }
+}
+
+// ── El recordatorio y la cita cancelada (2026-10-03) ──
+{
+  const H = await import(join(stage, 'data/horarios.js'))
+  const ahora = new Date(2026, 9, 3, 10, 30)          // 3 oct, 10:30
+  const s = (date, time, status = 'confirmed', helperId = 7) => ({ helperId, helperName: 'Laura Gómez', specialty: 'Logopeda', date, time, status })
+  const casos = [
+    ['confirmada mañana a las 9 → sale', H.citaEn24h([s('2026-10-04', '09:00')], [], ahora)?.hora === '09:00'],
+    ['a más de 24 horas → no sale', H.citaEn24h([s('2026-10-04', '11:00')], [], ahora) === null],
+    ['ya empezada → no sale', H.citaEn24h([s('2026-10-03', '10:00')], [], ahora) === null],
+    ['pendiente (sin confirmar) → no sale', H.citaEn24h([s('2026-10-03', '17:00', 'pending')], [], ahora) === null],
+    ['cancelada → no sale', H.citaEn24h([s('2026-10-03', '17:00', 'cancelled')], [], ahora) === null],
+    ['de dos, sale la más cercana', H.citaEn24h([s('2026-10-04', '08:00'), s('2026-10-03', '12:00')], [], ahora)?.fecha === '2026-10-03'],
+    ['una cita del chat confirmada también cuenta', H.citaEn24h([], [{ helperId: 7, helperName: 'Laura', fecha: '2026-10-03', hora: '18:00', estado: 'confirmada' }], ahora)?.hora === '18:00'],
+    ['la misma cita en las dos listas: guarda la especialidad', H.citaEn24h([s('2026-10-03', '18:00')], [{ helperId: 7, helperName: 'Laura', fecha: '2026-10-03', hora: '18:00', estado: 'confirmada' }], ahora)?.specialty === 'Logopeda'],
+    ['una cita cancelada ya no ocupa la hora', H.ocupacionesDe([{ helperId: 7, fecha: '2026-10-03', hora: '18:00', estado: 'cancelada' }], [s('2026-10-03', '19:00', 'cancelled')]).length === 0],
+  ]
+  for (const [n, ok] of casos) { if (!ok) failed++; console.log(`${ok ? '✓' : '✗'} recordatorio: ${n}`) }
+}
+
+// ── La agenda del profesional (2026-10-04) ──
+{
+  const H = await import(join(stage, 'data/horarios.js'))
+  const ahora = new Date(2026, 9, 3, 10, 30)          // 3 oct
+  const a = (id, fecha, hora, estado, respuesta = null) => ({ id, token: 't' + id, cita_fecha: fecha, cita_hora: hora, cita_estado: estado, respuesta })
+  const ag = H.agendaDe([
+    a(1, '2026-10-05', '17:00', 'aceptada'),
+    a(2, '2026-10-03', '9:00', 'propuesta'),
+    a(3, '2026-10-05', '10:00', 'cancelada'),
+    a(4, '2026-10-04', '12:00', 'rechazada'),
+    a(5, '2026-10-02', '12:00', 'aceptada'),
+    a(6, '2026-10-30', '12:00', 'aceptada'),
+    a(7, '2026-10-04', '11:00', 'propuesta', 'Déjame mirarlo'),
+    { id: 8, token: 't8', mensaje: 'sin cita' },
+  ], ahora)
+  const planas = ag.flatMap(d => d.citas)
+  const casos = [
+    ['agrupa por día, en orden', ag.map(d => d.fecha).join() === '2026-10-03,2026-10-04,2026-10-05'],
+    ['dentro del día, por hora (10:00 antes que 17:00)', ag[2].citas.map(c => c.hora).join() === '10:00,17:00'],
+    ['aceptada → confirmada', planas.find(c => c.id === 1)?.estado === 'confirmada'],
+    ['propuesta sin responder → por contestar', planas.find(c => c.id === 2)?.estado === 'por-contestar'],
+    ['respondida sin aceptar → sin confirmar', planas.find(c => c.id === 7)?.estado === 'sin-decidir'],
+    ['cancelada sale como cancelada', planas.find(c => c.id === 3)?.estado === 'cancelada'],
+    ['la rechazada no sale', !planas.some(c => c.id === 4)],
+    ['ni la de ayer, ni la de dentro de un mes, ni un mensaje sin cita', !planas.some(c => [5, 6, 8].includes(c.id))],
+    ['sin nada, agenda vacía', H.agendaDe([], ahora).length === 0 && H.agendaDe(null, ahora).length === 0],
+  ]
+  for (const [n, ok] of casos) { if (!ok) failed++; console.log(`${ok ? '✓' : '✗'} agenda del profesional: ${n}`) }
+}
+
+// ── Días u horas bloqueadas (2026-10-05) ──
+{
+  const H = await import(join(stage, 'data/horarios.js'))
+  const horas = ['16:00', '17:00', '18:00', '19:00']
+  const pro = { id: 55, category: 'logopedia', horario: { dias: [1, 2, 3, 4, 5], horas } }
+  const lunes = (() => { for (let i = 1; i < 14; i++) { const d = new Date(); d.setDate(d.getDate() + i); if (d.getDay() === 1) return H.isoLocal(d) } })()
+  const martes = (() => { const d = new Date(lunes + 'T12:00:00'); d.setDate(d.getDate() + 1); return H.isoLocal(d) })()
+  const conDia = { ...pro, bloqueos: [{ fecha: lunes }] }
+  const conHoras = { ...pro, bloqueos: [{ fecha: lunes, horas: ['17:00'] }] }
+  let b = H.alternarHora([], lunes, '17:00', horas)
+  const c1 = b.length === 1 && b[0].horas.join() === '17:00'
+  b = H.alternarHora(b, lunes, '17:00', horas)
+  const c2 = b.length === 0
+  b = H.alternarDia([], lunes)
+  const c3 = b.length === 1 && !b[0].horas
+  b = H.alternarHora(b, lunes, '16:00', horas)
+  const c4 = b[0].horas?.join() === '17:00,18:00,19:00'
+  b = H.alternarHora(b, lunes, '16:00', horas)
+  const c5 = b.length === 1 && !b[0].horas
+  const casos = [
+    ['un día entero bloqueado no tiene horas', H.slotsDe(conDia, lunes, []).length === 0],
+    ['y dice «no disponible», no «no trabaja» ni «completo»', H.motivoSinHuecos(conDia, lunes) === 'bloqueado'],
+    ['el día siguiente, igual que sin bloqueos', JSON.stringify(H.slotsDe(conDia, martes, [])) === JSON.stringify(H.slotsDe(pro, martes, []))],
+    ['una hora bloqueada sale ocupada; las demás, como sin bloqueos', (() => {
+      const sin = H.slotsDe(pro, lunes, []), con = H.slotsDe(conHoras, lunes, [])
+      return con.length === 4 && con.every((x, i) => x.hora === '17:00' ? x.estado === 'ocupada' : x.estado === sin[i].estado)
+    })()],
+    ['el próximo hueco salta lo bloqueado', H.proximoHueco(conDia, []).fecha !== lunes],
+    ['bloquear una hora y volver a tocarla la libera', c1 && c2],
+    ['bloquear el día entero', c3],
+    ['quitar una hora a un día entero deja «todas menos esa»', c4],
+    ['bloquear todas las horas vuelve a ser el día entero', c5],
+    ['los bloqueos rotos se ignoran', H.bloqueosValidos([{ fecha: 'mañana' }, { fecha: lunes, horas: ['25:00'] }, null, 'x']).length === 0],
+    ['los días pasados se olvidan', H.bloqueosVigentes([{ fecha: '2020-01-01' }, { fecha: lunes }]).map(x => x.fecha).join() === lunes],
+    ['sin bloqueos, todo como antes', H.slotsDe(pro, lunes, []).length === 4 && H.bloqueoDe(pro, lunes) === null],
+  ]
+  for (const [n, ok] of casos) { if (!ok) failed++; console.log(`${ok ? '✓' : '✗'} bloqueos: ${n}`) }
 }
 
 // El total se contaba sumando los tres catalogos, asi que se quedo en 32

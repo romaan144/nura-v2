@@ -7,6 +7,7 @@ import { DEMO_MODE } from '../config'
 import PageHeader from '../components/PageHeader'
 import styles from './MyServices.module.css'
 import RatingModal from '../components/RatingModal'
+import { showToast } from '../components/Toast'
 
 // Demo services for realistic preview
 const DEMO_SERVICES = [
@@ -63,15 +64,36 @@ const STATUS = {
   confirmed: { label: 'Confirmado',  color: 'var(--green)', bg: 'var(--green-light)' },
   completed: { label: 'Completado',  color: '#6B7280', bg: '#F9FAFB' },
   cancelled: { label: 'Cancelado',   color: 'var(--red)', bg: 'var(--red-light)' },
+  // El profesional contestó que esa hora no le va (su mensaje está en el chat).
+  rejected:  { label: 'Propón otra hora', color: '#B45309', bg: '#FFFBEB' },
 }
 
 const TABS = ['Todos', 'Próximos', 'Completados']
 
 export default function MyServices() {
   const navigate = useNavigate()
-  const { services, hasRated, updateService, user } = useUser()
+  const { services, hasRated, updateService, user, cancelarCita } = useUser()
   const [tab, setTab] = useState('Todos')
   const [ratingModal, setRatingModal] = useState(null)
+  // La cita que se está a punto de cancelar (pide un segundo toque).
+  const [aCancelar, setACancelar] = useState(null)
+  const [cancelando, setCancelando] = useState(false)
+
+  // Solo se puede cancelar lo que aún no ha pasado.
+  const [ahora] = useState(() => Date.now())
+  const porVenir = s => {
+    if (!s.date || !s.time) return false
+    const t = new Date(`${s.date}T${String(s.time).padStart(5, '0')}:00`).getTime()
+    return Number.isFinite(t) && t > ahora
+  }
+  async function cancelar(s) {
+    setCancelando(true)
+    const r = await cancelarCita({ helperId: s.helperId, fecha: s.date, hora: s.time })
+    setCancelando(false)
+    if (r === 'fallo') { showToast('Sin conexión: la cita sigue en pie. Prueba otra vez.'); return }
+    setACancelar(null)
+    showToast('Cita cancelada.')
+  }
 
   // Merge real + demo (real take priority by helperId)
   const realIds = new Set((services||[]).map(s => String(s.helperId)))
@@ -205,6 +227,34 @@ export default function MyServices() {
                       <CheckCircle size={13} /> Marcar completado y valorar
                     </button>
                   </div>
+                )}
+
+                {/* Pendiente o confirmada y aún por venir → cancelar (dos toques) */}
+                {(s.status === 'pending' || s.status === 'confirmed') && !String(s.id).startsWith('demo') && porVenir(s) && (
+                  aCancelar === s.id ? (
+                    <div className={styles.postActions} role="group" aria-label="Confirmar cancelación"
+                      onClick={e => e.stopPropagation()} style={{ flexWrap: 'wrap' }}>
+                      <span style={{ flexBasis: '100%', fontSize: 'var(--text-sm)', color: 'var(--ink-primary)' }}>
+                        ¿Cancelar la cita? {s.helperName?.split(' ')?.[0]} lo verá y esa hora quedará libre.
+                      </span>
+                      <button className={styles.actionBtn} disabled={cancelando}
+                        style={{ background: 'var(--red-ink, #B42318)', color: 'white' }}
+                        onClick={() => cancelar(s)}>
+                        {cancelando ? 'Cancelando…' : 'Sí, cancelar'}
+                      </button>
+                      <button className={styles.actionBtnSecondary} disabled={cancelando}
+                        onClick={() => setACancelar(null)}>
+                        No, la mantengo
+                      </button>
+                    </div>
+                  ) : (
+                    <div className={styles.postActions}>
+                      <button className={styles.actionBtnSecondary}
+                        onClick={e => { e.stopPropagation(); setACancelar(s.id) }}>
+                        Cancelar la cita
+                      </button>
+                    </div>
+                  )
                 )}
 
                 {/* Completed + not yet rated → rate CTA */}

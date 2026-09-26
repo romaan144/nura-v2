@@ -1,3 +1,5 @@
+import { revisarContacto } from '../utils/contactoProfesional'
+import { ciudadEnTexto } from '../data/ciudades'
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Send, Mic, MicOff } from 'lucide-react'
@@ -27,7 +29,8 @@ async function saveHelperToSupabase(answers, declarado = []) {
       // La formacion se preguntaba y solo viajaba a `ai_data`: invisible.
       // Es la credencial que gana la confianza — va en la bio publica.
       bio: [answers.formation, answers.differentiator].map(x => (x || '').trim()).filter(Boolean).join('. '),
-      zone: answers.zone || 'Barcelona', city: 'Barcelona',
+      // La ciudad, de lo que escribe: antes TODOS quedaban en Barcelona.
+      zone: (answers.zone || '').trim() || null, city: ciudadEnTexto(answers.zone),
       price: answers.price || null, category: inferredCategory,
       presential: true, online: (answers.modality || '').toLowerCase().includes('online'),
       // COLUMNAS EN camelCase: la tabla real de Supabase usa `dniVerified`,
@@ -55,7 +58,7 @@ const QUESTIONS = [
   { id: 'name',           text: 'Hola, vamos a crear tu perfil profesional. ¿Cómo te llamas?',        placeholder: 'Tu nombre completo' },
   { id: 'specialty',      text: 'Encantada, {name}. ¿Cuál es tu especialidad principal?',             placeholder: 'Ej: logopeda, cuidadora, técnico de calderas...' },
   { id: 'formation',      text: '¿Qué formación o certificaciones tienes?',                           placeholder: 'Ej: Grado en Logopedia, FP Atención Sociosanitaria...' },
-  { id: 'zone',           text: '¿En qué zona de Barcelona trabajas? ¿Te desplazas?',                 placeholder: 'Ej: Gràcia y alrededores, toda Barcelona' },
+  { id: 'zone',           text: '¿En qué ciudad y zona trabajas? ¿Te desplazas?',                    placeholder: 'Ej: Barcelona, Gràcia y alrededores · Madrid, Chamberí' },
   { id: 'price',          text: '¿Cuál es tu tarifa? Cuanto más claro, más confianza genera.',        placeholder: 'Ej: 50€/sesión de 45 min, 15€/hora' },
   { id: 'differentiator', text: '¿Qué te diferencia de otros profesionales?',                        placeholder: 'Lo que te hace único — en una o dos frases' },
   // SIN ESTO NO HAY NEGOCIO. El alta no pedia ningun dato de contacto y
@@ -83,6 +86,7 @@ export default function RegisterHelper() {
   const [typing, setTyping]       = useState(false)
   const [listening, setListening] = useState(false)
   const [done, setDone]           = useState(false)
+  const contactoRechazado = useRef('')
   // Lo que la IA ha ordenado de sus respuestas, esperando su «es correcto».
   const [propuesta, setPropuesta] = useState(null)
   const [topH, setTopH]           = useState(80)
@@ -107,10 +111,27 @@ export default function RegisterHelper() {
   }, [messages, typing])
 
   function sendMessage() {
-    const val = input.trim()
+    let val = input.trim()
     if (!val || typing) return
     setInput('')
     const q = QUESTIONS[qIdx]
+    // El contacto se comprueba: es por donde le llegarán los avisos.
+    if (q.id === 'contacto') {
+      const r = revisarContacto(val)
+      // Si le sugerimos otro correo y reenvía el suyo tal cual, es el bueno.
+      const insiste = r.sugerencia && contactoRechazado.current === val
+      if (!r.ok && !insiste) {
+        contactoRechazado.current = val
+        setMessages(prev => [...prev, { id: Date.now(), from: 'user', text: val }])
+        setTyping(true)
+        setTimeout(() => {
+          setTyping(false)
+          setMessages(prev => [...prev, { id: Date.now(), from: 'nura', text: r.motivo }])
+        }, 600)
+        return
+      }
+      val = r.ok ? r.valor : val.toLowerCase().replace(/\s+/g, '')
+    }
     const newAnswers = { ...answers, [q.id]: val }
     setAnswers(newAnswers)
     setMessages(prev => [...prev, { id: Date.now(), from: 'user', text: val }])

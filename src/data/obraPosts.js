@@ -1,3 +1,4 @@
+import { DEMO_MODE } from '../config'
 // ═══════════════════════════════════════════════════════════════
 // LA OBRA — publicaciones tipadas de los profesionales
 // No existe el post libre: toda pieza nace con tipo y resultado.
@@ -77,7 +78,8 @@ const dias = h => 1 + ((h * 7) % 9)
 const ALL = () => {
   let mias = []
   try { mias = window.__nuraMisObras || [] } catch { /* noop */ }
-  return [...mias, ...SEED_OBRA]
+  // Las publicaciones de ejemplo, solo en la demo (son de perfiles inventados).
+  return [...mias, ...(DEMO_MODE ? SEED_OBRA : [])]
 }
 
 const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
