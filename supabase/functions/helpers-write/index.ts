@@ -244,6 +244,74 @@ function cercaDeLaAlerta(zonaAlerta: { lat?: unknown, lng?: unknown } | null, h:
   return kmEntre(zonaAlerta.lat, zonaAlerta.lng, b[1], b[2]) <= RADIO_ALERTA_KM
 }
 
+// ── LAS CIUDADES (copia de src/data/ciudades.js: mantener iguales) ──
+// Para avisar solo de quien trabaja en la ciudad de la alerta. [nombre, alias…]
+const CIUDADES: string[][] = [
+  ['Barcelona', 'barcelona', 'bcn'], ['Madrid', 'madrid'], ['Valencia', 'valencia'],
+  ['Sevilla', 'sevilla'], ['Zaragoza', 'zaragoza'], ['Málaga', 'malaga'],
+  ['Murcia', 'murcia'], ['Palma', 'palma de mallorca', 'palma'], ['Las Palmas', 'las palmas', 'las palmas de gran canaria'],
+  ['Bilbao', 'bilbao'], ['Alicante', 'alicante', 'alacant'], ['Córdoba', 'cordoba'],
+  ['Valladolid', 'valladolid'], ['Vigo', 'vigo'], ['Gijón', 'gijon'],
+  ["L'Hospitalet", "l'hospitalet", 'hospitalet', "l'hospitalet de llobregat"], ['Vitoria', 'vitoria', 'vitoria-gasteiz', 'gasteiz'],
+  ['A Coruña', 'a coruna', 'la coruna', 'coruna'], ['Granada', 'granada'], ['Elche', 'elche', 'elx'],
+  ['Oviedo', 'oviedo'], ['Badalona', 'badalona'], ['Terrassa', 'terrassa', 'tarrasa'],
+  ['Sabadell', 'sabadell'], ['Cartagena', 'cartagena'], ['Jerez', 'jerez', 'jerez de la frontera'],
+  ['Móstoles', 'mostoles'], ['Santa Cruz de Tenerife', 'santa cruz de tenerife', 'tenerife'], ['Pamplona', 'pamplona', 'iruna'],
+  ['Almería', 'almeria'], ['Alcalá de Henares', 'alcala de henares'], ['Fuenlabrada', 'fuenlabrada'],
+  ['San Sebastián', 'san sebastian', 'donostia'], ['Leganés', 'leganes'], ['Santander', 'santander'],
+  ['Getafe', 'getafe'], ['Burgos', 'burgos'], ['Albacete', 'albacete'], ['Castellón', 'castellon', 'castello'],
+  ['Alcorcón', 'alcorcon'], ['Logroño', 'logrono'], ['Badajoz', 'badajoz'], ['Salamanca', 'salamanca'],
+  ['Huelva', 'huelva'], ['Marbella', 'marbella'], ['Lleida', 'lleida', 'lerida'], ['Tarragona', 'tarragona'],
+  ['León', 'leon'], ['Cádiz', 'cadiz'], ['Jaén', 'jaen'], ['Ourense', 'ourense', 'orense'],
+  ['Girona', 'girona', 'gerona'], ['Mataró', 'mataro'], ['Santiago de Compostela', 'santiago de compostela'],
+  ['Sant Cugat', 'sant cugat', 'sant cugat del valles'], ['Castelldefels', 'castelldefels'],
+]
+const CIUDAD_AMBIGUA = new Set(['granada', 'santander', 'leon', 'palma', 'valencia', 'jerez', 'santiago de compostela', 'elche', 'cartagena', 'salamanca'])
+const ALIAS_CIUDADES = CIUDADES.flatMap(([nombre, ...alias]) => alias.map(a => ({ a, nombre }))).sort((x, y) => y.a.length - x.a.length)
+const escReg = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+/** La ciudad que nombra un texto (la zona de un profesional), o null. Un barrio de Barcelona cuenta. */
+function ciudadDeTexto(texto: string): string | null {
+  if (!texto) return null
+  const t = ' ' + sinTildes(texto).replace(/[^a-z0-9' -]/g, ' ').replace(/\s+/g, ' ') + ' '
+  for (const { a, nombre } of ALIAS_CIUDADES) {
+    if (!new RegExp(`[^a-z0-9']${escReg(a)}[^a-z0-9']`).test(t)) continue
+    if (!CIUDAD_AMBIGUA.has(a) || t.trim() === a) return nombre
+    if (new RegExp(`(^| )(en|de|por|desde|cerca de|zona|ciudad de|provincia de) ${escReg(a)}[^a-z0-9']`).test(t)) return nombre
+  }
+  return barrioDeTexto(texto) ? 'Barcelona' : null
+}
+
+/** La ciudad de un profesional: la guardada (si es de la lista) o la de su zona. */
+function ciudadDelProfesional(h: { city?: unknown, zone?: unknown }): string | null {
+  return ciudadDeAlerta(h.city) || ciudadDeTexto(String(h.city || '')) || ciudadDeTexto(String(h.zone || ''))
+}
+
+/** La ciudad que manda la app para una alerta: solo si es una de la lista. */
+function ciudadDeAlerta(entrada: unknown): string | null {
+  const t = sinTildes(String(entrada ?? '')).trim()
+  if (!t || t.length > 60) return null
+  return CIUDADES.find(c => sinTildes(c[0]) === t)?.[0] ?? null
+}
+
+// Las ciudades que entran en los 5 km de algun barrio de la lista.
+const AREA_BARCELONA = new Set(['Barcelona', "L'Hospitalet", 'Badalona'])
+
+/**
+ * ¿Trabaja en la ciudad de la alerta? Online, SI. Si no se sabe su ciudad,
+ * SI (como con los barrios: mejor un aviso de mas). Una alerta de barrio
+ * no avisa de quien trabaja en otra ciudad lejos de alli.
+ */
+function enLaCiudadDeLaAlerta(a: { ciudad?: unknown, zona?: { lat?: unknown } | null }, h: { city?: unknown, zone?: unknown, online?: unknown }): boolean {
+  if (h.online === true) return true
+  const deBarrio = Boolean(a.zona && typeof a.zona.lat === 'number')
+  const ciudad = typeof a.ciudad === 'string' && a.ciudad ? a.ciudad : null
+  if (!ciudad && !deBarrio) return true
+  const suya = ciudadDelProfesional(h)
+  if (!suya) return true
+  return deBarrio ? AREA_BARCELONA.has(suya) : suya === ciudad
+}
+
 /** El barrio que manda la app para una alerta: solo si es uno de la lista. */
 function zonaDeAlerta(entrada: unknown): { nombre: string, lat: number, lng: number } | null {
   const nombre = String((entrada as { nombre?: unknown })?.nombre ?? '')
@@ -255,7 +323,7 @@ function zonaDeAlerta(entrada: unknown): { nombre: string, lat: number, lng: num
  * Ha llegado un profesional: avisa a quien lo estaba esperando. Nunca hace
  * fallar el alta: si algo no sale, el profesional queda dado de alta igual.
  */
-async function avisarAlertas(h: { id?: unknown, name?: unknown, specialty?: unknown, category?: unknown, zone?: unknown, online?: unknown }) {
+async function avisarAlertas(h: { id?: unknown, name?: unknown, specialty?: unknown, category?: unknown, zone?: unknown, city?: unknown, online?: unknown }) {
   try {
     const cat = String(h?.category || '')
     if (!CATEGORIA_OK.test(cat) || h?.id === undefined) return
@@ -263,12 +331,14 @@ async function avisarAlertas(h: { id?: unknown, name?: unknown, specialty?: unkn
     // De paso se borran las caducadas: caducar es borrar, no esconder.
     await fetch(`${SUPABASE_URL}/rest/v1/alertas?caduca_en=lt.${ahora}`, { method: 'DELETE', headers: rest })
     const r = await fetch(
-      `${SUPABASE_URL}/rest/v1/alertas?categorias=cs.{${cat}}&caduca_en=gt.${ahora}&select=id,que,correo,push,baja,encontrados,zona`,
+      `${SUPABASE_URL}/rest/v1/alertas?categorias=cs.{${cat}}&caduca_en=gt.${ahora}&select=id,que,correo,push,baja,encontrados,zona,ciudad`,
       { headers: rest },
     )
     if (!r.ok) return
-    // Si la pidio para un barrio, solo cuenta quien trabaja cerca.
-    const alertas = (await r.json()).filter((a: { zona?: { lat?: unknown, lng?: unknown } | null }) => cercaDeLaAlerta(a.zona ?? null, h))
+    // Si la pidio para un barrio, solo cuenta quien trabaja cerca; si la
+    // pidio para una ciudad, quien trabaja en ella (u online).
+    const alertas = (await r.json()).filter((a: { zona?: { lat?: unknown, lng?: unknown } | null, ciudad?: unknown }) =>
+      cercaDeLaAlerta(a.zona ?? null, h) && enLaCiudadDeLaAlerta(a, h))
     if (!alertas.length) return
     const vapid = alertas.some((a: { push?: unknown }) => a.push) ? await llavesVapid() : null
     const nombre = String(h.name || '').split(' ')[0] || 'Alguien'
@@ -280,7 +350,7 @@ async function avisarAlertas(h: { id?: unknown, name?: unknown, specialty?: unkn
       if (a.push && vapid && !(await tocarMovil(a.push, vapid))) cambios.push = null
       if (a.correo) {
         await enviarCorreo(a.correo, `Ha llegado a Nüra: ${oficio || a.que}`,
-          `<p>Hola:</p><p>Nos pediste que te avisáramos si llegaba a Nüra alguien de <b>${escHtml(a.que)}</b>${a.zona?.nombre ? ` cerca de ${escHtml(a.zona.nombre)}` : ''}.</p>` +
+          `<p>Hola:</p><p>Nos pediste que te avisáramos si llegaba a Nüra alguien de <b>${escHtml(a.que)}</b>${a.zona?.nombre ? ` cerca de ${escHtml(a.zona.nombre)}` : a.ciudad ? ` en ${escHtml(String(a.ciudad))}` : ''}.</p>` +
           `<p><b>${escHtml(nombre)}</b>${oficio ? ` (${escHtml(oficio)})` : ''} acaba de darse de alta.</p>` +
           `<p><a href="${origen}/helper/${encodeURIComponent(String(h.id))}">Ver su ficha</a></p>` +
           `<p style="color:#777;font-size:13px">¿Ya no lo necesitas? <a href="${origen}/baja/${a.baja}">Deja de avisarme</a>. ` +
@@ -977,11 +1047,13 @@ Deno.serve(async (req: Request) => {
       if (ya.ok && (await ya.json()).length >= MAX_ALERTAS_CORREO) return json({ error: 'demasiadas alertas' }, 429, cors)
     }
 
+    // Con barrio manda la distancia; sin barrio, la ciudad (si es de la lista).
+    const zona = zonaDeAlerta(cuerpo.zona)
     const llave = llaveAleatoria()
     const res = await fetch(`${SUPABASE_URL}/rest/v1/alertas`, {
       method: 'POST',
       headers: { ...rest, Prefer: 'return=representation' },
-      body: JSON.stringify({ categorias, que, correo, push, zona: zonaDeAlerta(cuerpo.zona), llave_hash: hex(await sha256(llave)), baja: llaveAleatoria() }),
+      body: JSON.stringify({ categorias, que, correo, push, zona, ciudad: zona ? null : ciudadDeAlerta(cuerpo.ciudad), llave_hash: hex(await sha256(llave)), baja: llaveAleatoria() }),
     })
     if (!res.ok) return json({ error: 'no guardada', estado: res.status }, 502, cors)
     const [fila] = await res.json()
@@ -998,14 +1070,14 @@ Deno.serve(async (req: Request) => {
     if (!llaves.length) return json({ ok: true, alertas: [] }, 200, cors)
     const resumenes = await Promise.all(llaves.map(async l => hex(await sha256(l))))
     const r = await fetch(
-      `${SUPABASE_URL}/rest/v1/alertas?llave_hash=in.(${resumenes.join(',')})&caduca_en=gt.${new Date().toISOString()}&select=llave_hash,que,caduca_en,encontrados,correo,push,zona`,
+      `${SUPABASE_URL}/rest/v1/alertas?llave_hash=in.(${resumenes.join(',')})&caduca_en=gt.${new Date().toISOString()}&select=llave_hash,que,caduca_en,encontrados,correo,push,zona,ciudad`,
       { headers: rest },
     )
     if (!r.ok) return json({ error: 'lectura rechazada', estado: r.status }, 502, cors)
     const deLlave = new Map(resumenes.map((h, i) => [h, llaves[i]]))
-    const filas: { llave_hash: string, que: string, caduca_en: string, encontrados: unknown[], correo: string | null, push: unknown, zona: { nombre?: string } | null }[] = await r.json()
+    const filas: { llave_hash: string, que: string, caduca_en: string, encontrados: unknown[], correo: string | null, push: unknown, zona: { nombre?: string } | null, ciudad: string | null }[] = await r.json()
     return json({ ok: true, alertas: filas.map(f => ({
-      llave: deLlave.get(f.llave_hash), que: f.que, zona: f.zona?.nombre ?? null, caduca_en: f.caduca_en, encontrados: f.encontrados || [],
+      llave: deLlave.get(f.llave_hash), que: f.que, zona: f.zona?.nombre ?? null, ciudad: f.ciudad ?? null, caduca_en: f.caduca_en, encontrados: f.encontrados || [],
       canales: { movil: Boolean(f.push), correo: Boolean(f.correo) },
     })) }, 200, cors)
   }

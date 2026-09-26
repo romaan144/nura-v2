@@ -300,8 +300,8 @@ console.log('\n── Te aviso si aparece alguien ──')
   const llaveMovil = r.datos.llave
   ok(!JSON.stringify(db.alertas).includes(llaveMovil), 'la llave de la alerta no se guarda tal cual')
   const fila = db.alertas.at(-1)
-  ok(Object.keys(fila).every(k => ['id','fecha','caduca_en','encontrados','categorias','que','correo','push','llave_hash','baja','zona'].includes(k)) && fila.zona === null,
-    'la alerta guarda solo oficio, canales y llaves: ninguna frase (ni barrio si no lo pidió)')
+  ok(Object.keys(fila).every(k => ['id','fecha','caduca_en','encontrados','categorias','que','correo','push','llave_hash','baja','zona','ciudad'].includes(k)) && fila.zona === null && fila.ciudad === null,
+    'la alerta guarda solo oficio, canales y llaves: ninguna frase (ni barrio ni ciudad si no lo pidió)')
 
   r = await llamarG(funcion, { op: 'crear-alerta', categorias: ['logopedia'], que: 'x', push: { endpoint: 'https://atacante.test/robar' } })
   ok(r.estado === 400, `una «suscripción» a una web cualquiera se rechaza → 400 (dio ${r.estado})`)
@@ -416,6 +416,62 @@ console.log('\n── Te aviso si aparece, cerca de tu barrio ──')
   const enServidor = [...fuente.matchAll(/^  \['((?:[^'\\]|\\')*)', ([\d.]+), ([\d.]+), \[/gm)].map(m => `${m[1].replace(/\\'/g, "'")}|${Number(m[2])}|${Number(m[3])}`)
   const enApp = BARRIOS.map(b => `${b.nombre}|${b.lat}|${b.lng}`)
   ok(enServidor.length === enApp.length && enApp.every((x, i) => x === enServidor[i]), `los barrios del servidor y de la app coinciden (${enServidor.length}/${enApp.length})`)
+}
+
+console.log('\n── Te aviso si aparece, en tu ciudad ──')
+{
+  const SUB = { endpoint: 'https://fcm.googleapis.com/fcm/send/ficticio-ciudad', keys: { p256dh: 'x', auth: 'y' } }
+  db.alertas = []
+  let r = await llamarG(funcion, { op: 'crear-alerta', categorias: ['canguro'], que: 'Canguro', push: SUB, ciudad: 'Madrid' })
+  const llave = r.datos?.llave
+  ok(r.estado === 200 && db.alertas.at(-1).ciudad === 'Madrid' && db.alertas.at(-1).zona === null, 'guarda la ciudad de la alerta')
+  await llamarG(funcion, { op: 'crear-alerta', categorias: ['canguro'], que: 'Canguro', ciudad: 'Ciudad Inventada' })
+  ok(db.alertas.at(-1).ciudad === null, 'una ciudad que no está en la lista no se guarda')
+  db.alertas.pop()
+  await llamarG(funcion, { op: 'crear-alerta', categorias: ['canguro'], que: 'Canguro', ciudad: 'madrid; drop table' })
+  ok(db.alertas.at(-1).ciudad === null, 'solo se acepta el nombre exacto de una ciudad')
+  db.alertas.pop()
+  await llamarG(funcion, { op: 'crear-alerta', categorias: ['canguro'], que: 'Canguro', ciudad: 'Madrid', zona: { nombre: 'Gràcia' } })
+  ok(db.alertas.at(-1).ciudad === null && db.alertas.at(-1).zona?.nombre === 'Gràcia', 'con barrio manda el barrio, no la ciudad')
+  db.alertas.pop()
+
+  const avisos = () => (db.alertas.find(f => f.ciudad === 'Madrid')?.encontrados || []).length
+  await llamarG(funcion, { op: 'alta', payload: { name: 'Barcelonesa Ficticia', category: 'canguro', zone: 'Gràcia' } })
+  ok(avisos() === 0, 'no avisa de quien trabaja en Barcelona')
+  await llamarG(funcion, { op: 'alta', payload: { name: 'Valenciana Ficticia', category: 'canguro', city: 'Valencia', zone: 'Russafa' } })
+  ok(avisos() === 0, 'no avisa de quien trabaja en otra ciudad (Valencia, guardada)')
+  await llamarG(funcion, { op: 'alta', payload: { name: 'Madrileña Ficticia', category: 'canguro', zone: 'Chamberí, Madrid' } })
+  ok(avisos() === 1, 'sí avisa de quien trabaja en Madrid (leída de su zona)')
+  await llamarG(funcion, { op: 'alta', payload: { name: 'Guardada Ficticia', category: 'canguro', city: 'madrid' } })
+  ok(avisos() === 2, 'sí avisa si su ciudad guardada es Madrid')
+  await llamarG(funcion, { op: 'alta', payload: { name: 'Remota Ficticia', category: 'canguro', zone: 'Gràcia', online: true } })
+  ok(avisos() === 3, 'sí avisa de quien atiende online')
+  await llamarG(funcion, { op: 'alta', payload: { name: 'Sin Ciudad', category: 'canguro', zone: 'por ahí' } })
+  ok(avisos() === 4, 'si no se sabe su ciudad, avisa (mejor uno de más que perderlo)')
+  r = await llamarG(funcion, { op: 'alertas', llaves: [llave] })
+  ok(r.datos?.alertas?.[0]?.ciudad === 'Madrid', 'el móvil ve la ciudad de su aviso')
+
+  // Un aviso de barrio ya no avisa de quien trabaja en otra ciudad.
+  db.alertas = []
+  await llamarG(funcion, { op: 'crear-alerta', categorias: ['canguro'], que: 'Canguro', zona: { nombre: 'Gràcia' } })
+  const deBarrio = () => (db.alertas.at(-1).encontrados || []).length
+  await llamarG(funcion, { op: 'alta', payload: { name: 'Madrileña Dos', category: 'canguro', zone: 'Chamberí, Madrid' } })
+  ok(deBarrio() === 0, 'un aviso de barrio de Barcelona no avisa de quien trabaja en Madrid')
+  await llamarG(funcion, { op: 'alta', payload: { name: 'Madrileña Online', category: 'canguro', zone: 'Chamberí, Madrid', online: true } })
+  ok(deBarrio() === 1, 'pero sí si atiende online')
+
+  // La lista de ciudades del servidor es la misma que la de la app.
+  // (se lee el texto: ciudades.js importa sin extensión, como pide Vite)
+  const fuente = readFileSync(new URL('../supabase/functions/helpers-write/index.ts', import.meta.url), 'utf8')
+  const app = readFileSync(new URL('../src/data/ciudades.js', import.meta.url), 'utf8')
+  const lista = (texto, desde, hasta) => {
+    const b = texto.slice(texto.indexOf(desde), texto.indexOf(hasta))
+    return JSON.stringify(Function('return ' + b.slice(b.indexOf('= [') + 2, b.lastIndexOf(']') + 1))())
+  }
+  const enServidor = lista(fuente, 'const CIUDADES: string[][] = [', 'const CIUDAD_AMBIGUA')
+  ok(enServidor.length > 100 && enServidor === lista(app, 'export const CIUDADES = [', 'const AMBIGUAS'), 'las ciudades del servidor y de la app coinciden')
+  const amb = s => s.match(/new Set\((\[[^\]]*\])\)/)[1]
+  ok(amb(fuente.slice(fuente.indexOf('const CIUDAD_AMBIGUA'))) === amb(app.slice(app.indexOf('const AMBIGUAS'))), 'las ciudades ambiguas coinciden')
 }
 
 console.log('\n── El aviso le llega solo al profesional con correo ──')

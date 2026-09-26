@@ -458,7 +458,17 @@ for (const t of NEGATIVE) {
 
 // ── La ciudad (2026-09-25): Nüra se usará en más ciudades ──
 {
-  const { ciudadEnTexto } = await import(join(stage, 'data/ciudades.js'))
+  const { ciudadEnTexto, hayEnLaCiudad } = await import(join(stage, 'data/ciudades.js'))
+  for (const [nombre, lista, ciudad, esp] of [
+    ['nadie en Madrid si todos son de Barcelona', [{ zone: 'Gràcia' }, { city: 'Barcelona' }], 'Madrid', false],
+    ['alguien en Madrid por su zona', [{ zone: 'Gràcia' }, { zone: 'Chamberí, Madrid' }], 'Madrid', true],
+    ['online cuenta como que hay', [{ zone: 'Gràcia', online: true }], 'Madrid', true],
+    ['sin ciudad elegida no se dice nada', [], null, true],
+  ]) {
+    const r = hayEnLaCiudad(lista, ciudad)
+    if (r !== esp) failed++
+    console.log(`${r === esp ? '✓' : '✗'} hayEnLaCiudad: ${nombre}`)
+  }
   const casos = [
     ['fontanero en Madrid', 'Madrid'], ['busco canguro en valència', 'Valencia'], ['canguro en Valencia', 'Valencia'],
     ['logopeda cerca de Gràcia', 'Barcelona'], ['clases de inglés', null], ['Chamberí, Madrid', 'Madrid'],
