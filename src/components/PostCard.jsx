@@ -1,9 +1,10 @@
-import { Hand, MessageCircle } from 'lucide-react'
+import { Hand, MessageCircle, BadgeCheck, ArrowUpRight, ArrowRight, Check } from 'lucide-react'
 import ObraTypeIcon from './ObraTypeIcon'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import { TYPE_META, COMMENT_STARTERS } from '../data/obraPosts'
+import styles from './PostCard.module.css'
 
 // ═══════════════════════════════════════════════════════════════
 // PostCard — LA UNIDAD UNICA del Muro.
@@ -18,6 +19,7 @@ export default function PostCard({ post }) {
   const { user, toggleUtil, utilesDe, meSirve, addComment, commentsFor } = useUser()
   const [openThread, setOpenThread] = useState(false)
   const [draft, setDraft] = useState('')
+  const threadId = useId()
   if (!post) return null
 
   const meta = post.type ? TYPE_META[post.type] : null
@@ -40,186 +42,67 @@ export default function PostCard({ post }) {
     setDraft('')
   }
 
+  const Author = post.helperId ? 'button' : 'div'
   return (
-    <article className="nura-post" style={{
-      /* Cristal, como el resto del sistema. Son 27 tarjetas en Comunidad:
-         cualquier cambio aqui se multiplica por 27. El fondo se ve a traves,
-         asi que las historias forman parte de la pantalla en vez de
-         apilarse como fichas sobre ella. */
-      background: 'rgba(255,255,255,0.96)',
-      WebkitBackdropFilter: 'blur(20px) saturate(160%)',
-      backdropFilter: 'blur(20px) saturate(160%)',
-      border: '1px solid var(--ink-border)',
-      borderRadius: 'var(--radius-md)',
-      boxShadow: 'var(--alzado-reposo)',
-      padding: 'var(--space-16)',
-    }}>
-      {/* ── El autor: siempre primero, siempre igual ── */}
-      <button onClick={post.helperId ? irAlPerfil : undefined}
-        style={{
-          display: 'flex', alignItems: 'center', gap: 'var(--space-10)', width: '100%',
-          background: 'none', border: 'none', padding: 0, textAlign: 'left',
-          cursor: post.helperId ? 'pointer' : 'default',
-        }}>
+    <article className={styles.card}>
+      <Author className={styles.author} {...(post.helperId ? { type: 'button', onClick: irAlPerfil, 'aria-label': `Ver perfil de ${post.autor}` } : {})}>
         {post.avatarUrl
-          ? <img src={post.avatarUrl} alt="" decoding="async" width={36} height={36}
-              style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover' }} />
-          : <span style={{
-              width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
-              background: post.autorColor || 'var(--purple-20)', color: 'var(--purple-ink)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 'var(--text-sm)', fontWeight: 700,
-            }}>{(post.autor || '?')[0]}</span>}
-        <span style={{ minWidth: 0 }}>
-          <span style={{ display: 'block', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--ink)' }}>
-            {post.autor}
-            {post.verified && <span style={{ color: 'var(--purple-ink)' }}> ✓</span>}
-          </span>
-          <span style={{ display: 'block', fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)' }}>
-            {post.rol}{post.rol && post.dateLabel ? ' · ' : ''}{post.dateLabel}
-            {post.lugar && <> · {post.lugar}</>}
-          </span>
+          ? <img src={post.avatarUrl} alt="" decoding="async" loading="lazy" width={44} height={48} className={styles.avatar} />
+          : <span className={styles.initial}>{(post.autor || '?')[0]}</span>}
+        <span className={styles.authorInfo}>
+          <span className={styles.authorName}>{post.autor}{post.verified && <BadgeCheck size={15} aria-label="Identidad verificada" />}</span>
+          {post.rol && <span className={styles.authorRole}>{post.rol}</span>}
+          {(post.dateLabel || post.lugar) && <span className={styles.date}>{[post.dateLabel, post.lugar].filter(Boolean).join(' · ')}</span>}
         </span>
-      </button>
+        {post.helperId && <ArrowUpRight size={17} className={styles.authorArrow} aria-hidden="true" />}
+      </Author>
 
-      {/* El sello del manifiesto: "resultados confirmados por quien los
-          vivio". Si no hay confirmacion real, NO se finge: la pieza sale
-          sin sello. La confianza se demuestra, no se declara. */}
-      {post.confirmado && (
-        <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: 'var(--space-6)',
-          background: 'rgba(16,185,129,0.10)', color: 'var(--green-dot, #10B981)',
-          borderRadius: 'var(--radius-full)', padding: '4px var(--space-10)',
-          fontSize: 'var(--text-sm)', fontWeight: 700, marginTop: 'var(--space-10)',
-        }}>
-          ✓ Confirmado por quien lo vivió
-        </div>
-      )}
-
-      {/* ── El contenido ── */}
-      {meta && (
-        <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: 'var(--space-4)',
-          background: 'var(--purple-10)', color: 'var(--purple-ink)', borderRadius: 'var(--radius-full)',
-          padding: '3px var(--space-10)', fontSize: 'var(--text-sm)', fontWeight: 700,
-          letterSpacing: '0.4px', textTransform: 'uppercase',
-          margin: 'var(--space-12) 0 var(--space-6)',
-        }}><ObraTypeIcon type={post.type} /> {meta.label}</div>
-      )}
-
-      {post.title && (
-        <h3 style={{
-          fontFamily: 'var(--font-voice)', fontWeight: 600, fontSize: 'var(--text-md)',
-          letterSpacing: '-0.3px', color: 'var(--ink)',
-          margin: meta ? '0 0 var(--space-6)' : 'var(--space-12) 0 var(--space-6)', lineHeight: 1.3,
-        }}>{post.title}</h3>
-      )}
-
-      <p style={{
-        fontSize: 'var(--text-sm)', lineHeight: 1.55, color: 'var(--ink-secondary)',
-        margin: post.title ? 0 : 'var(--space-12) 0 0',
-      }}>{post.body}</p>
-
-      {post.result && (
-        <p style={{ fontSize: 'var(--text-sm)', margin: 'var(--space-8) 0 0', color: 'var(--ink)' }}>
-          <strong>Resultado:</strong> {post.result}
-        </p>
-      )}
-
-      {post.mention && (
-        <button onClick={irAlPerfil}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 'var(--space-8)', marginTop: 'var(--space-10)',
-            background: 'var(--surface-subtle)', border: 'none', borderRadius: 'var(--radius-card)',
-            padding: 'var(--space-8) var(--space-10)', width: '100%', cursor: 'pointer', textAlign: 'left',
-          }}>
-          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-secondary)' }}>
-            Encontró a <strong style={{ color: 'var(--ink)' }}>{post.mention}</strong> →
-          </span>
-        </button>
-      )}
-
-      {/* ── La barra social: siempre presente, siempre igual ──
-          Medido: estos dos botones median 22px de alto y eran ELLOS SOLOS
-          52 de los 53 incumplimientos del minimo tactil de WCAG 2.2 AA
-          (24x24) en toda la app — se repiten en cada publicacion de
-          Comunidad y de la ficha. El padding vertical pasa de 4 a 8 y se
-          fija minHeight 24. La pildora no tiene fondo ni borde, asi que
-          crece la zona tocable sin que cambie NADA de lo que se ve. */}
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 'var(--space-16)',
-        borderTop: '1px solid var(--ink-border)', marginTop: 'var(--space-12)', paddingTop: 'var(--space-8)',
-      }}>
-        <button onClick={() => user ? toggleUtil(post.id) : pedirCuenta()}
-          aria-pressed={!!marcado}
-          style={{
-            background: 'none', border: 'none', padding: 'var(--space-8) 0', cursor: 'pointer', minHeight: 24,
-            fontSize: 'var(--text-sm)', fontWeight: 700,
-            color: marcado ? 'var(--purple)' : 'var(--ink-tertiary)',
-          }}>
-          <Hand size={15} aria-hidden="true" style={{ verticalAlign: 'middle', marginRight: 4 }} /> Me sirve{utiles > 0 ? ` · ${utiles}` : ''}
-        </button>
-        <button onClick={() => setOpenThread(v => !v)}
-          style={{
-            background: 'none', border: 'none', padding: 'var(--space-8) 0', cursor: 'pointer', minHeight: 24,
-            fontSize: 'var(--text-xs)', fontWeight: 600, minWidth: 24,
-            color: openThread ? 'var(--purple)' : 'var(--ink-tertiary)',
-          }}>
-          <MessageCircle size={15} aria-hidden="true" style={{ verticalAlign: 'middle', marginRight: 4 }} /> {comments.length > 0 ? comments.length : 'Comentar'}
-        </button>
+      <div className={styles.content}>
+        {meta && <span className={styles.type}><ObraTypeIcon type={post.type} />{meta.label}</span>}
+        {post.title && <h3 className={styles.title}>{post.title}</h3>}
+        <p className={styles.body}>{post.body}</p>
+        {post.result && <div className={styles.result}>
+          <span className={styles.resultLabel}>Resultado</span>
+          <p>{post.result}</p>
+        </div>}
+        {post.confirmado && <p className={styles.confirmed}><Check size={16} aria-hidden="true" />Confirmado por quien lo vivió</p>}
+        {post.mention && <button type="button" onClick={irAlPerfil} className={styles.mention}>
+          <span>Encontró a <strong>{post.mention}</strong></span><ArrowUpRight size={16} aria-hidden="true" />
+        </button>}
       </div>
 
-      {openThread && (
-        <div style={{ marginTop: 'var(--space-10)' }}>
-          {comments.map(c => (
-            <div key={c.id} style={{ marginBottom: 'var(--space-10)' }}>
-              <span style={{ fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--ink)' }}>{c.author}</span>
-              <span style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)' }}> · {c.ago}</span>
-              <p style={{ fontSize: 'var(--text-sm)', lineHeight: 1.5, color: 'var(--ink-secondary)', margin: '2px 0 0' }}>
-                {c.text}
-              </p>
-            </div>
-          ))}
-          {user ? (
-            <>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-6)', margin: 'var(--space-10) 0 var(--space-8)' }}>
-                {COMMENT_STARTERS.map(s => (
-                  <button key={s} onClick={() => publicar(s)}
-                    style={{
-                      background: 'var(--purple-10)', color: 'var(--purple-ink)', border: 'none',
-                      borderRadius: 'var(--radius-full)', padding: '5px var(--space-10)',
-                      fontSize: 'var(--text-xs)', fontWeight: 600, cursor: 'pointer',
-                    }}>{s}</button>
-                ))}
-              </div>
-              <div style={{ display: 'flex', gap: 'var(--space-8)' }}>
-                <input value={draft} onChange={e => setDraft(e.target.value)}
-                  onKeyDown={e => { if (e.key === 'Enter') publicar(draft) }}
-                  placeholder="Escribe un comentario…"
-                  style={{
-                    flex: 1, border: '1px solid var(--ink-border)', borderRadius: 'var(--radius-full)',
-                    padding: 'var(--space-8) var(--space-14)', fontSize: 'var(--text-sm)',
-                    outline: 'none', background: 'var(--paper)', fontFamily: 'inherit',
-                  }} />
-                <button onClick={() => publicar(draft)} aria-label="Publicar comentario"
-                  style={{
-                    background: 'var(--purple)', color: 'white', border: 'none', borderRadius: '50%',
-                    width: 36, height: 36, fontSize: 'var(--text-md)', cursor: 'pointer', flexShrink: 0,
-                  }}>→</button>
-              </div>
-            </>
-          ) : (
-            <button onClick={pedirCuenta}
-              style={{
-                background: 'none', border: '1px dashed var(--ink-border)', borderRadius: 'var(--radius-full)',
-                padding: 'var(--space-8) var(--space-14)', fontSize: 'var(--text-xs)',
-                color: 'var(--ink-secondary)', width: '100%', cursor: 'pointer',
-              }}>
-              Entra para comentar
-            </button>
-          )}
+      <div className={styles.actions}>
+        <button type="button" onClick={() => user ? toggleUtil(post.id) : pedirCuenta()} aria-pressed={!!marcado}
+          className={`${styles.action} ${marcado ? styles.selected : ''}`}>
+          <Hand size={16} aria-hidden="true" /><span>Me sirve{utiles > 0 ? ` · ${utiles}` : ''}</span>
+        </button>
+        <button type="button" onClick={() => setOpenThread(v => !v)} aria-expanded={openThread} aria-controls={threadId}
+          className={`${styles.action} ${openThread ? styles.selected : ''}`}>
+          <MessageCircle size={16} aria-hidden="true" /><span>{comments.length > 0 ? `Comentarios · ${comments.length}` : 'Comentar'}</span>
+        </button>
+      </div>
+      {openThread && <div id={threadId} className={styles.thread}>
+        <h4 className={styles.threadTitle}>Comentarios</h4>
+        {comments.length === 0 && <p className={styles.emptyThread}>Todavía no hay comentarios.</p>}
+        <div className={styles.comments}>
+          {comments.map(c => <div key={c.id} className={styles.comment}>
+            <div className={styles.commentHead}><strong>{c.author}</strong><span>{c.ago}</span></div>
+            <p>{c.text}</p>
+          </div>)}
         </div>
-      )}
+        {user ? <>
+          <p className={styles.quickLabel}>Publicar una respuesta rápida</p>
+          <div className={styles.quickReplies}>
+            {COMMENT_STARTERS.map(s => <button type="button" key={s} onClick={() => publicar(s)}>{s}</button>)}
+          </div>
+          <label htmlFor={`${threadId}-draft`} className={styles.draftLabel}>Tu comentario</label>
+          <div className={styles.composer}>
+            <input id={`${threadId}-draft`} value={draft} onChange={e => setDraft(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') publicar(draft) }} placeholder="Escribe aquí…" />
+            <button type="button" onClick={() => publicar(draft)} aria-label="Publicar comentario" disabled={!draft.trim()}><ArrowRight size={20} aria-hidden="true" /></button>
+          </div>
+        </> : <button type="button" onClick={pedirCuenta} className={styles.signIn}>Entra para comentar</button>}
+      </div>}
     </article>
   )
 }

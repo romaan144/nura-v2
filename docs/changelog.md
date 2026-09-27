@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-27 — Su obra gana espacio y distingue los resultados
+
+Se elimina la tarjeta exterior redundante de Su obra para dar ancho a las publicaciones. PostCard separa autor, contenido, resultado y acciones con botones de 44 px, comentarios con nombre y contador y respuestas rápidas identificadas como publicación directa. El perfil conserva una publicación inicial y permite desplegar/recoger las demás. La etiqueta habla de publicaciones, porque no todas son casos. Sin cambios de datos ni reintroducir Comunidad en navegación.
+
 ## 2026-09-27 — Acceso y recuperación con campos y estados claros
 
 Login, acceso por correo y recuperación comparten superficies y controles de contraste definido. Etiquetas persistentes, campos de 16 px, mostrar/ocultar contraseña y mensajes de error/confirmación diferenciados. La demo aclara que no envía SMS. Se conservan controladores, validaciones y destinos; pruebas de estados mediante respuestas locales simuladas, sin modificar credenciales reales.

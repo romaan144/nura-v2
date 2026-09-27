@@ -615,31 +615,20 @@ function HelperProfileInner() {
         )}
 
         {getObraDeHelper(enrichedH.id, 2).length > 0 && (
-          <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0ms forwards`}} className={styles.section}>
-            <h2 className={styles.sectionHeading}>Su obra</h2>
-            {/* ── EL MURO NO ES LA FICHA ──────────────────────────────
-                Se pintaban TODAS las publicaciones: tres pantallas de las
-                4,7 que medía la ficha. Era Comunidad dentro del perfil — el
-                mismo problema que el susurro en Home, en grande.
-                Ahora se ve UNA, prueba de que este profesional trabaja y lo
-                documenta. El resto sigue ahí, a un toque. */}
-            <div style={{display:'flex', flexDirection:'column', gap:'var(--space-10)'}}>
+          <section className={`${styles.section} ${styles.workSection}`} aria-labelledby="su-obra-titulo">
+            <div className={styles.workHeading}>
+              <h2 id="su-obra-titulo" className={styles.sectionHeading}>Su obra</h2>
+              <p>Cómo trabaja, contado por {getFirstName(enrichedH.name)}.</p>
+            </div>
+            <div id="su-obra-publicaciones" className={styles.workList}>
               {(verTodaLaObra ? publicacionesDe(enrichedH) : publicacionesDe(enrichedH).slice(0, 1))
                 .map(p => <PostCard key={p.id} post={p} />)}
             </div>
-            {!verTodaLaObra && publicacionesDe(enrichedH).length > 1 && (
-              <button onClick={() => setVerTodaLaObra(true)} style={{
-                width:'100%', marginTop:'var(--space-10)', minHeight:48,
-                background:'rgba(255,255,255,0.96)',
-                WebkitBackdropFilter:'blur(20px) saturate(160%)',
-                backdropFilter:'blur(20px) saturate(160%)',
-                border:'1px solid rgba(255,255,255,0.6)',
-                borderRadius:'var(--radius-md)',
-                boxShadow:'var(--alzado-reposo)',
-                fontSize:'var(--text-sm)', fontWeight:600, color:'var(--ink-secondary)',
-                fontFamily:'inherit', cursor:'pointer',
-              }}>
-                Ver los {publicacionesDe(enrichedH).length} casos de {getFirstName(enrichedH.name)}
+            {publicacionesDe(enrichedH).length > 1 && (
+              <button type="button" onClick={() => setVerTodaLaObra(v => !v)} className={styles.workMore}
+                aria-expanded={verTodaLaObra} aria-controls="su-obra-publicaciones">
+                <span>{verTodaLaObra ? 'Ver menos publicaciones' : `Ver las ${publicacionesDe(enrichedH).length} publicaciones de ${getFirstName(enrichedH.name)}`}</span>
+                <ChevronDown size={18} aria-hidden="true" />
               </button>
             )}
           </section>
