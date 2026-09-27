@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-27 — Explorar con filtros visibles y tarjetas comparables
+
+Las categorías pasan a filas compactas en móvil. Un selector muestra todas las especialidades, los filtros indican selección y pueden quitarse juntos. El vacío distingue falta de coincidencias de una categoría sin profesionales. Las tarjetas compartidas usan retratos mayores, tarifa disponible y dos botones independientes para perfil y contacto; altura uniforme, fondo blanco e iniciales si no hay foto. Se conserva la lógica de categorías, orden, búsqueda y contacto.
+
 ## 2026-09-27 — Valoración con preguntas separadas y envío visible
 
 Estrellas numeradas con selección clara, cualidades uniformes con contador de tres y comentario etiquetado. El permiso de publicación se muestra en su propio bloque y sigue desmarcado inicialmente. La cabecera y el envío quedan visibles mientras el formulario se desplaza por dentro, también al abrir el teclado. Se comparte únicamente el comportamiento de foco/teclado con la ventana de cita; reglas y envío no cambian.

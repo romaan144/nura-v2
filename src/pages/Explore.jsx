@@ -1,17 +1,15 @@
 import { useState, useEffect, useRef } from 'react'
 import PageHeader from '../components/PageHeader'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Search, ArrowLeft, Loader2, SlidersHorizontal,
+import { Search, SlidersHorizontal, Check, X, ArrowUpRight,
          Heart, Wrench, BookOpen, Scale, Home, PawPrint,
-         Dumbbell, Baby, MapPin, Star, Laptop, Palette, Car, PartyPopper, Globe } from 'lucide-react'
-import { searchHelpers, getAllHelpers } from '../utils/supabase'
+         Dumbbell, Baby, Star, Laptop, Palette, Car, PartyPopper, Globe } from 'lucide-react'
+import { searchHelpers } from '../utils/supabase'
 import { HELPERS as LOCAL_DEMO_HELPERS } from '../data/helpers'
 import { DEMO_MODE } from '../config'
-import { analyzeNeed, matchHelpers } from '../utils/matching'
-import { useUser } from '../context/UserContext'
 import HelperCard from '../components/HelperCard'
 import styles from './Explore.module.css'
-import { LiveDot, EmptyState, Skeleton } from '../components/ui'
+import { EmptyState, Skeleton } from '../components/ui'
 
 
 
@@ -154,7 +152,6 @@ const CATEGORIES = [
 
 export default function Explore() {
   const navigate  = useNavigate()
-  const { addSearch, cacheHelpers } = useUser()
   const inputRef  = useRef(null)
 
   // ── State ────────────────────────────────────────────────────
@@ -325,6 +322,15 @@ export default function Explore() {
   const isLoading   = loadingCat
   const isListView  = activeCategory !== null
 
+  const hasFilters = filterAvailable || filterRating || filterOnline || activeSubcategory !== 'Todos'
+  function resetFilters() {
+    setFilterAvailable(false)
+    setFilterRating(false)
+    setFilterOnline(false)
+    setActiveSubcategory('Todos')
+    setVisibleCount(20)
+  }
+
   /* ── RENDER ─────────────────────────────────────────────────── */
   return (
     <div className={styles.page}>
@@ -334,10 +340,10 @@ export default function Explore() {
       />
 
       <div className={styles.body}>
-        <div className="nura-page-intro">
-          <span className="nura-eyebrow">Tu próxima conexión</span>
-          <h1>Personas que pueden ayudarte</h1>
-          <p>Busca por lo que necesitas o descubre cada especialidad.</p>
+        <div className={styles.intro}>
+          <span className={styles.eyebrow}>Explorar profesionales</span>
+          <h1>{activeCategory ? activeCategory.label : '¿Qué necesitas resolver?'}</h1>
+          {!activeCategory && <p>Elige una categoría o cuéntaselo a Nüra.</p>}
         </div>
 
         {/* ── SEARCH BAR ──────────────────────────────────── */}
@@ -355,7 +361,7 @@ export default function Explore() {
             />
             {(searchText || isListView) && (
               <button type="button" aria-label="Limpiar búsqueda" className={styles.clearBtn} onClick={clearSearch}>
-                ✕
+                <X size={18} aria-hidden="true" />
               </button>
             )}
           </form>
@@ -369,16 +375,16 @@ export default function Explore() {
                 <button
                   key={cat.id}
                   className={styles.catCard}
-                  style={{'--category-tint': cat.bg}}
                   onClick={() => openCategory(cat)}
                 >
                   <div className={styles.catIconWrap} style={{background: cat.bg}}>
-                    <Icon size={24} color={cat.color} strokeWidth={1.8} />
+                    <Icon size={23} color={cat.color} strokeWidth={1.8} aria-hidden="true" />
                   </div>
                   <div className={styles.catInfo}>
                     <span className={styles.catLabel}>{cat.label}</span>
                     <span className={styles.catDesc}>{cat.desc}</span>
                   </div>
+                  <ArrowUpRight className={styles.catArrow} size={18} aria-hidden="true" />
                 </button>
               )
             })}
@@ -396,63 +402,50 @@ export default function Explore() {
         {/* ── RESULTADOS ──────────────────────────────────── */}
         {isListView && !isLoading && (
           <>
-            {/* Header de resultados */}
-            <div className={styles.resultsHeader} >
-              {activeCategory && (
-                <div className={styles.catPill} style={{ '--cat-color': activeCategory.color, '--cat-bg': activeCategory.bg }}>
-                  {(() => { const Icon = activeCategory.icon; return <Icon size={13} color={activeCategory.color} /> })()}
-                  <span>{activeCategory.label}</span>
+            <section className={styles.filterPanel} aria-label="Filtrar profesionales">
+              {activeCategory?.subcategories?.length > 0 && (
+                <div className={styles.specialtyFilter}>
+                  <label htmlFor="explore-specialty"><SlidersHorizontal size={16} aria-hidden="true" />Especialidad</label>
+                  <select id="explore-specialty" className={styles.specialtySelect} value={activeSubcategory}
+                    onChange={e => { setActiveSubcategory(e.target.value); setVisibleCount(20) }}>
+                    {activeCategory.subcategories.map(sub => <option key={sub} value={sub}>{sub === 'Todos' ? 'Todas las especialidades' : sub}</option>)}
+                  </select>
                 </div>
               )}
-              <span className={styles.resultCount}>
-                {displayList.length} profesional{displayList.length !== 1 ? 'es' : ''}
-              </span>
-            </div>
-
-            {/* Subcategorías */}
-            {activeCategory?.subcategories?.length > 0 && (
-              <div className={styles.subCatRow}>
-                {activeCategory.subcategories.map(sub => (
-                  <button
-                    key={sub}
-                    className={`${styles.subCatPill} ${activeSubcategory === sub ? styles.subCatActive : ''}`}
-                    style={activeSubcategory === sub ? {background: activeCategory.color, borderColor: activeCategory.color} : {}}
-                    onClick={() => { setActiveSubcategory(sub); setVisibleCount(20) }}>
-                    {sub}
-                  </button>
-                ))}
+              <div className={styles.filtersRow} role="group" aria-label="Preferencias">
+                <button type="button" aria-pressed={filterAvailable}
+                  className={`${styles.filterPill} ${filterAvailable ? styles.filterActive : ''}`}
+                  onClick={() => { setFilterAvailable(v => !v); setVisibleCount(20) }}>
+                  {filterAvailable && <Check size={14} aria-hidden="true" />}Disponible ahora
+                </button>
+                <button type="button" aria-pressed={filterRating}
+                  className={`${styles.filterPill} ${filterRating ? styles.filterActive : ''}`}
+                  onClick={() => { setFilterRating(v => !v); setVisibleCount(20) }}>
+                  <Star size={14} aria-hidden="true" />4 o más
+                </button>
+                <button type="button" aria-pressed={filterOnline}
+                  className={`${styles.filterPill} ${filterOnline ? styles.filterActive : ''}`}
+                  onClick={() => { setFilterOnline(v => !v); setVisibleCount(20) }}>
+                  <Globe size={14} aria-hidden="true" />Online
+                </button>
               </div>
-            )}
-
-
-            {/* Filtros */}
-            <div className={styles.filtersRow}>
-              <button
-                className={`${styles.filterPill} ${filterAvailable ? styles.filterActive : ''}`}
-                onClick={() => { setFilterAvailable(v => !v); setVisibleCount(20) }}>
-                Disponible ahora
-              </button>
-              <button
-                className={`${styles.filterPill} ${filterRating ? styles.filterActive : ''}`}
-                onClick={() => { setFilterRating(v => !v); setVisibleCount(20) }}>
-                4★ o más
-              </button>
-              <button
-                className={`${styles.filterPill} ${filterOnline ? styles.filterActive : ''}`}
-                onClick={() => { setFilterOnline(v => !v); setVisibleCount(20) }}>
-                Online
-              </button>
+            </section>
+            <div className={styles.resultsHeader}>
+              <span className={styles.resultCount} role="status">
+                <strong>{displayList.length}</strong> profesional{displayList.length !== 1 ? 'es' : ''}
+              </span>
+              {hasFilters && <button type="button" className={styles.resetFilters} onClick={resetFilters}><X size={14} aria-hidden="true" />Quitar filtros</button>}
             </div>
 
             {/* Lista */}
             {pagedList.length > 0 ? (
               <>
-                <div className={styles.list} key={`${activeCategory}-${activeSubcategory}`}>
+                <div className={styles.list} key={`${activeCategory?.id}-${activeSubcategory}`}>
                   {pagedList.map((h, i) => (
-                    <div key={h.id} style={{
-                      animation: `cardCascade 0.35s cubic-bezier(0.22, 1, 0.36, 1) ${i * 55}ms both`,
+                    <div className={styles.resultItem} key={h.id} style={{
+                      animationDelay: `${Math.min(i, 5) * 40}ms`,
                     }}>
-                      <HelperCard helper={h} onClick={() => navigate(`/helper/${h.id}`)} />
+                      <HelperCard helper={h} showPrice />
                     </div>
                   ))}
                 </div>
@@ -471,9 +464,16 @@ export default function Explore() {
                 actionLabel="Reintentar"
                 onAction={() => openCategory(activeCategory)}
               />
+            ) : hasFilters ? (
+              <EmptyState
+                title="No hay profesionales con estos filtros."
+                hint="Quita los filtros para volver a ver esta categoría."
+                actionLabel="Ver la categoría completa"
+                onAction={resetFilters}
+              />
             ) : (
               <EmptyState
-                title="En esta categoría todavía no hay nadie cerca de ti."
+                title="En esta categoría todavía no hay profesionales."
                 hint="Prueba con otra, o cuéntame qué necesitas y lo busco yo."
                 actionLabel="Ver todas las categorías"
                 onAction={goBack}
