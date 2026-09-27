@@ -150,3 +150,8 @@
 .tab { min-height: 44px; font-family: var(--font-ui); }
 .cardMain { padding: 20px; }
 .actionBtn, .actionBtnSecondary, .rateBtn { min-height: 44px; }
+
+/* Detalle visual · septiembre 2026 */
+
+.title { font-family: var(--font-voice); color: var(--brand-deep); font-size: clamp(28px, 3.4vw, 38px); letter-spacing: -1.2px; }
+.card { border-radius: 22px; background: linear-gradient(120deg, white 70%, #F8F4FD); box-shadow: 0 5px 20px -16px #30214235; }

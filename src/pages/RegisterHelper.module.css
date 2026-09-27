@@ -96,3 +96,13 @@
 
 /* El foco lo dibuja la cápsula completa, sin un segundo marco interior. */
 .input:focus-visible { outline: none; }
+
+/* Detalle visual · septiembre 2026 */
+
+.page { background: var(--surface-entry); }
+.bubbleNura { border-radius: 22px 22px 22px 6px; box-shadow: 0 4px 18px -14px #30214240; }
+.bubbleUser { background: var(--grad-main); border-radius: 22px 22px 6px 22px; }
+.inputCapsule { border-radius: 22px; background: white; box-shadow: 0 8px 28px -18px #30214260; }
+.sendBtn { background: var(--grad-main); border-radius: 16px; }
+.micBtn { color: var(--purple-ink); background: var(--brand-lilac); }
+.micActive { background: var(--red); }

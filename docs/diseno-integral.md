@@ -57,3 +57,7 @@ Los datos ficticios de revisión viven fuera del repositorio de la app, en servi
 Leer `docs/ai-collaboration.md` y `docs/tasks.md` antes de trabajar. Codex mantiene la presentación; Claude mantiene lógica, datos y funcionalidades. Los archivos JSX pueden contener ambas cosas: repartirse responsabilidades no los convierte en archivos independientes. Si una tarea necesita el mismo archivo activo, se realiza después de integrar y actualizar la otra rama, o se acuerda una separación real.
 
 La autorización de Sergio para integrar y publicar diseño está dada. No se añade una aprobación estética previa; se mantienen pruebas técnicas y comprobación de lo publicado. GitHub es el registro compartido, no un canal de aviso instantáneo: la otra herramienta conoce los cambios cuando actualiza y lee el repositorio.
+
+## Evolución · 2026-09-27
+
+Primera entrega integrada en PR #65. La segunda iteración se documenta en `diseno-detalle.md`; el código actual de `src/design-system.css` y los módulos es la referencia vigente.

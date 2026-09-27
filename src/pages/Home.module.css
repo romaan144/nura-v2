@@ -722,7 +722,6 @@
 .messages > * { flex-shrink: 0; }
 .pageWelcome .messages { padding-bottom: var(--reserva-nav); }
 .welcomeBlock { margin-top: clamp(24px, 7dvh, 76px) !important; margin-bottom: auto; }
-.welcomeEyebrow { color: var(--purple-ink); text-align: center; font-size: var(--text-xs); letter-spacing: 1.8px; font-weight: 650; margin-bottom: var(--space-24); }
 .welcomeBlock > .msgRow { flex-direction: column; align-items: center; gap: var(--space-20); }
 .welcomeBlock .nuraAvatar { width: 70px; height: 70px; padding: var(--space-12); border-radius: var(--radius-md); border: 1px solid white; background: white; box-shadow: 0 8px 32px -12px var(--purple-20); animation: none; margin: 0; }
 .welcomeBlock .nuraAvatarImg { width: 46px; height: 46px; animation: none; }
@@ -754,7 +753,6 @@
 .answerChip:hover, .refineChip:hover { border-color: var(--purple-20); background: var(--purple-05); }
 @media (max-width: 767px) {
   .welcomeBlock { margin-top: var(--space-24) !important; }
-  .welcomeEyebrow { margin-bottom: var(--space-20); font-size: var(--text-xs); letter-spacing: 1.4px; }
   .welcomeBlock > .msgRow { gap: var(--space-16); }
   .welcomeBlock .nuraAvatar { width: 60px; height: 60px; }
   .welcomeBlock .nuraAvatarImg { width: 40px; height: 40px; }
@@ -780,3 +778,57 @@
 .input:focus-visible { outline: none; }
 
 .userAvatar { width: 100%; height: 100%; object-fit: cover; font-size: 13px; border-radius: 50%; }
+
+/* Detalle visual · septiembre 2026 */
+
+.page { background: radial-gradient(ellipse 75% 65% at 95% 0, #E3EDE7 0, transparent 72%), radial-gradient(ellipse 80% 85% at 0 20%, #EAE1F6 0, transparent 72%), var(--paper); }
+.floatTop { padding-top: max(env(safe-area-inset-top), 18px); }
+.pageWelcome .messages { padding-inline: max(20px, calc((100% - 850px) / 2)); }
+.welcomeBlock { position: relative; margin-top: clamp(30px, 7dvh, 68px) !important; padding: 36px 44px 32px; border: 1px solid #ffffffd9; border-radius: 36px; background: linear-gradient(150deg, #ffffffc7, #ffffff80); box-shadow: 0 20px 80px -48px #52317855, inset 0 1px 0 white; }
+.welcomeBlock > .msgRow { gap: 20px; }
+.welcomeBlock .nuraAvatar { width: 76px; height: 76px; border-radius: 26px; background: linear-gradient(150deg, white, #F3ECFF); position: relative; box-shadow: 0 12px 28px -14px #63379C70, inset 0 1px 0 white; }
+.welcomeBlock .nuraAvatar::before { content: ''; position: absolute; inset: -8px; border-radius: 33px; border: 1px solid #ffffffd9; transform: rotate(-8deg); pointer-events: none; }
+.welcomeBlock .greeting { max-width: 630px; }
+.welcomeBlock .greeting p:first-child { font-size: 13px; margin-bottom: 8px; }
+.welcomeBlock .greeting p:nth-child(2) { color: var(--brand-deep); font-weight: 650; letter-spacing: -2px; }
+.welcomeBlock .greeting p:nth-child(n+3) { margin-top: 12px; }
+.welcomeComposer { margin-top: 28px; margin-bottom: 8px; }
+.inputCapsule { border-radius: 22px; border-color: #DCD1E9; box-shadow: 0 8px 30px -18px #56347760, inset 0 1px 0 white; transition: box-shadow 220ms ease, border-color 220ms ease; }
+.inputCapsule:focus-within { border-color: #9870C5; box-shadow: 0 0 0 5px #7951AA12, 0 10px 30px -18px #56347760; }
+.sendBtn { width: 46px; height: 46px; border-radius: 16px; background: var(--grad-main); color: white; box-shadow: 0 5px 12px -5px #64349B80; }
+.micActive { background: var(--red); }
+.browseBelow { color: var(--purple-ink); }
+.welcomeBlock .answerRow { gap: 12px; margin-top: 18px; }
+.welcomeBlock .answerChip { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 20px; min-height: 125px; border-radius: 22px; background: #FFFFFFB8; border: 1px solid white; box-shadow: 0 3px 14px -10px #39214B40; text-align: left; transition: transform 240ms var(--motion-curve), box-shadow 240ms var(--motion-curve), background 240ms ease; }
+.welcomeBlock .answerChip::after { content: none; }
+.choiceIcon { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 12px; color: #6B3E9E; background: var(--brand-lilac); }
+.answerChip:nth-child(2) .choiceIcon { color: #32634F; background: var(--brand-mint); }
+.answerChip:nth-child(3) .choiceIcon { color: #885442; background: var(--brand-peach); }
+.choiceArrow { margin-left: auto; flex-shrink: 0; }
+.welcomeBlock .choiceArrow { position: absolute; right: 18px; top: 26px; color: var(--ink-tertiary); transition: transform 220ms ease; }
+@media (hover: hover) { .welcomeBlock .answerChip:hover { transform: translateY(-5px); background: white; box-shadow: 0 12px 24px -16px #52317870; } .answerChip:hover .choiceArrow { transform: translate(2px,-2px); } }
+.bubbleUser { background: var(--grad-main); border-radius: 22px 22px 6px 22px; }
+.refineChip { transition: background 180ms ease, transform 180ms ease; }
+.refineChip:active, .answerChip:active { transform: scale(.98); }
+@media (prefers-reduced-motion: no-preference) {
+  .welcomeBlock { animation: welcomeReveal 550ms var(--motion-curve) both; }
+  .welcomeBlock .answerChip { animation: welcomeReveal 450ms var(--motion-curve) both; }
+  .welcomeBlock .answerChip:nth-child(2) { animation-delay: 60ms; }
+  .welcomeBlock .answerChip:nth-child(3) { animation-delay: 120ms; }
+}
+@keyframes welcomeReveal { from { opacity: 0; translate: 0 12px; } to { opacity: 1; translate: 0 0; } }
+@media (max-width: 767px) {
+  .pageWelcome .messages { padding-inline: 16px; }
+  .welcomeBlock { margin-top: 22px !important; padding: 28px 18px 22px; border-radius: 28px; }
+  .welcomeBlock .nuraAvatar { width: 60px; height: 60px; border-radius: 21px; }
+  .welcomeBlock .nuraAvatar::before { inset: -6px; border-radius: 27px; }
+  .welcomeBlock .greeting p:nth-child(2) { font-size: clamp(29px, 8.4vw, 40px); letter-spacing: -1.2px; }
+  .welcomeBlock .greeting p:nth-child(n+3) { font-size: 14px; }
+  .welcomeComposer { margin-top: 22px; }
+  .inputCapsule { min-height: 60px; padding-left: 14px; border-radius: 20px; }
+  .welcomeBlock .input::placeholder { font-size: 14px; }
+  .welcomeBlock .answerRow { grid-template-columns: 1fr; gap: 8px; margin-top: 14px; }
+  .welcomeBlock .answerChip { flex-direction: row; align-items: center; min-height: 62px; padding: 12px 14px; gap: 12px; border-radius: 18px; }
+  .welcomeBlock .choiceArrow { position: static; }
+  .choiceIcon { width: 34px; height: 34px; flex-shrink: 0; }
+}

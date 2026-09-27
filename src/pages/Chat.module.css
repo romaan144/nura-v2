@@ -420,3 +420,14 @@
 .input:focus-visible { outline: none; }
 
 .header { background: var(--paper-veil); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); padding-bottom: 12px; }
+
+/* Detalle visual · septiembre 2026 */
+
+.page { background: radial-gradient(ellipse at 100% 0, #EEE6F7, transparent 55%), var(--paper); }
+.msgUser .msgBubble { background: var(--grad-main); border-radius: 22px 22px 6px 22px; box-shadow: 0 5px 16px -10px #6736A66B; }
+.msgHelper .msgBubble { border-radius: 22px 22px 22px 6px; }
+.inputBar { border-radius: 22px; box-shadow: 0 8px 28px -18px #30214260; }
+.inputBar:focus-within { border-color: #9870C5; box-shadow: 0 0 0 4px var(--purple-05); }
+.helperInfo { background: white; border: 1px solid var(--ink-border); }
+.quickReply { background: #FFFFFFEB; transition: transform 180ms ease, background 180ms ease; }
+.quickReply:hover { background: var(--brand-lilac); transform: translateY(-2px); }

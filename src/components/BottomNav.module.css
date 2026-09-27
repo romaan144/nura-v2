@@ -117,3 +117,11 @@
 .tabActive svg { transform: none; }
 .label { font-family: var(--font-ui); font-weight: 550; }
 .badge { background: var(--purple-ink); }
+
+/* Detalle visual · septiembre 2026 */
+
+.nav { background: #FFFFFFE8; border-color: #FFFFFFD9; box-shadow: 0 8px 32px -12px #30214245, 0 0 0 1px #30214208; }
+.tab { transition: background 220ms var(--motion-curve), transform 180ms var(--motion-curve); }
+.tabActive { background: var(--brand-deep); }
+.tabActive svg, .tabActive .label { color: white; }
+.tab:active { transform: scale(.94); opacity: 1; }

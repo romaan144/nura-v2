@@ -3,8 +3,8 @@
 :root {
   --font-ui: 'Inter Variable', 'Inter', -apple-system, sans-serif;
   --font-voice: 'Plus Jakarta Sans Variable', 'Inter Variable', sans-serif;
-  --paper: #F5F5F9;
-  --paper-rgb: 245,245,249;
+  --paper: #F7F6FA;
+  --paper-rgb: 247,246,250;
   --paper-veil: rgba(var(--paper-rgb), .94);
   --paper-veil-soft: rgba(var(--paper-rgb), .88);
   --surface-card: #fff;
@@ -15,7 +15,7 @@
   --radius-card: 14px;
   --radius-lg: 20px;
   --radius-xl: 24px;
-  --text-display: clamp(30px, 5vw, 46px);
+  --text-display: clamp(34px, 5vw, 54px);
   --text-page-title: 28px;
   --text-input: 16px;
   --space-40: 40px;
@@ -104,3 +104,53 @@ input::placeholder, textarea::placeholder { color: var(--ink-tertiary); opacity:
 
 
 span.nura-user-initials { display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: var(--purple-05); color: var(--purple-ink); font-family: var(--font-voice); font-weight: 650; }
+
+/* Detalle visual · septiembre 2026 */
+
+:root {
+  --brand-deep: #302142;
+  --brand-lilac: #EAE2F8;
+  --brand-mint: #E1EDE7;
+  --brand-peach: #FAEAE2;
+  --grad-main: linear-gradient(135deg, #7942D7, #5723A8);
+  --person-card-surface: linear-gradient(160deg, #F0EAF9 0, #F9F7FC 96px, white 190px);
+  --surface-cover: radial-gradient(ellipse at 90% 10%, #DFEBE4, transparent 65%), linear-gradient(125deg, #DFD2F3, #EEE8F6 60%, #ECF1EB);
+}
+.nura-button--primary { box-shadow: 0 4px 12px -4px #6534A852, inset 0 1px 0 #ffffff30; }
+.nura-button--primary:hover:not(:disabled) { box-shadow: 0 8px 22px -8px #6534A87A; filter: brightness(1.06); transform: translateY(-2px); }
+.nura-button--primary:active:not(:disabled) { transform: translateY(0) scale(.98); }
+.nura-button:disabled { box-shadow: none; }
+.nura-page-intro { padding-bottom: 28px; }
+.nura-page-intro h1 { font-size: clamp(28px, 3.4vw, 38px); letter-spacing: -1.3px; }
+.nura-page-intro .nura-eyebrow { display: inline-flex; align-items: center; gap: 8px; }
+.nura-page-intro .nura-eyebrow::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--purple); }
+.nura-auth-card { box-shadow: 0 18px 60px -36px #39214B60; border-top: 4px solid var(--brand-lilac); }
+.nura-auth-card h1, .nura-auth-card h2 { letter-spacing: -.8px; }
+.nura-person-card { position: relative; }
+.nura-person-card > div:first-child { box-shadow: 0 0 0 6px #ffffffc9, 0 8px 24px -12px #33223f80; border-radius: 50%; }
+@media (hover: hover) {
+  .nura-person-card:hover { translate: 0 -3px; }
+}
+.nura-person-card { transition: translate 220ms var(--motion-curve); }
+/* Shared form surfaces, including feature dialogs maintained by Claude. */
+[role='dialog'] h2 { font-family: var(--font-voice); }
+[role='dialog'] input:not([type='checkbox']):not([type='radio']), [role='dialog'] textarea, [role='dialog'] select {
+  box-shadow: inset 0 1px 3px #30214205; transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+[role='dialog'] input:focus-visible, [role='dialog'] textarea:focus-visible { box-shadow: 0 0 0 5px var(--purple-05); }
+@keyframes nura-surface-in { from { opacity: 0; translate: 0 10px; } to { opacity: 1; translate: 0 0; } }
+/* Focus remains visible; motion is finite and disabled by the global reduced-motion rule. */
+@media (prefers-reduced-motion: no-preference) { .nura-auth-card { animation: nura-surface-in 420ms var(--motion-curve) both; } }
+
+
+/* Detalle visual · septiembre 2026 */
+
+:root { --surface-entry: radial-gradient(ellipse at 85% 0, #E0ECE5, transparent 65%), radial-gradient(ellipse at 0 30%, #E9DFF5, transparent 65%), var(--paper); }
+span.nura-user-initials { background: #F0E9FA; }
+.nura-reading { background: white; border: 1px solid var(--ink-border); border-radius: 26px; margin-top: 20px !important; margin-bottom: 24px !important; width: calc(100% - 32px); }
+.nura-reading section { padding-top: 20px; border-top: 1px solid var(--ink-border); }
+.nura-empty-state { border: 1px dashed #D9CFE5; border-radius: 24px; background: linear-gradient(135deg, #FFFFFFB8, #F2EBFA80); }
+[aria-labelledby='editar-ficha-titulo'] > div, [aria-labelledby='editar-ficha-titulo'] > p { width: min(100%, 720px); margin-inline: auto !important; }
+.nura-work-composer > :not(button:first-child) { max-width: 680px; margin-left: auto !important; margin-right: auto !important; }
+.nura-work-composer input, .nura-work-composer textarea { box-shadow: 0 3px 14px -10px #30214230; }
+.nura-post { border-top: 3px solid #E6DCF1 !important; }

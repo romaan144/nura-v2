@@ -21,3 +21,11 @@
 .btn { width: 100%; margin-top: 8px; padding: 14px; background: var(--grad-main); color: white; border: none; border-radius: var(--radius-card); font-size: var(--text-base); font-weight: 700; box-shadow: 0 6px 20px var(--purple-30); }
 .btn:disabled { opacity: 0.6; }
 .btnNo { width: 100%; margin-top: 6px; padding: 12px; background: none; border: none; color: var(--mid); font-size: var(--text-sm); font-weight: 600; }
+
+/* Detalle visual · septiembre 2026 */
+
+.overlay { background: #251B3A66; backdrop-filter: blur(10px); padding: 16px 16px max(16px, env(safe-area-inset-bottom)); }
+.card { border: 1px solid #FFFFFFB3; border-radius: 28px; background: linear-gradient(160deg, #F7F2FD, white 180px); box-shadow: 0 24px 80px -24px #24143370; padding-top: 36px; }
+.close { width: 44px; height: 44px; top: 10px; right: 10px; background: #FFFFFFB8; color: var(--ink-secondary); }
+.title { font-family: var(--font-voice); font-size: 22px; letter-spacing: -.6px; }
+@media (min-width: 768px) { .overlay { align-items: center; } }

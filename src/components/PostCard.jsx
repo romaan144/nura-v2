@@ -39,7 +39,7 @@ export default function PostCard({ post }) {
   }
 
   return (
-    <article style={{
+    <article className="nura-post" style={{
       /* Cristal, como el resto del sistema. Son 27 tarjetas en Comunidad:
          cualquier cambio aqui se multiplica por 27. El fondo se ve a traves,
          asi que las historias forman parte de la pantalla en vez de

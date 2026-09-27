@@ -369,6 +369,7 @@ export default function Explore() {
                 <button
                   key={cat.id}
                   className={styles.catCard}
+                  style={{'--category-tint': cat.bg}}
                   onClick={() => openCategory(cat)}
                 >
                   <div className={styles.catIconWrap} style={{background: cat.bg}}>

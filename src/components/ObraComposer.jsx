@@ -16,7 +16,7 @@ export default function ObraComposer({ onClose }) {
   const listo = title.trim().length > 3 && body.trim().length > 20 && (!needsResult || result.trim().length > 3)
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 900, background: 'var(--paper)',
+    <div className="nura-work-composer" style={{ position: 'fixed', inset: 0, zIndex: 900, background: 'var(--paper)',
       overflowY: 'auto', overflowX: 'hidden', overscrollBehaviorY: 'contain', padding: '54px var(--space-20) 40px' }}>
       <button onClick={onClose} aria-label="Cerrar"
         style={{ position: 'absolute', top: '16px', right: '18px', background: 'none',

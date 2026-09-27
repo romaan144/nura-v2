@@ -24,10 +24,7 @@ const S = {
     // justify-content:center, cuando el contenido no cabe el margen se
     // reduce a cero y vuelve al flujo normal — nunca corta por arriba.
     display: 'flex', flexDirection: 'column',
-    background: `radial-gradient(420px 320px at 88% -4%, rgba(255,59,92,0.10), transparent 64%),
-                 radial-gradient(520px 360px at 6% 4%, rgba(123,47,255,0.11), transparent 66%),
-                 radial-gradient(460px 300px at 50% 104%, rgba(0,212,200,0.08), transparent 62%),
-                 var(--paper)`,
+    background: 'var(--surface-entry)',
     /* Sin reserva de barra: BottomNav se oculta en /login
        (BottomNav.jsx:14 HIDE_ON), asi que reservarla dejaba ~90px muertos. */
     padding: 'var(--space-32) var(--space-20) var(--space-32)',
@@ -49,8 +46,8 @@ const S = {
     WebkitBackdropFilter: 'blur(24px) saturate(180%)',
     backdropFilter: 'blur(24px) saturate(180%)',
     border: '1px solid var(--ink-border)',
-    borderRadius: 'var(--radius-md)',
-    boxShadow: 'var(--shadow-md)',
+    borderRadius: '28px',
+    boxShadow: '0 20px 60px -30px #39214B50',
     padding: 'var(--space-24) var(--space-20)',
   },
   pasos: { display: 'flex', gap: 'var(--space-6)', marginBottom: 'var(--space-24)' },
