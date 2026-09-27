@@ -1,5 +1,12 @@
 # Trabajo compartido
 
+## Acceso y recuperación claros · Codex
+
+**Estado:** implementado y verificado localmente. **Rama:** `codex/acceso-recuperacion-diseno`, desde `383504c`.
+**Alcance:** Login, Entrar, Restablecer y estilos/campo de contraseña compartidos. Etiquetas, bordes, foco, mensajes y estados legibles; conservar validaciones, sesiones, envíos y destinos. Pruebas solo con servicios locales simulados.
+**Contrato para Claude:** los estados y controladores de Login, Entrar y Restablecer se conservan literalmente; PasswordField solo alterna visibilidad local y recibe los props del formulario. Se conservan mínimos, sugerencia de correo, autocompletado, sesión y destinos. Access.module.css sustituye estilos inline y dependencia de Siguiendo en estas pantallas. La demo dice expresamente que no envía SMS; no se cambia su recorrido.
+**Pruebas:** build, matching 255/255 y smoke 8×2 + 120×4; lint sin diagnósticos nuevos y no-undef=0. Navegador local 390×844, 320×568 y 1280×900: errores, mostrar/ocultar contraseña, mínimo de caracteres, sugerencia de correo, confirmaciones simuladas, enlace ausente y recuperación simulada, demo teléfono/código/nombre y acceso sin demo. Teclado simulado: campo 16 px por encima del menú con viewport 484 y también con pan de 90 px. Nueva carga sin errores de consola. Sin cuentas creadas, correos enviados ni contraseñas reales modificadas. No equivale a prueba de autenticación real ni de iPhone físico.
+
 ## Explorar: filtros y tarjetas · Codex
 
 **Estado:** implementado y verificado localmente. **Rama:** `codex/explorar-filtros-tarjetas`, desde `d5b7559`.

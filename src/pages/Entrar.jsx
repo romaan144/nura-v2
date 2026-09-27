@@ -1,7 +1,9 @@
 import { useState, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import PageHeader from '../components/PageHeader'
-import styles from './Siguiendo.module.css'
+import styles from './Access.module.css'
+import PasswordField from '../components/PasswordField'
+import { KeyRound, Mail, UserRoundPlus } from 'lucide-react'
 import { crearCuenta, entrar, pedirRestablecer, sesionActual, MIN_CONTRASENA } from '../utils/cuenta'
 import { reclamarFicha } from '../utils/escrituras'
 import { useUser } from '../context/UserContext'
@@ -11,15 +13,6 @@ import { revisarContacto } from '../utils/contactoProfesional'
 // Etapa 6 de docs/estudio-perfil.md: correo y contraseña, como casi todas
 // las apps, y un enlace por correo solo si se olvida la contraseña.
 // Tres modos en una pantalla porque son el mismo gesto: demostrar que eres tu.
-
-const campo = {
-  width: '100%', boxSizing: 'border-box', padding: 'var(--space-12) var(--space-14)',
-  border: '1px solid var(--ink-border)', borderRadius: 'var(--radius-card)', fontSize: 'var(--text-base)',
-  fontFamily: 'inherit', color: 'var(--ink-primary)', background: 'white', outline: 'none',
-}
-const etiqueta = { display: 'block', margin: '0 0 var(--space-6)', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--ink-primary)' }
-const enlace = { background: 'none', border: 'none', padding: 'var(--space-8) 0', cursor: 'pointer',
-  fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--purple-ink)' }
 
 export default function Entrar() {
   const navigate = useNavigate()
@@ -92,58 +85,47 @@ export default function Entrar() {
   return (
     <div className={styles.page}>
       <PageHeader showBack />
-      <div className={`${styles.content} nura-auth-card`}>
+      <main className={styles.card}>
+        <div className={styles.icon} aria-hidden="true">{modo === 'olvido' ? <Mail size={24} /> : modo === 'crear' ? <UserRoundPlus size={24} /> : <KeyRound size={24} />}</div>
+        <p className={styles.eyebrow}>Tu acceso a Nüra</p>
         <h1 className={styles.title}>{titulo}</h1>
-        <p style={{ margin: '0 0 var(--space-20)', fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)', lineHeight: 1.5 }}>
+        <p className={styles.description}>
           {modo === 'crear' && volver ? 'Con tu correo te aviso cuando llegue alguien que buscas. Solo lo usamos para eso y para entrar.'
             : modo === 'crear' ? 'Con tu correo y una contraseña podrás cambiar tu ficha desde cualquier móvil.'
             : modo === 'olvido' ? 'Escribe tu correo y te enviaremos un enlace para poner una contraseña nueva.'
-            : 'Con el correo y la contraseña de tu acceso.'}
+            : 'Usa el correo y la contraseña de tu cuenta.'}
         </p>
 
         <form onSubmit={e => { e.preventDefault(); enviar() }} noValidate>
-          <div style={{ marginBottom: 'var(--space-14)' }}>
-            <label htmlFor="e-email" style={etiqueta}>Correo</label>
-            <input id="e-email" type="email" inputMode="email" autoComplete="email" value={email}
-              onChange={e => setEmail(e.target.value)} placeholder="tucorreo@ejemplo.com" style={campo} />
+          <div className={styles.field}>
+            <label htmlFor="e-email" className={styles.label}>Correo electrónico</label>
+            <input id="e-email" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" spellCheck={false} value={email}
+              onChange={e => setEmail(e.target.value)} placeholder="tucorreo@ejemplo.com" className={styles.input} />
           </div>
           {modo !== 'olvido' && (
-            <div style={{ marginBottom: 'var(--space-8)' }}>
-              <label htmlFor="e-pass" style={etiqueta}>Contraseña</label>
-              <input id="e-pass" type="password" value={pass} onChange={e => setPass(e.target.value)}
+            <div className={styles.field}>
+              <label htmlFor="e-pass" className={styles.label}>Contraseña</label>
+              <PasswordField key={modo} id="e-pass" value={pass} onChange={e => setPass(e.target.value)}
                 autoComplete={modo === 'crear' ? 'new-password' : 'current-password'}
-                placeholder={modo === 'crear' ? `Al menos ${MIN_CONTRASENA} caracteres` : ''} style={campo} />
+                aria-describedby={modo === 'crear' ? 'e-pass-hint' : undefined} />
+              {modo === 'crear' && <p id="e-pass-hint" className={styles.hint}>Al menos {MIN_CONTRASENA} caracteres.</p>}
             </div>
           )}
-          {modo === 'entrar' && (
-            <button type="button" onClick={() => cambiar('olvido')} style={enlace}>¿Has olvidado tu contraseña?</button>
-          )}
-
-          {error && <p role="alert" style={{ margin: 'var(--space-10) 0 0', fontSize: 'var(--text-sm)', color: 'var(--red-ink)', lineHeight: 1.45 }}>{error}</p>}
-          {sugerencia && (
-            <button type="button" onClick={() => { setEmail(sugerencia); setSugerencia(null); setError('') }}
-              style={{ marginTop: 'var(--space-8)', padding: 'var(--space-8) var(--space-14)', minHeight: 40, background: 'var(--purple-10, #F1ECFF)',
-                color: 'var(--purple-ink)', border: 'none', borderRadius: 'var(--radius-full)', fontSize: 'var(--text-sm)', fontWeight: 600, cursor: 'pointer' }}>
-              Usar {sugerencia}
-            </button>
-          )}
-          {aviso && <p role="status" style={{ margin: 'var(--space-10) 0 0', fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)', lineHeight: 1.5 }}>{aviso}</p>}
-
-          <button type="submit" disabled={!listo || enviando}
-            style={{ width: '100%', minHeight: 48, marginTop: 'var(--space-16)', border: 'none', borderRadius: 'var(--radius-full)',
-              cursor: listo && !enviando ? 'pointer' : 'default', fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 700,
-              background: listo && !enviando ? 'var(--purple)' : 'rgba(33,29,51,0.08)',
-              color: listo && !enviando ? 'white' : 'var(--ink-tertiary)' }}>
+          {modo === 'entrar' && <button type="button" onClick={() => cambiar('olvido')} className={styles.textButton}>¿Has olvidado tu contraseña?</button>}
+          {error && <p role="alert" className={styles.error}>{error}</p>}
+          {sugerencia && <button type="button" className={styles.suggestion}
+            onClick={() => { setEmail(sugerencia); setSugerencia(null); setError('') }}>Usar {sugerencia}</button>}
+          {aviso && <p role="status" className={styles.notice}>{aviso}</p>}
+          <button type="submit" disabled={!listo || enviando} className={styles.primary}>
             {enviando ? 'Un momento…' : modo === 'entrar' ? 'Entrar' : modo === 'crear' ? 'Crear mi acceso' : 'Enviarme el enlace'}
           </button>
         </form>
-
-        <div style={{ marginTop: 'var(--space-16)', textAlign: 'center' }}>
+        <div className={styles.alternative}>
           {modo === 'entrar'
-            ? <button onClick={() => cambiar('crear')} style={enlace}>¿Aún no tienes acceso? Créalo</button>
-            : <button onClick={() => cambiar('entrar')} style={enlace}>{modo === 'crear' ? '¿Ya tienes acceso? Entra' : 'Volver a entrar'}</button>}
+            ? <button type="button" onClick={() => cambiar('crear')} className={styles.secondary}>¿Aún no tienes acceso? Créalo</button>
+            : <button type="button" onClick={() => cambiar('entrar')} className={styles.secondary}>{modo === 'crear' ? '¿Ya tienes acceso? Entra' : 'Volver a entrar'}</button>}
         </div>
-      </div>
+      </main>
     </div>
   )
 }
