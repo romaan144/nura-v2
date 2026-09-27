@@ -107,3 +107,12 @@ Verificado en navegador aislado a 390×844, 320×720 y 1280×900, con estados pe
 ElegirCita conserva sus cálculos de disponibilidad, pero presenta días con mes y fecha accesible completa, selección con marca e indicador, franjas uniformes y horas ocupadas/propias diferenciadas. El foco queda en la ventana, Escape la cierra y se devuelve el foco anterior cuando existe. La ventana usa el viewport visual compartido: al reducirse por teclado, solo ajusta el scroll de su nota, sin modificar el scroll de la app.
 
 Probado en navegador aislado a 390×844, 320×420 y 1280×900; solicitud y cambio de hora llegan a Mis servicios en demo. Bloqueos, reinicio de hora, teclado, Escape y recorrido de foco comprobados. Con altura visual simulada de 484 px: nota termina en y=349, pie empieza en 361; con pan de 90 px, ambos se desplazan 90 px. Pendiente la comprobación física en iPhone. Build, matching 255/255 y smoke correctos; lint sin nuevos diagnósticos, no-undef=0.
+
+
+## Valorar al profesional · 2026-09-27
+
+Preguntas en bloques independientes, Sí/No de 48 px, cualidades en dos columnas de altura uniforme y contador de máximo tres. Cinco estrellas con cifra propia, área táctil de 66 px de alto y estado seleccionado de contraste dorado. El grupo usa botones nativos con aria-pressed, compatible con volver a tocar para deseleccionar. Comentario con etiqueta, contador de 500 caracteres y consentimiento de publicación separado/desmarcado inicialmente.
+
+Cabecera y pie permanecen visibles; el cuerpo tiene scroll propio. Se extrae el comportamiento visual de CitaModal a `useModalSheet`, incluyendo el checkbox en el recorrido de foco. No se cambian estados de negocio, payload, analítica, callbacks, requisitos de envío ni tiempo de cierre. Los avatares sin fotografía usan iniciales.
+
+Verificado a 390×844, 320×420 y 1280×900, con nombre largo, máximo de cualidades, selección/deselección de estrellas, consentimiento, contador, envío local, Escape y foco contenido. Con teclado simulado de 484 px, el comentario termina 12 px sobre el pie; se conserva con pan de 90 px. Regresión de CitaModal: día/hora, nota, foco y cierre correctos. Pendiente comprobación física de iPhone. Build, matching 255/255 y smoke pasan; lint sin nuevos diagnósticos, no-undef=0. Sin datos ni envíos de prueba en producción.

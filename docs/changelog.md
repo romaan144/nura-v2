@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-27 — Valoración con preguntas separadas y envío visible
+
+Estrellas numeradas con selección clara, cualidades uniformes con contador de tres y comentario etiquetado. El permiso de publicación se muestra en su propio bloque y sigue desmarcado inicialmente. La cabecera y el envío quedan visibles mientras el formulario se desplaza por dentro, también al abrir el teclado. Se comparte únicamente el comportamiento de foco/teclado con la ventana de cita; reglas y envío no cambian.
+
 ## 2026-09-27 — Una presentación común para solicitar cita
 
 Ficha y chat comparten ventana visual: profesional, día con mes, horas uniformes, resumen y confirmación siempre accesible. El contenido se desplaza dentro de la ventana, con ajuste de la nota al teclado; foco contenido y cierre con Escape. Los dos controladores conservan su lógica de envío y el motor de disponibilidad no cambia.
