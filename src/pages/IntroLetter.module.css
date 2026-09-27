@@ -178,3 +178,16 @@
 .helperChip { background: white; border-radius: 20px; border: 1px solid var(--ink-border); }
 .letterCard:focus-within { box-shadow: 0 0 0 4px var(--purple-05); }
 .sendBtn { background: var(--grad-main); }
+
+/* El envío tiene su propia franja sobre la navegación, también con teclado. */
+.page { padding-bottom: var(--nav-h); box-sizing: border-box; }
+.scroll { min-height: 0; }
+.letterText { font-size: 16px; }
+.floatBottom { padding: 12px 20px 14px; }
+.sendBtn { max-width: 740px; margin-inline: auto; min-height: 48px; }
+@media (max-width: 767px) {
+  .page { height: var(--letter-height, 100dvh); top: var(--letter-top, 0px); }
+  :global(body[data-nura-letter]) nav[aria-label="Navegación principal"] {
+    bottom: calc(var(--letter-keyboard-inset, 0px) + max(env(safe-area-inset-bottom, 0px), 10px));
+  }
+}

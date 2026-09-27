@@ -16,6 +16,31 @@ export default function IntroLetter() {
   const location = useLocation()
   const { user } = useUser()
   const textareaRef = useRef(null)
+  const pageRef = useRef(null)
+
+  useEffect(() => {
+    const viewport = window.visualViewport
+    const update = () => {
+      const height = viewport?.height || window.innerHeight
+      const offset = viewport?.offsetTop || 0
+      pageRef.current?.style.setProperty('--letter-height', `${height}px`)
+      pageRef.current?.style.setProperty('--letter-top', `${offset}px`)
+      document.body.style.setProperty('--letter-keyboard-inset', `${Math.max(0, window.innerHeight - height - offset)}px`)
+    }
+    document.body.dataset.nuraLetter = ''
+    update()
+    viewport?.addEventListener('resize', update)
+    viewport?.addEventListener('scroll', update)
+    window.addEventListener('resize', update)
+    return () => {
+      viewport?.removeEventListener('resize', update)
+      viewport?.removeEventListener('scroll', update)
+      window.removeEventListener('resize', update)
+      delete document.body.dataset.nuraLetter
+      document.body.style.removeProperty('--letter-keyboard-inset')
+    }
+  }, [])
+
 
   const passedHelper = location.state?.helper
   const helper = passedHelper && DEMO_MODE && passedHelper.id >= 2000 && DEMO_ENRICHMENTS[passedHelper.id]
@@ -39,7 +64,7 @@ export default function IntroLetter() {
   }, [letter])
 
   if (!helper) return (
-    <div className={styles.page}>
+    <div ref={pageRef} className={styles.page}>
       {/* Tercera pantalla con la misma situacion: mismo trato que la ficha
           y el chat. Una situacion, una respuesta, en toda la app. */}
       <div className={styles.notFound} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'var(--space-12)'}}>
@@ -80,7 +105,7 @@ export default function IntroLetter() {
   }
 
   return (
-    <div className={styles.page}>
+    <div ref={pageRef} className={styles.page}>
       <header className={styles.header}>
         <button className={styles.back} onClick={() => navigate(-1)} aria-label="Volver">
           <ArrowLeft size={18} />
