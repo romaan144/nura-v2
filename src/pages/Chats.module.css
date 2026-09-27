@@ -202,3 +202,12 @@
 
 /* El foco lo dibuja la cápsula completa, sin un segundo marco interior. */
 .searchInput:focus-visible { outline: none; }
+
+/* Detalle visual · septiembre 2026 */
+
+.searchBox { background: white; border: 1px solid var(--ink-border); border-radius: 20px; }
+.searchBox:focus-within { border-color: #9870C5; box-shadow: 0 0 0 4px var(--purple-05); }
+.chatRow { border-radius: 22px; background: white; box-shadow: 0 5px 20px -16px #30214235; transition: box-shadow 220ms ease, transform 220ms ease; }
+.chatUnread { background: linear-gradient(110deg, #F4EDFE, white); }
+.avatarImg, .avatar { border-radius: 18px; }
+@media (hover: hover) { .chatRow:hover { transform: translateY(-2px); } }

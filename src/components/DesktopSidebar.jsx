@@ -60,7 +60,6 @@ export default function DesktopSidebar() {
       )}
 
       <div className={styles.footer}>
-        <p className={styles.footerVoice}>Personas que<br />hacen bien.</p>
         <p>Nüra · Cerca de ti</p>
       </div>
     </aside>

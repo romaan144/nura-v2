@@ -1403,7 +1403,6 @@ export default function Home() {
              pantalla en blanco antes de que empezara nada. Ahi el saludo
              sube y respira. */
           <div key={msg.id} className={msgIdx === 0 && isWelcome ? styles.welcomeBlock : undefined} style={{marginTop: msgIdx === 0 ? (nuraChatMessages.length <= 1 ? 'var(--space-32)' : 'auto') : msg.from === 'user' ? 'var(--chat-gap-md)' : 'var(--chat-gap)'}} ref={msg.results?.length ? resultRef : undefined}>
-            {msgIdx === 0 && isWelcome && <p className={styles.welcomeEyebrow}>PERSONAS QUE HACEN BIEN</p>}
             <div className={`${styles.msgRow} ${msg.from === 'user' ? styles.msgRowUser : ''} ${spacingClass}`}>
               {msg.from === 'nura' && (
                 firstOfNuraRun ? (
@@ -1463,7 +1462,14 @@ export default function Home() {
             <div className={styles.answerRow}>
               {lastMsg.chips.map((chip, i) => (
                 <button key={i} className={styles.answerChip}
-                  onClick={() => handleChip(chip)}>{chip}</button>
+                  onClick={() => handleChip(chip)}>
+                    {isWelcome && ['Para mí', 'Para alguien de mi familia', 'Para mi hogar o negocio'].includes(chip) && (
+                      <span className={styles.choiceIcon} aria-hidden="true">
+                        {chip === 'Para mí' ? <UserRound size={20} /> : chip === 'Para alguien de mi familia' ? <Heart size={20} /> : <House size={20} />}
+                      </span>
+                    )}
+                    <span>{chip}</span><ArrowUpRight className={styles.choiceArrow} size={17} aria-hidden="true" />
+                  </button>
               ))}
             </div>
           )

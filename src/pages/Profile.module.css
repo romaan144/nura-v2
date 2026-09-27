@@ -415,3 +415,28 @@
 
 
 .avatar { font-size: 32px; }
+
+/* Detalle visual · septiembre 2026 */
+
+.hero { position: relative; isolation: isolate; padding-top: 64px; padding-bottom: 28px; overflow: hidden; background: white; border-color: #E5DEEC; border-radius: 28px; box-shadow: 0 12px 34px -28px #4E2C7655; }
+.hero::before { content: ''; position: absolute; inset: 0 0 auto; height: 118px; z-index: -1; background: var(--surface-cover); }
+.hero::after { content: ''; position: absolute; width: 230px; height: 230px; right: -55px; top: -138px; border: 1px solid #FFFFFFA8; border-radius: 50%; box-shadow: 0 0 0 26px #ffffff28, 0 0 0 54px #ffffff18; z-index: -1; pointer-events: none; }
+.avatarWrap { margin-bottom: 20px; }
+.avatar, .avatarFallback { box-shadow: 0 0 0 6px white, 0 8px 28px -12px #34204466; }
+.name { color: var(--brand-deep); }
+@media (max-width: 767px) { .hero { padding-top: 58px; border-radius: 24px; } .hero::before { height: 106px; } }
+
+
+/* Detalle visual · septiembre 2026 */
+
+.titulo { display: flex; align-items: center; gap: 12px; font-size: 17px; }
+.titulo::after { content: ''; height: 1px; background: var(--ink-border); flex: 1; }
+.tarjeta, .lista { border-radius: 22px; background: white; box-shadow: 0 5px 18px -14px #34204430; }
+.fila { transition: background 180ms ease; }
+.filaIcono { background: #EFE8F7; color: #6B3E9E; }
+.fila:nth-child(3n+2) .filaIcono { background: var(--brand-mint); color: #32634F; }
+.fila:nth-child(3n+3) .filaIcono { background: var(--brand-peach); color: #885442; }
+.chevron { transition: transform 200ms ease; }
+.fila:hover .chevron { transform: translateX(3px); }
+.heroStats { background: var(--paper); padding: 14px 22px; border-radius: 18px; }
+.dato { background: #F5F1FA; border: 1px solid #EAE2F4; }

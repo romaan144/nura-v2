@@ -183,3 +183,10 @@
 .name { font-family: var(--font-voice); }
 @media (hover: hover) { .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--purple-20); } }
 @media (max-width: 380px) { .card { padding: 16px; } .row { gap: 12px; } }
+
+/* Detalle visual · septiembre 2026 */
+
+.card { border-radius: 22px; background: linear-gradient(115deg, white 60%, #F7F3FC); }
+.avatar, .avatarFallback { border-radius: 18px; box-shadow: 0 0 0 4px white; }
+.favBtn { border: 1px solid var(--ink-border); background: white; }
+.favBtnActive { background: #EFE6FC; border-color: #DBC6F7; }

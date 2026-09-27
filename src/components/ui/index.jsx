@@ -133,18 +133,18 @@ export function Button({
     fontSize: 'var(--text-sm)', fontWeight: 700,
     fontFamily: 'inherit', lineHeight: 1,
     cursor: disabled ? 'default' : 'pointer',
-    transition: 'opacity 0.18s cubic-bezier(0.22, 1, 0.36, 1)',
+    transition: 'transform 180ms var(--motion-curve), box-shadow 180ms var(--motion-curve), opacity 180ms ease',
     opacity: disabled ? 0.45 : 1,
   }
   const skins = {
-    primary:   { background: 'var(--purple)', color: 'white', border: 'none' },
+    primary:   { background: 'var(--grad-main)', color: 'white', border: 'none' },
     secondary: { background: 'white', color: 'var(--ink)', border: '1px solid var(--ink-border)' },
     ghost:     { background: 'none', color: 'var(--purple-ink)', border: 'none' },
   }
   return (
     <button
       type="button"
-      className={`nura-button ${className}`}
+      className={`nura-button nura-button--${variant} ${className}`}
       disabled={disabled}
       onClick={disabled ? undefined : onClick}
       style={{ ...base, ...(skins[variant] || skins.primary), ...style }}
@@ -206,7 +206,7 @@ export function SectionLabel({ tone = 'muted', children, style, ...rest }) {
 // ═══════════════════════════════════════════════════════════════
 export function EmptyState({ title, hint, actionLabel, onAction, style }) {
   return (
-    <div style={{ textAlign: 'center', padding: '64px var(--space-24) var(--space-24)', ...style }}>
+    <div className="nura-empty-state" style={{ textAlign: 'center', padding: '40px var(--space-24)', ...style }}>
       <p style={{
         fontFamily: 'var(--font-voice)', fontSize: 'var(--text-heading)', fontWeight: 500,
         color: 'var(--ink)', lineHeight: 1.45, letterSpacing: '-0.3px',

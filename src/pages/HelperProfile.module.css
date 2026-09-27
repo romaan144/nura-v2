@@ -522,3 +522,25 @@
 .actionBar { max-width: 740px; margin: 0 auto; background: rgba(255,255,255,.94); border-color: var(--ink-border); }
 .shareBtn { width: 44px; height: 44px; box-shadow: none; }
 @media (max-width: 380px) { .scroll { padding-left: 16px; padding-right: 16px; } .hero { padding-left: 16px; padding-right: 16px; } }
+
+/* Detalle visual · septiembre 2026 */
+
+.hero { position: relative; isolation: isolate; padding-top: 64px; padding-bottom: 28px; overflow: hidden; background: white; border-color: #E5DEEC; border-radius: 28px; box-shadow: 0 12px 34px -28px #4E2C7655; }
+.hero::before { content: ''; position: absolute; inset: 0 0 auto; height: 118px; z-index: -1; background: var(--surface-cover); }
+.hero::after { content: ''; position: absolute; width: 230px; height: 230px; right: -55px; top: -138px; border: 1px solid #FFFFFFA8; border-radius: 50%; box-shadow: 0 0 0 26px #ffffff28, 0 0 0 54px #ffffff18; z-index: -1; pointer-events: none; }
+.avatarWrap { margin-bottom: 20px; }
+.avatar, .avatarFallback { box-shadow: 0 0 0 6px white, 0 8px 28px -12px #34204466; }
+.name { color: var(--brand-deep); }
+@media (max-width: 767px) { .hero { padding-top: 58px; border-radius: 24px; } .hero::before { height: 106px; } }
+
+
+/* Detalle visual · septiembre 2026 */
+
+.section { margin-top: 16px; padding: 24px; background: #FFFFFFB8; border: 1px solid var(--ink-border); border-radius: 22px; }
+.sectionHeading { color: var(--brand-deep); }
+.bio { font-size: 16px; }
+.pruebaIcono { background: var(--brand-mint); color: #32634F; }
+.actionBar { box-shadow: 0 10px 32px -18px #30214250; padding: 12px; }
+@media (max-width: 767px) { .section { padding: 20px; } }
+
+.avatar { background: white; }

@@ -16,3 +16,7 @@
 @keyframes fadeOut { to{opacity:0;transform:translateY(-8px)} }
 .icon { width: 22px; height: 22px; object-fit: contain; flex-shrink: 0; }
 .msg { font-size: var(--text-sm); font-weight: 500; line-height: 1.4; }
+
+/* Detalle visual · septiembre 2026 */
+
+.toast { background: #302142F5; border: 1px solid #FFFFFF20; border-radius: 20px; padding: 16px 20px; backdrop-filter: blur(16px); box-shadow: 0 12px 36px -12px #30214266; }

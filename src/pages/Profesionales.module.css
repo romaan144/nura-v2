@@ -59,3 +59,14 @@
 .pasoIcono { border-radius: 14px; }
 .pasoTexto { line-height: 1.7; }
 @media (min-width: 900px) { .pasos { display: grid; grid-template-columns: 1fr 1fr; } }
+
+/* Detalle visual · septiembre 2026 */
+
+.hero { background: var(--surface-cover); border-radius: 30px; margin: 18px 0 8px; padding: 44px 28px; border: 1px solid white; }
+.title { color: var(--brand-deep); }
+.eyebrow { background: #FFFFFFA8; }
+.cta { background: var(--grad-main); box-shadow: 0 8px 24px -12px #6736A680; }
+.paso { border-radius: 22px; }
+.paso:nth-child(2n) .pasoIcono { background: var(--brand-mint); color: #32634F; }
+.final { background: #EEE8F580; border: 1px solid #E4DBEE; border-radius: 26px; padding: 28px 20px; }
+@media (max-width: 767px) { .hero { padding: 32px 20px; } .title { letter-spacing: -1px; } }

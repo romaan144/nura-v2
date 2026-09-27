@@ -78,3 +78,8 @@
 .circleBtn { width: 44px; height: 44px; background: white; border-color: var(--ink-border); box-shadow: var(--shadow-xs); }
 .circleBtn:hover { background: var(--purple-05); color: var(--purple-ink); }
 .wordmark { font-family: var(--font-voice); font-size: var(--text-lg); font-weight: 750; letter-spacing: -1.1px; line-height: 1.25; }
+
+/* Detalle visual · septiembre 2026 */
+
+.logoPill { background: #FFFFFFCC; border-color: #FFFFFFD9; box-shadow: 0 2px 12px -8px #30214230; }
+.circleBtn { background: #FFFFFFE6; border-color: #FFFFFFD9; box-shadow: 0 3px 12px -8px #30214245; }

@@ -1,6 +1,13 @@
 # Trabajo compartido
 
-## Diseño integral · Codex
+## Diseño de detalle · Codex
+
+**Estado:** implementado y verificado, desde `0884d7f`; integración y despliegue comprobables en GitHub. **Rama:** `codex/diseno-detalle`.
+**Alcance:** quitar el eslogan repetido de Inicio y navegación; evolucionar superficies, perfiles, tarjetas, formularios y movimiento. CSS de páginas/componentes, `design-system.css`, y cambios exclusivamente de presentación en Home, Explore, HelperCardTall, UI, Login, Legal, PostCard y ObraComposer. Conservar la búsqueda que Claude está desarrollando. Detalle: `docs/diseno-detalle.md`.
+
+## Diseño integral · Codex · integrado
+
+Primera entrega integrada mediante PR #65 y publicada en Vercel el 2026-09-26. La nueva iteración se registra arriba.
 
 **Alcance:** presentación de todas las rutas actuales, empezando por Inicio.
 **Rama:** `codex/diseno-integral`.

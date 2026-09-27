@@ -66,7 +66,7 @@ export default function HelperCardTall({ helper, small = false }) {
   }
 
   return (
-    <div onClick={handleTap} role="button" tabIndex={0}
+    <div className={`nura-person-card ${small ? 'nura-person-card--small' : ''}`} onClick={handleTap} role="button" tabIndex={0}
       onKeyDown={e => { if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); handleTap() } }} aria-label={`Ver perfil de ${helper.name}`}
       style={{
         /* LA TARJETA DEL HALLAZGO. Es la superficie mas importante de Nüra
@@ -75,7 +75,7 @@ export default function HelperCardTall({ helper, small = false }) {
            (modales, hojas), estando en reposo. La ley de la elevacion dice
            que la sombra comunica CAPA, no importancia: si algo debe
            destacar sin flotar, se destaca con contraste, no elevandolo. */
-        background: 'rgba(255,255,255,0.96)',
+        background: 'var(--person-card-surface)',
         WebkitBackdropFilter: 'blur(20px) saturate(160%)',
         backdropFilter: 'blur(20px) saturate(160%)',
         border: '1px solid var(--ink-border)',
@@ -84,7 +84,7 @@ export default function HelperCardTall({ helper, small = false }) {
         padding: small ? 'var(--space-14) var(--space-10) var(--space-12)' : 'var(--space-24) var(--space-20) var(--space-20)',
         display: 'flex', flexDirection: 'column', alignItems: 'center',
         textAlign: 'center', cursor: 'pointer', width: '100%',
-        transition: 'transform 0.18s cubic-bezier(0.22,1,0.36,1), box-shadow 0.18s ease',
+        transition: 'translate 220ms var(--motion-curve), transform 180ms var(--motion-curve), box-shadow 180ms ease',
         WebkitTapHighlightColor: 'transparent',
       }}
       onPointerDown={e => { e.currentTarget.style.transform = 'scale(0.985)' }}
