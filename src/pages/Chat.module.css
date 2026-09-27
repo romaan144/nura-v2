@@ -431,3 +431,13 @@
 .helperInfo { background: white; border: 1px solid var(--ink-border); }
 .quickReply { background: #FFFFFFEB; transition: transform 180ms ease, background 180ms ease; }
 .quickReply:hover { background: var(--brand-lilac); transform: translateY(-2px); }
+
+/* Sugerencias y escritura en el flujo: su altura real reserva el espacio. */
+.messages { position: relative; inset: auto; flex: 1; min-height: 0; padding-bottom: 24px; }
+.inputWrap {
+  position: relative; inset: auto; flex-shrink: 0;
+  width: calc(100% - 32px); margin: 0 auto max(env(safe-area-inset-bottom, 0px), 16px);
+  display: flex; flex-direction: column; gap: 18px;
+}
+.quickReplies { position: static; max-width: none; margin: 0; gap: 10px 12px; }
+.quickReply { max-width: 100%; line-height: 1.4; text-align: left; }

@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-27 — Sugerencias del chat separadas de la escritura
+
+Sergio señala que las etiquetas se pegan a la cápsula inferior. Se reproduce un solapamiento de 2 px causado por posiciones absolutas independientes. Sugerencias y entrada pasan a un pie en el flujo con 18 px de separación, y la conversación reserva automáticamente su altura real. Mayor espacio entre etiquetas, mismos manejadores.
+
 ## 2026-09-27 — La carta de presentación no queda bajo el menú
 
 La captura de Sergio revela un fallo reproducible: IntroLetter usaba toda la altura sin reservar el menú. Se reserva su altura compartida y se adapta la página al visualViewport al editar, manteniendo el envío sobre la navegación y sin cambiar el manejador. Editor a 16 px y limpieza de los ajustes al salir.
