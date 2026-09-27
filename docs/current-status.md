@@ -14,6 +14,10 @@
 
 Sergio encarga a Codex el diseño integral y a Claude las funcionalidades. Los cambios visuales tienen autorización de integración y publicación tras las pruebas, sin revisión estética previa. Leer `docs/tasks.md` y `docs/diseno-integral.md` antes de editar pantallas. La presencia de este apartado en una rama no certifica su despliegue: comprobar integración y Vercel.
 
+## Seguimiento de profesionales (2026-09-27)
+
+`following` es el único estado de seguimiento; `favorites` queda como alias por compatibilidad. La lista, el contador del perfil y el filtro de Feed lo comparten. Se conservan listas vacías al recargar y se migran favoritos antiguos solo cuando falta una lista principal válida. Persistencia local al dispositivo, sin sincronización entre dispositivos. Ver contrato y pruebas en `docs/tasks.md`.
+
 ## Estado actual (2026-09-24)
 
 > Todo lo que hay en este apartado está **comprobado contra el código y

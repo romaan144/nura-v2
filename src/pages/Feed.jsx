@@ -28,7 +28,7 @@ function pulsoReal(posts) {
 
 export default function Feed() {
   const navigate = useNavigate()
-  const { user, myStories, following, utilesDe, contactedHelpers } = useUser()
+  const { user, myStories, isFollowing, utilesDe, contactedHelpers } = useUser()
   const [modo, setModo] = useState('todos')
   const [composerOpen, setComposerOpen] = useState(false)
   const [avisoNoPro, setAvisoNoPro] = useState(false)
@@ -68,7 +68,7 @@ export default function Feed() {
     if (b < deObra.length && a % 2 === 0) todos.push(deObra[b++])
   }
 
-  const sigue = id => (following || []).includes(id)
+  const sigue = isFollowing
 
   // Temas: la comunidad se recorre por lo que te preocupa
   // HELPERS puede traer huecos nulos: filtrar antes de buscar (lo cazo el smoke)

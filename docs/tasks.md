@@ -1,10 +1,18 @@
 # Trabajo compartido
 
+## Seguidos sincronizados · Codex
+
+**Estado:** implementado y verificado localmente. **Rama:** `codex/seguidos-sincronizados`, desde `09bf282`.
+**Autorización:** Sergio responde «Sigue» a la propuesta de corregir la lista y el contador al dejar de seguir. Excepción funcional al reparto habitual.
+**Alcance:** UserContext, utilidad de seguimiento, Siguiendo y filtro de Feed. Un único estado compatible con favoritos, migración de preferencias antiguas, lista vacía persistente y comparación de identificadores numéricos/texto. Sin cambios en Supabase.
+**Pruebas:** `npm run test:following` (15 comprobaciones), build, matching 255/255 y smoke 8×2 + 120×4. Lint sin diagnósticos nuevos; no-undef=0. Navegador aislado: retirar uno actualiza lista y contador del perfil; retirar todos y recargar mantiene vacío; migrar favoritos antiguos deduplica IDs; lista vacía tiene prioridad sobre favoritos obsoletos; altas/alternancias consecutivas no pierden cambios; cierre de sesión limpia ambas claves.
+**Contrato para Claude:** `favorites` es alias de `following`, no un segundo estado. Usar `follow`, `unfollow`, `toggleFollow` e `isFollowing`; no escribir listas independientes. La persistencia sigue siendo local al dispositivo.
+
 ## Siguiendo: fotos y acciones claras · Codex
 
 **Estado:** diseño implementado y verificado. **Rama:** `codex/siguiendo-fotos`, desde `235598a`.
 **Alcance:** Siguiendo.jsx y CSS. Retratos mayores, valoración/zona/tarifa legibles y controles separados para abrir el perfil y seguir/dejar de seguir. Mantener favoritos, demo, datos y destinos.
-**Incidencia previa detectada (pendiente):** Siguiendo filtra por `favorites`, pero los controles `follow/unfollow` actualizan `following`. Al dejar de seguir cambia el botón, pero la tarjeta permanece durante la sesión. Comprobado localmente; ambos caminos ya estaban en main. Esta entrega no modifica UserContext ni migra estado. Revisar sincronización y comportamiento demo en una tarea funcional separada.
+**Incidencia previa detectada (resuelta en la tarea de sincronización superior):** Siguiendo filtra por `favorites`, pero los controles `follow/unfollow` actualizan `following`. Al dejar de seguir cambia el botón, pero la tarjeta permanece durante la sesión. Comprobado localmente; ambos caminos ya estaban en main. Esta entrega no modifica UserContext ni migra estado. Revisar sincronización y comportamiento demo en una tarea funcional separada.
 
 ## Lista de conversaciones más legible · Codex
 
