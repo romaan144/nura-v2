@@ -1,5 +1,12 @@
 # Trabajo compartido
 
+## Valoración clara y cómoda · Codex
+
+**Estado:** implementado y verificado localmente. **Rama:** `codex/valoracion-diseno-claro`, desde `deb0547`.
+**Alcance:** RatingModal JSX/CSS, comportamiento de foco/teclado compartido con CitaModal. Preguntas separadas, estrellas legibles, contador de cualidades, comentario y consentimiento claros, envío visible. Conservar reglas, payload, permisos y callbacks. Sin cambios de servidor.
+**Contrato para Claude:** RatingModal conserva estados, máximo de tres cualidades, consentimiento desmarcado, payload y callbacks. `useModalSheet` comparte solo foco, Escape y visibilidad del textarea con CitaModal; no controla envíos.
+**Pruebas:** build, matching 255/255 y smoke 8×2 + 120×4; lint sin diagnósticos nuevos y no-undef=0. Navegador aislado: marcar/desmarcar tres cualidades, estrellas por teclado y deselección, comentario/contador, consentimiento inicialmente desmarcado y envío de prueba local. 390×844, 320×420 y 1280×900 sin desbordamiento. Nombre largo, foco contenido y Escape; regresión de selección de cita y cierre sin envío. Teclado simulado de 484 px: textarea termina 12 px antes del pie, también con desplazamiento de 90 px. Pendiente comprobación física en iPhone; ningún envío real.
+
 ## Solicitar cita: día, hora y confirmación · Codex
 
 **Estado:** implementado y verificado localmente. **Rama:** `codex/reserva-diseno-claro`, desde `0eb6723`.
