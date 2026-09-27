@@ -1,5 +1,10 @@
 # Trabajo compartido
 
+## Botones secundarios coherentes · Codex
+
+**Estado:** implementado y verificado. **Rama:** `codex/botones-secundarios`, desde `054698b`.
+**Alcance:** tokens de borde y fondo, primitiva Button y acciones secundarias locales de perfil, profesionales, chat, carta, seguidos, servicios y página no encontrada. Revisar contraste y texto adaptable; conservar destinos y funciones.
+
 ## Botones informativos del perfil · Codex
 
 **Estado:** implementado y verificado. **Rama:** `codex/botones-perfil-contraste`, desde `6ae1d19`.

@@ -138,8 +138,8 @@ export function Button({
   }
   const skins = {
     primary:   { background: 'var(--grad-main)', color: 'white', border: 'none' },
-    secondary: { background: 'white', color: 'var(--ink)', border: '1px solid var(--ink-border)' },
-    ghost:     { background: 'none', color: 'var(--purple-ink)', border: 'none' },
+    secondary: { background: 'var(--action-surface)', color: 'var(--purple-ink)', border: '1px solid var(--action-border)', minHeight: 48, padding: '10px var(--space-20)', lineHeight: 1.4, boxShadow: 'none' },
+    ghost:     { background: 'none', color: 'var(--purple-ink)', border: 'none', boxShadow: 'none' },
   }
   return (
     <button

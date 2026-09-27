@@ -9,6 +9,8 @@
   --paper-veil-soft: rgba(var(--paper-rgb), .88);
   --surface-card: #fff;
   --ink-border: rgba(33,29,51,.09);
+  --action-border: #C7B2DF;
+  --action-surface: #F7F3FC;
   --surface-subtle: rgba(33,29,51,.035);
   --rule: #E5E2EC;
   --radius-md: 20px;
@@ -48,6 +50,7 @@ input::placeholder, textarea::placeholder { color: var(--ink-tertiary); opacity:
 .nura-button { box-shadow: var(--shadow-xs); }
 .nura-button:hover:not(:disabled) { filter: brightness(.98); box-shadow: var(--shadow-sm); }
 .nura-button:active:not(:disabled) { transform: translateY(1px); }
+.nura-button--ghost { text-decoration: underline; text-underline-offset: 3px; }
 .nura-section-title { font-family: var(--font-voice); }
 .desktopMain { height: 100dvh; }
 

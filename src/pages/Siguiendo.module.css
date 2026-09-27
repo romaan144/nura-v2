@@ -135,3 +135,6 @@
 
 .title { font-family: var(--font-voice); color: var(--brand-deep); font-size: clamp(28px, 3.4vw, 38px); letter-spacing: -1.2px; }
 .card { border-radius: 22px; background: linear-gradient(120deg, white 70%, #F8F4FD); box-shadow: 0 5px 20px -16px #30214235; }
+
+/* Acciones secundarias con contorno compartido. */
+.emptyBtnSecondary { border: 1px solid var(--action-border); background: var(--action-surface); color: var(--purple-ink); min-height: 44px; line-height: 1.4; box-shadow: none; white-space: normal; }

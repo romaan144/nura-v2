@@ -441,3 +441,5 @@
 }
 .quickReplies { position: static; max-width: none; margin: 0; gap: 10px 12px; }
 .quickReply { max-width: 100%; line-height: 1.4; text-align: left; }
+
+.contractBtn, .quickReply { border-color: var(--action-border); }

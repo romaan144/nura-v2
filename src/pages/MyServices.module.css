@@ -173,3 +173,6 @@
 .actionBtn, .actionBtnSecondary { border-radius: 12px; white-space: normal; }
 .actionBtnSecondary { color: var(--ink-secondary); border: 1px solid var(--ink-border); background: white; }
 .ratedRow { justify-content: flex-start; padding: 12px 16px; background: var(--green-light); }
+
+/* Acciones secundarias con contorno compartido. */
+.actionBtnSecondary { border: 1px solid var(--action-border); background: var(--action-surface); color: var(--purple-ink); min-height: 44px; line-height: 1.4; box-shadow: none; white-space: normal; }

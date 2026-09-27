@@ -45,3 +45,6 @@
 .content { border-radius: 28px; box-shadow: 0 20px 60px -32px #30214250; }
 .logo { opacity: 1; padding: 12px; background: #F2EBFA; border-radius: 22px; }
 .btn { background: var(--grad-main); min-height: 48px; }
+
+/* Acciones secundarias con contorno compartido. */
+.btnSecondary { border: 1px solid var(--action-border); background: var(--action-surface); color: var(--purple-ink); min-height: 44px; line-height: 1.4; box-shadow: none; white-space: normal; }
