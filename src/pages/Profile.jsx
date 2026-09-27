@@ -28,6 +28,14 @@ import { quitarTodas } from '../utils/alertas'
 import { compartirEnlace, enlaceDeFicha } from '../utils/compartir'
 import { showToast } from '../components/Toast'
 
+// Acciones de apoyo: contorno visible también sobre las tarjetas blancas.
+const professionalInfoButton = {
+  minHeight: 48, marginTop: 10, padding: '10px 16px', lineHeight: 1.4,
+  border: '1px solid #C7B2DF', background: '#F7F3FC',
+  color: 'var(--purple-ink)', boxShadow: 'none',
+}
+
+
 // ── Tu semana: la voz de Nüra para quien trabaja ──
 // Gramática: frase humana primero, cifras discretas después, cero vanidad.
 // CONTABA MAL: "abiertas" y "citas" salian de `contactedHelpers`, que son
@@ -222,7 +230,7 @@ export default function Profile() {
           </Button>
           {/* Sin esto, una profesional con acceso que cambiaba de movil no
               tenia por donde entrar: solo "crear cuenta" y "darse de alta". */}
-          <Button variant="ghost" full onClick={() => navigate('/entrar')} style={{marginTop:'var(--space-6)'}}>
+          <Button variant="secondary" full onClick={() => navigate('/entrar')} style={professionalInfoButton}>
             ¿Ya tienes acceso de profesional? Entra
           </Button>
         </div>
@@ -718,7 +726,7 @@ export default function Profile() {
                 style={{marginTop:'var(--space-16)', color:'var(--purple-ink)'}}>
                 <User size={15} aria-hidden="true" /> Crear perfil profesional
               </Button>
-              <Button variant="ghost" full onClick={() => navigate('/profesionales')} style={{marginTop:'var(--space-4)'}}>
+              <Button variant="secondary" full onClick={() => navigate('/profesionales')} style={professionalInfoButton}>
                 Cómo funciona para profesionales
               </Button>
             </div>

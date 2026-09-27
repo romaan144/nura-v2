@@ -1,5 +1,10 @@
 # Trabajo compartido
 
+## Botones informativos del perfil · Codex
+
+**Estado:** implementado y verificado. **Rama:** `codex/botones-perfil-contraste`, desde `6ae1d19`.
+**Alcance:** presentación de los dos botones de acceso profesional e información para profesionales en Profile.jsx. Borde lila visible, fondo suave, espacio entre acciones y texto adaptable en móvil; mismos destinos. Comprobado en navegador a 390 y 320 px, ambos destinos de navegación, build, matching 255/255 y smoke. Lint sin nuevos diagnósticos y no-undef=0.
+
 ## Corrección del desplazamiento de Safari · Codex
 
 **Estado:** implementado y verificado con reproducción del pan completo; pendiente confirmar en iPhone físico. **Rama:** `codex/safari-teclado-desplazamiento`, desde `d0596ee`.
