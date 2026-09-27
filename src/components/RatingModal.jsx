@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import { getFirstName } from '../utils/name'
 import { useState } from 'react'
 import { Star, X, CheckCircle, ThumbsUp, ThumbsDown } from 'lucide-react'
@@ -54,7 +55,7 @@ export default function RatingModal({ helper, onClose, onEnviado }) {
     setTimeout(onClose, 2200)
   }
 
-  return (
+  return createPortal(
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.card} onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="valorar-titulo">
         {!done ? (
@@ -62,7 +63,7 @@ export default function RatingModal({ helper, onClose, onEnviado }) {
             <button className={styles.close} onClick={onClose} aria-label="Cerrar"><X size={16} /></button>
             {helper.avatarUrl
               ? <img className={styles.avatar} src={helper.avatarUrl} alt="" />
-              : <div className={styles.avatar} style={{background: helper.avatarColor || 'var(--purple)'}}>{helper.avatar}</div>}
+              : <div className={styles.avatar} style={{background: helper.avatarColor || 'var(--purple)'}}>{helper.avatar || nombre[0]?.toUpperCase()}</div>}
             <h3 id="valorar-titulo" className={styles.title}>¿Cómo fue con {nombre}?</h3>
             <p className={styles.desc}>Un toque basta. Ayudas a otros a elegir bien.</p>
 
@@ -107,7 +108,7 @@ export default function RatingModal({ helper, onClose, onEnviado }) {
                   onClick={() => setRating(rating === n ? 0 : n)}>
                   <Star size={32}
                     fill={(hover || rating) >= n ? 'var(--amber)' : 'none'}
-                    color={(hover || rating) >= n ? 'var(--amber)' : 'var(--rule)'}
+                    color={(hover || rating) >= n ? 'var(--amber)' : 'var(--ink-tertiary)'}
                     strokeWidth={1.5} />
                 </button>
               ))}
@@ -131,7 +132,7 @@ export default function RatingModal({ helper, onClose, onEnviado }) {
             )}
 
             <button className={styles.btn} onClick={submit} disabled={!algo || enviando}>
-              {enviando ? 'Enviando…' : 'Enviar'}
+              {enviando ? 'Enviando…' : 'Enviar valoración'}
             </button>
             <p className={styles.privacidad}>Nunca analizamos tus conversaciones ni lo que buscas.</p>
           </>
@@ -149,6 +150,6 @@ export default function RatingModal({ helper, onClose, onEnviado }) {
           </div>
         )}
       </div>
-    </div>
+    </div>, document.body
   )
 }

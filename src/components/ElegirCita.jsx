@@ -7,6 +7,7 @@
 // quedan. Las horas, por mañana / tarde / noche; las cogidas, tachadas; la
 // que ya pediste, marcada como tuya.
 import { useEffect, useState } from 'react'
+import styles from './ElegirCita.module.css'
 import { useUser } from '../context/UserContext'
 import { ocupadasDe } from '../utils/escrituras'
 import { SectionLabel } from './ui'
@@ -55,24 +56,25 @@ export default function ElegirCita({ helper, date, time, onDate, onTime }) {
     .filter(x => x.horas.length)
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-14)' }}>
+    <div className={styles.picker}>
       <div>
-        <SectionLabel tone="muted" style={{ margin: '0 0 var(--space-8)', color: 'var(--ink-tertiary)' }}>Día</SectionLabel>
-        <div role="listbox" aria-label="Elige un día"
+        <SectionLabel className={styles.label} tone="muted" style={{ margin: '0 0 var(--space-8)', color: 'var(--ink-tertiary)' }}>Día</SectionLabel>
+        <p className={styles.range}>Próximos {DIAS} días · hora local</p>
+        <div className={styles.days} role="listbox" aria-label="Elige un día"
           style={{ display: 'flex', gap: 'var(--space-6)', overflowX: 'auto', paddingBottom: 'var(--space-4)', scrollSnapType: 'x proximity' }}>
           {dias.map(d => {
             const sel = date === d.iso
             const puede = d.libres > 0
             return (
-              <button key={d.iso} type="button" role="option" aria-selected={sel} disabled={!puede}
+              <button className={styles.day} key={d.iso} type="button" role="option" aria-selected={sel} disabled={!puede}
                 aria-label={`${d.arriba} ${d.numero}: ${d.abajo}`}
                 onClick={() => { onDate(d.iso); onTime('') }}
                 style={{
-                  flexShrink: 0, minWidth: 66, padding: 'var(--space-8) var(--space-6)', scrollSnapAlign: 'start',
+                  flexShrink: 0, minWidth: 76, minHeight: 88, padding: 'var(--space-8) var(--space-6)', scrollSnapAlign: 'start',
                   display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
-                  background: sel ? 'var(--purple)' : puede ? 'var(--surface-subtle)' : 'transparent',
+                  background: sel ? 'var(--grad-main)' : puede ? 'white' : 'transparent',
                   color: sel ? 'white' : puede ? 'var(--ink-primary)' : 'var(--ink-tertiary)',
-                  border: puede || sel ? '1px solid transparent' : '1px dashed var(--ink-border, rgba(33,29,51,0.16))',
+                  border: sel ? '1px solid transparent' : puede ? '1px solid var(--ink-border)' : '1px dashed var(--ink-border, rgba(33,29,51,0.16))',
                   borderRadius: 'var(--radius-card)', cursor: puede ? 'pointer' : 'default', fontFamily: 'inherit',
                 }}>
                 <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600, textTransform: 'capitalize' }}>{d.arriba}</span>
@@ -86,7 +88,8 @@ export default function ElegirCita({ helper, date, time, onDate, onTime }) {
       </div>
 
       <div>
-        <SectionLabel tone="muted" style={{ margin: '0 0 var(--space-8)', color: 'var(--ink-tertiary)' }}>Hora</SectionLabel>
+        <SectionLabel className={styles.label} tone="muted" style={{ margin: '0 0 var(--space-8)', color: 'var(--ink-tertiary)' }}>Hora</SectionLabel>
+        {date && <p className={styles.selectedDate}>{new Date(date + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}</p>}
         {!date ? (
           <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)', margin: 0 }}>Elige antes un día.</p>
         ) : !slots.length ? (
@@ -102,14 +105,14 @@ export default function ElegirCita({ helper, date, time, onDate, onTime }) {
                     const sel = time === hora
                     const que = estado === 'ocupada' ? 'ocupada' : estado === 'tuya' ? 'es tuya' : 'libre'
                     return (
-                      <button key={hora} type="button" disabled={!libre} aria-pressed={sel}
+                      <button className={styles.time} key={hora} type="button" disabled={!libre} aria-pressed={sel}
                         aria-label={`${hora}: ${que}`} title={libre ? '' : que}
                         onClick={() => onTime(hora)}
                         style={{
-                          minWidth: 62, minHeight: 36, padding: '0 var(--space-10)',
-                          background: sel ? 'var(--purple)' : libre ? 'var(--surface-subtle)' : estado === 'tuya' ? 'var(--purple-10)' : 'transparent',
+                          minWidth: 68, minHeight: 44, padding: '0 var(--space-10)',
+                          background: sel ? 'var(--grad-main)' : libre ? 'white' : estado === 'tuya' ? 'var(--purple-10)' : 'transparent',
                           color: sel ? 'white' : libre ? 'var(--ink-primary)' : estado === 'tuya' ? 'var(--purple-ink)' : 'var(--ink-tertiary)',
-                          border: libre || sel ? '1px solid transparent' : estado === 'tuya' ? '1px solid var(--purple-30, rgba(123,47,255,0.3))' : '1px dashed var(--ink-border, rgba(33,29,51,0.16))',
+                          border: sel ? '1px solid transparent' : libre ? '1px solid var(--ink-border)' : estado === 'tuya' ? '1px solid var(--purple-30, rgba(123,47,255,0.3))' : '1px dashed var(--ink-border, rgba(33,29,51,0.16))',
                           textDecoration: estado === 'ocupada' ? 'line-through' : 'none',
                           borderRadius: 'var(--radius-full)', fontSize: 'var(--text-sm)', fontWeight: 600,
                           cursor: libre ? 'pointer' : 'default', fontFamily: 'inherit',

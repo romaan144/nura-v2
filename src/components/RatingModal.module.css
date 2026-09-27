@@ -56,3 +56,12 @@
 .close { width: 44px; height: 44px; top: 10px; right: 10px; background: #FFFFFFB8; color: var(--ink-secondary); }
 .title { font-family: var(--font-voice); font-size: 22px; letter-spacing: -.6px; }
 @media (min-width: 768px) { .overlay { align-items: center; } }
+
+/* Preguntas separadas y controles cómodos de pulsar. */
+.pregunta { padding-top: 18px; margin-top: 20px; border-top: 1px solid #E6DEEE; font-size: 15px; flex-wrap: wrap; }
+.chip { min-height: 44px; background: white; }
+.chipOn { background: var(--grad-main); border-color: transparent; box-shadow: 0 3px 10px -6px #6736A680; }
+.star { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 14px; }
+.star[aria-checked='true'] { background: #FFF3D6; }
+.publicar { min-height: 44px; line-height: 1.5; }
+.btn { min-height: 50px; }

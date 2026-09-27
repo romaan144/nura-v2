@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import { useTitulo } from '../utils/titulo'
 import PageHeader from '../components/PageHeader'
 import PostCard from '../components/PostCard'
@@ -10,7 +11,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Star, Shield, MapPin, MessageCircle, Calendar,
          Share2, UserPlus, UserCheck, Briefcase, BookOpen, Award,
-         CheckCircle, Check, Globe, Zap, ChevronRight, Clock, ThumbsUp, ShieldCheck } from 'lucide-react'
+         CheckCircle, Check, Globe, Zap, ChevronRight, Clock, ThumbsUp, ShieldCheck, ChevronDown } from 'lucide-react'
 import { HELPERS_DEMO as HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
 import RatingModal from '../components/RatingModal'
@@ -57,17 +58,17 @@ function BookingModal({ helper, onClose, onBook, onNavigate, cambia: cambiaAlAbr
   }
 
   const style = {
-    overlay: {position:'fixed',inset:0,background:'var(--surface-scrim)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:300,display:'flex',alignItems:'flex-end',justifyContent:'center'},
-    sheet: {background:'rgba(255,255,255,0.96)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',borderRadius:'24px 24px 0 0',padding:'var(--space-24) var(--space-20) calc(var(--nav-h) + var(--space-12))',width:'100%',maxWidth:'500px',maxHeight:'88dvh',overflowY:'auto',WebkitOverflowScrolling:'touch'},
+    overlay: {position:'fixed',inset:0,background:'var(--surface-scrim)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:300,display:'flex',alignItems:'flex-end',justifyContent:'center',padding:'16px 16px max(16px, env(safe-area-inset-bottom))'},
+    sheet: {background:'rgba(255,255,255,0.96)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',borderRadius:'28px',padding:'var(--space-24) var(--space-20)',width:'100%',maxWidth:'500px',maxHeight:'calc(100dvh - 32px)',overflowY:'auto',WebkitOverflowScrolling:'touch'},
     handle: {width:'36px',height:'4px',background:'var(--surface-muted)',borderRadius:'2px',margin:'0 auto var(--space-20)'},
     input: {width:'100%',padding:'var(--space-12) var(--space-16)',border:'1px solid rgba(33,29,51,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',fontFamily:'-apple-system,Inter,sans-serif',background:'var(--surface-subtle)',boxSizing:'border-box'},
     btnPrimary: {width:'100%',padding:'var(--space-14)',background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:'pointer',transition:'opacity 0.2s'},
     btnSecondary: {width:'100%',padding:'var(--space-12)',background:'var(--surface-subtle)',color:'var(--ink-tertiary)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'},
   }
 
-  return (
-    <div style={style.overlay}>
-      <div style={style.sheet}>
+  return createPortal(
+    <div className={styles.bookingOverlay} style={style.overlay}>
+      <div style={style.sheet} role="dialog" aria-modal="true" aria-labelledby="booking-title">
         <div style={style.handle} />
         {done ? (
           <div style={{textAlign:'center',display:'flex',flexDirection:'column',alignItems:'center',gap:'var(--space-12)',padding:'var(--space-16) 0'}}>
@@ -85,7 +86,7 @@ function BookingModal({ helper, onClose, onBook, onNavigate, cambia: cambiaAlAbr
               <span style={{position:'absolute',bottom:-2,right:-2,width:'22px',height:'22px',background:'var(--green-dot)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center'}}><svg width='12' height='12' viewBox='0 0 12 12' fill='none'><path d='M2 6l3 3 5-5' stroke='white' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round'/></svg></span>
             </div>
             <div>
-              <h3 style={{fontSize:'var(--text-heading)',fontWeight:800,margin:'0 0 var(--space-4)',color:'var(--ink-primary)',letterSpacing:'-0.3px'}}>
+              <h3 id="booking-title" style={{fontSize:'var(--text-heading)',fontWeight:800,margin:'0 0 var(--space-4)',color:'var(--ink-primary)',letterSpacing:'-0.3px'}}>
                 {cambia ? '¡Cambio enviado!' : '¡Solicitud enviada!'}
               </h3>
               <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:0,lineHeight:1.6}}>
@@ -111,7 +112,7 @@ function BookingModal({ helper, onClose, onBook, onNavigate, cambia: cambiaAlAbr
           </div>
         ) : (
           <>
-            <h3 style={{fontSize:'var(--text-md)',fontWeight:800,margin:'0 0 var(--space-4)',color:'var(--ink-primary)',letterSpacing:'-0.3px'}}>{cambia ? 'Cambiar la hora' : 'Solicitar servicio'}</h3>
+            <h3 id="booking-title" style={{fontSize:'var(--text-md)',fontWeight:800,margin:'0 0 var(--space-4)',color:'var(--ink-primary)',letterSpacing:'-0.3px'}}>{cambia ? 'Cambiar la hora' : 'Solicitar servicio'}</h3>
             <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:'0 0 var(--space-20)'}}>
               {cambia
                 ? `Tu cita con ${name} del ${diaLargo(cambia.date)}${cambia.time ? ` a las ${cambia.time}` : ''} se cancelará al enviar la nueva hora.`
@@ -135,7 +136,7 @@ function BookingModal({ helper, onClose, onBook, onNavigate, cambia: cambiaAlAbr
           </>
         )}
       </div>
-    </div>
+    </div>, document.body
   )
 }
 
@@ -249,7 +250,7 @@ function HelperProfileInner() {
   // El próximo hueco libre, a la vista sin abrir la agenda.
   const hueco = proximoHueco(enrichedH, ocupacionesDe(citas, services))
 
-  // Primary education for hero display
+  // Resumen de formación en su bloque propio
   const mainEdu = enrichedH.education?.[0]
 
   function handleContact() {
@@ -571,67 +572,47 @@ function HelperProfileInner() {
           </section>
         )}
 
-        {getObraDeHelper(enrichedH.id, 2).length > 0 && (
-          <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0ms forwards`}} className={styles.section}>
-            <h2 className={styles.sectionHeading}>Su obra</h2>
-            {/* ── EL MURO NO ES LA FICHA ──────────────────────────────
-                Se pintaban TODAS las publicaciones: tres pantallas de las
-                4,7 que medía la ficha. Era Comunidad dentro del perfil — el
-                mismo problema que el susurro en Home, en grande.
-                Ahora se ve UNA, prueba de que este profesional trabaja y lo
-                documenta. El resto sigue ahí, a un toque. */}
-            <div style={{display:'flex', flexDirection:'column', gap:'var(--space-10)'}}>
-              {(verTodaLaObra ? publicacionesDe(enrichedH) : publicacionesDe(enrichedH).slice(0, 1))
-                .map(p => <PostCard key={p.id} post={p} />)}
+        {/* Experiencia y estudios son una sección propia, antes de los casos. */}
+        {(enrichedH.experience?.length > 0 || enrichedH.education?.length > 0) && (
+          <section className={`${styles.section} ${styles.career}`} aria-labelledby="trayectoria-titulo">
+            <div className={styles.careerHeader}>
+              <span className={styles.careerIcon} aria-hidden="true"><Briefcase size={21} /></span>
+              <div>
+                <h2 id="trayectoria-titulo" className={styles.careerTitle}>Trayectoria y formación</h2>
+                <p className={styles.careerLead}>La experiencia y los estudios de {firstName}.</p>
+              </div>
             </div>
-            {!verTodaLaObra && publicacionesDe(enrichedH).length > 1 && (
-              <button onClick={() => setVerTodaLaObra(true)} style={{
-                width:'100%', marginTop:'var(--space-10)', minHeight:48,
-                background:'rgba(255,255,255,0.96)',
-                WebkitBackdropFilter:'blur(20px) saturate(160%)',
-                backdropFilter:'blur(20px) saturate(160%)',
-                border:'1px solid rgba(255,255,255,0.6)',
-                borderRadius:'var(--radius-md)',
-                boxShadow:'var(--alzado-reposo)',
-                fontSize:'var(--text-sm)', fontWeight:600, color:'var(--ink-secondary)',
-                fontFamily:'inherit', cursor:'pointer',
-              }}>
-                Ver los {publicacionesDe(enrichedH).length} casos de {getFirstName(enrichedH.name)}
-              </button>
+            {!verTrayectoria && (
+              <div className={styles.careerPreview}>
+                {enrichedH.experience?.[0] && (
+                  <div className={styles.careerFact}>
+                    <span className={styles.careerLabel}>Experiencia</span>
+                    <p className={styles.careerFactTitle}>{enrichedH.experience[0].role}</p>
+                    <p className={styles.careerMeta}>{[enrichedH.experience[0].company, enrichedH.experience[0].period].filter(Boolean).join(' · ')}</p>
+                  </div>
+                )}
+                {mainEdu && (
+                  <div className={styles.careerFact}>
+                    <span className={styles.careerLabel}>Formación</span>
+                    <p className={styles.careerFactTitle}>{mainEdu.title || mainEdu.degree}</p>
+                    <p className={styles.careerMeta}>{mainEdu.institution || mainEdu.school}</p>
+                  </div>
+                )}
+              </div>
             )}
-          </section>
-        )}
-
-        {/* ── EL CURRICULO, PLEGADO ──────────────────────────────────
-            Trayectoria y formacion existen para quien las busque, pero no
-            pueden ocupar media ficha. Quien duda de alguien no empieza por
-            su universidad: empieza por lo que dicen quienes ya le
-            contrataron. */}
-        {(enrichedH.experience?.length > 0 || enrichedH.education?.length > 0) && !verTrayectoria && (
-          <button onClick={() => setVerTrayectoria(true)} style={{
-            width:'100%', minHeight:52, marginBottom:'var(--space-20)',
-            background:'rgba(255,255,255,0.96)',
-            WebkitBackdropFilter:'blur(20px) saturate(160%)',
-            backdropFilter:'blur(20px) saturate(160%)',
-            border:'1px solid rgba(255,255,255,0.6)',
-            borderRadius:'var(--radius-md)',
-            boxShadow:'var(--alzado-reposo)',
-            fontSize:'var(--text-sm)', fontWeight:600, color:'var(--ink-secondary)',
-            fontFamily:'inherit', cursor:'pointer',
-          }}>
-            Ver su trayectoria y formación
-          </button>
-        )}
-
-        {verTrayectoria && (
-          <>
-
+            <button type="button" className={styles.careerToggle}
+              aria-expanded={verTrayectoria} aria-controls="trayectoria-detalles"
+              onClick={() => setVerTrayectoria(v => !v)}>
+              <span>{verTrayectoria ? 'Ocultar experiencia y estudios' : 'Ver experiencia y estudios'}</span>
+              <ChevronDown size={18} aria-hidden="true" />
+            </button>
+            <div id="trayectoria-detalles" className={styles.careerDetails} hidden={!verTrayectoria}>
         {/* ── Experiencia ── */}
         {enrichedH.experience?.length > 0 && (
           <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 160ms forwards`}} className={styles.section}>
-            <h2 className={styles.sectionHeading}>
+            <h3 className={styles.sectionHeading}>
               <Briefcase size={14} /> Trayectoria profesional
-            </h2>
+            </h3>
             <div className={styles.expList}>
               {enrichedH.experience.map((exp, i) => (
                 <div key={i} className={styles.expItem}>
@@ -677,9 +658,9 @@ function HelperProfileInner() {
         {/* ── Formación ── */}
         {enrichedH.education?.length > 0 && (
           <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 240ms forwards`}} className={styles.section}>
-            <h2 className={styles.sectionHeading}>
+            <h3 className={styles.sectionHeading}>
               <BookOpen size={14} /> Formación académica
-            </h2>
+            </h3>
             <div className={styles.expList}>
               {enrichedH.education.map((edu, i) => (
                 <div key={i} className={styles.expItem}>
@@ -698,9 +679,40 @@ function HelperProfileInner() {
             </div>
           </section>
         )}
-          </>
+            </div>
+          </section>
         )}
 
+        {getObraDeHelper(enrichedH.id, 2).length > 0 && (
+          <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0ms forwards`}} className={styles.section}>
+            <h2 className={styles.sectionHeading}>Su obra</h2>
+            {/* ── EL MURO NO ES LA FICHA ──────────────────────────────
+                Se pintaban TODAS las publicaciones: tres pantallas de las
+                4,7 que medía la ficha. Era Comunidad dentro del perfil — el
+                mismo problema que el susurro en Home, en grande.
+                Ahora se ve UNA, prueba de que este profesional trabaja y lo
+                documenta. El resto sigue ahí, a un toque. */}
+            <div style={{display:'flex', flexDirection:'column', gap:'var(--space-10)'}}>
+              {(verTodaLaObra ? publicacionesDe(enrichedH) : publicacionesDe(enrichedH).slice(0, 1))
+                .map(p => <PostCard key={p.id} post={p} />)}
+            </div>
+            {!verTodaLaObra && publicacionesDe(enrichedH).length > 1 && (
+              <button onClick={() => setVerTodaLaObra(true)} style={{
+                width:'100%', marginTop:'var(--space-10)', minHeight:48,
+                background:'rgba(255,255,255,0.96)',
+                WebkitBackdropFilter:'blur(20px) saturate(160%)',
+                backdropFilter:'blur(20px) saturate(160%)',
+                border:'1px solid rgba(255,255,255,0.6)',
+                borderRadius:'var(--radius-md)',
+                boxShadow:'var(--alzado-reposo)',
+                fontSize:'var(--text-sm)', fontWeight:600, color:'var(--ink-secondary)',
+                fontFamily:'inherit', cursor:'pointer',
+              }}>
+                Ver los {publicacionesDe(enrichedH).length} casos de {getFirstName(enrichedH.name)}
+              </button>
+            )}
+          </section>
+        )}
 
         {/* ── Habilidades ── */}
         {enrichedH.skills?.length > 0 && (
