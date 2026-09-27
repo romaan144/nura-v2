@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-27 — Acceso y recuperación con campos y estados claros
+
+Login, acceso por correo y recuperación comparten superficies y controles de contraste definido. Etiquetas persistentes, campos de 16 px, mostrar/ocultar contraseña y mensajes de error/confirmación diferenciados. La demo aclara que no envía SMS. Se conservan controladores, validaciones y destinos; pruebas de estados mediante respuestas locales simuladas, sin modificar credenciales reales.
+
 ## 2026-09-27 — Explorar con filtros visibles y tarjetas comparables
 
 Las categorías pasan a filas compactas en móvil. Un selector muestra todas las especialidades, los filtros indican selección y pueden quitarse juntos. El vacío distingue falta de coincidencias de una categoría sin profesionales. Las tarjetas compartidas usan retratos mayores, tarifa disponible y dos botones independientes para perfil y contacto; altura uniforme, fondo blanco e iniciales si no hay foto. Se conserva la lógica de categorías, orden, búsqueda y contacto.
