@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-27 — Contorno visible en acciones profesionales del perfil
+
+Sergio señala que los botones de acceso profesional e información se pierden sobre la tarjeta blanca. Comparten ahora borde lila explícito, fondo tenue, separación de 10 px y altura adaptable al texto en dos líneas. Se conservan los destinos y manejadores.
+
 ## 2026-09-27 — Corregir el doble desplazamiento al escribir en Safari
 
 La captura real posterior a PR #96 muestra contenido fuera de pantalla. Se reproduce el pan visual completo (la prueba anterior solo cambiaba la propiedad sin mover físicamente la vista). Marco y menú se posicionan respecto al viewport visual, restando su offset del espacio inferior y conservando el scroll interno nativo. Pruebas de regresión y limitación de hardware en `docs/teclado-movil.md`.
