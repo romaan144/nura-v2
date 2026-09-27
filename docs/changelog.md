@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-27 — Trayectoria visible y separada de los casos
+
+A petición de Sergio, experiencia y formación pasan a un bloque propio antes de Su obra, con resumen real y detalles desplegables. Se mejora el selector de citas y la valoración; sus ventanas dejan de quedar bajo la navegación. Datos y reglas conservados. Comprobaciones y coordinación: `docs/ficha-trayectoria.md`.
+
 ## 2026-09-27 — Diseño de detalle · Codex
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.

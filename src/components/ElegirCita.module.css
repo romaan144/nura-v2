@@ -1,0 +1,14 @@
+.picker { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+.label { font-family: var(--font-voice); }
+.range { font-size: 12px; color: var(--ink-secondary); margin: 0 0 10px; }
+.days { padding: 4px 3px 10px !important; scrollbar-width: thin; scrollbar-color: #D8C8EA transparent; }
+.day { transition: transform 180ms var(--motion-curve), box-shadow 180ms ease; }
+.day[aria-selected='true'] { box-shadow: 0 5px 14px -6px #6736A67A; }
+.day:disabled { opacity: .7; }
+.time { transition: box-shadow 180ms ease, transform 180ms var(--motion-curve); }
+.time[aria-pressed='true'] { box-shadow: 0 4px 12px -6px #6736A680; }
+.selectedDate { margin: 0 0 12px; color: var(--brand-deep); font-size: 15px; font-weight: 650; }
+@media (hover: hover) { .day:hover:not(:disabled), .time:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 12px -5px #6736A645; } }
+.day:active:not(:disabled), .time:active:not(:disabled) { transform: scale(.97); }
+
+.selectedDate::first-letter { text-transform: uppercase; }
