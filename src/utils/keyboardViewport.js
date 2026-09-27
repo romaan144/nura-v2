@@ -1,5 +1,5 @@
-// El teclado recorta la ventana visible, no el contenido. No escuchamos
-// scroll del visualViewport: seguir offsetTop contrarrestaba el gesto en iOS.
+// El contenido conserva su altura. Safari puede además desplazar la ventana
+// visual: se ancla su marco a offsetTop, sin modificar el scroll del contenido.
 export function installKeyboardViewport(win = window, doc = document) {
   const viewport = win.visualViewport
   const root = doc.documentElement
@@ -30,9 +30,18 @@ export function installKeyboardViewport(win = window, doc = document) {
       host.scrollTop += box.top - visible.top - 16
     } else if (box.bottom > bottom) host.scrollTop += box.bottom - bottom
   }
+  // offsetTop pertenece al viewport visual, no al scroll de desktopMain.
+  // Actualizar SOLO el marco evita sumar el pan de Safari al scroll interno.
+  const positionWindow = () => {
+    if (win.innerWidth >= 768 || (viewport?.scale || 1) > 1.05) return
+    const top = Math.max(0, viewport?.offsetTop || 0)
+    const height = viewport?.height || win.innerHeight
+    root.style.setProperty('--app-visible-top', `${top}px`)
+    root.style.setProperty('--app-keyboard-inset', `${Math.max(0, win.innerHeight - height - top)}px`)
+  }
   const clear = () => {
     delete root.dataset.keyboardOpen
-    for (const key of ['--app-layout-height', '--app-visible-height', '--app-keyboard-inset']) root.style.removeProperty(key)
+    for (const key of ['--app-layout-height', '--app-visible-height', '--app-visible-top', '--app-keyboard-inset']) root.style.removeProperty(key)
   }
   const update = () => {
     if (win.innerWidth >= 768 || (viewport?.scale || 1) > 1.05) {
@@ -54,7 +63,7 @@ export function installKeyboardViewport(win = window, doc = document) {
     if (!opened) baseline = height
     root.style.setProperty('--app-layout-height', `${baseline}px`)
     root.style.setProperty('--app-visible-height', `${height}px`)
-    root.style.setProperty('--app-keyboard-inset', `${opened ? Math.max(0, win.innerHeight - height) : 0}px`)
+    positionWindow()
     if (opened) root.dataset.keyboardOpen = 'true'
     else {
       delete root.dataset.keyboardOpen
@@ -77,11 +86,13 @@ export function installKeyboardViewport(win = window, doc = document) {
   update()
   doc.addEventListener('focusin', focus)
   viewport?.addEventListener('resize', update)
+  viewport?.addEventListener('scroll', positionWindow)
   win.addEventListener('resize', update)
   return () => {
     win.cancelAnimationFrame(frame)
     doc.removeEventListener('focusin', focus)
     viewport?.removeEventListener('resize', update)
+    viewport?.removeEventListener('scroll', positionWindow)
     win.removeEventListener('resize', update)
     clear()
   }

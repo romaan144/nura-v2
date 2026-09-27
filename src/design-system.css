@@ -164,7 +164,7 @@ span.nura-user-initials { background: #F0E9FA; }
 .appCanvas { height: 100%; min-height: 0; }
 @media (max-width: 767px) {
   .desktopMain {
-    position: fixed; inset: 0 0 auto; width: 100%;
+    position: fixed; inset: var(--app-visible-top, 0px) 0 auto; width: 100%;
     height: var(--app-visible-height, 100dvh);
     overflow-y: auto; overflow-x: hidden; overscroll-behavior-y: contain;
     -webkit-overflow-scrolling: touch; scroll-behavior: auto; overflow-anchor: none;
