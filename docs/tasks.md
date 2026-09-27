@@ -1,5 +1,11 @@
 # Trabajo compartido
 
+## Mis servicios: estados y citas legibles · Codex
+
+**Estado:** implementado y verificado localmente. **Rama:** `codex/servicios-estados-visuales`, desde `75f106d`.
+**Alcance:** MyServices.jsx y CSS. Estado, identidad y fecha/hora diferenciados; filtros con recuentos y acciones con espacio suficiente. Mantener filtros, orden, cancelación, cambio de hora, valoración y destinos. Sin cambios de servidor ni de estado compartido.
+**Pruebas:** build, matching 255/255 y smoke 8×2 + 120×4; lint sin diagnósticos nuevos y no-undef=0. Navegador aislado a 390×844, 320×720 y 1280×900: cinco estados, valorado, reprogramada, textos largos, filtros y recuentos, vacíos, teclado, confirmación de cancelación sin envío, apertura de valoración y agenda. Sin desbordamiento horizontal; botones de al menos 44 px.
+
 ## Seguidos sincronizados · Codex
 
 **Estado:** implementado y verificado localmente. **Rama:** `codex/seguidos-sincronizados`, desde `09bf282`.

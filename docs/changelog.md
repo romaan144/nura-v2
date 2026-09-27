@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-27 — Estados y fechas claros en Mis servicios
+
+Cada cita separa estado, profesional y fecha/hora. Las bandas de estado tienen texto, icono y contraste; los filtros muestran recuentos consistentes y selección accesible. Fotos mayores, notas completas y confirmación de cancelación con espacio propio. Se conservan condiciones, manejadores, orden y destinos.
+
 ## 2026-09-27 — Un solo estado para los profesionales seguidos
 
 Al dejar de seguir, la tarjeta y el contador cambian juntos. `favorites` se mantiene como alias compatible de `following`; los datos antiguos solo se recuperan cuando falta la lista principal. Una lista vacía guardada es una elección, también en demo. Se comparan IDs numéricos/texto sin duplicados y las acciones consecutivas usan el estado más reciente. La autorización funcional de Sergio y las pruebas quedan en `docs/tasks.md`.
