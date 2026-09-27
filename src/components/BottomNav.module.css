@@ -125,3 +125,7 @@
 .tabActive { background: var(--brand-deep); }
 .tabActive svg, .tabActive .label { color: white; }
 .tab:active { transform: scale(.94); opacity: 1; }
+
+@media (min-width: 768px) {
+  :global(body[data-nura-focus]) .nav { display: flex; }
+}

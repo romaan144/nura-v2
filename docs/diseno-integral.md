@@ -61,3 +61,7 @@ La autorización de Sergio para integrar y publicar diseño está dada. No se a�
 ## Evolución · 2026-09-27
 
 Primera entrega integrada en PR #65. La segunda iteración se documenta en `diseno-detalle.md`; el código actual de `src/design-system.css` y los módulos es la referencia vigente.
+
+## Actualización de Inicio · 2026-09-27
+
+La instrucción posterior de Sergio sustituye la presentación de Inicio descrita arriba: una burbuja de respuesta que ocupa el espacio disponible, sin scroll ni historial visible. Campo de escritura y menú debajo en móvil y escritorio. El contenido que no cabe se recorre con botones, sin recortarlo. Ver `docs/busqueda-pantalla.md`. El resto de pantallas conserva su navegación habitual.
