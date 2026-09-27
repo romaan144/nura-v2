@@ -1,3 +1,4 @@
+import ObraTypeIcon from './ObraTypeIcon'
 import { useState } from 'react'
 import { useUser } from '../context/UserContext'
 import { showToast } from './Toast'
@@ -37,7 +38,7 @@ export default function ObraComposer({ onClose }) {
               color: type === k ? 'white' : 'var(--ink)',
               border: '1px solid ' + (type === k ? 'var(--purple)' : 'var(--ink-border)'),
               borderRadius: 'var(--radius-full)', padding: '7px 13px', fontSize: 'var(--text-xs)', fontWeight: 600, cursor: 'pointer' }}>
-            {meta.icon} {meta.label}
+            <ObraTypeIcon type={k} /> {meta.label}
           </button>
         ))}
       </div>

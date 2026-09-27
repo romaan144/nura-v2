@@ -228,7 +228,7 @@ function buildLivingConversation({ helper, analysis, userQuery }) {
     s.infantil ? 'Trabajo muchísimo con peques — la paciencia y el juego son mi método.' :
     s.sola ? 'Sé lo importante que es una compañía constante y de confianza.' :
     `Es exactamente el tipo de ayuda que doy cada semana${helper?.specialty ? ` como ${helper.specialty.toLowerCase()}` : ''}.`
-  const msg1 = `Hola, soy ${firstName} 😊 Acabo de leer tu mensaje con calma${persona ? ` — será un placer ayudar con ${persona}` : ''}. ${especial}`
+  const msg1 = `Hola, soy ${firstName}. Acabo de leer tu mensaje con calma${persona ? ` — será un placer ayudar con ${persona}` : ''}. ${especial}`
   const franja = detectFranja(userQuery)
   const day = nextBusinessDay()
   const msg2 = `Si te parece, podemos empezar con una primera visita sin compromiso para conocernos. ¿Te iría bien el ${day} ${franja}?`

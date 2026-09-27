@@ -1,3 +1,4 @@
+import { Heart } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import { useTitulo } from '../utils/titulo'
 import PageHeader from '../components/PageHeader'
@@ -221,7 +222,7 @@ function HelperProfileInner() {
           "Perfil no encontrado." a secas y el chat dejaba un logo latiendo
           para siempre. Dos pantallas, una situacion, una sola respuesta. */}
       <div className={styles.notFound} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'var(--space-12)'}}>
-        <div style={{fontSize:'var(--text-xl)'}}>🤍</div>
+        <div style={{fontSize:'var(--text-xl)'}}><Heart size={24} aria-hidden="true" /></div>
         <p style={{fontSize:'var(--text-base)',color:'var(--ink)',lineHeight:1.5,margin:0}}>
           {sinRed ? 'No he podido cargar esta ficha.' : 'Esta persona ya no está en Nüra.'}
         </p>
@@ -397,7 +398,7 @@ function HelperProfileInner() {
             }}>
               {Math.floor(enrichedH.reviews * 0.08 + 2)} personas cerca de ti contactaron con {firstName} este mes
               {enrichedH.reviews >= 100 && (
-                <Badge variant="warning" style={{marginLeft:'var(--space-8)'}}>🔥 Muy solicitado</Badge>
+                <Badge variant="warning" style={{marginLeft:'var(--space-8)'}}><Zap size={12} aria-hidden="true" /> Muy solicitado</Badge>
               )}
             </div>
           )}

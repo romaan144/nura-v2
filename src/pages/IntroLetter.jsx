@@ -1,3 +1,4 @@
+import { Heart } from 'lucide-react'
 import { getFirstName } from '../utils/name'
 import { useState, useRef, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
@@ -42,7 +43,7 @@ export default function IntroLetter() {
       {/* Tercera pantalla con la misma situacion: mismo trato que la ficha
           y el chat. Una situacion, una respuesta, en toda la app. */}
       <div className={styles.notFound} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'var(--space-12)'}}>
-        <div style={{fontSize:'var(--text-xl)'}}>🤍</div>
+        <div style={{fontSize:'var(--text-xl)'}}><Heart size={24} aria-hidden="true" /></div>
         <p style={{fontSize:'var(--text-base)',color:'var(--ink)',lineHeight:1.5,margin:0}}>
           Esta persona ya no está en Nüra.
         </p>

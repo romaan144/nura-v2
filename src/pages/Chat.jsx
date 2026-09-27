@@ -1,3 +1,4 @@
+import { Heart } from 'lucide-react'
 import { getFirstName } from '../utils/name'
 import { useTitulo } from '../utils/titulo'
 import { useState, useEffect, useRef } from 'react'
@@ -312,14 +313,14 @@ export default function Chat() {
   // ── La Conversación Viva: aceptar o mover la propuesta del profesional ──
   function answerProposal(msgId, accepted, label) {
     setMessages(prev => prev.map(m => m.id === msgId ? { ...m, proposalAnswered: true } : m))
-    const userText = accepted ? `Sí, ${label} me va bien 👍` : '¿Podemos buscar otro momento?'
+    const userText = accepted ? `Sí, ${label} me va bien` : '¿Podemos buscar otro momento?'
     setMessages(prev => [...prev, { id: Date.now(), from: 'user', text: userText, time: new Date().toISOString() }])
     setTyping(true)
     setTimeout(() => {
       setTyping(false)
       const replyText = accepted
-        ? `¡Perfecto! ${label.charAt(0).toUpperCase() + label.slice(1)} entonces 👌 Te escribo el día antes para confirmar los detalles. Cualquier cosa mientras tanto, aquí estoy.`
-        : '¡Claro, sin problema! Dime qué día y franja te encajan mejor y me adapto 🙂'
+        ? `¡Perfecto! ${label.charAt(0).toUpperCase() + label.slice(1)} entonces. Te escribo el día antes para confirmar los detalles. Cualquier cosa mientras tanto, aquí estoy.`
+        : '¡Claro, sin problema! Dime qué día y franja te encajan mejor y me adapto.'
       setMessages(prev => [...prev, { id: Date.now() + 1, from: 'helper', text: replyText, time: new Date().toISOString() }])
       if (accepted) {
         // La Cita — el acuerdo se convierte en un objeto vivo
@@ -427,7 +428,7 @@ export default function Chat() {
   if (!helper) return (
     <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
       height:'100dvh',background:'var(--paper)',padding:'var(--space-32)',textAlign:'center',gap:'var(--space-12)'}}>
-      <div style={{fontSize:'var(--text-xl)'}}>🤍</div>
+      <div style={{fontSize:'var(--text-xl)'}}><Heart size={24} aria-hidden="true" /></div>
       <p style={{fontSize:'var(--text-base)',color:'var(--ink)',lineHeight:1.5,margin:0}}>
         {sinRed ? 'No he podido abrir esta conversación.' : 'Esta conversación ya no está disponible.'}
       </p>

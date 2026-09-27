@@ -1,3 +1,4 @@
+import { Heart } from 'lucide-react'
 import { Component } from 'react'
 import { esVersionVieja, recargarPorVersionNueva } from '../utils/versionNueva'
 
@@ -26,7 +27,7 @@ export default class ErrorBoundary extends Component {
             width:'56px', height:'56px', borderRadius:'50%',
             background:'var(--purple-10)', display:'flex',
             alignItems:'center', justifyContent:'center', fontSize:'24px'
-          }}>🤍</div>
+          }}><Heart size={24} aria-hidden="true" /></div>
           <div>
             <p style={{fontSize:'var(--text-base)',fontWeight:700,color:'var(--ink, #1a1a1a)',marginBottom:'var(--space-6)'}}>
               Algo fue mal por mi lado

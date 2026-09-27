@@ -1,0 +1,35 @@
+.compact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  height: 116px;
+  padding: 10px 12px;
+  border: 1px solid var(--ink-border);
+  border-radius: 20px;
+  background: white;
+  box-shadow: 0 4px 16px -14px #30214230;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+.featured { background: linear-gradient(110deg, #F5EFFD, #FFFFFF 85%); border-color: #D9CAEC; }
+.profile { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; height: 100%; padding: 0; border: 0; background: none; text-align: left; cursor: pointer; color: var(--ink-primary); font-family: inherit; border-radius: 10px; }
+.avatar { width: 48px; height: 48px; border-radius: 16px; object-fit: cover; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; font-weight: 600; }
+.info { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.name { white-space: nowrap; overflow: hidden; display: flex; align-items: center; gap: 5px; font-size: 15px; font-weight: 700; line-height: 20px; color: var(--brand-deep); }
+.name svg { color: var(--purple-ink); flex-shrink: 0; }
+.specialty { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; line-height: 17px; color: var(--ink-secondary); }
+.meta { display: flex; align-items: center; gap: 10px; min-height: 17px; font-size: 12px; line-height: 17px; color: var(--ink-secondary); }
+.meta > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.meta .rating { display: inline-flex; align-items: center; gap: 3px; flex-shrink: 0; color: var(--brand-deep); font-weight: 600; }
+.rating svg { color: var(--purple-ink); }
+.open { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; line-height: 15px; font-weight: 600; color: var(--purple-ink); }
+.contact { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 15px; border: 1px solid var(--purple-20); color: var(--purple-ink); background: var(--purple-05); cursor: pointer; transition: background 180ms ease, transform 180ms ease; }
+.featured .contact { background: var(--grad-main); color: white; border-color: transparent; }
+.contact:active { transform: scale(.96); }
+@media (hover: hover) {
+  .compact:hover { border-color: #B99BDC; box-shadow: 0 6px 20px -15px #7942D740; }
+  .profile:hover .open { text-decoration: underline; text-underline-offset: 3px; }
+  .contact:hover { background: var(--purple-10); }
+  .featured .contact:hover { background: var(--purple-ink); }
+}
+@media (max-width: 370px) { .compact { padding: 10px; gap: 6px; } .profile { gap: 9px; } .avatar { width: 42px; height: 42px; border-radius: 14px; } }

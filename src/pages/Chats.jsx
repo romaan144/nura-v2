@@ -3,7 +3,7 @@ import { useState } from 'react'
 import PageHeader from '../components/PageHeader'
 import { EmptyState } from '../components/ui'
 import { useNavigate } from 'react-router-dom'
-import { Search, MessageCircle } from 'lucide-react'
+import { Search, MessageCircle, Calendar } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import { HELPERS_DEMO as HELPERS } from '../data/helpers'
 import styles from './Chats.module.css'
@@ -253,7 +253,7 @@ export default function Chats() {
                   return (
                     <div style={{display:'flex', alignItems:'center', gap:'5px', margin:'1px 0 var(--space-2)', flexWrap:'wrap'}}>
                       {lp && <span style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', fontWeight:500}}>Te ayuda con {lp.label}</span>}
-                      {citaViva && <span style={{fontSize:'var(--text-xs)', color:'var(--purple-ink)', fontWeight:600}}>📅 {ci.label}</span>}
+                      {citaViva && <span style={{fontSize:'var(--text-xs)', color:'var(--purple-ink)', fontWeight:600}}><Calendar size={12} aria-hidden="true" style={{ verticalAlign: 'middle', marginRight: 4 }} />{ci.label}</span>}
                       {ok && <Badge variant="success" size="xs">✓ funcionó</Badge>}
                     </div>
                   )

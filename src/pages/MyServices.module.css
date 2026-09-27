@@ -155,3 +155,21 @@
 
 .title { font-family: var(--font-voice); color: var(--brand-deep); font-size: clamp(28px, 3.4vw, 38px); letter-spacing: -1.2px; }
 .card { border-radius: 22px; background: linear-gradient(120deg, white 70%, #F8F4FD); box-shadow: 0 5px 20px -16px #30214235; }
+
+/* El estado precede a los detalles sin comprimir el nombre. */
+.statusRow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 16px 0; }
+.statusBadge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; font-size: 11px; }
+.card { cursor: default; }
+.card:active { opacity: 1; transform: none; }
+.cardMain { width: 100%; text-align: left; font-family: inherit; color: inherit; background: none; border: 0; cursor: pointer; align-items: center; padding: 16px; }
+.helperName { font-size: 15px; line-height: 1.4; }
+.specialty { line-height: 1.5; }
+.meta { color: var(--ink-secondary); margin-top: 8px; gap: 7px; line-height: 1.5; }
+.meta svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--purple-ink); }
+.note { margin-top: 6px; line-height: 1.5; }
+.profileArrow { flex-shrink: 0; color: var(--purple-ink); }
+.postActions { padding: 0 14px 12px; gap: 8px; }
+.rateBtn { border: 1px solid var(--purple-10); border-radius: 12px; font-size: 12px; }
+.actionBtn, .actionBtnSecondary { border-radius: 12px; white-space: normal; }
+.actionBtnSecondary { color: var(--ink-secondary); border: 1px solid var(--ink-border); background: white; }
+.ratedRow { justify-content: flex-start; padding: 12px 16px; background: var(--green-light); }

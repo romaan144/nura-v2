@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { CAT_HUMANA } from '../data/categorias'
 import { hayEnLaCiudad } from '../data/ciudades'
-import { Compass, Send, Mic, MicOff, RotateCcw, UserRound, ArrowUpRight, Heart, Home as House, Sparkles } from 'lucide-react'
+import { Compass, Send, Mic, MicOff, RotateCcw, UserRound, ArrowUpRight, Heart, Home as House, Sparkles, MapPin, Wallet, Star, Monitor, Users, SlidersHorizontal } from 'lucide-react'
 import { analyzeNeed, matchHelpers, getPriceContext } from '../utils/matching'
 import { barrioEnTexto } from '../data/barrios'
 import { getFirstName } from '../utils/name'
@@ -96,31 +96,26 @@ function buildWhy(helper, analysis) {
   return parts.slice(0, 2).join(' y ') || 'encaja con lo que necesitas'
 }
 
+const REFINE_ICONS = {
+  'Más cerca': MapPin, 'Más barato': Wallet, 'Mejor valorado': Star,
+  'Online': Monitor, 'Ver todos': Users, 'Crear cuenta': UserRound,
+  'No es lo que buscaba': RotateCcw, 'Era otra cosa': RotateCcw,
+}
+function RefinementIcon({ label }) {
+  const Icon = REFINE_ICONS[label] || SlidersHorizontal
+  return <Icon size={17} aria-hidden="true" />
+}
+
 function ResultsBlock({ results }) {
-  const navigate = useNavigate()
   if (!results?.length) return null
-  const top = results[0]
-  const alts = results.slice(1, 4)
   return (
-    <div>
-      <HelperCardTall helper={top} />
-      <div className="hilo" style={{margin:'var(--space-12) var(--space-6) var(--space-2)'}} />
-      {alts.length > 0 && (
-        <>
-          <div style={{fontSize:'var(--text-xs)', color:'var(--ink-secondary)', margin:'var(--space-14) 0 var(--space-8)', lineHeight:1.5}}>
-            {alts.length === 1 ? 'También encajaría:' : 'Si prefieres comparar, también encajarían:'}
-          </div>
-          {/* SISTEMA, NO PANTALLA: la rejilla es SIEMPRE de tres. Una tarjeta
-              pequeña mide lo mismo tenga tres hermanas o ninguna. Con
-              `repeat(alts.length)` la unica alternativa se estiraba a 358px
-              — un avatar de 62px flotando en una tarjeta del triple de
-              ancho — y le pasaba a TODA la categoria de logopedia, que solo
-              tiene dos profesionales. */}
-          <div style={{display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:'var(--space-8)', alignItems:'start'}}>
-            {alts.map((a, i) => <HelperCardTall key={a.id || i} helper={a} small />)}
-          </div>
-        </>
-      )}
+    <div className={styles.searchResults}>
+      {results.slice(0, 4).map((helper, i) => (
+        <div key={helper.id || i}>
+          {i === 1 && <p className={styles.alternativesLabel}>Otras opciones</p>}
+          <HelperCardTall helper={helper} compact featured={i === 0} />
+        </div>
+      ))}
     </div>
   )
 }
@@ -154,8 +149,8 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
     return [
       saludo,
       citaProxima.personaLabel
-        ? `El ${citaProxima.label}, **${hf}** está con ${citaProxima.personaLabel}. Todo listo 💜`
-        : `El ${citaProxima.label} tienes tu primera cita con **${hf}**. Todo listo 💜`
+        ? `El ${citaProxima.label}, **${hf}** está con ${citaProxima.personaLabel}. Todo listo.`
+        : `El ${citaProxima.label} tienes tu primera cita con **${hf}**. Todo listo.`
     ]
   }
 
@@ -562,7 +557,7 @@ export default function Home() {
           } else {
             lineas.push('Crea tu acceso con correo y cada semana te diré cuántas personas buscan lo que haces y cuántas veces sale tu ficha.')
           }
-          lineas.push(`💡 ${consejos[Math.floor(Math.random() * consejos.length)]}`)
+          lineas.push(`${consejos[Math.floor(Math.random() * consejos.length)]}`)
           try { localStorage.setItem('nura_last_pulso', String(Date.now())) } catch { /* sin memoria */ }
           setMessages(prev => prev.length > 1 ? prev : [...prev, {
             id: Date.now() + 77, from: 'nura', isPulso: true, lines: lineas,
@@ -794,7 +789,7 @@ export default function Home() {
           setMessages(prev => [...prev, {
             id: Date.now(), from: 'nura',
             lines: [
-              `Me alegra mucho. **${helperName}** queda anotado como una conexión que funcionó. 🤍`,
+              `Me alegra mucho. **${helperName}** queda anotado como una conexión que funcionó.`,
               `Si me cuentas cómo fue, ayudarás a otros a elegir bien.`
             ]
           }])
@@ -1476,7 +1471,7 @@ export default function Home() {
           const activeChips = lastMsg?.refineChips
           if (activeChips) return (
             <div className={styles.refineRow}>
-              <div className={styles.refineLabel}>Ajustar esta búsqueda</div>
+              <div className={styles.refineLabel}><SlidersHorizontal size={15} aria-hidden="true" /> Ajustar esta búsqueda</div>
               {activeChips.map((chip, i) => (
                 <button key={i} className={styles.refineChip}
                   onClick={() => {
@@ -1551,7 +1546,7 @@ export default function Home() {
                     }
                     handleSend(chip)
                   }}>
-                  {chip === 'Más cerca' ? '📍' : chip === 'Más barato' ? '💰' : chip === 'Mejor valorado' ? '★' : chip === 'Online' ? '💻' : chip === 'No es lo que buscaba' ? '↺' : chip === 'Ver todos' ? '👥' : '✦'} {chip}
+                  <span className={styles.refineIcon}><RefinementIcon label={chip} /></span><span>{chip}</span>
                 </button>
               ))}
             </div>
