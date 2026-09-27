@@ -3,24 +3,16 @@ import { useNavigate } from 'react-router-dom'
 import { UserCheck, UserPlus, Star, MapPin, ArrowUpRight } from 'lucide-react'
 import { HELPERS_DEMO as HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
-import { DEMO_MODE } from '../config'
 import PageHeader from '../components/PageHeader'
 import styles from './Siguiendo.module.css'
 import { fmtNota } from '../utils/formato'
 
 export default function Siguiendo() {
   const navigate = useNavigate()
-  const { favorites, follow, unfollow, isFollowing, helpersCache } = useUser()
+  const { follow, unfollow, isFollowing, helpersCache } = useUser()
   const allHelpers = [...HELPERS.filter(Boolean), ...Object.values(helpersCache || {}).filter(h => h?.id && !HELPERS.filter(Boolean).find(l => l && String(l.id) === String(h.id)))]
 
-  // Demo favorites when user has none — shows what a real account looks like
-  const DEMO_FOLLOWING_IDS = [1, 5] // Carlos (logopeda) + Elena (cuidadora)
-  // Igual que en Chats: sin puerta, quien no sigue a nadie veia que ya seguia
-  // a dos personas. Y el estado vacio real ("Aún no sigues a nadie") no se
-  // llegaba a ver NUNCA, con su texto roto incluido.
-  const effectiveFavorites = favorites.length > 0 ? favorites : (DEMO_MODE ? DEMO_FOLLOWING_IDS : [])
-
-  const saved = allHelpers.filter(h => h && effectiveFavorites.some(fid => String(fid) === String(h.id)))
+  const saved = allHelpers.filter(h => h && isFollowing(h.id))
 
   return (
     <div className={styles.page}>

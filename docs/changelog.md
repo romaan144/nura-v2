@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-27 — Un solo estado para los profesionales seguidos
+
+Al dejar de seguir, la tarjeta y el contador cambian juntos. `favorites` se mantiene como alias compatible de `following`; los datos antiguos solo se recuperan cuando falta la lista principal. Una lista vacía guardada es una elección, también en demo. Se comparan IDs numéricos/texto sin duplicados y las acciones consecutivas usan el estado más reciente. La autorización funcional de Sergio y las pruebas quedan en `docs/tasks.md`.
+
 ## 2026-09-27 — Fichas de Siguiendo con retratos y controles claros
 
 Se amplían fotos y se separan valoración/zona y tarifa. Abrir perfil y seguir/dejar de seguir pasan a botones nativos independientes, con etiqueta y estado accesible. Se documenta aparte una desincronización previa entre las dos listas internas de seguimiento, sin cambiar su lógica en esta entrega visual.

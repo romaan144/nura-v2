@@ -1,6 +1,9 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useRef } from 'react'
 import { SEED_COMMENTS, SEED_REACCIONES } from '../data/obraPosts'
 import { cancelarCitaServidor } from '../utils/escrituras'
+
+import { DEMO_MODE } from '../config'
+import { initialFollowing, hasFollowed, addFollowed, removeFollowed } from '../utils/following'
 
 const UserContext = createContext(null)
 
@@ -20,14 +23,14 @@ export function UserProvider({ children }) {
   const [utiles, setUtiles] = useState(() => load('nura_utiles', []))
   const [misObras, setMisObras] = useState(() => load('nura_obra_mias', []))
   const [helpersCache, setHelpersCache] = useState({})
-  const [following, setFollowing] = useState(() => {
-    const stored = load('nura_following', null)
-    // Demo: pre-seed with Carlos (1) and Elena (5) if no real data
-    if (stored !== null) return stored
-    return [1, 5]  // Carlos logopeda + Elena cuidadora
-  })
+  const [following, setFollowing] = useState(() => initialFollowing(
+    load('nura_following', null), load('nura_favorites', null), DEMO_MODE,
+  ))
+  // La referencia permite encadenar acciones antes del siguiente render.
+  const followingRef = useRef(following)
   const [notifications, setNotifications] = useState(() => load('nura_notifications', []))
-  const [favorites, setFavorites] = useState(() => load('nura_favorites', []))
+  // Compatibilidad con consumidores antiguos: una sola lista, nunca dos estados.
+  const favorites = following
   const [nuraChatMessages, setNuraChatMessages] = useState([])  // always starts fresh
   const [chatHistories, setChatHistories] = useState(() => load('nura_chat_histories', {}))
   const [services, setServices] = useState(() => load('nura_services', []))
@@ -45,12 +48,8 @@ export function UserProvider({ children }) {
     if (savedHistory) setSearchHistory(JSON.parse(savedHistory))
     const savedContacted = localStorage.getItem('nura_contacted')
     if (savedContacted) setContactedHelpers(JSON.parse(savedContacted))
-    const savedFollowing = localStorage.getItem('nura_following')
-    if (savedFollowing) setFollowing(JSON.parse(savedFollowing))
     const savedNotifs = localStorage.getItem('nura_notifications')
     if (savedNotifs) setNotifications(JSON.parse(savedNotifs))
-    const savedFavs = localStorage.getItem('nura_following')
-    if (savedFavs) setFavorites(JSON.parse(savedFavs))
     } catch (e) { console.warn('localStorage unavailable:', e) }
   }, [])
 
@@ -59,8 +58,11 @@ export function UserProvider({ children }) {
   useEffect(() => { save('nura_chats', chats) }, [chats])
   useEffect(() => { save('nura_ratings', ratings) }, [ratings])
   useEffect(() => { save('nura_search_history', searchHistory) }, [searchHistory])
-  useEffect(() => { save('nura_following', following) }, [following])
-  useEffect(() => { save('nura_favorites', favorites) }, [favorites])
+  useEffect(() => {
+    save('nura_following', following)
+    save('nura_favorites', following)
+  }, [following])
+  useEffect(() => { save('nura_notifications', notifications) }, [notifications])
   useEffect(() => { try { window.__nuraMisObras = misObras } catch { /* noop */ } }, [misObras])
   // nuraChatMessages: intentionally NOT persisted — Nüra always starts fresh
   useEffect(() => { save('nura_chat_histories', chatHistories) }, [chatHistories])
@@ -144,10 +146,11 @@ export function UserProvider({ children }) {
   function logout() {
     setUser(null)
     setChats([]); setRatings([]); setSearchHistory([])
-    setContactedHelpers([]); setFollowing([]); setNotifications([])
+    setContactedHelpers([]); updateFollowing([]); setNotifications([])
     save('nura_user', null)
     save('nura_chats', null)
-    save('nura_following', null)
+    save('nura_following', [])
+    save('nura_favorites', [])
   }
 
   function saveChatHistory(helperId, messages) {
@@ -222,35 +225,34 @@ export function UserProvider({ children }) {
     setHelpersCache(prev => ({ ...prev, ...map }))
   }
 
-  function follow(id) {
-    if ((following||[]).includes(id)) return
-    const updated = [...following, id]
+  function updateFollowing(updated) {
+    followingRef.current = updated
     setFollowing(updated)
-    save('nura_following', updated)
-    // Add notification
+  }
+
+  function follow(id) {
+    const previous = followingRef.current
+    const updated = addFollowed(previous, id)
+    if (updated === previous) return
+    updateFollowing(updated)
     const notif = { id: Date.now(), type: 'followed', profileId: id, date: new Date().toISOString(), read: false }
-    const updatedNotifs = [notif, ...notifications].slice(0, 50)
-    setNotifications(updatedNotifs)
-    save('nura_notifications', updatedNotifs)
+    setNotifications(prev => [notif, ...prev].slice(0, 50))
   }
 
   function unfollow(id) {
-    const updated = (following||[]).filter(f => f !== id)
-    setFollowing(updated)
-    save('nura_following', updated)
+    updateFollowing(removeFollowed(followingRef.current, id))
   }
 
   function isFollowing(id) {
-    return (following||[]).includes(id)
+    return hasFollowed(following, id)
   }
 
   function toggleFollow(helperId) {
-    const isFav = favorites.includes(helperId)
-    const updated = isFav ? (favorites||[]).filter(f => f !== helperId) : [...favorites, helperId]
-    setFavorites(updated)
-    return !isFav
+    const wasFollowing = hasFollowed(followingRef.current, helperId)
+    if (wasFollowing) unfollow(helperId)
+    else follow(helperId)
+    return !wasFollowing
   }
-  // isFollowing already defined above from the following system
 
   function markNotifsRead() {
     const updated = (notifications||[]).map(n => ({ ...n, read: true }))
