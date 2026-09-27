@@ -1,5 +1,12 @@
 # Trabajo compartido
 
+## Explorar: filtros y tarjetas · Codex
+
+**Estado:** implementado y verificado localmente. **Rama:** `codex/explorar-filtros-tarjetas`, desde `d5b7559`.
+**Alcance:** Explore JSX/CSS y presentación compartida de HelperCard. Categorías más compactas, filtros claros, fotos con mayor presencia y acciones accesibles. Conservar búsqueda, filtros, paginación, orden, contacto, datos y destinos; comprobar también Feed y vista previa de perfil que usan HelperCard.
+**Contrato para Claude:** el selector nativo reemplaza solo la fila de especialidades; mantiene las mismas opciones y condiciones. Quitar filtros restablece los estados existentes. HelperCard mantiene handleTap/handleContact, contexto de navegación y comprobación de sesión; perfil y contacto son botones hermanos. La vista previa de Profile sigue dentro de inert. Explore muestra también la tarifa existente.
+**Pruebas:** build, matching 255/255 y smoke 8×2 + 120×4; lint sin nuevos diagnósticos y no-undef=0. Navegador aislado a 390×844, 320×720 y 1280×900: categorías de 112 px en móvil, tarjetas de 186–187 px uniformes, textos largos, datos opcionales ausentes y sin desbordamiento horizontal. Fixture externa de 34 profesionales: carga de más resultados y tres filtros combinados; vacío por filtros y recuperación; vacío real sin demo. Apertura de perfil con Enter, contacto hacia chat/sin sesión hacia login, búsqueda hacia Inicio. Feed y vista previa profesional sin desbordamiento; la vista previa continúa inert. Ningún dato ni envío de prueba en producción.
+
 ## Valoración clara y cómoda · Codex
 
 **Estado:** implementado y verificado localmente. **Rama:** `codex/valoracion-diseno-claro`, desde `deb0547`.

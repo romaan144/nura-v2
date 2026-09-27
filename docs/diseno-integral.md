@@ -116,3 +116,12 @@ Preguntas en bloques independientes, Sí/No de 48 px, cualidades en dos columnas
 Cabecera y pie permanecen visibles; el cuerpo tiene scroll propio. Se extrae el comportamiento visual de CitaModal a `useModalSheet`, incluyendo el checkbox en el recorrido de foco. No se cambian estados de negocio, payload, analítica, callbacks, requisitos de envío ni tiempo de cierre. Los avatares sin fotografía usan iniciales.
 
 Verificado a 390×844, 320×420 y 1280×900, con nombre largo, máximo de cualidades, selección/deselección de estrellas, consentimiento, contador, envío local, Escape y foco contenido. Con teclado simulado de 484 px, el comentario termina 12 px sobre el pie; se conserva con pan de 90 px. Regresión de CitaModal: día/hora, nota, foco y cierre correctos. Pendiente comprobación física de iPhone. Build, matching 255/255 y smoke pasan; lint sin nuevos diagnósticos, no-undef=0. Sin datos ni envíos de prueba en producción.
+
+
+## Explorar: filtros y tarjetas · 2026-09-27
+
+Categorías en filas de 112 px en móvil, con icono propio y acceso de flecha; dos columnas a partir de 1000 px. Cabecera contextual al entrar en una categoría. Especialidades en selector nativo etiquetado, preferencias de 44 px con aria-pressed y botón Quitar filtros. Recuento anunciado; el vacío filtrado permite recuperar la categoría completa. Los algoritmos y opciones son los existentes.
+
+HelperCard pasa de estilos inline a su módulo CSS consolidado. Retrato de 80×104 px (68×100 en móvil estrecho), nombre completo en el dato y nombre accesible, especialidad de hasta dos líneas, valoración/zona y tarifa. Se reservan los mismos espacios para evitar tamaños dispares: las tarjetas probadas miden 186–187 px. Textos largos se abrevian visualmente; el perfil conserva el detalle. Fotografía conservada e inicial si falta, sin emojis añadidos. El botón de perfil y Escribir son hermanos nativos y conservan los manejadores. Feed y la vista previa inerte del profesional reutilizan el componente.
+
+Navegador aislado a 390×844, 320×720 y 1280×900: categorías, selección de especialidad, tres preferencias combinadas, quitar filtros, vacío y catálogo sin demo. Fixture externa de 34 profesionales para paginación, texto largo, tarifa larga y ausencia de datos. Enter abre el perfil; Escribir abre chat o login según sesión. Feed y Profile comprobados sin desbordamiento. Build, matching 255/255 y smoke pasan; lint sin diagnósticos nuevos, no-undef=0. Sin escrituras ni datos de prueba en producción.
