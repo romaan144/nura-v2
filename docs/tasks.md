@@ -1,5 +1,12 @@
 # Trabajo compartido
 
+## Tarjetas neutras y fotos protagonistas · Codex
+
+**Estado:** implementado y verificado. **Rama:** `codex/tarjetas-foto-protagonista`, desde `2aaea8c`.
+**Alcance:** CSS de HelperCardTall y documentación. Sergio pide que la tarjeta principal use la superficie neutra de las secundarias, con fotos mayores en todas. Conservar altura compacta, alternativas juntas y funciones.
+**Entrega:** principal con fondo blanco, borde y contacto como las secundarias. Retrato principal de 76 × 88 px (antes 48 × 48); secundarios de 60 × 68 (antes 38 × 38), adaptados a pantallas pequeñas y teclado. Sin aumentar alturas de tarjeta.
+**Pruebas:** build, matching 255/255, smoke 8 × 2 pantallas y 120 × 4 tarjetas; paginación 200 casos. Lint sin nuevos diagnósticos y no-undef=0. Navegador a 390 × 844, 320 × 568, 390 × 380 y 1280 × 900: fotos mayores, alternativas iguales, sin scroll ni errores de consola.
+
 ## Más cerca con ubicación automática · Codex
 
 **Estado:** implementado y verificado; ver `docs/ubicacion-automatica.md`. **Rama:** `codex/mas-cerca-ubicacion`, desde `d806436`.

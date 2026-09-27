@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-27 — Tarjetas neutras y fotos protagonistas
+
+Sergio prefiere el fondo de las tarjetas secundarias también en la principal: se retiran su degradado y el del botón de contacto. Fotos mayores, con formato de retrato, conservando alturas compactas, alternativas juntas y adaptación al teclado. Solo CSS; funciones intactas.
+
 ## 2026-09-27 — Más cerca con ubicación automática
 
 Sergio pide que Más cerca use la ubicación del dispositivo sin preguntar el barrio. Solicitud tras pulsar, cálculo local y distancias aproximadas a las zonas conocidas; errores y cancelación sin bloquear la escritura. Encargo funcional explícito a Codex, sin tocar matching ni Supabase. Ver `docs/ubicacion-automatica.md`.
