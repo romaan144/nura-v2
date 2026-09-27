@@ -1,5 +1,11 @@
 # Trabajo compartido
 
+## Siguiendo: fotos y acciones claras · Codex
+
+**Estado:** diseño implementado y verificado. **Rama:** `codex/siguiendo-fotos`, desde `235598a`.
+**Alcance:** Siguiendo.jsx y CSS. Retratos mayores, valoración/zona/tarifa legibles y controles separados para abrir el perfil y seguir/dejar de seguir. Mantener favoritos, demo, datos y destinos.
+**Incidencia previa detectada (pendiente):** Siguiendo filtra por `favorites`, pero los controles `follow/unfollow` actualizan `following`. Al dejar de seguir cambia el botón, pero la tarjeta permanece durante la sesión. Comprobado localmente; ambos caminos ya estaban en main. Esta entrega no modifica UserContext ni migra estado. Revisar sincronización y comportamiento demo en una tarea funcional separada.
+
 ## Lista de conversaciones más legible · Codex
 
 **Estado:** implementado y verificado. **Rama:** `codex/lista-conversaciones`, desde `2d4d6de`.

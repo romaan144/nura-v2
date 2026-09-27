@@ -138,3 +138,28 @@
 
 /* Acciones secundarias con contorno compartido. */
 .emptyBtnSecondary { border: 1px solid var(--action-border); background: var(--action-surface); color: var(--purple-ink); min-height: 44px; line-height: 1.4; box-shadow: none; white-space: normal; }
+
+/* Fotos protagonistas; abrir el perfil y seguir son controles independientes. */
+.card { display: flex; flex-direction: column; align-items: stretch; padding: 0; gap: 0; height: 100%; background: white; cursor: default; }
+.card:active { transform: none; opacity: 1; }
+.profileButton { display: grid; grid-template-columns: 80px minmax(0, 1fr); gap: 16px; align-items: start; width: 100%; flex: 1; padding: 18px; border: none; border-radius: 22px 22px 0 0; background: transparent; font-family: inherit; text-align: left; cursor: pointer; }
+.avatar { width: 80px; height: 104px; border-radius: 18px; object-fit: cover; background: var(--action-surface); }
+.details { display: flex; flex-direction: column; min-width: 0; }
+.name { font-family: var(--font-voice); font-size: 15px; line-height: 1.35; min-height: 2.7em; margin-bottom: 4px; }
+.spec { font-size: 13px; line-height: 1.4; min-height: 2.8em; font-weight: 500; margin-bottom: 8px; color: var(--ink-secondary); }
+.meta { flex-wrap: wrap; gap: 7px 12px; line-height: 1.4; color: var(--ink-secondary); }
+.rating, .zone { display: inline-flex; align-items: center; gap: 4px; min-width: 0; overflow-wrap: anywhere; }
+.meta svg { flex-shrink: 0; }
+.rating { color: var(--purple-ink); font-weight: 650; }
+.profileLink { display: inline-flex; align-items: center; gap: 4px; margin-top: 12px; color: var(--purple-ink); font-size: 12px; font-weight: 650; }
+.cardFooter { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px; border-top: 1px solid var(--ink-border); }
+.price { font-size: 14px; font-weight: 650; color: var(--ink); overflow-wrap: anywhere; min-width: 0; }
+.followBtn { width: auto; min-width: 108px; padding: 10px 12px; gap: 6px; border-radius: var(--radius-full); border: 1px solid var(--action-border); background: var(--action-surface); color: var(--purple-ink); font-family: inherit; font-size: 12px; font-weight: 650; line-height: 1.4; }
+.profileButton:focus-visible { outline-offset: -4px; }
+@media (hover: hover) { .profileButton:hover { background: var(--action-surface); } }
+@media (max-width: 359px) {
+  .content { padding-left: 16px; padding-right: 16px; }
+  .profileButton { grid-template-columns: 68px minmax(0, 1fr); gap: 12px; padding: 14px; }
+  .avatar { width: 68px; height: 92px; border-radius: 16px; }
+  .cardFooter { padding: 10px 14px; }
+}

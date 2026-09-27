@@ -83,3 +83,9 @@ Comprobado en 320×720, 320×568, 390×844 y 1280×900. Antes: especialidad invi
 Fotos de 64×72 px (56×64 en móviles menores de 360), nombre y vista previa de hasta dos líneas. Fecha y contador sin leer tienen espacio propio y ya no estrechan la vista previa. Tarjeta sin leer con borde lila y fondo tenue; contador con nombre accesible. Introducción más breve para mostrar antes la lista. Altura regular de 132 px en móvil y 116 en escritorio para los ejemplos sin datos adicionales; las etiquetas de contexto pueden ampliar la tarjeta. Se conservan filtro, orden, markRead, historiales, datos y destino.
 
 Verificación: 390×844, 320×720 y 1280×900, sin desbordamientos; búsqueda por nombre, búsqueda sin coincidencias, apertura de Carlos y retorno con historial de prueba; lista vacía sin demo. Sin envíos reales. Build, matching 255/255, smoke 8×2 + 120×4; lint sin diagnósticos nuevos y no-undef=0.
+
+## Siguiendo · 2026-09-27
+
+Retratos de 80×104 px, 68×92 en móviles estrechos, y bloques separados para nombre, especialidad, valoración/zona y tarifa. El perfil se abre desde un botón nativo con indicación Ver perfil; seguir/dejar de seguir es un botón independiente de 44 px con etiqueta y aria-pressed. Evita controles interactivos anidados y que Enter/Espacio en seguimiento abran el perfil. Fondo blanco, borde definido, una columna móvil y dos en escritorio. Se conservan datos y handlers.
+
+Verificado en 390×844, 320×720 y 1280×900: tarjetas sin desbordamiento, alturas iguales en los ejemplos, acceso al perfil con Enter, cambio de estado de seguimiento sin navegación, y vacío sin demo. La desincronización preexistente entre favorites/following está anotada en tasks; no se presenta como corregida. Build, matching 255/255, smoke 8×2 + 120×4; lint sin diagnósticos nuevos y no-undef=0. Pruebas de interacción solo locales.
