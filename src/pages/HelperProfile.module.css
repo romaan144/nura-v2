@@ -568,3 +568,15 @@
 .careerDetails .expCompany { flex-wrap: wrap; }
 .careerDetails .expItem:last-child .expContent { padding-bottom: 0; }
 @media (max-width: 380px) { .careerHeader { gap: 10px; } .careerIcon { width: 38px; height: 38px; border-radius: 13px; } .careerTitle { font-size: 18px; } }
+
+/* Su obra deja el ancho a cada publicación, sin otra tarjeta alrededor. */
+.section.workSection { padding: 12px 0 0; background: transparent; border: 0; border-radius: 0; }
+.workHeading { padding: 0 4px 16px; }
+.workHeading .sectionHeading { margin-bottom: 6px; }
+.workHeading p { margin: 0; color: var(--ink-secondary); font-size: 13px; line-height: 1.6; }
+.workList { display: flex; flex-direction: column; gap: 16px; }
+.workMore { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 52px; margin-top: 14px; padding: 14px 16px; border: 1px solid #CBB8DF; border-radius: 15px; background: #F5EFFB; color: var(--purple-ink); font-family: inherit; font-size: 13px; line-height: 1.5; font-weight: 650; text-align: left; cursor: pointer; }
+.workMore svg { flex-shrink: 0; transition: transform .18s; }
+.workMore[aria-expanded='true'] svg { transform: rotate(180deg); }
+.workMore:focus-visible { outline: 3px solid var(--purple); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .workMore svg { transition: none; } }

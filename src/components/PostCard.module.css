@@ -1,0 +1,51 @@
+.card { min-width: 0; overflow: hidden; background: white; border: 1px solid #DFD7E9; border-radius: 22px; box-shadow: 0 6px 22px -19px #30214250; }
+.author { display: flex; align-items: center; gap: 11px; width: 100%; min-width: 0; padding: 18px 18px 16px; border: 0; border-bottom: 1px solid #EEE8F3; background: transparent; text-align: left; font-family: inherit; }
+button.author { cursor: pointer; }
+.avatar, .initial { flex-shrink: 0; width: 44px; height: 48px; border-radius: 13px; object-fit: cover; }
+.initial { display: grid; place-items: center; background: #EEE6F7; color: var(--purple-ink); font-family: var(--font-voice); font-size: 20px; font-weight: 700; }
+.authorInfo { flex: 1; min-width: 0; }
+.authorName { display: flex; align-items: center; gap: 5px; color: var(--ink-primary); font-size: 13px; font-weight: 700; line-height: 1.5; overflow-wrap: anywhere; }
+.authorName svg { flex-shrink: 0; color: #27715A; }
+.authorRole, .date { display: block; margin-top: 2px; color: var(--ink-secondary); font-size: 11px; line-height: 1.5; overflow-wrap: anywhere; }
+.date { color: #786D83; }
+.authorArrow { flex-shrink: 0; color: var(--purple-ink); }
+.content { padding: 18px; }
+.type { display: inline-flex; align-items: center; gap: 3px; margin-bottom: 10px; color: var(--purple-ink); font-size: 11px; line-height: 1.5; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
+.title { margin: 0 0 12px; color: var(--brand-deep); font-family: var(--font-voice); font-size: 19px; font-weight: 750; line-height: 1.4; letter-spacing: -.5px; overflow-wrap: anywhere; }
+.body { margin: 0; color: var(--ink-secondary); font-size: 14px; line-height: 1.75; white-space: pre-line; overflow-wrap: anywhere; }
+.result { margin-top: 18px; padding: 15px 16px; border: 1px solid #DED2EA; border-left: 3px solid #B49ACD; border-radius: 14px; background: #F7F3FB; }
+.resultLabel { display: block; margin-bottom: 6px; color: var(--purple-ink); font-size: 11px; font-weight: 700; line-height: 1.5; letter-spacing: .5px; text-transform: uppercase; }
+.result p { margin: 0; color: var(--ink-primary); font-size: 14px; font-weight: 500; line-height: 1.65; overflow-wrap: anywhere; }
+.confirmed { display: flex; align-items: center; gap: 7px; padding: 10px 12px; margin: 14px 0 0; border: 1px solid #C8DFD3; border-radius: 12px; background: #EEF7F2; color: #26644E; font-size: 12px; line-height: 1.5; font-weight: 650; }
+.confirmed svg { flex-shrink: 0; }
+.mention { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; width: 100%; margin-top: 14px; padding: 11px 12px; border: 1px solid #DDD1E7; border-radius: 12px; background: #FAF8FC; text-align: left; color: var(--ink-secondary); font-family: inherit; font-size: 12px; line-height: 1.5; cursor: pointer; }
+.mention svg { flex-shrink: 0; color: var(--purple-ink); }
+.actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 12px 18px; border-top: 1px solid #EAE3F1; }
+.action { display: flex; justify-content: center; align-items: center; gap: 6px; min-height: 44px; padding: 8px 9px; border: 1px solid #D6C8E3; border-radius: 12px; background: white; color: var(--ink-secondary); font-family: inherit; font-size: 12px; line-height: 1.5; font-weight: 600; cursor: pointer; }
+.action svg { flex-shrink: 0; }
+.selected { color: var(--purple-ink); background: #EFE6F8; border-color: #BFA6D6; }
+.thread { margin: 0 18px 18px; padding: 18px 0 0; border-top: 1px solid #EAE3F1; }
+.threadTitle { margin: 0 0 14px; color: var(--ink-primary); font-family: var(--font-voice); font-size: 15px; }
+.emptyThread, .quickLabel { margin: 0 0 10px; color: var(--ink-secondary); font-size: 12px; line-height: 1.5; }
+.comments { display: flex; flex-direction: column; gap: 10px; }
+.comment { padding: 12px; border: 1px solid #E5DFEC; border-radius: 13px; background: #FAF8FC; }
+.commentHead { display: flex; flex-wrap: wrap; gap: 5px 8px; align-items: baseline; font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
+.commentHead strong { color: var(--ink-primary); }
+.commentHead span { color: var(--ink-secondary); font-size: 11px; }
+.comment p { margin: 5px 0 0; font-size: 13px; line-height: 1.65; color: var(--ink-secondary); overflow-wrap: anywhere; white-space: pre-line; }
+.quickLabel { margin-top: 20px; }
+.quickReplies { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.quickReplies button { min-height: 44px; padding: 9px 12px; border: 1px solid #D4C6E1; border-radius: 12px; background: white; color: var(--purple-ink); font-family: inherit; font-size: 12px; line-height: 1.5; font-weight: 500; text-align: left; cursor: pointer; }
+.draftLabel { display: block; margin: 0 0 8px; font-size: 12px; font-weight: 650; color: var(--ink-primary); }
+.composer { display: flex; align-items: center; gap: 8px; }
+.composer input { flex: 1; min-width: 0; min-height: 48px; padding: 11px 12px; border: 1px solid #BFAED0; border-radius: 13px; background: white; font-family: inherit; font-size: 16px; line-height: 1.5; color: var(--ink-primary); }
+.composer input:focus { outline: none; border-color: var(--purple); box-shadow: 0 0 0 3px var(--purple-10); }
+.composer > button { display: grid; place-items: center; flex-shrink: 0; width: 48px; height: 48px; border: 1px solid transparent; border-radius: 13px; background: var(--purple); color: white; cursor: pointer; }
+.composer > button:disabled { background: #ECE7F1; color: #746580; border-color: #DBD1E6; cursor: default; }
+.signIn { width: 100%; min-height: 48px; margin-top: 14px; padding: 11px; border: 1px solid #CBB8DF; border-radius: 13px; background: #F6F1FB; color: var(--purple-ink); font-family: inherit; font-size: 13px; font-weight: 650; cursor: pointer; }
+.card button:focus-visible { outline: 3px solid var(--purple); outline-offset: 2px; }
+.card .author:focus-visible { outline-offset: -4px; }
+.card button { transition: background .18s, border-color .18s; }
+@media (hover: hover) { button.author:hover { background: #FAF8FC; } .action:hover, .quickReplies button:hover, .signIn:hover { border-color: #A689C2; background: #F4EEF9; } }
+@media (max-width: 359px) { .author, .content { padding: 16px 14px; } .actions { padding: 12px 14px; gap: 6px; } .action { padding-inline: 6px; font-size: 11px; } .thread { margin-inline: 14px; } }
+@media (prefers-reduced-motion: reduce) { .card button { transition: none; } }

@@ -1,5 +1,13 @@
 # Trabajo compartido
 
+## Su obra en la ficha profesional · Codex
+
+**Estado:** implementado y verificado localmente. **Rama:** `codex/obra-profesional-diseno`, desde `b6c31b6`.
+**Alcance:** PostCard y su CSS, sección Su obra en HelperProfile. Mejorar lectura, resultado y acciones; una publicación inicial y acceso claro al resto. Conservar publicaciones, datos, reacciones, comentarios y condiciones de cuenta. No se añade Comunidad al menú.
+**Contrato para Claude:** PostCard mantiene irAlPerfil, pedirCuenta, publicar y acciones de UserContext; solo cambia presentación, ids accesibles y bloqueo visual del envío vacío (ya era un no-op). El sello confirmado sigue condicionado a post.confirmado. HelperProfile mantiene selección y límite de publicaciones; el mismo estado permite desplegar y recoger. No cambiar el mapeo obraAPost ni añadir pruebas al dataset publicado.
+**Pruebas:** build, matching 255/255 y smoke 8×2 + 120×4; lint sin nuevos diagnósticos y no-undef=0. Navegador aislado a 390×844, 320×720 y 1280×900: reaccionar/deshacer, comentarios propios y rápidos, hilo vacío, acceso sin sesión, desplegar cuatro publicaciones y recoger a una, textos largos sin desbordamiento, acciones de al menos 44 px. Teclado simulado 484 px y pan de 90 px: campo 16 px sobre menú. Regresión visual de Profile y Feed sin desbordamiento ni errores. Sin publicaciones ni reacciones de prueba en producción.
+**Siguiente incidencia detectada, anterior a esta entrega:** pedirCuenta guarda /feed como destino incluso si se pulsa desde una ficha. El regreso tras iniciar sesión debería conservar la ficha de origen; requiere ajustar el recorrido, no está resuelto aquí.
+
 ## Acceso y recuperación claros · Codex
 
 **Estado:** implementado y verificado localmente. **Rama:** `codex/acceso-recuperacion-diseno`, desde `383504c`.
