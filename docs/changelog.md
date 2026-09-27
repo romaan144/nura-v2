@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-27 — Fichas de Siguiendo con retratos y controles claros
+
+Se amplían fotos y se separan valoración/zona y tarifa. Abrir perfil y seguir/dejar de seguir pasan a botones nativos independientes, con etiqueta y estado accesible. Se documenta aparte una desincronización previa entre las dos listas internas de seguimiento, sin cambiar su lógica en esta entrega visual.
+
 ## 2026-09-27 — Fotos y mensajes más legibles en la lista de chats
 
 Retratos mayores, nombres y últimos mensajes en dos líneas y fecha/contador en un espacio propio. La introducción se acorta y las tarjetas conservan ritmo uniforme, más compacto en ordenador. Se mantienen filtro, orden, lectura y navegación.
