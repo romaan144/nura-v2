@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-27 — Corregir el doble desplazamiento al escribir en Safari
+
+La captura real posterior a PR #96 muestra contenido fuera de pantalla. Se reproduce el pan visual completo (la prueba anterior solo cambiaba la propiedad sin mover físicamente la vista). Marco y menú se posicionan respecto al viewport visual, restando su offset del espacio inferior y conservando el scroll interno nativo. Pruebas de regresión y limitación de hardware en `docs/teclado-movil.md`.
+
 ## 2026-09-27 — El teclado desplaza la app sin comprimirla
 
 Sergio pide conservar el tamaño de las pantallas al escribir y corregir el movimiento invertido de Inicio. Una ventana visible y un contenido de altura estable sustituyen las dos gestiones locales del visualViewport. Se retira el seguimiento de offsetTop, se permite scroll nativo en Inicio y los chats desplazan solo su conversación. Pruebas simuladas y límites en `docs/teclado-movil.md`.

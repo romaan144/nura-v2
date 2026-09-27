@@ -1,5 +1,10 @@
 # Trabajo compartido
 
+## Corrección del desplazamiento de Safari · Codex
+
+**Estado:** implementado y verificado con reproducción del pan completo; pendiente confirmar en iPhone físico. **Rama:** `codex/safari-teclado-desplazamiento`, desde `d0596ee`.
+**Alcance:** utilidad compartida de teclado, posición de ventana y menú, regresión de viewport desplazado. La captura real posterior a PR #96 muestra el contenido fuera de pantalla. Reproducir el pan visual completo, conservar scroll interno nativo y altura de contenido; no tocar funcionalidades ni Supabase.
+
 ## Teclado sin comprimir y desplazamiento natural · Codex
 
 **Estado:** implementado y verificado; detalle en `docs/teclado-movil.md`. **Rama:** `codex/teclado-sin-comprimir`, desde `cd1b22a`.
