@@ -185,3 +185,6 @@
 .letterText { font-size: 16px; }
 .floatBottom { padding: 12px 20px 14px; }
 .sendBtn { max-width: 740px; margin-inline: auto; min-height: 48px; }
+
+/* Acciones secundarias con contorno compartido. */
+.regenBtn { border: 1px solid var(--action-border); background: var(--action-surface); color: var(--purple-ink); min-height: 44px; line-height: 1.4; box-shadow: none; white-space: normal; }

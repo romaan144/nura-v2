@@ -70,3 +70,7 @@
 .paso:nth-child(2n) .pasoIcono { background: var(--brand-mint); color: #32634F; }
 .final { background: #EEE8F580; border: 1px solid #E4DBEE; border-radius: 26px; padding: 28px 20px; }
 @media (max-width: 767px) { .hero { padding: 32px 20px; } .title { letter-spacing: -1px; } }
+
+/* Acciones secundarias con contorno compartido. */
+.secundario, .textoBoton { border: 1px solid var(--action-border); background: var(--action-surface); color: var(--purple-ink); min-height: 44px; line-height: 1.4; box-shadow: none; white-space: normal; }
+ .textoBoton { width: 100%; max-width: 360px; padding: 10px 16px; border-radius: var(--radius-full); }

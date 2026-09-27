@@ -65,3 +65,9 @@ Primera entrega integrada en PR #65. La segunda iteración se documenta en `dise
 ## Actualización de Inicio · 2026-09-27
 
 La instrucción posterior de Sergio sustituye la presentación de Inicio descrita arriba: una burbuja de respuesta que ocupa el espacio disponible, sin scroll ni historial visible. Campo de escritura y menú debajo en móvil y escritorio. El contenido que no cabe se recorre con botones, sin recortarlo. Ver `docs/busqueda-pantalla.md`. El resto de pantallas conserva su navegación habitual.
+
+## Acciones secundarias · 2026-09-27
+
+Los botones secundarios usan `--action-border` (#C7B2DF) y `--action-surface` (#F7F3FC), separados del borde tenue de las tarjetas. La primitiva Button y las acciones locales de carta, servicios, profesionales, seguidos y error comparten el contorno. Las sugerencias del chat refuerzan solo el borde para mantener su superficie blanca. Botones de texto ghost sin sombra y con subrayado: no simular una cápsula sin borde. Texto largo con altura flexible y línea 1.4; controles secundarios de al menos 44 px, 48 en Button. Mantener los estados y manejadores existentes.
+
+Verificación: navegador a 390×844, 320×720 y escritorio; ficha/disponibilidad y cierre de solicitud, carta, acciones de citas y confirmación de conservarlas, pie para profesionales. Build, matching 255/255, smoke 8×2 + 120×4; lint sin nuevos diagnósticos y no-undef=0. Las comprobaciones de comportamiento usan datos locales aislados.

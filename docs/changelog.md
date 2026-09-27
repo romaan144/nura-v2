@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-27 — Contorno coherente para acciones secundarias
+
+Tras la revisión pedida por Sergio, los botones secundarios comparten tokens de borde y superficie; se aplican también a acciones locales de carta, citas, seguidos y profesionales. Se retira la sombra de los enlaces ghost para evitar cápsulas difusas. Texto adaptable y mismos manejadores.
+
 ## 2026-09-27 — Contorno visible en acciones profesionales del perfil
 
 Sergio señala que los botones de acceso profesional e información se pierden sobre la tarjeta blanca. Comparten ahora borde lila explícito, fondo tenue, separación de 10 px y altura adaptable al texto en dos líneas. Se conservan los destinos y manejadores.

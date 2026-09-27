@@ -31,7 +31,7 @@ import { showToast } from '../components/Toast'
 // Acciones de apoyo: contorno visible también sobre las tarjetas blancas.
 const professionalInfoButton = {
   minHeight: 48, marginTop: 10, padding: '10px 16px', lineHeight: 1.4,
-  border: '1px solid #C7B2DF', background: '#F7F3FC',
+  border: '1px solid var(--action-border)', background: 'var(--action-surface)',
   color: 'var(--purple-ink)', boxShadow: 'none',
 }
 
@@ -587,7 +587,7 @@ export default function Profile() {
                 <Button variant="primary" full onClick={() => navigate('/entrar?modo=crear')} style={{marginTop:'var(--space-16)'}}>
                   Crear mi acceso
                 </Button>
-                <Button variant="ghost" full onClick={() => navigate('/entrar')} style={{marginTop:'var(--space-4)'}}>
+                <Button variant="secondary" full onClick={() => navigate('/entrar')} style={professionalInfoButton}>
                   ¿Ya tienes acceso? Entra
                 </Button>
               </div>

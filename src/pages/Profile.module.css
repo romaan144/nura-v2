@@ -440,3 +440,5 @@
 .fila:hover .chevron { transform: translateX(3px); }
 .heroStats { background: var(--paper); padding: 14px 22px; border-radius: 18px; }
 .dato { background: #F5F1FA; border: 1px solid #EAE2F4; }
+
+.editCancel { border: 1px solid var(--action-border); background: var(--action-surface); }
