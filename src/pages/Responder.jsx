@@ -147,7 +147,7 @@ function ResponderAviso({ token }) {
   }
 
   const marco = {
-    height: '100dvh', overflowY: 'auto', background: 'var(--paper)',
+    height: 'var(--app-layout-height, 100dvh)', overflowY: 'auto', background: 'var(--paper)',
     display: 'flex', flexDirection: 'column', alignItems: 'center',
     padding: 'max(env(safe-area-inset-top,0px),24px) var(--space-20) var(--space-32)',
   }

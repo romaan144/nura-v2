@@ -843,7 +843,7 @@
 @media (min-width: 900px) { .refineRow { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 
 /* Búsqueda por pantallas: nunca acumular una conversación desplazable. */
-.focusPage { inset: auto 0 auto; top: var(--focus-top, 0px); height: var(--focus-height, 100dvh); display: grid; grid-template-rows: 50px minmax(0, 1fr) 60px; gap: 12px; padding: max(env(safe-area-inset-top), 12px) 16px calc(var(--nav-h) + 12px); overflow: hidden; }
+.focusPage { inset: auto 0 auto; top: 0; height: var(--app-layout-height, 100dvh); display: grid; grid-template-rows: 50px minmax(0, 1fr) 60px; gap: 12px; padding: max(env(safe-area-inset-top), 12px) 16px calc(var(--nav-h) + 12px); overflow: clip; overscroll-behavior: auto; }
 .focusPage .floatTop { position: static; width: 100%; max-width: 850px; padding: 0; align-self: center; height: 44px; }
 .screenArea { width: 100%; max-width: 850px; margin: 0 auto; min-height: 0; }
 .focusComposer { width: 100%; max-width: 850px; margin: 0 auto; min-width: 0; }
@@ -859,8 +859,6 @@
 .screenResultLabel { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--ink-secondary); margin: 0 2px 7px; }
 .screenResultLabel span { font-variant-numeric: tabular-nums; font-weight: 400; }
 @media (min-width: 768px) { .focusPage { padding: 16px 24px 20px; } }
-@media (max-height: 600px) { .focusPage { grid-template-rows: 38px minmax(0,1fr) 52px; gap: 8px; padding-top: 6px; padding-bottom: calc(var(--nav-h) + 6px); } .focusComposer .inputCapsule { height: 52px; min-height: 52px; } .focusPage .screenTitle { font-size: 26px; } .screenText { font-size: 14px; line-height: 1.45; } .screenChoice { min-height: 46px; } }
-@media (max-height: 420px) { .focusPage { grid-template-rows: minmax(0,1fr) 48px; } .focusPage .floatTop { display: none; } .focusComposer .inputCapsule { height: 48px; min-height: 48px; } }
 /* También responde al viewport visual de iOS al abrir el teclado. */
 .focusPage[data-focus-size='short'], .focusPage[data-focus-size='tiny'] { grid-template-rows: 38px minmax(0,1fr) 52px; gap: 8px; padding-top: 6px; padding-bottom: calc(var(--nav-h) + 6px); }
 .focusPage[data-focus-size='short'] .inputCapsule, .focusPage[data-focus-size='tiny'] .inputCapsule { height: 52px; min-height: 52px; }

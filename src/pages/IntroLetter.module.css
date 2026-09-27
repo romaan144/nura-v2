@@ -1,6 +1,6 @@
 .page {
   display: flex; flex-direction: column;
-  height: 100dvh; background: var(--paper);
+  height: var(--app-layout-height, 100dvh); background: var(--paper);
   position: relative; overflow: hidden;
 }
 
@@ -185,9 +185,3 @@
 .letterText { font-size: 16px; }
 .floatBottom { padding: 12px 20px 14px; }
 .sendBtn { max-width: 740px; margin-inline: auto; min-height: 48px; }
-@media (max-width: 767px) {
-  .page { height: var(--letter-height, 100dvh); top: var(--letter-top, 0px); }
-  :global(body[data-nura-letter]) nav[aria-label="Navegación principal"] {
-    bottom: calc(var(--letter-keyboard-inset, 0px) + max(env(safe-area-inset-bottom, 0px), 10px));
-  }
-}

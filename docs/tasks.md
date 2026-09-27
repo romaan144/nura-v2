@@ -1,5 +1,10 @@
 # Trabajo compartido
 
+## Teclado sin comprimir y desplazamiento natural · Codex
+
+**Estado:** implementado y verificado; detalle en `docs/teclado-movil.md`. **Rama:** `codex/teclado-sin-comprimir`, desde `cd1b22a`.
+**Alcance:** contenedor compartido de la app, utilidad de teclado, retirar ajustes contradictorios de Inicio/carta y adaptar alturas de pantallas de escritura. Mantener el tamaño previo al teclado y desplazar mediante scroll nativo, sin perseguir visualViewport.offsetTop ni interceptar gestos. Pruebas con viewport visual simulado, además de escritorio.
+
 ## Espacio entre sugerencias y escritura del chat · Codex
 
 **Estado:** implementado y verificado. **Rama:** `codex/chat-sugerencias-espacio`, desde `94c010b`.

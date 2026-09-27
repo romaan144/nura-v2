@@ -411,7 +411,10 @@ export default function Chat() {
     }
   }, [helper?.id])
 
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages, typing])
+  useEffect(() => {
+    const scroller = bottomRef.current?.parentElement
+    scroller?.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' })
+  }, [messages, typing])
 
   // Persist chat history per helper
   useEffect(() => {

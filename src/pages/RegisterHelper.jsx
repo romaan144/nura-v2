@@ -6,7 +6,6 @@ import { ArrowLeft, Send, Mic, MicOff } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import { DEMO_MODE } from '../config'
 import { altaProfesional } from '../utils/escrituras'
-import BottomNav from '../components/BottomNav'
 import ConfirmarDeclarado from '../components/ConfirmarDeclarado'
 import { ordenarPerfil } from '../utils/declarado'
 import styles from './Home.module.css'
@@ -104,7 +103,7 @@ export default function RegisterHelper() {
   useEffect(() => {
     const top = topRef.current
     if (!top) return
-    const measure = () => setTopH(Math.ceil(top.getBoundingClientRect().bottom) + 8)
+    const measure = () => setTopH(Math.ceil(top.offsetTop + top.getBoundingClientRect().height) + 8)
     const ro = new ResizeObserver(measure)
     ro.observe(top)
     measure()
@@ -112,8 +111,9 @@ export default function RegisterHelper() {
   }, [])
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-    if (!done) inputRef.current?.focus()
+    const scroller = bottomRef.current?.parentElement
+    scroller?.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' })
+    if (!done) inputRef.current?.focus({ preventScroll: true })
   }, [messages, typing])
 
   function sendMessage() {
@@ -378,7 +378,6 @@ export default function RegisterHelper() {
         </div>
       )}
 
-      <BottomNav />
 
     </div>
   )
