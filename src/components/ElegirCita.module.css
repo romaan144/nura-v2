@@ -1,14 +1,30 @@
-.picker { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
-.label { font-family: var(--font-voice); }
-.range { font-size: 12px; color: var(--ink-secondary); margin: 0 0 10px; }
-.days { padding: 4px 3px 10px !important; scrollbar-width: thin; scrollbar-color: #D8C8EA transparent; }
-.day { transition: transform 180ms var(--motion-curve), box-shadow 180ms ease; }
-.day[aria-selected='true'] { box-shadow: 0 5px 14px -6px #6736A67A; }
-.day:disabled { opacity: .7; }
-.time { transition: box-shadow 180ms ease, transform 180ms var(--motion-curve); }
-.time[aria-pressed='true'] { box-shadow: 0 4px 12px -6px #6736A680; }
-.selectedDate { margin: 0 0 12px; color: var(--brand-deep); font-size: 15px; font-weight: 650; }
-@media (hover: hover) { .day:hover:not(:disabled), .time:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 12px -5px #6736A645; } }
-.day:active:not(:disabled), .time:active:not(:disabled) { transform: scale(.97); }
-
+.picker { display: flex; flex-direction: column; gap: 24px; min-width: 0; }
+.label { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font-family: var(--font-ui); font-size: 14px; font-weight: 700; line-height: 1.5; color: var(--ink-primary); }
+.label svg { color: var(--purple-ink); }
+.range { font-size: 12px; line-height: 1.5; color: var(--ink-secondary); margin: 0 0 10px; }
+.days { display: flex; gap: 8px; overflow-x: auto; padding: 4px 3px 10px; scroll-snap-type: x proximity; scrollbar-width: thin; scrollbar-color: #CBB8DE transparent; }
+.day { position: relative; flex: 0 0 88px; min-height: 102px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; padding: 10px 5px; background: white; color: var(--ink-primary); border: 1px solid #DAD0E5; border-radius: 17px; scroll-snap-align: start; font-family: var(--font-ui); cursor: pointer; transition: background .18s, border-color .18s, box-shadow .18s; }
+.weekday { font-size: 12px; font-weight: 600; text-transform: capitalize; }
+.number { display: flex; align-items: baseline; gap: 4px; font-size: 24px; font-weight: 750; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.month { font-size: 11px; font-weight: 500; }
+.availability { font-size: 10px; font-weight: 600; white-space: nowrap; color: #216653; }
+.day:disabled { background: #F5F3F7; border-style: dashed; color: #746B7D; cursor: default; }
+.day:disabled .availability { color: #746B7D; }
+.day[aria-pressed='true'] { background: var(--brand-deep); border-color: var(--brand-deep); color: white; box-shadow: 0 5px 12px -7px #30214280; }
+.day[aria-pressed='true'] .availability { color: white; }
+.dayCheck { position: absolute; top: 5px; right: 5px; }
+.selectedDate { margin: 0 0 16px; color: var(--ink-secondary); font-size: 12px; line-height: 1.5; }
 .selectedDate::first-letter { text-transform: uppercase; }
+.empty { padding: 16px; margin: 0; border: 1px dashed #DAD0E5; border-radius: 14px; color: var(--ink-secondary); background: #F7F5FA; font-size: 13px; line-height: 1.6; }
+.periods { display: flex; flex-direction: column; gap: 16px; }
+.periodLabel { margin: 0 0 8px; color: var(--ink-secondary); font-size: 12px; font-weight: 600; }
+.times { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.time { display: flex; justify-content: center; align-items: center; gap: 5px; min-height: 46px; min-width: 0; padding: 8px 4px; font-family: var(--font-ui); font-size: 13px; line-height: 1.4; font-weight: 600; font-variant-numeric: tabular-nums; background: white; color: var(--ink-primary); border: 1px solid #DAD0E5; border-radius: 12px; cursor: pointer; transition: background .18s, border-color .18s; }
+.time:disabled { background: #F5F3F7; border-style: dashed; color: #746B7D; cursor: default; }
+.time[data-state='ocupada'] { text-decoration: line-through; }
+.time[data-state='tuya'] { background: #EDE3F7; color: var(--purple-ink); border: 1px solid #CBB8DE; }
+.time[aria-pressed='true']:not(:disabled) { background: var(--brand-deep); color: white; border-color: var(--brand-deep); }
+.legend { margin: 0; font-size: 11px; line-height: 1.5; color: var(--ink-secondary); }
+@media (hover: hover) { .day:hover:not(:disabled), .time:hover:not(:disabled) { border-color: var(--purple-ink); box-shadow: 0 3px 10px -5px #6736A650; } }
+@media (max-width: 359px) { .times { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (prefers-reduced-motion: reduce) { .day, .time { transition: none; } }

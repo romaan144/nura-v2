@@ -98,3 +98,12 @@ Tarjetas blancas con una banda discreta de estado: ámbar por confirmar, verde c
 Filtros Todos/Próximos/Completados con recuento y `aria-pressed`. A 480 px o menos, todos los recuentos se sitúan debajo del texto de manera uniforme. Acciones de 46 px como mínimo, separación de 10 px y confirmación de cancelación dentro de su propio panel. Una sola reserva para la navegación inferior; ancho de lectura en escritorio. Se consolida el CSS local para evitar capas de reglas contradictorias.
 
 Verificado en navegador aislado a 390×844, 320×720 y 1280×900, con estados pendientes, confirmados, completados, cancelados, rechazados, valorados, reprogramados y vacíos. Textos largos sin recorte ni desbordamiento. Filtros/teclado, cancelar y mantener, valoración y agenda conservan sus destinos. No se envían solicitudes ni valoraciones reales. Build, matching 255/255 y smoke pasan; lint sin nuevos diagnósticos y no-undef=0.
+
+
+## Solicitud de cita compartida · 2026-09-27
+
+`CitaModal` da la misma presentación a la ficha y al chat sin unificar sus controladores de envío. Cabecera y pie permanecen visibles; el cuerpo se desplaza por dentro. Profesional con foto/inicial, precio, selección en dos pasos y nota opcional con etiqueta. Antes de enviar se ve el día completo y la hora; después se indica que falta confirmación del profesional.
+
+ElegirCita conserva sus cálculos de disponibilidad, pero presenta días con mes y fecha accesible completa, selección con marca e indicador, franjas uniformes y horas ocupadas/propias diferenciadas. El foco queda en la ventana, Escape la cierra y se devuelve el foco anterior cuando existe. La ventana usa el viewport visual compartido: al reducirse por teclado, solo ajusta el scroll de su nota, sin modificar el scroll de la app.
+
+Probado en navegador aislado a 390×844, 320×420 y 1280×900; solicitud y cambio de hora llegan a Mis servicios en demo. Bloqueos, reinicio de hora, teclado, Escape y recorrido de foco comprobados. Con altura visual simulada de 484 px: nota termina en y=349, pie empieza en 361; con pan de 90 px, ambos se desplazan 90 px. Pendiente la comprobación física en iPhone. Build, matching 255/255 y smoke correctos; lint sin nuevos diagnósticos, no-undef=0.
