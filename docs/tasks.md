@@ -1,5 +1,10 @@
 # Trabajo compartido
 
+## Lista de conversaciones más legible · Codex
+
+**Estado:** implementado y verificado. **Rama:** `codex/lista-conversaciones`, desde `2d4d6de`.
+**Alcance:** Chats.jsx y CSS. Más presencia de fotos, vista previa en dos líneas, nombre/fecha sin competir y avisos sin leer claros. Mantener búsqueda, orden, lectura, datos y navegación.
+
 ## Cabecera de chat legible en móvil · Codex
 
 **Estado:** implementado y verificado. **Rama:** `codex/chat-cabecera-movil`, desde `9599b60`.
