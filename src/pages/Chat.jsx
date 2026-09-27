@@ -846,15 +846,6 @@ export default function Chat() {
           </div>
         )}
 
-        {/* Quick replies */}
-        {showQuickReplies && (
-          <div className={styles.quickReplies}>
-            {QUICK_REPLIES.map((r, i) => (
-              <button key={i} className={styles.quickReply} onClick={() => sendMessage(r)}>{r}</button>
-            ))}
-          </div>
-        )}
-
         <div ref={bottomRef} />
       </div>
 
@@ -866,8 +857,17 @@ export default function Chat() {
         </div>
       )}
 
-      {/* Floating input */}
+      {/* Las sugerencias y la entrada comparten espacio, sin superponerse. */}
       <div className={styles.inputWrap}>
+        {/* Quick replies */}
+        {showQuickReplies && (
+          <div className={styles.quickReplies}>
+            {QUICK_REPLIES.map((r, i) => (
+              <button key={i} className={styles.quickReply} onClick={() => sendMessage(r)}>{r}</button>
+            ))}
+          </div>
+        )}
+
         <div className={styles.inputBar}>
           <input className={styles.input} aria-label="Escribe tu mensaje"
             placeholder="Escribe un mensaje..."

@@ -1,5 +1,11 @@
 # Trabajo compartido
 
+## Espacio entre sugerencias y escritura del chat · Codex
+
+**Estado:** implementado y verificado. **Rama:** `codex/chat-sugerencias-espacio`, desde `94c010b`.
+**Alcance:** estructura visual de Chat.jsx y CSS. Reproducido a 390×844: sugerencias hasta y=770, entrada desde y=768 (solapan 2 px). Sugerencias y entrada comparten ahora un pie en el flujo con separación de 18 px; etiquetas con huecos de 10 px entre filas y 12 px entre columnas. La conversación ocupa el espacio restante, sin reservas fijas que dejen mensajes bajo los controles. Se conservan los manejadores.
+**Pruebas:** navegador a 390×844 (dos filas), 320×420 (tres filas) y 1280×900; separación medida de 18 px en todos, documento sin scroll exterior. Sugerencia pulsada y texto llegado al chat solo en servidor local aislado; consola sin errores. Build, matching 255/255, smoke 8×2 pantallas + 120×4 tarjetas; lint sin nuevos diagnósticos y no-undef=0 (107 errores y 6 avisos previos).
+
 ## Envío de carta visible sobre el menú · Codex
 
 **Estado:** implementado y verificado. **Rama:** `codex/carta-boton-visible`, desde `cbcea61`.
