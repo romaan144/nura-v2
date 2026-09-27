@@ -60,10 +60,10 @@ const DEMO_SERVICES = [
 ]
 
 const STATUS = {
-  pending:   { label: 'Por confirmar', icon: Clock, color: '#D97706', bg: '#FFFBEB' },
-  confirmed: { label: 'Confirmada', icon: CheckCircle, color: 'var(--green)', bg: 'var(--green-light)' },
-  completed: { label: 'Completada', icon: CheckCircle, color: '#6B7280', bg: '#F9FAFB' },
-  cancelled: { label: 'Cancelada', icon: XCircle, color: 'var(--red)', bg: 'var(--red-light)' },
+  pending:   { label: 'Por confirmar', icon: Clock, color: '#915509', bg: '#FFFBEB' },
+  confirmed: { label: 'Confirmada', icon: CheckCircle, color: '#216653', bg: '#EAF5EF' },
+  completed: { label: 'Completada', icon: CheckCircle, color: '#595367', bg: '#F0EEF4' },
+  cancelled: { label: 'Cancelada', icon: XCircle, color: '#A33B46', bg: '#FFF0F1' },
   // El profesional contestó que esa hora no le va (su mensaje está en el chat).
   rejected:  { label: 'Propón otra hora', icon: RotateCcw, color: '#B45309', bg: '#FFFBEB' },
 }
@@ -129,39 +129,41 @@ export default function MyServices() {
     <div className={styles.page}>
       <PageHeader showBack />
       <div className={styles.content}>
-        <h2 className={styles.title}>Mis servicios</h2>
+        <header className={styles.heading}>
+          <h1 className={styles.title}>Mis servicios</h1>
+          <p className={styles.subtitle}>Tus citas, de la primera propuesta al servicio terminado.</p>
+        </header>
 
-        {/* Tabs */}
-        <div className={styles.tabs}>
-          {TABS.map(t => (
-            <button key={t}
-              className={`${styles.tab} ${tab === t ? styles.tabActive : ''}`}
-              onClick={() => setTab(t)}>
-              {t}
-              {t === 'Próximos' && tab !== 'Próximos' && (services||[]).filter(s => s.status === 'pending' || s.status === 'confirmed').length > 0 && (
-                <span className={styles.tabBadge}>
-                  {(services||[]).filter(s => s.status === 'pending' || s.status === 'confirmed').length}
-                </span>
-              )}
-            </button>
-          ))}
+        <div className={styles.tabs} role="group" aria-label="Filtrar servicios">
+          {TABS.map(t => {
+            const count = allServices.filter(s => t === 'Próximos'
+              ? s.status === 'pending' || s.status === 'confirmed'
+              : t === 'Completados' ? s.status === 'completed' : true).length
+            return (
+              <button key={t} type="button" aria-pressed={tab === t}
+                className={`${styles.tab} ${tab === t ? styles.tabActive : ''}`}
+                onClick={() => setTab(t)}>
+                <span>{t}</span><span className={styles.tabBadge}>{count}</span>
+              </button>
+            )
+          })}
         </div>
 
         {/* Empty state */}
         {filtered.length === 0 && (
           <div className={styles.empty}>
-            <span style={{display:'block',marginBottom:'var(--space-12)',opacity:0.25}}>
+            <span className={styles.emptyIcon} aria-hidden="true">
               {tab === 'Completados' ? <CheckCircle size={44} /> : tab === 'Próximos' ? <Calendar size={44} /> : <ClipboardList size={44} />}
             </span>
-            <strong style={{fontSize:'var(--text-base)',color:'var(--ink-primary)',letterSpacing:'-0.2px'}}>
+            <h2 className={styles.emptyTitle}>
               {/* Un profesional leia aqui "Aún no has contratado nada" y
                   "Cuando contrates a un profesional...": la app le hablaba
                   como al cliente que NO es. */}
               {tab === 'Todos' ? (user?.isHelper ? 'Todavía no tienes citas' : 'Aún no has contratado nada')
                : tab === 'Próximos' ? 'No tienes servicios próximos'
                : 'Sin servicios completados'}
-            </strong>
-            <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:'var(--space-4) 0 var(--space-16)',lineHeight:1.6,textAlign:'center',maxWidth:'220px'}}>
+            </h2>
+            <p className={styles.emptyDescription}>
               {tab === 'Todos'
                 ? (user?.isHelper
                     ? 'Cuando alguien te contacte y concretéis una cita, aparecerá aquí.'
@@ -185,9 +187,10 @@ export default function MyServices() {
             const StatusIcon = st.icon
             const rated = hasRated(s.helperId) || s.rated
             return (
-              <article key={s.id} className={styles.card}>
+              <article key={s.id} className={styles.card} aria-label={`Cita con ${s.helperName}: ${st.label}`}
+                style={{ '--service-status': st.color, '--service-status-bg': st.bg }}>
                 <div className={styles.statusRow}>
-                  <span className={styles.statusBadge} style={{color: st.color, background: st.bg}}>
+                  <span className={styles.statusBadge}>
                     <StatusIcon size={14} aria-hidden="true" />{st.label}
                   </span>
                   {s.price && <span className={styles.price}>{s.price}</span>}
@@ -206,27 +209,32 @@ export default function MyServices() {
                   <span className={styles.info}>
                     <span className={styles.helperName}>{s.helperName}</span>
                     <span className={styles.specialty}>{s.specialty}</span>
-                    <span className={styles.meta}>
-                      <Calendar size={11} />
-                      <span>{formatDate(s.date)}{s.time ? ` · ${s.time}` : ''}</span>
-                    </span>
-                    {s.note && <span className={styles.note}>"{s.note}"</span>}
-                    {/* La canceló el profesional: se dice, con su nota si la dejó. */}
-                    {s.status === 'cancelled' && s.canceladaPor === 'profesional' && (
-                      <span className={styles.note} role="status" style={{ whiteSpace: 'normal' }}>
-                        {s.helperName?.split(' ')?.[0] || 'El profesional'} ha cancelado la cita. Esa hora ya no está reservada.
-                        {s.notaCancelacion && <> «{s.notaCancelacion}»</>}
-                      </span>
-                    )}
-                    {s.reprogramada && (
-                      <span className={styles.note} role="status" style={{ whiteSpace: 'normal' }}>
-                        Ya has pedido otra hora: {formatDate(s.reprogramada.date)}{s.reprogramada.time ? ` · ${s.reprogramada.time}` : ''}.
-                      </span>
-                    )}
+                    <span className={styles.profileLink}>Ver perfil</span>
                   </span>
 
                   <ChevronRight className={styles.profileArrow} size={18} aria-hidden="true" />
                 </button>
+
+                <div className={styles.appointment}>
+                  <Calendar size={19} aria-hidden="true" />
+                  <div className={styles.date}>
+                    <span className={styles.detailLabel}>Fecha de la cita</span>
+                    <span>{formatDate(s.date) || 'Fecha sin indicar'}</span>
+                  </div>
+                  {s.time && <span className={styles.time}><Clock size={14} aria-hidden="true" />{s.time}</span>}
+                </div>
+                {s.note && <p className={styles.note}>{s.note}</p>}
+                {s.status === 'cancelled' && s.canceladaPor === 'profesional' && (
+                  <p className={styles.notice} role="status">
+                    {s.helperName?.split(' ')?.[0] || 'El profesional'} ha cancelado la cita. Esa hora ya no está reservada.
+                    {s.notaCancelacion && <> «{s.notaCancelacion}»</>}
+                  </p>
+                )}
+                {s.reprogramada && (
+                  <p className={styles.notice} role="status">
+                    Ya has pedido otra hora: {formatDate(s.reprogramada.date)}{s.reprogramada.time ? ` · ${s.reprogramada.time}` : ''}.
+                  </p>
+                )}
 
                 {/* Rate CTA */}
                 {/* Pending/confirmed → mark complete */}
@@ -243,9 +251,9 @@ export default function MyServices() {
                 {/* Pendiente o confirmada y aún por venir → cancelar (dos toques) */}
                 {(s.status === 'pending' || s.status === 'confirmed') && !String(s.id).startsWith('demo') && porVenir(s) && (
                   aCancelar === s.id ? (
-                    <div className={styles.postActions} role="group" aria-label="Confirmar cancelación"
-                      onClick={e => e.stopPropagation()} style={{ flexWrap: 'wrap' }}>
-                      <span style={{ flexBasis: '100%', fontSize: 'var(--text-sm)', color: 'var(--ink-primary)' }}>
+                    <div className={`${styles.postActions} ${styles.cancelConfirmation}`} role="group" aria-label="Confirmar cancelación"
+                      onClick={e => e.stopPropagation()}>
+                      <span className={styles.cancelQuestion}>
                         ¿Cancelar la cita? {s.helperName?.split(' ')?.[0]} lo verá y esa hora quedará libre.
                       </span>
                       <button className={styles.actionBtn} disabled={cancelando}
@@ -300,7 +308,7 @@ export default function MyServices() {
                 {/* Completed + rated → rebooking CTA */}
                 {rated && (
                   <div className={styles.postActions}>
-                    <div className={styles.ratedRow} style={{flex:1}}>
+                    <div className={styles.ratedRow}>
                       <CheckCircle size={12} color="var(--green)" />
                       <span>Valorado</span>
                     </div>

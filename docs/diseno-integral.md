@@ -89,3 +89,12 @@ Verificación: 390×844, 320×720 y 1280×900, sin desbordamientos; búsqueda po
 Retratos de 80×104 px, 68×92 en móviles estrechos, y bloques separados para nombre, especialidad, valoración/zona y tarifa. El perfil se abre desde un botón nativo con indicación Ver perfil; seguir/dejar de seguir es un botón independiente de 44 px con etiqueta y aria-pressed. Evita controles interactivos anidados y que Enter/Espacio en seguimiento abran el perfil. Fondo blanco, borde definido, una columna móvil y dos en escritorio. Se conservan datos y handlers.
 
 Verificado en 390×844, 320×720 y 1280×900: tarjetas sin desbordamiento, alturas iguales en los ejemplos, acceso al perfil con Enter, cambio de estado de seguimiento sin navegación, y vacío sin demo. La desincronización preexistente entre favorites/following está anotada en tasks; no se presenta como corregida. Build, matching 255/255, smoke 8×2 + 120×4; lint sin diagnósticos nuevos y no-undef=0. Pruebas de interacción solo locales.
+
+
+## Mis servicios: estados y fecha de la cita · 2026-09-27
+
+Tarjetas blancas con una banda discreta de estado: ámbar por confirmar, verde confirmada, gris/lila completada y rojo cancelada. Siempre se incluye texto e icono; el color no es la única señal. La identidad tiene retrato de 60×70 px, nombre y acceso al perfil; día/hora viven en un bloque independiente. Las notas y avisos se leen completos fuera del botón del perfil.
+
+Filtros Todos/Próximos/Completados con recuento y `aria-pressed`. A 480 px o menos, todos los recuentos se sitúan debajo del texto de manera uniforme. Acciones de 46 px como mínimo, separación de 10 px y confirmación de cancelación dentro de su propio panel. Una sola reserva para la navegación inferior; ancho de lectura en escritorio. Se consolida el CSS local para evitar capas de reglas contradictorias.
+
+Verificado en navegador aislado a 390×844, 320×720 y 1280×900, con estados pendientes, confirmados, completados, cancelados, rechazados, valorados, reprogramados y vacíos. Textos largos sin recorte ni desbordamiento. Filtros/teclado, cancelar y mantener, valoración y agenda conservan sus destinos. No se envían solicitudes ni valoraciones reales. Build, matching 255/255 y smoke pasan; lint sin nuevos diagnósticos y no-undef=0.
