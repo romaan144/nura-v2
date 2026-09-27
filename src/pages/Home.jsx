@@ -28,6 +28,8 @@ import { extractPersona } from '../utils/personas'
 import { proSignals } from '../utils/proSignals'
 import { fmtNota, fmtKm } from '../utils/formato'
 import RecordatorioCita from '../components/RecordatorioCita'
+import ResponseScreen from '../components/ResponseScreen'
+import { splitResponseText } from '../utils/responseLayout'
 
 // ── La Comprensión Visible — lo que Nüra ha entendido, en chips ──
 const PERSONA_CHIP = {
@@ -106,19 +108,6 @@ function RefinementIcon({ label }) {
   return <Icon size={17} aria-hidden="true" />
 }
 
-function ResultsBlock({ results }) {
-  if (!results?.length) return null
-  return (
-    <div className={styles.searchResults}>
-      {results.slice(0, 4).map((helper, i) => (
-        <div key={helper.id || i}>
-          {i === 1 && <p className={styles.alternativesLabel}>Otras opciones</p>}
-          <HelperCardTall helper={helper} compact featured={i === 0} />
-        </div>
-      ))}
-    </div>
-  )
-}
 
 
 function getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas) {
@@ -381,6 +370,12 @@ export default function Home() {
   const messages = nuraChatMessages
   const setMessages = setNuraChatMessages
   const [input, setInput] = useState('')
+  // Solo cambia la presentación: el historial sigue disponible para la comprensión.
+  const [viewStart, setViewStart] = useState(() => Math.max(0,
+    messages.findLastIndex(m => m.from === 'user'), messages.findLastIndex(m => m.results?.length)))
+  const pageRef = useRef(null)
+  function beginResponse() { setViewStart(messages.filter(m => !m.loading).length) }
+
   const [forWhom, setForWhom] = useState(() => {
     try { return sessionStorage.getItem('nura_for_whom') || '' } catch { return '' }
   })
@@ -459,17 +454,7 @@ export default function Home() {
   const setShowSuggestions = () => {} // no-op, derived from messages
   const lastMatches = nuraLastMatches
   const setLastMatches = setNuraLastMatches
-  const bottomRef  = useRef(null)
-  const resultRef = useRef(null)   // el MENSAJE de la respuesta (no solo el bloque)
-  const scrollerRef = useRef(null) // el contenedor con scroll
-  const inputRef   = useRef(null)
-  const topRef     = useRef(null)
-  const [topH, setTopH] = useState(80)
-  const [floatH, setFloatH] = useState(84) /* header height fallback */
-
-  // Cero scroll automático: la vista NO se mueve sola. La respuesta entra
-  // debajo y el usuario baja cuando quiere. Ninguna mecánica puede fallar
-  // si no hay mecánica. (Ley del fundador, 3 intentos de auto-scroll.)
+  const inputRef = useRef(null)
 
   useEffect(() => {
     let lines = getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas)
@@ -679,6 +664,7 @@ export default function Home() {
     blurSinSalto()
     let msg = text || input
     if (!msg.trim()) return
+    beginResponse()
     // Nura es una conversacion, no un formulario. Si hablas otra vez
     // mientras busca, te escucha a ti y suelta lo anterior: el guardia de
     // secuencia (sid/alive) ya estaba construido para esto. Antes el
@@ -1175,6 +1161,7 @@ export default function Home() {
   }
 
   function handleChip(chip) {
+    beginResponse()
     if (chip === CONTESTAR) { navigate('/chats'); return }
     if (chip === LEER_RESPUESTA) { navigate(respuestaAbrir.current ? `/chat/${respuestaAbrir.current}` : '/chats'); return }
     const responde = (lines, chips) =>
@@ -1270,19 +1257,107 @@ export default function Home() {
 
   const suggestions = user?.isHelper ? HELPER_SUGGESTIONS : getDynamicSuggestions(user, searchHistory)
 
-  // Measure floatTop height for messages top padding
-  useEffect(() => {
-    const top = topRef.current
-    if (!top) return
-    const measure = () => {
-      const tRect = top.getBoundingClientRect()
-      setTopH(Math.ceil(tRect.bottom) + 8)
+  function handleRefine(chip) {
+    beginResponse()
+    if (chip === 'Crear cuenta') { navigate('/login'); return }
+    // La Correccion: el unico camino para "me entendiste
+    // mal". Los otros chips reordenan lo mismo; este admite
+    // que lo mismo no sirve.
+    if (chip === 'No es lo que buscaba') { haptic('light'); startCorrection(window.__nuraLastQuery); return }
+    // Ordenar una lista de UNO es teatro: la respuesta seria
+    // "X es el mas economico" sobre el unico que hay. Los
+    // chips de orden solo aparecen si hay algo que comparar.
+    const ordenar = (n, propios) => n >= 2 ? propios : []
+    if (chip === 'Era otra cosa') { haptic('light'); cancelCorrection()
+      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+        lines: ['Sin problema. Cuéntame qué necesitas.'] }])
+      setTimeout(() => inputRef.current?.focus?.(), 200); return }
+    if (chip === 'Ver todos') {
+      const todos = todosRef.current || []
+      if (!todos.length) return
+      haptic('light')
+      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+        lines: ['Aquí los tienes todos otra vez.'],
+        results: todos, refineChips: [...ordenar(todos.length, ['Más barato','Más cerca','Mejor valorado']), 'No es lo que buscaba'] }])
+      setLastMatches(todos); return
     }
-    const ro = new ResizeObserver(measure)
-    ro.observe(top)
-    measure()
-    return () => ro.disconnect()
-  }, [])
+    if (chip === 'Más barato' && lastMatches?.length > 0) {
+      const sorted = [...lastMatches].sort((a,b) => {
+        const pa = parseFloat((a.price||'').replace(/[^0-9.]/g,'')) || 9999
+        const pb = parseFloat((b.price||'').replace(/[^0-9.]/g,'')) || 9999
+        return pa - pb
+      })
+      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+        lines: [`${sorted[0]?.name?.split(' ')?.[0]} es el más económico — cobra ${sorted[0]?.price}.`],
+        results: sorted, refineChips: ['Más cerca','Mejor valorado','Online'] }])
+      setLastMatches(sorted); return
+    }
+    if (chip === 'Más cerca' && lastMatches?.length > 0) {
+      if (lastMatches.every(h => typeof h.distance !== 'number')) {
+        setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+          lines: ['¿En qué barrio estás? Dímelo —por ejemplo, «en Gràcia»— y los ordeno por cercanía.'] }])
+        return
+      }
+      const sorted = [...lastMatches].sort((a,b) => (a.distance ?? 99) - (b.distance ?? 99))
+      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+        lines: [`${sorted[0]?.name?.split(' ')?.[0]} es quien está más cerca: ${sorted[0]?.distance < 0.5 ? `en ${sorted[0]?.distanciaDesde}` : `a ${fmtKm(sorted[0]?.distance)} de ${sorted[0]?.distanciaDesde}`}.`],
+        results: sorted, refineChips: ['Más barato','Mejor valorado','Online'] }])
+      setLastMatches(sorted); return
+    }
+    if (chip === 'Mejor valorado' && lastMatches?.length > 0) {
+      const sorted = [...lastMatches].sort((a,b) => (b.rating||0)-(a.rating||0))
+      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+        lines: [`${sorted[0]?.name?.split(' ')?.[0]} tiene la mejor valoración — ${fmtNota(sorted[0]?.rating)}★.`],
+        results: sorted, refineChips: ['Más barato','Más cerca','Online'] }])
+      setLastMatches(sorted); return
+    }
+    if (chip === 'Online' && lastMatches?.length > 0) {
+      const online = lastMatches.filter(h => h.online)
+      if (online.length > 0) {
+        setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+          lines: [online.length === 1
+            ? 'Solo uno de ellos ofrece sesiones online.'
+            : `${online.length} de ellos ofrecen sesiones online.`],
+          results: online,
+          refineChips: [...ordenar(online.length, ['Más barato','Más cerca','Mejor valorado']), 'Ver todos'] }])
+        setLastMatches(online)
+      } else {
+        setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+          lines: ['Ninguno de estos profesionales ofrece sesiones online.'],
+          refineChips: ['No es lo que buscaba'] }])
+      }
+      return
+    }
+    handleSend(chip)
+  }
+
+  // El teclado móvil reduce el espacio real disponible; la navegación y
+  // la escritura se mantienen juntas por encima del teclado.
+  useEffect(() => {
+    if (location.pathname !== '/') return
+    const viewport = window.visualViewport
+    function resize() {
+      const height = viewport?.height || window.innerHeight
+      const offset = viewport?.offsetTop || 0
+      pageRef.current?.style.setProperty('--focus-height', `${height}px`)
+      if (pageRef.current) pageRef.current.dataset.focusSize = height <= 420 ? 'tiny' : height <= 600 ? 'short' : 'full'
+      pageRef.current?.style.setProperty('--focus-top', `${offset}px`)
+      const keyboard = Math.max(0, window.innerHeight - height - offset)
+      document.documentElement.style.setProperty('--nura-keyboard-inset', `${keyboard}px`)
+      document.body.dataset.nuraFocus = 'true'
+    }
+    resize()
+    viewport?.addEventListener('resize', resize)
+    viewport?.addEventListener('scroll', resize)
+    window.addEventListener('resize', resize)
+    return () => {
+      viewport?.removeEventListener('resize', resize)
+      viewport?.removeEventListener('scroll', resize)
+      window.removeEventListener('resize', resize)
+      document.documentElement.style.removeProperty('--nura-keyboard-inset')
+      delete document.body.dataset.nuraFocus
+    }
+  }, [location.pathname])
 
 
   const isWelcome = nuraChatMessages.length <= 1
@@ -1300,35 +1375,62 @@ export default function Home() {
           }
         </div>
 
-        {/* ── PARA QUIEN NO SABE QUE ESCRIBIR ────────────────────────────
-            Profesionales deja de ser una pestaña (ver docs/revision-profunda.md):
-            era una segunda puerta a la misma cosa — su buscador ya mandaba
-            aqui—. Pero SI aportaba algo real: ver que hay sin saber que
-            pedir, con 13 categorias y sus especialidades.
-            Eso no se pierde. Vive aqui, bajo la capsula, donde alguien lo
-            busca cuando se queda en blanco. Sin ocupar pantalla. */}
-        {nuraChatMessages.length <= 1 && (
-          <button onClick={() => navigate('/explore')} className={styles.browseBelow}>
-            <Compass size={15} color="var(--purple)" style={{flexShrink:0}} />
-            {/* Decision del fundador. Paso por "Ver a quien puedes
-                encontrar" —con la tilde de "quién" perdida— y por "Ver con
-                qué te puedo ayudar". Se queda en el nombre llano: quien
-                llega aqui sabe lo que va a ver. */}
-            <span style={{fontSize:'var(--text-sm)', fontWeight:600, color:'var(--purple-ink)'}}>
-              Buscar profesionales
-            </span>
-          </button>
-        )}
 
   </>)
 
+  const turn = messages.slice(Math.min(viewStart, messages.length)).filter(m => m.from === 'nura')
+  const response = turn.filter(m => !m.loading || loading)
+  const responseKey = response[0]?.id || `waiting-${viewStart}`
+  const latestQuery = messages.slice().reverse().find(m => m.from === 'user')?.text
+  const blocks = []
+  if (isWelcome) blocks.push({ id: 'reminder', content: <RecordatorioCita compact /> })
+  response.forEach((msg, msgIndex) => {
+    const lines = msg.lines || (msg.text ? [msg.text] : [])
+    lines.forEach((line, i) => splitResponseText(line).forEach((part, j) => {
+      const hero = isWelcome && i === 1 && j === 0
+      blocks.push({ id: `${msg.id}-line-${i}-${j}`, content: hero
+        ? <h1 className={styles.screenTitle}>{formatLine(part)}</h1>
+        : <p className={`${styles.screenText} ${msg.results && i === 0 ? styles.screenLead : ''}`}>{formatLine(part)}</p> })
+    }))
+    if (msg.loading) blocks.push({ id: `${msg.id}-loading`, content: <div className={styles.typingDots} role="status" aria-label="Buscando"><span /><span /><span /></div> })
+    msg.results?.slice(0, 4).forEach((helper, i) => blocks.push({ id: `${msg.id}-helper-${helper.id}`, content:
+      <div className={styles.screenResult}>
+        <div className={styles.screenResultLabel}>{i === 0 ? 'Primera opción' : 'Otra opción'}<span>{i + 1} / {Math.min(4, msg.results.length)}</span></div>
+        <HelperCardTall helper={helper} compact featured={i === 0} />
+      </div> }))
+    msg.quickOptions?.forEach((opt, i) => blocks.push({ id: `${msg.id}-quick-${i}`, content:
+      <button className={styles.screenChoice} onClick={() => {
+        beginResponse()
+        setShowSuggestions(false)
+        if (opt.includes('busca')) handleSend(searchHistory[0]?.query)
+        else setMessages(prev => [...prev, { id: Date.now(), from: 'nura', lines: ['Me alegra saberlo. Cuando lo necesites, vuelve a buscar.'] }])
+      }}>{opt}<ArrowUpRight size={16} aria-hidden="true" /></button> }))
+    msg.chips?.forEach((chip, i) => blocks.push({ id: `${msg.id}-chip-${i}`, content:
+      <button className={styles.screenChoice} onClick={() => handleChip(chip)}>
+        <span className={styles.choiceIcon} aria-hidden="true">{chip === 'Para mí' ? <UserRound size={18} /> : chip === 'Para alguien de mi familia' ? <Heart size={18} /> : chip === 'Para mi hogar o negocio' ? <House size={18} /> : <ArrowUpRight size={18} />}</span>
+        <span>{chip}</span><ArrowUpRight size={16} aria-hidden="true" />
+      </button> }))
+    if (msg.refineChips?.length) {
+      // Cada ajuste es una unidad: incluso en pantallas pequeñas se llega a todos.
+      msg.refineChips.forEach((chip, i) => blocks.push({ id: `${msg.id}-refine-${i}`, content:
+        <button className={styles.screenChoice} onClick={() => handleRefine(chip)}>
+          <span className={styles.choiceIcon}><RefinementIcon label={chip} /></span><span>{chip}</span><ArrowUpRight size={16} aria-hidden="true" />
+        </button>, section: 'Ajustar esta búsqueda' }))
+    }
+    if (showSuggestions && !msg.chips?.length && !msg.refineChips?.length && msgIndex === response.length - 1) {
+      suggestions.forEach((suggestion, i) => blocks.push({ id: `suggestion-${i}`, content:
+        <button className={styles.screenChoice} onClick={() => handleSend(suggestion.text)}><span className={styles.choiceIcon}><Sparkles size={18} aria-hidden="true" /></span><span>{suggestion.text}</span><ArrowUpRight size={16} aria-hidden="true" /></button> }))
+    }
+  })
+  if (!blocks.length) blocks.push({ id: 'waiting', content: <p className={styles.screenText} role="status">{loading ? 'Estoy buscando a quien puede ayudarte…' : 'Cuéntame qué necesitas.'}</p> })
+
   return (
-    <div className={`${styles.page} ${isWelcome ? styles.pageWelcome : ''} ${user ? styles.pageReturning : ''}`}>
+    <div ref={pageRef} className={`${styles.page} ${styles.focusPage} ${isWelcome ? styles.pageWelcome : ''} ${user ? styles.pageReturning : ''}`}>
       {/* New search button — appears when chat has content */}
 
 
       {/* Floating top — three independent bubbles */}
-      <div className={styles.floatTop} ref={topRef}>
+      <div className={styles.floatTop}>
         {/* ── BUSCAR PROFESIONALES, SIEMPRE A MANO ─────────────────────
             El enlace de abajo desaparece al buscar — y es justo entonces
             cuando puede hacer falta: si Nüra no acierta, quieres mirar tu.
@@ -1359,6 +1461,7 @@ export default function Home() {
                 stopThinking()
                 correctionRef.current = null
                 setCorrigiendo(false)
+                setViewStart(0)
                 setMessages([])
                 setLastMatches([])
                 setTimeout(() => setMessages([{ id: 1, from: 'nura', lines: getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas) }]), 100)
@@ -1382,199 +1485,10 @@ export default function Home() {
         </div>
       </div>
 
-      <div className={styles.messages} ref={scrollerRef}
-        style={{paddingTop: topH + 'px'}}>
-        <RecordatorioCita />
-        {messages.map((msg, msgIdx) => {
-          const prevMsg = messages[msgIdx - 1]
-          const prevHadResults = prevMsg?.results?.length > 0
-          const firstOfNuraRun = msg.from === 'nura' && prevMsg?.from !== 'nura'
-          // Spacing: 16px between messages, 24px after carousel, 20px for user replies
-          const spacingClass = prevHadResults ? styles.afterCarousel : ''
-          return (
-          /* El `auto` del primer mensaje mantiene la conversacion pegada
-             abajo, que es correcto CUANDO HAY conversacion. En la pantalla
-             de bienvenida dejaba 368px muertos arriba — mas de un tercio de
-             pantalla en blanco antes de que empezara nada. Ahi el saludo
-             sube y respira. */
-          <div key={msg.id} className={msgIdx === 0 && isWelcome ? styles.welcomeBlock : undefined} style={{marginTop: msgIdx === 0 ? (nuraChatMessages.length <= 1 ? 'var(--space-32)' : 'auto') : msg.from === 'user' ? 'var(--chat-gap-md)' : 'var(--chat-gap)'}} ref={msg.results?.length ? resultRef : undefined}>
-            <div className={`${styles.msgRow} ${msg.from === 'user' ? styles.msgRowUser : ''} ${spacingClass}`}>
-              {msg.from === 'nura' && (
-                firstOfNuraRun ? (
-                  <div className={styles.nuraAvatar}>
-                    <img src="/logo-iso.png" alt="Nüra" className={styles.nuraAvatarImg} />
-                  </div>
-                ) : (
-                  <div className={styles.nuraAvatarSpacer} />
-                )
-              )}
-              <div className={`${styles.bubble} ${msg.from === 'user' ? styles.bubbleUser : styles.bubbleNura} ${msgIdx === 0 && msg.from !== 'user' ? styles.greeting : ''} ${msgIdx === 0 && msg.from !== 'user' && nuraChatMessages.length > 1 ? styles.greetingRetirado : ''}`}>
-                {msg.text && <p>{msg.text}</p>}
-                {msg.lines?.map((line, i) => <p key={i}
-                  role={msgIdx === 0 && i === 1 && isWelcome ? 'heading' : undefined}
-                  aria-level={msgIdx === 0 && i === 1 && isWelcome ? 1 : undefined}>{formatLine(line)}</p>)}
-                {msg.loading && <div className={styles.typingDots}><span /><span /><span /></div>}
-
-              {msg.quickOptions && (
-                <div style={{display:'flex',gap:'var(--space-8)',flexWrap:'wrap',marginTop:'var(--space-8)'}}>
-                  {(msg.quickOptions||[]).map((opt,i) => (
-                    <button key={i}
-                      style={{padding:'7px var(--space-14)',background:'var(--paper)',border:'1.5px solid var(--rule)',borderRadius:'var(--radius-card)',fontSize:'var(--text-xs)',color:'var(--mid)',cursor:'pointer',transition:'all 0.15s'}}
-                      onClick={() => {
-                        setShowSuggestions(false)
-                        if (opt.includes('busca')) handleSend(searchHistory[0]?.query)
-                        else setMessages(prev => [...prev, {id:Date.now(),from:'nura',lines:['Me alegra saberlo. Cuando lo necesites, vuelve a buscar.']}])
-                      }}>
-                      {opt}
-                    </button>
-                  ))}
-                </div>
-              )}
-              </div>
-            </div>
-
-            {msgIdx === 0 && isWelcome && <div className={styles.welcomeComposer}>{composer}</div>}
-
-            {msg.results && (
-              <div className={styles.carouselBlock}>
-                <ResultsBlock results={msg.results} />
-              </div>
-            )}
-
-        {(() => {
-          const lastMsg = msg
-          // Los chips de conversacion: la respuesta a lo que Nura acaba de
-          // preguntar. Se producian en NUEVE sitios y no se pintaban en
-          // ninguno — la pregunta llegaba sin forma de contestarla. Van
-          // antes que las sugerencias: quien tiene una pregunta delante no
-          // necesita ademas tres ejemplos genericos.
-          // Los chips de RESPUESTA no son los de ajustar. Estos contestan a
-          // una pregunta —"¿para quien necesitas ayuda?"— y son una decision;
-          // los de ajustar son un retoque. Compartian estilo de pildora
-          // pequeña apretada, y eso hacia que responder pareciera rellenar un
-          // formulario.
-          if (lastMsg?.chips?.length) return (
-            <div className={styles.answerRow}>
-              {lastMsg.chips.map((chip, i) => (
-                <button key={i} className={styles.answerChip}
-                  onClick={() => handleChip(chip)}>
-                    {isWelcome && ['Para mí', 'Para alguien de mi familia', 'Para mi hogar o negocio'].includes(chip) && (
-                      <span className={styles.choiceIcon} aria-hidden="true">
-                        {chip === 'Para mí' ? <UserRound size={20} /> : chip === 'Para alguien de mi familia' ? <Heart size={20} /> : <House size={20} />}
-                      </span>
-                    )}
-                    <span>{chip}</span><ArrowUpRight className={styles.choiceArrow} size={17} aria-hidden="true" />
-                  </button>
-              ))}
-            </div>
-          )
-          const activeChips = lastMsg?.refineChips
-          if (activeChips) return (
-            <div className={styles.refineRow}>
-              <div className={styles.refineLabel}><SlidersHorizontal size={15} aria-hidden="true" /> Ajustar esta búsqueda</div>
-              {activeChips.map((chip, i) => (
-                <button key={i} className={styles.refineChip}
-                  onClick={() => {
-                    if (chip === 'Crear cuenta') { navigate('/login'); return }
-                    // La Correccion: el unico camino para "me entendiste
-                    // mal". Los otros chips reordenan lo mismo; este admite
-                    // que lo mismo no sirve.
-                    if (chip === 'No es lo que buscaba') { haptic('light'); startCorrection(window.__nuraLastQuery); return }
-                    // Ordenar una lista de UNO es teatro: la respuesta seria
-                    // "X es el mas economico" sobre el unico que hay. Los
-                    // chips de orden solo aparecen si hay algo que comparar.
-                    const ordenar = (n, propios) => n >= 2 ? propios : []
-                    if (chip === 'Era otra cosa') { haptic('light'); cancelCorrection()
-                      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-                        lines: ['Sin problema. Cuéntame qué necesitas.'] }])
-                      setTimeout(() => inputRef.current?.focus?.(), 200); return }
-                    if (chip === 'Ver todos') {
-                      const todos = todosRef.current || []
-                      if (!todos.length) return
-                      haptic('light')
-                      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-                        lines: ['Aquí los tienes todos otra vez.'],
-                        results: todos, refineChips: [...ordenar(todos.length, ['Más barato','Más cerca','Mejor valorado']), 'No es lo que buscaba'] }])
-                      setLastMatches(todos); return
-                    }
-                    if (chip === 'Más barato' && lastMatches?.length > 0) {
-                      const sorted = [...lastMatches].sort((a,b) => {
-                        const pa = parseFloat((a.price||'').replace(/[^0-9.]/g,'')) || 9999
-                        const pb = parseFloat((b.price||'').replace(/[^0-9.]/g,'')) || 9999
-                        return pa - pb
-                      })
-                      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-                        lines: [`${sorted[0]?.name?.split(' ')?.[0]} es el más económico — cobra ${sorted[0]?.price}.`],
-                        results: sorted, refineChips: ['Más cerca','Mejor valorado','Online'] }])
-                      setLastMatches(sorted); return
-                    }
-                    if (chip === 'Más cerca' && lastMatches?.length > 0) {
-                      if (lastMatches.every(h => typeof h.distance !== 'number')) {
-                        setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-                          lines: ['¿En qué barrio estás? Dímelo —por ejemplo, «en Gràcia»— y los ordeno por cercanía.'] }])
-                        return
-                      }
-                      const sorted = [...lastMatches].sort((a,b) => (a.distance ?? 99) - (b.distance ?? 99))
-                      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-                        lines: [`${sorted[0]?.name?.split(' ')?.[0]} es quien está más cerca: ${sorted[0]?.distance < 0.5 ? `en ${sorted[0]?.distanciaDesde}` : `a ${fmtKm(sorted[0]?.distance)} de ${sorted[0]?.distanciaDesde}`}.`],
-                        results: sorted, refineChips: ['Más barato','Mejor valorado','Online'] }])
-                      setLastMatches(sorted); return
-                    }
-                    if (chip === 'Mejor valorado' && lastMatches?.length > 0) {
-                      const sorted = [...lastMatches].sort((a,b) => (b.rating||0)-(a.rating||0))
-                      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-                        lines: [`${sorted[0]?.name?.split(' ')?.[0]} tiene la mejor valoración — ${fmtNota(sorted[0]?.rating)}★.`],
-                        results: sorted, refineChips: ['Más barato','Más cerca','Online'] }])
-                      setLastMatches(sorted); return
-                    }
-                    if (chip === 'Online' && lastMatches?.length > 0) {
-                      const online = lastMatches.filter(h => h.online)
-                      if (online.length > 0) {
-                        setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-                          lines: [online.length === 1
-                            ? 'Solo uno de ellos ofrece sesiones online.'
-                            : `${online.length} de ellos ofrecen sesiones online.`],
-                          results: online,
-                          refineChips: [...ordenar(online.length, ['Más barato','Más cerca','Mejor valorado']), 'Ver todos'] }])
-                        setLastMatches(online)
-                      } else {
-                        setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-                          lines: ['Ninguno de estos profesionales ofrece sesiones online.'],
-                          refineChips: ['No es lo que buscaba'] }])
-                      }
-                      return
-                    }
-                    handleSend(chip)
-                  }}>
-                  <span className={styles.refineIcon}><RefinementIcon label={chip} /></span><span>{chip}</span>
-                </button>
-              ))}
-            </div>
-          )
-          if (showSuggestions) return (
-            <div className={styles.suggestions}>
-              <p className={styles.suggestionsLabel}>Puedes empezar por aquí</p>
-              {(suggestions||[]).map((s, i) => (
-                <button key={i} className={styles.suggestion} onClick={() => handleSend(s.text)}>
-                  <span className={styles.suggestionMark} aria-hidden="true">{i === 0 ? <Heart size={18} /> : i === 1 ? <House size={18} /> : <Sparkles size={18} />}</span>
-                  <span className={styles.suggestionText}>{s.text}</span>
-                  <ArrowUpRight size={16} className={styles.suggestionArrow} aria-hidden="true" />
-                </button>
-              ))}
-            </div>
-          )
-          return null
-        })()}
-
-          </div>
-          )
-        })}
-        {/* Espaciadores retirados: la reserva vive en el padding del
-            scroller (CONTRATO regla 3: ningun hijo reserva nada). */}
-        <div ref={bottomRef} />
+      <div className={styles.screenArea}>
+        <ResponseScreen key={responseKey} blocks={blocks} welcome={isWelcome} query={isWelcome ? '' : latestQuery} />
       </div>
-
-      {!isWelcome && <div className={styles.floatBottom}>{composer}</div>}
+      <div className={styles.focusComposer}>{composer}</div>
 
       {showGate && <RegisterGate reason={gateReason} onClose={() => setShowGate(false)} />}
       {valorar && <RatingModal helper={valorar} onClose={() => setValorar(null)} />}

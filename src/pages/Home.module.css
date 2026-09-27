@@ -841,3 +841,34 @@
 .refineChip { min-width: 0; min-height: 52px; padding: 9px 10px; border-radius: 16px; font-size: 12px; line-height: 1.35; gap: 8px; box-shadow: none; }
 .refineIcon { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; flex-shrink: 0; color: var(--purple-ink); border-radius: 9px; background: var(--brand-lilac); }
 @media (min-width: 900px) { .refineRow { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* Búsqueda por pantallas: nunca acumular una conversación desplazable. */
+.focusPage { inset: auto 0 auto; top: var(--focus-top, 0px); height: var(--focus-height, 100dvh); display: grid; grid-template-rows: 50px minmax(0, 1fr) 60px; gap: 12px; padding: max(env(safe-area-inset-top), 12px) 16px calc(var(--nav-h) + 12px); overflow: hidden; }
+.focusPage .floatTop { position: static; width: 100%; max-width: 850px; padding: 0; align-self: center; height: 44px; }
+.screenArea { width: 100%; max-width: 850px; margin: 0 auto; min-height: 0; }
+.focusComposer { width: 100%; max-width: 850px; margin: 0 auto; min-width: 0; }
+.focusComposer .inputCapsule { height: 60px; min-height: 60px; }
+.screenTitle { font-family: var(--font-voice); color: var(--brand-deep); font-size: clamp(28px, 3.5vw, 45px); font-weight: 650; letter-spacing: -1.1px; line-height: 1.15; margin: 0; }
+.screenText { font-size: 15px; line-height: 1.55; margin: 0; color: var(--ink-secondary); }
+.screenLead { font-size: clamp(20px, 2.2vw, 27px); line-height: 1.3; color: var(--brand-deep); letter-spacing: -.6px; }
+.screenChoice { width: 100%; display: flex; align-items: center; gap: 10px; min-height: 52px; background: #FFFFFFE0; border: 1px solid #DDD4E9; border-radius: 17px; padding: 9px 12px; font: inherit; font-size: 13px; color: var(--brand-deep); text-align: left; cursor: pointer; }
+.screenChoice > span:nth-child(2) { flex: 1; }
+.screenChoice > svg:last-child { flex-shrink: 0; margin-left: auto; }
+.screenChoice .choiceIcon { width: 30px; height: 30px; border-radius: 10px; flex-shrink: 0; }
+.screenChoice:hover { background: white; border-color: #B49ACE; }
+.screenResultLabel { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--ink-secondary); margin: 0 2px 7px; }
+.screenResultLabel span { font-variant-numeric: tabular-nums; font-weight: 400; }
+@media (min-width: 768px) { .focusPage { padding: 16px 24px 20px; } }
+@media (max-height: 600px) { .focusPage { grid-template-rows: 38px minmax(0,1fr) 52px; gap: 8px; padding-top: 6px; padding-bottom: calc(var(--nav-h) + 6px); } .focusComposer .inputCapsule { height: 52px; min-height: 52px; } .focusPage .screenTitle { font-size: 26px; } .screenText { font-size: 14px; line-height: 1.45; } .screenChoice { min-height: 46px; } }
+@media (max-height: 420px) { .focusPage { grid-template-rows: minmax(0,1fr) 48px; } .focusPage .floatTop { display: none; } .focusComposer .inputCapsule { height: 48px; min-height: 48px; } }
+/* También responde al viewport visual de iOS al abrir el teclado. */
+.focusPage[data-focus-size='short'], .focusPage[data-focus-size='tiny'] { grid-template-rows: 38px minmax(0,1fr) 52px; gap: 8px; padding-top: 6px; padding-bottom: calc(var(--nav-h) + 6px); }
+.focusPage[data-focus-size='short'] .inputCapsule, .focusPage[data-focus-size='tiny'] .inputCapsule { height: 52px; min-height: 52px; }
+.focusPage[data-focus-size='short'] .screenTitle, .focusPage[data-focus-size='tiny'] .screenTitle { font-size: 26px; }
+.focusPage[data-focus-size='short'] .screenText, .focusPage[data-focus-size='tiny'] .screenText { font-size: 14px; line-height: 1.45; }
+.focusPage[data-focus-size='short'] .screenChoice, .focusPage[data-focus-size='tiny'] .screenChoice { min-height: 46px; }
+.focusPage[data-focus-size='tiny'] { grid-template-rows: minmax(0,1fr) 48px; }
+.focusPage[data-focus-size='tiny'] .floatTop { display: none; }
+.focusPage[data-focus-size='tiny'] .inputCapsule { height: 48px; min-height: 48px; }
+.focusPage[data-focus-size='tiny'] .screenResultLabel { display: none; }
+@media (min-width: 768px) { .focusPage { padding-bottom: calc(var(--nav-h) + 12px); } }

@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-27 — Una respuesta por pantalla, sin scroll
+
+Sergio sustituye expresamente el chat acumulado de Inicio por una sola burbuja que cambia con cada búsqueda o acción. La respuesta completa se reparte por altura real en pasos navegables; escritura y menú permanecen debajo también en ordenador. El historial interno y los manejadores de comprensión se conservan. Esta decisión sustituye el contrato anterior de scroller en Inicio. Detalles y pruebas: `docs/busqueda-pantalla.md`.
+
 ## 2026-09-27 — Resultados compactos, iconos e historial
 
 Sergio pide reducir las fichas de búsqueda y unificar sus tamaños: filas horizontales de 116 px con acceso al perfil y al chat, sin biografía ni trayectoria anticipadas. Ajustes en una rejilla compacta con iconos de trazo; retirados emojis decorativos de controles y plantillas revisadas. El historial separa estado, identidad y acciones, sin cambiar las reglas de citas. Pruebas y coordinación: `docs/resultados-compactos.md`.

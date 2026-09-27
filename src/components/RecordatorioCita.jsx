@@ -21,7 +21,7 @@ function cuandoEs(c, ahora = new Date()) {
   return `${dia} a las ${c.hora}`
 }
 
-export default function RecordatorioCita() {
+export default function RecordatorioCita({ compact = false }) {
   const navigate = useNavigate()
   const { services, citas, cancelarCita } = useUser()
   const [ahora, setAhora] = useState(() => new Date())
@@ -59,6 +59,15 @@ export default function RecordatorioCita() {
     fontSize: 'var(--text-sm)', fontWeight: 600, fontFamily: 'inherit', cursor: 'pointer',
     display: 'inline-flex', alignItems: 'center', gap: 'var(--space-6)',
   }
+
+  if (compact) return (
+    <button type="button" onClick={() => navigate('/my-services')} aria-label={`Ver tu cita con ${nombre}: ${cuandoEs(cita)}`}
+      style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', minHeight: 52, padding: '10px 12px', borderRadius: 16,
+        background: 'var(--brand-lilac)', border: '1px solid var(--purple-20)', textAlign: 'left', color: 'var(--purple-ink)', fontFamily: 'inherit', cursor: 'pointer' }}>
+      <CalendarClock size={20} aria-hidden="true" style={{ flexShrink: 0 }} />
+      <span style={{ fontSize: 12, lineHeight: 1.4 }}><strong>{cuandoEs(cita)}</strong><br />Tu cita con {nombre}</span>
+    </button>
+  )
 
   return (
     <section aria-label="Recordatorio de tu cita"

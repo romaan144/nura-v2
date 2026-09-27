@@ -84,3 +84,6 @@
   .userSub { color: #C6B3DD; }
   .userAvatar { background: #EAE2F8; color: #452764; }
 }
+
+/* En Inicio, Sergio pide mantener la navegación debajo de la escritura. */
+:global(body[data-nura-focus]) .sidebar { display: none; }

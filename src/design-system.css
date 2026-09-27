@@ -154,3 +154,10 @@ span.nura-user-initials { background: #F0E9FA; }
 .nura-work-composer > :not(button:first-child) { max-width: 680px; margin-left: auto !important; margin-right: auto !important; }
 .nura-work-composer input, .nura-work-composer textarea { box-shadow: 0 3px 14px -10px #30214230; }
 .nura-post { border-top: 3px solid #E6DCF1 !important; }
+
+@media (max-width: 767px) {
+  body[data-nura-focus] nav[aria-label="Navegación principal"] { bottom: calc(var(--nura-keyboard-inset, 0px) + max(env(safe-area-inset-bottom), 10px)); }
+}
+@media (min-width: 768px) {
+  body[data-nura-focus] .desktopMain[data-screen='home'] { left: 0; width: 100%; --nav-h: 72px; }
+}
