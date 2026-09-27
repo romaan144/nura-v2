@@ -3,7 +3,7 @@ import { getFirstName } from '../utils/name'
 import { useTitulo } from '../utils/titulo'
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, Send, Shield, Award, Calendar, Mic, MicOff } from 'lucide-react'
+import { ArrowLeft, Send, Shield, Award, Star, Calendar, Mic, MicOff } from 'lucide-react'
 import { HELPERS_DEMO as HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
 import ElegirCita from '../components/ElegirCita'
@@ -665,47 +665,48 @@ export default function Chat() {
   return (
     <div className={styles.page}>
 
-      {/* Floating header */}
+      {/* La cabecera reserva su altura real, también con nombres largos. */}
       <header className={styles.header}>
         <button className={styles.back} onClick={() => navigate(-1)} aria-label="Volver">
           <ArrowLeft size={17} />
         </button>
 
-        <div className={styles.helperInfo} onClick={() => navigate(`/helper/${helper.id}`, { state: { helper } })}>
+        <button type="button" className={styles.helperInfo}
+          aria-label={`Ver perfil de ${helper.name}`}
+          onClick={() => navigate(`/helper/${helper.id}`, { state: { helper } })}>
           {helper.avatarUrl
-            ? <img src={helper.avatarUrl} alt={helper.name} className={styles.avatarImg} />
-            : <div className={styles.avatar} style={{ background: helper.avatarColor }}>{helper.avatar}</div>
+            ? <img src={helper.avatarUrl} alt="" className={styles.avatarImg} />
+            : <span className={styles.avatar} style={{ background: helper.avatarColor }} aria-hidden="true">{helper.avatar}</span>
           }
-          <div className={styles.helperMeta}>
-            <div className={styles.helperName}>
-              {chatDisplayName}
-              {helper.founder && <Award size={11} color='#92400E' style={{marginLeft:'var(--space-3)',verticalAlign:'middle'}} />}
-              {helper.dniVerified && <Shield size={10} color='var(--green)' style={{marginLeft:'var(--space-3)',verticalAlign:'middle'}} />}
-            </div>
-            <div className={styles.helperStatus} style={{display:'flex',alignItems:'center',gap:'var(--space-4)',minWidth:0}}>
-              {typing
-                ? <span className={styles.typingStatus}>escribiendo...</span>
-                : <>
-                    <span className={styles.onlineDot} style={{flexShrink:0}} />
-                    <span style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',minWidth:0}}>{chatSpecialty}</span>
-                    {helper.rating && (
-                      <span style={{flexShrink:0,fontSize:'var(--text-xs)',color:'var(--ink-tertiary)'}}>
-                        ★ {fmtNota(helper.rating)}
-                      </span>
-                    )}
-                    {helper.verified && (
-                      <Badge variant="success" size="xs" style={{flexShrink:0}}>✓ Verif.</Badge>
-                    )}
-                  </>
-              }
-            </div>
-          </div>
-        </div>
-
-        <button className={styles.contractBtn} onClick={() => serviceState === 'Valorar' ? setShowRating(true) : setShowConfirm(true)}>
-          <Calendar size={13} /> {serviceState}
+          <span className={styles.helperMeta}>
+            <span className={styles.helperName}>
+              <span className={styles.nameText}>{chatDisplayName}</span>
+              {helper.founder && <Award size={13} color="#92400E" aria-label="Profesional fundador" />}
+              {helper.dniVerified && <Shield size={13} color="var(--green)" aria-label="Identidad verificada" />}
+            </span>
+            <span className={styles.helperSpecialty} title={helper.specialty}>{chatSpecialty}</span>
+          </span>
         </button>
 
+        <div className={styles.headerActions}>
+          <div className={styles.helperStatus}>
+            {typing
+              ? <span className={styles.typingStatus}>escribiendo...</span>
+              : <>
+                  <span className={styles.onlineDot} aria-hidden="true" />
+                  {helper.rating && (
+                    <span className={styles.headerRating} aria-label={`Valoración: ${fmtNota(helper.rating)}`}>
+                      <Star size={13} aria-hidden="true" /> {fmtNota(helper.rating)}
+                    </span>
+                  )}
+                  {helper.verified && <Badge variant="success" size="xs">Verificado</Badge>}
+                </>
+            }
+          </div>
+          <button className={styles.contractBtn} onClick={() => serviceState === 'Valorar' ? setShowRating(true) : setShowConfirm(true)}>
+            <Calendar size={15} aria-hidden="true" /> {serviceState}
+          </button>
+        </div>
       </header>
 
       {/* Messages — full screen */}

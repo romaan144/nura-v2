@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-27 — Identidad y acciones legibles en la cabecera del chat
+
+La cabecera anterior ocultaba la especialidad en 320 px. Dos filas en móvil separan identidad y controles; foto de 48 px y nombre adaptable. La cabecera reserva su altura real en el flujo y el perfil se abre desde un botón accesible. Se mantienen las funciones y el comportamiento del teclado.
+
 ## 2026-09-27 — Contorno coherente para acciones secundarias
 
 Tras la revisión pedida por Sergio, los botones secundarios comparten tokens de borde y superficie; se aplican también a acciones locales de carta, citas, seguidos y profesionales. Se retira la sombra de los enlaces ghost para evitar cápsulas difusas. Texto adaptable y mismos manejadores.
