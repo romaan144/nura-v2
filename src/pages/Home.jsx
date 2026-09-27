@@ -1393,11 +1393,20 @@ export default function Home() {
         : <p className={`${styles.screenText} ${msg.results && i === 0 ? styles.screenLead : ''}`}>{formatLine(part)}</p> })
     }))
     if (msg.loading) blocks.push({ id: `${msg.id}-loading`, content: <div className={styles.typingDots} role="status" aria-label="Buscando"><span /><span /><span /></div> })
-    msg.results?.slice(0, 4).forEach((helper, i) => blocks.push({ id: `${msg.id}-helper-${helper.id}`, content:
-      <div className={styles.screenResult}>
-        <div className={styles.screenResultLabel}>{i === 0 ? 'Primera opción' : 'Otra opción'}<span>{i + 1} / {Math.min(4, msg.results.length)}</span></div>
-        <HelperCardTall helper={helper} compact featured={i === 0} />
-      </div> }))
+    if (msg.results?.length) {
+      blocks.push({ id: `${msg.id}-primary`, content:
+        <div className={styles.screenResult}>
+          <div className={styles.screenResultLabel}>Primera opción</div>
+          <HelperCardTall helper={msg.results[0]} compact featured />
+        </div> })
+      const alternatives = msg.results.slice(1, 4)
+      if (alternatives.length) blocks.push({ id: `${msg.id}-alternatives`, section: 'Otras opciones', content:
+        <div className={styles.alternativeGroup} style={{ '--alternatives-count': alternatives.length }}>
+          <div className={styles.alternativeGrid}>
+            {alternatives.map(helper => <HelperCardTall key={helper.id} helper={helper} compact comparison />)}
+          </div>
+        </div> })
+    }
     msg.quickOptions?.forEach((opt, i) => blocks.push({ id: `${msg.id}-quick-${i}`, content:
       <button className={styles.screenChoice} onClick={() => {
         beginResponse()

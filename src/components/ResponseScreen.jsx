@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react'
-import { ArrowLeft, ArrowRight, SlidersHorizontal } from 'lucide-react'
+import { ArrowLeft, ArrowRight, SlidersHorizontal, Users } from 'lucide-react'
 import { paginateResponse } from '../utils/responseLayout'
 import styles from './ResponseScreen.module.css'
 
@@ -17,7 +17,7 @@ export default function ResponseScreen({ blocks, welcome, query }) {
     if (!area) return
     const measure = () => {
       const sizes = [...area.children].map(el => Math.ceil(el.getBoundingClientRect().height))
-      const height = Math.floor(area.clientHeight)
+      const height = Math.floor(area.getBoundingClientRect().height)
       setLayout(old => old.height === height && old.sizes.join(',') === sizes.join(',') ? old : { height, sizes })
     }
     const observer = new ResizeObserver(measure)
@@ -39,7 +39,7 @@ export default function ResponseScreen({ blocks, welcome, query }) {
     areaRef.current?.focus({ preventScroll: true })
   }
   return (
-    <section className={styles.screen} aria-label="Respuesta de Nüra">
+    <section className={styles.screen} data-paged={pages.length > 1} aria-label="Respuesta de Nüra">
       <header className={styles.header}>
         <img src="/logo-iso.png" alt="" width="32" height="32" />
         <div className={styles.heading}>
@@ -48,9 +48,9 @@ export default function ResponseScreen({ blocks, welcome, query }) {
         </div>
         {adjustments >= 0 && !section
           ? <button type="button" className={styles.adjust} onClick={() => goTo(adjustments)} aria-label="Ir a ajustes de búsqueda" title="Ajustar búsqueda"><SlidersHorizontal size={18} aria-hidden="true" /></button>
-          : section && <SlidersHorizontal size={18} aria-hidden="true" />}
+          : section === 'Ajustar esta búsqueda' ? <SlidersHorizontal size={18} aria-hidden="true" /> : section === 'Otras opciones' && <Users size={18} aria-hidden="true" />}
       </header>
-      <div ref={areaRef} className={styles.body} tabIndex={-1} aria-label="Contenido de la respuesta">
+      <div ref={areaRef} className={styles.body} style={{ '--response-height': layout.height > 0 ? `${layout.height}px` : undefined }} tabIndex={-1} aria-label="Contenido de la respuesta">
         {blocks.map((block, index) => {
           const visible = ready && current.has(index)
           const top = current.get(index) || 0
@@ -61,13 +61,12 @@ export default function ResponseScreen({ blocks, welcome, query }) {
           </div>
         })}
       </div>
-      <footer className={styles.footer}>
-        <button type="button" onClick={() => goTo(pages[selected - 1].items[0].index)} disabled={selected === 0} aria-label="Parte anterior de la respuesta"><ArrowLeft size={17} aria-hidden="true" /></button>
-        <span className={styles.progress} role="status" aria-live="polite">{pages.length > 1 ? `${selected + 1} de ${pages.length}` : 'A tu ritmo'}</span>
-        {next ? <button type="button" className={styles.next} onClick={() => goTo(next.items[0].index)}>{nextSection ? 'Ajustar búsqueda' : 'Siguiente'}<ArrowRight size={16} aria-hidden="true" /></button>
-          : pages.length > 1 ? <button type="button" className={styles.restart} onClick={() => goTo(pages[0].items[0].index)}>Volver al principio</button>
-          : <span className={styles.hint}>Puedes escribir abajo</span>}
-      </footer>
+      {pages.length > 1 && <footer className={styles.footer}>
+        {selected > 0 && <button type="button" onClick={() => goTo(pages[selected - 1].items[0].index)} aria-label="Parte anterior de la respuesta"><ArrowLeft size={17} aria-hidden="true" /></button>}
+        <span className={styles.progress} role="status" aria-live="polite">{`${selected + 1} de ${pages.length}`}</span>
+        {next ? <button type="button" className={styles.next} onClick={() => goTo(next.items[0].index)}>{nextSection === 'Otras opciones' ? 'Ver otras opciones' : nextSection === 'Ajustar esta búsqueda' ? 'Ajustar búsqueda' : 'Siguiente'}<ArrowRight size={16} aria-hidden="true" /></button>
+          : <button type="button" className={styles.restart} onClick={() => goTo(pages[0].items[0].index)}>Volver al principio</button>}
+      </footer>}
     </section>
   )
 }
