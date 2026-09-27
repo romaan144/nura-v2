@@ -17,7 +17,7 @@ import { fmtNota, dondeEsta } from '../utils/formato'
 // acción ancha. `small` la reduce para las alternativas: coherencia
 // por escala, no por invención.
 // ═══════════════════════════════════════════════════════════════
-export default function HelperCardTall({ helper, small = false, compact = false, featured = false }) {
+export default function HelperCardTall({ helper, small = false, compact = false, featured = false, comparison = false }) {
   // Navegacion diferida cancelable: si el componente se va antes de los
   // 600ms, el usuario NO acaba en Login sin haberlo pedido.
   const irLuego = useRef(null)
@@ -69,7 +69,7 @@ export default function HelperCardTall({ helper, small = false, compact = false,
   }
 
   if (compact) return (
-    <article className={`${styles.compact} ${featured ? styles.featured : ''}`}>
+    <article className={`${styles.compact} ${featured ? styles.featured : ''} ${comparison ? styles.comparison : ''}`}>
       <button type="button" className={styles.profile} onClick={handleTap} aria-label={`Ver perfil de ${helper.name}`}>
         {helper.avatarUrl
           ? <img className={styles.avatar} src={helper.avatarUrl} alt="" loading="lazy" />

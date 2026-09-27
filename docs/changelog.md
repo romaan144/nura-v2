@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-27 — Bienvenida limpia, cristal y alternativas juntas
+
+Sergio pide retirar la flecha sin destino y «A tu ritmo», aumentar ligeramente el contraste del cristal y mostrar todas las alternativas juntas en el paso siguiente a la recomendación principal. El grupo es indivisible al paginar y adapta su distribución a la altura disponible. Sin cambios en ordenación, búsqueda o datos. Ver `docs/alternativas-juntas.md`.
+
 ## 2026-09-27 — Una respuesta por pantalla, sin scroll
 
 Sergio sustituye expresamente el chat acumulado de Inicio por una sola burbuja que cambia con cada búsqueda o acción. La respuesta completa se reparte por altura real en pasos navegables; escritura y menú permanecen debajo también en ordenador. El historial interno y los manejadores de comprensión se conservan. Esta decisión sustituye el contrato anterior de scroller en Inicio. Detalles y pruebas: `docs/busqueda-pantalla.md`.

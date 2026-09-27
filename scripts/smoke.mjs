@@ -108,10 +108,10 @@ import { UserProvider } from '../src/context/UserContext.jsx'
 import Card from '../src/components/HelperCardTall.jsx'
 import { HELPERS } from '../src/data/helpers.js'
 globalThis.__helpers = HELPERS
-globalThis.__card = (helper, small, compact = false) => renderToString(
+globalThis.__card = (helper, small, compact = false, comparison = false) => renderToString(
   React.createElement(MemoryRouter, { initialEntries: ['/'] },
     React.createElement(UserProvider, null,
-      React.createElement(Card, { helper, small, compact })))
+      React.createElement(Card, { helper, small, compact, comparison })))
 )
 `)
 try {
@@ -350,17 +350,17 @@ try {
   }
   const rotos = []
   for (const h of helpers) {
-    for (const variant of ['grande', 'small', 'compact']) {
-      try { globalThis.__card(h, variant === 'small', variant === 'compact') }
+    for (const variant of ['grande', 'small', 'compact', 'comparison']) {
+      try { globalThis.__card(h, variant === 'small', variant === 'compact' || variant === 'comparison', variant === 'comparison') }
       catch (e) { rotos.push(`id=${h.id} ${variant} → ${String(e.message).split('\n')[0].slice(0, 70)}`) }
     }
   }
   if (rotos.length) {
-    console.log(`✗ ${'Censo tarjeta'.padEnd(14)} — ${rotos.length} de ${helpers.length * 3} renders rotos`)
+    console.log(`✗ ${'Censo tarjeta'.padEnd(14)} — ${rotos.length} de ${helpers.length * 4} renders rotos`)
     rotos.slice(0, 6).forEach(r => console.log(`    ${r}`))
     failed += rotos.length
   } else {
-    console.log(`✓ ${'Censo tarjeta'.padEnd(14)} [${helpers.length} profesionales × 3 variantes]`)
+    console.log(`✓ ${'Censo tarjeta'.padEnd(14)} [${helpers.length} profesionales × 4 variantes]`)
   }
 } catch (e) {
   console.log(`✗ ${'Censo tarjeta'.padEnd(14)} — no compila: ${String(e.message).slice(0, 200)}`)

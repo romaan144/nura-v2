@@ -872,3 +872,11 @@
 .focusPage[data-focus-size='tiny'] .inputCapsule { height: 48px; min-height: 48px; }
 .focusPage[data-focus-size='tiny'] .screenResultLabel { display: none; }
 @media (min-width: 768px) { .focusPage { padding-bottom: calc(var(--nav-h) + 12px); } }
+
+.focusPage { background: radial-gradient(ellipse at 10% 0%, #E3DCED, transparent 70%), radial-gradient(ellipse at 95% 90%, #DDE8E2, transparent 70%), #EAE6EF; }
+/* Una sola unidad de paginación: ninguna alternativa salta a otro paso. */
+.alternativeGroup { height: var(--response-height, 280px); container-type: size; container-name: alternatives; }
+.alternativeGrid { display: grid; grid-auto-rows: minmax(0, 1fr); gap: 8px; height: min(calc(var(--alternatives-count) * 88px + (var(--alternatives-count) - 1) * 8px), 100%); }
+@container alternatives (max-height: 180px) {
+  .alternativeGrid { grid-template-columns: repeat(var(--alternatives-count), minmax(0, 1fr)); grid-template-rows: minmax(0, 1fr); height: min(126px, 100%); }
+}
