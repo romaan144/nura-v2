@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-27 — La carta de presentación no queda bajo el menú
+
+La captura de Sergio revela un fallo reproducible: IntroLetter usaba toda la altura sin reservar el menú. Se reserva su altura compartida y se adapta la página al visualViewport al editar, manteniendo el envío sobre la navegación y sin cambiar el manejador. Editor a 16 px y limpieza de los ajustes al salir.
+
 ## 2026-09-27 — Tarjetas neutras y fotos protagonistas
 
 Sergio prefiere el fondo de las tarjetas secundarias también en la principal: se retiran su degradado y el del botón de contacto. Fotos mayores, con formato de retrato, conservando alturas compactas, alternativas juntas y adaptación al teclado. Solo CSS; funciones intactas.

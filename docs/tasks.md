@@ -1,5 +1,11 @@
 # Trabajo compartido
 
+## Envío de carta visible sobre el menú · Codex
+
+**Estado:** implementado y verificado. **Rama:** `codex/carta-boton-visible`, desde `cbcea61`.
+**Alcance:** IntroLetter.jsx y su CSS. Reproducido en 390×844: botón entre y=782,5 y 830, menú entre 772 y 834. La página reserva `--nav-h`; botón con 14 px de separación del menú. Altura y desplazamiento del visualViewport adaptan carta y menú al teclado, con limpieza al salir. Editor de 16 px para evitar zoom al enfocar en iOS; botón limitado al ancho de lectura en ordenador. Sin cambiar el envío.
+**Verificación:** a 390×844 botón hasta y=758 y menú desde 772; a 390×420 botón hasta 334 y menú desde 348. Editor y envío probados únicamente en servidor local aislado: el texto editado llega al chat y se limpian los ajustes del teclado. A 1280×900 no se reserva navegación móvil. Build, matching 255/255 y smoke 8×2 + censo 120×4 pasan; lint sin nuevos diagnósticos y no-undef=0 (deuda previa: 107 errores y 6 avisos). Pruebas de altura reducida en navegador; no equivalen a un teclado físico de iPhone.
+
 ## Tarjetas neutras y fotos protagonistas · Codex
 
 **Estado:** implementado y verificado. **Rama:** `codex/tarjetas-foto-protagonista`, desde `2aaea8c`.
