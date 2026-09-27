@@ -41,6 +41,9 @@ export function fmtTel(valor) {
  * Antes se enseñaba «a 0,8 km» sin saber donde estaba nadie.
  */
 export function dondeEsta(helper) {
+  if (Number.isFinite(helper?.distance) && helper?.distanciaAproximada) {
+    return helper.distance < 0.1 ? 'Zona a menos de 100 m de ti, aprox.' : `Zona a ${fmtKm(helper.distance)} de ti, aprox.`
+  }
   if (typeof helper?.distance === 'number' && helper?.distanciaDesde) {
     return helper.distance < 0.5 ? `en ${helper.distanciaDesde}` : `a ${fmtKm(helper.distance)} de ${helper.distanciaDesde}`
   }

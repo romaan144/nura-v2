@@ -30,6 +30,7 @@ import { fmtNota, fmtKm } from '../utils/formato'
 import RecordatorioCita from '../components/RecordatorioCita'
 import ResponseScreen from '../components/ResponseScreen'
 import { splitResponseText } from '../utils/responseLayout'
+import { pedirUbicacion, ordenarDesdeUbicacion, mensajeErrorUbicacion } from '../utils/ubicacion'
 
 // ── La Comprensión Visible — lo que Nüra ha entendido, en chips ──
 const PERSONA_CHIP = {
@@ -374,7 +375,18 @@ export default function Home() {
   const [viewStart, setViewStart] = useState(() => Math.max(0,
     messages.findLastIndex(m => m.from === 'user'), messages.findLastIndex(m => m.results?.length)))
   const pageRef = useRef(null)
-  function beginResponse() { setViewStart(messages.filter(m => !m.loading).length) }
+  const ubicacionRef = useRef(null)
+  function beginResponse() {
+    if (ubicacionRef.current) stopThinking()
+    setViewStart(messages.filter(m => !m.loading).length)
+  }
+  useEffect(() => () => {
+    if (!ubicacionRef.current) return
+    ubicacionRef.current.abort()
+    ubicacionRef.current = null
+    setMessages(prev => prev.filter(m => !m.loading))
+    setLoading(false)
+  }, [location.pathname, setMessages])
 
   const [forWhom, setForWhom] = useState(() => {
     try { return sessionStorage.getItem('nura_for_whom') || '' } catch { return '' }
@@ -631,6 +643,8 @@ export default function Home() {
 
   // ── Una sola autoridad del estado "pensando" ──
   function stopThinking() {
+    ubicacionRef.current?.abort()
+    ubicacionRef.current = null
     try { clearInterval(window.__nuraStatusInterval) } catch {}
     setMessages(prev => prev.filter(m => !m.loading))
     setLoading(false)
@@ -845,16 +859,8 @@ export default function Home() {
           })
           refineLine = `Ordenados por precio. El más económico es **${refined[0]?.name?.split(' ')?.[0]}** a ${refined[0]?.price}.`
         } else if (t.includes('más cerca') || t.includes('cerca') || t.includes('zona')) {
-          // Sin su barrio no hay cercania que medir: se pregunta (antes se
-          // decia «está a 1,2 km» con una distancia inventada).
-          if (refined.every(h => typeof h.distance !== 'number')) {
-            setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-              lines: ['¿En qué barrio estás? Dímelo —por ejemplo, «en Gràcia»— y los ordeno por cercanía.'] }])
-            setLoading(false)
-            return
-          }
-          refined = refined.sort((a,b) => (a.distance ?? 99) - (b.distance ?? 99))
-          refineLine = `Ordenados por cercanía. **${refined[0]?.name?.split(' ')?.[0]}** está ${refined[0]?.distance < 0.5 ? `en ${refined[0]?.distanciaDesde}` : `a ${fmtKm(refined[0]?.distance)} de ${refined[0]?.distanciaDesde}`}.`
+          await buscarMasCerca()
+          return
         } else if (t.includes('mejor valorado') || t.includes('rating') || t.includes('valoración')) {
           refined = refined.sort((a,b) => (b.rating||0) - (a.rating||0))
           refineLine = `Ordenados por valoración. **${refined[0]?.name?.split(' ')?.[0]}** tiene ${fmtNota(refined[0]?.rating)}★.`
@@ -1257,6 +1263,40 @@ export default function Home() {
 
   const suggestions = user?.isHelper ? HELPER_SUGGESTIONS : getDynamicSuggestions(user, searchHistory)
 
+  async function buscarMasCerca() {
+    stopThinking()
+    const sid = ++searchSeqRef.current
+    const controller = new AbortController()
+    ubicacionRef.current = controller
+    const alive = () => !controller.signal.aborted && searchSeqRef.current === sid
+    const id = `ubicacion-${sid}`
+    setShowSuggestions(false)
+    setLoading(true)
+    setMessages(prev => [...prev, { id, from: 'nura', loading: true,
+      lines: ['Buscando tu ubicación. Si el dispositivo te pide permiso, pulsa «Permitir».'] }])
+    const answer = (lines, results) => setMessages(prev => prev.map(m => m.id === id
+      ? { id, from: 'nura', lines, results, refineChips: ['Más cerca', 'Más barato', 'Mejor valorado', 'Online'] } : m))
+    try {
+      const origin = await pedirUbicacion({ signal: controller.signal })
+      if (!alive()) return
+      const sorted = ordenarDesdeUbicacion(lastMatches, origin)
+      const located = sorted.filter(h => h.distance != null)
+      if (!located.length) {
+        answer(['Ya tengo tu ubicación, pero estos profesionales no tienen una zona que pueda localizar. Mantengo los resultados sin inventar distancias.'], sorted)
+      } else {
+        answer([`Ordenados por cercanía a tu ubicación, según la zona aproximada de cada profesional.${located.length < sorted.length ? ' Sin zona localizable, al final.' : ''}`], sorted)
+      }
+      setLastMatches(sorted)
+    } catch (error) {
+      if (alive()) answer([mensajeErrorUbicacion(error)])
+    } finally {
+      if (alive()) {
+        ubicacionRef.current = null
+        setLoading(false)
+      }
+    }
+  }
+
   function handleRefine(chip) {
     beginResponse()
     if (chip === 'Crear cuenta') { navigate('/login'); return }
@@ -1293,16 +1333,8 @@ export default function Home() {
       setLastMatches(sorted); return
     }
     if (chip === 'Más cerca' && lastMatches?.length > 0) {
-      if (lastMatches.every(h => typeof h.distance !== 'number')) {
-        setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-          lines: ['¿En qué barrio estás? Dímelo —por ejemplo, «en Gràcia»— y los ordeno por cercanía.'] }])
-        return
-      }
-      const sorted = [...lastMatches].sort((a,b) => (a.distance ?? 99) - (b.distance ?? 99))
-      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-        lines: [`${sorted[0]?.name?.split(' ')?.[0]} es quien está más cerca: ${sorted[0]?.distance < 0.5 ? `en ${sorted[0]?.distanciaDesde}` : `a ${fmtKm(sorted[0]?.distance)} de ${sorted[0]?.distanciaDesde}`}.`],
-        results: sorted, refineChips: ['Más barato','Mejor valorado','Online'] }])
-      setLastMatches(sorted); return
+      void buscarMasCerca()
+      return
     }
     if (chip === 'Mejor valorado' && lastMatches?.length > 0) {
       const sorted = [...lastMatches].sort((a,b) => (b.rating||0)-(a.rating||0))

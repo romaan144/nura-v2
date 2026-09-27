@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-27 — Más cerca con ubicación automática
+
+Sergio pide que Más cerca use la ubicación del dispositivo sin preguntar el barrio. Solicitud tras pulsar, cálculo local y distancias aproximadas a las zonas conocidas; errores y cancelación sin bloquear la escritura. Encargo funcional explícito a Codex, sin tocar matching ni Supabase. Ver `docs/ubicacion-automatica.md`.
+
 ## 2026-09-27 — Bienvenida limpia, cristal y alternativas juntas
 
 Sergio pide retirar la flecha sin destino y «A tu ritmo», aumentar ligeramente el contraste del cristal y mostrar todas las alternativas juntas en el paso siguiente a la recomendación principal. El grupo es indivisible al paginar y adapta su distribución a la altura disponible. Sin cambios en ordenación, búsqueda o datos. Ver `docs/alternativas-juntas.md`.

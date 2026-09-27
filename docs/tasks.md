@@ -1,5 +1,10 @@
 # Trabajo compartido
 
+## Más cerca con ubicación automática · Codex
+
+**Estado:** implementado y verificado; ver `docs/ubicacion-automatica.md`. **Rama:** `codex/mas-cerca-ubicacion`, desde `d806436`.
+**Encargo explícito de Sergio:** al pulsar Más cerca, solicitar ubicación del dispositivo y ordenar sin preguntar el barrio. Excepción funcional al reparto habitual. Archivos: Home.jsx, nueva utilidad de ubicación, formato de distancia, pruebas y documentación. No cambia matching.js ni Supabase.
+
 ## Contraste y alternativas juntas · Codex
 
 **Estado:** implementado y verificado; detalle en `docs/alternativas-juntas.md`. **Rama:** `codex/alternativas-juntas`, desde `32cbf93`.
