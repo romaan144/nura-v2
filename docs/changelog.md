@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-27 — Resultados compactos, iconos e historial
+
+Sergio pide reducir las fichas de búsqueda y unificar sus tamaños: filas horizontales de 116 px con acceso al perfil y al chat, sin biografía ni trayectoria anticipadas. Ajustes en una rejilla compacta con iconos de trazo; retirados emojis decorativos de controles y plantillas revisadas. El historial separa estado, identidad y acciones, sin cambiar las reglas de citas. Pruebas y coordinación: `docs/resultados-compactos.md`.
+
 ## 2026-09-27 — Trayectoria visible y separada de los casos
 
 A petición de Sergio, experiencia y formación pasan a un bloque propio antes de Su obra, con resumen real y detalles desplegables. Se mejora el selector de citas y la valoración; sus ventanas dejan de quedar bajo la navegación. Datos y reglas conservados. Comprobaciones y coordinación: `docs/ficha-trayectoria.md`.

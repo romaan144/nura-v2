@@ -1,3 +1,5 @@
+import { Hand, MessageCircle } from 'lucide-react'
+import ObraTypeIcon from './ObraTypeIcon'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
@@ -102,7 +104,7 @@ export default function PostCard({ post }) {
           padding: '3px var(--space-10)', fontSize: 'var(--text-sm)', fontWeight: 700,
           letterSpacing: '0.4px', textTransform: 'uppercase',
           margin: 'var(--space-12) 0 var(--space-6)',
-        }}>{meta.icon} {meta.label}</div>
+        }}><ObraTypeIcon type={post.type} /> {meta.label}</div>
       )}
 
       {post.title && (
@@ -155,7 +157,7 @@ export default function PostCard({ post }) {
             fontSize: 'var(--text-sm)', fontWeight: 700,
             color: marcado ? 'var(--purple)' : 'var(--ink-tertiary)',
           }}>
-          ✋ Me sirve{utiles > 0 ? ` · ${utiles}` : ''}
+          <Hand size={15} aria-hidden="true" style={{ verticalAlign: 'middle', marginRight: 4 }} /> Me sirve{utiles > 0 ? ` · ${utiles}` : ''}
         </button>
         <button onClick={() => setOpenThread(v => !v)}
           style={{
@@ -163,7 +165,7 @@ export default function PostCard({ post }) {
             fontSize: 'var(--text-xs)', fontWeight: 600, minWidth: 24,
             color: openThread ? 'var(--purple)' : 'var(--ink-tertiary)',
           }}>
-          💬 {comments.length > 0 ? comments.length : 'Comentar'}
+          <MessageCircle size={15} aria-hidden="true" style={{ verticalAlign: 'middle', marginRight: 4 }} /> {comments.length > 0 ? comments.length : 'Comentar'}
         </button>
       </div>
 

@@ -137,7 +137,7 @@ function makeNewHelperPost(helper) {
     date: 'Nuevo',
     likes: Math.floor(Math.random() * 12) + 2,
     comments: 1,
-    badge: '👋 Nuevo profesional',
+    badge: 'Nuevo profesional',
     author: helper,
     authorType: 'helper',
     suggested: true,

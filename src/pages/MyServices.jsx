@@ -1,7 +1,7 @@
 import { avatarDe } from '../utils/avatar'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Calendar, CheckCircle, ChevronRight, Star, ClipboardList, MessageCircle, RotateCcw } from 'lucide-react'
+import { Calendar, CheckCircle, ChevronRight, Star, ClipboardList, MessageCircle, RotateCcw, Clock, XCircle } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import { DEMO_MODE } from '../config'
 import PageHeader from '../components/PageHeader'
@@ -60,12 +60,12 @@ const DEMO_SERVICES = [
 ]
 
 const STATUS = {
-  pending:   { label: 'Pendiente',   color: '#D97706', bg: '#FFFBEB' },
-  confirmed: { label: 'Confirmado',  color: 'var(--green)', bg: 'var(--green-light)' },
-  completed: { label: 'Completado',  color: '#6B7280', bg: '#F9FAFB' },
-  cancelled: { label: 'Cancelado',   color: 'var(--red)', bg: 'var(--red-light)' },
+  pending:   { label: 'Por confirmar', icon: Clock, color: '#D97706', bg: '#FFFBEB' },
+  confirmed: { label: 'Confirmada', icon: CheckCircle, color: 'var(--green)', bg: 'var(--green-light)' },
+  completed: { label: 'Completada', icon: CheckCircle, color: '#6B7280', bg: '#F9FAFB' },
+  cancelled: { label: 'Cancelada', icon: XCircle, color: 'var(--red)', bg: 'var(--red-light)' },
   // El profesional contestó que esa hora no le va (su mensaje está en el chat).
-  rejected:  { label: 'Propón otra hora', color: '#B45309', bg: '#FFFBEB' },
+  rejected:  { label: 'Propón otra hora', icon: RotateCcw, color: '#B45309', bg: '#FFFBEB' },
 }
 
 const TABS = ['Todos', 'Próximos', 'Completados']
@@ -182,52 +182,51 @@ export default function MyServices() {
         <div className={styles.list}>
           {filtered.map(s => {
             const st = STATUS[s.status] || STATUS.pending
+            const StatusIcon = st.icon
             const rated = hasRated(s.helperId) || s.rated
             return (
-              <div key={s.id} className={styles.card}
-                onClick={() => navigate(`/helper/${s.helperId}`)}>
-                <div className={styles.cardMain}>
+              <article key={s.id} className={styles.card}>
+                <div className={styles.statusRow}>
+                  <span className={styles.statusBadge} style={{color: st.color, background: st.bg}}>
+                    <StatusIcon size={14} aria-hidden="true" />{st.label}
+                  </span>
+                  {s.price && <span className={styles.price}>{s.price}</span>}
+                </div>
+                <button type="button" className={styles.cardMain} aria-label={`Ver perfil de ${s.helperName}`}
+                  onClick={() => navigate(`/helper/${s.helperId}`)}>
                   {/* Avatar */}
                   {s.avatarUrl
                     ? <img src={s.avatarUrl} alt="" className={styles.avatar} />
-                    : <div className={styles.avatarFallback} style={{background: s.avatarColor || 'var(--purple)'}}>
+                    : <span className={styles.avatarFallback} style={{background: s.avatarColor || 'var(--purple)'}}>
                         {s.avatar || s.helperName?.[0] || '?'}
-                      </div>
+                      </span>
                   }
 
                   {/* Info */}
-                  <div className={styles.info}>
-                    <div className={styles.helperName}>{s.helperName}</div>
-                    <div className={styles.specialty}>{s.specialty}</div>
-                    <div className={styles.meta}>
+                  <span className={styles.info}>
+                    <span className={styles.helperName}>{s.helperName}</span>
+                    <span className={styles.specialty}>{s.specialty}</span>
+                    <span className={styles.meta}>
                       <Calendar size={11} />
                       <span>{formatDate(s.date)}{s.time ? ` · ${s.time}` : ''}</span>
-                    </div>
-                    {s.note && <div className={styles.note}>"{s.note}"</div>}
+                    </span>
+                    {s.note && <span className={styles.note}>"{s.note}"</span>}
                     {/* La canceló el profesional: se dice, con su nota si la dejó. */}
                     {s.status === 'cancelled' && s.canceladaPor === 'profesional' && (
-                      <div className={styles.note} role="status" style={{ whiteSpace: 'normal' }}>
+                      <span className={styles.note} role="status" style={{ whiteSpace: 'normal' }}>
                         {s.helperName?.split(' ')?.[0] || 'El profesional'} ha cancelado la cita. Esa hora ya no está reservada.
                         {s.notaCancelacion && <> «{s.notaCancelacion}»</>}
-                      </div>
+                      </span>
                     )}
                     {s.reprogramada && (
-                      <div className={styles.note} role="status" style={{ whiteSpace: 'normal' }}>
+                      <span className={styles.note} role="status" style={{ whiteSpace: 'normal' }}>
                         Ya has pedido otra hora: {formatDate(s.reprogramada.date)}{s.reprogramada.time ? ` · ${s.reprogramada.time}` : ''}.
-                      </div>
+                      </span>
                     )}
-                  </div>
+                  </span>
 
-                  {/* Right */}
-                  <div className={styles.right}>
-                    {s.price && <span className={styles.price}>{s.price}</span>}
-                    <span className={styles.statusBadge}
-                      style={{color: st.color, background: st.bg}}>
-                      {st.label}
-                    </span>
-                    <ChevronRight size={14} color="rgba(33,29,51,0.25)" />
-                  </div>
-                </div>
+                  <ChevronRight className={styles.profileArrow} size={18} aria-hidden="true" />
+                </button>
 
                 {/* Rate CTA */}
                 {/* Pending/confirmed → mark complete */}
@@ -315,7 +314,7 @@ export default function MyServices() {
                     </button>
                   </div>
                 )}
-              </div>
+              </article>
             )
           })}
         </div>
