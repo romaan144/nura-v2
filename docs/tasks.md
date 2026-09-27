@@ -1,5 +1,10 @@
 # Trabajo compartido
 
+## Cabecera de chat legible en móvil · Codex
+
+**Estado:** implementado y verificado. **Rama:** `codex/chat-cabecera-movil`, desde `9599b60`.
+**Alcance:** Chat.jsx y CSS. Dos filas en móvil, fotografía mayor, texto legible y acceso al perfil como botón; cabecera en el flujo para reservar su altura real. Conservar acciones de contratación/valoración, conversación y teclado.
+
 ## Botones secundarios coherentes · Codex
 
 **Estado:** implementado y verificado. **Rama:** `codex/botones-secundarios`, desde `054698b`.
