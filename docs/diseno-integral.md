@@ -77,3 +77,9 @@ Verificación: navegador a 390×844, 320×720 y escritorio; ficha/disponibilidad
 En móvil la identidad ocupa la primera fila y valoración/verificación/acción la segunda. Foto de 48 px (antes 30), nombre y especialidad con espacio y ajuste de texto. El acceso al perfil es un botón con nombre accesible. En ordenador se conserva una sola fila. La cabecera participa en el flujo: la conversación reserva su altura real, sin una separación fija que pueda solaparse. Se conservan estados, contratación, valoración y envío.
 
 Comprobado en 320×720, 320×568, 390×844 y 1280×900. Antes: especialidad invisible y nombre apretado a 320 px. Después: textos visibles, cero desbordamientos de botones, cabecera hasta y=140 y aviso de chat desde y=156; Próxima visita cabe en 320 px. Apertura/cierre de contratación y acceso al perfil verificados en servidor local. Simulación del teclado/pan Safari: campo y=427–449 dentro de 484 px visibles, lienzo 844 px. No equivale a una prueba física de iPhone. Build, matching 255/255, smoke 8×2 + 120×4; lint sin nuevos diagnósticos y no-undef=0.
+
+## Lista de conversaciones · 2026-09-27
+
+Fotos de 64×72 px (56×64 en móviles menores de 360), nombre y vista previa de hasta dos líneas. Fecha y contador sin leer tienen espacio propio y ya no estrechan la vista previa. Tarjeta sin leer con borde lila y fondo tenue; contador con nombre accesible. Introducción más breve para mostrar antes la lista. Altura regular de 132 px en móvil y 116 en escritorio para los ejemplos sin datos adicionales; las etiquetas de contexto pueden ampliar la tarjeta. Se conservan filtro, orden, markRead, historiales, datos y destino.
+
+Verificación: 390×844, 320×720 y 1280×900, sin desbordamientos; búsqueda por nombre, búsqueda sin coincidencias, apertura de Carlos y retorno con historial de prueba; lista vacía sin demo. Sin envíos reales. Build, matching 255/255, smoke 8×2 + 120×4; lint sin diagnósticos nuevos y no-undef=0.

@@ -163,10 +163,9 @@ export default function Chats() {
   return (
     <div className={styles.page}>
       <PageHeader />
-      <div className="nura-page-intro">
-        <span className="nura-eyebrow">Cada conexión empieza aquí</span>
+      <div className={`nura-page-intro ${styles.intro}`}>
         <h1>Tus conversaciones</h1>
-        <p>Un espacio para hablar, preguntar y dar el siguiente paso.</p>
+        <p>Continúa donde lo dejaste.</p>
       </div>
 
       <div className={styles.searchWrap}>
@@ -204,6 +203,7 @@ export default function Chats() {
         {filtered.map((chat, i) => {
           const helper = getHelper(chat.helperId)
           const isDemo = demosToShow.some(d => d.helperId === chat.helperId)
+          const unreadCount = (chat.unread || 0) + (respuestasNuevas[String(chat.helperId)] || 0)
           return (
             <button key={i}
               className={`${styles.chatRow} ${chat.unread > 0 || respuestasNuevas[String(chat.helperId)] ? styles.chatUnread : ''}`}
@@ -226,7 +226,7 @@ export default function Chats() {
 
               <div className={styles.avatarWrap}>
                 {chat.avatarUrl
-                  ? <img src={chat.avatarUrl} alt={chat.helperName} className={styles.avatarImg} />
+                  ? <img src={chat.avatarUrl} alt="" className={styles.avatarImg} />
                   : <div className={styles.avatar} style={{background: chat.helperColor}}>{chat.helperAvatar}</div>
                 }
                 {/* Online status — green if active recently */}
@@ -240,8 +240,13 @@ export default function Chats() {
 
               <div className={styles.chatInfo}>
                 <div className={styles.chatTop}>
-                  <span className={styles.chatName}>{chat.helperName}</span>
-                  <span className={styles.chatTime}>{formatChatTime(chat.lastTime)}</span>
+                  <span className={styles.chatName} title={chat.helperName}>{chat.helperName}</span>
+                  <span className={styles.chatAside}>
+                    <span className={styles.chatTime}>{formatChatTime(chat.lastTime)}</span>
+                    {unreadCount > 0 && (
+                      <span className={styles.unreadBadge} aria-label={`${unreadCount} ${unreadCount === 1 ? 'mensaje' : 'mensajes'} sin leer`}>{unreadCount}</span>
+                    )}
+                  </span>
                 </div>
                 {(() => {
                   const lp = (personas || []).find(p => (p.contactedHelperIds || []).includes(chat.helperId))
@@ -264,9 +269,7 @@ export default function Chats() {
                       ? <strong style={{ color: 'var(--purple)' }}>Te ha contestado · tócalo para leerlo</strong>
                       : chat.lastMsg}
                   </span>
-                  {(chat.unread > 0 || respuestasNuevas[String(chat.helperId)]) && (
-                    <span className={styles.unreadBadge}>{(chat.unread || 0) + (respuestasNuevas[String(chat.helperId)] || 0)}</span>
-                  )}
+
                 </div>
               </div>
             </button>
