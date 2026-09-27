@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-27 — El teclado desplaza la app sin comprimirla
+
+Sergio pide conservar el tamaño de las pantallas al escribir y corregir el movimiento invertido de Inicio. Una ventana visible y un contenido de altura estable sustituyen las dos gestiones locales del visualViewport. Se retira el seguimiento de offsetTop, se permite scroll nativo en Inicio y los chats desplazan solo su conversación. Pruebas simuladas y límites en `docs/teclado-movil.md`.
+
 ## 2026-09-27 — Sugerencias del chat separadas de la escritura
 
 Sergio señala que las etiquetas se pegan a la cápsula inferior. Se reproduce un solapamiento de 2 px causado por posiciones absolutas independientes. Sugerencias y entrada pasan a un pie en el flujo con 18 px de separación, y la conversación reserva automáticamente su altura real. Mayor espacio entre etiquetas, mismos manejadores.

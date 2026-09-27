@@ -1363,30 +1363,21 @@ export default function Home() {
     handleSend(chip)
   }
 
-  // El teclado móvil reduce el espacio real disponible; la navegación y
-  // la escritura se mantienen juntas por encima del teclado.
+  // La burbuja conserva el tamaño del lienzo; el contenedor compartido
+  // desplaza la página al abrir el teclado sin repaginar la respuesta.
   useEffect(() => {
     if (location.pathname !== '/') return
-    const viewport = window.visualViewport
-    function resize() {
-      const height = viewport?.height || window.innerHeight
-      const offset = viewport?.offsetTop || 0
-      pageRef.current?.style.setProperty('--focus-height', `${height}px`)
-      if (pageRef.current) pageRef.current.dataset.focusSize = height <= 420 ? 'tiny' : height <= 600 ? 'short' : 'full'
-      pageRef.current?.style.setProperty('--focus-top', `${offset}px`)
-      const keyboard = Math.max(0, window.innerHeight - height - offset)
-      document.documentElement.style.setProperty('--nura-keyboard-inset', `${keyboard}px`)
-      document.body.dataset.nuraFocus = 'true'
+    document.body.dataset.nuraFocus = 'true'
+    const page = pageRef.current
+    const resize = () => {
+      const height = page?.getBoundingClientRect().height || window.innerHeight
+      if (page) page.dataset.focusSize = height <= 420 ? 'tiny' : height <= 600 ? 'short' : 'full'
     }
     resize()
-    viewport?.addEventListener('resize', resize)
-    viewport?.addEventListener('scroll', resize)
-    window.addEventListener('resize', resize)
+    const observer = new ResizeObserver(resize)
+    if (page) observer.observe(page)
     return () => {
-      viewport?.removeEventListener('resize', resize)
-      viewport?.removeEventListener('scroll', resize)
-      window.removeEventListener('resize', resize)
-      document.documentElement.style.removeProperty('--nura-keyboard-inset')
+      observer.disconnect()
       delete document.body.dataset.nuraFocus
     }
   }, [location.pathname])

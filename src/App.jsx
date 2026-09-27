@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { useUser } from './context/UserContext'
 import { ponerTitulo, tituloDeRuta } from './utils/titulo'
 
+import { installKeyboardViewport } from './utils/keyboardViewport'
 import { NURA_BUILD } from './config'
 console.log('[Nüra] build', NURA_BUILD)   // preflight-ok: el sello es como se sabe QUE hay desplegado; no lleva dato de nadie
 // El navegador restauraba la posicion de scroll al navegar. Con rutas que
@@ -43,6 +44,7 @@ import './design-system.css'
 import ErrorBoundary from './components/ErrorBoundary'
 
 function AppRoutes() {
+  useEffect(() => installKeyboardViewport(), [])
   // Entrada directa: un solo respiro del iso mientras arranca el JS
   const [booting, setBooting] = useState(true)
   useEffect(() => {
@@ -104,6 +106,7 @@ function AppRoutes() {
 
       <AppShell>
       <div className="desktopMain" data-screen={location.pathname.split('/')[1] || 'home'} data-layout={['/login', '/register-helper'].includes(location.pathname) ? 'focus' : 'app'}>
+        <div className="appCanvas">
         {/* Pestañas vivas: montadas tras su primera visita, visibles según ruta.
             Solo Inicio va en el archivo principal: el resto se descarga al
             visitarlas por primera vez (la app abre antes). */}
@@ -152,6 +155,7 @@ function AppRoutes() {
             </Suspense>
           </PageTransition>
         )}
+        </div>
       </div>
       </AppShell>
 

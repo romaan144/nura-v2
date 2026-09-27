@@ -18,7 +18,7 @@ const S = {
   // flujo normal, cero elementos posicionados a nivel de pagina. Lo bonito
   // de la version original vuelve como SUPERFICIE, no como colocacion.
   page: {
-    height: '100%', minHeight: '100dvh',
+    height: '100%', minHeight: 'var(--app-layout-height, 100dvh)',
     overflowY: 'auto', overflowX: 'hidden', overscrollBehaviorY: 'contain', WebkitOverflowScrolling: 'touch',
     // Centrado SEGURO: flex + margin:auto en el hijo. A diferencia de
     // justify-content:center, cuando el contenido no cabe el margen se
