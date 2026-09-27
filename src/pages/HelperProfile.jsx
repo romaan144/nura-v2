@@ -1,10 +1,9 @@
 import { Heart } from 'lucide-react'
-import { createPortal } from 'react-dom'
 import { useTitulo } from '../utils/titulo'
 import PageHeader from '../components/PageHeader'
 import PostCard from '../components/PostCard'
 import { proximoHueco, ocupacionesDe } from '../data/horarios'
-import ElegirCita from '../components/ElegirCita'
+import CitaModal from '../components/CitaModal'
 import { Button, SectionLabel, Skeleton } from '../components/ui'
 import { getObraDeHelper, obraAPost } from '../data/obraPosts'
 import ErrorBoundary from '../components/ErrorBoundary'
@@ -58,86 +57,17 @@ function BookingModal({ helper, onClose, onBook, onNavigate, cambia: cambiaAlAbr
     setDone(true)
   }
 
-  const style = {
-    overlay: {position:'fixed',inset:0,background:'var(--surface-scrim)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:300,display:'flex',alignItems:'flex-end',justifyContent:'center',padding:'16px 16px max(16px, env(safe-area-inset-bottom))'},
-    sheet: {background:'rgba(255,255,255,0.96)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',borderRadius:'28px',padding:'var(--space-24) var(--space-20)',width:'100%',maxWidth:'500px',maxHeight:'calc(100dvh - 32px)',overflowY:'auto',WebkitOverflowScrolling:'touch'},
-    handle: {width:'36px',height:'4px',background:'var(--surface-muted)',borderRadius:'2px',margin:'0 auto var(--space-20)'},
-    input: {width:'100%',padding:'var(--space-12) var(--space-16)',border:'1px solid rgba(33,29,51,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',fontFamily:'-apple-system,Inter,sans-serif',background:'var(--surface-subtle)',boxSizing:'border-box'},
-    btnPrimary: {width:'100%',padding:'var(--space-14)',background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:'pointer',transition:'opacity 0.2s'},
-    btnSecondary: {width:'100%',minHeight:44,lineHeight:1.4,padding:'var(--space-12)',background:'var(--action-surface)',color:'var(--purple-ink)',border:'1px solid var(--action-border)',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'},
-  }
-
-  return createPortal(
-    <div className={styles.bookingOverlay} style={style.overlay}>
-      <div style={style.sheet} role="dialog" aria-modal="true" aria-labelledby="booking-title">
-        <div style={style.handle} />
-        {done ? (
-          <div style={{textAlign:'center',display:'flex',flexDirection:'column',alignItems:'center',gap:'var(--space-12)',padding:'var(--space-16) 0'}}>
-            {/* Helper avatar */}
-            <div style={{position:'relative'}}>
-              {helper?.avatarUrl
-                ? <img src={helper.avatarUrl} alt={name}
-                    style={{width:'68px',height:'68px',borderRadius:'50%',border:'3px solid var(--green-dot)'}} />
-                : <div style={{width:'68px',height:'68px',borderRadius:'50%',background:helper?.avatarColor||'var(--purple)',
-                    display:'flex',alignItems:'center',justifyContent:'center',color:'white',fontSize:'24px',fontWeight:700,
-                    border:'3px solid var(--green-dot)'}}>
-                    {helper?.avatar||name?.[0]}
-                  </div>
-              }
-              <span style={{position:'absolute',bottom:-2,right:-2,width:'22px',height:'22px',background:'var(--green-dot)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center'}}><svg width='12' height='12' viewBox='0 0 12 12' fill='none'><path d='M2 6l3 3 5-5' stroke='white' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round'/></svg></span>
-            </div>
-            <div>
-              <h3 id="booking-title" style={{fontSize:'var(--text-heading)',fontWeight:800,margin:'0 0 var(--space-4)',color:'var(--ink-primary)',letterSpacing:'-0.3px'}}>
-                {cambia ? '¡Cambio enviado!' : '¡Solicitud enviada!'}
-              </h3>
-              <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:0,lineHeight:1.6}}>
-                {DEMO_MODE ? `${name} recibirá tu solicitud y confirmará en breve.` : `Se la hago llegar a ${name}. Su respuesta te llegará en el chat.`}
-              </p>
-            </div>
-            {/* Booking summary */}
-            {(date || time) && (
-              <div style={{background:'var(--surface-subtle)',border:'1px solid rgba(33,29,51,0.06)',
-                borderRadius:'var(--radius-card)',padding:'var(--space-12) var(--space-16)',width:'100%',textAlign:'left'}}>
-                {date && <p style={{margin:'0 0 var(--space-4)',fontSize:'var(--text-sm)',color:'var(--ink-tertiary)'}}>
-                  {new Date(date).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})}
-                </p>}
-                {time && <p style={{margin:0,fontSize:'var(--text-sm)',color:'var(--ink-tertiary)'}}><Clock size={12} style={{marginRight:'var(--space-4)',verticalAlign:'middle'}}/>{time}h</p>}
-              </div>
-            )}
-            <div style={{display:'flex',flexDirection:'column',gap:'var(--space-8)',width:'100%',marginTop:'var(--space-4)'}}>
-              <Button variant="primary" full onClick={() => { onClose(); onNavigate('/my-services') }}>
-                Ver Mis servicios
-              </Button>
-              <button onClick={onClose} style={style.btnSecondary}>Volver al perfil</button>
-            </div>
-          </div>
-        ) : (
-          <>
-            <h3 id="booking-title" style={{fontSize:'var(--text-md)',fontWeight:800,margin:'0 0 var(--space-4)',color:'var(--ink-primary)',letterSpacing:'-0.3px'}}>{cambia ? 'Cambiar la hora' : 'Solicitar servicio'}</h3>
-            <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:'0 0 var(--space-20)'}}>
-              {cambia
-                ? `Tu cita con ${name} del ${diaLargo(cambia.date)}${cambia.time ? ` a las ${cambia.time}` : ''} se cancelará al enviar la nueva hora.`
-                : `${name} · ${helper?.price || 'Precio a consultar'}`}
-            </p>
-            <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)',marginBottom:'var(--space-20)'}}>
-              <ElegirCita helper={helper} date={date} time={time} onDate={setDate} onTime={setTime} />
-              <textarea value={note} onChange={e=>setNote(e.target.value)}
-                placeholder="Detalles adicionales (opcional)..." rows={3}
-                style={{...style.input, resize:'none'}} />
-            </div>
-            <div style={{display:'flex', alignItems:'center', gap:'var(--space-8)'}}>
-              <button onClick={onClose} style={{...style.btnSecondary, width:'auto', flex:1}}>Cancelar</button>
-              {/* Día Y hora: una cita sin hora no es una cita (en el chat ya se exigía). */}
-              <Button variant="primary" onClick={confirm} disabled={!date || !time || enviando}
-                style={{flex:2}}>
-                {enviando ? 'Enviando…' : cambia ? 'Cambiar a esta hora' : 'Enviar solicitud'}
-              </Button>
-            </div>
-            {fallo && <p role="alert" style={{margin:'var(--space-10) 0 0',fontSize:'var(--text-sm)',color:'var(--red-ink)',lineHeight:1.45}}>{fallo}</p>}
-          </>
-        )}
-      </div>
-    </div>, document.body
+  return (
+    <CitaModal helper={helper} date={date} time={time} note={note}
+      onDate={setDate} onTime={setTime} onNote={setNote} onClose={onClose}
+      onConfirm={confirm} submitting={enviando} error={fallo} done={done}
+      title={cambia ? 'Cambiar la hora' : 'Solicitar servicio'}
+      notice={cambia ? `Tu cita con ${name} del ${diaLargo(cambia.date)}${cambia.time ? ` a las ${cambia.time}` : ''} se cancelará al enviar la nueva hora.` : ''}
+      confirmLabel={cambia ? 'Cambiar a esta hora' : 'Enviar solicitud'}
+      successTitle={cambia ? '¡Cambio enviado!' : '¡Solicitud enviada!'}
+      successText={DEMO_MODE ? `${name} recibirá tu solicitud y confirmará en breve.` : `Se la hago llegar a ${name}. Su respuesta te llegará en el chat.`}
+      onServices={() => { onClose(); onNavigate('/my-services') }}
+      backLabel="Volver al perfil" />
   )
 }
 

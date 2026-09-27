@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-27 — Una presentación común para solicitar cita
+
+Ficha y chat comparten ventana visual: profesional, día con mes, horas uniformes, resumen y confirmación siempre accesible. El contenido se desplaza dentro de la ventana, con ajuste de la nota al teclado; foco contenido y cierre con Escape. Los dos controladores conservan su lógica de envío y el motor de disponibilidad no cambia.
+
 ## 2026-09-27 — Estados y fechas claros en Mis servicios
 
 Cada cita separa estado, profesional y fecha/hora. Las bandas de estado tienen texto, icono y contraste; los filtros muestran recuentos consistentes y selección accesible. Fotos mayores, notas completas y confirmación de cancelación con espacio propio. Se conservan condiciones, manejadores, orden y destinos.

@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react'
 import styles from './ElegirCita.module.css'
 import { useUser } from '../context/UserContext'
 import { ocupadasDe } from '../utils/escrituras'
-import { SectionLabel } from './ui'
+import { Calendar, Clock, Check } from 'lucide-react'
 import { slotsDe, ocupacionesDe, huecosLibres, horarioDe, isoLocal, motivoSinHuecos, FRASE_SIN_HUECOS } from '../data/horarios'
 
 const DIAS = 14
@@ -46,6 +46,8 @@ export default function ElegirCita({ helper, date, time, onDate, onTime }) {
       iso, libres,
       arriba: i === 0 ? 'Hoy' : i === 1 ? 'Mañana' : d.toLocaleDateString('es-ES', { weekday: 'short' }).replace('.', ''),
       numero: d.getDate(),
+      mes: d.toLocaleDateString('es-ES', { month: 'short' }).replace('.', ''),
+      fechaLarga: d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' }),
       abajo: libres < 0 ? 'No trabaja' : libres === 0 ? ({ tarde: i === 0 ? 'Terminado' : 'Completo', bloqueado: 'No disponible' }[motivoSinHuecos(helper, iso)] || 'Completo') : `${libres} ${libres === 1 ? 'hueco' : 'huecos'}`,
     }
   })
@@ -58,75 +60,50 @@ export default function ElegirCita({ helper, date, time, onDate, onTime }) {
   return (
     <div className={styles.picker}>
       <div>
-        <SectionLabel className={styles.label} tone="muted" style={{ margin: '0 0 var(--space-8)', color: 'var(--ink-tertiary)' }}>Día</SectionLabel>
-        <p className={styles.range}>Próximos {DIAS} días · hora local</p>
-        <div className={styles.days} role="listbox" aria-label="Elige un día"
-          style={{ display: 'flex', gap: 'var(--space-6)', overflowX: 'auto', paddingBottom: 'var(--space-4)', scrollSnapType: 'x proximity' }}>
+        <h3 className={styles.label}><Calendar size={17} aria-hidden="true" />1. Elige un día</h3>
+        <p className={styles.range}>Próximos {DIAS} días · desliza para ver más</p>
+        <div className={styles.days} role="group" aria-label="Elige un día">
           {dias.map(d => {
             const sel = date === d.iso
             const puede = d.libres > 0
             return (
-              <button className={styles.day} key={d.iso} type="button" role="option" aria-selected={sel} disabled={!puede}
-                aria-label={`${d.arriba} ${d.numero}: ${d.abajo}`}
-                onClick={() => { onDate(d.iso); onTime('') }}
-                style={{
-                  flexShrink: 0, minWidth: 76, minHeight: 88, padding: 'var(--space-8) var(--space-6)', scrollSnapAlign: 'start',
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
-                  background: sel ? 'var(--grad-main)' : puede ? 'white' : 'transparent',
-                  color: sel ? 'white' : puede ? 'var(--ink-primary)' : 'var(--ink-tertiary)',
-                  border: sel ? '1px solid transparent' : puede ? '1px solid var(--ink-border)' : '1px dashed var(--ink-border, rgba(33,29,51,0.16))',
-                  borderRadius: 'var(--radius-card)', cursor: puede ? 'pointer' : 'default', fontFamily: 'inherit',
-                }}>
-                <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600, textTransform: 'capitalize' }}>{d.arriba}</span>
-                <span style={{ fontSize: 'var(--text-md)', fontWeight: 800, lineHeight: 1.1 }}>{d.numero}</span>
-                <span style={{ fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap',
-                  color: sel ? 'rgba(255,255,255,0.9)' : puede ? 'var(--green-ink, #067647)' : 'var(--ink-tertiary)' }}>{d.abajo}</span>
+              <button className={styles.day} key={d.iso} type="button" aria-pressed={sel} disabled={!puede}
+                aria-label={`${d.fechaLarga}: ${d.abajo}`}
+                onClick={() => { onDate(d.iso); onTime('') }}>
+                <span className={styles.weekday}>{d.arriba}</span>
+                <span className={styles.number}>{d.numero}<span className={styles.month}>{d.mes}</span></span>
+                <span className={styles.availability}>{d.abajo}</span>
+                {sel && <Check size={13} className={styles.dayCheck} aria-hidden="true" />}
               </button>
             )
           })}
         </div>
       </div>
-
       <div>
-        <SectionLabel className={styles.label} tone="muted" style={{ margin: '0 0 var(--space-8)', color: 'var(--ink-tertiary)' }}>Hora</SectionLabel>
+        <h3 className={styles.label}><Clock size={17} aria-hidden="true" />2. Elige una hora</h3>
         {date && <p className={styles.selectedDate}>{new Date(date + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}</p>}
-        {!date ? (
-          <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)', margin: 0 }}>Elige antes un día.</p>
-        ) : !slots.length ? (
-          <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)', margin: 0 }}>{FRASE_SIN_HUECOS[motivoSinHuecos(helper, date)]}</p>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-10)' }}>
+        {!date ? <p className={styles.empty}>Selecciona un día para ver sus horarios.</p>
+          : !slots.length ? <p className={styles.empty}>{FRASE_SIN_HUECOS[motivoSinHuecos(helper, date)]}</p>
+          : <div className={styles.periods}>
             {tramos.map(({ t, horas }) => (
               <div key={t}>
-                <p style={{ margin: '0 0 var(--space-6)', fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--ink-secondary)' }}>{t}</p>
-                <div style={{ display: 'flex', gap: 'var(--space-6)', flexWrap: 'wrap' }}>
+                <p className={styles.periodLabel}>{t}</p>
+                <div className={styles.times}>
                   {horas.map(({ hora, estado }) => {
                     const libre = estado === 'libre'
                     const sel = time === hora
                     const que = estado === 'ocupada' ? 'ocupada' : estado === 'tuya' ? 'es tuya' : 'libre'
                     return (
                       <button className={styles.time} key={hora} type="button" disabled={!libre} aria-pressed={sel}
-                        aria-label={`${hora}: ${que}`} title={libre ? '' : que}
-                        onClick={() => onTime(hora)}
-                        style={{
-                          minWidth: 68, minHeight: 44, padding: '0 var(--space-10)',
-                          background: sel ? 'var(--grad-main)' : libre ? 'white' : estado === 'tuya' ? 'var(--purple-10)' : 'transparent',
-                          color: sel ? 'white' : libre ? 'var(--ink-primary)' : estado === 'tuya' ? 'var(--purple-ink)' : 'var(--ink-tertiary)',
-                          border: sel ? '1px solid transparent' : libre ? '1px solid var(--ink-border)' : estado === 'tuya' ? '1px solid var(--purple-30, rgba(123,47,255,0.3))' : '1px dashed var(--ink-border, rgba(33,29,51,0.16))',
-                          textDecoration: estado === 'ocupada' ? 'line-through' : 'none',
-                          borderRadius: 'var(--radius-full)', fontSize: 'var(--text-sm)', fontWeight: 600,
-                          cursor: libre ? 'pointer' : 'default', fontFamily: 'inherit',
-                        }}>{hora}</button>
+                        data-state={estado} aria-label={`${hora}: ${que}`} title={libre ? '' : que}
+                        onClick={() => onTime(hora)}>{hora}{sel && <Check size={13} aria-hidden="true" />}</button>
                     )
                   })}
                 </div>
               </div>
             ))}
-            <p style={{ margin: 0, fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)' }}>
-              Tachadas: ya las tiene cogidas.{slots.some(s => s.estado === 'tuya') ? ' En morado: la tuya.' : ''}
-            </p>
-          </div>
-        )}
+            <p className={styles.legend}>Hora local. Tachadas: ocupadas.{slots.some(s => s.estado === 'tuya') ? ' En lila claro: la tuya.' : ''}</p>
+          </div>}
       </div>
     </div>
   )

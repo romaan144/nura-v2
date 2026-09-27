@@ -568,5 +568,3 @@
 .careerDetails .expCompany { flex-wrap: wrap; }
 .careerDetails .expItem:last-child .expContent { padding-bottom: 0; }
 @media (max-width: 380px) { .careerHeader { gap: 10px; } .careerIcon { width: 38px; height: 38px; border-radius: 13px; } .careerTitle { font-size: 18px; } }
-
-@media (min-width: 768px) { .bookingOverlay { align-items: center !important; } }

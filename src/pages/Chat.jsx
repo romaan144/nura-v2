@@ -6,7 +6,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Send, Shield, Award, Star, Calendar, Mic, MicOff } from 'lucide-react'
 import { HELPERS_DEMO as HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
-import ElegirCita from '../components/ElegirCita'
+import CitaModal from '../components/CitaModal'
 import { getHelperById } from '../utils/supabase'
 import { registrarConversacion, respuestasDe, enviarPropuestaCita, enviarAlProfesional, idsPendientes } from '../utils/escrituras'
 import { avisarCuandoConteste, movilPuedeAvisar, esIphoneSinInstalar } from '../utils/alertas'
@@ -111,86 +111,15 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
   const [done, setDone] = useState(false)
   const name = getFirstName(helper.name) || helper.name
 
-  if (done) return (
-    <div style={{position:'fixed',inset:0,background: 'rgba(30,25,40,0.35)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:200,display:'flex',alignItems:'center',justifyContent:'center',padding:'var(--space-20)'}}>
-      <div style={{background:'rgba(255,255,255,0.95)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',border:'1px solid rgba(255,255,255,0.5)',borderRadius:'var(--radius-lg)',padding:'36px var(--space-28)',textAlign:'center',maxWidth:'320px',width:'100%',boxShadow:'0 8px 40px rgba(33,29,51,0.12)'}}>
-        {/* Avatar with checkmark */}
-        <div style={{position:'relative',display:'inline-block',marginBottom:'var(--space-12)'}}>
-          {helper.avatarUrl
-            ? <img src={helper.avatarUrl} alt={name}
-                style={{width:'64px',height:'64px',borderRadius:'50%',border:'3px solid var(--green-dot)',display:'block'}} />
-            : <div style={{width:'64px',height:'64px',borderRadius:'50%',background:helper.avatarColor||'var(--purple)',
-                display:'flex',alignItems:'center',justifyContent:'center',color:'white',fontSize:'var(--text-lg)',fontWeight:700,
-                border:'3px solid var(--green-dot)'}}>
-                {helper.avatar||name[0]}
-              </div>
-          }
-          <span style={{position:'absolute',bottom:-2,right:-2,width:'20px',height:'20px',background:'var(--green-dot)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center'}}><svg width='11' height='11' viewBox='0 0 12 12' fill='none'><path d='M2 6l3 3 5-5' stroke='white' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round'/></svg></span>
-        </div>
-        <h3 className={styles.modalTitle}>¡Solicitud enviada!</h3>
-            <div className="hilo" style={{width:'56px', margin:'var(--space-2) auto var(--space-10)'}} />
-        <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',marginBottom:'var(--space-12)',lineHeight:1.6}}>{DEMO_MODE ? `${name} confirmará disponibilidad en breve.` : `Se la hago llegar a ${name}. Su respuesta te llegará en este chat.`}</p>
-        {(date || time) && (
-          <div style={{background:'var(--surface-subtle)',border:'1px solid rgba(33,29,51,0.06)',borderRadius:'var(--radius-card)',
-            padding:'var(--space-10) var(--space-14)',marginBottom:'var(--space-20)',textAlign:'left'}}>
-            {date && <p className={styles.metaXs3}>
-              {new Date(date).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})}
-            </p>}
-            {time && <p style={{margin:0,fontSize:'var(--text-xs)',color:'var(--ink-tertiary)'}}>{time}h</p>}
-          </div>
-        )}
-        <div className={styles.colFull}>
-          <button onClick={() => { onClose(); navigate('/my-services') }}
-            style={{padding:'13px',background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:'pointer',width:'100%'}}>
-            Ver mis servicios
-          </button>
-          <button onClick={onClose}
-            style={{padding:'var(--space-12)',background:'transparent',color:'var(--ink-tertiary)',border:'none',fontSize:'var(--text-sm)',cursor:'pointer'}}>
-            Volver al chat
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-
   return (
-    <div style={{position:'fixed',inset:0,background:'rgba(30,25,40,0.35)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:200,display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
-      <div style={{background:'rgba(255,255,255,0.95)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',border:'1px solid rgba(255,255,255,0.5)',borderRadius:'24px 24px 0 0',padding:'var(--space-24) var(--space-20) var(--space-32)',width:'100%',maxWidth:'500px',boxShadow:'0 -8px 40px rgba(33,29,51,0.1)'}}>
-        <div style={{width:'36px',height:'4px',background:'var(--surface-muted)',borderRadius:'2px',margin:'0 auto var(--space-24)'}} />
-        <h3 style={{fontSize:'var(--text-md)',fontWeight:800,marginBottom:'var(--space-4)',color:'var(--ink-primary)',letterSpacing:'-0.3px'}}>Solicitar servicio</h3>
-        <div className="hilo" style={{width:'56px', margin:'var(--space-2) 0 var(--space-10)'}} />
-        <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',marginBottom: prefillDate ? '12px' : '20px'}}>Con {name} · {helper.price || 'Precio a consultar'}</p>
-        {prefillDate && (
-          <div style={{display:'flex',alignItems:'center',gap:'var(--space-6)',
-            background:'var(--purple-05)',border:'1px solid var(--purple-10)',
-            borderRadius:'var(--radius-sm)',padding:'var(--space-8) var(--space-12)',marginBottom:'var(--space-16)',
-          }}>
-            <img src="/logo-iso.png" alt="" style={{width:'12px',height:'12px',opacity:0.7}} />
-            <span className={styles.purpleLabel}>
-              Fecha detectada en la conversación
-            </span>
-          </div>
-        )}
-        <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)',marginBottom:'var(--space-20)'}}>
-          <ElegirCita helper={helper} date={date} time={time} onDate={setDate} onTime={setTime} />
-          <textarea value={note} onChange={e=>setNote(e.target.value)}
-            placeholder="Detalles adicionales (opcional)..." rows={3}
-            style={{padding:'var(--space-12) var(--space-16)',border:'1px solid rgba(33,29,51,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',resize:'none',fontFamily:'-apple-system,Inter,sans-serif',color:'var(--ink-primary)',background:'var(--surface-subtle)'}} />
-        </div>
-        <div style={{display:'flex',gap:'var(--space-10)'}}>
-          <button onClick={onClose} style={{flex:1,padding:'var(--space-14)',background:'var(--surface-subtle)',color:'var(--ink-tertiary)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>Cancelar</button>
-          {/* HACEN FALTA DIA **Y** HORA. Antes bastaba el dia: en un sabado,
-              que el logopeda no trabaja, no aparecia ningun hueco y el boton
-              se activaba igual. Se podia enviar una solicitud sin hora — y
-              llegaba al profesional como "sabado, 5 de septiembre" a secas.
-              Una cita sin hora no es una cita. */}
-          <button onClick={()=>{ onConfirm?.(date, time, note); setDone(true); notifyServiceConfirmed(getFirstName(helper.name) || helper.name); haptic('success') }} disabled={!date || !time}
-            style={{flex:2,padding:'var(--space-14)',background:(date&&time)?'var(--purple)':'rgba(33,29,51,0.1)',color:(date&&time)?'white':'var(--ink-tertiary)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:(date&&time)?'pointer':'default',transition:'all 0.2s'}}>
-            Enviar solicitud
-          </button>
-        </div>
-      </div>
-    </div>
+    <CitaModal helper={helper} date={date} time={time} note={note}
+      onDate={setDate} onTime={setTime} onNote={setNote} onClose={onClose}
+      done={done} title="Solicitar servicio"
+      notice={prefillDate ? 'Fecha detectada en la conversación' : ''}
+      onConfirm={() => { onConfirm?.(date, time, note); setDone(true); notifyServiceConfirmed(getFirstName(helper.name) || helper.name); haptic('success') }}
+      successText={DEMO_MODE ? `${name} confirmará disponibilidad en breve.` : `Se la hago llegar a ${name}. Su respuesta te llegará en este chat.`}
+      onServices={() => { onClose(); navigate('/my-services') }}
+      backLabel="Volver al chat" />
   )
 }
 

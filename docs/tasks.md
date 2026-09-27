@@ -1,5 +1,12 @@
 # Trabajo compartido
 
+## Solicitar cita: día, hora y confirmación · Codex
+
+**Estado:** implementado y verificado localmente. **Rama:** `codex/reserva-diseno-claro`, desde `0eb6723`.
+**Alcance:** presentación común para las reservas de ficha y chat; ElegirCita, nuevo contenedor visual y uso en HelperProfile/Chat. Conservar disponibilidad, prefijado, envío, cambio de hora y estados de cada entrada. Sin cambios de servidor ni del motor de horarios.
+**Contrato para Claude:** `CitaModal` contiene solo la presentación. BookingModal (ficha) y ConfirmModal (chat) conservan sus estados y callbacks de envío. ElegirCita sigue usando las mismas ocupaciones y franjas.
+**Pruebas:** build, matching 255/255 y smoke 8×2 + 120×4. Lint sin nuevos diagnósticos y no-undef=0. Navegador aislado: ambas entradas, selección y reinicio de hora al cambiar día, horas ocupadas/propias bloqueadas, solicitud de prueba y cambio de hora hasta Mis servicios, foco contenido/tecla Escape. 390×844, 320×420 y 1280×900 sin desbordamiento. Teclado visual simulado: la nota queda 12 px sobre el pie, también con offsetTop=90; no equivale a verificar un iPhone físico.
+
 ## Mis servicios: estados y citas legibles · Codex
 
 **Estado:** implementado y verificado localmente. **Rama:** `codex/servicios-estados-visuales`, desde `75f106d`.
