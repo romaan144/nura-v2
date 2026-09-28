@@ -11,9 +11,7 @@
   display: flex; flex-direction: column; overflow: hidden;
   border: 1px solid #E7DFEF; border-radius: 28px; outline: none;
   background: #FDFCFF; box-shadow: 0 24px 80px -28px #21172F80;
-  animation: arrive .22s ease-out;
 }
-@keyframes arrive { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 .header { display: flex; align-items: center; gap: 12px; padding: 22px 20px 18px; flex-shrink: 0; }
 .icono { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 48px; border: 1px solid #E3D6EF; border-radius: 15px; background: #F1EAF8; color: var(--purple-ink); }
 .heading { flex: 1; min-width: 0; }

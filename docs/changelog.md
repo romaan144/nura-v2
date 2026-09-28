@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-28 — Movimiento común al abrir y cerrar ventanas
+
+Reservas, valoraciones, avisos, acceso y edición de ficha entran con un desplazamiento corto y desaparecen en 180 ms al cerrar. Se bloquean acciones durante la salida y se cancela el cierre pendiente al desmontar; movimiento reducido no espera. Los enlaces y guardados siguen cerrando inmediatamente para evitar portales residuales al cambiar de pantalla. RegisterGate incorpora foco contenido y Escape.
+
 ## 2026-09-28 — Material de cristal común a toda Nüra
 
 Se extiende la referencia visual de la navegación a controles, tarjetas y burbujas mediante tokens comunes. Controles flotantes translúcidos, lectura casi opaca, selección lila con tinta oscura y acciones principales moradas; mensajes propios claros para aligerar el chat. Se mantienen tonos de error/éxito, carta de presentación y reservas de teclado. Los estilos JSX cambian solo la presentación, sin nuevos comportamientos.

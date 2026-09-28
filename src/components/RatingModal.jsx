@@ -1,3 +1,4 @@
+import motion from './ModalMotion.module.css'
 import { createPortal } from 'react-dom'
 import { getFirstName } from '../utils/name'
 import { useId, useState } from 'react'
@@ -32,7 +33,7 @@ export default function RatingModal({ helper, onClose, onEnviado }) {
   const [enviando, setEnviando] = useState(false)
   const { addRating } = useUser()
 
-  const { dialog, body } = useModalSheet(onClose, done)
+  const { dialog, body, dismiss, motionProps } = useModalSheet(onClose, done)
   const titleId = useId()
   const commentId = useId()
   const qualitiesId = useId()
@@ -58,19 +59,19 @@ export default function RatingModal({ helper, onClose, onEnviado }) {
     const r = await valorar(id, { estrellas: rating, volveria, cualidades: elegidas, comentario: comment.trim(), publico })
     onEnviado?.(r)
     setDone(r)
-    setTimeout(onClose, 2200)
+    setTimeout(dismiss, 2200)
   }
 
   return createPortal(
-    <div className={styles.overlay} onClick={onClose}>
-      <section className={styles.card} ref={dialog} tabIndex={-1}
+    <div className={`${styles.overlay} ${motion.overlay}`} {...motionProps} onClick={dismiss}>
+      <section className={`${styles.card} ${motion.sheet}`} ref={dialog} tabIndex={-1}
         onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby={titleId}>
         <header className={styles.header}>
           <div>
             <p className={styles.eyebrow}>Tu experiencia cuenta</p>
             <h2 id={titleId} className={styles.title}>{done ? '¡Gracias!' : `¿Cómo fue con ${nombre}?`}</h2>
           </div>
-          <button type="button" className={styles.close} onClick={onClose} aria-label="Cerrar valoración"><X size={20} /></button>
+          <button type="button" className={styles.close} onClick={dismiss} aria-label="Cerrar valoración"><X size={20} /></button>
         </header>
         <div className={styles.body} ref={body}>
           {!done ? (

@@ -1,3 +1,4 @@
+import motion from './ModalMotion.module.css'
 import { useId, useState } from 'react'
 import useModalSheet from './useModalSheet'
 import { createPortal } from 'react-dom'
@@ -19,7 +20,7 @@ export default function AlertaSheet({ categoria, que, zona, ciudad, onClose, onH
   const navigate = useNavigate()
   const titleId = useId()
   const descriptionId = useId()
-  const { dialog, body } = useModalSheet(onClose)
+  const { dialog, body, dismiss, motionProps } = useModalSheet(onClose)
   const correo = correoDeLaCuenta()
   const puedeMovil = movilPuedeAvisar() && !esIphoneSinInstalar()
   const [movil, setMovil] = useState(puedeMovil)
@@ -53,8 +54,8 @@ export default function AlertaSheet({ categoria, que, zona, ciudad, onClose, onH
 
   // Portal y pie separado: confirmar nunca queda bajo el menú de Buscar.
   return createPortal(
-    <div className={styles.overlay} onClick={onClose}>
-      <section ref={dialog} className={styles.card} onClick={e => e.stopPropagation()}
+    <div className={`${styles.overlay} ${motion.overlay}`} {...motionProps} onClick={dismiss}>
+      <section ref={dialog} className={`${styles.card} ${motion.sheet}`} onClick={e => e.stopPropagation()}
         role="dialog" aria-modal="true" aria-labelledby={titleId} aria-describedby={descriptionId} tabIndex={-1}>
         <header className={styles.header}>
           <span className={styles.icono} aria-hidden="true"><Bell size={22} /></span>
@@ -62,7 +63,7 @@ export default function AlertaSheet({ categoria, que, zona, ciudad, onClose, onH
             <p className={styles.eyebrow}>Aviso de búsqueda</p>
             <h2 id={titleId} className={styles.title}>Si aparece alguien</h2>
           </div>
-          <button type="button" className={styles.close} onClick={onClose} aria-label="Cerrar aviso"><X size={20} /></button>
+          <button type="button" className={styles.close} onClick={dismiss} aria-label="Cerrar aviso"><X size={20} /></button>
         </header>
 
         <div ref={body} className={styles.body}>
@@ -144,7 +145,7 @@ export default function AlertaSheet({ categoria, que, zona, ciudad, onClose, onH
             {viasElegidas.length ? <>Has elegido: <strong>{viasElegidas.join(' y ')}</strong></> : <>Solo en tu perfil, al abrir Nüra.</>}
           </p>
           <div className={styles.actions}>
-            <button type="button" className={styles.btnNo} onClick={onClose}>Ahora no</button>
+            <button type="button" className={styles.btnNo} onClick={dismiss}>Ahora no</button>
             <button type="button" className={styles.btn} onClick={confirmar} disabled={guardando}>
               {guardando ? 'Guardando…' : 'Sí, avísame'}
             </button>
