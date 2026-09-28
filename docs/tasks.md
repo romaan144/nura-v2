@@ -1,5 +1,13 @@
 # Trabajo compartido
 
+## Barra de navegación de cristal · Codex
+
+**Estado:** implementada y verificada localmente. **Rama:** `codex/navegacion-cristal`, desde `7df412f`.
+**Petición:** acercar Buscar/Chats/Perfil al cristal y la selección móvil del vídeo de Tinder aportado por Sergio, con colores integrados en Nüra.
+**Alcance:** BottomNav JSX/CSS. Cristal translúcido, borde definido, tinte lila/menta y una lente que se desplaza al cambiar de pestaña. Adaptación web inspirada en Liquid Glass; no es el componente nativo de iOS ni certifica una versión futura del sistema.
+**Contrato para Claude:** se mantienen los tres destinos, criterios de selección, rutas ocultas, cálculo de avisos y navegación. La lente es decorativa y no intercepta pulsaciones. Altura 62 px, botones 48 px y reserva `--nav-h` sin cambios; tampoco se modifica keyboardViewport. CSS consolidado con alternativa opaca sin backdrop-filter, movimiento reducido y mayor contraste.
+**Pruebas:** build, matching 255/255 y smoke 8×2 + 120×4 pasan; lint sin diagnósticos nuevos, no-undef=0. Navegador local 320×568, 390×844, 430×932 y 1280×900: las tres selecciones, indicador de mensajes, navegación y barra de escritorio conservadas. Carta de presentación: envío 14 px sobre la barra, ninguna pestaña falsamente seleccionada. Teclado simulado y pan de Safari de 90 px mantienen el campo visible sobre la barra. Pendiente iPhone físico. Sin envíos ni datos de prueba en producción.
+
 ## Ventana de avisos clara · Codex
 
 **Estado:** implementado y verificado localmente. **Rama:** `codex/avisos-ventana-clara`, desde `15fea09`.
