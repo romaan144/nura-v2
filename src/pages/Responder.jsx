@@ -1,4 +1,5 @@
 import glass from '../components/ui/glass'
+import ErrorPanel from '../components/ErrorPanel'
 // ── LA VUELTA ────────────────────────────────────────────────────────────
 //
 // Aqui aterriza un profesional cuando abre el enlace del aviso que le llego
@@ -172,38 +173,21 @@ function ResponderAviso({ token }) {
 
   if (estado === 'sinred') {
     return <div style={{...marco, justifyContent: 'center'}}>
-      <div style={{...caja, textAlign: 'center'}}>
-        <p style={{fontSize: 'var(--text-md)', fontWeight: 700, color: 'var(--ink-primary)', margin: '0 0 var(--space-8)'}}>
-          No he podido abrir el mensaje
-        </p>
-        <p style={{fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)', margin: '0 0 var(--space-16)', lineHeight: 1.6}}>
-          Parece un problema de conexión. El mensaje sigue esperándote.
-        </p>
-        <button className="nura-glass-action" onClick={() => { setEstado('cargando'); setIntento(n => n + 1) }}
-          style={{ width: '100%',
-              minHeight: 48,
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-              fontSize: 'var(--text-base)',
-              fontWeight: 700,
-              ...(glass.primary) }}>
-          Reintentar
-        </button>
-      </div>
+      <ErrorPanel
+        title="No he podido abrir el mensaje"
+        hint="Parece un problema de conexión. Puedes intentarlo de nuevo."
+        actionLabel="Reintentar"
+        onAction={() => { setEstado('cargando'); setIntento(n => n + 1) }}
+      />
     </div>
   }
 
   if (estado === 'error') {
     return <div style={{...marco, justifyContent: 'center'}}>
-      <div style={{...caja, textAlign: 'center'}}>
-        <p style={{fontSize: 'var(--text-md)', fontWeight: 700, color: 'var(--ink-primary)', margin: '0 0 var(--space-8)'}}>
-          Este enlace ya no sirve
-        </p>
-        <p style={{fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)', margin: 0, lineHeight: 1.6}}>
-          Puede que sea antiguo o que se haya copiado a medias. Si alguien te
-          escribió, vuelve a abrir el mensaje que te llegó.
-        </p>
-      </div>
+      <ErrorPanel
+        title="Este enlace ya no está disponible"
+        hint="Puede que sea antiguo o que se haya copiado a medias. Vuelve a abrir el enlace del mensaje que recibiste."
+      />
     </div>
   }
 

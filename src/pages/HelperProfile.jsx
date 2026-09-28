@@ -1,5 +1,5 @@
-import glass from '../components/ui/glass'
-import { Heart } from 'lucide-react'
+import ErrorPanel from '../components/ErrorPanel'
+import errorStyles from '../components/ErrorPanel.module.css'
 import { useTitulo } from '../utils/titulo'
 import PageHeader from '../components/PageHeader'
 import PostCard from '../components/PostCard'
@@ -142,40 +142,16 @@ function HelperProfileInner() {
 
   if (loading) return <PageLoading kind="helper" />
   if (!h) return (
-    <div className={styles.page}>
+    <div className={`${errorStyles.frame} ${errorStyles.withHeader}`}>
       <PageHeader showBack />
-      {/* Mismo trato que en Chat para la misma situacion: la ficha decia
-          "Perfil no encontrado." a secas y el chat dejaba un logo latiendo
-          para siempre. Dos pantallas, una situacion, una sola respuesta. */}
-      <div className={styles.notFound} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'var(--space-12)'}}>
-        <div style={{fontSize:'var(--text-xl)'}}><Heart size={24} aria-hidden="true" /></div>
-        <p style={{fontSize:'var(--text-base)',color:'var(--ink)',lineHeight:1.5,margin:0}}>
-          {sinRed ? 'No he podido cargar esta ficha.' : 'Esta persona ya no está en Nüra.'}
-        </p>
-        <p style={{fontSize:'var(--text-sm)',color:'var(--ink-secondary)',lineHeight:1.5,margin:0}}>
-          {sinRed ? 'Parece un problema de conexión. Vuelve a intentarlo en un momento.'
-                  : 'Puede que el enlace sea antiguo. Puedo buscarte a alguien ahora mismo.'}
-        </p>
-        {sinRed && (
-          <button className="nura-glass-action" onClick={() => { setLoading(true); setIntento(n => n + 1) }} style={{ marginTop:'var(--space-8)',
-              padding:'var(--space-12) var(--space-24)',
-              fontSize:'var(--text-sm)',
-              fontWeight:600,
-              cursor:'pointer',
-              ...(glass.primary) }}>
-            Reintentar
-          </button>
-        )}
-        <button className="nura-glass-action" onClick={() => navigate('/')} style={{ marginTop: sinRed ? 0 : 'var(--space-8)',
-              padding:'var(--space-12) var(--space-24)',
-              ...(sinRed ? {background:'transparent',color:'var(--purple-ink)'} : {background:'var(--purple)',color:'white'}),
-              fontSize:'var(--text-sm)',
-              fontWeight:600,
-              cursor:'pointer',
-              ...(sinRed ? glass.control : glass.primary) }}>
-          Buscar a alguien
-        </button>
-      </div>
+      <ErrorPanel
+        title={sinRed ? 'No he podido cargar esta ficha' : 'Esta ficha ya no está disponible'}
+        hint={sinRed ? 'No he podido conectar. Puedes intentarlo de nuevo.' : 'Puede que el enlace sea antiguo. Puedes buscar a otro profesional.'}
+        actionLabel={sinRed ? 'Reintentar' : 'Buscar a alguien'}
+        onAction={sinRed ? () => { setLoading(true); setIntento(n => n + 1) } : () => navigate('/')}
+        secondaryLabel={sinRed ? 'Buscar a alguien' : undefined}
+        onSecondary={() => navigate('/')}
+      />
     </div>
   )
 

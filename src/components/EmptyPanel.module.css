@@ -27,3 +27,6 @@
 .primary:focus-visible, .secondary:focus-visible { outline: 3px solid var(--purple); outline-offset: 4px; }
 @media (max-width: 359px) { .icon { width: 56px; height: 56px; margin-bottom: 18px; } .actions { margin-top: 22px; } }
 @media (forced-colors: active) { .panel, .icon, .primary, .secondary { border-color: ButtonText; } }
+
+.message { width: 100%; display: flex; flex-direction: column; align-items: center; }
+.error .icon { background: linear-gradient(145deg, #FFF9F2E6, #F6E9D8AD); border-color: #C9A77E; color: #805522; }
