@@ -9,6 +9,7 @@ import styles from './ResponseScreen.module.css'
 export default function ResponseScreen({ blocks, welcome, query }) {
   const areaRef = useRef(null)
   const blockRefs = useRef(new Map())
+  const directionRef = useRef(1)
   const [layout, setLayout] = useState({ height: 0, sizes: [] })
   const [anchor, setAnchor] = useState(0)
   const signature = blocks.map(b => b.id).join('|')
@@ -34,7 +35,28 @@ export default function ResponseScreen({ blocks, welcome, query }) {
   const section = blocks[page.items[0]?.index]?.section
   const ready = layout.height > 0
   const adjustments = blocks.findIndex(block => block.section === 'Ajustar esta búsqueda')
+  // Animar el área, no cada bloque: ResizeObserver mide el contenido real.
+  // Cambios de tamaño/teclado no reinician la entrada. No se retienen respuestas
+  // antiguas ni se demora la navegación: solo la página actual es interactiva.
+  useLayoutEffect(() => {
+    const area = areaRef.current
+    if (!ready || !area?.animate) return
+    const preference = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (preference.matches) return
+    const animation = area.animate([
+      { opacity: 0.3, transform: `translateY(${directionRef.current * 8}px)` },
+      { opacity: 1, transform: 'translateY(0)' },
+    ], { duration: 240, easing: 'cubic-bezier(.22, 1, .36, 1)' })
+    const stop = () => animation.cancel()
+    preference.addEventListener('change', stop)
+    return () => {
+      stop()
+      preference.removeEventListener('change', stop)
+    }
+  }, [anchor, ready])
+
   function goTo(index) {
+    directionRef.current = index < anchor ? -1 : 1
     setAnchor(index)
     areaRef.current?.focus({ preventScroll: true })
   }

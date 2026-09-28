@@ -1,5 +1,13 @@
 # Trabajo compartido
 
+## Transiciones de respuestas de Inicio · Codex · 2026-09-28
+
+**Estado:** implementado y comprobado localmente; integración/publicación se verifican en GitHub y Vercel. **Rama:** `codex/transiciones-inicio`, desde `0981021`.
+**Cambio:** ResponseScreen anima únicamente el contenido medido (240 ms, opacidad y desplazamiento vertical de 8 px). Avanzar entra desde abajo y retroceder desde arriba. El marco de cristal, cabecera, controles inferiores, campo y navegación permanecen fijos; se retira la animación del marco completo.
+**Contrato para Claude:** no se retiene contenido anterior, ni se introduce espera, temporizador o estado de transición. Se conserva paginación, foco, selección y bloques inertes. El efecto se cancela al cambiar de paso o desmontar; no se reinicia al medir/redimensionar. Movimiento reducido omite la animación y un cambio de preferencia la cancela. Sin cambios de Home, matching ni keyboardViewport.
+**Pruebas:** build, paginación 200 escenarios, matching 255/255 y smoke 8×2 +120×4 pasan; lint sin diagnósticos nuevos y no-undef=0. Navegador aislado 390×844: primera recomendación, alternativas agrupadas, ajustes y retroceso consecutivo. Marco/campo/menú con rectángulos idénticos antes/después. Registro local confirma duración y dirección, foco en contenido y bloques ocultos inertes. Redimensionar a 320×568 no crea otra animación. Rama de movimiento reducido simulada en fixture: cero animaciones y navegación operativa. Sin mensajes ni datos reales. Pendiente contraste en iPhone físico.
+
+
 ## Repaso completo del cristal · Codex · 2026-09-28
 
 **Estado:** implementado y verificado localmente; integración y despliegue se comprueban por GitHub/Vercel. **Rama:** `codex/repaso-cristal-completo`, desde `637b3ff`.

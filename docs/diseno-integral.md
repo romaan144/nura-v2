@@ -179,3 +179,8 @@ El primer pase tenía excepciones inline y reglas de foco más específicas que 
 Para presentación inline reutilizar `src/components/ui/glass.js` (`control`, `panel`, `floating`, `field`, `circle`, `selected`, `primary`, `disabled`). Los componentes mantienen sus manejadores y selección. Las filas agrupadas y cabeceras clicables dentro de tarjetas heredan el panel: no se añade una burbuja a cada línea. No modificar la altura del menú o el contrato del teclado para cambiar materiales. Foco y hover deben conservar el cristal. Alto contraste/transparencia reducida tienen alternativa opaca mediante tokens.
 
 Alcance y pruebas por pantalla: `docs/revision-cristal.md`.
+
+
+## Movimiento de respuestas de Inicio
+
+`ResponseScreen` mantiene fija la superficie de cristal y anima el contenido ya medido: 240 ms, opacidad 0,3→1 y 8 px verticales (dirección inversa al volver). Evitar animar tamaños o cada bloque: alteraría mediciones/paginación. La navegación es inmediata; no añadir copias del contenido saliente ni esperas. Foco y bloques inertes conservados. El efecto se limpia al cambiar de paso o desmontar, no se repite al redimensionar y se omite con movimiento reducido.

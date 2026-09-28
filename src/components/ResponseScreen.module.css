@@ -13,8 +13,7 @@
 .footer .restart { margin-left: auto; background: none; border-color: transparent; padding-right: 0; }
 .progress, .hint { font-size: 11px; color: var(--ink-secondary); }
 .hint { margin-left: auto; }
-@media (prefers-reduced-motion: no-preference) { .screen { animation: appear 240ms ease-out; } }
-@keyframes appear { from { opacity: .3; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+/* El marco permanece fijo; ResponseScreen anima solo el contenido medido. */
 :global([data-focus-size='short']) .screen, :global([data-focus-size='tiny']) .screen { gap: 10px; padding: 14px 18px; border-radius: 24px; }
 :global([data-focus-size='short']) .header img { width: 28px; height: 28px; }
 :global([data-focus-size='short']) .footer, :global([data-focus-size='tiny']) .footer { padding-top: 6px; min-height: 50px; }
