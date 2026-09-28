@@ -1,3 +1,4 @@
+import glass from '../components/ui/glass'
 import { Heart } from 'lucide-react'
 import { useTitulo } from '../utils/titulo'
 import PageHeader from '../components/PageHeader'
@@ -164,16 +165,22 @@ function HelperProfileInner() {
                   : 'Puede que el enlace sea antiguo. Puedo buscarte a alguien ahora mismo.'}
         </p>
         {sinRed && (
-          <button onClick={() => { setLoading(true); setIntento(n => n + 1) }} style={{marginTop:'var(--space-8)',padding:'var(--space-12) var(--space-24)',
-            background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',
-            fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
+          <button className="nura-glass-action" onClick={() => { setLoading(true); setIntento(n => n + 1) }} style={{ marginTop:'var(--space-8)',
+              padding:'var(--space-12) var(--space-24)',
+              fontSize:'var(--text-sm)',
+              fontWeight:600,
+              cursor:'pointer',
+              ...(glass.primary) }}>
             Reintentar
           </button>
         )}
-        <button onClick={() => navigate('/')} style={{marginTop: sinRed ? 0 : 'var(--space-8)',padding:'var(--space-12) var(--space-24)',
-          ...(sinRed ? {background:'transparent',color:'var(--purple-ink)'} : {background:'var(--purple)',color:'white'}),
-          border:'none',borderRadius:'var(--radius-full)',
-          fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
+        <button className="nura-glass-action" onClick={() => navigate('/')} style={{ marginTop: sinRed ? 0 : 'var(--space-8)',
+              padding:'var(--space-12) var(--space-24)',
+              ...(sinRed ? {background:'transparent',color:'var(--purple-ink)'} : {background:'var(--purple)',color:'white'}),
+              fontSize:'var(--text-sm)',
+              fontWeight:600,
+              cursor:'pointer',
+              ...(sinRed ? glass.control : glass.primary) }}>
           Buscar a alguien
         </button>
       </div>

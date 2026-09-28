@@ -1,3 +1,4 @@
+import glass from './ui/glass'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Inbox, Bell } from 'lucide-react'
@@ -88,10 +89,18 @@ export default function BandejaProfesional() {
       </h2>
       {puedeMovil && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-8)', margin: '0 0 var(--space-10)', flexWrap: 'wrap' }}>
-          <button type="button" onClick={cambiarMovil} aria-pressed={movil}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-6)', minHeight: 36, padding: '0 var(--space-12)',
-              borderRadius: 'var(--radius-full)', border: '1px solid var(--purple)', fontFamily: 'inherit', fontSize: 'var(--text-xs)', fontWeight: 600, cursor: 'pointer',
-              background: movil ? 'var(--purple)' : 'transparent', color: movil ? 'white' : 'var(--purple)' }}>
+          <button className="nura-glass-action" type="button" onClick={cambiarMovil} aria-pressed={movil}
+            style={{ display: 'inline-flex',
+              alignItems: 'center',
+              gap: 'var(--space-6)',
+              minHeight: 36,
+              padding: '0 var(--space-12)',
+              fontFamily: 'inherit',
+              fontSize: 'var(--text-xs)',
+              fontWeight: 600,
+              cursor: 'pointer',
+              color: movil ? 'white' : 'var(--purple)',
+              ...(movil ? glass.selected : glass.control) }}>
             <Bell size={14} aria-hidden="true" /> {movil ? 'Te aviso en este móvil · Quitar' : 'Avísame en este móvil cuando me escriban'}
           </button>
           {nota && <span role="status" style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-secondary)' }}>{nota}</span>}

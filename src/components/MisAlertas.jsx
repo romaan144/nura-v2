@@ -1,3 +1,4 @@
+import glass from './ui/glass'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Bell, Mail, X, ChevronRight } from 'lucide-react'
@@ -54,10 +55,17 @@ export default function MisAlertas({ estilos: s, destacar = false }) {
                   {a.caduca_en ? ` · hasta el ${fecha(a.caduca_en)}` : ''}
                 </span>
                 {caducaPronto(a) && (
-                  <button onClick={() => renovar(a.llave)}
-                    style={{ alignSelf: 'flex-start', marginTop: 'var(--space-6)', minHeight: 36, padding: '0 var(--space-12)',
-                      borderRadius: 'var(--radius-full)', border: '1px solid var(--purple)', background: 'transparent',
-                      color: 'var(--purple)', fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 600, cursor: 'pointer' }}>
+                  <button className="nura-glass-action" onClick={() => renovar(a.llave)}
+                    style={{ alignSelf: 'flex-start',
+              marginTop: 'var(--space-6)',
+              minHeight: 36,
+              padding: '0 var(--space-12)',
+              color: 'var(--purple)',
+              fontFamily: 'inherit',
+              fontSize: 'var(--text-sm)',
+              fontWeight: 600,
+              cursor: 'pointer',
+              ...(glass.control) }}>
                     {a.fallo ? 'No se pudo. Reintentar' : 'Renovar 3 meses más'}
                   </button>
                 )}
@@ -70,8 +78,8 @@ export default function MisAlertas({ estilos: s, destacar = false }) {
                   {[...a.encontrados].reverse().map(e => (
                     <button key={e.id + e.fecha} onClick={() => navigate(`/helper/${e.id}`)}
                       style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-8)', minHeight: 40, padding: '0 var(--space-12)',
-                        borderRadius: 'var(--radius-card)', border: 'none', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left',
-                        background: nuevos.includes(e) ? 'var(--green-light)' : 'var(--surface-subtle)', color: 'var(--ink-primary)' }}>
+                        borderRadius: 'var(--radius-card)', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left',
+                        background: nuevos.includes(e) ? 'var(--glass-selected)' : 'var(--glass-control)', color: 'var(--ink-primary)', boxShadow: 'var(--glass-control-shadow)', border: '1px solid var(--glass-edge)' }}>
                       <span style={{ flex: 1, fontSize: 'var(--text-sm)' }}>
                         <strong>Ha llegado {e.nombre}</strong>{e.especialidad ? ` · ${e.especialidad}` : ''}
                       </span>

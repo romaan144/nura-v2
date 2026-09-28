@@ -253,3 +253,6 @@
 .chatUnread { background: var(--glass-selected); }
 .emptyBtn { background: var(--grad-main); color: white; border-radius: 999px; box-shadow: var(--glass-primary-shadow); }
 .emptyBtnSecondary { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
+
+/* Repaso de controles: mismo material, geometría y estados conservados. */
+.searchBox, .searchBox:focus-within { background: var(--glass-floating); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }

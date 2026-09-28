@@ -448,3 +448,14 @@
 .hero, .tarjeta, .lista { background: var(--glass-panel); border-color: var(--glass-edge); border-radius: var(--radius-glass); box-shadow: var(--glass-panel-shadow); }
 .dato, .editCancel { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
 .editConfirm { background: var(--grad-main); color: white; border-radius: 999px; box-shadow: var(--glass-primary-shadow); }
+
+/* Repaso de controles: mismo material, geometría y estados conservados. */
+.campo, .editInput, .campo:focus { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 20px; box-shadow: var(--glass-control-shadow); }
+.campo:focus, .editInput:focus { border-color: var(--glass-selected-edge); }
+.nameTap { background: var(--glass-control); border: 1px solid var(--glass-edge); border-radius: 999px; padding: 8px 14px; box-shadow: var(--glass-control-shadow); }
+.quitar { background: var(--glass-control); border: 1px solid var(--glass-edge); border-radius: 50%; box-shadow: var(--glass-control-shadow); }
+.lista { background: var(--glass-panel); }
+.fila { background: transparent; }
+.fila:hover, .salir:hover { background: var(--glass-control); }
+.salir { background: var(--glass-control); box-shadow: var(--glass-control-shadow); }
+.heroStats { background: var(--glass-control); border: 1px solid var(--glass-edge); box-shadow: var(--glass-shine); }

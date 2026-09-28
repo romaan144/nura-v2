@@ -48,3 +48,11 @@
 .filterActive { background: var(--glass-selected); color: var(--glass-selected-ink); border-color: var(--glass-selected-edge); box-shadow: var(--glass-control-shadow), inset 0 0 0 1px var(--glass-selected-edge); }
 .specialtySelect { border-radius: 20px; }
 .filterPanel { border-radius: 26px; box-shadow: var(--glass-shine); }
+
+/* Repaso de controles: mismo material, geometría y estados conservados. */
+.resetFilters { padding-inline: 12px; background: var(--glass-control); border: 1px solid var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
+.searchBar, .searchBar:focus-within { background: var(--glass-floating); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
+.filterPill:hover:not(.filterActive) { background: var(--glass-selected); }
+
+.specialtySelect { background: var(--glass-control); box-shadow: var(--glass-control-shadow); }
+.clearBtn { background: var(--glass-control); border: 1px solid var(--glass-edge); border-radius: 50%; box-shadow: var(--glass-control-shadow); }

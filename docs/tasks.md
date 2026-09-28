@@ -1,5 +1,14 @@
 # Trabajo compartido
 
+## Repaso completo del cristal · Codex · 2026-09-28
+
+**Estado:** implementado y verificado localmente; integración y despliegue se comprueban por GitHub/Vercel. **Rama:** `codex/repaso-cristal-completo`, desde `637b3ff`.
+**Petición:** revisar página por página los controles que quedaron fuera del material compartido, especialmente Ver todos, perfil, escribir y volver.
+**Cambio:** tokens más translúcidos con borde y reflejo definidos; clases explícitas y `components/ui/glass.js` para estilos inline. Inicio deja de reutilizar el estilo del logotipo para el botón del perfil. Se corrigen fondos blancos al enfocar y piezas propias de registro, agenda, respuesta profesional, publicaciones, acceso, citas, valoraciones y avisos.
+**Contrato para Claude:** solo presentación y nombres accesibles de botones de registro. Comparación estructural de JSX confirma que manejadores, disabled, value, checked, enlaces y selección no cambian. No se modifica matching, rutas, datos, permisos, reservas del menú ni keyboardViewport. Usar los tokens o `glass` al añadir controles; no reintroducir fondos blancos en focus/hover.
+**Validación:** build y matching 255/255 pasan; smoke 8×2 + censo 120×4 pasa; lint sin diagnósticos nuevos respecto a main y no-undef=0 (deuda anterior permanece). Recorrido y límites en `docs/revision-cristal.md`. Sin envíos, reservas ni cambios reales de cuenta.
+
+
 ## Transiciones de ventanas · Codex
 
 **Estado:** implementadas y comprobadas localmente. **Rama:** `codex/transiciones-ventanas`, desde `1dbfe93`.

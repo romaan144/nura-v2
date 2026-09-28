@@ -60,3 +60,6 @@ button.author { cursor: pointer; }
 .composer > button:not(:disabled) { background: var(--grad-main); color: white; border-radius: 999px; box-shadow: var(--glass-primary-shadow); }
 
 .composer > button { border-radius: 999px; }
+
+/* Repaso de controles: mismo material, geometría y estados conservados. */
+.composer input:focus { background: var(--glass-control); }

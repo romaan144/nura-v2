@@ -1,3 +1,4 @@
+import glass from '../components/ui/glass'
 import { Heart } from 'lucide-react'
 import { getFirstName } from '../utils/name'
 import { useTitulo } from '../utils/titulo'
@@ -369,16 +370,22 @@ export default function Chat() {
                 : 'Puede que el enlace sea antiguo. Puedo buscarte a alguien ahora mismo.'}
       </p>
       {sinRed && (
-        <button onClick={() => { setBuscando(true); setIntento(n => n + 1) }} style={{marginTop:'var(--space-8)',padding:'var(--space-12) var(--space-24)',
-          background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',
-          fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
+        <button className="nura-glass-action" onClick={() => { setBuscando(true); setIntento(n => n + 1) }} style={{ marginTop:'var(--space-8)',
+              padding:'var(--space-12) var(--space-24)',
+              fontSize:'var(--text-sm)',
+              fontWeight:600,
+              cursor:'pointer',
+              ...(glass.primary) }}>
           Reintentar
         </button>
       )}
-      <button onClick={() => navigate('/')} style={{marginTop: sinRed ? 0 : 'var(--space-8)',padding:'var(--space-12) var(--space-24)',
-        ...(sinRed ? {background:'transparent',color:'var(--purple-ink)'} : {background:'var(--purple)',color:'white'}),
-        border:'none',borderRadius:'var(--radius-full)',
-        fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
+      <button className="nura-glass-action" onClick={() => navigate('/')} style={{ marginTop: sinRed ? 0 : 'var(--space-8)',
+              padding:'var(--space-12) var(--space-24)',
+              ...(sinRed ? {background:'transparent',color:'var(--purple-ink)'} : {background:'var(--purple)',color:'white'}),
+              fontSize:'var(--text-sm)',
+              fontWeight:600,
+              cursor:'pointer',
+              ...(sinRed ? glass.control : glass.primary) }}>
         Buscar a alguien
       </button>
     </div>
@@ -722,15 +729,19 @@ export default function Chat() {
                 <p>{msg.text}</p>
                 {msg.from === 'helper' && msg.proposal && !msg.proposalAnswered && (
                   <div style={{display:'flex', gap:'var(--space-6)', marginTop:'var(--space-8)', flexWrap:'wrap'}}>
-                    <button onClick={() => answerProposal(msg.id, true, msg.proposal.label)}
-                      style={{background:'var(--purple)', color:'white', border:'none',
-                        borderRadius:'var(--radius-full)', padding:'7px var(--space-14)', fontSize:'var(--text-xs)', fontWeight:600}}>
+                    <button className="nura-glass-action" onClick={() => answerProposal(msg.id, true, msg.proposal.label)}
+                      style={{ padding:'7px var(--space-14)',
+              fontSize:'var(--text-xs)',
+              fontWeight:600,
+              ...(glass.primary) }}>
                       ✓ Me va bien
                     </button>
-                    <button onClick={() => answerProposal(msg.id, false, msg.proposal.label)}
-                      style={{background:'var(--surface-subtle)', color:'var(--ink)',
-                        border:'1px solid var(--ink-border)', borderRadius:'var(--radius-full)',
-                        padding:'7px var(--space-14)', fontSize:'var(--text-xs)', fontWeight:600}}>
+                    <button className="nura-glass-action" onClick={() => answerProposal(msg.id, false, msg.proposal.label)}
+                      style={{ color:'var(--ink)',
+              padding:'7px var(--space-14)',
+              fontSize:'var(--text-xs)',
+              fontWeight:600,
+              ...(glass.control) }}>
                       Otro momento
                     </button>
                   </div>
@@ -738,21 +749,20 @@ export default function Chat() {
                 {isNura && msg.chips && (
                   <div style={{display:'flex',gap:'var(--space-6)',marginTop:'var(--space-8)',flexWrap:'wrap'}}>
                     {msg.chips.map((chip, ci) => (
-                      <button key={ci}
+                      <button className="nura-glass-action" key={ci}
                         onClick={() => {
                           if (chip === 'Confirmar reserva') { setShowConfirm(true); return }
                           if (chip === 'Todavía no') return
                           if (chip === AVISAME) { pedirAvisoRespuesta(msg.id); return }
                           sendMessage(chip)
                         }}
-                        style={{
-                          padding:'5px var(--space-12)',borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
-                          cursor:'pointer',border:'none',
-                          background: chip === 'Confirmar reserva'
-                            ? 'var(--purple)' : 'rgba(33,29,51,0.07)',
-                          color: chip === 'Confirmar reserva' ? 'white' : 'var(--ink-secondary)',
-                          fontFamily:'inherit',
-                        }}>
+                        style={{ padding:'5px var(--space-12)',
+              fontSize:'var(--text-xs)',
+              fontWeight:600,
+              cursor:'pointer',
+              color: chip === 'Confirmar reserva' ? 'white' : 'var(--ink-secondary)',
+              fontFamily:'inherit',
+              ...(chip === 'Confirmar reserva' ? glass.primary : glass.control) }}>
                         {chip}
                       </button>
                     ))}

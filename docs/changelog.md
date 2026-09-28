@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-28 — Cerrar las excepciones del cristal, página por página
+
+Sergio detecta que el primer pase no cubrió todos los controles. Se reduce la opacidad del material flotante y se corrigen estilos particulares y reglas de foco que lo volvían blanco. Los controles inline comparten recetas de presentación; se revisan también registro, respuestas profesionales, agenda y estados secundarios. La lectura conserva más opacidad, las acciones principales su morado y los avisos sus colores semánticos. Recorrido documentado en `revision-cristal.md`.
+
 ## 2026-09-28 — Movimiento común al abrir y cerrar ventanas
 
 Reservas, valoraciones, avisos, acceso y edición de ficha entran con un desplazamiento corto y desaparecen en 180 ms al cerrar. Se bloquean acciones durante la salida y se cancela el cierre pendiente al desmontar; movimiento reducido no espera. Los enlaces y guardados siguen cerrando inmediatamente para evitar portales residuales al cambiar de pantalla. RegisterGate incorpora foco contenido y Escape.

@@ -56,3 +56,9 @@
 .icon { border-radius: 50%; box-shadow: var(--glass-shine); }
 
 .primary { border-radius: 999px; }
+
+/* Repaso de controles: mismo material, geometría y estados conservados. */
+.reveal { background: var(--glass-control); border: 1px solid var(--glass-edge); border-radius: 50%; box-shadow: var(--glass-control-shadow); }
+.textButton { padding-inline: 14px; background: var(--glass-control); border: 1px solid var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
+.codeRow > span { background: var(--glass-control); border-color: var(--glass-edge); box-shadow: var(--glass-control-shadow); border-radius: 18px; }
+.codeRow > .codeFilled { background: var(--glass-selected); border-color: var(--glass-selected-edge); }

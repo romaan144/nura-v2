@@ -484,3 +484,11 @@
 .micBtn:not(:disabled):not(.micActive) { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); color: var(--purple-ink); }
 .msgBubbleNura { -webkit-backdrop-filter: none; backdrop-filter: none; }
 .systemNote { border-radius: 999px; }
+
+/* Repaso de controles: mismo material, geometría y estados conservados. */
+.inputBar:focus-within { background: var(--glass-floating); }
+.systemNote { background: var(--glass-control); box-shadow: var(--glass-control-shadow); border: 1px solid var(--glass-edge); }
+.msgHelper .msgBubble { border: 1px solid var(--glass-edge); }
+.msgUser .msgBubble { border: 1px solid var(--glass-selected-edge); }
+.msgBubbleNura { background: var(--glass-panel); }
+.quickReply:hover { background: var(--glass-selected); }

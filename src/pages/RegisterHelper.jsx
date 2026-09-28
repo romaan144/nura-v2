@@ -242,7 +242,7 @@ export default function RegisterHelper() {
 
       {/* ── HEADER — mismo floatTop que Home ── */}
       <div className={styles.floatTop} ref={topRef}>
-        <button className={styles.menuBubble} onClick={() => navigate(-1)}>
+        <button className={styles.menuBubble} aria-label="Volver" onClick={() => navigate(-1)}>
           <ArrowLeft size={17} />
         </button>
 
@@ -283,8 +283,8 @@ export default function RegisterHelper() {
         {messages.length === 1 && (
           <div style={{
             margin:'0 0 var(--space-12)', padding:'var(--space-12) var(--space-16)',
-            background:'var(--purple-05)', borderRadius:'var(--radius-card)',
-            border:'1px solid var(--purple-10)'
+            background:'var(--glass-panel)', borderRadius:'var(--radius-glass)',
+            border:'1px solid var(--glass-edge)', boxShadow:'var(--glass-panel-shadow)'
           }}>
             {/* Antes: «reciben una media de 8 contactos al mes». Ese dato no
                 existe: no hay profesionales reales todavia. Se promete solo
@@ -367,10 +367,10 @@ export default function RegisterHelper() {
               disabled={typing}
             />
             {input.trim()
-              ? <button className={styles.sendBtn} onClick={sendMessage} disabled={!input.trim() || typing}>
+              ? <button className={styles.sendBtn} aria-label="Enviar respuesta" onClick={sendMessage} disabled={!input.trim() || typing}>
                   <Send size={16} />
                 </button>
-              : <button className={`${styles.sendBtn} ${listening ? styles.micActive : styles.micBtn}`} onClick={toggleMic}>
+              : <button className={`${styles.sendBtn} ${listening ? styles.micActive : styles.micBtn}`} onClick={toggleMic} aria-label={listening ? 'Detener dictado' : 'Dictar por voz'}>
                   {listening ? <MicOff size={16} /> : <Mic size={16} />}
                 </button>
             }

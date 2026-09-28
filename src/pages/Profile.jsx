@@ -31,8 +31,8 @@ import { showToast } from '../components/Toast'
 // Acciones de apoyo: contorno visible también sobre las tarjetas blancas.
 const professionalInfoButton = {
   minHeight: 48, marginTop: 10, padding: '10px 16px', lineHeight: 1.4,
-  border: '1px solid var(--action-border)', background: 'var(--action-surface)',
-  color: 'var(--purple-ink)', boxShadow: 'none',
+  border: '1px solid var(--glass-edge)', background: 'var(--glass-control)',
+  color: 'var(--purple-ink)', boxShadow: 'var(--glass-control-shadow)',
 }
 
 
@@ -189,10 +189,10 @@ export default function Profile() {
         </p>
 
         <div style={{
-          background:'rgba(255,255,255,0.86)',
-          WebkitBackdropFilter:'blur(24px) saturate(180%)', backdropFilter:'blur(24px) saturate(180%)',
-          border:'1px solid var(--ink-border)', borderRadius:'var(--radius-md)',
-          boxShadow:'0 8px 32px rgba(33,29,51,0.07)', padding:'var(--space-24) var(--space-20)',
+          background:'var(--glass-panel)',
+          WebkitBackdropFilter:'var(--glass-filter)', backdropFilter:'var(--glass-filter)',
+          border:'1px solid var(--glass-edge)', borderRadius:'var(--radius-glass)',
+          boxShadow:'var(--glass-panel-shadow)', padding:'var(--space-24) var(--space-20)',
         }}>
           <h2 style={{fontFamily:'var(--font-voice)', fontSize:'var(--text-heading)', fontWeight:700,
             letterSpacing:'-0.6px', color:'var(--ink)', margin:'0 0 var(--space-6)', textAlign:'center'}}>
@@ -225,7 +225,7 @@ export default function Profile() {
             Crear cuenta gratis
           </Button>
           <Button variant="secondary" full onClick={() => navigate('/register-helper')}
-            style={{minHeight:48, marginTop:'var(--space-10)', color:'var(--purple-ink)', boxShadow:'var(--alzado-reposo)'}}>
+            style={{minHeight:48, marginTop:'var(--space-10)', color:'var(--purple-ink)', boxShadow:'var(--glass-control-shadow)'}}>
             <User size={15} aria-hidden="true" /> Quiero ser profesional
           </Button>
           {/* Sin esto, una profesional con acceso que cambiaba de movil no
@@ -500,7 +500,7 @@ export default function Profile() {
               </div>
 
               <Button variant="secondary" full onClick={() => setEditarAbierto(true)}
-                style={{color:'var(--purple-ink)', boxShadow:'var(--alzado-reposo)', minHeight:48}}>
+                style={{color:'var(--purple-ink)', boxShadow:'var(--glass-control-shadow)', minHeight:48}}>
                 <Edit2 size={15} aria-hidden="true" /> Editar mi ficha
               </Button>
 
@@ -517,7 +517,7 @@ export default function Profile() {
                     if (r === 'copiado') showToast('Enlace de tu ficha copiado')
                     else if (r === 'fallo') showToast('No he podido copiar el enlace')
                   }}
-                  style={{boxShadow:'var(--alzado-reposo)', minHeight:48}}>
+                  style={{boxShadow:'var(--glass-control-shadow)', minHeight:48}}>
                   <Share2 size={15} aria-hidden="true" /> Compartir mi ficha
                 </Button>
               )}

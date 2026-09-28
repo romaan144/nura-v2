@@ -87,3 +87,6 @@
 
 /* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
 .logoPill, .circleBtn { background: var(--glass-floating); border-color: var(--glass-edge); box-shadow: var(--glass-floating-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
+
+/* Repaso de controles: mismo material, geometría y estados conservados. */
+.circleBtn:hover { background: var(--glass-floating); border-color: var(--glass-selected-edge); }

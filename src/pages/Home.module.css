@@ -882,10 +882,23 @@
 
 /* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
 .inputCapsule { background: var(--glass-floating); border-color: var(--glass-edge); box-shadow: var(--glass-floating-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); border-radius: 999px; }
-.inputCapsule:focus-within { border-color: var(--glass-selected-edge); box-shadow: var(--glass-focus); }
+.inputCapsule:focus-within { background: var(--glass-floating); border-color: var(--glass-selected-edge); box-shadow: var(--glass-focus); }
 .screenChoice, .answerChip, .refineChip { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
 .screenChoice .choiceIcon { border-radius: 50%; box-shadow: var(--glass-shine); }
-.browseTop, .resetBubble { background: var(--glass-floating); border-color: var(--glass-edge); box-shadow: var(--glass-floating-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
+.browseTop, .resetBubble, .profileBubble { background: var(--glass-floating); border-color: var(--glass-edge); box-shadow: var(--glass-floating-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
 .sendBtn:not(:disabled):not(.micActive) { background: var(--grad-main); color: white; border-radius: 999px; box-shadow: var(--glass-primary-shadow); }
 .sendBtn { border-radius: 50%; }
 .bubbleUser { background: var(--glass-message); color: var(--brand-deep); border-radius: 24px 24px 8px 24px; box-shadow: var(--glass-control-shadow); }
+
+/* Repaso de controles: mismo material, geometría y estados conservados. */
+.profileBubble { color: var(--purple-ink); }
+.profileBubble :global(.nura-user-initials) { background: transparent; }
+.browseTop:hover, .resetBubble:hover, .profileBubble:hover { background: var(--glass-floating); border-color: var(--glass-selected-edge); }
+.inputCapsule:focus-within { -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
+.screenChoice:hover, .answerChip:hover, .refineChip:hover { background: var(--glass-selected); color: var(--glass-selected-ink); }
+.micBtn:not(.micActive) { background: var(--glass-selected); color: var(--glass-selected-ink); box-shadow: var(--glass-control-shadow); border: 1px solid var(--glass-selected-edge); }
+
+/* El alta profesional usa este módulo, no RegisterHelper.module.css. */
+.menuBubble { background: var(--glass-floating); border-color: var(--glass-edge); box-shadow: var(--glass-floating-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
+.page:not(.focusPage) .bubbleNura { padding: 12px 16px; border: 1px solid var(--glass-edge); border-radius: 24px 24px 24px 8px; background: var(--glass-panel); box-shadow: var(--glass-control-shadow); }
+.page:not(.focusPage) .logoBubble { background: var(--glass-floating); border: 1px solid var(--glass-edge); box-shadow: var(--glass-floating-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
