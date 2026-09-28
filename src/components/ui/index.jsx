@@ -78,7 +78,7 @@ export function Bubble({ text, author, index = 0, style }) {
           <span style={{
             fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)',
             fontWeight: 500, paddingLeft: 'var(--space-4)',
-          }}>— {author}</span>
+          }}>{author}</span>
         )}
       </div>
     </div>

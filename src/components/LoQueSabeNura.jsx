@@ -16,7 +16,7 @@ function texto(a) {
   if (a.clave.startsWith('cualidad:')) return ETIQUETA_CUALIDAD[a.clave.slice(9)] || a.clave.slice(9)
   if (a.clave === 'tiempo_respuesta') {
     const m = a.valor.mediana_minutos
-    return `Sueles contestar ${m < 60 ? 'en menos de 1 h' : m < 180 ? 'en 1–3 h' : m < 1440 ? 'el mismo día' : `en ${Math.round(m / 1440)} días`}`
+    return `Sueles contestar ${m < 60 ? 'en menos de 1 h' : m < 180 ? 'entre 1 y 3 h' : m < 1440 ? 'el mismo día' : `en ${Math.round(m / 1440)} días`}`
   }
   if (a.clave === 'tasa_respuesta') return `Contestas ${Math.round(100 * a.valor.respondidos / a.valor.recibidos)} % de los mensajes`
   return a.clave

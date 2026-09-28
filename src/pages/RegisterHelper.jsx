@@ -61,7 +61,7 @@ const QUESTIONS = [
   { id: 'formation',      text: '¿Qué formación o certificaciones tienes?',                           placeholder: 'Ej: Grado en Logopedia, FP Atención Sociosanitaria...' },
   { id: 'zone',           text: '¿En qué ciudad y zona trabajas? ¿Te desplazas?',                    placeholder: 'Ej: Barcelona, Gràcia y alrededores · Madrid, Chamberí' },
   { id: 'price',          text: '¿Cuál es tu tarifa? Cuanto más claro, más confianza genera.',        placeholder: 'Ej: 50€/sesión de 45 min, 15€/hora' },
-  { id: 'differentiator', text: '¿Qué te diferencia de otros profesionales?',                        placeholder: 'Lo que te hace único — en una o dos frases' },
+  { id: 'differentiator', text: '¿Qué te diferencia de otros profesionales?',                        placeholder: 'Cuenta qué te hace único en una o dos frases' },
   // SIN ESTO NO HAY NEGOCIO. El alta no pedia ningun dato de contacto y
   // ningun perfil del dataset lo tiene: un profesional podia completar las
   // seis preguntas, aparecer en las busquedas, y ser INALCANZABLE para

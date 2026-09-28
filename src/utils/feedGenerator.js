@@ -26,13 +26,13 @@ const TEMPLATES = {
     (h) => `Recuerdo por qué elegí esta profesión cada vez que veo el avance de un paciente. No hay mejor recompensa que ver a alguien ganar confianza en su propia voz.`,
   ],
   tecnico: [
-    (h) => `Avería resuelta en tiempo récord en ${h.zone || 'Barcelona'}. Caldera que llevaba semanas fallando — diagnosticada y reparada en 90 minutos. La clave está en la experiencia y en llevar siempre el material necesario.`,
+    (h) => `Avería resuelta en tiempo récord en ${h.zone || 'Barcelona'}. La caldera llevaba semanas fallando. Quedó diagnosticada y reparada en 90 minutos. La clave está en la experiencia y en llevar siempre el material necesario.`,
     (h) => `Esta semana: 4 instalaciones de climatización, 2 reparaciones urgentes y un mantenimiento preventivo que evitó una avería mayor. El trabajo en casa requiere atención al detalle.`,
     (h) => `Un consejo profesional: el mantenimiento preventivo cuesta un 80% menos que la reparación de emergencia. Esta semana he visto casos que se podrían haber evitado fácilmente.`,
   ],
   limpieza: [
-    (h) => `Limpieza a fondo completada en ${h.zone || 'Barcelona'}. Cuando un espacio queda impecable, no solo cambia el ambiente — cambia el estado de ánimo de quien vive en él.`,
-    (h) => `Trabajo hoy con productos ecológicos en un piso familiar. Limpiar con responsabilidad no significa limpiar peor — significa limpiar mejor y más seguro para todos.`,
+    (h) => `Limpieza a fondo completada en ${h.zone || 'Barcelona'}. Cuando un espacio queda impecable, mejoran el ambiente y el estado de ánimo de quien vive en él.`,
+    (h) => `Trabajo hoy con productos ecológicos en un piso familiar. Limpiar con responsabilidad también es cuidar de quienes viven en casa.`,
     (h) => `La puntualidad y la discreción son tan importantes como la limpieza en sí. Esta semana he trabajado en 6 hogares diferentes y en cada uno me adapto a las necesidades de la familia.`,
   ],
   cuidado: [
@@ -41,19 +41,19 @@ const TEMPLATES = {
     (h) => `No es solo asistencia. Es compañía, es escucha, es presencia. Hoy cumplió años una de las personas a las que cuido y el brillo en sus ojos no tiene precio.`,
   ],
   entrenador: [
-    (h) => `Primera sesión de evaluación completada con un nuevo cliente. Partimos de cero, pero con un objetivo claro. Lo más importante no es donde empiezas — es hacia donde vas.`,
+    (h) => `Primera sesión de evaluación completada con un nuevo cliente. Partimos de cero, pero con un objetivo claro. Lo importante es saber qué quieres conseguir e ir avanzando.`,
     (h) => `Semana intensa de entrenamiento en ${h.zone || 'Barcelona'}. Ver la evolución de mis clientes en los últimos meses es la mejor motivación para seguir dando el 100%.`,
     (h) => `El entrenamiento personal no es solo ejercicio. Es disciplina, constancia y mentalidad. Esta semana uno de mis clientes bajó su marca personal. Sin palabras.`,
   ],
   matematicas: [
     (h) => `Clase de refuerzo completada con un estudiante de 2º de bachillerato. Llevaba meses bloqueado con las derivadas. Hoy lo entendió todo. Eso es lo que hace que esto valga la pena.`,
-    (h) => `La matemática no es difícil — la enseñanza habitual la hace difícil. Con el método adecuado y paciencia, cualquier alumno puede avanzar. Esta semana lo demostré en ${h.zone || 'Barcelona'}.`,
+    (h) => `Una buena explicación puede hacer las matemáticas mucho más sencillas. Con el método adecuado y paciencia, cualquier alumno puede avanzar. Esta semana lo demostré en ${h.zone || 'Barcelona'}.`,
     (h) => `Temporada de exámenes a la vista. Si tu hijo o hija necesita refuerzo en matemáticas, física o ciencias, estoy disponible. La constancia hace la diferencia.`,
   ],
   salud: [
     (h) => `Sesión de seguimiento completada. Ver la evolución de pacientes a lo largo de semanas es el mejor indicador de que el trabajo está dando frutos.`,
-    (h) => `La salud no es un lujo — es una inversión. Hoy he trabajado con tres personas en ${h.zone || 'Barcelona'} que han decidido tomar el control de su bienestar. Eso merece todo el respeto.`,
-    (h) => `El acompañamiento profesional marca la diferencia. No solo en resultados — en motivación, en constancia y en calidad de vida. Esta semana ha sido muy gratificante.`,
+    (h) => `Cuidar la salud es invertir en bienestar. Hoy he trabajado con tres personas en ${h.zone || 'Barcelona'} que han decidido tomar el control de su bienestar. Eso merece todo el respeto.`,
+    (h) => `El acompañamiento profesional marca la diferencia. Ayuda a mejorar los resultados, la motivación, la constancia y la calidad de vida. Esta semana ha sido muy gratificante.`,
   ],
   legal: [
     (h) => `Caso cerrado favorablemente para el cliente. El derecho es complejo, pero con la orientación adecuada los resultados son posibles. La información es el primer paso para defenderse.`,
@@ -63,7 +63,7 @@ const TEMPLATES = {
   mascotas: [
     (h) => `Paseo completado con tres perros esta mañana en ${h.zone || 'Barcelona'}. El tiempo que los dueños no pueden darles, nosotros lo compensamos con atención y cariño.`,
     (h) => `La relación entre un perro y su cuidador se construye con confianza y consistencia. Esta semana un nuevo cliente ya confía en mí para dejarme su compañero de vida.`,
-    (h) => `Sesión de adiestramiento positivo completada. Sin castigos, sin gritos — solo refuerzo, paciencia y resultados reales. Los animales responden cuando se les trata con respeto.`,
+    (h) => `Sesión de adiestramiento positivo completada. Con refuerzo positivo y paciencia, sin castigos ni gritos. Los animales responden cuando se les trata con respeto.`,
   ],
   hogar: [
     (h) => `Reforma de cocina completada en ${h.zone || 'Barcelona'}. Ver la cara del cliente cuando entra al espacio transformado es la mejor recompensa de este trabajo.`,
@@ -72,7 +72,7 @@ const TEMPLATES = {
   ],
   otro: [
     (h) => `Otra semana de trabajo en ${h.zone || 'Barcelona'}. Cada proyecto es diferente y cada cliente tiene sus propias necesidades. Adaptarse es parte del trabajo.`,
-    (h) => `La profesionalidad no es solo técnica — es puntualidad, comunicación y responsabilidad. Esta semana he podido demostrarlo una vez más.`,
+    (h) => `Ser profesional también implica puntualidad, comunicación y responsabilidad. Esta semana he podido demostrarlo una vez más.`,
     (h) => `Cuando ayudas a alguien a resolver un problema real, el agradecimiento es genuino. Eso es lo que da sentido a este trabajo cada día.`,
   ],
 }

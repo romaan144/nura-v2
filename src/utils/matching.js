@@ -37,12 +37,12 @@ export function getPriceContext(helper, categoria) {
   if (ciudad && ciudad !== 'Barcelona') return null
 
   if (isBelow) {
-    return `El precio de ${ctx.label} en Barcelona es ${ctx.lo}–${ctx.hi}€/${ctx.unit}. ${helperName} cobra ${helperNum}€ — por debajo de la media.`
+    return `El precio de ${ctx.label} en Barcelona va de ${ctx.lo} a ${ctx.hi} € por ${ctx.unit}. ${helperName} cobra ${helperNum} €, por debajo de la media.`
   }
   if (isAbove) {
-    return `El precio medio de ${ctx.label} en Barcelona es ${ctx.lo}–${ctx.hi}€/${ctx.unit}. ${helperName} cobra ${helperNum}€.`
+    return `El precio medio de ${ctx.label} en Barcelona va de ${ctx.lo} a ${ctx.hi} € por ${ctx.unit}. ${helperName} cobra ${helperNum} €.`
   }
-  return `El precio de ${ctx.label} en Barcelona suele ser ${ctx.lo}–${ctx.hi}€/${ctx.unit}. ${helperName} cobra ${helperNum}€ — dentro de la media.`
+  return `El precio de ${ctx.label} en Barcelona suele ir de ${ctx.lo} a ${ctx.hi} € por ${ctx.unit}. ${helperName} cobra ${helperNum} €, dentro de la media.`
 }
 
 import { HELPERS as LOCAL_HELPERS } from '../data/helpers'

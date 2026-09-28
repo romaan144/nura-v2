@@ -198,3 +198,9 @@ Reutilizar `PageLoading` para `helper`, `profile`, `chat` y `chats`, tanto en de
 ### Pantallas sin contenido · 2026-09-28
 
 `EmptyPanel` concentra los estados vacíos de Chats, Siguiendo y Mis servicios. Tarjeta con tokens de cristal, borde continuo, icono Lucide decorativo y título h2; una acción principal y, si procede, otra secundaria separada 12 px. Ancho máximo 620 px; texto secundario hasta 36 caracteres por línea y botones de al menos 48 px. Sin flotación repetida ni animación adicional. Conserva contenido y destinos por pantalla; no decide si los datos han llegado ni confunde carga con vacío. Las páginas reservan cabecera y menú mediante scroll-padding al desplazar el foco.
+
+### Voz de Nüra y puntuación · 2026-09-28
+
+Sergio pide respuestas naturales y cuidadas por toda la aplicación, sin rayas largas ni adornos de texto. Usar frases breves, puntos y comas; separar ideas en frases completas y evitar cadenas de «y». No usar emojis, estrellas de texto o marcas de verificación dentro de la prosa. Mantener los iconos de interfaz y las negritas que el componente sabe representar. No prometer disponibilidad confirmada solo porque la búsqueda sea urgente.
+
+Redactar bien en la plantilla que genera cada respuesta. Nunca limpiar globalmente el texto al renderizar: los mensajes de usuarios y profesionales, nombres, enlaces y fechas deben conservarse. Los chips que actúan como instrucciones tienen un contrato de texto exacto; cambiar su aspecto o la prosa no debe alterar esos identificadores. Claude debe aplicar esta pauta a las nuevas respuestas que incorpore. Las respuestas nuevas cambian; no se reescribe el historial guardado.

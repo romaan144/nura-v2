@@ -578,7 +578,7 @@ function HelperProfileInner() {
                     {exp.managerOpinion && (
                       <div className={styles.quote}>
                         <p>"{exp.managerOpinion.text?.slice(0,120)}{exp.managerOpinion.text?.length > 120 ? '…' : ''}"</p>
-                        <span>— {exp.managerOpinion.name}, {exp.managerOpinion.role}</span>
+                        <span>{exp.managerOpinion.name}, {exp.managerOpinion.role}</span>
                       </div>
                     )}
                   </div>
@@ -729,7 +729,7 @@ function textoHueco({ fecha, hora, dentro }) {
 
 function tiempoHumano(min) {
   if (min < 60) return 'en menos de 1 h'
-  if (min < 180) return 'en 1–3 h'
+  if (min < 180) return 'entre 1 y 3 h'
   if (min < 1440) return 'el mismo día'
   return `en ${Math.round(min / 1440)} días`
 }

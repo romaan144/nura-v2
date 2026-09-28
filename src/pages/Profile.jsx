@@ -603,7 +603,7 @@ export default function Profile() {
               <span className={styles.filaIcono} aria-hidden="true"><CalendarDays size={17} /></span>
               <p className={styles.tarjetaTexto} style={{color:'var(--ink)'}}>
                 El {citaProxima.label}, <strong>{nombre(citaProxima.helperName)}</strong>
-                {citaProxima.personaLabel ? <> está con {citaProxima.personaLabel}</> : <> — vuestra primera cita</>}. Todo listo.
+                {citaProxima.personaLabel ? <> está con {citaProxima.personaLabel}</> : <> tiene su primera cita contigo</>}. Todo listo.
               </p>
             </div>
           </section>

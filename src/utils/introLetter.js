@@ -78,8 +78,8 @@ function describeTiming(analysis) {
 
 function describeWhyThisProfessional(helper) {
   const reasons = []
-  if (helper?.specialty) reasons.push(`tu experiencia en ${helper.specialty.toLowerCase()}`)
-  if (helper?.reviews >= 50) reasons.push(`las ${helper.reviews} valoraciones que tienes`)
+  if (helper?.specialty) reasons.push('tu experiencia profesional')
+  if (helper?.reviews >= 50) reasons.push(`tus ${helper.reviews} valoraciones`)
   if (helper?.zone) reasons.push(`que estás cerca de su zona`)
   if (reasons.length === 0) return 'tu perfil'
   return reasons.slice(0, 2).join(' y ')
@@ -127,13 +127,13 @@ export function buildIntroLetter({ helper, analysis, userQuery, user }) {
     : 'Hola, soy Nüra.'
 
   const intro = user?.name
-    ? `Te escribo en nombre de ${userFirstName} —`
-    : 'Te escribo en nombre de una persona que me ha contado lo siguiente —'
+    ? `Te escribo en nombre de ${userFirstName}.`
+    : 'Te escribo en nombre de una persona que busca ayuda.'
 
-  const body = `${intro} ${situation}.${timing}`
+  const body = `${intro} ${situation.charAt(0).toUpperCase()}${situation.slice(1)}.${timing}`
 
   const subjectName = user?.name ? userFirstName : 'Esta persona'
-  const closing = `Vi ${whyThis} y creo que encajáis bien. ${subjectName} está disponible para hablar cuando te vaya bien.`
+  const closing = `Pensé en ti por ${whyThis}. ${subjectName} está disponible para hablar cuando te vaya bien.`
 
   return `${greeting} ${body} ${closing}`
 }
@@ -153,5 +153,5 @@ export function regenerateIntroLetter(params) {
   const timing = describeTiming(params.analysis)
   const whyThis = describeWhyThisProfessional(helper)
 
-  return `Hola${helperFirstName ? ' ' + helperFirstName : ''}, soy Nüra — la IA que conecta a ${userFirstName} con profesionales de confianza. ${userFirstName} ${situation}.${timing} Pensé en ti por ${whyThis}. ¿Podrías ayudar?`
+  return `Hola${helperFirstName ? ' ' + helperFirstName : ''}, soy Nüra. Ayudo a ${userFirstName} a encontrar profesionales de confianza. ${situation.charAt(0).toUpperCase()}${situation.slice(1)}.${timing} Pensé en ti por ${whyThis}. ¿Podrías ayudar?`
 }

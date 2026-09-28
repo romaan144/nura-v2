@@ -1,5 +1,9 @@
 # NÜRA 2 — CHANGELOG DE DECISIONES
 
+## 2026-09-28 · Respuestas con una redacción más natural
+
+Se revisan las plantillas de Nüra por toda la app: frases cortas, puntuación sencilla y sin rayas largas de relleno. Recomendación, ajustes, presentación y sugerencias conservan sus datos; la urgencia deja de garantizar disponibilidad. No se transforman mensajes reales ni historial. Regla compartida de escritura en diseno-integral.md.
+
 ## 2026-09-28 · Vacíos con el mismo material de cristal
 
 Chats, Siguiendo y Mis servicios usan `EmptyPanel`: marco definido, icono propio, explicación y acciones separadas. Borrar búsqueda devuelve la bandeja; los avisos vacíos de Chats no se duplican. Se reserva espacio al desplazar el foco bajo la cabecera y sobre el menú. Sin cambios de datos ni consultas.
