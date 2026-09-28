@@ -1,5 +1,13 @@
 # Trabajo compartido
 
+## Cristal en toda la aplicación · Codex
+
+**Estado:** implementado y comprobado localmente. **Rama:** `codex/cristal-toda-la-app`, desde `73d1d94`.
+**Petición:** extender el aspecto del menú a botones y burbujas por toda Nüra, tomando también el chat de Tinder como referencia.
+**Alcance:** tokens de material compartidos, 27 módulos visuales y presentación de Button/Bubble y edición de ficha/horario/bloqueos. Inicio, resultados, chats, perfiles, catálogo, servicios, publicaciones, acceso, alta y ventanas de reserva/valoración/avisos comparten cristal claro, bordes definidos y controles redondeados. Lectura más opaca; mensajes propios lila claro con tinta oscura; selección lila y CTA morado. Estados semánticos y superficies de carta conservados.
+**Contrato para Claude:** sin cambios de rutas, controladores, permisos, datos, ranking ni textos de producto. JSX modifica únicamente objetos de estilos. No cambiar reservas ni keyboardViewport. Reutilizar `--glass-control`, `--glass-panel`, `--glass-floating`, `--glass-selected` y sus tintas/bordes; no usar texto blanco sobre la selección lila. Formas iguales en botones habilitados y deshabilitados. Desenfoque para controles flotantes; evitar añadirlo a cada fila de listas.
+**Pruebas:** build, matching 255/255 y smoke 8×2 + 120×4; lint sin diagnósticos nuevos y no-undef=0. Navegador local: 320×568, 390×844 y 1280×900; Inicio, envío de chat ficticio y respuesta demo, filtros, perfil/seguidos, trayectoria, acceso, servicios, reserva sin envío, valoración sin envío y canales de aviso. Horarios/bloqueos probados y cerrados sin guardar. Tinta de disponibilidad seleccionada corregida; estados desactivados conservados. Ficha: CTA 21 px sobre navegación en 320 px. Teclado simulado y pan de 90 px: campo de Inicio a 30,8 px sobre menú, sin desbordamiento horizontal. No equivale a prueba física de iPhone; no se enviaron mensajes, citas, valoraciones ni avisos reales.
+
 ## Barra de navegación de cristal · Codex
 
 **Estado:** implementada y verificada localmente. **Rama:** `codex/navegacion-cristal`, desde `7df412f`.

@@ -442,3 +442,9 @@
 .dato { background: #F5F1FA; border: 1px solid #EAE2F4; }
 
 .editCancel { border: 1px solid var(--action-border); background: var(--action-surface); }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.hero, .tarjeta, .lista { background: var(--glass-panel); border-color: var(--glass-edge); border-radius: var(--radius-glass); box-shadow: var(--glass-panel-shadow); }
+.dato, .editCancel { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
+.editConfirm { background: var(--grad-main); color: white; border-radius: 999px; box-shadow: var(--glass-primary-shadow); }

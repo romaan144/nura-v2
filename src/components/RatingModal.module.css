@@ -52,3 +52,14 @@
 @media (max-width: 359px) { .overlay { padding-inline: 8px; } .header, .body, .footer { padding-inline: 16px; } .title { font-size: 20px; } .stars { gap: 5px; } }
 @media (max-height: 560px) { .overlay { padding-block: 8px; } .header { padding-block: 10px; } .eyebrow { display: none; } .footer { padding-block: 10px; } .privacidad { margin-top: 6px; } }
 @media (prefers-reduced-motion: reduce) { .card button { transition: none; } }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.card { background: var(--glass-panel); border-color: var(--glass-edge); border-radius: var(--radius-glass); box-shadow: var(--glass-panel-shadow); }
+.close, .opcion, .chip:not(:disabled) { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
+.opcionOn, .chipOn:not(:disabled) { background: var(--glass-selected); color: var(--glass-selected-ink); border-color: var(--glass-selected-edge); box-shadow: var(--glass-control-shadow), inset 0 0 0 1px var(--glass-selected-edge); }
+.btn:not(:disabled) { background: var(--grad-main); color: white; border-radius: 999px; box-shadow: var(--glass-primary-shadow); }
+.textarea { border-radius: 20px; }
+.star { border-radius: 22px; box-shadow: var(--glass-shine); }
+
+.btn, .chip { border-radius: 999px; }

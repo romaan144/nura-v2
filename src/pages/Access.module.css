@@ -46,3 +46,13 @@
 @media (min-width: 768px) { .page { padding-top: calc(var(--header-h) + 36px); } .card, .loginCard { padding: 32px; } }
 @media (max-width: 359px) { .page, .loginPage { padding-inline: 16px; } .card, .loginCard { padding: 22px 18px; } .title { font-size: 24px; } .codeRow { gap: 8px; } }
 @media (prefers-reduced-motion: reduce) { .input, .passwordInput, .primary, .secondary, .suggestion { transition: none; } }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.card, .loginCard { background: var(--glass-panel); border-color: var(--glass-edge); border-radius: var(--radius-glass); box-shadow: var(--glass-panel-shadow); }
+.input, .passwordInput { border-radius: 20px; background: var(--glass-control); }
+.primary:not(:disabled) { background: var(--grad-main); color: white; border-radius: 999px; box-shadow: var(--glass-primary-shadow); }
+.secondary, .suggestion { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
+.icon { border-radius: 50%; box-shadow: var(--glass-shine); }
+
+.primary { border-radius: 999px; }

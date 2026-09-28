@@ -179,3 +179,52 @@ span.nura-user-initials { background: #F0E9FA; }
   .desktopMain input:not([type='checkbox']):not([type='radio']), .desktopMain textarea,
   [role='dialog'] input, [role='dialog'] textarea { font-size: 16px; }
 }
+
+
+/* Materiales de cristal · septiembre 2026.
+   Tres niveles: controles, superficies de lectura y selección.
+   El desenfoque se reserva a piezas flotantes, no a cada tarjeta del listado. */
+:root {
+  --glass-edge: #CFC5DB;
+  --glass-control: linear-gradient(155deg, #FFFFFFF5, rgba(var(--paper-rgb), .9));
+  --glass-panel: linear-gradient(155deg, #FFFFFFF5, rgba(var(--paper-rgb), .96));
+  --glass-floating: var(--glass-control);
+  --glass-filter: none;
+  --glass-selected: linear-gradient(150deg, #F5EFFC, #E5D6F3 72%, #E3ECE9);
+  --glass-selected-edge: #AE91C9;
+  --glass-selected-ink: #583082;
+  --glass-message: linear-gradient(145deg, #F0E6FA, #E7DDF2);
+  --glass-shine: inset 0 1px 0 #FFFFFFF5, inset 0 -1px 0 #FFFFFF70;
+  --glass-control-shadow: var(--glass-shine), 0 2px 7px -4px #30214230;
+  --glass-panel-shadow: var(--glass-shine), 0 8px 26px -21px #30214250;
+  --glass-floating-shadow: var(--glass-shine), 0 8px 26px -12px #30214240;
+  --glass-primary-shadow: inset 0 1px 0 #FFFFFF65, inset 0 0 0 1px #FFFFFF28, 0 5px 14px -9px #63359970;
+  --glass-focus: 0 0 0 3px #7951AA24, var(--glass-control-shadow);
+  --radius-glass: 26px;
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root {
+    --glass-floating: linear-gradient(145deg, #FFFFFFD9, rgba(var(--paper-rgb), .75));
+    --glass-filter: blur(22px) saturate(145%);
+  }
+}
+.nura-button--primary { box-shadow: var(--glass-primary-shadow); }
+.nura-button--secondary { -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
+.nura-reading, .nura-auth-card { background: var(--glass-panel); border-color: var(--glass-edge); box-shadow: var(--glass-panel-shadow); }
+.nura-work-composer input, .nura-work-composer textarea { border-radius: 20px; }
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  :root {
+    --glass-control: #FFFFFF;
+    --glass-panel: #FFFFFF;
+    --glass-floating: #FFFFFF;
+    --glass-filter: none;
+    --glass-edge: #9E8EAD;
+    --glass-selected: #E8D9F4;
+    --glass-selected-edge: #84629F;
+    --glass-selected-ink: #4C256E;
+    --glass-message: #EADDF4;
+  }
+}
+@media (forced-colors: active) {
+  :root { --glass-edge: CanvasText; --glass-selected-edge: Highlight; --glass-selected-ink: CanvasText; }
+}

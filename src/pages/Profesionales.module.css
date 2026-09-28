@@ -74,3 +74,9 @@
 /* Acciones secundarias con contorno compartido. */
 .secundario, .textoBoton { border: 1px solid var(--action-border); background: var(--action-surface); color: var(--purple-ink); min-height: 44px; line-height: 1.4; box-shadow: none; white-space: normal; }
  .textoBoton { width: 100%; max-width: 360px; padding: 10px 16px; border-radius: var(--radius-full); }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.paso, .final { background: var(--glass-panel); border-color: var(--glass-edge); border-radius: var(--radius-glass); box-shadow: var(--glass-panel-shadow); }
+.chip, .secundario, .textoBoton { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
+.cta { background: var(--grad-main); color: white; border-radius: 999px; box-shadow: var(--glass-primary-shadow); }

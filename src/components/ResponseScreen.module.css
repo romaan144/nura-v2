@@ -27,3 +27,11 @@
 .screen { background: linear-gradient(135deg, #FFFFFFED, #FBFCF9DB); backdrop-filter: blur(26px) saturate(125%); -webkit-backdrop-filter: blur(26px) saturate(125%); border-color: #FFFFFFF2; box-shadow: 0 16px 42px -24px #48355F55, 0 0 0 1px #78668E14, inset 0 1px 0 white; }
 .screen[data-paged='false'] { grid-template-rows: auto minmax(0, 1fr); }
 :global([data-focus-size='tiny']) .screen[data-paged='false'] { grid-template-rows: minmax(0, 1fr); }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.screen { background: var(--glass-panel); border-color: var(--glass-edge); border-radius: var(--radius-glass); box-shadow: var(--glass-panel-shadow); border-radius: 32px; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.footer button, .adjust { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
+.footer .next:not(:disabled) { background: var(--grad-main); color: white; border-radius: 999px; box-shadow: var(--glass-primary-shadow); }
+.adjust { border-radius: 50%; }
+.footer .restart { padding-inline: 14px; }

@@ -468,3 +468,19 @@
   .header { grid-template-columns: 44px minmax(0, 1fr); gap: 8px 10px; }
   .headerActions { grid-column: 1 / -1; padding-left: 4px; }
 }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.back, .contractBtn, .helperInfo { background: var(--glass-floating); border-color: var(--glass-edge); box-shadow: var(--glass-floating-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
+.helperInfo { border-radius: 28px; }
+.avatarImg, .avatar { border-radius: 50%; }
+.inputBar { background: var(--glass-floating); border-color: var(--glass-edge); box-shadow: var(--glass-floating-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); border-radius: 999px; }
+.inputBar:focus-within { border-color: var(--glass-selected-edge); box-shadow: var(--glass-focus); }
+.quickReply, .suggestionText { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
+.msgHelper .msgBubble, .typingBubble { background: var(--glass-panel); border-color: var(--glass-edge); border-radius: 24px 24px 24px 8px; box-shadow: var(--glass-control-shadow); -webkit-backdrop-filter: none; backdrop-filter: none; }
+.msgUser .msgBubble { background: var(--glass-message); color: var(--brand-deep); border-radius: 24px 24px 8px 24px; box-shadow: var(--glass-control-shadow); }
+.msgTime, .msgMeta { color: #6F567E; }
+.sendBtn:not(:disabled):not(.micBtn):not(.micActive) { background: var(--grad-main); color: white; border-radius: 999px; box-shadow: var(--glass-primary-shadow); }
+.micBtn:not(:disabled):not(.micActive) { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); color: var(--purple-ink); }
+.msgBubbleNura { -webkit-backdrop-filter: none; backdrop-filter: none; }
+.systemNote { border-radius: 999px; }

@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-28 — Material de cristal común a toda Nüra
+
+Se extiende la referencia visual de la navegación a controles, tarjetas y burbujas mediante tokens comunes. Controles flotantes translúcidos, lectura casi opaca, selección lila con tinta oscura y acciones principales moradas; mensajes propios claros para aligerar el chat. Se mantienen tonos de error/éxito, carta de presentación y reservas de teclado. Los estilos JSX cambian solo la presentación, sin nuevos comportamientos.
+
 ## 2026-09-28 — Navegación con cristal y selección deslizante
 
 Buscar, Chats y Perfil comparten una cápsula translúcida con borde definido y una lente lila móvil, inspirada en el vídeo de Tinder aportado por Sergio. Se retira el bloque morado oscuro para integrar la selección con los materiales de Nüra. Misma altura de 62 px y botones de 48 px: se preservan las reservas de contenido y teclado. Rutas, contadores y lógica sin cambios; alternativas para movimiento reducido, mayor contraste y navegadores sin desenfoque.
