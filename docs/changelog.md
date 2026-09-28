@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-28 — Entrar para comentar devuelve a la publicación de origen
+
+Se sustituye el destino fijo /feed por la ruta original y un ancla de comentarios. La ficha despliega las publicaciones y abre el hilo solicitado, incluso si antes estaba recogido. El desplazamiento espera el contenido y descarta copias ocultas en pestañas persistentes. Petición funcional explícita de Sergio; no cambia la autenticación ni publica comentarios o reacciones automáticamente.
+
 ## 2026-09-27 — Su obra gana espacio y distingue los resultados
 
 Se elimina la tarjeta exterior redundante de Su obra para dar ancho a las publicaciones. PostCard separa autor, contenido, resultado y acciones con botones de 44 px, comentarios con nombre y contador y respuestas rápidas identificadas como publicación directa. El perfil conserva una publicación inicial y permite desplegar/recoger las demás. La etiqueta habla de publicaciones, porque no todas son casos. Sin cambios de datos ni reintroducir Comunidad en navegación.

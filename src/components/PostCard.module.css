@@ -25,7 +25,7 @@ button.author { cursor: pointer; }
 .action svg { flex-shrink: 0; }
 .selected { color: var(--purple-ink); background: #EFE6F8; border-color: #BFA6D6; }
 .thread { margin: 0 18px 18px; padding: 18px 0 0; border-top: 1px solid #EAE3F1; }
-.threadTitle { margin: 0 0 14px; color: var(--ink-primary); font-family: var(--font-voice); font-size: 15px; }
+.threadTitle { scroll-margin-top: 96px; margin: 0 0 14px; color: var(--ink-primary); font-family: var(--font-voice); font-size: 15px; }
 .emptyThread, .quickLabel { margin: 0 0 10px; color: var(--ink-secondary); font-size: 12px; line-height: 1.5; }
 .comments { display: flex; flex-direction: column; gap: 10px; }
 .comment { padding: 12px; border: 1px solid #E5DFEC; border-radius: 13px; background: #FAF8FC; }

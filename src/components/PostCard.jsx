@@ -1,7 +1,7 @@
 import { Hand, MessageCircle, BadgeCheck, ArrowUpRight, ArrowRight, Check } from 'lucide-react'
 import ObraTypeIcon from './ObraTypeIcon'
 import { useId, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import { TYPE_META, COMMENT_STARTERS } from '../data/obraPosts'
 import styles from './PostCard.module.css'
@@ -16,8 +16,12 @@ import styles from './PostCard.module.css'
 // ═══════════════════════════════════════════════════════════════
 export default function PostCard({ post }) {
   const navigate = useNavigate()
+  const location = useLocation()
+  const commentAnchor = `comentarios-${encodeURIComponent(post?.id ?? '')}`
   const { user, toggleUtil, utilesDe, meSirve, addComment, commentsFor } = useUser()
-  const [openThread, setOpenThread] = useState(false)
+  const [threadView, setThreadView] = useState(null)
+  const openThread = threadView?.hash === location.hash
+    ? threadView.open : location.hash === `#${commentAnchor}`
   const [draft, setDraft] = useState('')
   const threadId = useId()
   if (!post) return null
@@ -29,15 +33,17 @@ export default function PostCard({ post }) {
 
   const irAlPerfil = () => post.helperId && navigate(`/helper/${post.helperId}`)
 
-  const pedirCuenta = () => {
-    try { sessionStorage.setItem('nura_return_to', '/feed') } catch { /* noop */ }
+  const pedirCuenta = (paraComentar = false) => {
+    const hash = paraComentar ? `#${commentAnchor}` : location.hash
+    const destino = location.pathname + location.search + hash
+    try { sessionStorage.setItem('nura_return_to', destino) } catch { /* noop */ }
     navigate('/login')
   }
 
   const publicar = txt => {
     const t = String(txt || '').trim()
     if (!t) return
-    if (!user) return pedirCuenta()
+    if (!user) return pedirCuenta(true)
     addComment(post.id, t)
     setDraft('')
   }
@@ -76,13 +82,13 @@ export default function PostCard({ post }) {
           className={`${styles.action} ${marcado ? styles.selected : ''}`}>
           <Hand size={16} aria-hidden="true" /><span>Me sirve{utiles > 0 ? ` · ${utiles}` : ''}</span>
         </button>
-        <button type="button" onClick={() => setOpenThread(v => !v)} aria-expanded={openThread} aria-controls={threadId}
+        <button type="button" onClick={() => setThreadView({ hash: location.hash, open: !openThread })} aria-expanded={openThread} aria-controls={threadId}
           className={`${styles.action} ${openThread ? styles.selected : ''}`}>
           <MessageCircle size={16} aria-hidden="true" /><span>{comments.length > 0 ? `Comentarios · ${comments.length}` : 'Comentar'}</span>
         </button>
       </div>
       {openThread && <div id={threadId} className={styles.thread}>
-        <h4 className={styles.threadTitle}>Comentarios</h4>
+        <h4 data-comment-anchor={commentAnchor} className={styles.threadTitle}>Comentarios</h4>
         {comments.length === 0 && <p className={styles.emptyThread}>Todavía no hay comentarios.</p>}
         <div className={styles.comments}>
           {comments.map(c => <div key={c.id} className={styles.comment}>
@@ -101,7 +107,7 @@ export default function PostCard({ post }) {
               onKeyDown={e => { if (e.key === 'Enter') publicar(draft) }} placeholder="Escribe aquí…" />
             <button type="button" onClick={() => publicar(draft)} aria-label="Publicar comentario" disabled={!draft.trim()}><ArrowRight size={20} aria-hidden="true" /></button>
           </div>
-        </> : <button type="button" onClick={pedirCuenta} className={styles.signIn}>Entra para comentar</button>}
+        </> : <button type="button" onClick={() => pedirCuenta(true)} className={styles.signIn}>Entra para comentar</button>}
       </div>}
     </article>
   )
