@@ -1,7 +1,7 @@
 import { avatarDe } from '../utils/avatar'
 import { useState } from 'react'
 import PageHeader from '../components/PageHeader'
-import { EmptyState } from '../components/ui'
+import EmptyPanel from '../components/EmptyPanel'
 import { useNavigate } from 'react-router-dom'
 import { Search, MessageCircle, Calendar } from 'lucide-react'
 import { useUser } from '../context/UserContext'
@@ -184,21 +184,24 @@ export default function Chats() {
       {user?.isHelper && !DEMO_MODE && <BandejaProfesional />}
 
       <div className={styles.list}>
-        {allChats.length === 0 && !user?.isHelper && (
-          <EmptyState
-            title="Cuando conectes con alguien, vuestra conversación vivirá aquí."
-            hint="Cuéntale a Nüra qué necesitas y ella encontrará a la persona."
-            actionLabel="Buscar a mi persona"
+        {allChats.length === 0 && !search.trim() && !user?.isHelper && (
+          <EmptyPanel
+            icon={MessageCircle}
+            title="Tu próxima conversación empieza aquí"
+            hint="Encuentra a un profesional y escríbele. Aquí podrás retomar vuestra conversación."
+            actionLabel="Buscar profesionales"
             onAction={() => navigate('/')}
           />
         )}
 
         {filtered.length === 0 && search.trim() && (
-          <div style={{textAlign:'center',padding:'48px var(--space-24)',color:'var(--ink-tertiary)'}}>
-            <Search size={36} color='rgba(33,29,51,0.12)' strokeWidth={1.3} style={{marginBottom:'var(--space-12)'}}/>
-            <p style={{fontSize:'var(--text-sm)',fontWeight:500}}>Sin resultados para "{search}"</p>
-            <p style={{fontSize:'var(--text-xs)',marginTop:'var(--space-4)'}}>Prueba con el nombre del profesional</p>
-          </div>
+          <EmptyPanel
+            icon={Search}
+            title="No encontramos esa conversación"
+            hint={<>Sin resultados para «{search}». Prueba con el nombre del profesional.</>}
+            actionLabel="Borrar búsqueda"
+            onAction={() => setSearch('')}
+          />
         )}
         {filtered.map((chat, i) => {
           const helper = getHelper(chat.helperId)

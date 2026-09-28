@@ -1,8 +1,15 @@
 # Trabajo compartido
 
+## Pantallas sin conversaciones, seguidos ni citas · Codex · 2026-09-28
+
+**Estado:** implementadas y comprobadas localmente; integración y despliegue se verifican en GitHub/Vercel. **Rama:** `codex/estados-vacios`, desde `09196f1`.
+**Cambio:** `EmptyPanel` comparte tarjeta de cristal, icono Lucide decorativo, título h2, explicación y acciones de 48 px. Chats sin conversaciones y sin resultados, Siguiendo sin guardados y los tres filtros vacíos de Mis servicios. Textos orientan al siguiente paso y conservan las diferencias entre cliente y profesional.
+**Contrato para Claude:** listas, filtros, datos y destinos existentes conservados. Única acción nueva: Borrar búsqueda limpia el filtro local de Chats. Con búsqueda escrita no se muestra además la invitación de bandeja vacía. No se cambia BandejaProfesional, consultas, permisos, teclado ni navegación. `scroll-padding-block` en las tres páginas reserva cabecera/menú al desplazar hacia un control; no altera sus alturas. `EmptyState` antiguo sigue disponible para catálogo/Feed, fuera de esta tarea.
+**Pruebas:** build, matching 255/255 y smoke 8×2 +120×4; lint sin diagnósticos nuevos y no-undef=0. Navegador aislado sin demo: Chats vacío, búsqueda larga sin resultados y borrar; ambos destinos de Siguiendo; Todos/Próximos/Completados de Mis servicios; textos cliente/profesional. 390×844, 320×568 y 1280×900. En 320 px, Tab desplaza el botón de citas por encima del menú (borde inferior 417 px frente a menú en 496 px). Sin desbordamiento horizontal, sin envíos ni cambios reales. No equivale a prueba física de iPhone.
+
 ## Espera de perfiles y chats · Codex · 2026-09-28
 
-**Estado:** implementada y comprobada localmente; verificar integración y publicación en GitHub/Vercel. **Rama:** `codex/carga-perfiles-chats`, desde `af31ff2`.
+**Estado:** integrada en PR #119 y despliegue Vercel verificado (`09196f1`). **Rama:** `codex/carga-perfiles-chats`, desde `af31ff2`.
 **Cambio:** PageLoading comparte cuatro vistas de espera (ficha, perfil propio, chat y lista de chats). Se usa tanto en Suspense de esas rutas/pestañas como mientras se consulta un profesional. Cabecera, salida en ficha/chat, mensaje de estado y siluetas de cristal; sin controles ficticios ni animaciones repetidas. Contenido final aparece en 180 ms por opacidad, sin espera artificial.
 **Contrato para Claude:** mismas consultas, condiciones loading/buscando, cachés, reintentos, errores y rutas. No se añaden temporizadores ni cambios de datos; tampoco se toca keyboardViewport. La descarga y la consulta usan el mismo kind de PageLoading para evitar dos vistas distintas. Siluetas aria-hidden; estado legible por asistentes. Movimiento reducido omite las nuevas entradas. La navegación del chat sigue sin menú inferior.
 **Pruebas:** build, matching 255/255 y smoke 8×2 +120×4; lint sin diagnósticos nuevos y no-undef=0. Fixture externa detiene descarga y datos por separado: ficha pasa de espera a contenido; chat pasa a error, reintenta y permite volver; chat exitoso muestra campo operativo; lista de chats y perfil invitado pasan de espera a pantalla real. 390×844, perfil a 320×568 y chat a 1280×900, sin desbordamiento horizontal. Ningún mensaje, cita ni dato real enviado. Sin prueba física de iPhone; retardos exclusivamente locales y fuera del repositorio.

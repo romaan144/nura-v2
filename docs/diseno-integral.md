@@ -194,3 +194,7 @@ Botones y elementos role=button usan scale:.985 y brightness(.97), recuperando e
 ## Espera de perfiles y chats
 
 Reutilizar `PageLoading` para `helper`, `profile`, `chat` y `chats`, tanto en descarga de pantalla como en espera de datos. Mantener cabecera y salida; las siluetas son decorativas, ocultas a lectores de pantalla y sin controles falsos. El mensaje con role=status comunica la espera. No retrasar el contenido real para mostrar una animación. Entrada única por opacidad de 180 ms, sin movimiento con preferencia reducida; no añadir latidos o brillos repetidos.
+
+### Pantallas sin contenido · 2026-09-28
+
+`EmptyPanel` concentra los estados vacíos de Chats, Siguiendo y Mis servicios. Tarjeta con tokens de cristal, borde continuo, icono Lucide decorativo y título h2; una acción principal y, si procede, otra secundaria separada 12 px. Ancho máximo 620 px; texto secundario hasta 36 caracteres por línea y botones de al menos 48 px. Sin flotación repetida ni animación adicional. Conserva contenido y destinos por pantalla; no decide si los datos han llegado ni confunde carga con vacío. Las páginas reservan cabecera y menú mediante scroll-padding al desplazar el foco.
