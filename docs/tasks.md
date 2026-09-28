@@ -1,5 +1,12 @@
 # Trabajo compartido
 
+## Textos de acceso según el motivo · Codex
+
+**Estado:** implementado y verificado localmente. **Rama:** `codex/textos-acceso-contexto`, desde `7810648`.
+**Alcance:** textos de Entrar según publicación, avisos, mensajes, ficha profesional o regreso genérico. AlertaSheet añade motivo=avisos para distinguir su entrada de otras que vuelven a Inicio. Solo presentación; autenticación, validaciones, permisos y destinos se conservan.
+**Contrato para Claude:** `motivo=avisos` solo selecciona el texto; no activa avisos ni altera el regreso. El ancla comentarios identifica la publicación, /chat/ y /chats identifican mensajes, sin volver mantiene el acceso profesional y otros destinos usan texto general. Crear/entrar tienen sus propios textos; recuperación no cambia.
+**Pruebas:** navegador aislado: cinco contextos, alternar crear/entrar y recuperación, pantalla 320 px sin desbordamiento ni errores. Build, matching 255/255, smoke 8×2 + 120×4 y lint sin nuevos diagnósticos, no-undef=0. Sin cuentas, correos ni envíos reales.
+
 ## Volver a la publicación después de entrar · Codex
 
 **Estado:** implementado y verificado localmente. **Rama:** `codex/volver-a-comentarios`, desde `d0a8b92`.
