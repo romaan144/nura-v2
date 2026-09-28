@@ -91,7 +91,10 @@ function HelperProfileInner() {
   const { id }     = useParams()
   const navigate   = useNavigate()
   const location   = useLocation()
-  const [verTodaLaObra, setVerTodaLaObra] = useState(false)
+  // El regreso desde el acceso puede apuntar a una publicación recogida.
+  const [obraView, setObraView] = useState(null)
+  const verTodaLaObra = obraView?.hash === location.hash
+    ? obraView.expanded : location.hash.startsWith('#comentarios-')
   const [verTrayectoria, setVerTrayectoria] = useState(false)
   const { user, addService, cancelarCita, citas, services } = useUser()
 
@@ -625,7 +628,7 @@ function HelperProfileInner() {
                 .map(p => <PostCard key={p.id} post={p} />)}
             </div>
             {publicacionesDe(enrichedH).length > 1 && (
-              <button type="button" onClick={() => setVerTodaLaObra(v => !v)} className={styles.workMore}
+              <button type="button" onClick={() => setObraView({ hash: location.hash, expanded: !verTodaLaObra })} className={styles.workMore}
                 aria-expanded={verTodaLaObra} aria-controls="su-obra-publicaciones">
                 <span>{verTodaLaObra ? 'Ver menos publicaciones' : `Ver las ${publicacionesDe(enrichedH).length} publicaciones de ${getFirstName(enrichedH.name)}`}</span>
                 <ChevronDown size={18} aria-hidden="true" />

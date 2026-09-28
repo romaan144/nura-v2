@@ -1,12 +1,20 @@
 # Trabajo compartido
 
+## Volver a la publicación después de entrar · Codex
+
+**Estado:** implementado y verificado localmente. **Rama:** `codex/volver-a-comentarios`, desde `d0a8b92`.
+**Autorización:** Sergio pide expresamente corregir el regreso desde «Entra para comentar»; excepción funcional al reparto habitual.
+**Alcance:** PostCard, apertura de Su obra en HelperProfile y desplazamiento al destino. Conservar autenticación, comentarios y datos.
+**Contrato para Claude:** PostCard guarda pathname + search + ancla de comentarios en `nura_return_to`; la reacción conserva la ruta sin abrir un hilo nuevo. HelperProfile despliega la obra al regresar a comentarios. El estado de apertura distingue el hash para soportar cambios de publicación sin desmontar la ficha. ScrollToTop busca únicamente el destino visible (hay pestañas montadas y ocultas) y espera la carga del perfil; cancela al cambiar de ruta o a los 10 segundos. Autenticación y publicación no se modifican. No se envía automáticamente ningún comentario ni reacción al entrar.
+**Pruebas:** reproducido antes: ficha → login → /feed. Después: primera y última publicación → acceso demo → misma ficha/hilo; acceso por nombre y correo con servicios ficticios; recarga y cambio de hash; cerrar/reabrir hilo; comentario publicado solo localmente. Móvil 390/320 y ordenador 1280, ancla a 96 px bajo cabecera. Build, matching 255/255, smoke 8×2 + 120×4; lint sin nuevos diagnósticos y no-undef=0. Sin credenciales ni comentarios de prueba en producción.
+
 ## Su obra en la ficha profesional · Codex
 
 **Estado:** implementado y verificado localmente. **Rama:** `codex/obra-profesional-diseno`, desde `b6c31b6`.
 **Alcance:** PostCard y su CSS, sección Su obra en HelperProfile. Mejorar lectura, resultado y acciones; una publicación inicial y acceso claro al resto. Conservar publicaciones, datos, reacciones, comentarios y condiciones de cuenta. No se añade Comunidad al menú.
 **Contrato para Claude:** PostCard mantiene irAlPerfil, pedirCuenta, publicar y acciones de UserContext; solo cambia presentación, ids accesibles y bloqueo visual del envío vacío (ya era un no-op). El sello confirmado sigue condicionado a post.confirmado. HelperProfile mantiene selección y límite de publicaciones; el mismo estado permite desplegar y recoger. No cambiar el mapeo obraAPost ni añadir pruebas al dataset publicado.
 **Pruebas:** build, matching 255/255 y smoke 8×2 + 120×4; lint sin nuevos diagnósticos y no-undef=0. Navegador aislado a 390×844, 320×720 y 1280×900: reaccionar/deshacer, comentarios propios y rápidos, hilo vacío, acceso sin sesión, desplegar cuatro publicaciones y recoger a una, textos largos sin desbordamiento, acciones de al menos 44 px. Teclado simulado 484 px y pan de 90 px: campo 16 px sobre menú. Regresión visual de Profile y Feed sin desbordamiento ni errores. Sin publicaciones ni reacciones de prueba en producción.
-**Siguiente incidencia detectada, anterior a esta entrega:** pedirCuenta guarda /feed como destino incluso si se pulsa desde una ficha. El regreso tras iniciar sesión debería conservar la ficha de origen; requiere ajustar el recorrido, no está resuelto aquí.
+**Incidencia posterior resuelta:** el regreso desde acceso conserva ahora la ficha y el hilo; ver la tarea superior «Volver a la publicación después de entrar».
 
 ## Acceso y recuperación claros · Codex
 
