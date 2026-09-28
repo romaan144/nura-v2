@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-28 — Espera reconocible en perfiles y chats
+
+Las pestañas de perfil y chats quedaban vacías mientras descargaban su código, y el chat mostraba un logotipo aislado al buscar al profesional. PageLoading da continuidad con cabecera, estado accesible y siluetas de cristal. Descarga y consulta comparten la misma vista; el contenido llega sin temporizadores de presentación y aparece con un fundido breve. Errores y reintentos permanecen intactos.
+
 ## 2026-09-28 — Una sola respuesta de pulsación
 
 Se retiran efectos que encogían controles hasta un 6 % o bajaban su opacidad hasta el 50 %. Botones y superficies accionables se comprimen un 1,5 % con ligero cambio de brillo, sin alterar posición ni legibilidad. La regla común respeta desactivados, acciones anidadas y movimiento reducido; se evitan saltos hover en los controles principales.

@@ -254,3 +254,7 @@
 
 /* Repaso de controles: mismo material, geometría y estados conservados. */
 .searchBox, .searchBox:focus-within { background: var(--glass-floating); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
+
+/* El contenido aparece al estar listo, sin retener la vista de carga. */
+@media (prefers-reduced-motion: no-preference) { .page { animation: contentReady 180ms ease-out; } }
+@keyframes contentReady { from { opacity: .65; } to { opacity: 1; } }

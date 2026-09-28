@@ -39,6 +39,7 @@ const Entrar = lazy(() => import('./pages/Entrar'))
 const Restablecer = lazy(() => import('./pages/Restablecer'))
 import Toast from './components/Toast'
 import PageTransition from './components/PageTransition'
+import PageLoading from './components/PageLoading'
 import './index.css'
 import './design-system.css'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -117,12 +118,14 @@ function AppRoutes() {
             <Suspense fallback={null}><Feed /></Suspense>
           </div>
         )}
-        {seenTabs['/chats'] && <div style={tabStyle('/chats')}><Suspense fallback={null}><Chats /></Suspense></div>}
-        {seenTabs['/profile'] && <div style={tabStyle('/profile')}><Suspense fallback={null}><Profile /></Suspense></div>}
+        {seenTabs['/chats'] && <div style={tabStyle('/chats')}><Suspense fallback={<PageLoading kind="chats" />}><Chats /></Suspense></div>}
+        {seenTabs['/profile'] && <div style={tabStyle('/profile')}><Suspense fallback={<PageLoading kind="profile" />}><Profile /></Suspense></div>}
 
         {!isTab && (
           <PageTransition>
             <Suspense fallback={
+              location.pathname.startsWith('/helper/') ? <PageLoading kind="helper" /> :
+              location.pathname.startsWith('/chat/') ? <PageLoading kind="chat" /> :
               <div style={{display:'flex',alignItems:'center',justifyContent:'center',
                 height:'100dvh',background:'var(--paper)'}}>
                 <img src="/logo-iso.png" alt="" style={{width:'36px',opacity:0.35,

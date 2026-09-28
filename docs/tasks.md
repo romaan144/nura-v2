@@ -1,5 +1,13 @@
 # Trabajo compartido
 
+## Espera de perfiles y chats · Codex · 2026-09-28
+
+**Estado:** implementada y comprobada localmente; verificar integración y publicación en GitHub/Vercel. **Rama:** `codex/carga-perfiles-chats`, desde `af31ff2`.
+**Cambio:** PageLoading comparte cuatro vistas de espera (ficha, perfil propio, chat y lista de chats). Se usa tanto en Suspense de esas rutas/pestañas como mientras se consulta un profesional. Cabecera, salida en ficha/chat, mensaje de estado y siluetas de cristal; sin controles ficticios ni animaciones repetidas. Contenido final aparece en 180 ms por opacidad, sin espera artificial.
+**Contrato para Claude:** mismas consultas, condiciones loading/buscando, cachés, reintentos, errores y rutas. No se añaden temporizadores ni cambios de datos; tampoco se toca keyboardViewport. La descarga y la consulta usan el mismo kind de PageLoading para evitar dos vistas distintas. Siluetas aria-hidden; estado legible por asistentes. Movimiento reducido omite las nuevas entradas. La navegación del chat sigue sin menú inferior.
+**Pruebas:** build, matching 255/255 y smoke 8×2 +120×4; lint sin diagnósticos nuevos y no-undef=0. Fixture externa detiene descarga y datos por separado: ficha pasa de espera a contenido; chat pasa a error, reintenta y permite volver; chat exitoso muestra campo operativo; lista de chats y perfil invitado pasan de espera a pantalla real. 390×844, perfil a 320×568 y chat a 1280×900, sin desbordamiento horizontal. Ningún mensaje, cita ni dato real enviado. Sin prueba física de iPhone; retardos exclusivamente locales y fuera del repositorio.
+
+
 ## Pulsación uniforme de controles · Codex · 2026-09-28
 
 **Estado:** implementada y comprobada localmente; publicación por comprobar en GitHub/Vercel. **Rama:** `codex/respuesta-pulsacion`, desde `3b8af6b`.
