@@ -1,5 +1,6 @@
 /* Mis servicios: estado, persona y cita se leen por separado. */
 .page {
+  scroll-padding-block: calc(var(--header-h) + 12px) var(--reserva-nav);
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;

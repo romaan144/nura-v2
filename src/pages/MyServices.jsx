@@ -5,6 +5,7 @@ import { Calendar, CheckCircle, ChevronRight, Star, ClipboardList, MessageCircle
 import { useUser } from '../context/UserContext'
 import { DEMO_MODE } from '../config'
 import PageHeader from '../components/PageHeader'
+import EmptyPanel from '../components/EmptyPanel'
 import styles from './MyServices.module.css'
 import RatingModal from '../components/RatingModal'
 import { showToast } from '../components/Toast'
@@ -151,33 +152,23 @@ export default function MyServices() {
 
         {/* Empty state */}
         {filtered.length === 0 && (
-          <div className={styles.empty}>
-            <span className={styles.emptyIcon} aria-hidden="true">
-              {tab === 'Completados' ? <CheckCircle size={44} /> : tab === 'Próximos' ? <Calendar size={44} /> : <ClipboardList size={44} />}
-            </span>
-            <h2 className={styles.emptyTitle}>
-              {/* Un profesional leia aqui "Aún no has contratado nada" y
-                  "Cuando contrates a un profesional...": la app le hablaba
-                  como al cliente que NO es. */}
-              {tab === 'Todos' ? (user?.isHelper ? 'Todavía no tienes citas' : 'Aún no has contratado nada')
-               : tab === 'Próximos' ? 'No tienes servicios próximos'
-               : 'Sin servicios completados'}
-            </h2>
-            <p className={styles.emptyDescription}>
-              {tab === 'Todos'
-                ? (user?.isHelper
-                    ? 'Cuando alguien te contacte y concretéis una cita, aparecerá aquí.'
-                    : 'Cuando contrates a un profesional y concretéis una cita, aparecerá aquí.')
-                : tab === 'Próximos'
-                ? 'Cuando reserves una cita, aparecerá aquí con todos los detalles.'
-                : (user?.isHelper
-                    ? 'Cuando termines un servicio, aparecerá aquí con su resultado.'
-                    : 'Cuando finalices un servicio podrás valorar al profesional.')}
-            </p>
-            <button className={styles.emptyBtn} onClick={() => navigate('/')}>
-              Buscar profesionales
-            </button>
-          </div>
+          <EmptyPanel
+            icon={tab === 'Completados' ? CheckCircle : tab === 'Próximos' ? Calendar : ClipboardList}
+            title={tab === 'Todos' ? 'Tus citas aparecerán aquí'
+              : tab === 'Próximos' ? 'No tienes servicios próximos'
+              : 'Sin servicios completados'}
+            hint={tab === 'Todos'
+              ? (user?.isHelper
+                  ? 'Cuando alguien te contacte y concretéis una cita, aparecerá aquí.'
+                  : 'Cuando contrates a un profesional y concretéis una cita, aparecerá aquí.')
+              : tab === 'Próximos'
+              ? 'Aquí verás los detalles de tus próximas citas cuando estén acordadas.'
+              : (user?.isHelper
+                  ? 'Cuando termines un servicio, aparecerá aquí con su resultado.'
+                  : 'Cuando finalices un servicio podrás valorar al profesional.')}
+            actionLabel="Buscar profesionales"
+            onAction={() => navigate('/')}
+          />
         )}
 
         {/* Service list */}

@@ -1,5 +1,9 @@
 # NÜRA 2 — CHANGELOG DE DECISIONES
 
+## 2026-09-28 · Vacíos con el mismo material de cristal
+
+Chats, Siguiendo y Mis servicios usan `EmptyPanel`: marco definido, icono propio, explicación y acciones separadas. Borrar búsqueda devuelve la bandeja; los avisos vacíos de Chats no se duplican. Se reserva espacio al desplazar el foco bajo la cabecera y sobre el menú. Sin cambios de datos ni consultas.
+
 > Una línea por decisión importante, con fecha y **motivo**. Este documento es
 > la memoria longitudinal del proyecto: los porqués que el código no puede
 > contar. Se escribe hacia arriba (lo más reciente, primero).

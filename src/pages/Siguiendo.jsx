@@ -4,6 +4,7 @@ import { UserCheck, UserPlus, Star, MapPin, ArrowUpRight } from 'lucide-react'
 import { HELPERS_DEMO as HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
 import PageHeader from '../components/PageHeader'
+import EmptyPanel from '../components/EmptyPanel'
 import styles from './Siguiendo.module.css'
 import { fmtNota } from '../utils/formato'
 
@@ -22,17 +23,15 @@ export default function Siguiendo() {
         <p className={styles.sub}>{saved.length} {saved.length === 1 ? 'profesional guardado' : 'profesionales guardados'}</p>
 
         {saved.length === 0 ? (
-          <div className={styles.empty}>
-            <div className={styles.emptyIcon}><UserPlus size={48} color='var(--purple-20)' strokeWidth={1.3} fill='var(--purple-05)' /></div>
-            <h3 className={styles.emptyTitle}>Aún no sigues a nadie</h3>
-            <p className={styles.emptyDesc}>Cuando encuentres un profesional que te interese, pulsa Seguir para guardarlo aquí.</p>
-            <button className={styles.emptyBtn} onClick={() => navigate('/explore')}>
-              Explorar profesionales
-            </button>
-            <button className={styles.emptyBtnSecondary} onClick={() => navigate('/')}>
-              Buscar profesionales
-            </button>
-          </div>
+          <EmptyPanel
+            icon={UserPlus}
+            title="Tus profesionales, a mano"
+            hint="Pulsa Seguir en el perfil de quien te interese. Lo encontrarás aquí cuando lo necesites."
+            actionLabel="Explorar profesionales"
+            onAction={() => navigate('/explore')}
+            secondaryLabel="Buscar con Nüra"
+            onSecondary={() => navigate('/')}
+          />
         ) : (
           <div className={styles.list}>
             {(saved||[]).map((h, i) => (
