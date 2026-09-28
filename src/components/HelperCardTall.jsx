@@ -110,12 +110,8 @@ export default function HelperCardTall({ helper, small = false, compact = false,
         padding: small ? 'var(--space-14) var(--space-10) var(--space-12)' : 'var(--space-24) var(--space-20) var(--space-20)',
         display: 'flex', flexDirection: 'column', alignItems: 'center',
         textAlign: 'center', cursor: 'pointer', width: '100%',
-        transition: 'translate 220ms var(--motion-curve), transform 180ms var(--motion-curve), box-shadow 180ms ease',
         WebkitTapHighlightColor: 'transparent',
-      }}
-      onPointerDown={e => { e.currentTarget.style.transform = 'scale(0.985)' }}
-      onPointerUp={e => { e.currentTarget.style.transform = '' }}
-      onPointerLeave={e => { e.currentTarget.style.transform = '' }}>
+      }}>
       <div style={{ position: 'relative', marginBottom: small ? '8px' : '12px' }}>
         {helper.avatarUrl
           ? <img src={helper.avatarUrl} alt="" decoding="async" width={av} height={av}

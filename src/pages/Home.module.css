@@ -102,7 +102,6 @@
   transition: opacity 0.2s;
   flex-shrink: 0;
 }
-.menuBubble:active { opacity: 0.6; }
 
 /* ── LOGO PILL — floating center ────────────────────── */
 .logoBubble {
@@ -142,7 +141,6 @@
   transition: opacity 0.2s;
   flex-shrink: 0;
 }
-.profileBubble:active { opacity: 0.6; }
 
 /* ── SUGGESTIONS — floating pills ──────────────────── */
 /* ── LO QUE SE OFRECE, NO LO QUE SE RELLENA ────────────────────────────
@@ -191,7 +189,6 @@
 }
 /* Al tocar NO se hunde: se acerca. Responder es avanzar, no presionar. */
 .suggestion:active {
-  transform: scale(0.985);
   box-shadow: var(--alzado-pulsado);
 }
 @media (prefers-reduced-motion: reduce) {
@@ -262,7 +259,6 @@
   flex-shrink: 0; cursor: pointer;
   transition: opacity 0.15s;
 }
-.plusBtn:active { opacity: 0.5; }
 .sendBtn {
   /* 44px: la misma ley que cuece la primitiva Button. Este es el boton
      mas pulsado de la app y estaba por debajo. */
@@ -274,7 +270,6 @@
   flex-shrink: 0; cursor: pointer;
   transition: opacity 0.2s;
 }
-.sendBtn:active { opacity: 0.7; }
 .sendBtn:disabled { background: #ddd; color: #aaa; }
 .micBtn { background: transparent; color: #999; box-shadow: none; }
 .micActive { background: var(--red); color: white;   animation: micPulse 1s ease-in-out infinite;
@@ -422,8 +417,6 @@
   margin-top: 8px;
 }
 
-.resultCard:active { transform: scale(0.99); opacity: 0.9; }
-
 .resultDot { width: 3px; height: 3px; border-radius: 50%; background: #ccc; }
 .resultDist { color: #888; }
 
@@ -519,7 +512,6 @@
   pointer-events: all;
   transition: opacity 0.2s;
 }
-.resetBubble:active { opacity: 0.6; }
 
 /* Suggestions inside scroll — above the last message, below content */
 .suggestionsInScroll {
@@ -643,7 +635,6 @@
 .answerChip:nth-child(3) { animation-delay: 0.22s; }
 .answerChip:nth-child(4) { animation-delay: 0.30s; }
 .answerChip:active {
-  transform: scale(0.985);
   box-shadow: var(--alzado-pulsado);
 }
 @media (prefers-reduced-motion: reduce) {
@@ -705,7 +696,6 @@
   -webkit-tap-highlight-color: transparent;
 }
 .refineChip:active {
-  transform: scale(0.985);
   box-shadow: var(--alzado-pulsado);
 }
 
@@ -736,12 +726,11 @@
 .input::placeholder { font-weight: 400; }
 .micBtn { color: var(--purple-ink); background: var(--purple-05); }
 .sendBtn { transition: transform var(--motion-fast) var(--motion-curve), background var(--motion-fast) var(--motion-curve); }
-.sendBtn:hover { transform: translateY(-1px); }
 .browseBelow { display: flex; align-items: center; justify-content: center; gap: var(--space-8); min-height: 44px; margin: var(--space-10) auto 0; padding: var(--space-8) var(--space-12); font-family: inherit; }
 .suggestions { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: var(--space-12); margin: 0 auto; max-width: 640px; }
 .suggestionsLabel { grid-column: 1/-1; font-size: var(--text-xs); color: var(--ink-tertiary); text-align: center; margin-bottom: var(--space-4); }
 .suggestion { display: flex; align-items: flex-start; flex-direction: column; position: relative; padding: var(--space-20); min-height: 136px; border-color: var(--ink-border); background: white; backdrop-filter: none; box-shadow: var(--shadow-xs); gap: var(--space-14); }
-.suggestion:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--purple-20); }
+.suggestion:hover { box-shadow: var(--shadow-md); border-color: var(--purple-20); }
 .suggestionMark { width: 34px; height: 34px; display: grid; place-items: center; color: var(--purple-ink); background: var(--purple-05); border-radius: var(--radius-card); }
 .suggestion:nth-of-type(2) .suggestionMark { color: #37675b; background: rgba(16,185,129,.09); }
 .suggestion:nth-of-type(3) .suggestionMark { color: #965041; background: rgba(255,59,92,.06); }
@@ -806,10 +795,9 @@
 .answerChip:nth-child(3) .choiceIcon { color: #885442; background: var(--brand-peach); }
 .choiceArrow { margin-left: auto; flex-shrink: 0; }
 .welcomeBlock .choiceArrow { position: absolute; right: 18px; top: 26px; color: var(--ink-tertiary); transition: transform 220ms ease; }
-@media (hover: hover) { .welcomeBlock .answerChip:hover { transform: translateY(-5px); background: white; box-shadow: 0 12px 24px -16px #52317870; } .answerChip:hover .choiceArrow { transform: translate(2px,-2px); } }
+@media (hover: hover) { .welcomeBlock .answerChip:hover { background: white; box-shadow: 0 12px 24px -16px #52317870; } .answerChip:hover .choiceArrow { transform: translate(2px,-2px); } }
 .bubbleUser { background: var(--grad-main); border-radius: 22px 22px 6px 22px; }
 .refineChip { transition: background 180ms ease, transform 180ms ease; }
-.refineChip:active, .answerChip:active { transform: scale(.98); }
 @media (prefers-reduced-motion: no-preference) {
   .welcomeBlock { animation: welcomeReveal 550ms var(--motion-curve) both; }
   .welcomeBlock .answerChip { animation: welcomeReveal 450ms var(--motion-curve) both; }

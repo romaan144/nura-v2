@@ -184,3 +184,8 @@ Alcance y pruebas por pantalla: `docs/revision-cristal.md`.
 ## Movimiento de respuestas de Inicio
 
 `ResponseScreen` mantiene fija la superficie de cristal y anima el contenido ya medido: 240 ms, opacidad 0,3→1 y 8 px verticales (dirección inversa al volver). Evitar animar tamaños o cada bloque: alteraría mediciones/paginación. La navegación es inmediata; no añadir copias del contenido saliente ni esperas. Foco y bloques inertes conservados. El efecto se limpia al cambiar de paso o desmontar, no se repite al redimensionar y se omite con movimiento reducido.
+
+
+## Pulsación compartida
+
+Botones y elementos role=button usan scale:.985 y brightness(.97), recuperando escala en 160 ms. No aplicar opacidad al texto ni transform de pulsación por pantalla: el CSS compartido conserva transforms de posición. Disabled/aria-disabled no reaccionan; un padre con una acción descendiente activa no se comprime también. Los diálogos comparten la regla. Movimiento reducido fija --press-scale:none. Inputs y enlaces de texto quedan fuera. No introducir manejadores pointer que escriban estilos: evitarían esta regla y podrían quedar activos al cancelar un gesto.

@@ -37,7 +37,6 @@
   color: var(--ink-secondary); cursor: pointer; flex-shrink: 0;
   transition: opacity 0.2s;
 }
-.back:active { opacity: 0.6; }
 
 .helperInfo {
   flex: 1; display: flex; align-items: center; gap: 10px;
@@ -50,7 +49,6 @@
   cursor: pointer; min-width: 0;
   transition: opacity 0.2s;
 }
-.helperInfo:active { opacity: 0.8; }
 
 .avatarImg { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
 .avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: var(--text-xs); flex-shrink: 0; }
@@ -72,7 +70,6 @@
   display: flex; align-items: center; gap: var(--space-4); flex-shrink: 0;
   cursor: pointer; transition: opacity 0.2s;
 }
-.contractBtn:active { opacity: 0.7; }
 
 /* ── MESSAGES ───────────────────────────────────────── */
 .messages {
@@ -187,7 +184,6 @@
   -webkit-tap-highlight-color: transparent;
 }
 .quickReply:active {
-  transform: scale(0.96);
   box-shadow: 0 1px 2px rgba(33,29,51,0.04), 0 3px 8px -6px rgba(33,29,51,0.18);
 }
 
@@ -231,7 +227,6 @@
   flex-shrink: 0; cursor: pointer;
   transition: opacity 0.2s;
 }
-.sendBtn:active { opacity: 0.7; }
 .sendBtn:disabled { background: rgba(33,29,51,0.12); color: var(--ink-tertiary); }
 
 /* ── MODAL — rating & confirm ──────────────────────── */
@@ -308,8 +303,6 @@
 }
 
 /* Quick replies floating */
-
-.quickReply:active { opacity: 0.6; }
 
 /* Suggestion bar */
 .suggestionBar > * { pointer-events: all; }
@@ -430,7 +423,7 @@
 .inputBar:focus-within { border-color: #9870C5; box-shadow: 0 0 0 4px var(--purple-05); }
 .helperInfo { background: white; border: 1px solid var(--ink-border); }
 .quickReply { background: #FFFFFFEB; transition: transform 180ms ease, background 180ms ease; }
-.quickReply:hover { background: var(--brand-lilac); transform: translateY(-2px); }
+.quickReply:hover { background: var(--brand-lilac); }
 
 /* Sugerencias y escritura en el flujo: su altura real reserva el espacio. */
 .messages { position: relative; inset: auto; flex: 1; min-height: 0; padding-bottom: 24px; }

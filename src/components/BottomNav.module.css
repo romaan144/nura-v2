@@ -67,7 +67,6 @@
   transition: color 180ms ease, transform 180ms ease;
 }
 .tabActive { color: #61369b; }
-.tab:active { transform: scale(.94); }
 .tab:focus-visible { outline: 2px solid #7448a7; outline-offset: 2px; }
 
 .iconWrap {

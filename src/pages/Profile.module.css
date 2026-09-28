@@ -110,7 +110,6 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-.dato:active { opacity: 0.8; }
 .datoVacio {
   background: var(--purple-05);
   color: var(--purple-ink);

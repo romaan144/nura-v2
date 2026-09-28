@@ -24,7 +24,6 @@
 .rating svg { color: var(--purple-ink); }
 .open { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; line-height: 15px; font-weight: 600; color: var(--purple-ink); }
 .contact { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 15px; border: 1px solid var(--purple-20); color: var(--purple-ink); background: var(--purple-05); cursor: pointer; transition: background 180ms ease, transform 180ms ease; }
-.contact:active { transform: scale(.96); }
 @media (hover: hover) {
   .compact:hover { border-color: #B99BDC; box-shadow: 0 6px 20px -15px #7942D740; }
   .profile:hover .open { text-decoration: underline; text-underline-offset: 3px; }

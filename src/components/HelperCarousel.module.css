@@ -41,7 +41,6 @@
   position: relative;   /* needed for absolute label */
   animation: cardIn 0.22s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
-.card:active { opacity: 0.75; }
 
 /* Avatar */
 .avatarWrap {
@@ -124,7 +123,6 @@
   transition: opacity 0.15s;
   width: 100%;
 }
-.contactBtn:active { opacity: 0.7; }
 
 /* Top pick card — subtle purple border */
 .card:has(> [style*="NÜRA RECOMIENDA"]) {

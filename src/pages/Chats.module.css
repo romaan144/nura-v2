@@ -55,7 +55,6 @@
   -webkit-tap-highlight-color: transparent;
 }
 .chatRow:active {
-  transform: scale(0.985);
   box-shadow: var(--alzado-pulsado);
 }
 .chatUnread {
@@ -127,7 +126,6 @@
 .emptyTitle { font-size: var(--text-md); font-weight: 800; color: var(--ink-primary); margin: 0; letter-spacing: -0.3px; }
 .emptyDesc { font-size: var(--text-sm); color: var(--ink-tertiary); margin: 0; line-height: 1.65; max-width: 240px; text-align: center; }
 .emptyBtn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; max-width: 280px; padding: 13px; background: var(--purple); color: white; border: none; border-radius: var(--radius-full); font-size: var(--text-sm); font-weight: 700; cursor: pointer; transition: opacity 0.2s; font-family: inherit; }
-.emptyBtn:active { opacity: 0.75; }
 .emptyBtnSecondary { width: 100%; max-width: 280px; padding: 12px; background: var(--surface-subtle); color: var(--ink-secondary); border: none; border-radius: var(--radius-full); font-size: var(--text-sm); font-weight: 600; cursor: pointer; font-family: inherit; }
 
 @keyframes fadeSlideIn {
@@ -210,7 +208,7 @@
 .chatRow { border-radius: 22px; background: white; box-shadow: 0 5px 20px -16px #30214235; transition: box-shadow 220ms ease, transform 220ms ease; }
 .chatUnread { background: linear-gradient(110deg, #F4EDFE, white); }
 .avatarImg, .avatar { border-radius: 18px; }
-@media (hover: hover) { .chatRow:hover { transform: translateY(-2px); } }
+@media (hover: hover) { }
 
 /* La persona y el último mensaje tienen espacio propio. */
 .intro { padding-bottom: 18px; }

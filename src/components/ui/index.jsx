@@ -133,7 +133,6 @@ export function Button({
     fontSize: 'var(--text-sm)', fontWeight: 700,
     fontFamily: 'inherit', lineHeight: 1,
     cursor: disabled ? 'default' : 'pointer',
-    transition: 'transform 180ms var(--motion-curve), box-shadow 180ms var(--motion-curve), opacity 180ms ease',
     opacity: disabled ? 0.45 : 1,
   }
   const skins = {

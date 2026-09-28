@@ -410,7 +410,6 @@ body {
   transition: opacity 0.2s;
   color: var(--ink-secondary);
 }
-.glassCircle:active { opacity: 0.6; }
 
 /* Cápsula de input */
 .glassCapsule {
@@ -469,20 +468,6 @@ button,
 a,
 [role="button"] {
   -webkit-tap-highlight-color: transparent;
-}
-
-button:active,
-a:active,
-[role="button"]:active {
-  transform: scale(0.96);
-  opacity: 0.82;
-  transition: transform 0.08s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.08s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-input:active,
-textarea:active {
-  transform: none;
-  opacity: 1;
 }
 
 /* ── ENTRADA TARJETAS ────────────────────────────────────────────────── */
