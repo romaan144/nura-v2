@@ -1,5 +1,9 @@
 # NÜRA 2 — CHANGELOG DE DECISIONES
 
+## 2026-09-28 · Un único desplazamiento en Chat
+
+El teclado dejaba dos contenedores desplazables y cada respuesta animaba el historial al final. Chat pasa a tener una sola zona de scroll y conserva el lugar de lectura ante respuestas o escritura nuevas; solo sigue el final si ya se estaba allí o se envía un mensaje propio. Contratar adopta el morado principal. Prueba de regresión dedicada y resto de pantallas sin alterar.
+
 ## 2026-09-28 · Corregir cortes y tamaño del chat
 
 Sergio detecta en iPhone que la identidad ocupa demasiado y el historial se recorta bajo dos bandas rectangulares. Se compacta la foto/nombre y se superponen controles al historial de pantalla completa, con desvanecido gradual y reservas internas para leer sus extremos. Lección: comprobar conversaciones largas a mitad del desplazamiento, no solo saludos cortos.

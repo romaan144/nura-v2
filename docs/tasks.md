@@ -1,5 +1,14 @@
 # Trabajo compartido
 
+## Gesto del chat y Contratar destacado · Codex · 2026-09-28
+
+**Estado:** implementado y comprobado localmente; integración/despliegue se verifican en GitHub/Vercel. **Rama:** `codex/chat-scroll-contratar`, desde `dba3d1f`.
+**Problema reproducido:** al abrir teclado, desktopMain era desplazable (844 px dentro de 484, scrollTop=360) y el historial también. Además, cada cambio de messages/typing forzaba una animación al final, incluso durante la lectura.
+**Corrección:** solo en Chat, appCanvas ocupa la ventana visible y desktopMain deja de ser desplazable. Cabecera/campo conservan posición y el historial usa el espacio disponible. `attachChatScroll` sigue el final solo si ya se estaba cerca, al entrar o al enviar un mensaje propio. Llegadas, escritura y redimensionados respetan la lectura anterior y el gesto táctil; sin animación ni preventDefault. Contratar usa el degradado morado principal, texto blanco y relieve. Se mantienen formas flotantes y desvanecido.
+**Contrato para Claude:** sin cambios de consultas, texto/historial, permisos, solicitud/valoración o dictado. Cambio de comportamiento exclusivamente del desplazamiento. Nuevos `src/utils/chatScroll.js` y `scripts/test-chat-scroll.mjs`; `test:chat-scroll` en package.json. keyboardViewport no se modifica; Inicio y formularios mantienen el lienzo anterior. El observador/eventos se limpian al desmontar.
+**Validación:** build, matching 255/255, smoke 8×2 +120×4, lint sin diagnósticos nuevos/no-undef=0; pruebas nuevas de lectura, llegadas, envío, teclado, toque/cancelación y limpieza, más test-keyboard-viewport existente. Navegador local aislado con 18 mensajes: teclado deja una sola zona desplazable de 484 px, cabecera visible y campo en 430..484. Scroll en ambos sentidos, respuesta demo sin mover scrollTop=2135; pan de Safari y cierre mantienen ese punto. 320×568 y 390×844; solicitud abre sin enviar. No prueba física de iPhone ni envío de datos reales.
+
+
 ## Chat flotante y compacto · Codex · 2026-09-28
 
 **Estado:** implementado y comprobado localmente; integración/despliegue se verifican en GitHub/Vercel. **Rama:** `codex/chat-flotante-compacto`, desde `0b75d70`.

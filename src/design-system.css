@@ -247,3 +247,10 @@ span.nura-user-initials { background: #F0E9FA; }
 @media (prefers-reduced-motion: reduce) {
   :root { --press-scale: none; }
 }
+
+/* Chat: una única zona desplazable, también con teclado abierto.
+   El resto de pantallas conserva su lienzo estable. */
+@media (max-width: 767px) {
+  .desktopMain[data-screen='chat'] { overflow: hidden; }
+  .desktopMain[data-screen='chat'] .appCanvas { height: 100%; }
+}

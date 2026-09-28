@@ -514,3 +514,17 @@
 /* El contenido aparece al estar listo, sin retener la vista de carga. */
 @media (prefers-reduced-motion: no-preference) { .page { animation: contentReady 180ms ease-out; } }
 @keyframes contentReady { from { opacity: .65; } to { opacity: 1; } }
+
+/* Contratar es la acción principal; conserva su área táctil y estados. */
+.contractBtn {
+  background: var(--grad-main); color: #fff;
+  border-color: #8152BD; box-shadow: var(--glass-primary-shadow);
+}
+.messages { overflow-anchor: none; scroll-behavior: auto; }
+@media (max-width: 767px) {
+  .page { height: 100%; }
+  :global(html[data-keyboard-open='true']) .inputWrap { bottom: 0; }
+  :global(html[data-keyboard-open='true']) .messages {
+    padding-bottom: 70px; scroll-padding-bottom: 70px;
+  }
+}

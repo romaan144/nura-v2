@@ -216,3 +216,7 @@ Tres piezas: Volver, identidad centrada (foto circular de 64 px y cápsula separ
 ### Corrección de chat flotante · 2026-09-28
 
 Sustituye las medidas y distribución del apartado anterior: foto 44 px, cápsula de identidad unida con solapamiento de 5 px, nombre 13 px y especialidad 10 px en una línea cada uno. Cabecera y entrada se superponen al historial que ocupa toda la pantalla. Sin bandas que recorten mensajes al nivel de los controles; desvanecido gradual arriba y suave al borde inferior. Padding y scroll-padding protegen la lectura del primer/último mensaje. Safe-area y lógica de teclado conservadas. Verificar siempre un historial largo a mitad del desplazamiento.
+
+### Gesto nativo y acción principal en Chat · 2026-09-28
+
+En Chat, únicamente el historial es desplazable: el marco ocupa la altura visible también con teclado y los controles flotan dentro de él. La excepción se limita a data-screen=chat. El seguimiento del final no interrumpe la lectura anterior ni el gesto táctil; enviar un mensaje propio vuelve al final. Sin animaciones programáticas de scroll. Contratar usa fondo morado principal y texto blanco.
