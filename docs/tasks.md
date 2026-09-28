@@ -1,5 +1,12 @@
 # Trabajo compartido
 
+## Ventana de avisos clara · Codex
+
+**Estado:** implementado y verificado localmente. **Rama:** `codex/avisos-ventana-clara`, desde `15fea09`.
+**Alcance:** presentación de AlertaSheet, misma selección y confirmación. Separar búsqueda, zona, canales y privacidad; pie visible en móvil, foco y cierre accesibles. Sin cambios de servidor ni activaciones reales durante las pruebas.
+**Contrato para Claude:** estados iniciales, selección de zona/ciudad y controlador confirmar conservados (comparados literalmente). El resumen distingue móvil, correo y solo perfil. useModalSheet comparte foco, Escape y restauración, sin tocar el hook. El enlace de correo llama a onClose antes de navegar: Home persiste montado y su portal de lo contrario permanece sobre Entrar. Sin cambios de suscripción, payload ni onHecho.
+**Pruebas:** build, matching 255/255, smoke 8×2 + 120×4; lint sin nuevos diagnósticos y no-undef=0. Navegador aislado: ambos canales/ninguno, barrio/ciudad/sin zona, correo largo, iPhone sin instalar simulado, móvil no disponible, payloads y envío ficticio, guardando deshabilitado, Escape y ciclo de Tab, restauración de foco. 390×844, 320×568, 390×484 y 1280×900 sin desbordamiento; pie visible. Recorrido integrado en Home local: búsqueda sin resultados → aviso → acceso por correo, sin portal residual. No se pidieron permisos de notificación ni se guardaron avisos reales.
+
 ## Textos de acceso según el motivo · Codex
 
 **Estado:** implementado y verificado localmente. **Rama:** `codex/textos-acceso-contexto`, desde `7810648`.

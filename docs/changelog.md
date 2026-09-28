@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-28 — Avisos con opciones claras y confirmación siempre visible
+
+AlertaSheet separa búsqueda, zona, canales y privacidad; cabecera y pie fijos con cuerpo desplazable, opciones de borde visible y resumen de selección que explica también el modo solo perfil. Se comparte el foco y Escape de los modales existentes. El acceso por correo cierra primero la ventana para no dejar su portal sobre Entrar. Confirmación, datos y permisos se conservan.
+
 ## 2026-09-28 — El acceso explica el motivo correcto
 
 Entrar distingue comentarios, avisos, mensajes, ficha profesional y regreso general. Tener un destino de regreso ya no significa que se esté pidiendo un aviso. AlertaSheet identifica su entrada con motivo=avisos, solo para el texto, que aclara que después hay que activar el aviso. Sin cambios en autenticación, permisos ni destinos.
