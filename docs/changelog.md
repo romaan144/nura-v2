@@ -1,5 +1,9 @@
 # NÜRA 2 — CHANGELOG DE DECISIONES
 
+## 2026-09-28 · Escribir abre el chat directamente
+
+Sergio elimina la carta intermedia: el chat nuevo propone un borrador breve editable, sin envío automático. Chats existentes conservan su historial y no añaden presentación. Enlaces antiguos a /intro redirigen al chat; se retira el tratamiento automático de introLetterText.
+
 ## 2026-09-28 · Un único desplazamiento en Chat
 
 El teclado dejaba dos contenedores desplazables y cada respuesta animaba el historial al final. Chat pasa a tener una sola zona de scroll y conserva el lugar de lectura ante respuestas o escritura nuevas; solo sigue el final si ya se estaba allí o se envía un mensaje propio. Contratar adopta el morado principal. Prueba de regresión dedicada y resto de pantallas sin alterar.

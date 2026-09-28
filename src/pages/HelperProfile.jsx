@@ -16,7 +16,7 @@ import { Star, Shield, MapPin, MessageCircle, Calendar,
 import { HELPERS_DEMO as HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
 import RatingModal from '../components/RatingModal'
-import { recordarDestino, contextoDeChat, hayContexto } from '../utils/contacto'
+import { recordarDestino, contextoDeChat } from '../utils/contacto'
 import styles from './HelperProfile.module.css'
 import PageLoading from '../components/PageLoading'
 import { DEMO_ENRICHMENTS } from '../data/demoEnrichments'
@@ -168,10 +168,6 @@ function HelperProfileInner() {
       // La ficha abre una reja en vez de llevarte al registro: aqui la
       // persona ya esta leyendo un perfil y sacarla de golpe seria peor.
       setShowGate(true); return
-    }
-    if (hayContexto(location.state)) {
-      navigate(`/intro/${enrichedH.id}`, { state: contextoDeChat(h, location.state) })
-      return
     }
     navigate(`/chat/${enrichedH.id}`, { state: contextoDeChat(h, location.state) })
   }

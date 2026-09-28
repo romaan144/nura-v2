@@ -94,24 +94,16 @@ function describeWhyThisProfessional(helper) {
  * @param {object} params.user - usuario actual (puede ser null si no ha hecho login)
  * @returns {string} texto del mensaje, editable por el usuario
  */
-/**
- * La Carta del chat — la escribe el USUARIO, no Nüra.
- * Primera persona, sus propias palabras, y el porqué que Nüra vio.
- * (buildIntroLetter, más abajo, es la de la pantalla /intro: allí Nüra es
- *  la remitente y la tercera persona es la voz correcta.)
- */
-export function buildChatOpener({ helper, analysis, userQuery }) {
-  const q = String(userQuery || '').trim().replace(/[.?!]+$/, '')
-  if (!q) return ''
+/** Borrador breve en primera persona. Se edita y solo sale al pulsar Enviar. */
+export function buildChatOpener({ helper, userQuery }) {
   const first = getFirstName(helper?.name)
-  const cuerpo = q.charAt(0).toLowerCase() + q.slice(1)
-  const urgente = analysis?.urgente || analysis?.urgencia === 'urgente' ? ' Es algo urgente.' : ''
-
-  let porque = ''
-  if (helper?.specialty) porque = ` Nüra te ha recomendado por tu experiencia como ${helper.specialty.toLowerCase()}.`
-  else if (helper?.reviews >= 50) porque = ` Nüra te ha recomendado por tus ${helper.reviews} valoraciones.`
-
-  return `Hola${first ? ` ${first}` : ''}, ${cuerpo}.${urgente}${porque} ¿Podrías ayudarme?`
+  const greeting = `Hola${first ? ` ${first}` : ''}`
+  const query = String(userQuery || '').trim().replace(/\s+/g, ' ')
+  // No recortar una necesidad larga a mitad ni inventar un resumen de ella.
+  if (!query || query.length > 120) return `${greeting}, ¿tienes disponibilidad para ayudarme?`
+  const sentence = query.charAt(0).toUpperCase() + query.slice(1)
+  const end = /[.!?…]$/.test(sentence) ? '' : '.'
+  return `${greeting}. ${sentence}${end} ¿Podrías ayudarme?`
 }
 
 export function buildIntroLetter({ helper, analysis, userQuery, user }) {

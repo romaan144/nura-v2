@@ -31,8 +31,8 @@ export function recordarDestino(helperId) {
 
 /**
  * El estado con el que se abre un chat para que no empiece en frio: quien
- * es, que pidio la persona y como lo entendio Nüra. Sin esto, La Carta no
- * puede redactar el primer mensaje en las palabras del usuario.
+ * es, que pidio la persona y como lo entendio Nüra. El chat prepara un
+ * borrador breve y editable, sin una pantalla intermedia.
  */
 export function contextoDeChat(helper, extra) {
   // El contacto de quien YA tiene cuenta — el camino principal. Estaba solo
@@ -48,14 +48,4 @@ export function contextoDeChat(helper, extra) {
     userQuery: e.userQuery ?? (typeof window !== 'undefined' ? window.__nuraLastQuery : undefined),
     analysis: e.analysis ?? (typeof window !== 'undefined' ? window.__nuraLastAnalysis : undefined),
   }
-}
-
-/**
- * ¿Hay contexto suficiente para pasar por la carta de presentacion en vez
- * de soltar a la persona en un chat vacio?
- */
-export function hayContexto(extra) {
-  const e = extra || {}
-  const w = typeof window !== 'undefined' ? window : {}
-  return Boolean(e.userQuery || e.analysis || w.__nuraLastQuery)
 }
