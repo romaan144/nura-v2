@@ -350,7 +350,7 @@ export default function Chat() {
 
   useLayoutEffect(() => {
     scrollController.current?.update(messages.at(-1))
-  }, [messages, typing])
+  }, [messages, typing, helper?.id])
 
   // Persist chat history per helper
   useEffect(() => {
