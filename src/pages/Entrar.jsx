@@ -9,6 +9,30 @@ import { reclamarFicha } from '../utils/escrituras'
 import { useUser } from '../context/UserContext'
 import { revisarContacto } from '../utils/contactoProfesional'
 
+// El motivo solo cambia el texto: no los permisos ni el destino del acceso.
+const TEXTOS_ACCESO = {
+  comentarios: {
+    crear: 'Crea tu acceso con correo para comentar esta publicación. Después volverás al mismo hilo.',
+    entrar: 'Entra con tu correo y contraseña para volver a la publicación y comentar.',
+  },
+  avisos: {
+    crear: 'Crea tu acceso con correo. Después vuelve a tu búsqueda y activa el aviso por correo.',
+    entrar: 'Entra con tu correo y contraseña. Después podrás volver a tu búsqueda y activar el aviso.',
+  },
+  mensajes: {
+    crear: 'Crea tu acceso con correo para continuar con tus mensajes en Nüra.',
+    entrar: 'Entra con tu correo y contraseña para continuar con tus mensajes.',
+  },
+  profesional: {
+    crear: 'Con tu correo y una contraseña podrás cambiar tu ficha desde cualquier móvil.',
+    entrar: 'Entra con el correo de tu cuenta para gestionar tu ficha profesional.',
+  },
+  continuar: {
+    crear: 'Crea tu acceso con correo y contraseña. Después volverás a donde estabas.',
+    entrar: 'Entra con tu correo y contraseña para continuar donde estabas.',
+  },
+}
+
 // ── ENTRAR / CREAR ACCESO / OLVIDÉ LA CONTRASEÑA ─────────────────────────
 // Etapa 6 de docs/estudio-perfil.md: correo y contraseña, como casi todas
 // las apps, y un enlace por correo solo si se olvida la contraseña.
@@ -19,9 +43,13 @@ export default function Entrar() {
   const { user, login } = useUser()
   const [params] = useSearchParams()
   const [modo, setModo] = useState(params.get('modo') === 'crear' ? 'crear' : 'entrar')
-  // Quien llega desde «te aviso si aparece alguien» busca, no ofrece: su
-  // cuenta es para recibir el aviso por correo, no para una ficha.
+  // El destino puede ser una publicación, un chat o una búsqueda.
   const volver = (params.get('volver') || '').startsWith('/') && !(params.get('volver') || '').startsWith('//') ? params.get('volver') : ''
+  const rutaDestino = volver.split(/[?#]/)[0]
+  const contexto = volver.split('#')[1]?.startsWith('comentarios-') ? 'comentarios'
+    : params.get('motivo') === 'avisos' && volver ? 'avisos'
+    : rutaDestino === '/chats' || rutaDestino.startsWith('/chat/') ? 'mensajes'
+    : !volver ? 'profesional' : 'continuar'
   const [email, setEmail] = useState('')
   const [pass, setPass] = useState('')
   const [error, setError] = useState('')
@@ -90,10 +118,8 @@ export default function Entrar() {
         <p className={styles.eyebrow}>Tu acceso a Nüra</p>
         <h1 className={styles.title}>{titulo}</h1>
         <p className={styles.description}>
-          {modo === 'crear' && volver ? 'Con tu correo te aviso cuando llegue alguien que buscas. Solo lo usamos para eso y para entrar.'
-            : modo === 'crear' ? 'Con tu correo y una contraseña podrás cambiar tu ficha desde cualquier móvil.'
-            : modo === 'olvido' ? 'Escribe tu correo y te enviaremos un enlace para poner una contraseña nueva.'
-            : 'Usa el correo y la contraseña de tu cuenta.'}
+          {modo === 'olvido' ? 'Escribe tu correo y te enviaremos un enlace para poner una contraseña nueva.'
+            : TEXTOS_ACCESO[contexto][modo]}
         </p>
 
         <form onSubmit={e => { e.preventDefault(); enviar() }} noValidate>

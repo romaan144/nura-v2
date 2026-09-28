@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-28 — El acceso explica el motivo correcto
+
+Entrar distingue comentarios, avisos, mensajes, ficha profesional y regreso general. Tener un destino de regreso ya no significa que se esté pidiendo un aviso. AlertaSheet identifica su entrada con motivo=avisos, solo para el texto, que aclara que después hay que activar el aviso. Sin cambios en autenticación, permisos ni destinos.
+
 ## 2026-09-28 — Entrar para comentar devuelve a la publicación de origen
 
 Se sustituye el destino fijo /feed por la ruta original y un ancla de comentarios. La ficha despliega las publicaciones y abre el hilo solicitado, incluso si antes estaba recogido. El desplazamiento espera el contenido y descarta copias ocultas en pestañas persistentes. Petición funcional explícita de Sergio; no cambia la autenticación ni publica comentarios o reacciones automáticamente.

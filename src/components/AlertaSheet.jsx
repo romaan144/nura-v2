@@ -97,7 +97,7 @@ export default function AlertaSheet({ categoria, que, zona, ciudad, onClose, onH
             <span className={styles.check}>{porCorreo && <Check size={14} />}</span>
           </button>
         ) : (
-          <button type="button" className={styles.canal} onClick={() => navigate('/entrar?modo=crear&volver=/')}>
+          <button type="button" className={styles.canal} onClick={() => navigate('/entrar?modo=crear&volver=/&motivo=avisos')}>
             <Mail size={18} />
             <span className={styles.canalTxt}>
               <span className={styles.canalTit}>Correo</span>
