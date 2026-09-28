@@ -580,7 +580,7 @@ export default function Chat() {
   return (
     <div className={styles.page}>
 
-      {/* La cabecera reserva su altura real, también con nombres largos. */}
+      {/* Controles flotantes sobre el historial de pantalla completa. */}
       <header className={styles.header}>
         <button className={styles.back} onClick={() => navigate(-1)} aria-label="Volver">
           <ArrowLeft size={17} />

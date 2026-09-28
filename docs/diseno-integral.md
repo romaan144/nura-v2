@@ -212,3 +212,7 @@ Redactar bien en la plantilla que genera cada respuesta. Nunca limpiar globalmen
 ## Cabecera de conversación · 2026-09-28
 
 Tres piezas: Volver, identidad centrada (foto circular de 64 px y cápsula separada con nombre/especialidad) y Contratar. Sin puntuación, insignias, disponibilidad ni banner con escudo en Chat. La ficha mantiene sus datos. Pie de 54 px con solo la entrada; sin margen mínimo artificial, respetando safe-area. Sugerencias dentro del flujo desplazable. Los estados del servicio y la apertura de solicitud/valoración se conservan.
+
+### Corrección de chat flotante · 2026-09-28
+
+Sustituye las medidas y distribución del apartado anterior: foto 44 px, cápsula de identidad unida con solapamiento de 5 px, nombre 13 px y especialidad 10 px en una línea cada uno. Cabecera y entrada se superponen al historial que ocupa toda la pantalla. Sin bandas que recorten mensajes al nivel de los controles; desvanecido gradual arriba y suave al borde inferior. Padding y scroll-padding protegen la lectura del primer/último mensaje. Safe-area y lógica de teclado conservadas. Verificar siempre un historial largo a mitad del desplazamiento.
