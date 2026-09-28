@@ -189,3 +189,8 @@ Alcance y pruebas por pantalla: `docs/revision-cristal.md`.
 ## Pulsación compartida
 
 Botones y elementos role=button usan scale:.985 y brightness(.97), recuperando escala en 160 ms. No aplicar opacidad al texto ni transform de pulsación por pantalla: el CSS compartido conserva transforms de posición. Disabled/aria-disabled no reaccionan; un padre con una acción descendiente activa no se comprime también. Los diálogos comparten la regla. Movimiento reducido fija --press-scale:none. Inputs y enlaces de texto quedan fuera. No introducir manejadores pointer que escriban estilos: evitarían esta regla y podrían quedar activos al cancelar un gesto.
+
+
+## Espera de perfiles y chats
+
+Reutilizar `PageLoading` para `helper`, `profile`, `chat` y `chats`, tanto en descarga de pantalla como en espera de datos. Mantener cabecera y salida; las siluetas son decorativas, ocultas a lectores de pantalla y sin controles falsos. El mensaje con role=status comunica la espera. No retrasar el contenido real para mostrar una animación. Entrada única por opacidad de 180 ms, sin movimiento con preferencia reducida; no añadir latidos o brillos repetidos.

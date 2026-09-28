@@ -458,3 +458,7 @@
 .fila:hover, .salir:hover { background: var(--glass-control); }
 .salir { background: var(--glass-control); box-shadow: var(--glass-control-shadow); }
 .heroStats { background: var(--glass-control); border: 1px solid var(--glass-edge); box-shadow: var(--glass-shine); }
+
+/* El contenido aparece al estar listo, sin retener la vista de carga. */
+@media (prefers-reduced-motion: no-preference) { .page { animation: contentReady 180ms ease-out; } }
+@keyframes contentReady { from { opacity: .65; } to { opacity: 1; } }

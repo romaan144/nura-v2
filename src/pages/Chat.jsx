@@ -16,6 +16,7 @@ import { notifyServiceConfirmed } from '../utils/notifications'
 import { haptic } from '../utils/haptic'
 import RatingModal from '../components/RatingModal'
 import styles from './Chat.module.css'
+import PageLoading from '../components/PageLoading'
 import { generateFirstMessage, getHelperReply, getNuraIntervention, buildLivingConversation } from '../utils/chatReplies'
 import { buildChatOpener } from '../utils/introLetter'
 import { DEMO_MODE } from '../config'
@@ -353,11 +354,7 @@ export default function Chat() {
     }
   }, [messages])
 
-  if (!helper && buscando) return (
-    <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100dvh',background:'var(--paper)'}}>
-      <img src="/logo-iso.png" alt="" style={{width:'40px',opacity:0.4,animation:'pulse 1.5s infinite'}} />
-    </div>
-  )
+  if (!helper && buscando) return <PageLoading kind="chat" />
   if (!helper) return (
     <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
       height:'100dvh',background:'var(--paper)',padding:'var(--space-32)',textAlign:'center',gap:'var(--space-12)'}}>

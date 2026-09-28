@@ -485,3 +485,7 @@
 .msgUser .msgBubble { border: 1px solid var(--glass-selected-edge); }
 .msgBubbleNura { background: var(--glass-panel); }
 .quickReply:hover { background: var(--glass-selected); }
+
+/* El contenido aparece al estar listo, sin retener la vista de carga. */
+@media (prefers-reduced-motion: no-preference) { .page { animation: contentReady 180ms ease-out; } }
+@keyframes contentReady { from { opacity: .65; } to { opacity: 1; } }

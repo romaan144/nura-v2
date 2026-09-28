@@ -5,7 +5,7 @@ import PageHeader from '../components/PageHeader'
 import PostCard from '../components/PostCard'
 import { proximoHueco, ocupacionesDe } from '../data/horarios'
 import CitaModal from '../components/CitaModal'
-import { Button, SectionLabel, Skeleton } from '../components/ui'
+import { Button, SectionLabel } from '../components/ui'
 import { getObraDeHelper, obraAPost } from '../data/obraPosts'
 import ErrorBoundary from '../components/ErrorBoundary'
 import { useState, useEffect } from 'react'
@@ -18,6 +18,7 @@ import { useUser } from '../context/UserContext'
 import RatingModal from '../components/RatingModal'
 import { recordarDestino, contextoDeChat, hayContexto } from '../utils/contacto'
 import styles from './HelperProfile.module.css'
+import PageLoading from '../components/PageLoading'
 import { DEMO_ENRICHMENTS } from '../data/demoEnrichments'
 import { showToast } from '../components/Toast'
 import { compartirEnlace, enlaceDeFicha } from '../utils/compartir'
@@ -139,16 +140,7 @@ function HelperProfileInner() {
     }
   }, [id, intento])   // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (loading) return (
-    <div className={styles.page}>
-      <PageHeader showBack />
-      <div style={{padding:'var(--space-24) var(--space-16)'}}>
-        <Skeleton variant="card" />
-        <Skeleton variant="block" style={{marginTop:'var(--space-24)'}} />
-        <Skeleton variant="block" />
-      </div>
-    </div>
-  )
+  if (loading) return <PageLoading kind="helper" />
   if (!h) return (
     <div className={styles.page}>
       <PageHeader showBack />
