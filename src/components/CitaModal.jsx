@@ -1,3 +1,4 @@
+import motion from './ModalMotion.module.css'
 import { useId } from 'react'
 import useModalSheet from './useModalSheet'
 import { createPortal } from 'react-dom'
@@ -12,22 +13,22 @@ export default function CitaModal({ helper, date, time, note, onDate, onTime, on
   successText, onServices, backLabel }) {
   const titleId = useId()
   const noteId = useId()
-  const { dialog, body } = useModalSheet(onClose, done)
+  const { dialog, body, dismiss, motionProps } = useModalSheet(onClose, done)
 
   const day = date ? new Date(date + 'T12:00:00').toLocaleDateString('es-ES', {
     weekday: 'long', day: 'numeric', month: 'long',
   }) : ''
 
   return createPortal(
-    <div className={styles.overlay}>
-      <section className={styles.sheet} ref={dialog} role="dialog" aria-modal="true"
+    <div className={`${styles.overlay} ${motion.overlay}`} {...motionProps}>
+      <section className={`${styles.sheet} ${motion.sheet}`} ref={dialog} role="dialog" aria-modal="true"
         aria-labelledby={titleId} tabIndex={-1}>
         <header className={styles.header}>
           <div>
             <p className={styles.eyebrow}>{done ? 'Tu solicitud' : 'Tu próxima cita'}</p>
             <h2 id={titleId}>{done ? successTitle : title}</h2>
           </div>
-          <button className={styles.close} type="button" onClick={onClose} aria-label="Cerrar solicitud"><X size={20} /></button>
+          <button className={styles.close} type="button" onClick={dismiss} aria-label="Cerrar solicitud"><X size={20} /></button>
         </header>
         <div className={styles.body} ref={body}>
           <div className={styles.person}>
@@ -58,7 +59,7 @@ export default function CitaModal({ helper, date, time, note, onDate, onTime, on
         <footer className={styles.footer}>
           {done ? (
             <div className={styles.actions}>
-              <button type="button" className={styles.secondary} onClick={onClose}>{backLabel}</button>
+              <button type="button" className={styles.secondary} onClick={dismiss}>{backLabel}</button>
               <button type="button" className={styles.primary} onClick={onServices}>Ver mis servicios <ArrowRight size={16} aria-hidden="true" /></button>
             </div>
           ) : (
@@ -69,7 +70,7 @@ export default function CitaModal({ helper, date, time, note, onDate, onTime, on
               </div>
               {error && <p className={styles.error} role="alert">{error}</p>}
               <div className={styles.actions}>
-                <button type="button" className={styles.secondary} onClick={onClose}>Cancelar</button>
+                <button type="button" className={styles.secondary} onClick={dismiss}>Cancelar</button>
                 <button type="button" className={styles.primary} onClick={onConfirm} disabled={!date || !time || submitting}>
                   {submitting ? 'Enviando…' : confirmLabel}<ArrowRight size={16} aria-hidden="true" />
                 </button>

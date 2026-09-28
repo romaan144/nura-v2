@@ -1,3 +1,5 @@
+import useModalMotion from './useModalMotion'
+import motion from './ModalMotion.module.css'
 import { revisarContacto } from '../utils/contactoProfesional'
 import { ciudadDeZona, ciudadAlGuardar } from '../data/ciudades'
 import { useState, useEffect } from 'react'
@@ -44,6 +46,7 @@ const MODOS = ['Presencial', 'Online', 'Las dos']
 
 /** `foco`: 'bloqueos' abre la hoja ya en «Días u horas que no puedes». */
 export default function EditarFicha({ onClose, foco }) {
+  const { dismiss, motionProps } = useModalMotion(onClose)
   const { user, updateUser } = useUser()
   const perfil = user?.helperProfile || {}
   // La ciudad: la que guardó, o la que dice su zona (fichas de antes).
@@ -178,7 +181,7 @@ export default function EditarFicha({ onClose, foco }) {
   // toque caia en la pestaña "Perfil" y no se guardaba nada. Medido con
   // elementFromPoint.
   return createPortal(
-    <div role="dialog" aria-modal="true" aria-labelledby="editar-ficha-titulo"
+    <div className={motion.page} {...motionProps} role="dialog" aria-modal="true" aria-labelledby="editar-ficha-titulo"
       style={{ position: 'fixed', inset: 0, zIndex: 900, background: 'var(--paper)',
         display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -187,7 +190,7 @@ export default function EditarFicha({ onClose, foco }) {
           fontSize: 'var(--text-lg)', fontWeight: 700, color: 'var(--ink-primary)', letterSpacing: '-0.5px' }}>
           Tu ficha
         </h2>
-        <button onClick={onClose} aria-label="Cerrar sin guardar"
+        <button onClick={dismiss} aria-label="Cerrar sin guardar"
           style={{ width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center',
             background: 'var(--glass-control)', border: '1px solid var(--glass-edge)', borderRadius: '50%', boxShadow: 'var(--glass-control-shadow)', cursor: 'pointer', color: 'var(--ink-secondary)' }}>
           <X size={22} />
@@ -296,7 +299,7 @@ export default function EditarFicha({ onClose, foco }) {
       {!propuesta && !chocan && <div style={{ display: 'flex', gap: 'var(--space-8)',
         padding: 'var(--space-12) var(--space-16) max(env(safe-area-inset-bottom, 0px), var(--space-16))',
         borderTop: '1px solid var(--ink-border)', background: 'var(--paper)' }}>
-        <button onClick={onClose} style={{ flex: 1, minHeight: 48, background: 'var(--glass-control)', boxShadow: 'var(--glass-control-shadow)',
+        <button onClick={dismiss} style={{ flex: 1, minHeight: 48, background: 'var(--glass-control)', boxShadow: 'var(--glass-control-shadow)',
           border: '1px solid var(--ink-border)', borderRadius: 'var(--radius-full)', cursor: 'pointer',
           fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--ink-secondary)' }}>
           Cancelar

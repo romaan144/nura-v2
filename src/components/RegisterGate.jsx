@@ -1,3 +1,6 @@
+import { useId } from 'react'
+import useModalSheet from './useModalSheet'
+import motion from './ModalMotion.module.css'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Shield, Star, MessageCircle, UserPlus, ArrowRight, User, Sparkles } from 'lucide-react'
 import { Button } from './ui'
@@ -8,6 +11,8 @@ import { Button } from './ui'
  * Shows VALUE before asking to register. (Airbnb/Tinder pattern)
  */
 export default function RegisterGate({ onClose, reason = 'contact', volverA }) {
+  const { dialog, dismiss, motionProps } = useModalSheet(onClose)
+  const titleId = useId()
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -39,14 +44,14 @@ export default function RegisterGate({ onClose, reason = 'contact', volverA }) {
   ]
 
   return (
-    <div onClick={onClose} style={{
+    <div className={motion.overlay} {...motionProps} onClick={dismiss} style={{
       position: 'fixed', inset: 0, zIndex: 300,
       background: 'rgba(30,25,40,0.35)',  /* Aire: sombra tibia */
       backdropFilter: 'blur(8px)',
       WebkitBackdropFilter: 'blur(8px)',
       display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
     }}>
-      <div onClick={e => e.stopPropagation()} style={{
+      <div className={motion.sheet} ref={dialog} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} onClick={e => e.stopPropagation()} style={{
         background: 'rgba(var(--paper-rgb), 0.98)',  /* el papel del sistema, no uno propio */
         backdropFilter: 'blur(32px)',
         WebkitBackdropFilter: 'blur(32px)',
@@ -60,7 +65,6 @@ export default function RegisterGate({ onClose, reason = 'contact', volverA }) {
         padding: 'var(--space-8) 22px calc(var(--nav-h) + var(--space-12))',
         width: '100%', maxWidth: '500px',
         boxShadow: '0 -8px 40px rgba(33,29,51,0.1)',
-        animation: 'slideUp 0.28s cubic-bezier(0.25,0.46,0.45,0.94)',
       }}>
         {/* Handle */}
         <div style={{width:36,height:4,borderRadius:2,background:'var(--surface-muted)',margin:'var(--space-12) auto var(--space-20)'}} />
@@ -68,7 +72,7 @@ export default function RegisterGate({ onClose, reason = 'contact', volverA }) {
         {/* Icon + headline */}
         <div style={{textAlign:'center',marginBottom:'var(--space-20)'}}>
           <div style={{fontSize:'44px',marginBottom:'var(--space-12)',lineHeight:1}}>{(() => { const IC = r.Icon; return IC ? <IC size={36} strokeWidth={1.4} color='var(--purple)' /> : null })()}</div>
-          <h2 style={{fontFamily:'var(--font-voice)',fontSize:'var(--text-heading)',fontWeight:500,color:'var(--ink)',letterSpacing:'-0.4px',margin:'0 0 var(--space-8)'}}>
+          <h2 id={titleId} style={{fontFamily:'var(--font-voice)',fontSize:'var(--text-heading)',fontWeight:500,color:'var(--ink)',letterSpacing:'-0.4px',margin:'0 0 var(--space-8)'}}>
             {r.title}
           </h2>
           <div className="hilo" style={{width:'56px', margin:'var(--space-2) 0 var(--space-10)'}} />

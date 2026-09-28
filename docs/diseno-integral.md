@@ -163,3 +163,10 @@ El lenguaje de la barra se comparte ahora con todas las familias visuales. `--gl
 Botones en cápsula, tarjetas con radios amplios y mensajes con radios de 24 px y esquina de 8 px hacia quien habla. Mensajes propios lila claro con tinta oscura; tiempo y metadatos también oscuros. La carta conserva su papel cálido. Campos de varias líneas y opciones extensas conservan formas menos redondas para aprovechar el ancho. No modificar márgenes, alturas reservadas, navegación ni sistema de teclado para aplicar materiales. Reducir transparencia y aumentar contraste sustituyen el cristal por blanco opaco; se conserva la preferencia global de movimiento reducido.
 
 Aplicado a Inicio/resultados, chat/lista de chats, perfiles/edición, catálogo/seguidos, servicios, publicaciones, acceso/recuperación, alta profesional y modales. Los componentes compartidos Button y Bubble propagan el aspecto a las pantallas que los utilizan. Referencia adicional: captura de chat de Tinder facilitada por Sergio. Se conserva el tema claro de Nüra.
+
+
+## Transiciones de ventanas · 2026-09-28
+
+`ModalMotion.module.css` comparte velo de 240 ms y entrada de hoja de 280 ms, con 20 px de recorrido y curva de frenado suave. Cierre voluntario de 180 ms/16 px, contenido de edición a pantalla completa con entrada de 12 px y salida por opacidad. No animar altura ni desenfoque, para conservar geometría y teclado. Las reglas solo se activan con `prefers-reduced-motion: no-preference`.
+
+`useModalMotion` retrasa únicamente el cierre visual solicitado por la persona. Los botones que navegan, guardan o confirman mantienen su comportamiento inmediato. El fondo sigue capturando toques durante la salida, se bloquean nuevas acciones, el cierre se ejecuta una sola vez y se cancela al desmontar. Reutilizar este contrato para nuevas ventanas; no añadir temporizadores independientes a los enlaces.

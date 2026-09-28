@@ -1,11 +1,13 @@
+import useModalMotion from './useModalMotion'
 import { useEffect, useRef } from 'react'
 
 // Comportamiento visual común: foco contenido y nota visible al abrir teclado.
 export default function useModalSheet(onClose, done) {
+  const { dismiss, motionProps } = useModalMotion(onClose)
   const dialog = useRef(null)
   const body = useRef(null)
-  const close = useRef(onClose)
-  useEffect(() => { close.current = onClose }, [onClose])
+  const close = useRef(dismiss)
+  useEffect(() => { close.current = dismiss }, [dismiss])
   useEffect(() => {
     const previous = document.activeElement
     const sheet = dialog.current
@@ -50,5 +52,5 @@ export default function useModalSheet(onClose, done) {
     }
   }, [])
 
-  return { dialog, body }
+  return { dialog, body, dismiss, motionProps }
 }

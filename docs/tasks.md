@@ -1,5 +1,12 @@
 # Trabajo compartido
 
+## Transiciones de ventanas · Codex
+
+**Estado:** implementadas y comprobadas localmente. **Rama:** `codex/transiciones-ventanas`, desde `1dbfe93`.
+**Alcance:** CitaModal, RatingModal, AlertaSheet, RegisterGate y EditarFicha comparten entrada suave (240–280 ms) y cierre voluntario de 180 ms. Sin animar altura ni desenfoque; movimiento reducido cierra inmediatamente.
+**Contrato para Claude:** `useModalMotion` devuelve `dismiss` para cerrar visualmente y `motionProps` para bloquear acciones durante la salida. `useModalSheet` lo integra con Escape, foco y restauración. Navegación, confirmaciones y guardado conservan callbacks inmediatos: no sustituirlos por `dismiss`, pues algunos padres permanecen montados al navegar. Temporizador cancelado al desmontar, cierre único y callback actualizado. RegisterGate añade semántica de diálogo y foco contenido. No se cambian datos, solicitudes, rutas, reservas ni keyboardViewport.
+**Pruebas:** build, matching 255/255 y smoke 8×2 + 120×4; lint sin diagnósticos nuevos y no-undef=0. Fixture externa: cierre medido 182–184 ms; doble cierre se ejecuta una vez; acción posterior bloqueada incluso en el mismo evento; desmontar cancela callback y reapertura conserva nuevo callback. Rama JS de movimiento reducido simulada: cierre en 0 ms. Navegador móvil 390×844: reserva abrir/Escape/cancelar/restaurar foco; valoración con teclado simulado (campo sobre pie), sin enviar; aviso cerrar/reabrir/acceso sin portal residual; editar/cerrar sin guardar; acceso con Tab/Escape y navegación. No se han realizado envíos reales. Pendiente prueba física de iPhone.
+
 ## Cristal en toda la aplicación · Codex
 
 **Estado:** implementado y comprobado localmente. **Rama:** `codex/cristal-toda-la-app`, desde `73d1d94`.

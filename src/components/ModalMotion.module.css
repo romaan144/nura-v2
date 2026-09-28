@@ -1,0 +1,16 @@
+/* Material en movimiento: solo opacidad y desplazamiento, sin animar altura
+   ni desenfoque. El cierre de 180ms coincide con useModalMotion. */
+@media (prefers-reduced-motion: no-preference) {
+  .overlay { animation: veilIn 240ms ease-out both; }
+  .sheet { animation: sheetIn 280ms cubic-bezier(.22, 1, .36, 1) both; }
+  .overlay[data-closing] { animation: veilOut 180ms ease-in both; }
+  .overlay[data-closing] .sheet { animation: sheetOut 180ms ease-in both; }
+  .page { animation: pageIn 240ms cubic-bezier(.22, 1, .36, 1) both; }
+  .page[data-closing] { animation: pageOut 180ms ease-in both; }
+}
+@keyframes veilIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes veilOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes sheetIn { from { transform: translateY(20px); } to { transform: none; } }
+@keyframes sheetOut { from { transform: none; } to { transform: translateY(16px); } }
+@keyframes pageIn { from { opacity: 0; translate: 0 12px; } to { opacity: 1; translate: 0 0; } }
+@keyframes pageOut { from { opacity: 1; } to { opacity: 0; } }
