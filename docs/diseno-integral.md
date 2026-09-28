@@ -147,3 +147,10 @@ Verificado en navegador local a 390×844, 320×720 y 1280×900: reacciones rever
 ## Avisos de búsqueda · 2026-09-28
 
 La ventana agrupa necesidad y zona en una tarjeta, canales en controles independientes y privacidad en un bloque breve. Cabecera y confirmación siempre visibles; el cuerpo se desplaza. El pie resume lo elegido, incluido solo perfil. Se mantienen las selecciones existentes, el permiso de notificaciones se pide únicamente al confirmar y el acceso por correo cierra la ventana antes de navegar.
+
+
+## Navegación de cristal · 2026-09-28
+
+Cápsula única de 62 px, máximo 340 px de ancho y margen seguro inferior. Cristal claro de papel/menta, borde continuo y reflejo interior; la selección es una lente translúcida lila que se desplaza en 360 ms. Iconos y etiquetas mantienen tinta legible, con violeta en la pestaña activa; la selección también se expresa por forma y peso. Los botones conservan 48 px de área táctil y foco visible. La lente es aria-hidden y no intercepta eventos.
+
+No se altera el contrato de teclado ni la navegación de escritorio. Fuera de las tres rutas principales, la lente se oculta. Sin desenfoque se usa una superficie opaca; movimiento reducido elimina transiciones, y mayor contraste/reducir transparencia refuerzan el material. Referencia: vídeo de Tinder aportado por Sergio y materiales Liquid Glass de Apple (https://developer.apple.com/design/human-interface-guidelines/materials). Esta es una adaptación web; al desarrollar una app iOS nativa se valorará la barra del sistema vigente.

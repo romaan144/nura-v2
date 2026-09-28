@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-28 — Navegación con cristal y selección deslizante
+
+Buscar, Chats y Perfil comparten una cápsula translúcida con borde definido y una lente lila móvil, inspirada en el vídeo de Tinder aportado por Sergio. Se retira el bloque morado oscuro para integrar la selección con los materiales de Nüra. Misma altura de 62 px y botones de 48 px: se preservan las reservas de contenido y teclado. Rutas, contadores y lógica sin cambios; alternativas para movimiento reducido, mayor contraste y navegadores sin desenfoque.
+
 ## 2026-09-28 — Avisos con opciones claras y confirmación siempre visible
 
 AlertaSheet separa búsqueda, zona, canales y privacidad; cabecera y pie fijos con cuerpo desplazable, opciones de borde visible y resumen de selección que explica también el modo solo perfil. Se comparte el foco y Escape de los modales existentes. El acceso por correo cierra primero la ventana para no dejar su portal sobre Entrar. Confirmación, datos y permisos se conservan.
