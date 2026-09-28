@@ -1,5 +1,9 @@
 # NÜRA 2 — CHANGELOG DE DECISIONES
 
+## 2026-09-28 · Corregir cortes y tamaño del chat
+
+Sergio detecta en iPhone que la identidad ocupa demasiado y el historial se recorta bajo dos bandas rectangulares. Se compacta la foto/nombre y se superponen controles al historial de pantalla completa, con desvanecido gradual y reservas internas para leer sus extremos. Lección: comprobar conversaciones largas a mitad del desplazamiento, no solo saludos cortos.
+
 ## 2026-09-28 · Chat centrado en la persona
 
 Por petición de Sergio, foto circular centrada con cápsula de nombre y especialidad, Volver a la izquierda y Contratar a la derecha. Se retiran metadatos repetidos y aviso con escudo. Solo la entrada permanece en el pie, sin margen artificial, y las sugerencias se desplazan con la conversación. Lógica de mensajes, citas y teclado conservada.

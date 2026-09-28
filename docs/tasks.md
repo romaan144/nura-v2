@@ -1,5 +1,14 @@
 # Trabajo compartido
 
+## Chat flotante y compacto · Codex · 2026-09-28
+
+**Estado:** implementado y comprobado localmente; integración/despliegue se verifican en GitHub/Vercel. **Rama:** `codex/chat-flotante-compacto`, desde `0b75d70`.
+**Corrección solicitada:** la cabecera anterior ocupaba demasiado y el historial se cortaba horizontalmente bajo la cabecera y sobre la entrada. Foto de 44 px, cápsula unida por solapamiento de 5 px, nombre/especialidad en líneas compactas con elipsis. Identidad de unos 77 px frente a 122 px; controles laterales mantienen 44 px táctiles.
+**Diseño:** historial absoluto de borde a borde detrás de cabecera y campo, sin paneles rectangulares de fondo. Reserva interna al principio/final para leer el primer/último mensaje y desvanecido superior gradual. Pie flotante transparente con solo la cápsula y safe-area. El historial sigue visible por los laterales al desplazarlo.
+**Contrato para Claude:** CSS de Chat y comentario JSX; ningún cambio de mensajes, consultas, handlers, citas, dictado ni keyboardViewport. Datos de prueba únicamente en un servidor local externo al repositorio.
+**Validación:** build, matching 255/255, smoke 8×2 +120×4; lint sin diagnósticos nuevos y no-undef=0. Ordenador 1280×900 sin desbordamiento horizontal. Historial local ficticio de 18 mensajes, desplazamiento intermedio y final, 390×844 y 320×568; región desplazable ocupa 0..844 px, entrada 790..844 y teclado simulado 430..484. Pan simulado de Safari de 90 px conserva el anclaje. Solicitud abre/cierra sin enviar. No se ha probado en iPhone físico.
+
+
 ## Chat con identidad centrada · Codex · 2026-09-28
 
 **Estado:** implementado y comprobado localmente; integración y despliegue se verifican en GitHub/Vercel. **Rama:** `codex/chat-cabecera-simple`, desde `24e653a`.
