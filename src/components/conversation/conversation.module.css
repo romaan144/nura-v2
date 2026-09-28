@@ -231,3 +231,11 @@
 
 /* Spacing between messages */
 .msgGap { height: var(--chat-gap, 10px); flex-shrink: 0; }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.headerCircle, .headerPill, .inputCapsule { background: var(--glass-floating); border-color: var(--glass-edge); box-shadow: var(--glass-floating-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
+.inputCapsule:focus-within { border-color: var(--glass-selected-edge); box-shadow: var(--glass-focus); }
+.suggestion { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
+.bubbleNura { background: var(--glass-panel); border-color: var(--glass-edge); border-radius: var(--radius-glass); box-shadow: var(--glass-panel-shadow); border-radius: 24px 24px 24px 8px; }
+.bubbleUser { background: var(--glass-message); color: var(--brand-deep); border-radius: 24px 24px 8px 24px; box-shadow: var(--glass-control-shadow); }

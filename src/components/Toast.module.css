@@ -20,3 +20,7 @@
 /* Detalle visual · septiembre 2026 */
 
 .toast { background: #302142F5; border: 1px solid #FFFFFF20; border-radius: 20px; padding: 16px 20px; backdrop-filter: blur(16px); box-shadow: 0 12px 36px -12px #30214266; }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.toast { border-radius: 999px; box-shadow: inset 0 1px 0 #FFFFFF40, 0 8px 24px -10px #30214266; }

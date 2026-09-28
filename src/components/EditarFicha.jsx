@@ -167,9 +167,9 @@ export default function EditarFicha({ onClose, foco }) {
 
   const campo = {
     width: '100%', boxSizing: 'border-box', padding: 'var(--space-12) var(--space-14)',
-    border: '1px solid var(--ink-border)', borderRadius: 'var(--radius-card)',
+    border: '1px solid var(--glass-edge)', borderRadius: 20,
     fontSize: 'var(--text-base)', fontFamily: 'inherit', color: 'var(--ink-primary)',
-    background: 'white', outline: 'none', resize: 'none', lineHeight: 1.45,
+    background: 'var(--glass-control)', outline: 'none', resize: 'none', lineHeight: 1.45,
   }
 
   // PORTAL AL BODY: montada dentro del perfil, la hoja quedaba DEBAJO de la
@@ -189,7 +189,7 @@ export default function EditarFicha({ onClose, foco }) {
         </h2>
         <button onClick={onClose} aria-label="Cerrar sin guardar"
           style={{ width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-secondary)' }}>
+            background: 'var(--glass-control)', border: '1px solid var(--glass-edge)', borderRadius: '50%', boxShadow: 'var(--glass-control-shadow)', cursor: 'pointer', color: 'var(--ink-secondary)' }}>
           <X size={22} />
         </button>
       </div>
@@ -277,9 +277,10 @@ export default function EditarFicha({ onClose, foco }) {
                 <button key={m} onClick={() => setV({ ...v, modality: m })} aria-pressed={on}
                   style={{ flex: 1, minHeight: 44, borderRadius: 'var(--radius-full)', cursor: 'pointer',
                     fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 600,
-                    border: on ? 'none' : '1px solid var(--ink-border)',
-                    background: on ? 'var(--purple)' : 'white',
-                    color: on ? 'white' : 'var(--ink-secondary)' }}>{m}</button>
+                    border: on ? '1px solid var(--glass-selected-edge)' : '1px solid var(--glass-edge)',
+                    background: on ? 'var(--glass-selected)' : 'var(--glass-control)',
+                    boxShadow: 'var(--glass-control-shadow)',
+                    color: on ? 'var(--glass-selected-ink)' : 'var(--ink-secondary)' }}>{m}</button>
               )
             })}
           </div>
@@ -295,7 +296,7 @@ export default function EditarFicha({ onClose, foco }) {
       {!propuesta && !chocan && <div style={{ display: 'flex', gap: 'var(--space-8)',
         padding: 'var(--space-12) var(--space-16) max(env(safe-area-inset-bottom, 0px), var(--space-16))',
         borderTop: '1px solid var(--ink-border)', background: 'var(--paper)' }}>
-        <button onClick={onClose} style={{ flex: 1, minHeight: 48, background: 'none',
+        <button onClick={onClose} style={{ flex: 1, minHeight: 48, background: 'var(--glass-control)', boxShadow: 'var(--glass-control-shadow)',
           border: '1px solid var(--ink-border)', borderRadius: 'var(--radius-full)', cursor: 'pointer',
           fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--ink-secondary)' }}>
           Cancelar
@@ -303,7 +304,8 @@ export default function EditarFicha({ onClose, foco }) {
         <button onClick={() => guardar()} disabled={!cambiado || guardando} style={{ flex: 2, minHeight: 48, border: 'none',
           borderRadius: 'var(--radius-full)', cursor: cambiado ? 'pointer' : 'default',
           fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 700,
-          background: cambiado ? 'var(--purple)' : 'rgba(33,29,51,0.08)',
+          background: cambiado ? 'var(--grad-main)' : 'rgba(33,29,51,0.08)',
+          boxShadow: cambiado ? 'var(--glass-primary-shadow)' : 'none',
           color: cambiado ? 'white' : 'var(--ink-tertiary)' }}>
           {guardando ? 'Guardando…' : 'Guardar cambios'}
         </button>

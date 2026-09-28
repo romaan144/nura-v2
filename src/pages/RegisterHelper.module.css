@@ -106,3 +106,14 @@
 .sendBtn { background: var(--grad-main); border-radius: 16px; }
 .micBtn { color: var(--purple-ink); background: var(--brand-lilac); }
 .micActive { background: var(--red); }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.back, .logoPill { background: var(--glass-floating); border-color: var(--glass-edge); box-shadow: var(--glass-floating-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
+.inputCapsule { background: var(--glass-floating); border-color: var(--glass-edge); box-shadow: var(--glass-floating-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); border-radius: 999px; }
+.inputCapsule:focus-within { border-color: var(--glass-selected-edge); box-shadow: var(--glass-focus); }
+.bubbleNura { background: var(--glass-panel); border-color: var(--glass-edge); border-radius: var(--radius-glass); box-shadow: var(--glass-panel-shadow); border-radius: 24px 24px 24px 8px; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.bubbleUser { background: var(--glass-message); color: var(--brand-deep); border-radius: 24px 24px 8px 24px; box-shadow: var(--glass-control-shadow); }
+.sendBtn { border-radius: 50%; }
+.sendBtn:not(:disabled):not(.micBtn):not(.micActive) { background: var(--grad-main); color: white; border-radius: 999px; box-shadow: var(--glass-primary-shadow); }
+.micBtn:not(:disabled):not(.micActive) { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); color: var(--purple-ink); }

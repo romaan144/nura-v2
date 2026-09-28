@@ -65,7 +65,7 @@ export function Bubble({ text, author, index = 0, style }) {
       }}>{initials}</div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{
-          background: 'var(--surface-subtle)', borderRadius: '0 12px 12px 12px',
+          background: 'var(--glass-panel)', borderRadius: '24px 24px 24px 8px', boxShadow: 'var(--glass-control-shadow)',
           padding: 'var(--space-10) var(--space-12)', marginBottom: 'var(--space-4)',
         }}>
           <p style={{
@@ -138,7 +138,7 @@ export function Button({
   }
   const skins = {
     primary:   { background: 'var(--grad-main)', color: 'white', border: 'none' },
-    secondary: { background: 'var(--action-surface)', color: 'var(--purple-ink)', border: '1px solid var(--action-border)', minHeight: 48, padding: '10px var(--space-20)', lineHeight: 1.4, boxShadow: 'none' },
+    secondary: { background: 'var(--glass-control)', color: 'var(--purple-ink)', border: '1px solid var(--glass-edge)', minHeight: 48, padding: '10px var(--space-20)', lineHeight: 1.4, boxShadow: 'var(--glass-control-shadow)' },
     ghost:     { background: 'none', color: 'var(--purple-ink)', border: 'none', boxShadow: 'none' },
   }
   return (

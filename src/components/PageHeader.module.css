@@ -83,3 +83,7 @@
 
 .logoPill { background: #FFFFFFCC; border-color: #FFFFFFD9; box-shadow: 0 2px 12px -8px #30214230; }
 .circleBtn { background: #FFFFFFE6; border-color: #FFFFFFD9; box-shadow: 0 3px 12px -8px #30214245; }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.logoPill, .circleBtn { background: var(--glass-floating); border-color: var(--glass-edge); box-shadow: var(--glass-floating-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }

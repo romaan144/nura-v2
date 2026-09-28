@@ -69,3 +69,13 @@
 @media (max-width: 359px) { .overlay { padding-inline: 8px; } .header, .body, .footer { padding-inline: 16px; } .header h2 { font-size: 21px; } .primary, .secondary { font-size: 12px; padding-inline: 10px; } }
 @media (max-height: 560px) { .overlay { padding-block: 8px; } .header { padding-block: 10px; } .eyebrow { display: none; } .footer { padding-block: 10px; } .selection { margin-bottom: 8px; } }
 @media (prefers-reduced-motion: reduce) { .sheet button { transition: none; } }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.sheet { background: var(--glass-panel); border-color: var(--glass-edge); border-radius: var(--radius-glass); box-shadow: var(--glass-panel-shadow); }
+.close, .secondary { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
+.primary:not(:disabled) { background: var(--grad-main); color: white; border-radius: 999px; box-shadow: var(--glass-primary-shadow); }
+.person { border-radius: 24px; background: var(--glass-control); box-shadow: var(--glass-shine); }
+.note { border-radius: 20px; }
+
+.primary { border-radius: 999px; }

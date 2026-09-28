@@ -28,3 +28,8 @@
 @media (hover: hover) { .card:has(.profile:hover) { border-color: #BFA7D6; box-shadow: 0 10px 24px -18px #30214260; } .contactBtn:hover { background: #EDE3F7; border-color: var(--purple-ink); } }
 @media (max-width: 359px) { .profile { grid-template-columns: 68px minmax(0, 1fr); gap: 5px 10px; padding: 12px; } .avatar, .avatarFallback { width: 68px; height: 100px; } .name { font-size: 14px; } }
 @media (prefers-reduced-motion: reduce) { .card, .contactBtn { transition: none; } }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.card { background: var(--glass-panel); border-color: var(--glass-edge); border-radius: var(--radius-glass); box-shadow: var(--glass-panel-shadow); }
+.contactBtn { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }

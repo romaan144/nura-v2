@@ -48,3 +48,9 @@
 
 /* Acciones secundarias con contorno compartido. */
 .btnSecondary { border: 1px solid var(--action-border); background: var(--action-surface); color: var(--purple-ink); min-height: 44px; line-height: 1.4; box-shadow: none; white-space: normal; }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.content { background: var(--glass-panel); border-color: var(--glass-edge); border-radius: var(--radius-glass); box-shadow: var(--glass-panel-shadow); }
+.btn { background: var(--grad-main); color: white; border-radius: 999px; box-shadow: var(--glass-primary-shadow); }
+.btnSecondary { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }

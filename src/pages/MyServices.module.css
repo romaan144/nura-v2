@@ -186,3 +186,15 @@
 @media (prefers-reduced-motion: reduce) {
   .page button { transition: none; }
 }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.card, .empty { background: var(--glass-panel); border-color: var(--glass-edge); border-radius: var(--radius-glass); box-shadow: var(--glass-panel-shadow); }
+.tabs { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
+.tab { border-radius: 999px; }
+.tabActive { background: var(--glass-selected); color: var(--glass-selected-ink); border-color: var(--glass-selected-edge); box-shadow: var(--glass-control-shadow), inset 0 0 0 1px var(--glass-selected-edge); }
+.tabActive .tabBadge { background: #D4C1E8; color: var(--glass-selected-ink); }
+.actionBtnSecondary, .rateBtn { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
+.actionBtn:not(:disabled), .emptyBtn { background: var(--grad-main); color: white; border-radius: 999px; box-shadow: var(--glass-primary-shadow); }
+
+.actionBtn { border-radius: 999px; }

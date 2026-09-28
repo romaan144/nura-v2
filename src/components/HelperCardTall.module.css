@@ -54,3 +54,8 @@
   .comparison .name svg { width: 12px; height: 12px; }
   .comparison .specialty { font-size: 11px; line-height: 14px; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.compact { background: var(--glass-panel); border-color: var(--glass-edge); border-radius: var(--radius-glass); box-shadow: var(--glass-panel-shadow); }
+.contact { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }

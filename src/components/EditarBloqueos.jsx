@@ -37,8 +37,10 @@ export default function EditarBloqueos({ valor, horario, onCambio, citas = [] })
   const chip = (on, extra) => ({
     minHeight: 40, borderRadius: 'var(--radius-full)', cursor: 'pointer', fontFamily: 'inherit',
     fontSize: 'var(--text-sm)', fontWeight: 600,
-    border: on ? '1px solid transparent' : '1px solid var(--ink-border)',
-    background: on ? 'var(--ink-primary)' : 'white', color: on ? 'white' : 'var(--ink-secondary)', ...extra,
+    border: on ? '1px solid var(--glass-selected-edge)' : '1px solid var(--glass-edge)',
+    background: on ? 'var(--glass-selected)' : 'var(--glass-control)',
+    color: on ? 'var(--glass-selected-ink)' : 'var(--ink-secondary)',
+    boxShadow: 'var(--glass-control-shadow)', ...extra,
   })
 
   return (
@@ -63,15 +65,16 @@ export default function EditarBloqueos({ valor, horario, onCambio, citas = [] })
               style={{
                 flexShrink: 0, minWidth: 58, padding: 'var(--space-6)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
                 borderRadius: 'var(--radius-card)', cursor: 'pointer', fontFamily: 'inherit',
-                border: sel ? '1px solid transparent' : '1px solid var(--ink-border)',
-                background: sel ? 'var(--purple)' : 'white', color: sel ? 'white' : 'var(--ink-primary)',
+                border: sel ? '1px solid var(--glass-selected-edge)' : '1px solid var(--glass-edge)',
+                background: sel ? 'var(--glass-selected)' : 'var(--glass-control)', color: sel ? 'var(--glass-selected-ink)' : 'var(--ink-primary)',
+                boxShadow: 'var(--glass-control-shadow)',
               }}>
               <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600, textTransform: 'capitalize' }}>
                 {d.toLocaleDateString('es-ES', { weekday: 'short' }).replace('.', '')}
               </span>
               <span style={{ fontSize: 'var(--text-md)', fontWeight: 800, lineHeight: 1.1 }}>{d.getDate()}</span>
               <span aria-hidden="true" style={{ width: 6, height: 6, borderRadius: 3,
-                background: b ? (sel ? 'white' : 'var(--ink-primary)') : 'transparent' }} />
+                background: b ? 'var(--ink-primary)' : 'transparent' }} />
             </button>
           )
         })}
