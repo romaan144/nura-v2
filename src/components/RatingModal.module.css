@@ -63,3 +63,11 @@
 .star { border-radius: 22px; box-shadow: var(--glass-shine); }
 
 .btn, .chip { border-radius: 999px; }
+
+/* Cristal también en los controles internos y el pie fijo. */
+.person, .publicar { background: var(--glass-control); border-color: var(--glass-edge); box-shadow: var(--glass-shine); }
+.textarea { background: var(--glass-control); border-color: var(--glass-edge); box-shadow: var(--glass-control-shadow); }
+.star { background: var(--glass-control); border-color: var(--glass-edge); box-shadow: var(--glass-control-shadow); }
+.star[aria-pressed='true'] { background: linear-gradient(145deg, #FFF9EEDF, #F5DEAEC7); border-color: #B0802B; box-shadow: var(--glass-control-shadow); }
+.footer { background: var(--glass-panel); }
+.btn:disabled, .chip:disabled { background: var(--glass-control); box-shadow: var(--glass-shine); }

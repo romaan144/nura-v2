@@ -1,3 +1,4 @@
+import glass from './ui/glass'
 import { Heart } from 'lucide-react'
 import { Component } from 'react'
 import { esVersionVieja, recargarPorVersionNueva } from '../utils/versionNueva'
@@ -37,17 +38,27 @@ export default class ErrorBoundary extends Component {
             </p>
           </div>
           <div style={{display:'flex',gap:'var(--space-8)',marginTop:'var(--space-4)'}}>
-            <button onClick={() => window.history.back()}
-              style={{padding:'11px 22px',background:'white',color:'var(--ink, #1a1a1a)',border:'1px solid rgba(33,29,51,0.12)',borderRadius:'var(--radius-card)',fontSize:'var(--text-sm)',fontWeight:600}}>
+            <button className="nura-glass-action" onClick={() => window.history.back()}
+              style={{ padding:'11px 22px',
+              color:'var(--ink, #1a1a1a)',
+              fontSize:'var(--text-sm)',
+              fontWeight:600,
+              ...(glass.control) }}>
               Volver
             </button>
-            <button onClick={() => window.location.reload()}
-              style={{padding:'11px 22px',background:'var(--purple, var(--purple))',color:'white',border:'none',borderRadius:'var(--radius-card)',fontSize:'var(--text-sm)',fontWeight:600}}>
+            <button className="nura-glass-action" onClick={() => window.location.reload()}
+              style={{ padding:'11px 22px',
+              fontSize:'var(--text-sm)',
+              fontWeight:600,
+              ...(glass.primary) }}>
               Reintentar
             </button>
           </div>
-          <button onClick={() => this.setState({ showDetail: !this.state.showDetail })}
-            style={{marginTop:'var(--space-8)',fontSize:'var(--text-xs)',color:'var(--ink-tertiary)',background:'none',border:'none'}}>
+          <button className="nura-glass-action" onClick={() => this.setState({ showDetail: !this.state.showDetail })}
+            style={{ marginTop:'var(--space-8)',
+              fontSize:'var(--text-xs)',
+              color:'var(--ink-tertiary)',
+              ...(glass.control) }}>
             {this.state.showDetail ? 'Ocultar detalle técnico' : 'Detalle técnico'}
           </button>
           {this.state.showDetail && (

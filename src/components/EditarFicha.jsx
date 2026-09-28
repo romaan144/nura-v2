@@ -1,3 +1,4 @@
+import glass from './ui/glass'
 import useModalMotion from './useModalMotion'
 import motion from './ModalMotion.module.css'
 import { revisarContacto } from '../utils/contactoProfesional'
@@ -190,9 +191,10 @@ export default function EditarFicha({ onClose, foco }) {
           fontSize: 'var(--text-lg)', fontWeight: 700, color: 'var(--ink-primary)', letterSpacing: '-0.5px' }}>
           Tu ficha
         </h2>
-        <button onClick={dismiss} aria-label="Cerrar sin guardar"
-          style={{ width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            background: 'var(--glass-control)', border: '1px solid var(--glass-edge)', borderRadius: '50%', boxShadow: 'var(--glass-control-shadow)', cursor: 'pointer', color: 'var(--ink-secondary)' }}>
+        <button className="nura-glass-action" onClick={dismiss} aria-label="Cerrar sin guardar"
+          style={{ cursor: 'pointer',
+              color: 'var(--ink-secondary)',
+              ...(glass.circle) }}>
           <X size={22} />
         </button>
       </div>
@@ -226,19 +228,33 @@ export default function EditarFicha({ onClose, foco }) {
             <textarea id="f-nota-citas" rows={3} maxLength={300} value={notaCitas} placeholder="Me ha surgido un imprevisto. ¿Te iría bien otro día?"
               onChange={e => setNotaCitas(e.target.value)} style={campo} />
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)', marginTop: 'var(--space-12)' }}>
-              <button type="button" onClick={() => guardar(true)} disabled={guardando}
-                style={{ minHeight: 48, border: 'none', borderRadius: 'var(--radius-full)', cursor: 'pointer', fontFamily: 'inherit',
-                  fontSize: 'var(--text-sm)', fontWeight: 700, background: 'var(--purple)', color: 'white' }}>
+              <button className="nura-glass-action" type="button" onClick={() => guardar(true)} disabled={guardando}
+                style={{ minHeight: 48,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              fontSize: 'var(--text-sm)',
+              fontWeight: 700,
+              ...(glass.primary) }}>
                 {guardando ? 'Guardando…' : chocan.length === 1 ? 'Cancelar la cita y guardar' : 'Cancelar las citas y guardar'}
               </button>
-              <button type="button" onClick={() => guardar(false)} disabled={guardando}
-                style={{ minHeight: 48, border: '1px solid var(--ink-border)', borderRadius: 'var(--radius-full)', cursor: 'pointer', fontFamily: 'inherit',
-                  fontSize: 'var(--text-sm)', fontWeight: 600, background: 'white', color: 'var(--ink-primary)' }}>
+              <button className="nura-glass-action" type="button" onClick={() => guardar(false)} disabled={guardando}
+                style={{ minHeight: 48,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              fontSize: 'var(--text-sm)',
+              fontWeight: 600,
+              color: 'var(--ink-primary)',
+              ...(glass.control) }}>
                 {chocan.length === 1 ? 'Guardar sin cancelarla' : 'Guardar sin cancelarlas'}
               </button>
-              <button type="button" onClick={() => setChocan(null)} disabled={guardando}
-                style={{ minHeight: 44, border: 'none', borderRadius: 'var(--radius-full)', cursor: 'pointer', fontFamily: 'inherit',
-                  fontSize: 'var(--text-sm)', fontWeight: 600, background: 'none', color: 'var(--ink-secondary)' }}>
+              <button className="nura-glass-action" type="button" onClick={() => setChocan(null)} disabled={guardando}
+                style={{ minHeight: 44,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              fontSize: 'var(--text-sm)',
+              fontWeight: 600,
+              color: 'var(--ink-secondary)',
+              ...(glass.control) }}>
                 Volver a la ficha
               </button>
             </div>
@@ -299,9 +315,14 @@ export default function EditarFicha({ onClose, foco }) {
       {!propuesta && !chocan && <div style={{ display: 'flex', gap: 'var(--space-8)',
         padding: 'var(--space-12) var(--space-16) max(env(safe-area-inset-bottom, 0px), var(--space-16))',
         borderTop: '1px solid var(--ink-border)', background: 'var(--paper)' }}>
-        <button onClick={dismiss} style={{ flex: 1, minHeight: 48, background: 'var(--glass-control)', boxShadow: 'var(--glass-control-shadow)',
-          border: '1px solid var(--ink-border)', borderRadius: 'var(--radius-full)', cursor: 'pointer',
-          fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--ink-secondary)' }}>
+        <button className="nura-glass-action" onClick={dismiss} style={{ flex: 1,
+              minHeight: 48,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              fontSize: 'var(--text-sm)',
+              fontWeight: 600,
+              color: 'var(--ink-secondary)',
+              ...(glass.control) }}>
           Cancelar
         </button>
         <button onClick={() => guardar()} disabled={!cambiado || guardando} style={{ flex: 2, minHeight: 48, border: 'none',

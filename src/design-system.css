@@ -50,7 +50,7 @@ input::placeholder, textarea::placeholder { color: var(--ink-tertiary); opacity:
 .nura-button { box-shadow: var(--shadow-xs); }
 .nura-button:hover:not(:disabled) { filter: brightness(.98); box-shadow: var(--shadow-sm); }
 .nura-button:active:not(:disabled) { transform: translateY(1px); }
-.nura-button--ghost { text-decoration: underline; text-underline-offset: 3px; }
+.nura-button--ghost { text-decoration: none; }
 .nura-section-title { font-family: var(--font-voice); }
 .desktopMain { height: 100dvh; }
 
@@ -185,26 +185,26 @@ span.nura-user-initials { background: #F0E9FA; }
    Tres niveles: controles, superficies de lectura y selección.
    El desenfoque se reserva a piezas flotantes, no a cada tarjeta del listado. */
 :root {
-  --glass-edge: #CFC5DB;
-  --glass-control: linear-gradient(155deg, #FFFFFFF5, rgba(var(--paper-rgb), .9));
-  --glass-panel: linear-gradient(155deg, #FFFFFFF5, rgba(var(--paper-rgb), .96));
+  --glass-edge: #BEB0CD;
+  --glass-control: linear-gradient(155deg, #FFFFFFE0 0%, #F3EDF8B8 52%, #E4EEE9B8 100%);
+  --glass-panel: linear-gradient(155deg, #FFFFFFEC 0%, #F7F3FBE0 64%, #EDF4F0D9 100%);
   --glass-floating: var(--glass-control);
   --glass-filter: none;
   --glass-selected: linear-gradient(150deg, #F5EFFC, #E5D6F3 72%, #E3ECE9);
   --glass-selected-edge: #AE91C9;
   --glass-selected-ink: #583082;
   --glass-message: linear-gradient(145deg, #F0E6FA, #E7DDF2);
-  --glass-shine: inset 0 1px 0 #FFFFFFF5, inset 0 -1px 0 #FFFFFF70;
-  --glass-control-shadow: var(--glass-shine), 0 2px 7px -4px #30214230;
+  --glass-shine: inset 0 2px 2px #FFFFFFF5, inset 1px 0 1px #FFFFFFA6, inset 0 -2px 3px #8D79A21A;
+  --glass-control-shadow: var(--glass-shine), 0 3px 9px -5px #30214245;
   --glass-panel-shadow: var(--glass-shine), 0 8px 26px -21px #30214250;
   --glass-floating-shadow: var(--glass-shine), 0 8px 26px -12px #30214240;
   --glass-primary-shadow: inset 0 1px 0 #FFFFFF65, inset 0 0 0 1px #FFFFFF28, 0 5px 14px -9px #63359970;
-  --glass-focus: 0 0 0 3px #7951AA24, var(--glass-control-shadow);
+  --glass-focus: 0 0 0 3px #7951AA24, var(--glass-floating-shadow);
   --radius-glass: 26px;
 }
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   :root {
-    --glass-floating: linear-gradient(145deg, #FFFFFFD9, rgba(var(--paper-rgb), .75));
+    --glass-floating: linear-gradient(145deg, #FFFFFFB8 0%, #F0EAF580 52%, #DBEAE49E 100%);
     --glass-filter: blur(22px) saturate(145%);
   }
 }
@@ -228,3 +228,9 @@ span.nura-user-initials { background: #F0E9FA; }
 @media (forced-colors: active) {
   :root { --glass-edge: CanvasText; --glass-selected-edge: Highlight; --glass-selected-ink: CanvasText; }
 }
+
+/* Controles explícitamente adaptados; nunca afectar a todos los botones por etiqueta. */
+.nura-glass-action { min-height: 44px; }
+.nura-glass-action:disabled { opacity: .55; cursor: default; }
+.nura-glass-action:active:not(:disabled) { filter: brightness(.98); }
+.nura-glass-field:focus-visible { outline: 2px solid var(--glass-selected-edge); outline-offset: 2px; }

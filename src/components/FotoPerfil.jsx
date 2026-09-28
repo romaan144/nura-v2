@@ -1,3 +1,4 @@
+import glass from './ui/glass'
 import { useRef, useState } from 'react'
 import { Camera } from 'lucide-react'
 
@@ -76,8 +77,8 @@ export default function FotoPerfil({ actual, helperId, onCambio }) {
     fontSize: 'var(--text-sm)', fontWeight: 700 })
 
   return (
-    <div style={{ padding: 'var(--space-16)', background: 'rgba(255,255,255,0.96)', borderRadius: 'var(--radius-md)',
-      boxShadow: 'var(--alzado-reposo)', border: '1px solid rgba(255,255,255,0.6)', marginBottom: 'var(--space-12)' }}>
+    <div style={{ padding: 'var(--space-16)', background: 'var(--glass-panel)', borderRadius: 'var(--radius-md)',
+      boxShadow: 'var(--glass-panel-shadow)', border: '1px solid var(--glass-edge)', marginBottom: 'var(--space-12)' }}>
       <input ref={entrada} type="file" accept="image/*" onChange={elegida} style={{ display: 'none' }} aria-hidden="true" tabIndex={-1} />
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-14)' }}>
         {previa || actual
@@ -95,13 +96,19 @@ export default function FotoPerfil({ actual, helperId, onCambio }) {
       {error && <p role="alert" style={{ margin: 'var(--space-10) 0 0', fontSize: 'var(--text-sm)', color: 'var(--red-ink)', lineHeight: 1.45 }}>{error}</p>}
       <div style={{ display: 'flex', gap: 'var(--space-8)', marginTop: 'var(--space-12)' }}>
         {previa ? (<>
-          <button onClick={() => entrada.current?.click()} disabled={subiendo}
-            style={{ ...boton('none', 'var(--ink-secondary)', '1px solid var(--ink-border)'), flex: 1 }}>Elegir otra</button>
-          <button onClick={usar} disabled={subiendo} style={{ ...boton('var(--purple)', 'white'), flex: 2 }}>
+          <button className="nura-glass-action" onClick={() => entrada.current?.click()} disabled={subiendo}
+            style={{ ...boton('none', 'var(--ink-secondary)', '1px solid var(--ink-border)'),
+              flex: 1,
+              ...(glass.control) }}>Elegir otra</button>
+          <button className="nura-glass-action" onClick={usar} disabled={subiendo} style={{ ...boton('var(--purple)', 'white'),
+              flex: 2,
+              ...(glass.primary) }}>
             {subiendo ? 'Subiendo…' : 'Usar esta foto'}</button>
         </>) : (
-          <button onClick={() => entrada.current?.click()}
-            style={{ ...boton('white', 'var(--purple-ink)', '1px solid var(--ink-border)'), width: '100%' }}>
+          <button className="nura-glass-action" onClick={() => entrada.current?.click()}
+            style={{ ...boton('white', 'var(--purple-ink)', '1px solid var(--ink-border)'),
+              width: '100%',
+              ...(glass.control) }}>
             {actual ? 'Cambiar foto' : 'Elegir una foto'}</button>
         )}
       </div>

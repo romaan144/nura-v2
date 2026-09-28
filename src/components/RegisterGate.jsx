@@ -1,3 +1,4 @@
+import glass from './ui/glass'
 import { useId } from 'react'
 import useModalSheet from './useModalSheet'
 import motion from './ModalMotion.module.css'
@@ -52,7 +53,7 @@ export default function RegisterGate({ onClose, reason = 'contact', volverA }) {
       display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
     }}>
       <div className={motion.sheet} ref={dialog} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} onClick={e => e.stopPropagation()} style={{
-        background: 'rgba(var(--paper-rgb), 0.98)',  /* el papel del sistema, no uno propio */
+        background: 'var(--glass-panel)',  /* el papel del sistema, no uno propio */
         backdropFilter: 'blur(32px)',
         WebkitBackdropFilter: 'blur(32px)',
         borderRadius: '28px 28px 0 0',
@@ -64,7 +65,7 @@ export default function RegisterGate({ onClose, reason = 'contact', volverA }) {
         WebkitOverflowScrolling: 'touch',
         padding: 'var(--space-8) 22px calc(var(--nav-h) + var(--space-12))',
         width: '100%', maxWidth: '500px',
-        boxShadow: '0 -8px 40px rgba(33,29,51,0.1)',
+        border: '1px solid var(--glass-edge)', boxShadow: 'var(--glass-panel-shadow)',
       }}>
         {/* Handle */}
         <div style={{width:36,height:4,borderRadius:2,background:'var(--surface-muted)',margin:'var(--space-12) auto var(--space-20)'}} />
@@ -99,15 +100,15 @@ export default function RegisterGate({ onClose, reason = 'contact', volverA }) {
             style={{fontSize:'var(--text-base)',letterSpacing:'-0.2px'}}>
             Crear cuenta gratis <ArrowRight size={16} />
           </Button>
-          <button
+          <button className="nura-glass-action"
             onClick={() => { onClose(); sessionStorage.setItem('nura_return_to', volverA || location.pathname + location.search); navigate('/login') }}
-            style={{
-              width:'100%',padding:'13px',
-              background:'var(--surface-subtle)',color:'var(--ink-tertiary)',
-              border:'none',borderRadius:'var(--radius-full)',
-              fontSize:'var(--text-sm)',fontWeight:600,
+            style={{ width:'100%',
+              padding:'13px',
+              color:'var(--ink-tertiary)',
+              fontSize:'var(--text-sm)',
+              fontWeight:600,
               cursor:'pointer',
-            }}>
+              ...(glass.control) }}>
             Ya tengo cuenta
           </button>
         </div>

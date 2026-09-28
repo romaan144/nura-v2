@@ -195,3 +195,6 @@
 .helperChip { background: var(--glass-panel); border-color: var(--glass-edge); border-radius: var(--radius-glass); box-shadow: var(--glass-panel-shadow); }
 .regenBtn { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
 .sendBtn:not(:disabled) { background: var(--grad-main); color: white; border-radius: 999px; box-shadow: var(--glass-primary-shadow); }
+
+/* Repaso de controles: mismo material, geometría y estados conservados. */
+.letterCard { background: var(--glass-panel); border-color: var(--glass-edge); box-shadow: var(--glass-panel-shadow); }

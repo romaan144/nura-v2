@@ -1505,9 +1505,9 @@ export default function Home() {
               aria-label, un lector de pantalla solo dice "boton". Y es el
               unico camino al perfil desde Inicio. */}
           <button
-            className={styles.logoBubble}
+            className={styles.profileBubble}
             aria-label="Tu perfil"
-            style={{position:'static',transform:'none',padding:'0',width:'42px',height:'42px',borderRadius:'50%',overflow:'hidden',display:'flex',alignItems:'center',justifyContent:'center',pointerEvents:'all'}}
+            style={{position:'static',transform:'none',padding:'0',width:'44px',height:'44px',borderRadius:'50%',overflow:'hidden',display:'flex',alignItems:'center',justifyContent:'center',pointerEvents:'all'}}
             onClick={() => navigate('/profile')}>
             {user?.name
               ? <UserAvatar user={user} decorative className={styles.userAvatar} />

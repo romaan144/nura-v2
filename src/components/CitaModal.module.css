@@ -79,3 +79,7 @@
 .note { border-radius: 20px; }
 
 .primary { border-radius: 999px; }
+
+.note, .summary { background: var(--glass-control); border-color: var(--glass-edge); box-shadow: var(--glass-shine); }
+.footer { background: var(--glass-panel); }
+.primary:disabled { background: var(--glass-control); box-shadow: var(--glass-shine); }

@@ -170,3 +170,12 @@ Aplicado a Inicio/resultados, chat/lista de chats, perfiles/edición, catálogo/
 `ModalMotion.module.css` comparte velo de 240 ms y entrada de hoja de 280 ms, con 20 px de recorrido y curva de frenado suave. Cierre voluntario de 180 ms/16 px, contenido de edición a pantalla completa con entrada de 12 px y salida por opacidad. No animar altura ni desenfoque, para conservar geometría y teclado. Las reglas solo se activan con `prefers-reduced-motion: no-preference`.
 
 `useModalMotion` retrasa únicamente el cierre visual solicitado por la persona. Los botones que navegan, guardan o confirman mantienen su comportamiento inmediato. El fondo sigue capturando toques durante la salida, se bloquean nuevas acciones, el cierre se ejecuta una sola vez y se cancela al desmontar. Reutilizar este contrato para nuevas ventanas; no añadir temporizadores independientes a los enlaces.
+
+
+## Repaso del cristal · 28 de septiembre de 2026
+
+El primer pase tenía excepciones inline y reglas de foco más específicas que devolvían el blanco. El material flotante usa transparencia real, desenfoque y tinte lila/menta; controles y paneles usan los mismos reflejos con más opacidad para leer. Los botones de volver y cerrar comparten círculo; Inicio tiene una clase propia para el acceso al perfil.
+
+Para presentación inline reutilizar `src/components/ui/glass.js` (`control`, `panel`, `floating`, `field`, `circle`, `selected`, `primary`, `disabled`). Los componentes mantienen sus manejadores y selección. Las filas agrupadas y cabeceras clicables dentro de tarjetas heredan el panel: no se añade una burbuja a cada línea. No modificar la altura del menú o el contrato del teclado para cambiar materiales. Foco y hover deben conservar el cristal. Alto contraste/transparencia reducida tienen alternativa opaca mediante tokens.
+
+Alcance y pruebas por pantalla: `docs/revision-cristal.md`.

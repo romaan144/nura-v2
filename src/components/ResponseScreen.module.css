@@ -35,3 +35,8 @@
 .footer .next:not(:disabled) { background: var(--grad-main); color: white; border-radius: 999px; box-shadow: var(--glass-primary-shadow); }
 .adjust { border-radius: 50%; }
 .footer .restart { padding-inline: 14px; }
+
+/* Repaso de controles: mismo material, geometría y estados conservados. */
+.screen { background: var(--glass-floating); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); box-shadow: var(--glass-floating-shadow); }
+.footer .restart { background: var(--glass-control); border-color: var(--glass-edge); }
+.footer button:hover:not(:disabled):not(.next), .adjust:hover { background: var(--glass-selected); }

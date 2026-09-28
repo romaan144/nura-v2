@@ -1,3 +1,4 @@
+import glass from '../components/ui/glass'
 import { Heart } from 'lucide-react'
 import { getFirstName } from '../utils/name'
 import { useState, useRef, useEffect } from 'react'
@@ -50,9 +51,12 @@ export default function IntroLetter() {
         <p style={{fontSize:'var(--text-sm)',color:'var(--ink-secondary)',lineHeight:1.5,margin:0}}>
           Puede que el enlace sea antiguo. Puedo buscarte a alguien ahora mismo.
         </p>
-        <button onClick={() => navigate('/')} style={{marginTop:'var(--space-8)',padding:'var(--space-12) var(--space-24)',
-          background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',
-          fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
+        <button className="nura-glass-action" onClick={() => navigate('/')} style={{ marginTop:'var(--space-8)',
+              padding:'var(--space-12) var(--space-24)',
+              fontSize:'var(--text-sm)',
+              fontWeight:600,
+              cursor:'pointer',
+              ...(glass.primary) }}>
           Buscar a alguien
         </button>
       </div>
