@@ -208,3 +208,7 @@ Redactar bien en la plantilla que genera cada respuesta. Nunca limpiar globalmen
 ### Avisos de error · 2026-09-28
 
 `ErrorPanel` reutiliza `EmptyPanel` con icono ámbar y role=alert solo en título/explicación. Los botones se mantienen fuera de la zona anunciada. Reintentar ocupa la primera posición, con salida secundaria separada. Los enlaces no disponibles no ofrecen reintentar una conexión. El detalle técnico permanece cerrado inicialmente, es adaptable y comunica su estado desplegado. Sin animaciones adicionales ni cambio de alturas del menú/teclado. Usar las mismas condiciones y callbacks de cada pantalla: la presentación no decide recuperar ni reenviar.
+
+## Cabecera de conversación · 2026-09-28
+
+Tres piezas: Volver, identidad centrada (foto circular de 64 px y cápsula separada con nombre/especialidad) y Contratar. Sin puntuación, insignias, disponibilidad ni banner con escudo en Chat. La ficha mantiene sus datos. Pie de 54 px con solo la entrada; sin margen mínimo artificial, respetando safe-area. Sugerencias dentro del flujo desplazable. Los estados del servicio y la apertura de solicitud/valoración se conservan.

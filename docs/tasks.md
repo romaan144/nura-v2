@@ -1,5 +1,13 @@
 # Trabajo compartido
 
+## Chat con identidad centrada · Codex · 2026-09-28
+
+**Estado:** implementado y comprobado localmente; integración y despliegue se verifican en GitHub/Vercel. **Rama:** `codex/chat-cabecera-simple`, desde `24e653a`.
+**Cambio:** foto circular de 64 px centrada, pequeña cápsula con nombre y especialidad debajo, Volver a la izquierda y Contratar a la derecha. Se retiran puntuación, insignias, disponibilidad y aviso de escudo del chat, también en el estado vacío. Pie con solo la entrada de cristal de 54 px, sin margen inferior artificial; conserva la zona segura del dispositivo. Sugerencias y respuestas rápidas pasan al área desplazable.
+**Contrato para Claude:** consultas, mensajes, envíos, dictado, fechas y permisos sin cambios. Foto/nombre siguen abriendo la ficha. Contratar conserva el estado del servicio y los handlers de solicitud/valoración. No se altera keyboardViewport ni la navegación. Las valoraciones y acreditaciones siguen en la ficha profesional; solo se elimina su repetición en el chat.
+**Pruebas:** build, matching 255/255 y smoke 8×2 +120×4; lint sin diagnósticos nuevos y no-undef=0. Vista aislada a 390×844, 320×568 y 1280×900: sin desbordamiento horizontal, apertura/cierre de solicitud sin enviar, ficha y vuelta, envío y respuesta exclusivamente demo. Teclado simulado deja la cápsula en el límite visible (484 px); desplazamiento de Safari de 90 px mantiene su posición relativa. No equivale a una prueba en iPhone físico. No se enviaron mensajes ni citas reales.
+
+
 ## Avisos de error y reintentos · Codex · 2026-09-28
 
 **Estado:** implementados y comprobados localmente; integración y despliegue se verifican en GitHub/Vercel. **Rama:** `codex/avisos-error`, desde `be92e5a`.

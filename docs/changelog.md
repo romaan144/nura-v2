@@ -1,5 +1,9 @@
 # NÜRA 2 — CHANGELOG DE DECISIONES
 
+## 2026-09-28 · Chat centrado en la persona
+
+Por petición de Sergio, foto circular centrada con cápsula de nombre y especialidad, Volver a la izquierda y Contratar a la derecha. Se retiran metadatos repetidos y aviso con escudo. Solo la entrada permanece en el pie, sin margen artificial, y las sugerencias se desplazan con la conversación. Lógica de mensajes, citas y teclado conservada.
+
 ## 2026-09-28 · Avisos de error coherentes y acciones visibles
 
 Fallo general, ficha, chat, catálogo y enlace de respuesta profesional comparten ErrorPanel: cristal, icono de aviso, explicación legible y reintento destacado. Los enlaces antiguos siguen distinguiéndose de los fallos de conexión. Detalle técnico adaptable y plegable; errores de acceso con borde definido. Sin cambios en consultas ni funcionamiento de los reintentos.

@@ -6,7 +6,7 @@ import { getFirstName } from '../utils/name'
 import { useTitulo } from '../utils/titulo'
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, Send, Shield, Award, Star, Calendar, Mic, MicOff } from 'lucide-react'
+import { ArrowLeft, Send, Mic, MicOff } from 'lucide-react'
 import { HELPERS_DEMO as HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
 import CitaModal from '../components/CitaModal'
@@ -22,11 +22,10 @@ import PageLoading from '../components/PageLoading'
 import { generateFirstMessage, getHelperReply, getNuraIntervention, buildLivingConversation } from '../utils/chatReplies'
 import { buildChatOpener } from '../utils/introLetter'
 import { DEMO_MODE } from '../config'
-import { Badge, SectionLabel } from '../components/ui'
+import { SectionLabel } from '../components/ui'
 import RegisterGate from '../components/RegisterGate'
 import { registrar } from '../utils/analitica'
 import { construirAviso } from '../utils/aviso'
-import { fmtNota } from '../utils/formato'
 
 // ── Context-aware first message ───────────────────────────────────────────
 
@@ -597,49 +596,22 @@ export default function Chat() {
           <span className={styles.helperMeta}>
             <span className={styles.helperName}>
               <span className={styles.nameText}>{chatDisplayName}</span>
-              {helper.founder && <Award size={13} color="#92400E" aria-label="Profesional fundador" />}
-              {helper.dniVerified && <Shield size={13} color="var(--green)" aria-label="Identidad verificada" />}
             </span>
             <span className={styles.helperSpecialty} title={helper.specialty}>{chatSpecialty}</span>
           </span>
         </button>
 
-        <div className={styles.headerActions}>
-          <div className={styles.helperStatus}>
-            {typing
-              ? <span className={styles.typingStatus}>escribiendo...</span>
-              : <>
-                  <span className={styles.onlineDot} aria-hidden="true" />
-                  {helper.rating && (
-                    <span className={styles.headerRating} aria-label={`Valoración: ${fmtNota(helper.rating)}`}>
-                      <Star size={13} aria-hidden="true" /> {fmtNota(helper.rating)}
-                    </span>
-                  )}
-                  {helper.verified && <Badge variant="success" size="xs">Verificado</Badge>}
-                </>
-            }
-          </div>
-          <button className={styles.contractBtn} onClick={() => serviceState === 'Valorar' ? setShowRating(true) : setShowConfirm(true)}>
-            <Calendar size={15} aria-hidden="true" /> {serviceState}
-          </button>
-        </div>
+        <button className={styles.contractBtn} onClick={() => serviceState === 'Valorar' ? setShowRating(true) : setShowConfirm(true)}>
+          {serviceState}
+        </button>
       </header>
 
       {/* Messages — full screen */}
       <div className={styles.messages}>
 
-        {/* System note */}
-        <div className={styles.systemNote}>
-          <Shield size={11} /> Chat seguro · Comparte datos personales solo cuando confíes
-        </div>
-
         {/* Empty state */}
         {messages.length === 0 && (
           <div className={styles.emptyChat}>
-            {helper.avatarUrl
-              ? <img src={helper.avatarUrl} alt={helper.name} className={styles.emptyChatImg} />
-              : <div className={styles.emptyChatAvatar} style={{ background: helper.avatarColor }}>{helper.avatar}</div>
-            }
             {fromSearch && userQuery ? (
               <div style={{
                 background:'linear-gradient(135deg,var(--purple-05),rgba(0,212,200,0.04))',
@@ -653,14 +625,6 @@ export default function Chat() {
                 </p>
               </div>
             ) : null}
-            <p className={styles.emptyChatName}>{helper.name}</p>
-            <p className={styles.emptyChatDesc}>{helper.specialty} · {helper.zone}</p>
-            {helper.price && <p className={styles.emptyChatPrice}>{helper.price}</p>}
-            <div style={{display:'flex',gap:'var(--space-8)',flexWrap:'wrap',justifyContent:'center',marginTop:'var(--space-4)'}}>
-              {helper.dniVerified && <span style={{fontSize:'var(--text-xs)',color:'var(--green)',background:'var(--green-light)',border:'1px solid rgba(5,150,105,0.15)',borderRadius:'var(--radius-full)',padding:'var(--space-3) var(--space-10)',fontWeight:600}}>Verificado</span>}
-              {helper.available && <span style={{fontSize:'var(--text-xs)',color:'var(--green)',background:'var(--green-light)',border:'1px solid rgba(5,150,105,0.15)',borderRadius:'var(--radius-full)',padding:'var(--space-3) var(--space-10)',fontWeight:600}}>● Disponible</span>}
-              <span style={{fontSize:'var(--text-xs)',color:'var(--ink-tertiary)',background:'var(--surface-subtle)',borderRadius:'var(--radius-full)',padding:'var(--space-3) var(--space-10)'}}>⭐ {fmtNota(helper.rating)} · {helper.reviews} reseñas</span>
-            </div>
             {/* Conversation starters */}
             <div style={{display:'flex',flexDirection:'column',gap:'var(--space-8)',marginTop:'var(--space-20)',width:'100%',maxWidth:'280px'}}>
               <p style={{fontSize:'var(--text-xs)',color:'var(--ink-tertiary)',textAlign:'center',margin:0}}>Empieza la conversación</p>
@@ -671,15 +635,7 @@ export default function Chat() {
               ].map((q,i) => (
                 <button key={i}
                   onClick={() => sendMessage(q)}
-                  style={{
-                    padding:'11px var(--space-16)',
-                    background:'rgba(255,255,255,0.85)',
-                    border:'1px solid rgba(33,29,51,0.08)',
-                    borderRadius:'var(--radius-card)',
-                    fontSize:'var(--text-sm)',color:'var(--ink-secondary)',
-                    cursor:'pointer',textAlign:'left',
-                    fontFamily:'-apple-system,"Inter",sans-serif',
-                  }}>
+                  className={styles.quickReply}>
                   {q}
                 </button>
               ))}
@@ -768,20 +724,13 @@ export default function Chat() {
           </div>
         )}
 
-        <div ref={bottomRef} />
-      </div>
-
-      {/* Nüra suggestion for first message */}
-      {suggested && messages.length === 0 && (
-        <div className={styles.suggestionBar}>
-          <span className={styles.suggestionLabel}>Nüra sugiere</span>
-          <button className={styles.suggestionText} onClick={() => sendMessage(suggested)}>{suggested}</button>
-        </div>
-      )}
-
-      {/* Las sugerencias y la entrada comparten espacio, sin superponerse. */}
-      <div className={styles.inputWrap}>
-        {/* Quick replies */}
+        {/* Las sugerencias pertenecen a la conversación, no al pie fijo. */}
+        {suggested && messages.length === 0 && (
+          <div className={styles.suggestionBar}>
+            <span className={styles.suggestionLabel}>Nüra sugiere</span>
+            <button className={styles.suggestionText} onClick={() => sendMessage(suggested)}>{suggested}</button>
+          </div>
+        )}
         {showQuickReplies && (
           <div className={styles.quickReplies}>
             {QUICK_REPLIES.map((r, i) => (
@@ -789,7 +738,10 @@ export default function Chat() {
             ))}
           </div>
         )}
+        <div ref={bottomRef} />
+      </div>
 
+      <div className={styles.inputWrap}>
         <div className={styles.inputBar}>
           <input className={styles.input} aria-label="Escribe tu mensaje"
             placeholder="Escribe un mensaje..."
