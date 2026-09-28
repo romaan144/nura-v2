@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import PageHeader from '../components/PageHeader'
+import ErrorPanel from '../components/ErrorPanel'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Search, SlidersHorizontal, Check, X, ArrowUpRight,
          Heart, Wrench, BookOpen, Scale, Home, PawPrint,
@@ -458,7 +459,7 @@ export default function Explore() {
                 )}
               </>
             ) : sinRed ? (
-              <EmptyState
+              <ErrorPanel
                 title="No he podido cargar esta categoría."
                 hint="Parece un problema de conexión. Vuelve a intentarlo en un momento."
                 actionLabel="Reintentar"

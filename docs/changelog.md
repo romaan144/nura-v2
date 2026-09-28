@@ -1,5 +1,9 @@
 # NÜRA 2 — CHANGELOG DE DECISIONES
 
+## 2026-09-28 · Avisos de error coherentes y acciones visibles
+
+Fallo general, ficha, chat, catálogo y enlace de respuesta profesional comparten ErrorPanel: cristal, icono de aviso, explicación legible y reintento destacado. Los enlaces antiguos siguen distinguiéndose de los fallos de conexión. Detalle técnico adaptable y plegable; errores de acceso con borde definido. Sin cambios en consultas ni funcionamiento de los reintentos.
+
 ## 2026-09-28 · Respuestas con una redacción más natural
 
 Se revisan las plantillas de Nüra por toda la app: frases cortas, puntuación sencilla y sin rayas largas de relleno. Recomendación, ajustes, presentación y sugerencias conservan sus datos; la urgencia deja de garantizar disponibilidad. No se transforman mensajes reales ni historial. Regla compartida de escritura en diseno-integral.md.

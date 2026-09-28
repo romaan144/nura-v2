@@ -1,5 +1,12 @@
 # Trabajo compartido
 
+## Avisos de error y reintentos · Codex · 2026-09-28
+
+**Estado:** implementados y comprobados localmente; integración y despliegue se verifican en GitHub/Vercel. **Rama:** `codex/avisos-error`, desde `be92e5a`.
+**Cambio:** `ErrorPanel` reutiliza la tarjeta de cristal de `EmptyPanel`, con icono de aviso ámbar, título y explicación anunciados mediante role=alert, y acciones separadas de 48 px. Aplicado al fallo general, ficha, chat, categoría y enlace de respuesta profesional. Fallos de formulario de acceso conservan tinta de error con borde definido y superficie clara. Detalle técnico plegable, con aria-expanded y texto largo adaptable; se añade Volver a la cabecera del error de Chat.
+**Contrato para Claude:** mismos estados, consultas, reintentos, recarga de versión, tokens de enlace, handlers y destinos. Los enlaces no disponibles conservan su rama propia sin Reintentar. No se envían mensajes al reintentar abrirlos. `EmptyPanel` admite tono, rol del texto y contenido adicional sin cambiar sus estados vacíos anteriores. Sin cambios de teclado, navegación inferior ni datos. MisAlertas y errores de envío dentro de conversaciones no se reestructuran en esta tarea.
+**Pruebas:** build, matching 255/255 y smoke 8×2 +120×4; lint sin diagnósticos nuevos y no-undef=0. Fixture externa sin servicios reales: error/reintento persistente y recuperación de ficha, chat, catálogo y enlace de mensaje; enlace de chat antiguo permite salir a Inicio. Error general: detalle largo, plegar/desplegar y recarga con recuperación. 390×844 y 320×568; sin desbordamiento horizontal, acciones de 48 px y detalle de 44 px. Validación local de correo incompleto mantiene el aviso junto al campo. Ningún mensaje, cita o cuenta real enviado/modificado. No probado en iPhone físico.
+
 ## Redacción natural de Nüra · Codex · 2026-09-28
 
 **Estado:** implementada y comprobada localmente; integración y despliegue se verifican en GitHub/Vercel. **Rama:** `codex/textos-naturales`, desde `fee378a`.
