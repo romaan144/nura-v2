@@ -52,7 +52,7 @@ export default function ObraComposer({ onClose }) {
       </div>
 
       <input className="nura-glass-field" value={title} onChange={e => setTitle(e.target.value)}
-        placeholder="Título — ej. El caso de la R"
+        placeholder="Título, por ejemplo: El caso de la R"
         style={{ width: '100%',
               padding: '13px 15px',
               fontSize: 'var(--text-base)',
@@ -74,7 +74,7 @@ export default function ObraComposer({ onClose }) {
 
       {needsResult && (
         <input className="nura-glass-field" value={result} onChange={e => setResult(e.target.value)}
-          placeholder="Resultado — qué cambió al final"
+          placeholder="Cuenta qué cambió al final"
           style={{ width: '100%',
               padding: '13px 15px',
               fontSize: 'var(--text-base)',

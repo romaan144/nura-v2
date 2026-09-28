@@ -1,5 +1,13 @@
 # Trabajo compartido
 
+## Redacción natural de Nüra · Codex · 2026-09-28
+
+**Estado:** implementada y comprobada localmente; integración y despliegue se verifican en GitHub/Vercel. **Rama:** `codex/textos-naturales`, desde `fee378a`.
+**Petición:** respuestas más cuidadas en toda la app, sin rayas largas ni símbolos de relleno.
+**Cambio:** recomendaciones de Inicio en frases separadas; puntuación de comprensión, corrección, errores y ajustes; textos de precio, presentación, sugerencias y conversación demo, avisos, perfil, registro y publicaciones demo. Se retiran rayas de atribución y se escribe «entre 1 y 3 h» en la respuesta temporal. Se corrigen «te contacto Hola» y «Hola Hola» en sugerencias. Urgencia invita a preguntar si puede venir hoy, en lugar de afirmar disponibilidad no comprobada.
+**Contrato para Claude:** se cambian plantillas, sin limpieza global del texto. Mismos datos, consultas, orden de recomendaciones, chips exactos, rutas y manejadores. `matching.js` solo cambia las tres frases de precio, no el motor. Mensajes originales, publicaciones guardadas, nombres y fechas conservados; no hay migración del historial ni cambios de Supabase. Datos de ejemplo de perfiles y nombres de categorías no se renombraron. Pauta editorial en `docs/diseno-integral.md`.
+**Validación:** build, matching 255/255 y smoke 8×2 +120×4; lint sin diagnósticos nuevos y no-undef=0. Pruebas locales de cartas con/sin nombre y respuestas demo; consulta del usuario con raya permanece intacta. Búsqueda «Técnico urgente hoy» muestra Tomàs, 16 años y 4,9/138 opiniones; Mejor valorado sigue funcionando. Verificación visual a 390×844 y comprobación de paginación en 320×568. Sin envíos ni modificaciones reales; no equivale a prueba de iPhone físico.
+
 ## Pantallas sin conversaciones, seguidos ni citas · Codex · 2026-09-28
 
 **Estado:** implementadas y comprobadas localmente; integración y despliegue se verifican en GitHub/Vercel. **Rama:** `codex/estados-vacios`, desde `09196f1`.

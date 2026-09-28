@@ -51,7 +51,7 @@ export function construirAviso({ helper, analysis, userQuery, user }) {
     '',
     presentacion ? `«${presentacion}»` : '',
     '',
-    'Puedes responderle desde Nüra. Si no te viene bien, no pasa nada — dilo y buscamos a otra persona.',
+    'Puedes responderle desde Nüra. Si no te viene bien, puedes decirlo y buscamos a otra persona.',
   ].filter(l => l !== undefined).join('\n')
 
   return {

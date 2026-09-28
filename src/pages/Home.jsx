@@ -80,11 +80,11 @@ function buildWhy(helper, analysis) {
 
   // 2. Los años, si la bio los dice — es el dato que mas tranquiliza
   const años = (helper?.bio || '').match(/(\d+)\s*años de experiencia/)
-  if (años) parts.push(`lleva ${años[1]} años en esto`)
+  if (años) parts.push(`cuenta con ${años[1]} años de experiencia`)
 
   // 3. Cuantas personas le han valorado: una cifra pesa mas que un adjetivo
   if ((helper?.reviews || 0) >= 20 && (helper?.rating || 0) >= 4.7) {
-    parts.push(`${helper.reviews} personas le han valorado con un ${fmtNota(helper.rating)}`)
+    parts.push(`su valoración es de ${fmtNota(helper.rating)} sobre 5, con ${helper.reviews} opiniones`)
   }
 
   // 4. La distancia exacta, no "a unos minutos"
@@ -96,7 +96,7 @@ function buildWhy(helper, analysis) {
   if (helper?.__obra && parts.length < 2) parts.push('ha contado un caso muy parecido al tuyo')
   // «según su ficha, habla catalán y tiene coche y está a…» → con coma
   if (helper?.__declarado?.length === 2 && parts.length > 1) parts[0] = parts[0].replace(' y ', ', ')
-  return parts.slice(0, 2).join(' y ') || 'encaja con lo que necesitas'
+  return parts.slice(0, 2).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('. ') || 'Encaja con lo que necesitas'
 }
 
 const REFINE_ICONS = {
@@ -631,7 +631,7 @@ export default function Home() {
     correctionRef.current = originalQuery || window.__nuraLastQuery || ''
     setCorrigiendo(true)
     setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-      lines: ['Vale — dime qué he entendido mal y ajusto la búsqueda.'],
+      lines: ['Dime qué he entendido mal y ajusto la búsqueda.'],
       chips: ['Era otra cosa'] }])
     setTimeout(() => inputRef.current?.focus?.(), 200)
   }
@@ -718,7 +718,7 @@ export default function Home() {
       setForWhom(val)
       setTimeout(() => {
         const replies = {
-          mi: 'Perfecto. Cuéntame qué necesitas — estoy aquí para ayudarte.',
+          mi: 'Cuéntame qué necesitas. Estoy aquí para ayudarte.',
           familia: 'Entendido. Cuéntame qué le pasa y encontraré a la persona adecuada para cuidar de los tuyos.',
           hogar: 'Perfecto. Cuéntame qué necesita tu hogar o negocio y busco a la persona indicada.'
         }
@@ -775,7 +775,7 @@ export default function Home() {
               id: 'me_' + hid, helperId: hid,
               helper: { id: hf.id, name: hf.name, specialty: hf.specialty, category: hf.category, zone: hf.zone, avatarUrl: hf.avatarUrl, avatar: hf.avatar, avatarColor: hf.avatarColor, rating: hf.rating, verified: hf.verified },
               seconds: null, timeAgo: 'hoy',
-              text: `${fn} encontró ${lp ? `ayuda de confianza para ${lp.label}` : 'la ayuda que necesitaba'}${ci ? ` — primera visita, el ${ci.label}` : ''}. ✓ Funcionó.`,
+              text: `${fn} encontró ${lp ? `ayuda de confianza para ${lp.label}` : 'la ayuda que necesitaba'}${ci ? `. La primera visita fue el ${ci.label}` : ''}. La ayuda funcionó.`,
             })
             // Y el momento de preguntarle como fue: es lo que construye la
             // ficha del profesional (perfil vivo) y ayuda a otros a elegir.
@@ -965,7 +965,7 @@ export default function Home() {
       window.__nuraLastAnalysis = analysis
       try { sessionStorage.setItem('nura_last_analysis', JSON.stringify(analysis)) } catch {}
       // Empathy acknowledgment — instant, before searching
-      const empathyLine = `Entendido${analysis?.persona && PERSONA_CHIP[analysis.persona] ? ' — ' + PERSONA_CHIP[analysis.persona].charAt(0).toLowerCase() + PERSONA_CHIP[analysis.persona].slice(1) : ''}.`
+      const empathyLine = `Entendido${analysis?.persona && PERSONA_CHIP[analysis.persona] ? '. Buscas ayuda ' + PERSONA_CHIP[analysis.persona].charAt(0).toLowerCase() + PERSONA_CHIP[analysis.persona].slice(1) : ''}.`
       setMessages(prev => [...prev, { id: Date.now() + 0.3, from: 'nura', lines: [empathyLine] }])
 
       // El pensando sereno — con dueño y cancelación (El Contrato)
@@ -1020,7 +1020,7 @@ export default function Home() {
           setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
             lines: urge
               ? ['Entiendo que corre prisa. Para encontrarte a alguien ya, dime qué ha pasado: ¿es algo de casa, de salud, o cuidar a alguien?']
-              : ['No estoy segura de haberte entendido del todo — ¿me lo cuentas con otras palabras? Por ejemplo: "entrenador personal cerca de casa" o "alguien que cuide a mi madre".'],
+              : ['No estoy segura de haberte entendido del todo. ¿Me lo cuentas con otras palabras? Por ejemplo: "entrenador personal cerca de casa" o "alguien que cuide a mi madre".'],
             chips: urge
               ? ['Algo se ha roto en casa', 'Necesito ayuda médica', 'Cuidar a un familiar']
               : ['Entrenador personal', 'Cuidar a un familiar', 'Una reparación en casa'] }])
@@ -1092,7 +1092,7 @@ export default function Home() {
       const topFirstName = getFirstName(top?.name) || ''
       // La Gramática de la Recomendación — humana, breve, segura
       const why = buildWhy(top, analysis)
-      const urgentTail = analysis?.urgente ? ' — y puede estar allí hoy mismo' : ''
+      const urgentTail = analysis?.urgente ? '. Puedes preguntarle si puede venir hoy' : ''
       // EL PORQUE SE SEPARA. Iba dentro de la misma frase que el anuncio,
       // asi que se leia en 15px como un dato mas. Pero "trabaja muchisimo
       // con peques y trabaja muy cerca de ti" es lo UNICO que ninguna otra
@@ -1144,7 +1144,7 @@ export default function Home() {
         // con la consulta original — el usuario no la reescribe.
         lines: (!navigator.onLine || /fetch|network|load failed/i.test(String(err?.message || err)))
           ? ['Parece que te has quedado sin conexión. Cuando vuelvas, lo intento otra vez.']
-          : ['Se me ha atascado la búsqueda. No es culpa tuya — inténtalo otra vez.'],
+          : ['No he podido completar la búsqueda. Puedes intentarlo otra vez.'],
         chips: [msg] }])
     }
     setLoading(false)
@@ -1207,7 +1207,7 @@ export default function Home() {
       // ampliando aparecera alguien seria mentir dos veces.
       haptic('light')
       responde(
-        [`He mirado en toda ${window.__nuraLastAnalysis?.ciudad || 'la ciudad'}, no solo en tu barrio — todavía no tengo a nadie así.`],
+        [`He mirado en toda ${window.__nuraLastAnalysis?.ciudad || 'la ciudad'}, no solo en tu barrio. Todavía no tengo a nadie así.`],
         ['Avisame cuando tengas a alguien']
       )
       return
@@ -1328,7 +1328,7 @@ export default function Home() {
         return pa - pb
       })
       setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-        lines: [`${sorted[0]?.name?.split(' ')?.[0]} es el más económico — cobra ${sorted[0]?.price}.`],
+        lines: [`${sorted[0]?.name?.split(' ')?.[0]} es el más económico. Su tarifa es ${sorted[0]?.price}.`],
         results: sorted, refineChips: ['Más cerca','Mejor valorado','Online'] }])
       setLastMatches(sorted); return
     }
@@ -1339,7 +1339,7 @@ export default function Home() {
     if (chip === 'Mejor valorado' && lastMatches?.length > 0) {
       const sorted = [...lastMatches].sort((a,b) => (b.rating||0)-(a.rating||0))
       setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-        lines: [`${sorted[0]?.name?.split(' ')?.[0]} tiene la mejor valoración — ${fmtNota(sorted[0]?.rating)}★.`],
+        lines: [`${sorted[0]?.name?.split(' ')?.[0]} tiene la mejor valoración: ${fmtNota(sorted[0]?.rating)} sobre 5.`],
         results: sorted, refineChips: ['Más barato','Más cerca','Online'] }])
       setLastMatches(sorted); return
     }
