@@ -1,5 +1,14 @@
 # Trabajo compartido
 
+## Contacto directo con borrador breve · Codex · 2026-09-28
+
+**Estado:** implementado y comprobado localmente; integración/despliegue se verifican en GitHub/Vercel. **Rama:** `codex/contacto-directo-chat`, desde `48e073e`.
+**Petición de Sergio:** eliminar la carta de presentación intermedia al escribir desde la ficha; abrir el chat normal con un texto breve en la entrada.
+**Cambio:** la ficha siempre navega a Chat tras la comprobación de cuenta. `/intro/:id` queda como redirección compatible al chat y descarta cualquier antiguo introLetterText. Se elimina de Chat la rama que convertía esa carta en mensaje automáticamente. Sin historial, se prepara un borrador en primera persona: saludo, búsqueda corta y pregunta. Sin búsqueda o con más de 120 caracteres, saludo y pregunta de disponibilidad. Sin motivos promocionales, valoraciones ni afirmaciones de disponibilidad. Editable y solo se envía al pulsar Enviar. Las conversaciones existentes abren con el campo vacío.
+**Contrato para Claude:** cambio de flujo autorizado por Sergio. Se conserva historial original (incluidas cartas antiguas ya enviadas), llamadas de envío, registro, avisos y solicitud de citas. El profesional recibido desde la ficha se usa si su id coincide con la ruta. Se retira hayContexto, sin usos restantes. Las funciones antiguas de generación de cartas permanecen disponibles pero no se usan en este recorrido. No se cambia scroll ni teclado.
+**Validación:** build, matching 255/255, smoke 8×2 +120×4 y test-chat-scroll. Lint sin aumento de diagnósticos por archivo/regla y no-undef=0; advertencias previas de hooks pierden referencias a la rama eliminada. Navegador aislado: ficha con búsqueda abre directamente borrador corto, editar no añade mensaje, enviar demo añade solo el texto editado, volver a escribir conserva conversación/campo vacío; enlace /intro/5 abre /chat/5 con saludo breve sin enviar. Ningún mensaje ni dato real enviado.
+
+
 ## Gesto del chat y Contratar destacado · Codex · 2026-09-28
 
 **Estado:** implementado y comprobado localmente; integración/despliegue se verifican en GitHub/Vercel. **Rama:** `codex/chat-scroll-contratar`, desde `dba3d1f`.

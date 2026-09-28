@@ -220,3 +220,7 @@ Sustituye las medidas y distribución del apartado anterior: foto 44 px, cápsul
 ### Gesto nativo y acción principal en Chat · 2026-09-28
 
 En Chat, únicamente el historial es desplazable: el marco ocupa la altura visible también con teclado y los controles flotan dentro de él. La excepción se limita a data-screen=chat. El seguimiento del final no interrumpe la lectura anterior ni el gesto táctil; enviar un mensaje propio vuelve al final. Sin animaciones programáticas de scroll. Contratar usa fondo morado principal y texto blanco.
+
+### Contacto desde la ficha · 2026-09-28
+
+Escribir abre Chat directamente. La carta de presentación deja de ser una pantalla del recorrido y sus enlaces antiguos redirigen al chat. En un chat nuevo, borrador corto en primera persona dentro del campo, editable y nunca enviado al abrir. Si la búsqueda supera 120 caracteres, propuesta genérica breve para no copiar ni recortar información a medias. Con historial, campo vacío. Se conserva la comprobación de cuenta existente.

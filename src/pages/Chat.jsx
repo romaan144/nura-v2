@@ -20,7 +20,7 @@ import { haptic } from '../utils/haptic'
 import RatingModal from '../components/RatingModal'
 import styles from './Chat.module.css'
 import PageLoading from '../components/PageLoading'
-import { generateFirstMessage, getHelperReply, getNuraIntervention, buildLivingConversation } from '../utils/chatReplies'
+import { generateFirstMessage, getHelperReply, getNuraIntervention } from '../utils/chatReplies'
 import { buildChatOpener } from '../utils/introLetter'
 import { DEMO_MODE } from '../config'
 import { SectionLabel } from '../components/ui'
@@ -140,6 +140,7 @@ export default function Chat() {
   const [showRegGate, setShowRegGate] = useState(false)
 
   const [helper, setHelper] = useState(
+    (location.state?.helper && String(location.state.helper.id) === String(id) ? location.state.helper : null) ||
     helpersCache?.[parseInt(id)] || helpersCache?.[id] || helpersCache?.[String(id)] ||
     HELPERS.filter(Boolean).find(h => String(h.id) === String(id)) || null
   )
@@ -179,7 +180,7 @@ export default function Chat() {
     return []
   })
 
-  // Add welcome message from helper if chat is empty (only when there's no intro letter pending)
+  // Bienvenida solo cuando no hay historial.
   // LA VUELTA, ultimo tramo. Al abrir el chat se pregunta si el profesional
   // ya ha respondido desde su enlace. Si lo hizo, su mensaje entra aqui como
   // uno mas: para la persona que espera, es simplemente que le contestaron.
@@ -214,7 +215,7 @@ export default function Chat() {
   // poner en su boca un mensaje que nunca escribio («Hola, soy Carlos…»)
   // a alguien que aun no sabe que le han escrito.
   useEffect(() => {
-    if (DEMO_MODE && messages.length === 0 && helper && !location.state?.introLetterText) {
+    if (DEMO_MODE && messages.length === 0 && helper) {
       const firstName = getFirstName(helper.name) || helper.name
       const welcomeMsg = {
         id: 'welcome',
@@ -229,16 +230,9 @@ export default function Chat() {
   const userQuery = location.state?.userQuery || window.__nuraLastQuery
   const fromSearch = !!userQuery && !hasHistory
 
-  // Pre-fill input with contextual message when coming from search
+  // La propuesta permanece en el campo: no se añade al historial ni se envía.
   const [input, setInput] = useState(() =>
-    (!!location.state?.userQuery || !!window.__nuraLastQuery) && !hasHistory && !location.state?.introLetterText
-      ? buildChatOpener({
-          helper: helpersCache?.[parseInt(id)] || helpersCache?.[id] ||
-            HELPERS.filter(Boolean).find(h => String(h.id) === String(id)),
-          analysis: location.state?.analysis || window.__nuraLastAnalysis,
-          userQuery: location.state?.userQuery || window.__nuraLastQuery,
-        })
-      : ''
+    !hasHistory ? buildChatOpener({ helper, userQuery }) : ''
   )
   const [suggested, setSuggested] = useState('')
   const [typing, setTyping] = useState(false)
@@ -280,46 +274,6 @@ export default function Chat() {
     if (!helper) return
     setSuggested(generateFirstMessage(helper))
     markRead?.(helper.id)
-
-    // If coming from the Intro Letter screen, send it as the first user message
-    if (location.state?.introLetterText && !hasHistory) {
-      const letterMsg = {
-        id: Date.now(),
-        from: 'user',
-        isLetter: true,
-        text: location.state.introLetterText,
-        time: new Date().toISOString()
-      }
-      setMessages([letterMsg])
-      const chatAnalysis = (() => { try { return window.__nuraLastAnalysis || JSON.parse(sessionStorage.getItem('nura_last_analysis') || 'null') } catch { return null } })()
-      if (DEMO_MODE && chatAnalysis) {
-        // La Conversación Viva — solo en demo; en producción responden humanos reales
-        const conv = buildLivingConversation({ helper, analysis: chatAnalysis, userQuery: location.state?.userQuery || window.__nuraLastQuery || '' })
-        setTyping(true)
-        setTimeout(() => {
-          setMessages(prev => [...prev, { id: Date.now() + 1, from: 'helper', text: conv.messages[0], time: new Date().toISOString() }])
-          setTimeout(() => {
-            setTyping(false)
-            setMessages(prev => [...prev, { id: Date.now() + 2, from: 'helper', text: conv.messages[1], time: new Date().toISOString(), proposal: conv.proposal }])
-          }, Math.min(2800, 800 + conv.messages[1].length * 14))
-        }, Math.min(2600, 700 + conv.messages[0].length * 14))
-      } else {
-        setTyping(true)
-        const delay = 1200 + Math.random() * 600
-        setTimeout(() => {
-          setTyping(false)
-          const reply = getHelperReply(helper, 1, location.state.introLetterText, true)
-          const replyMsg = {
-            id: Date.now() + 1,
-            from: 'helper',
-            text: reply,
-            time: new Date().toISOString()
-          }
-          setMessages(prev => [...prev, replyMsg])
-        }, delay)
-      }
-      return
-    }
 
     // Send initial greeting if no history
     if (!hasHistory) {
