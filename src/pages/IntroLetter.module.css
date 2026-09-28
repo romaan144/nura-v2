@@ -126,7 +126,6 @@
   transition: opacity 0.15s;
 }
 .sendBtn:disabled { opacity: 0.5; }
-.sendBtn:active:not(:disabled) { opacity: 0.85; }
 
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(10px); }

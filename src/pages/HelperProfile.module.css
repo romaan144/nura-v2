@@ -38,7 +38,6 @@
   transition: opacity 0.2s;
   line-height: 0;  /* elimina espacio fantasma inline */
 }
-.shareBtn:active { opacity: 0.6; }
 
 /* ══════════════════════════════════════════════════════════
    HERO — first impression, no scroll needed
@@ -169,8 +168,6 @@
 }
 
 /* CTAs */
-
-.ctaPrimary:active { opacity: 0.8; }
 
 
 /* ══════════════════════════════════════════════════════════

@@ -10,6 +10,10 @@
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
 
+## 2026-09-28 — Una sola respuesta de pulsación
+
+Se retiran efectos que encogían controles hasta un 6 % o bajaban su opacidad hasta el 50 %. Botones y superficies accionables se comprimen un 1,5 % con ligero cambio de brillo, sin alterar posición ni legibilidad. La regla común respeta desactivados, acciones anidadas y movimiento reducido; se evitan saltos hover en los controles principales.
+
 ## 2026-09-28 — Transición interior de respuestas en Inicio
 
 Los pasos de una respuesta cambiaban de golpe mientras la animación existente movía el marco entero al aparecer. Se anima solo el contenido durante 240 ms y se distingue avanzar de retroceder. Campo, menú y marco permanecen fijos; sin demorar acciones ni animar medidas. Movimiento reducido cambia directamente.

@@ -699,7 +699,6 @@ export default function Chat() {
                     fontSize:'var(--text-sm)',color:'var(--ink-secondary)',
                     cursor:'pointer',textAlign:'left',
                     fontFamily:'-apple-system,"Inter",sans-serif',
-                    transition:'opacity 0.15s',
                   }}>
                   {q}
                 </button>

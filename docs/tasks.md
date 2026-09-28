@@ -1,5 +1,13 @@
 # Trabajo compartido
 
+## Pulsación uniforme de controles · Codex · 2026-09-28
+
+**Estado:** implementada y comprobada localmente; publicación por comprobar en GitHub/Vercel. **Rama:** `codex/respuesta-pulsacion`, desde `3b8af6b`.
+**Cambio:** se retiran las escalas y bajadas de opacidad dispersas. Botones y superficies con role=button comparten escala .985 y brillo .97, con recuperación en 160 ms. El texto conserva opacidad; se retiran saltos hover de controles en Inicio, catálogo y chats. Se usa scale independiente para no sustituir transforms de posición.
+**Contrato para Claude:** no cambia ningún onClick, navegación, selección, dato o permiso. Solo se retiran los tres manejadores de estilo pointer de HelperCardTall y transiciones inline que impedían compartir CSS. La regla excluye controles disabled/aria-disabled y padres con una acción descendiente activa. Movimiento reducido usa --press-scale:none y conserva feedback de color. Portales incluidos; inputs y enlaces de texto no se encogen. No añadir de nuevo opacidad/transform de pulsación por pantalla.
+**Pruebas:** build, matching 255/255 y smoke 8×2 +120×4 pasan; lint sin diagnósticos nuevos y no-undef=0. Navegador aislado 390×844: Ver todos, tarjeta de categoría, filtro Online, Contratar/cancelar reserva, acceso profesional y pestaña Buscar. Registro en pointerdown confirma :active, opacidad 1 y transición hacia .985; reposo vuelve a scale:none. Enviar solicitud desactivado conserva scale/filter:none; no se envía. Sin desbordamiento horizontal. Preferencia reducida y exclusión de controles anidados revisadas en CSS; pendientes contraste físico de iPhone y prueba visual de movimiento reducido del sistema.
+
+
 ## Transiciones de respuestas de Inicio · Codex · 2026-09-28
 
 **Estado:** implementado y comprobado localmente; integración/publicación se verifican en GitHub y Vercel. **Rama:** `codex/transiciones-inicio`, desde `0981021`.

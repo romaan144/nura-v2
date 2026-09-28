@@ -51,17 +51,14 @@
   transition: transform 0.18s cubic-bezier(0.22,1,0.36,1), box-shadow 0.18s ease;
 }
 .card:active {
-  transform: scale(0.985);
   box-shadow: var(--alzado-pulsado);
 }
-.card:active { opacity: 0.75; }
 .cardLeft { display: flex; align-items: center; gap: 12px; }
 .avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
 .name { font-size: var(--text-sm); font-weight: 700; color: var(--ink); margin-bottom: 2px; }
 .spec { font-size: var(--text-xs); color: var(--purple-ink); font-weight: 600; margin-bottom: 4px; }
 .meta { display: flex; align-items: center; gap: 5px; font-size: var(--text-xs); color: var(--soft); }
 .followBtn { width: 36px; height: 36px; border-radius: 50%; background: rgba(239,68,68,0.08); border: none; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity 0.15s; cursor: pointer; }
-.followBtn:active { opacity: 0.6; }
 .empty h3 { font-size: var(--text-md); font-weight: 700; color: var(--ink); margin: 0; }
 .empty p { font-size: var(--text-sm); color: var(--soft); margin: 0; line-height: 1.6; }
 .emptyBtn { padding: 12px 28px; background: var(--purple); color: white; border: none; border-radius: var(--radius-md); font-size: var(--text-sm); font-weight: 700;   transition: opacity 0.2s;
@@ -79,7 +76,6 @@
 
 .emptyTitle { font-size: var(--text-md); font-weight: 800; color: var(--ink-secondary); margin: 0; letter-spacing: -0.3px; }
 .emptyDesc { font-size: var(--text-sm); color: var(--ink-tertiary); margin: 0; line-height: 1.65; max-width: 240px; text-align: center; }
-.emptyBtn:active { opacity: 0.75; }
 .emptyBtnSecondary { padding: 12px 28px; background: var(--surface-subtle); color: var(--ink-tertiary); border: none; border-radius: var(--radius-full); font-size: var(--text-sm); font-weight: 600; cursor: pointer; width: 100%; max-width: 280px; font-family: inherit; }
 
 /* ── EMPTY STATE ─────────────────────────────────────────────────────── */
@@ -141,7 +137,6 @@
 
 /* Fotos protagonistas; abrir el perfil y seguir son controles independientes. */
 .card { display: flex; flex-direction: column; align-items: stretch; padding: 0; gap: 0; height: 100%; background: white; cursor: default; }
-.card:active { transform: none; opacity: 1; }
 .profileButton { display: grid; grid-template-columns: 80px minmax(0, 1fr); gap: 16px; align-items: start; width: 100%; flex: 1; padding: 18px; border: none; border-radius: 22px 22px 0 0; background: transparent; font-family: inherit; text-align: left; cursor: pointer; }
 .avatar { width: 80px; height: 104px; border-radius: 18px; object-fit: cover; background: var(--action-surface); }
 .details { display: flex; flex-direction: column; min-width: 0; }
