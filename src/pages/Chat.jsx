@@ -4,7 +4,8 @@ import errorStyles from '../components/ErrorPanel.module.css'
 import PageHeader from '../components/PageHeader'
 import { getFirstName } from '../utils/name'
 import { useTitulo } from '../utils/titulo'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react'
+import { attachChatScroll } from '../utils/chatScroll'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Send, Mic, MicOff } from 'lucide-react'
 import { HELPERS_DEMO as HELPERS } from '../data/helpers'
@@ -269,7 +270,11 @@ export default function Chat() {
   const [showConfirm, setShowConfirm] = useState(false)
   const [msgCount, setMsgCount] = useState(() => Math.floor((getChatHistory(id)?.filter(m => m.from === 'helper')?.length || 0)))
   const [listening, setListening] = useState(false)
-  const bottomRef = useRef(null)
+  const scrollController = useRef(null)
+  const messagesRef = useCallback(node => {
+    scrollController.current?.destroy()
+    scrollController.current = node ? attachChatScroll(node) : null
+  }, [])
 
   useEffect(() => {
     if (!helper) return
@@ -343,10 +348,9 @@ export default function Chat() {
     }
   }, [helper?.id])
 
-  useEffect(() => {
-    const scroller = bottomRef.current?.parentElement
-    scroller?.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' })
-  }, [messages, typing])
+  useLayoutEffect(() => {
+    scrollController.current?.update(messages.at(-1))
+  }, [messages, typing, helper?.id])
 
   // Persist chat history per helper
   useEffect(() => {
@@ -607,7 +611,7 @@ export default function Chat() {
       </header>
 
       {/* Messages — full screen */}
-      <div className={styles.messages}>
+      <div className={styles.messages} ref={messagesRef}>
 
         {/* Empty state */}
         {messages.length === 0 && (
@@ -738,7 +742,6 @@ export default function Chat() {
             ))}
           </div>
         )}
-        <div ref={bottomRef} />
       </div>
 
       <div className={styles.inputWrap}>
