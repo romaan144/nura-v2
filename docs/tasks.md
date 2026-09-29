@@ -289,6 +289,12 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
+### Tarea activa · Avatares nuevos y fotos siempre redondas
+
+**Responsable:** Claude. **Rama:** `claude/funny-clarke-e6m64r`, desde `main` (9c83cce).
+**Motivo (Sergio):** elige el estilo D («micah», ilustración sencilla sobre lila suave) para quien no tiene foto, y quiere todas las fotos redondas como en el perfil y el chat; en las búsquedas no lo son. De paso, las fichas de la base traen el avatar como enlace a api.dicebear.com: cada visitante llamaba a ese servicio. Se generan en el propio móvil.
+**Archivos previstos:** `src/utils/avatar.js`, `src/utils/supabase.js`, `src/utils/matching.js`, `src/context/UserContext.jsx` (actualizar avatares guardados), CSS de las fotos que no son redondas (`HelperCardTall`, `HelperCard` y los que aparezcan), documentación. Codex no tiene tarea activa en esos archivos.
+
 ### Última tarea integrada · El chat abierto desde una ficha empezaba arriba del todo
 
 Integrada el 2026-09-29 (ver `docs/changelog.md`, 2026-10-24). Tocó `src/components/ScrollToTop.jsx` (no toca lo marcado con `data-scroll-propio`), `src/pages/Chat.jsx` (solo ese atributo en el historial) y `scripts/recorrido.mjs` (comprobación nueva). Nada visual. Esos archivos quedan libres. Si otra pantalla gestiona su propio desplazamiento, basta con marcarla igual.
