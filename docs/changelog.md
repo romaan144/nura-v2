@@ -170,6 +170,13 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-23 — El teclado del móvil vuelve a proponer el teléfono y el nombre
+
+- Sergio notó que al registrarse el móvil ya no le ofrecía su número ni su nombre. El campo del teléfono pedía `autocomplete="tel-national"` (desde la renovación de formularios), que el autorrelleno de iPhone no reconoce; ahora pide `tel`, como antes lo deducía solo.
+- El número autorrellenado llega con prefijo («+34 612 34 56 78»): se queda en las 9 cifras. Antes el campo cortaba a 9 caracteres y se habría quedado con «346123456».
+- El alta del profesional dice al móvil qué pregunta es: en «¿Cómo te llamas?» propone su nombre y en el contacto su correo; en el resto, nada.
+- Solo atributos de los campos: el aspecto no cambia. No se puede probar el autorrelleno real de un iPhone desde aquí; hay que comprobarlo en el móvil.
+
 ## 2026-10-22 — Al darse de alta: quién le busca, y oficios que ya existen
 
 - Al escribir su especialidad, el profesional se entera de si le estaban buscando: «Buena noticia: en el último mes, 3 personas buscaron fontanero en Nüra y no encontraron a nadie. Te estaban esperando.» (o, si ya hay otros, cuántas lo buscaron).

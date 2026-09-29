@@ -289,15 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · Que el teclado del móvil vuelva a proponer el teléfono y el nombre
+### Última tarea integrada · Que el teclado del móvil vuelva a proponer el teléfono y el nombre
 
-**Responsable:** Claude. **Rama:** `claude/funny-clarke-e6m64r`, desde `main` (86c5bf3).
-**Motivo (Sergio):** antes el teclado del móvil ofrecía su número y su nombre al registrarse; ahora no. El campo del teléfono pide `tel-national`, que el autorrelleno de iPhone no reconoce, y el alta del profesional no dice a su campo qué pregunta es.
-**Archivos previstos:** `src/pages/Login.jsx` y `src/pages/RegisterHelper.jsx` (solo atributos de los campos y limpiar el número autorrellenado; nada visual), documentación.
-
-### Última tarea integrada · Al darse de alta: quién le busca, y oficios que ya existen
-
-Integrada el 2026-09-29 (ver `docs/changelog.md`, 2026-10-22). Tocó el nuevo `src/utils/demanda.js`, el nuevo `src/components/ElegirOficio.jsx` (panel y botones con `glass` como `ConfirmarDeclarado`), `src/pages/RegisterHelper.jsx` (mensajes y la elección tras la especialidad; resto intacto), `src/utils/supabase.js` (`especialidadesExistentes`), `supabase/functions/helpers-write/index.ts` (op `demanda-oficio`; desplegada, versión 27), `scripts/test-avisos.mjs`, `scripts/recorrido-real.mjs` y documentación. Esos archivos quedan libres.
+Integrada el 2026-09-29 (ver `docs/changelog.md`, 2026-10-23). Tocó `src/pages/Login.jsx` (atributos del teléfono y del nombre; el número autorrellenado se queda en 9 cifras) y `src/pages/RegisterHelper.jsx` (atributos del campo según la pregunta). Nada visual. Esos archivos quedan libres.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 

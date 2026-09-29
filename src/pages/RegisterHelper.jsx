@@ -58,7 +58,8 @@ async function saveHelperToSupabase(answers, declarado = []) {
 }
 
 const QUESTIONS = [
-  { id: 'name',           text: 'Hola, vamos a crear tu perfil profesional. ¿Cómo te llamas?',        placeholder: 'Tu nombre completo' },
+  // `campo`: lo que el teclado del móvil puede proponer (su nombre, su correo).
+  { id: 'name',           text: 'Hola, vamos a crear tu perfil profesional. ¿Cómo te llamas?',        placeholder: 'Tu nombre completo', campo: { autoComplete: 'name', name: 'name', autoCapitalize: 'words' } },
   { id: 'specialty',      text: 'Encantada, {name}. ¿Cuál es tu especialidad principal?',             placeholder: 'Ej: logopeda, cuidadora, técnico de calderas...' },
   { id: 'formation',      text: '¿Qué formación o certificaciones tienes?',                           placeholder: 'Ej: Grado en Logopedia, FP Atención Sociosanitaria...' },
   { id: 'zone',           text: '¿En qué ciudad y zona trabajas? ¿Te desplazas?',                    placeholder: 'Ej: Barcelona, Gràcia y alrededores · Madrid, Chamberí' },
@@ -70,7 +71,7 @@ const QUESTIONS = [
   // siempre. Nadie —ni Nura ni el fundador— podia avisarle de que alguien
   // le necesitaba. Es la ultima pregunta a proposito: se pide cuando la
   // persona ya ha invertido en el perfil, no en la puerta.
-  { id: 'contacto',       text: 'Y lo más importante: ¿cómo te avisamos cuando alguien te necesite?', placeholder: 'Tu móvil o tu email' },
+  { id: 'contacto',       text: 'Y lo más importante: ¿cómo te avisamos cuando alguien te necesite?', placeholder: 'Tu móvil o tu email', campo: { autoComplete: 'email', name: 'email', autoCapitalize: 'none' } },
 ]
 
 export default function RegisterHelper() {
@@ -437,6 +438,8 @@ export default function RegisterHelper() {
               ref={inputRef}
               className={styles.input}
               placeholder={currentQ?.placeholder || 'Escribe tu respuesta...'}
+              // Solo el nombre y el contacto: lo demás, sin propuestas del móvil.
+              {...(currentQ?.campo || { autoComplete: 'off' })}
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && sendMessage()}
