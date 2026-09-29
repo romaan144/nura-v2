@@ -691,6 +691,8 @@ export function analyzeNeed(userTextOriginal) {
     // hablar («buscas un electricista»). Vacío si no se entiende ninguno.
     oficios: oficios.map(x => x.id),
     oficioNombre: oficios.length ? oficio(oficios[0].id).nombre : null,
+    // «que repare aparatos de sonido o imagen»: para decir con verdad que falta.
+    oficioQuien: oficios.length ? oficio(oficios[0].id).quien : null,
     texto: userText,
   })
 }
@@ -805,6 +807,9 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
     if (porOficio) {
       const i = ids.findIndex(id => esDelOficio(h.specialty, id))
       if (i >= 0) score += 150 - 40 * i + puntosRefina(h.specialty, ids[i], analysis.texto || '')
+      // Lo infantil, solo si habla de un niño: «psicólogo para mí» no es el
+      // psicólogo infantil aunque tenga mejor nota.
+      if (!(analysis.complexSignals || {}).infantil && /infant|pediatr/.test(normalize(h.specialty || ''))) score -= 30
       else if (deParecido(h)) score += 60
     }
     // EL OFICIO PESA MAS QUE LA ETIQUETA. Medido: buscar "yoga" devolvia
@@ -826,13 +831,15 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
       // Si la palabra la escribio el usuario, pesa mas que si la puso el
       // catalogo de la categoria.
       const suya = (analysis.palabrasPropias || []).includes(normKw)
-      if (espNorm.includes(normKw)) score += suya ? 45 : 15
+      // Con el oficio entendido, que una palabra salga en la especialidad
+      // pesa poco: «traducir al inglés» no es la profesora de inglés.
+      if (espNorm.includes(normKw)) score += porOficio ? 8 : (suya ? 45 : 15)
     })
     // La consulta entera dentro del oficio: "instructor de yoga" contiene
     // "yoga" completo, y eso vale mas que contener una de sus palabras.
     {
       const consulta = normalize((analysis.palabrasClave || []).join(' ')).trim()
-      if (consulta && espNorm.includes(consulta)) score += 25
+      if (consulta && espNorm.includes(consulta)) score += porOficio ? 8 : 25
     }
     // El matiz decide el ORDEN, no quien entra. Peso 25: por debajo de la
     // categoria (40), por encima de una palabra suelta (8-10). Una logopeda
@@ -842,7 +849,9 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
       const sen = analysis.complexSignals || {}
       const texto = normalize(`${h.specialty || ''} ${h.bio || ''} ${(h.tags || []).join(' ')}`)
       const dice = (...ps) => ps.some(p => texto.includes(p))
-      if (sen.infantil && dice('infantil', 'niño', 'nino', 'peque', 'pediatr')) score += 25
+      // Con oficio entendido, «para mi hijo» ya lo ordena `refina` (y ahí
+      // pesa menos que lo concreto: anorexia antes que pediatría).
+      if (sen.infantil && !porOficio && dice('infantil', 'niño', 'nino', 'peque', 'pediatr')) score += 25
       if (sen.alzheimer && dice('alzheimer', 'demencia', 'geriatr', 'dependencia')) score += 25
       if (sen.sola && dice('acompan', 'compania', 'geriatr')) score += 15
       if (sen.nocturno && dice('noche', 'nocturn', '24h', 'urgenc')) score += 15

@@ -12,13 +12,15 @@
 //          tildes: `_` vale por una letra, como en la base de datos).
 //   dice   lo que escribe quien lo necesita: el oficio, los objetos, los
 //          síntomas. «palabra|5» pesa 5 (3 si no se dice). `*` deja hasta
-//          tres palabras en medio («perro * enfermo»). Los plurales cuentan.
+//          cuatro palabras en medio («perro * enfermo»). Los plurales cuentan.
 //   refina qué especialidad sube dentro del oficio según lo que cuente
-//          («terapia» + «pareja» → terapeuta de pareja). Pesa 30; lo que
-//          solo dice a QUIÉN es (un niño, un adulto) pesa 20, y lo general
+//          («terapia» + «pareja» → terapeuta de pareja). Pesa 40; lo que
+//          solo dice a QUIÉN es (un niño, un adulto) pesa 25, y lo general
 //          («ansiedad» → clínica), 10: manda lo más concreto.
 //   cat    la categoría de la app (textos, avisos, Explorar).
 //   quien  para decir con verdad que falta: «Todavía no tengo a nadie …».
+//   requiere   si lo tiene, solo cuenta cuando la frase nombra una de
+//          estas palabras (el veterinario, un animal).
 //   parecidos  si no hay nadie del oficio, a quién se ofrece (diciéndolo).
 //
 // Añadir un oficio o una forma de pedirlo es añadir una línea aquí y una
@@ -28,7 +30,7 @@ export const OFICIOS = [
   // ── Casa: instalaciones ─────────────────────────────────────────────
   { id: 'fontanero', nombre: 'fontanero', cat: 'tecnico', quien: 'que sea fontanero',
     esp: ['fontaner', 'lampista'],
-    dice: ['fontanero|8', 'fontanera|8', 'fontaneria|8', 'lampista|8', 'fuga|5', 'fuga de agua|6', 'gotea|5', 'gotera|4',
+    dice: ['fuita|6', 'fuita d aigua|9', 'aigua|2', 'aixeta|6', 'desembussar|8', 'fontanero|8', 'fontanera|8', 'fontaneria|8', 'lampista|8', 'fuga|5', 'fuga de agua|6', 'gotea|5', 'gotera|4',
       'grifo|5', 'atascado|5', 'atascada|5', 'atasco|5', 'desatascar|6', 'desatasco|6', 'fregadero|4', 'vater|5', 'wc|5',
       'inodoro|5', 'cisterna|5', 'tuberia|5', 'caneria|5', 'desague|5', 'sumidero|5', 'ducha|2', 'banera|3', 'agua|1',
       'pierde agua|3', 'no sale agua|3', 'sin agua|3', 'llave de paso|5'] },
@@ -48,7 +50,7 @@ export const OFICIOS = [
       'certificado de gas|8', 'cocina de gas|4'] },
   { id: 'clima', nombre: 'técnico de aire acondicionado', cat: 'tecnico', quien: 'que instale o arregle aire acondicionado',
     esp: ['aire acondicionado', 'climatiz'],
-    dice: ['aire acondicionado|8', 'split|6', 'climatizacion|7', 'bomba de calor|6', 'no enfria|2', 'aire acondicionat|8'] },
+    dice: ['el aire|6', 'el aire gotea|9', 'aire acondicionado|8', 'split|6', 'climatizacion|7', 'bomba de calor|6', 'no enfria|2', 'aire acondicionat|8'] },
   { id: 'cerrajero', nombre: 'cerrajero', cat: 'tecnico', quien: 'que sea cerrajero',
     esp: ['cerraj'],
     dice: ['cerrajero|8', 'cerrajera|8', 'cerrajeria|8', 'manya|8', 'cerradura|6', 'bombin|6', 'llaves|4', 'llave|2',
@@ -63,7 +65,7 @@ export const OFICIOS = [
   { id: 'electronica', nombre: 'técnico de electrónica', cat: 'tecnico', quien: 'que repare aparatos de sonido o imagen',
     esp: ['electr_nic', 'sonido', 'televis'],
     parecidos: ['electrodomesticos', 'informatico', 'moviles'],
-    dice: ['altavoz|8', 'altavoces|8', 'equipo de musica|8', 'equipo de sonido|8', 'amplificador|8', 'tele|6',
+    dice: ['play|6', 'la play|8', 'lee los discos|6', 'no lee|3', 'mando a distancia|4', 'altavoz|8', 'altavoces|8', 'equipo de musica|8', 'equipo de sonido|8', 'amplificador|8', 'tele|6',
       'television|7', 'televisor|8', 'smart tv|8', 'proyector|6', 'consola|6', 'playstation|8', 'xbox|8', 'nintendo|7',
       'auriculares|5', 'barra de sonido|8', 'subwoofer|8', 'hifi|8', 'minicadena|8', 'tocadiscos|8', 'radio|3',
       'electronica|5', 'aparato|2', 'aparatos|2'] },
@@ -73,7 +75,7 @@ export const OFICIOS = [
       'reparar el movil|8', 'bateria del movil|8', 'bateria del iphone|8', 'se me ha caido el movil|8'] },
   { id: 'informatico', nombre: 'informático', cat: 'tecnologia', quien: 'que sea informático',
     esp: ['inform_tic', 'ordenador'],
-    dice: ['informatico|8', 'informatica|6', 'ordenador|6', 'pc|5', 'portatil|6', 'windows|6', 'mac|4', 'macbook|6',
+    dice: ['hackeado|8', 'hackeada|8', 'me han hackeado|10', 'hackeo|8', 'contrasena|4', 'correo|3', 'antivirus|7', 'informatico|8', 'informatica|6', 'ordenador|6', 'pc|5', 'portatil|6', 'windows|6', 'mac|4', 'macbook|6',
       'virus|5', 'disco duro|7', 'formatear|6', 'impresora|6', 'software|4', 'teclado|3', 'copia de seguridad|6',
       'recuperar datos|7', 'recuperar fotos|4', 'programas|3', 'correo electronico|4', 'va muy lento|3', 'lento|2',
       'no arranca|2', 'con el ordenador|6'] },
@@ -86,13 +88,13 @@ export const OFICIOS = [
     esp: ['pintor'],
     dice: ['pintor|8', 'pintora|8', 'pintar|6', 'pinte|6', 'pinten|6', 'pintarme|6', 'pintura|3', 'gotele|8', 'lacar|5',
       'paredes|2', 'pintar el piso|8'] },
-  { id: 'albanil', nombre: 'albañil', cat: 'tecnico', quien: 'que sea albañil',
+  { id: 'albanil', nombre: 'albañil', cat: 'hogar', quien: 'que sea albañil',
     esp: ['alba_il'],
     dice: ['albanil|8', 'paleta|6', 'obra|3', 'obras|3', 'reforma|4', 'reformar|4', 'reformas|4', 'alicatar|8', 'azulejo|6',
       'baldosa|6', 'tabique|6', 'pladur|6', 'humedad|3', 'humedades|3', 'grieta|5', 'yeso|4', 'escayola|5', 'cemento|5',
       'plato de ducha|4', 'reformar el bano|8', 'reforma del bano|8', 'reformar la cocina|8', 'reforma de la cocina|8',
       'rozas|5'] },
-  { id: 'carpintero', nombre: 'carpintero', cat: 'hogar', quien: 'que sea carpintero',
+  { id: 'carpintero', nombre: 'carpintero', cat: 'tecnico', quien: 'que sea carpintero',
     esp: ['carpinter'],
     dice: ['carpintero|8', 'carpintera|8', 'carpinteria|8', 'fuster|8', 'a medida|4', 'mueble a medida|8',
       'armario empotrado|8', 'madera|4', 'puerta|2', 'puertas|2', 'tarima|5', 'parquet|5', 'rodapie|5', 'barnizar|4',
@@ -133,7 +135,7 @@ export const OFICIOS = [
       { esp: 'ecolog', si: ['ecologico', 'ecologica', 'sin quimicos'] },
       { esp: 'profunda', si: ['a fondo', 'profunda', 'mudanza'] },
     ],
-    dice: ['limpiar|5', 'limpieza|5', 'limpie|5', 'limpiadora|8', 'asistenta|7', 'empleada del hogar|8', 'fregar|5',
+    dice: ['limpio|4', 'piso limpio|8', 'dejar el piso limpio|10', 'dejar la casa limpia|10', 'casa limpia|6', 'limpiar|5', 'limpieza|5', 'limpie|5', 'limpiadora|8', 'asistenta|7', 'empleada del hogar|8', 'fregar|5',
       'barrer|5', 'polvo|3', 'sucio|4', 'sucia|4', 'a fondo|2', 'cristales|4', 'despues de una obra|4'] },
   { id: 'plancha', nombre: 'plancha', cat: 'hogar', quien: 'que planche',
     esp: ['plancha'],
@@ -160,9 +162,9 @@ export const OFICIOS = [
       { esp: 'nocturn', si: ['noche', 'noches', 'nocturna', 'madrugada', 'dormir'] },
       { esp: 'post operatorio|postoperatorio', si: ['operacion', 'operado', 'operada', 'hospital', 'cirugia', 'postoperatorio'] },
       { esp: 'discapacidad', si: ['discapacidad', 'silla de ruedas', 'movilidad reducida', 'paralisis'] },
-      { esp: 'mayores|geriatr', si: ['mayor', 'mayores', 'abuela', 'abuelo', 'anciano', 'anciana'], peso: 20 },
+      { esp: 'mayores|geriatr', si: ['mayor', 'mayores', 'abuela', 'abuelo', 'anciano', 'anciana'], peso: 25 },
     ],
-    dice: ['cuidadora|6', 'cuidador|6', 'cuidar a mi madre|8', 'cuidar a mi padre|8', 'cuidar * madre|7', 'cuidar * padre|7',
+    dice: ['cuidi|6', 'cuidar|3', 'la meva mare|6', 'el meu pare|6', 'la meva avia|7', 'el meu avi|7', 'mare|2', 'pare|2', 'cuidadora|6', 'cuidador|6', 'cuidar a mi madre|8', 'cuidar a mi padre|8', 'cuidar * madre|7', 'cuidar * padre|7',
       'cuidar * abuela|8', 'cuidar * abuelo|8', 'abuela|4', 'abuelo|4', 'mayor|3', 'mayores|4', 'anciano|5', 'anciana|5',
       'persona mayor|6', 'acompanar|3', 'acompane|3', 'acompanamiento|4', 'alzheimer|8', 'demencia|8', 'parkinson|4',
       'dependencia|5', 'vive sola|6', 'vive solo|6', 'geriatrico|6', 'geriatrica|6', 'ayuda a domicilio|7',
@@ -170,18 +172,18 @@ export const OFICIOS = [
       'movilidad reducida|7', 'asistente personal|8', 'madre|1', 'padre|1', 'gent gran|7', 'avi|4', 'avia|4'] },
   { id: 'enfermera', nombre: 'enfermera', cat: 'cuidado', quien: 'que sea enfermera',
     esp: ['enfermer'], parecidos: ['cuidadora'],
-    dice: ['enfermera|8', 'enfermero|8', 'inyeccion|7', 'inyecciones|7', 'curas|6', 'cura|3', 'vendaje|6', 'sonda|6',
+    dice: ['curar|5', 'herida|5', 'curar una herida|9', 'ulcera|7', 'escaras|8', 'glucosa|5', 'insulina|7', 'enfermera|8', 'enfermero|8', 'inyeccion|7', 'inyecciones|7', 'curas|6', 'cura|3', 'vendaje|6', 'sonda|6',
       'tomar la tension|6', 'pinchar|4', 'heparina|8', 'puntos|2'] },
   { id: 'canguro', nombre: 'canguro', cat: 'cuidado', quien: 'que cuide de niños',
     esp: ['canguro', 'ni_era'],
-    dice: ['canguro|8', 'cangur|8', 'ninera|8', 'au pair|8', 'cuidar * hijo|7', 'cuidar * hijos|7', 'cuidar * hija|7',
+    dice: ['cuidar * bebe|8', 'cuide * bebe|8', 'nen|3', 'nens|3', 'fill|2', 'filla|2', 'fills|3', 'canguro|8', 'cangur|8', 'ninera|8', 'au pair|8', 'cuidar * hijo|7', 'cuidar * hijos|7', 'cuidar * hija|7',
       'cuidar * ninos|7', 'cuide * ninos|7', 'cuide * hijos|7', 'recoger * cole|7', 'recoger del colegio|7',
       'guarderia|5', 'bebe|2', 'ninos|2', 'nino|2', 'hijos|2', 'peques|2', 'tarde con los ninos|6'] },
 
   // ── Mascotas ───────────────────────────────────────────────────────
   { id: 'paseador', nombre: 'paseador de perros', cat: 'mascotas', quien: 'que pasee perros',
     esp: ['paseador'],
-    dice: ['pasear * perro|8', 'pasear * perra|8', 'paseador|8', 'paseadora|8', 'paseos|3', 'paseo|3', 'pasee|5'] },
+    dice: ['saque * perro|8', 'sacar * perro|8', 'sacar al perro|8', 'bajar al perro|8', 'pasear * perro|8', 'pasear * perra|8', 'paseador|8', 'paseadora|8', 'paseos|3', 'paseo|3', 'pasee|5'] },
   { id: 'cuidador_mascotas', nombre: 'cuidador de mascotas', cat: 'mascotas', quien: 'que cuide mascotas',
     esp: ['felina', 'pet sitter', 'cuidadora de perros', 'cuidador de mascotas'],
     refina: [{ esp: 'felina', si: ['gato', 'gatos', 'gata', 'gatito'] }, { esp: 'perros', si: ['perro', 'perros', 'perra'] }],
@@ -198,8 +200,10 @@ export const OFICIOS = [
     dice: ['banar * perro|8', 'banar|4', 'cortar el pelo * perro|9', 'peluqueria canina|9', 'peluquera canina|9',
       'grooming|9', 'cortar las unas * perro|8', 'deslanar|8'] },
   { id: 'veterinario', nombre: 'veterinario', cat: 'mascotas', quien: 'que sea veterinario',
+    // Los síntomas solo cuentan si habla de un animal: «tengo diarrea» no es para el veterinario.
+    requiere: ['perro', 'perra', 'gato', 'gata', 'perrito', 'gatito', 'cachorro', 'mascota', 'conejo', 'animal', 'hamster', 'pajaro', 'veterinario', 'veterinaria', 'gos', 'gat'],
     esp: ['veterinar'],
-    dice: ['veterinario|8', 'veterinaria|8', 'perro * enfermo|8', 'gato * enfermo|8', 'perra * enferma|8',
+    dice: ['diarrea|4', 'vomitos|4', 'vomitando|4', 'sangra|3', 'herida|3', 'no come|4', 'esta enfermo|4', 'esta enferma|4', 'fiebre|2', 'se rasca|4', 'cojea|4', 'veterinario|8', 'veterinaria|8', 'perro * enfermo|8', 'gato * enfermo|8', 'perra * enferma|8',
       'gata * enferma|8', 'vacuna|4', 'vacunas|4', 'vomita|4', 'cojea|4', 'no come|2', 'pulgas|4', 'garrapata|5'] },
 
   // ── Salud: mente ───────────────────────────────────────────────────
@@ -207,7 +211,7 @@ export const OFICIOS = [
     esp: ['psic_log', 'cognitivo', 'terapeuta de pareja', 'emdr'],
     refina: [
       { esp: 'pareja', si: ['pareja', 'marido', 'mujer', 'novio', 'novia', 'matrimonio'] },
-      { esp: 'infant', si: ['hijo', 'hija', 'nino', 'nina', 'adolescente', 'infantil', 'peque', 'hijos'], peso: 20 },
+      { esp: 'infant', si: ['hijo', 'hija', 'nino', 'nina', 'adolescente', 'infantil', 'peque', 'hijos'], peso: 25 },
       { esp: 'perinatal', si: ['posparto', 'postparto', 'embarazo', 'embarazada', 'parto', 'maternidad'] },
       { esp: 'burnout|laboral', si: ['trabajo', 'quemado', 'quemada', 'burnout', 'jefe'] },
       { esp: 'trauma|emdr', si: ['trauma', 'emdr', 'abuso', 'traumatico'] },
@@ -215,7 +219,7 @@ export const OFICIOS = [
       { esp: 'neuropsicolog', si: ['neuropsicologica', 'neuropsicologo', 'neuropsicologa', 'deterioro'] },
       { esp: 'clinic|cognitiv', si: ['ansiedad', 'depresion', 'panico', 'fobia'], peso: 10 },
     ],
-    dice: ['psicologo|8', 'psicologa|8', 'psicologia|8', 'sicologo|8', 'sicologa|8', 'terapia|3', 'ansiedad|6',
+    dice: ['relacionarme|7', 'timidez|7', 'timido|6', 'timida|6', 'habilidades sociales|8', 'nervioso|4', 'nerviosa|4', 'nervios|4', 'embarazada|3', 'miedo a|3', 'panico a|6', 'adolescente|4', 'no quiere ir al instituto|6', 'no quiere ir al colegio|6', 'conducta|5', 'rabietas|5', 'no levanto cabeza|9', 'perdi a|4', 'sin ganas de nada|8', 'ganas de llorar|8', 'me siento solo|7', 'me siento sola|7', 'lo estoy pasando mal|8', 'psicologo|8', 'psicologa|8', 'psicologia|8', 'sicologo|8', 'sicologa|8', 'terapia|3', 'ansiedad|6',
       'depresion|6', 'estres|4', 'mala racha|6', 'hablar con alguien|6', 'triste|4', 'tristeza|4', 'angustia|5',
       'ataques de panico|8', 'panico|5', 'autoestima|5', 'duelo|5', 'fobia|6', 'trauma|5', 'emdr|8', 'terapia de pareja|8',
       'crisis de pareja|8', 'quemado|3', 'burnout|6', 'posparto|4', 'neuropsicologo|8', 'neuropsicologa|8',
@@ -235,7 +239,7 @@ export const OFICIOS = [
     esp: ['fisio', 'rehabilitaci_n', 'osteop', 'quiromasaj', 'masajista', 'suelo p_lvico'],
     refina: [
       { esp: 'deportiva', si: ['futbol', 'correr', 'deporte', 'esguince', 'gimnasio', 'baloncesto', 'tenis', 'padel'] },
-      { esp: 'pediatrica', si: ['bebe', 'hijo', 'hija', 'nino', 'nina'], peso: 20 },
+      { esp: 'pediatrica', si: ['bebe', 'hijo', 'hija', 'nino', 'nina'], peso: 25 },
       { esp: 'neurologica', si: ['ictus', 'parkinson', 'esclerosis', 'neurologico'] },
       { esp: 'respiratoria', si: ['respirar', 'respiratoria', 'epoc', 'pulmon', 'pulmones', 'mucosidad'] },
       { esp: 'oncologica', si: ['cancer', 'oncologico', 'linfedema', 'mastectomia'] },
@@ -244,7 +248,7 @@ export const OFICIOS = [
       { esp: 'masaj', si: ['masaje', 'masajes', 'relajante', 'contractura', 'masajista'] },
       { esp: 'osteop', si: ['osteopata', 'osteopatia'] },
     ],
-    dice: ['fisio|8', 'fisioterapeuta|8', 'fisioterapia|8', 'espalda|5', 'lumbago|7', 'lumbar|5', 'cervicales|6',
+    dice: ['me duele * cuello|10', 'me duele * espalda|10', 'me duele * hombro|10', 'me duele * rodilla|10', 'me duele * tobillo|10', 'me duele * cadera|10', 'me duele * brazo|10', 'me duele * pierna|10', 'me duele * muneca|10', 'dolor de cuello|9', 'dolor de espalda|9', 'cuello|5', 'perdidas de orina|9', 'di a luz|6', 'dar a luz|6', 'desde el parto|6', 'torcido|4', 'contracturas|6', 'fisio|8', 'fisioterapeuta|8', 'fisioterapia|8', 'espalda|5', 'lumbago|7', 'lumbar|5', 'cervicales|6',
       'contractura|6', 'esguince|6', 'tobillo|4', 'rodilla|4', 'hombro|4', 'me duele|2', 'dolor de|2', 'lesion|4',
       'rehabilitacion|6', 'rehabilitar|6', 'ciatica|7', 'hernia|5', 'tendinitis|7', 'suelo pelvico|9', 'masaje|6',
       'masajes|6', 'masajista|8', 'osteopata|9', 'osteopatia|9', 'quiromasaje|9', 'quiromasajista|9', 'cadera|3',
@@ -254,7 +258,7 @@ export const OFICIOS = [
     dice: ['acupuntura|9', 'medicina china|9', 'agujas|3'] },
   { id: 'medico', nombre: 'médico', cat: 'salud', quien: 'que sea médico',
     esp: ['m_dic_ internista', 'm_dic_ de familia', 'm_dic_ general', 'm_dico a domicilio'],
-    dice: ['medico|7', 'medica|7', 'doctor|6', 'doctora|6', 'medico a domicilio|9', 'medico de cabecera|9',
+    dice: ['mareo|6', 'me mareo|8', 'mareos|6', 'vertigo|6', 'dolor de cabeza|5', 'migrana|6', 'tension baja|6', 'cansancio|3', 'medico|7', 'medica|7', 'doctor|6', 'doctora|6', 'medico a domicilio|9', 'medico de cabecera|9',
       'medico de familia|9', 'consulta medica|8', 'receta|4', 'fiebre|3', 'gripe|4', 'analisis|3', 'chequeo|5',
       'internista|8', 'me encuentro mal|5'] },
   { id: 'pediatra', nombre: 'pediatra', cat: 'salud', quien: 'que sea pediatra',
@@ -266,7 +270,7 @@ export const OFICIOS = [
       'acne|7', 'eccema|7', 'psoriasis|7', 'dermatitis|7', 'granos|4'] },
   { id: 'ginecologo', nombre: 'ginecólogo', cat: 'salud', quien: 'que sea ginecólogo',
     esp: ['ginec'], parecidos: ['medico'],
-    dice: ['ginecologo|10', 'ginecologa|10', 'ginecologia|10', 'regla|4', 'menstruacion|6', 'revision ginecologica|10',
+    dice: ['embarazada|4', 'embarazo|4', 'ginecologo|10', 'ginecologa|10', 'ginecologia|10', 'regla|4', 'menstruacion|6', 'revision ginecologica|10',
       'anticonceptivos|6', 'menopausia|6'] },
   { id: 'cardiologo', nombre: 'cardiólogo', cat: 'salud', quien: 'que sea cardiólogo',
     esp: ['cardi'], parecidos: ['medico'],
@@ -274,33 +278,33 @@ export const OFICIOS = [
       'palpitaciones|7', 'colesterol|4'] },
   { id: 'reumatologo', nombre: 'reumatólogo', cat: 'salud', quien: 'que sea reumatólogo',
     esp: ['reumat'], parecidos: ['medico'],
-    dice: ['reumatologo|10', 'reumatologa|10', 'artritis|8', 'artrosis|7', 'reuma|6', 'fibromialgia|8', 'dolor articular|7'] },
+    dice: ['articulaciones|7', 'duelen las articulaciones|10', 'manos hinchadas|7', 'rigidez|5', 'reumatologo|10', 'reumatologa|10', 'artritis|8', 'artrosis|7', 'reuma|6', 'fibromialgia|8', 'dolor articular|7'] },
   { id: 'nutricionista', nombre: 'nutricionista', cat: 'salud', quien: 'que sea nutricionista',
     esp: ['nutric', 'dietista', 'p_rdida de peso', 'obesidad', 'alimentarios'],
     refina: [
       { esp: 'deportiva', si: ['deporte', 'gimnasio', 'rendimiento', 'deportista', 'musculo'] },
-      { esp: 'pediatrica', si: ['hijo', 'hija', 'nino', 'nina', 'bebe'], peso: 20 },
+      { esp: 'pediatrica', si: ['hijo', 'hija', 'nino', 'nina', 'bebe'], peso: 25 },
       { esp: 'vegan', si: ['vegano', 'vegana', 'vegetariano', 'vegetariana'] },
       { esp: 'oncolog', si: ['cancer', 'quimio', 'quimioterapia'] },
       { esp: 'peso|obesidad', si: ['adelgazar', 'peso', 'kilos', 'obesidad', 'sobrepeso'] },
-      { esp: 'alimentarios', si: ['anorexia', 'bulimia', 'atracones', 'tca'], peso: 40 },
+      { esp: 'alimentarios', si: ['anorexia', 'bulimia', 'atracones', 'tca'], peso: 50 },
     ],
-    dice: ['nutricionista|9', 'dietista|9', 'nutricion|7', 'dieta|5', 'adelgazar|5', 'perder peso|6', 'bajar de peso|6',
+    dice: ['come fatal|7', 'come mal|7', 'comer mejor|6', 'no come verdura|7', 'come poco|5', 'nutricionista|9', 'dietista|9', 'nutricion|7', 'dieta|5', 'adelgazar|5', 'perder peso|6', 'bajar de peso|6',
       'kilos|4', 'obesidad|7', 'sobrepeso|6', 'comer sano|7', 'comer mas sano|7', 'alimentacion|5', 'vegano|4',
       'vegana|4', 'anorexia|9', 'bulimia|9', 'atracones|8', 'trastorno alimentario|9', 'trastornos alimentarios|9'] },
   { id: 'logopeda', nombre: 'logopeda', cat: 'logopedia', quien: 'que sea logopeda',
     esp: ['logoped'],
     refina: [
-      { esp: 'infantil', si: ['hijo', 'hija', 'nino', 'nina', 'peque', 'infantil', 'anos'], peso: 20 },
+      { esp: 'infantil', si: ['hijo', 'hija', 'nino', 'nina', 'peque', 'infantil', 'anos'], peso: 25 },
       { esp: 'voz', si: ['voz', 'afonica', 'afonico', 'afonia', 'ronquera', 'cantante', 'cantar', 'dar clase'] },
       { esp: 'tartamudez', si: ['tartamudea', 'tartamudez', 'tartamudo', 'tartamuda'] },
       { esp: 'tea', si: ['autismo', 'tea', 'autista'] },
       { esp: 'neurolog', si: ['ictus', 'parkinson', 'afasia', 'neurologico'] },
       { esp: 'disfagia', si: ['tragar', 'disfagia', 'atraganta'] },
       { esp: 'biling', si: ['bilingue', 'dos idiomas'] },
-      { esp: 'adultos', si: ['adulto', 'adultos', 'padre', 'madre'], peso: 20 },
+      { esp: 'adultos', si: ['adulto', 'adultos', 'padre', 'madre'], peso: 25 },
     ],
-    dice: ['logopeda|10', 'logopedia|10', 'logopeta|10', 'pronuncia|6', 'pronunciar|6', 'no pronuncia|8', 'la r|4',
+    dice: ['tartamudeo|9', 'tartamudear|9', 'tartamudo|9', 'tartamuda|9', 'atraganta|8', 'se atraganta|9', 'dice * en vez de|8', 'pronuncia mal|9', 'no dice bien|8', 'cambia letras|8', 'cambia las letras|8', 'habla muy poco|8', 'habla poco|7', 'logopeda|10', 'logopedia|10', 'logopeta|10', 'pronuncia|6', 'pronunciar|6', 'no pronuncia|8', 'la r|4',
       'la erre|6', 'habla|3', 'no habla|6', 'lenguaje|5', 'tartamudea|9', 'tartamudez|9', 'afonica|7', 'afonico|7',
       'afonia|7', 'ronquera|6', 'voz|3', 'tragar|6', 'disfagia|9', 'dislalia|9', 'afasia|8', 'retraso del lenguaje|9'] },
   { id: 'terapeuta_ocupacional', nombre: 'terapeuta ocupacional', cat: 'salud', quien: 'que sea terapeuta ocupacional',
@@ -314,7 +318,7 @@ export const OFICIOS = [
       { esp: 'mayores|adaptado', si: ['mayor', 'mayores', 'abuelo', 'abuela', 'anciano', 'jubilado', 'discapacidad'] },
       { esp: 'musculaci', si: ['musculo', 'musculacion', 'masa muscular', 'pesas', 'volumen'] },
       { esp: 'crossfit|funcional', si: ['crossfit', 'funcional'] },
-      { esp: 'domicilio', si: ['casa', 'domicilio'], peso: 20 },
+      { esp: 'domicilio', si: ['casa', 'domicilio'], peso: 25 },
     ],
     dice: ['entrenador personal|10', 'entrenadora personal|10', 'entrenador|8', 'entrenadora|8', 'entrenar|5',
       'entrenamiento|6', 'ponerme en forma|8', 'ponerse en forma|8', 'en forma|5', 'gimnasio|5', 'gym|5', 'ejercicio|4',
@@ -368,11 +372,11 @@ export const OFICIOS = [
   // ── Leyes y papeles ────────────────────────────────────────────────
   { id: 'abogado_familia', nombre: 'abogado de familia', cat: 'legal', quien: 'que sea abogado de familia',
     esp: ['abogad_ de familia'],
-    dice: ['divorcio|9', 'divorciar|9', 'divorciarme|9', 'separacion|6', 'separarme|7', 'custodia|8',
+    dice: ['pension|6', 'pension de mis hijos|10', 'no me pagan la pension|10', 'mis hijos|1', 'divorcio|9', 'divorciar|9', 'divorciarme|9', 'separacion|6', 'separarme|7', 'custodia|8',
       'pension alimenticia|9', 'regimen de visitas|9', 'abogado de familia|10'] },
   { id: 'laboralista', nombre: 'abogado laboralista', cat: 'legal', quien: 'que sea abogado laboralista',
     esp: ['laboralista'],
-    dice: ['despido|9', 'despedido|9', 'despedida|6', 'me han despedido|10', 'finiquito|9', 'laboralista|10', 'ere|6',
+    dice: ['despedir|9', 'baja laboral|6', 'de baja|4', 'la empresa|3', 'mi jefe|3', 'no me pagan el sueldo|9', 'nomina|3', 'despido|9', 'despedido|9', 'despedida|6', 'me han despedido|10', 'finiquito|9', 'laboralista|10', 'ere|6',
       'contrato de trabajo|7', 'horas extra|6', 'acoso laboral|9'] },
   { id: 'extranjeria', nombre: 'abogado de extranjería', cat: 'legal', quien: 'que lleve extranjería',
     esp: ['extranjer'],
@@ -388,7 +392,7 @@ export const OFICIOS = [
     dice: ['herencia|10', 'heredar|10', 'herede|10', 'testamento|9', 'sucesion|8', 'albacea|9'] },
   { id: 'penal', nombre: 'abogado penalista', cat: 'legal', quien: 'que sea abogado penalista',
     esp: ['penal'],
-    dice: ['penal|9', 'penalista|10', 'denuncia|5', 'denunciar|5', 'delito|8', 'detenido|9', 'antecedentes|6', 'juicio|3'] },
+    dice: ['denunciado|8', 'denunciada|8', 'me han denunciado|10', 'me ha denunciado|10', 'estafa|7', 'me han robado|6', 'agresion|7', 'penal|9', 'penalista|10', 'denuncia|5', 'denunciar|5', 'delito|8', 'detenido|9', 'antecedentes|6', 'juicio|3'] },
   { id: 'administrativo', nombre: 'abogado administrativista', cat: 'legal', quien: 'que recurra multas y sanciones',
     esp: ['abogado administrativo'],
     dice: ['multa|9', 'multas|9', 'sancion|8', 'recurso|4', 'recurrir|6', 'ayuntamiento|4', 'administracion|3'] },
@@ -435,7 +439,7 @@ export const OFICIOS = [
     dice: ['redes sociales|9', 'instagram|8', 'community manager|10', 'tiktok|8', 'publicaciones|4', 'redes|4'] },
   { id: 'seo', nombre: 'especialista en SEO y marketing', cat: 'diseno', quien: 'que haga SEO o marketing',
     esp: ['seo', 'marketing'],
-    dice: ['seo|10', 'posicionar|7', 'posicionamiento|8', 'google|4', 'marketing|6', 'anuncios|4', 'publicidad|5',
+    dice: ['salir primero en google|10', 'primero en google|10', 'en google|6', 'aparecer en google|10', 'seo|10', 'posicionar|7', 'posicionamiento|8', 'google|4', 'marketing|6', 'anuncios|4', 'publicidad|5',
       'mas clientes|5', 'salir en google|9', 'posicionar * web|12'] },
   { id: 'copywriter', nombre: 'copywriter', cat: 'diseno', quien: 'que escriba textos',
     esp: ['copywriter'],
@@ -483,7 +487,7 @@ export const OFICIOS = [
     dice: ['interprete|10', 'interpretar|6', 'reunion con|3'] },
   { id: 'guia', nombre: 'guía turístico', cat: 'idiomas', quien: 'que haga de guía',
     esp: ['gu_a tur'],
-    dice: ['guia|6', 'guia turistico|10', 'guia turistica|10', 'visita guiada|10', 'tour|7', 'ensenar la ciudad|9',
+    dice: ['una guia|8', 'un guia|8', 'guia|6', 'guia turistico|10', 'guia turistica|10', 'visita guiada|10', 'tour|7', 'ensenar la ciudad|9',
       'ensenar barcelona|9', 'turismo|5'] },
 ]
 
@@ -494,9 +498,10 @@ export const normalizar = s => String(s || '').toLowerCase().normalize('NFD').re
 
 const escapar = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 function aRegex(frase) {
-  const partes = frase.split(' * ').map(p => p.split(' ').map(escapar).join(' '))
+  // Plural dentro de la frase: «comentarios de texto» vale por «comentario de texto».
+  const partes = frase.split(' * ').map(p => p.split(' ').map(w => escapar(w) + (w.length > 3 ? 's?' : '')).join(' '))
   // Plurales: «altavoz»→«altavoces» ya está; aquí basta s/es al final.
-  const cuerpo = partes.join('(?: [a-z0-9]+){0,3} ')
+  const cuerpo = partes.join('(?: [a-z0-9]+){0,4} ')
   return new RegExp(`(?:^| )${cuerpo}(?:s|es)?(?= |$)`)
 }
 
@@ -506,7 +511,8 @@ const INDICE = OFICIOS.map(o => ({
   dice: o.dice.map(d => { const [f, p] = d.split('|'); return { re: aRegex(f.split(' * ').map(normalizar).join(' * ')), peso: Number(p || 3), f } }),
   // La especialidad de la ficha: los patrones `_` valen por una letra.
   esp: new RegExp(o.esp.map(p => normalizar(p.replace(/_/g, 'QQ')).replace(/qq/g, '.')).map(p => p.split('.').map(escapar).join('.')).join('|')),
-  refina: (o.refina || []).map(r => ({ esp: new RegExp(r.esp), si: r.si.map(s => aRegex(normalizar(s))), peso: r.peso ?? 30 })),
+  requiere: (o.requiere || []).map(r => aRegex(normalizar(r))),
+  refina: (o.refina || []).map(r => ({ esp: new RegExp(r.esp), si: r.si.map(s => aRegex(normalizar(s))), peso: r.peso ?? 40 })),
 }))
 const POR_ID = Object.fromEntries(INDICE.map(x => [x.o.id, x]))
 
@@ -517,10 +523,13 @@ export const oficio = id => POR_ID[id]?.o || null
  * Solo los que se acercan al primero (la mitad de sus puntos o más).
  */
 export function oficiosDe(texto) {
-  const t = normalizar(texto)
-  if (!t) return []
+  // «que hable inglés» es un requisito de la persona (lo mira lo declarado),
+  // no el oficio: «una guía que hable inglés» no pide clases de inglés.
+  const t = normalizar(texto).replace(/\b(que )?(hable|hablen|habla|sepa|sepan) (en )?(ingles|frances|aleman|catalan|castellano|espanol|chino|arabe|italiano|portugues|ruso)\b/g, ' ')
+  if (!t.trim()) return []
   const puntos = []
   for (const x of INDICE) {
+    if (x.requiere.length && !x.requiere.some(r => r.test(t))) continue
     let p = 0
     for (const d of x.dice) if (d.re.test(t)) p += d.peso
     if (p >= 3) puntos.push({ id: x.o.id, puntos: p })

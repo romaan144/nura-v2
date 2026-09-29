@@ -18,6 +18,7 @@
 //
 // Uso: npm run test:busqueda            (resumen y fallos)
 //      npm run test:busqueda -- --todo  (cada frase)
+//      npm run test:busqueda -- --ver "frase"  (quién sale y con cuántos puntos)
 // ═══════════════════════════════════════════════════════════════════════
 import { cpSync, mkdirSync, readdirSync, readFileSync, writeFileSync, rmSync, symlinkSync } from 'fs'
 import { fileURLToPath } from 'url'
@@ -30,9 +31,11 @@ const TODO = process.argv.includes('--todo')
 const stage = '/tmp/nura-busqueda'
 rmSync(stage, { recursive: true, force: true })
 mkdirSync(stage, { recursive: true })
-cpSync(join(root, 'src/utils'), join(stage, 'utils'), { recursive: true })
-cpSync(join(root, 'src/data'), join(stage, 'data'), { recursive: true })
-cpSync(join(root, 'src/config.js'), join(stage, 'config.js'))
+// NURA_SRC: medir otra versión del buscador (por ejemplo, la publicada) con las mismas frases.
+const src = process.env.NURA_SRC || join(root, 'src')
+cpSync(join(src, 'utils'), join(stage, 'utils'), { recursive: true })
+cpSync(join(src, 'data'), join(stage, 'data'), { recursive: true })
+cpSync(join(src, 'config.js'), join(stage, 'config.js'))
 try { symlinkSync(join(root, 'node_modules'), join(stage, 'node_modules'), 'dir') } catch { /* ya existe */ }
 for (const dir of ['utils', 'data']) {
   for (const f of readdirSync(join(stage, dir))) {
@@ -197,6 +200,8 @@ const FRASES = [
   R('depresión posparto', /perinatal/),
   R('tengo un trauma y me han hablado del emdr', /trauma|emdr/),
   R('psiquiatra', /psiquiatr/),
+  // Visto por Codex en la app: salía una médica internista, y luego el psicólogo infantil.
+  R('Busco psicólogo para mí en Barcelona', /^(?!.*infant).*(psicolog|cognitiv)/),
   R('evaluación neuropsicológica', /neuropsicolog/),
   // ── Salud: fisio, cuerpo ──
   R('me duele la espalda', /fisio|osteopat|masaj|quiromasaj/),
@@ -289,10 +294,208 @@ const FRASES = [
   R('logopeta para mi hijo', /logoped/),
 ]
 
+// ── FRASES NUEVAS (2026-09-29) ─────────────────────────────────────────────
+// Escritas DESPUÉS de construir data/oficios.js y sin mirarlo, como las
+// escribiría la gente: largas, con faltas, coloquiales o en catalán. Miden
+// si la comprensión generaliza o solo se sabe las frases de arriba.
+const E = /electrodomest|electronic|informatic|ordenador|movil|sonido/
+const NUEVAS = [
+  R('hola, mi barra de sonido de la tele ha dejado de sonar', E, { falta: true }),
+  R('la play no lee los discos', E, { falta: true }),
+  R('se me ha mojado el portatil y no enciende', /informatic|ordenador/),
+  R('necesito a alguien que me instale el router nuevo que me ha mandado movistar', /wifi|informatic/),
+  R('no me funciona internet en casa', /wifi|informatic/),
+  R('se me ha caido el movil al agua', /movil/),
+  R('mi lavadora hace un ruido muy fuerte al centrifugar', /electrodomest/),
+  R('la nevera hace hielo por dentro y no enfria bien', /electrodomest/),
+  R('el horno no calienta por abajo', /electrodomest/),
+  R('se ha fundido la luz de todo el piso', /electricista/),
+  R('me da calambre la lavadora', /electricista|electrodomest/),
+  R('quiero poner un enchufe nuevo en la terraza', /electricista/),
+  R('el diferencial salta todo el rato', /electricista/),
+  R('la ducha no tiene presion', /fontaner/),
+  R('hay agua en el suelo debajo del fregadero', /fontaner/),
+  R('la cisterna no para de cargar', /fontaner/),
+  R('huele a desague en el baño', /fontaner/),
+  R('tengo una mancha de humedad en el techo del vecino de arriba', /fontaner|albanil|pintor/),
+  R('se me ha roto la llave dentro de la cerradura', /cerraj/),
+  R('quiero cambiar el bombin por seguridad', /cerraj/),
+  R('la caldera pierde presion', /calder|calefacc/),
+  R('en casa hace mucho frio y los radiadores estan tibios', /calder|calefacc/),
+  R('el aire gotea agua dentro de casa', /aire|climatiz/),
+  R('instalar un split en el dormitorio', /aire|climatiz/),
+  R('la persiana del salon se ha caido', /persiana/),
+  R('pintar dos habitaciones de blanco', /pintor/),
+  R('se me ha caido un trozo de techo del baño', /albanil/),
+  R('cambiar los azulejos de la cocina', /albanil/),
+  R('hacer una estanteria de madera a medida para el salon', /carpinter/),
+  R('la puerta del armario se ha descolgado', /carpinter|manitas|montador/),
+  R('montar una cama y un armario de ikea', /montador|montaje|manitas/),
+  R('colgar la tele en la pared', /manitas|montador|electricista/, { alt: E }),
+  R('arreglar el jardin de la casa del pueblo', /jardin|paisaj/),
+  R('regar mis plantas cuando estoy de vacaciones', /jardin|paisaj/),
+  R('alguien que me limpie la casa los lunes', /limpieza/),
+  R('dejar el piso limpio para entregarlo al casero', /limpieza/),
+  R('limpiar las ventanas de mi local', /cristales|oficinas|limpieza/),
+  R('necesito que me hagan la comida para toda la semana', /cociner/),
+  R('mi abuelo tiene demencia y no se puede quedar solo', /alzheimer|mayores|geriatr|domicilio|cuidadora/),
+  R('busco una señora que cuide a mi madre por las mañanas', /mayores|geriatr|domicilio|cuidadora|alzheimer|nocturna/),
+  R('mi madre se ha roto la cadera y necesita ayuda en casa', /post-operatorio|mayores|geriatr|domicilio|cuidadora|rehabilitacion|fisio/),
+  R('alguien que se quede con los niños el sabado por la noche', /canguro|ninera/),
+  R('recoger a mi hija del cole y quedarse hasta que llegue', /canguro|ninera/),
+  R('cuidar a mi bebe de 8 meses', /canguro|ninera/),
+  R('mi perro tiene diarrea desde ayer', /veterinari/),
+  R('mi gato no come nada', /veterinari/),
+  R('mi perro tira mucho de la correa y ladra a otros perros', /adiestr|cachorros/),
+  R('alguien que saque a mi perro a mediodia', /paseador/),
+  R('me voy de viaje y necesito que alguien cuide a mis gatos', /felina|pet sitter|mascotas/),
+  R('llevo meses sin dormir bien y con ataques de ansiedad', /psicolog|cognitivo/),
+  R('mi hijo adolescente no quiere ir al instituto y esta muy raro', /infanto|infantil|psicolog/),
+  R('mi pareja y yo discutimos todo el rato', /pareja/),
+  R('perdi a mi padre hace poco y no levanto cabeza', /psicolog|cognitivo/),
+  R('me duele mucho el cuello de estar con el ordenador', /fisio|osteopat|masaj/),
+  R('me he torcido el tobillo jugando a baloncesto', /fisio/),
+  R('tengo ciatica', /fisio|osteopat/),
+  R('quiero un masaje para las contracturas', /masaj|fisio/),
+  R('tengo perdidas de orina desde que di a luz', /suelo pelvico/),
+  R('mi bebe tiene fiebre y tos', /pediatra/),
+  R('me ha salido un lunar raro en la espalda', /dermatolog/),
+  R('tengo acne y no se me quita', /dermatolog/),
+  R('me duelen las articulaciones de las manos por las mañanas', /reumatolog/),
+  R('quiero comer mas sano pero no se por donde empezar', /nutri|dietista/),
+  R('me sobran 15 kilos', /nutri|dietista|peso|obesidad|entrenador/),
+  R('mi hija de 4 años habla muy poco para su edad', /logoped/),
+  R('mi hijo dice "tasa" en vez de "taza"', /logoped/),
+  R('se me cansa la voz cuando doy clases', /voz|logoped/),
+  R('mi padre tuvo un ictus y le cuesta hablar', /neurologica|adultos|logoped/),
+  R('quiero ganar musculo', /entrenador|musculacion|crossfit/),
+  R('clases de yoga en casa', /yoga/),
+  R('mi hija quiere aprender a nadar este verano', /natacion/),
+  R('quiero correr mi primera media maraton', /running|trail/),
+  R('mi hijo va fatal en mates', /matematicas/),
+  R('necesito aprobar el first de ingles', /ingles/),
+  R('mi hija tiene recuperacion de quimica en septiembre', /fisica|quimica/),
+  R('quiero aprender a tocar el piano de mayor', /piano/),
+  R('preparar el examen de acceso a la universidad', /ebau|selectividad/),
+  R('quiero separarme y tenemos dos hijos', /familia|divorcio/),
+  R('mi empresa no me paga las horas extra', /laboralista/),
+  R('necesito renovar el nie', /extranjeria/),
+  R('el propietario me quiere echar del piso', /arrendamientos/),
+  R('mi madre ha muerto y no se como hacer la herencia', /herencias|sucesiones/),
+  R('me ha llegado una carta de hacienda', /fiscal|gestor|contable/),
+  R('quiero hacerme autonomo', /gestor|fiscal|contable/),
+  R('me han multado con el coche y quiero recurrir', /administrativo/),
+  R('necesito un logo y unas tarjetas para mi peluqueria', /grafic/),
+  R('quiero una web para mi restaurante', /web/),
+  R('fotos profesionales para mi linkedin', /fotograf/),
+  R('editar los videos de mi canal de youtube', /video/),
+  R('que alguien me lleve el instagram del negocio', /community/),
+  R('quiero salir primero en google cuando buscan fisioterapia en gracia', /seo/),
+  R('un dj para la boda de mi hermana', /dj/),
+  R('animacion para el cumple de mi hijo de 6 años', /animador|mago/),
+  R('el coche pierde aceite', /mecanic/),
+  R('el coche no arranca y hace clic clic', /electricidad del automovil|mecanic/),
+  R('traducir mi titulo universitario al ingles para trabajar fuera', /traduct/),
+  R('una guia que hable ingles para unos clientes', /guia|interprete/),
+  R('em cal un electricista', /electricista/),
+  R('tinc una fuita d aigua a la cuina', /fontaner/),
+  R('busco una cangur per als nens', /canguro|ninera/),
+  R('necesito un fontanerro ya', /fontaner/),
+  R('electrisista para cambiar un enchufe', /electricista/),
+  R('sicologo infantil', /infanto|infantil/),
+]
+
+// ── TERCERA TANDA (2026-09-29) ─────────────────────────────────────────────
+// Escrita tras corregir las dos anteriores y medida UNA vez antes de tocar
+// nada: es la cifra honesta de cuánto generaliza. Luego queda como las demás.
+const TERCERA = [
+  R('mi microondas echa chispas', /electrodomest/),
+  R('la tele se apaga sola', E, { falta: true }),
+  R('no me carga el movil, creo que es el conector', /movil/),
+  R('el ordenador se calienta mucho y se apaga', /informatic|ordenador/),
+  R('pasar las fotos del movil al ordenador', /informatic|ordenador|movil/),
+  R('me han hackeado el correo', /informatic|ordenador/),
+  R('poner una lampara en el pasillo', /electricista|manitas/),
+  R('los enchufes de la cocina no funcionan', /electricista/),
+  R('el grifo del lavabo gotea toda la noche', /fontaner/),
+  R('el agua del lavabo no baja', /fontaner/),
+  R('cambiar el termo electrico', /calder|calefacc|fontaner|electrodomest|electricista/),
+  R('hace un ruido raro la caldera', /calder|calefacc/),
+  R('la puerta de casa no abre con la llave', /cerraj/),
+  R('quiero poner una puerta blindada', /cerraj|carpinter/),
+  R('arreglar las grietas de la pared del salon', /albanil|pintor/),
+  R('pintar la fachada de la casa', /pintor/),
+  R('lacar las puertas de casa', /pintor|carpinter/),
+  R('montar el mueble del tv', /montador|montaje|manitas/),
+  R('poner un toldo en el balcon', /persiana/),
+  R('podar un olivo', /jardin|paisaj/),
+  R('limpieza despues de una fiesta en casa', /limpieza/),
+  R('alguien para planchar las camisas de mi marido', /plancha/),
+  R('mi padre no puede ducharse solo', /mayores|geriatr|domicilio|cuidadora|discapacidad/),
+  R('necesito a alguien que duerma con mi abuela', /nocturna|mayores|geriatr|cuidadora/),
+  R('curar una herida de mi madre en casa', /enfermer/),
+  R('una canguro que hable ingles con mis hijos', /canguro|ninera/),
+  R('mi perra esta vomitando', /veterinari/),
+  R('mi cachorro se hace pis en casa', /adiestr|cachorros/),
+  R('cortar las uñas a mi perro', /grooming|peluquera canina|veterinari/),
+  R('tengo panico a volar', /psicolog|cognitivo/),
+  R('me cuesta mucho relacionarme con la gente', /psicolog|cognitivo/),
+  R('mi hijo de 7 años tiene rabietas muy fuertes', /infanto|infantil/),
+  R('estoy embarazada y muy nerviosa', /perinatal|psicolog/),
+  R('tengo lumbago', /fisio|osteopat/),
+  R('rehabilitacion de hombro despues de una luxacion', /fisio|rehabilitacion/),
+  R('me mareo cuando me levanto', /medic/),
+  R('tengo el colesterol alto', /cardiolog|nutri|medic/),
+  R('quiero adelgazar sin pasar hambre', /nutri|dietista|peso|obesidad/),
+  R('dieta para correr una maraton', /nutri|dietista|running/),
+  R('mi hijo come fatal', /nutri|pediatr/),
+  R('mi abuela se atraganta al comer', /disfagia|logoped/),
+  R('tartamudeo cuando estoy nervioso', /tartamudez|logoped/),
+  R('estiramientos para mayores', /mayores|adaptado|fisio|entrenador|yoga|pilates/),
+  R('quiero hacer ejercicio en casa con alguien', /entrenador/),
+  R('mejorar mi tiempo en 10k', /running|trail/),
+  R('clases de refuerzo de matematicas de 2 de la eso', /matematicas/),
+  R('mi hija tiene que aprender a hacer comentarios de texto', /lengua/),
+  R('aprender frances para un viaje', /frances/),
+  R('clases de guitarra electrica', /guitarra/),
+  R('aprender python para analisis de datos', /programacion|python/),
+  R('me quieren despedir estando de baja', /laboralista/),
+  R('no me pagan la pension de mis hijos', /familia|divorcio/),
+  R('mi vecino me ha denunciado', /penal/),
+  R('quiero hacer testamento', /herencias|sucesiones/),
+  R('el inquilino no me paga', /arrendamientos/),
+  R('llevar la contabilidad de mi tienda', /contable|gestor|fiscal/),
+  R('diseñar la carta de mi restaurante', /grafic/),
+  R('necesito una app para reservas de mi gimnasio', /apps|web/),
+  R('fotografo para la comunion de mi hija', /fotograf/),
+  R('hacer un video promocional de mi empresa', /video/),
+  R('quiero automatizar mi negocio con inteligencia artificial', /\bia\b/),
+  R('magia para una cena de empresa', /mago/),
+  R('la moto hace un ruido al frenar', /mecanic/),
+  R('lavar la tapiceria del coche', /limpieza de vehiculos|detailing/),
+  R('interprete de arabe para el medico', /interprete|arabe/),
+  R('traducir una carta del chino', /chino|traduct/),
+  R('em cal algu que cuidi la meva mare', /mayores|geriatr|domicilio|cuidadora|alzheimer/),
+  R('classes de mates per al meu fill', /matematicas/),
+  R('pintor per pintar el pis', /pintor/),
+  R('fisioterapueta para la espalda', /fisio/),
+]
+
+// ── Ver una frase por dentro: npm run test:busqueda -- --ver "frase" ─────
+const iVer = process.argv.indexOf('--ver')
+if (iVer > 0) {
+  const q = process.argv[iVer + 1]
+  const a = await analyzeNeed(q)
+  console.log('oficios:', a.oficios, '· categoría:', a.categoria)
+  for (const h of (await matchHelpers(a, 8)) || []) console.log(`  ${Math.round(h.score)}  ${h.specialty} (${h.category}, ${h.rating})${h.__aproximado ? ' aproximado' : ''}`)
+  process.exit(0)
+}
+
 // ── La medición ──────────────────────────────────────────────────────────
+async function medir(nombre, frases) {
 let bien = 0, bienTop3 = 0
 const fallos = []
-for (const f of FRASES) {
+for (const f of frases) {
   const a = await analyzeNeed(f.q)
   let r = []
   try { r = (await matchHelpers(a, 4)) || [] } catch (e) { r = []; a.__error = e.message }
@@ -310,7 +513,13 @@ for (const f of FRASES) {
   if (TODO) console.log(linea)
 }
 if (!TODO) for (const l of fallos) console.log(l)
-const pct = x => Math.round(100 * x / FRASES.length)
-console.log(`\nPrimera recomendación correcta: ${bien}/${FRASES.length} (${pct(bien)}%) · alguna correcta entre las 3 primeras: ${bienTop3}/${FRASES.length} (${pct(bienTop3)}%)`)
-const minimo = Number(process.env.NURA_BUSQUEDA_MIN || 0)
-if (pct(bien) < minimo) { console.log(`✗ Por debajo del mínimo (${minimo}%)`); process.exit(1) }
+const pct = x => Math.round(100 * x / frases.length)
+console.log(`${nombre}: primera recomendación correcta ${bien}/${frases.length} (${pct(bien)}%) · alguna correcta entre las 3 primeras ${bienTop3}/${frases.length} (${pct(bienTop3)}%)\n`)
+return pct(bien)
+}
+const p1 = await medir('Frases de construcción', FRASES)
+const p2 = await medir('Frases nuevas', NUEVAS)
+const p3 = await medir('Tercera tanda', TERCERA)
+// Mínimos: si una mejora baja de aquí, se ha roto algo que ya funcionaba.
+const MIN1 = Number(process.env.NURA_BUSQUEDA_MIN || 0), MIN2 = Number(process.env.NURA_BUSQUEDA_MIN_NUEVAS || 0)
+if (p1 < MIN1 || p2 < MIN2 || p3 < MIN2) { console.log(`✗ Por debajo del mínimo (${MIN1}% / ${MIN2}%)`); process.exit(1) }

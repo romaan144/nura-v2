@@ -1004,8 +1004,12 @@ export default function Home() {
           registrar('sin_cobertura', { categoria: analysis.categoria })
           setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
             lines: [ciudadBusca && ciudadBusca !== 'Barcelona'
-              ? `Te he entendido: buscas ${queEs} en ${ciudadBusca}. Nüra acaba de empezar y todavía no tengo a nadie allí.`
-              : `Te he entendido: buscas ${queEs}. Ahora mismo no tengo a nadie así cerca de ti.`],
+              // Sin «Te he entendido»: justo antes ya se dice «Entendido».
+              ? `Buscas ${queEs} en ${ciudadBusca}. Nüra acaba de empezar y todavía no tengo a nadie allí.`
+              : analysis.oficioQuien
+                // El oficio entendido, no la categoría: «buscas a alguien que haga mudanzas».
+                ? `Buscas a alguien ${analysis.oficioQuien}. Todavía no tengo a nadie así cerca de ti.`
+                : `Buscas ${queEs}. Ahora mismo no tengo a nadie así cerca de ti.`],
             chips: [`Buscar ${alt.alt}`, 'Ampliar la zona', 'Avísame cuando tengas a alguien'] }])
           // Aqui NO se pregunta si recordar: solo se ven las opciones del
           // ultimo mensaje, y taparia estas.
@@ -1100,7 +1104,12 @@ export default function Home() {
       // En dos lineas puede tener peso propio sin inventar nada.
       // "Creo que ya tengo a la persona" no aportaba nada: el resultado ya
       // esta ahi. Era relleno antes de lo que importa.
-      const resultLine = `**${topFirstName}** es quien mejor encaja.`
+      // NADIE DEL OFICIO: se dice, y se ofrece lo más parecido sin llamarlo
+      // «quien mejor encaja» («reparar altavoces» → técnico de electrodomésticos).
+      const aproximado = top?.__aproximado
+      const resultLine = aproximado
+        ? `Todavía no tengo a nadie ${aproximado.quien}. Lo más parecido es **${topFirstName}**.`
+        : `**${topFirstName}** es quien mejor encaja.`
       const whyLine = `${why.charAt(0).toUpperCase()}${why.slice(1)}${urgentTail}.`
 
 

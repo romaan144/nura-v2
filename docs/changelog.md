@@ -170,6 +170,42 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-16 — La búsqueda entiende el OFICIO, no solo la categoría
+
+- Motivo (Sergio): su hermano buscó «reparar altavoces 2.1» y le salió un
+  fontanero. La búsqueda elegía una categoría amplia («técnico» mezcla
+  fontaneros, cerrajeros, fotógrafos e informáticos) y dentro ganaba el mejor
+  valorado. Además, la base agrupa mal: los 57 logopedas y casi todos los
+  entrenadores están como «salud», así que buscar «logopeda» ni siquiera los
+  pedía; y el filtro por palabras leía una columna inexistente (`speciality`).
+- Nuevo `src/data/oficios.js`: unos 90 oficios, cada uno con cómo se llama
+  en las fichas, cómo lo pide la gente (objetos, síntomas, catalán, faltas) y
+  qué especialidad sube según lo que cuenta («terapia» + «pareja»). Si la
+  frase indica un oficio, se piden a la base las fichas de ese oficio estén
+  en la categoría que estén (`searchPorEspecialidad`), y el oficio pesa más
+  que la valoración.
+- Si no hay nadie del oficio, se dice: «Todavía no tengo a nadie que repare
+  aparatos de sonido o imagen. Lo más parecido es…». Si no hay ni parecido
+  (mudanzas), no se recomienda a nadie.
+- Lo infantil solo sale primero si se habla de un niño («psicólogo para mí»
+  ya no da el infantil). «Que hable inglés» es un requisito, no clases de
+  inglés. Los síntomas del veterinario solo cuentan si se nombra un animal.
+- Medido con `npm run test:busqueda` (nuevo): el buscador real contra una
+  copia de los 1008 perfiles (solo oficio, categoría, etiquetas, valoración
+  y zona). Primera recomendación correcta, antes → ahora: frases de
+  construcción 67% → 100% (185); frases nuevas 50% → 100% (103); tercera
+  tanda, escrita aparte y medida una vez antes de corregir: 54% → 83%, y
+  100% tras corregir sus lagunas. La cifra honesta para frases nunca vistas
+  es la del 83%. Mínimo exigido desde ahora: 95%.
+- `test:matching` (255) sigue verde; su comprobación de compatibilidad
+  acepta ya un resultado del oficio pedido aunque la base lo guarde en otra
+  categoría, y «mudarme» espera cero resultados.
+- Presentación de Inicio de Codex intacta: solo cambian dos textos del
+  mensaje de resultados.
+- Fallos previos, no de este cambio (idénticos en `main`): `recorrido` y
+  `recorrido:real` esperan el acceso con teléfono y el contacto antiguos, y
+  `medir a11y` marca 2 contrastes en /profile.
+
 ## 2026-10-15 — El servidor lee la ciudad entre comas de la zona
 
 - Los avisos «Te aviso si aparece» reconocen ya «Russafa, Valencia» o
