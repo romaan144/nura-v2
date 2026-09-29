@@ -289,15 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · Un chat leído deja de salir como no leído
+### Última tarea integrada · Un chat leído deja de salir como no leído
 
-**Responsable:** Claude. **Rama:** `claude/funny-clarke-e6m64r`, desde `main` (e45f5d5).
-**Motivo (Sergio):** entras en un chat resaltado, lo lees, sales, y sigue sin leer. Dos causas: los chats de ejemplo llevan el «sin leer» fijo en el código (y la barra suma un «1» fijo en la demo), y las respuestas que llegan mientras estás dentro del chat se contaban como no leídas.
-**Archivos previstos:** nuevo `src/utils/demoLeidos.js`, `src/pages/Chats.jsx`, `src/components/BottomNav.jsx` (solo el número), `src/context/UserContext.jsx` (`addChat` y `markRead`), `scripts/recorrido.mjs`, documentación.
-
-### Última tarea integrada · Sin asteriscos ni rayas a la vista, y la foto en los chats nuevos
-
-Integrada el 2026-09-29 (ver `docs/changelog.md`, 2026-10-28). Tocó los nuevos `src/utils/texto.js` y `src/components/ConNegritas.jsx`, `src/pages/Chat.jsx`, `src/pages/Chats.jsx`, `src/context/UserContext.jsx` (`addChat` guarda la foto), `src/utils/supabase.js` y `src/utils/matching.js` (sin rayas al mostrar), textos de `src/data/` (historias, perfiles, empresas), `src/pages/Explore.jsx` (un filtro), `src/utils/titulo.js` y `scripts/recorrido.mjs`. Sin cambios en la base de datos. Esos archivos quedan libres. **Regla de redacción:** textos de Nüra con negrita como `**nombre**` se pintan con `ConNegritas`; nada de rayas largas como separador (usar « · »).
+Integrada el 2026-09-29 (ver `docs/changelog.md`, 2026-10-29). Tocó el nuevo `src/utils/demoLeidos.js`, `src/pages/Chats.jsx`, `src/components/BottomNav.jsx` (solo el número), `src/context/UserContext.jsx` (`addChat`, `markRead`) y `scripts/recorrido.mjs`. Nada visual. Esos archivos quedan libres.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 

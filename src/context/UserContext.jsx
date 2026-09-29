@@ -181,7 +181,10 @@ export function UserProvider({ children }) {
   // iniciales en vez de la cara que se ve en el chat.
   function addChat(helperId, helperName, helperColor, helperAvatar, lastMsg, deQuien = 'helper', avatarUrl) {
     const existing = (chats||[]).find(c => c.helperId === helperId)
-    const suma = deQuien === 'user' ? 0 : 1
+    // Lo que llega mientras ese chat está abierto ya se está leyendo: no
+    // cuenta como «sin leer» (antes, al salir, el chat seguía resaltado).
+    const abierto = typeof window !== 'undefined' && window.location.pathname === `/chat/${helperId}`
+    const suma = deQuien === 'user' || abierto ? 0 : 1
     let updated
     if (existing) {
       updated = (chats||[]).map(c => c.helperId === helperId
@@ -207,10 +210,14 @@ export function UserProvider({ children }) {
     } catch {}
   }
 
+  // Sobre el estado más reciente, no sobre el de cuando se creó la función:
+  // así no pisa un mensaje que acabe de entrar.
   function markRead(helperId) {
-    const updated = (chats||[]).map(c => c.helperId === helperId ? { ...c, unread: 0 } : c)
-    setChats(updated)
-    save('nura_chats', updated)
+    setChats(prev => {
+      const updated = (prev||[]).map(c => String(c.helperId) === String(helperId) ? { ...c, unread: 0 } : c)
+      save('nura_chats', updated)
+      return updated
+    })
   }
 
   function addRating(helperId, rating, comment) {

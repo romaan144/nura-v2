@@ -5,6 +5,7 @@ import { DEMO_MODE } from '../config'
 import { useSinContestar } from '../utils/sinContestar'
 import { useRespuestasNuevas } from '../utils/respuestasNuevas'
 import styles from './BottomNav.module.css'
+import { demoLeidos, DEMO_SIN_LEER } from '../utils/demoLeidos'
 
 const TABS = [
   { path: '/',        icon: Search,        label: 'Buscar'     },
@@ -36,7 +37,9 @@ export default function BottomNav() {
   const sinContestar = useSinContestar(user)
   // Y a quien busca, las respuestas de profesionales que aun no ha visto.
   const { total: respuestas } = useRespuestasNuevas()
-  const effectiveUnread = (DEMO_MODE && !(chats?.length > 0) ? totalUnreadChats + 1 : totalUnreadChats) + sinContestar + respuestas
+  // Y solo mientras no se haya abierto (utils/demoLeidos.js).
+  const elenaSinLeer = DEMO_MODE && !(chats?.length > 0) && !demoLeidos().has(DEMO_SIN_LEER)
+  const effectiveUnread = totalUnreadChats + (elenaSinLeer ? 1 : 0) + sinContestar + respuestas
 
   if (HIDE_ON.some(p => location.pathname.startsWith(p))) return null
 
