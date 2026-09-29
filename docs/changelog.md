@@ -170,6 +170,14 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-20 — Qué oficios faltan y dónde
+
+- Motivo: `sin_cobertura` solo decía la categoría («técnico»), y eso no dice a quién fichar.
+- Ahora las búsquedas y las búsquedas sin nadie llevan también el OFICIO entendido (identificador del mapa, como `electronica`) y la ciudad. También cuenta como demanda sin cubrir cuando solo había algo parecido («Todavía no tengo a nadie que…»). Una búsqueda cuenta una sola vez.
+- Nunca la frase: el servidor (`helpers-write` v25) solo acepta un identificador y un nombre de ciudad corto, y la tabla lo exige también con restricciones.
+- Para el fundador: vista `demanda_sin_cubrir` en Supabase, cerrada al público.
+- `recorrido:real` comprueba que la búsqueda se cuenta con su oficio y que ningún evento lleva la frase.
+
 ## 2026-10-19 — Las pruebas de recorrido completo, al día (y un recordatorio que se escondía)
 
 - `recorrido` y `recorrido:real` fallaban siempre aunque la app funcionara: buscaban botones por su texto visible («Escribir a…» es hoy un icono con nombre accesible), campos antiguos del acceso y la hoja de cita de antes. Ahora miran también el nombre accesible y los campos actuales. Las dos pasan enteras.

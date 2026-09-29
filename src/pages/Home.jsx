@@ -16,7 +16,7 @@ import HelperCarousel from '../components/HelperCarousel'
 import RegisterGate from '../components/RegisterGate'
 import { haptic } from '../utils/haptic'
 import { scheduleLocalNotification, notifySearchAbandoned } from '../utils/notifications'
-import { registrar } from '../utils/analitica'
+import { registrar, demandaDe } from '../utils/analitica'
 import AlertaSheet from '../components/AlertaSheet'
 import { useSinContestar } from '../utils/sinContestar'
 import { useRespuestasNuevas } from '../utils/respuestasNuevas'
@@ -1001,7 +1001,7 @@ export default function Home() {
           const ciudadBusca = analysis.ciudad || analysis.ciudadElegida || null
           sinCoberturaRef.current = { categoria: analysis.categoria, que: CAT_HUMANA[analysis.categoria] || queEs, zona: analysis.zona || null, ciudad: ciudadBusca }
           registrarDemanda?.({ categoria: analysis.categoria, fecha: Date.now() })
-          registrar('sin_cobertura', { categoria: analysis.categoria })
+          registrar('sin_cobertura', { categoria: analysis.categoria, ...demandaDe(analysis) })
           setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
             lines: [ciudadBusca && ciudadBusca !== 'Barcelona'
               // Sin «Te he entendido»: justo antes ya se dice «Entendido».
@@ -1038,7 +1038,10 @@ export default function Home() {
       window.__nuraLastQuery = msg
       try { sessionStorage.setItem('nura_last_query', msg) } catch {}
       todosRef.current = matches
-      registrar('busqueda', { categoria: analysis?.categoria || 'otro', resultados: matches.length })
+      registrar('busqueda', { categoria: analysis?.categoria || 'otro', resultados: matches.length, ...demandaDe(analysis) })
+      // Solo algo parecido («Todavía no tengo a nadie que…»): también es
+      // demanda sin cubrir, con cuántos parecidos se le ofrecieron.
+      if (matches[0]?.__aproximado) registrar('sin_cobertura', { categoria: analysis.categoria, resultados: matches.length, ...demandaDe(analysis) })
       // Una por profesional recomendado: es lo que cuenta su Pulso («tu ficha
       // salio X veces»). Solo quien salio y la categoria, nunca la frase.
       matches.slice(0, 6).forEach(h => registrar('recomendacion_vista', {
@@ -1137,7 +1140,8 @@ export default function Home() {
       if (ciudadSuya && analysis?.categoria && analysis.categoria !== 'otro' && !hayEnLaCiudad(matches, ciudadSuya)) {
         const queEs = CAT_HUMANA[analysis.categoria] || 'eso'
         sinCoberturaRef.current = { categoria: analysis.categoria, que: queEs, zona: null, ciudad: ciudadSuya }
-        registrar('sin_cobertura', { categoria: analysis.categoria })
+        // Una búsqueda cuenta una vez: si ya se contó como «solo parecido», no se repite.
+        if (!matches[0]?.__aproximado) registrar('sin_cobertura', { categoria: analysis.categoria, ...demandaDe(analysis) })
         setMessages(prev => [...prev, { id: Date.now() + 3, from: 'nura',
           lines: [`En ${ciudadSuya} todavía no tengo a nadie de ${queEs.toLowerCase()}: los que te enseño trabajan en otra ciudad. Nüra acaba de empezar allí.`],
           chips: ['Avísame cuando tengas a alguien'] }])

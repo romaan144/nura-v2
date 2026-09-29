@@ -289,15 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · Qué oficios faltan y dónde (búsquedas sin nadie)
+### Última tarea integrada · Qué oficios faltan y dónde (búsquedas sin nadie)
 
-**Responsable:** Claude. **Rama:** `claude/funny-clarke-e6m64r`, desde `main` (bd6346c).
-**Motivo:** el evento `sin_cobertura` solo guarda la categoría («técnico»), que no dice a quién fichar. Se añade el OFICIO entendido (un identificador del mapa, como `electronica`) y la ciudad; también cuando solo había algo parecido. Nunca la frase.
-**Archivos previstos:** migración (columnas `oficio` y `ciudad` en `eventos` y una vista para el fundador), `supabase/functions/helpers-write/index.ts` (op `evento`, lista blanca), `src/utils/analitica.js`, `src/pages/Home.jsx` (solo los datos de las llamadas a `registrar`), documentación.
-
-### Última tarea integrada · Poner al día las pruebas de recorrido completo
-
-Integrada el 2026-09-29 (ver `docs/changelog.md`, 2026-10-19). Tocó `scripts/recorrido.mjs`, `scripts/recorrido-real.mjs` y `src/pages/Home.jsx` (solo la condición que muestra el recordatorio de cita; la presentación, intacta). Esos archivos quedan libres. `recorrido` y `recorrido:real` vuelven a pasar enteros: si fallan, es que algo se ha roto.
+Integrada el 2026-09-29 (ver `docs/changelog.md`, 2026-10-20). Tocó la migración `20261019000000_demanda_por_oficio.sql` (aplicada: columnas `oficio` y `ciudad` en `eventos`, vista `demanda_sin_cubrir`), `supabase/functions/helpers-write/index.ts` (desplegada, versión 25), `src/utils/analitica.js` (`demandaDe`), `src/pages/Home.jsx` (solo los datos de las llamadas a `registrar`), `scripts/recorrido-real.mjs` y documentación. Esos archivos quedan libres.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
