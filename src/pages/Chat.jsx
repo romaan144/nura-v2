@@ -6,6 +6,7 @@ import { getFirstName } from '../utils/name'
 import { useTitulo } from '../utils/titulo'
 import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react'
 import { attachChatScroll } from '../utils/chatScroll'
+import { sinArrastreDePagina } from '../utils/sinArrastre'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Send, Mic, MicOff } from 'lucide-react'
 import { HELPERS_DEMO as HELPERS } from '../data/helpers'
@@ -265,6 +266,12 @@ export default function Chat() {
   const [msgCount, setMsgCount] = useState(() => Math.floor((getChatHistory(id)?.filter(m => m.from === 'helper')?.length || 0)))
   const [listening, setListening] = useState(false)
   const scrollController = useRef(null)
+  // El dedo mueve los mensajes, nunca la web entera (utils/sinArrastre.js).
+  const quitarArrastre = useRef(null)
+  const pageRef = useCallback(node => {
+    quitarArrastre.current?.()
+    quitarArrastre.current = node ? sinArrastreDePagina(node) : null
+  }, [])
   const messagesRef = useCallback(node => {
     scrollController.current?.destroy()
     scrollController.current = node ? attachChatScroll(node) : null
@@ -536,7 +543,7 @@ export default function Chat() {
   })()
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} ref={pageRef}>
 
       {/* Controles flotantes sobre el historial de pantalla completa. */}
       <header className={styles.header}>

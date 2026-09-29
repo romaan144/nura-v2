@@ -182,6 +182,31 @@ console.log('\n── El chat, desde una ficha ──')
     return m ? m.scrollHeight - m.clientHeight - m.scrollTop : null
   })
   paso('abre en el último mensaje, no arriba del todo', fin !== null && fin < 50, fin === null ? 'sin historial' : `a ${Math.round(fin)} px del final`)
+
+  // EL DEDO NO ARRASTRA LA WEB. En un chat nuevo no hay nada que desplazar y
+  // Safari movía la página entera (Sergio, iPhone, 2026-09-29). Con el dedo
+  // simulado: en el chat nuevo se anula; con historial, el historial se mueve.
+  const cdp = await p.target().createCDPSession()
+  const deslizar = async (y1, y2) => {
+    await p.evaluate(() => { window.__anulado = null; window.addEventListener('touchmove', e => { window.__anulado = e.defaultPrevented }, { once: true }) })
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 200, y: y1 }] })
+    for (let k = 1; k <= 8; k++) { await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: 200, y: y1 + (y2 - y1) * k / 8 }] }); await espera(16) }
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
+    await espera(500)
+    return p.evaluate(() => window.__anulado)
+  }
+  const antes = await p.evaluate(() => document.querySelector('[data-scroll-propio]')?.scrollTop)
+  const anuladoConHistorial = await deslizar(300, 560)
+  const despues = await p.evaluate(() => document.querySelector('[data-scroll-propio]')?.scrollTop)
+  paso('con historial, el dedo desplaza los mensajes', anuladoConHistorial === false && despues < antes, `${Math.round(antes)} → ${Math.round(despues)}`)
+  // El mismo profesional, ahora sin mensajes: un chat nuevo.
+  await p.evaluate(() => { localStorage.removeItem('nura_chat_histories'); localStorage.removeItem('nura_chats') })
+  await p.goto(BASE + '/chat/2001', { waitUntil: 'networkidle0' })
+  await espera(2000)
+  paso('en un chat nuevo, el dedo no arrastra la web entera', await deslizar(500, 300) === true && await deslizar(60, 20) === true)
+  await tocar(p, /disponibilidad esta semana/)
+  await espera(2500)
+  paso('y los toques siguen funcionando (pregunta rápida enviada)', /disponibilidad esta semana/.test(await texto(p)))
   await p.close()
 }
 

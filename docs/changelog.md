@@ -170,6 +170,14 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-26 — En el chat, el dedo ya no arrastra la web entera
+
+- Sergio (iPhone): en un chat nuevo, al deslizar el dedo «se desplaza todo, como toda la web». El arreglo del 2026-10-24 (el historial que volvía arriba) era real, pero no era esto.
+- Causa: un chat nuevo no tiene nada que desplazar, y Safari pasa el gesto a la página entera. Con historial no pasaba porque el historial se quedaba el gesto. Por eso parecía depender de entrar desde la ficha o desde Chats: desde Chats siempre se abren chats con mensajes.
+- Arreglo: `utils/sinArrastre.js`. Dentro del chat, un deslizamiento vertical solo se permite si empieza sobre algo que de verdad puede desplazarse en esa dirección; si no, se anula. Los toques, los gestos horizontales y el zoom con dos dedos no se tocan. Nada visual.
+- `npm run recorrido` lo comprueba con el dedo simulado: en un chat nuevo el gesto se anula (en los mensajes y en la cabecera), con historial los mensajes se desplazan, y una pregunta rápida se sigue enviando al tocarla.
+- Lección: sin iPhone aquí, preguntar qué se ve exactamente antes de arreglar a ciegas.
+
 ## 2026-10-25 — Avatares nuevos y fotos siempre redondas
 
 - Sergio elige, entre seis muestras, el estilo «micah» (ilustración sencilla sobre lila suave) para quien no tiene foto. Mismas semillas: cada persona conserva su avatar, con el dibujo nuevo. Las fotos reales no cambian.
