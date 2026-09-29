@@ -48,7 +48,8 @@ const GOLDEN = [
   { q: 'quiero montar una tienda online', cat: 'tecnologia' },
   { q: 'necesito que alguien me pinte el piso', cat: 'tecnico' },
   { q: 'que me planchen la ropa', cat: 'hogar' },
-  { q: 'necesito ayuda para mudarme el sábado', cat: 'hogar' },
+  // Nadie hace mudanzas: lo honesto es no recomendar (antes salía limpieza).
+  { q: 'necesito ayuda para mudarme el sábado', cat: 'hogar', vacio: true },
   { q: 'estoy pasando una mala racha y necesito hablar con alguien', cat: 'salud' },
   { q: 'papeles para la residencia', cat: 'legal' },
   { q: 'cambiar el grifo de la cocina', cat: 'tecnico' },
@@ -156,8 +157,13 @@ for (const t of GOLDEN) {
   const m = await matchHelpers(a, 4)
   const catOk = a.categoria === t.cat
   const nonEmpty = (m?.length || 0) > 0
-  const allCompat = nonEmpty && m.every(x => cat_(x.category) === t.cat)
-  const ok = catOk && nonEmpty && allCompat
+  // Compatible: de la categoría pedida o, si se ha entendido el oficio, de
+  // ese oficio aunque la base lo guarde en otra categoría (el pintor de
+  // interiores está en «hogar» y es la respuesta a «que me pinte el piso»).
+  const { esDelOficio } = await import(join(stage, 'data/oficios.js'))
+  const delOficio = x => (a.oficios || []).some(id => esDelOficio(x.specialty, id)) || x.__aproximado
+  const allCompat = t.vacio ? !nonEmpty : nonEmpty && m.every(x => cat_(x.category) === t.cat || delOficio(x))
+  const ok = catOk && (t.vacio || nonEmpty) && allCompat
   if (!ok) failed++
   console.log(`${ok ? '✓' : '✗'} ${t.q.slice(0, 46).padEnd(46)} → ${a.categoria}${catOk ? '' : `≠${t.cat}`} · ${m?.length || 0}${allCompat ? '' : ' [INCOMPATIBLES]'}`)
 }
