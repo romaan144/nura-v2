@@ -8,6 +8,8 @@ import { DEMO_MODE } from '../config'
 import { altaProfesional } from '../utils/escrituras'
 import ConfirmarDeclarado from '../components/ConfirmarDeclarado'
 import { ordenarPerfil } from '../utils/declarado'
+import { valorarOficio } from '../utils/demanda'
+import ElegirOficio from '../components/ElegirOficio'
 import styles from './Home.module.css'
 
 
@@ -92,6 +94,10 @@ export default function RegisterHelper() {
   // le pregunta la ciudad: sin ella no le encuentra quien busca en Madrid.
   const pidiendoCiudad = useRef(false)
   const ciudadInsistida = useRef(false)
+  // Su profesión aún no existe en Nüra y nadie la busca: oficios que sí
+  // existen para elegir (o quedarse con la suya). Se ofrece una sola vez.
+  const [eleccion, setEleccion] = useState(null)
+  const oficioValorado = useRef(false)
   // Lo que la IA ha ordenado de sus respuestas, esperando su «es correcto».
   const [propuesta, setPropuesta] = useState(null)
   const [topH, setTopH]           = useState(80)
@@ -116,10 +122,69 @@ export default function RegisterHelper() {
     if (!done) inputRef.current?.focus({ preventScroll: true })
   }, [messages, typing])
 
+  // Tras la especialidad: la pregunta siguiente, con lo que haya que decirle antes.
+  function seguirTrasEspecialidad(newAnswers, avisos = []) {
+    const next = QUESTIONS.findIndex(x => x.id === 'specialty') + 1
+    setTyping(true)
+    setTimeout(() => {
+      setTyping(false)
+      setMessages(prev => [...prev,
+        ...avisos.map((text, i) => ({ id: Date.now() + i, from: 'nura', text })),
+        { id: Date.now() + 9, from: 'nura', text: QUESTIONS[next].text.replace('{name}', newAnswers.name || '') }])
+      setQIdx(next)
+    }, 800)
+  }
+
+  // ── ¿ALGUIEN BUSCA LO QUE HACES? ──
+  // Si la buscaron sin encontrar a nadie, se le dice: le estaban esperando.
+  // Si no existe en Nüra y nadie la ha buscado, se le recomienda un oficio
+  // que sí exista (decisión del fundador); puede quedarse con el suyo.
+  // Si no se sabe (sin conexión), no se dice nada.
+  function valorarEspecialidad(val, newAnswers) {
+    oficioValorado.current = true
+    setTyping(true)
+    const categoriaDe = async texto => {
+      const { analyzeNeed, categoriasEnBD } = await import('../utils/matching')
+      const c = (await analyzeNeed(texto))?.categoria
+      return c && c !== 'otro' ? categoriasEnBD(c) : null
+    }
+    const tope = new Promise(r => setTimeout(() => r(null), 6000))
+    Promise.race([valorarOficio(val, { categoriaDe }).catch(() => null), tope]).then(v => {
+      const nombre = v?.oficio?.nombre || null
+      const personas = n => n === 1 ? 'una persona buscó' : `${n} personas buscaron`
+      if (v?.sinNadie > 0) {
+        return seguirTrasEspecialidad(newAnswers, [`Buena noticia: en el último mes, ${personas(v.sinNadie)} ${nombre || 'lo que haces'} en Nüra y no ${v.sinNadie === 1 ? 'encontró' : 'encontraron'} a nadie. Te estaban esperando.`])
+      }
+      if (v?.busquedas > 0) {
+        return seguirTrasEspecialidad(newAnswers, [`En el último mes, ${personas(v.busquedas)} ${nombre || 'lo que haces'} en Nüra.`])
+      }
+      if (v?.existe === false) {
+        setTyping(false)
+        const cual = nombre || `«${val}»`
+        setMessages(prev => [...prev, { id: Date.now(), from: 'nura', text: v.sugerencias.length
+          ? `Todavía nadie ofrece ${cual} en Nüra y nadie lo ha buscado. Si tu trabajo encaja en una de estas, te encontrarán antes:`
+          : `Todavía no conozco ${cual} en Nüra y nadie lo ha buscado. Si puedes, escríbelo como lo buscaría la gente (por ejemplo: «electricista» o «profesora de inglés»).` }])
+        setEleccion({ opciones: v.sugerencias, original: val, answers: newAnswers })
+        return
+      }
+      seguirTrasEspecialidad(newAnswers)
+    })
+  }
+
+  function elegirOficio(elegido) {
+    const a = { ...eleccion.answers, specialty: elegido }
+    setEleccion(null)
+    setAnswers(a)
+    setMessages(prev => [...prev, { id: Date.now(), from: 'user', text: elegido }])
+    seguirTrasEspecialidad(a)
+  }
+
   function sendMessage() {
     let val = input.trim()
     if (!val || typing) return
     setInput('')
+    // Con la recomendación abierta, escribir es dar otra especialidad.
+    if (eleccion) setEleccion(null)
     const q = QUESTIONS[qIdx]
     if (pidiendoCiudad.current) {
       const ciudad = ciudadDeRespuesta(val)
@@ -164,6 +229,11 @@ export default function RegisterHelper() {
     const newAnswers = { ...answers, [q.id]: val }
     setAnswers(newAnswers)
     setMessages(prev => [...prev, { id: Date.now(), from: 'user', text: val }])
+    if (q.id === 'specialty') {
+      if (!oficioValorado.current) valorarEspecialidad(val, newAnswers)
+      else seguirTrasEspecialidad(newAnswers)
+      return
+    }
     if (q.id === 'zone' && faltaCiudad(val)) {
       pidiendoCiudad.current = true
       setTyping(true)
@@ -326,6 +396,12 @@ export default function RegisterHelper() {
                 <div className={styles.typingDots}><span /><span /><span /></div>
               </div>
             </div>
+          </div>
+        )}
+
+        {eleccion && (
+          <div style={{ marginTop: 'var(--chat-gap)' }}>
+            <ElegirOficio opciones={eleccion.opciones} original={eleccion.original} onElegir={elegirOficio} />
           </div>
         )}
 

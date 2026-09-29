@@ -660,6 +660,23 @@ Deno.serve(async (req: Request) => {
     return json({ ok: true }, 200, cors)
   }
 
+  // ── ¿ALGUIEN BUSCA ESTE OFICIO? (al darse de alta) ──
+  // Solo dos cifras del último mes para UN oficio del mapa: cuántas
+  // búsquedas y cuántas sin nadie (o solo algo parecido). Ni frases, ni
+  // ciudades, ni personas. El oficio es un identificador, no texto libre.
+  if (op === 'demanda-oficio') {
+    const oficio = String(cuerpo.oficio ?? '')
+    if (!/^[a-z0-9_]{1,40}$/.test(oficio)) return json({ error: 'oficio no valido' }, 400, cors)
+    const desde = new Date(Date.now() - 30 * 864e5).toISOString()
+    const contar = async (tipo: string) => {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/eventos?tipo=eq.${tipo}&oficio=eq.${oficio}&fecha=gt.${desde}&select=id&limit=5000`, { headers: rest })
+      return r.ok ? (await r.json()).length : null
+    }
+    const [busquedas, sinNadie] = await Promise.all([contar('busqueda'), contar('sin_cobertura')])
+    if (busquedas === null || sinNadie === null) return json({ error: 'lectura rechazada' }, 502, cors)
+    return json({ ok: true, busquedas, sinNadie }, 200, cors)
+  }
+
   // ── el aviso a un profesional ──
   // El `contacto` NO viaja al navegador (ver COLUMNAS_OCULTAS): un panel
   // dentro de la app no puede verlo, y esa restriccion es correcta. Asi que

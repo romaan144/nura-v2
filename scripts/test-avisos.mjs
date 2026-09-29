@@ -595,6 +595,20 @@ console.log('\n── El Pulso: cifras de verdad, solo de la ficha propia ──
   ok(p?.recibidos === 2 && p?.respondidos === 1, 'mensajes de esta semana: recibidos y contestados')
   ok(!JSON.stringify(r.datos).includes('mensaje'), 'el Pulso no devuelve ningún mensaje ni frase de nadie')
 
+  // ¿Alguien busca este oficio? (al darse de alta): solo dos cifras del mes.
+  db.eventos.push(
+    { id: 20, tipo: 'busqueda', oficio: 'electronica', fecha: hoy },
+    { id: 21, tipo: 'busqueda', oficio: 'electronica', fecha: hoy },
+    { id: 22, tipo: 'sin_cobertura', oficio: 'electronica', fecha: hoy },
+    { id: 23, tipo: 'busqueda', oficio: 'electronica', fecha: viejo },
+    { id: 24, tipo: 'busqueda', oficio: 'fontanero', fecha: hoy },
+  )
+  r = await llamarG(funcion, { op: 'demanda-oficio', oficio: 'electronica' })
+  ok(r.estado === 200 && r.datos?.busquedas === 2 && r.datos?.sinNadie === 1, `demanda de un oficio: búsquedas y sin nadie del último mes (${r.datos?.busquedas}, ${r.datos?.sinNadie})`)
+  ok(Object.keys(r.datos || {}).sort().join() === 'busquedas,ok,sinNadie', 'y nada más que esas dos cifras')
+  r = await llamarG(funcion, { op: 'demanda-oficio', oficio: 'reparar mis altavoces' })
+  ok(r.estado === 400, 'un texto libre no vale como oficio → 400')
+
   // La bandeja: quien le ha escrito, solo con su sesión y solo lo suyo
   db.avisos.push(
     { id: 80, helper_id: '777', mensaje: 'Para la 777 (ficticio)', token: 't'.repeat(32), lectura_hash: 'h80', fecha: hoy, respuesta: null, cita_fecha: '2030-01-02', cita_hora: '10:00', cita_estado: 'propuesta' },

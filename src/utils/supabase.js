@@ -322,6 +322,17 @@ export async function getHelperById(id) {
   return data?.[0] ? normalize(data[0]) : null
 }
 
+// Las especialidades que existen, con su categoría (una fila por ficha): para
+// saber, al darse de alta, si un oficio ya está en Nüra. Nada más que eso.
+export async function especialidadesExistentes() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/helpers?select=specialty,category&limit=5000`, { headers, signal: AbortSignal.timeout(4000) })
+    if (!res.ok) return null
+    const data = await res.json()
+    return Array.isArray(data) ? data.filter(f => f?.specialty) : null
+  } catch { return null }
+}
+
 export async function getAllHelpers() {
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/helpers?select=${columnasHelpers()}&limit=1000&order=rating.desc`, { headers, signal: AbortSignal.timeout(2500) })

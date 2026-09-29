@@ -38,7 +38,7 @@ actualizar por eso mismo.
 
 ### En producción (comprobado)
 
-- **Función `helpers-write` versión 26** (2026-09-29; la 25 añade oficio y ciudad a los eventos; la 26 corrige el Pulso), 27 operaciones · avisos por correo automáticos
+- **Función `helpers-write` versión 27** (2026-09-29; la 25 añade oficio y ciudad a los eventos; la 26 corrige el Pulso; la 27 añade `demanda-oficio`), 28 operaciones · avisos por correo automáticos
   («Te aviso si aparece» también por ciudad, no solo por barrio de Barcelona.
   Citas: `ocupadas`, `cancelar-cita` y `anular-cita` —el profesional
   cancela una suya—; `mis-avisos` devuelve la cita de cada aviso. Antes: `valorar`, `clave-push`, `crear-alerta`, `alertas`,

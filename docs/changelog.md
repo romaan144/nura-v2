@@ -170,6 +170,13 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-22 — Al darse de alta: quién le busca, y oficios que ya existen
+
+- Al escribir su especialidad, el profesional se entera de si le estaban buscando: «Buena noticia: en el último mes, 3 personas buscaron fontanero en Nüra y no encontraron a nadie. Te estaban esperando.» (o, si ya hay otros, cuántas lo buscaron).
+- Decisión de Sergio: si su profesión todavía no existe en Nüra y nadie la ha buscado, se le recomienda una que sí exista (las más cercanas, con su nombre real en Nüra) y puede quedarse con la suya. Si Nüra no la reconoce, se le pide escribirla como la buscaría la gente. Nunca se bloquea el alta, y sin conexión no se dice nada.
+- Servidor: op `demanda-oficio` (`helpers-write` v27): solo dos cifras del último mes para un identificador de oficio; nada de frases, ciudades ni personas.
+- Pruebas: `test:avisos` (cifras, nada más, y rechazo de texto libre) y `recorrido:real` con tres altas: fontanero esperado, técnico de electrónica con recomendación elegida y tarotista que mantiene la suya.
+
 ## 2026-10-21 — Cuántas búsquedas no se entienden
 
 - Antes, una búsqueda que la app no entendía no dejaba rastro, y una sin nadie no contaba como búsqueda. Ahora cada búsqueda deja exactamente un evento `busqueda`: categoría `otro` si no se entendió, 0 resultados si no había nadie. Nunca la frase.

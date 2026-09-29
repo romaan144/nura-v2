@@ -289,15 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · Al darse de alta: quién le busca, y oficios que ya existen
+### Última tarea integrada · Al darse de alta: quién le busca, y oficios que ya existen
 
-**Responsable:** Claude. **Rama:** `claude/funny-clarke-e6m64r`, desde `main` (6ce4f8f).
-**Motivo (Sergio):** al escribir su especialidad, el profesional sabe si hay gente buscándola sin encontrar a nadie. Si su profesión no existe todavía en Nüra y nadie la ha buscado, se le recomienda una que ya exista (puede quedarse con la suya).
-**Archivos previstos:** nuevo `src/utils/demanda.js`, `src/pages/RegisterHelper.jsx` (mensajes y botones de elección en la conversación del alta, con los estilos existentes), `supabase/functions/helpers-write/index.ts` (op `demanda-oficio`: solo cifras), `scripts/test-avisos.mjs`, `scripts/recorrido-real.mjs`, documentación.
-
-### Última tarea integrada · Cuántas búsquedas no se entienden
-
-Integrada el 2026-09-29 (ver `docs/changelog.md`, 2026-10-21). Tocó `src/pages/Home.jsx` (solo llamadas a `registrar`), `supabase/functions/helpers-write/index.ts` (op `mi-pulso`; desplegada, versión 26), la migración `20261020000000_salud_busqueda.sql` (aplicada), `scripts/recorrido-real.mjs`, `scripts/test-avisos.mjs` (el Pulso cuenta cada búsqueda una vez) y documentación. Esos archivos quedan libres.
+Integrada el 2026-09-29 (ver `docs/changelog.md`, 2026-10-22). Tocó el nuevo `src/utils/demanda.js`, el nuevo `src/components/ElegirOficio.jsx` (panel y botones con `glass` como `ConfirmarDeclarado`), `src/pages/RegisterHelper.jsx` (mensajes y la elección tras la especialidad; resto intacto), `src/utils/supabase.js` (`especialidadesExistentes`), `supabase/functions/helpers-write/index.ts` (op `demanda-oficio`; desplegada, versión 27), `scripts/test-avisos.mjs`, `scripts/recorrido-real.mjs` y documentación. Esos archivos quedan libres.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
