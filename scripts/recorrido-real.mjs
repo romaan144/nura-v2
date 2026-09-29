@@ -45,7 +45,7 @@ process.on('exit', apagar)
 await new Promise(r => setTimeout(r, 3000))
 
 // ── el servidor ficticio, con estado ──
-const avisos = [], valoraciones = []
+const avisos = [], valoraciones = [], eventos = []
 const sha = t => crypto.createHash('sha256').update(t).digest('hex')
 const azar = () => crypto.randomBytes(16).toString('hex')
 function backend(c) {
@@ -72,6 +72,7 @@ function backend(c) {
       a.cita_estado = 'cancelada'; return { ok: true }
     }
     case 'valorar': { const a = porLlave(c.llave); if (!a) return { __estado: 404 }; valoraciones.push({ helper_id: a.helper_id, ...c }); return { ok: true } }
+    case 'evento': eventos.push(c.payload); return { ok: true }
     default: return { ok: true }
   }
 }
@@ -125,6 +126,11 @@ try {
   console.log('\n── La familia busca y escribe ──')
   await c.type('textarea, input', 'Busco logopeda para mi hijo de 5 años que no pronuncia la r'); await c.keyboard.press('Enter')
   await espera(7000)
+  {
+    const busqueda = eventos.find(e => e.tipo === 'busqueda')
+    ok(busqueda?.oficio === 'logopeda', `la búsqueda se cuenta con su oficio (${busqueda?.oficio}), para saber a quién fichar`)
+    ok(!JSON.stringify(eventos).includes('pronuncia'), 'y ningún evento lleva la frase buscada')
+  }
   ok(await pulsar(c, 'Escribir a'), 'la búsqueda recomienda a alguien con «Escribir a…»')
   // Desde la tarjeta se va a su ficha o directo al registro: los dos valen.
   if (c.url().includes('/helper/')) ok(await pulsar(c, 'Escribir a'), 'desde su ficha, «Escribir a…»')

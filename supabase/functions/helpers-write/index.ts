@@ -644,6 +644,11 @@ Deno.serve(async (req: Request) => {
       helper_id: e.helperId ? String(e.helperId).slice(0, 40) : null,
       resultados: typeof e.resultados === 'number' ? e.resultados : null,
       valoracion: typeof e.valoracion === 'number' ? e.valoracion : null,
+      // El oficio es un IDENTIFICADOR del mapa (`electronica`), no texto
+      // libre; la ciudad, un nombre corto. Lo que no encaje se descarta:
+      // así aquí no puede colarse una frase. La tabla lo exige también.
+      oficio: typeof e.oficio === 'string' && /^[a-z0-9_]{1,40}$/.test(e.oficio) ? e.oficio : null,
+      ciudad: typeof e.ciudad === 'string' && /^[\p{L} '.-]{2,40}$/u.test(e.ciudad.trim()) ? e.ciudad.trim() : null,
       fecha: e.fecha ? String(e.fecha).slice(0, 40) : new Date().toISOString(),
     }
     const res = await fetch(`${SUPABASE_URL}/rest/v1/eventos`, {

@@ -68,12 +68,18 @@ y una obligación de privacidad.
 
 | evento | cuándo | qué lleva |
 |---|---|---|
-| `busqueda` | al analizar una consulta | categoría, si se entendió, nº de resultados |
-| `sin_cobertura` | cuando no hay nadie compatible | categoría, zona |
+| `busqueda` | al analizar una consulta | categoría, oficio entendido, ciudad, nº de resultados |
+| `sin_cobertura` | cuando no hay nadie del oficio (o solo algo parecido) | categoría, oficio entendido, ciudad; `resultados` > 0 si se ofreció algo parecido |
 | `recomendacion_vista` | al pintar resultados | categoría, posición del primero |
 | `contacto` | al abrir chat con un profesional | categoría, si venía de recomendación |
 | `servicio_confirmado` | al confirmar una cita | categoría |
 | `resultado_registrado` | al cerrar con un resultado | categoría, si hay valoración |
+
+**Qué oficios faltan y dónde** (desde el 2026-09-29): en Supabase, vista
+`demanda_sin_cubrir` (Table Editor o SQL). Una fila por oficio y ciudad:
+cuántas veces, cuántas personas, cuántas veces solo había algo parecido y la
+última. El oficio es un identificador del mapa (`src/data/oficios.js`), no
+texto libre: la tabla y el servidor rechazan cualquier otra cosa.
 
 **Sin el texto de la consulta.** Basta la categoría para decidir a quién
 reclutar, y guardar las frases de la gente en un servidor de analítica es

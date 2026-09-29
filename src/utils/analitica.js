@@ -13,6 +13,8 @@
 //
 //   busqueda              · alguien pide algo
 //   sin_cobertura         · no hay nadie compatible   ← dice a quien reclutar
+//                           (con su oficio y ciudad; `resultados` > 0 si
+//                           solo habia algo parecido)
 //   recomendacion_vista   · se le enseña a alguien
 //   contacto              · abre chat con un profesional
 //   servicio_confirmado   · hay cita
@@ -81,6 +83,19 @@ export function registrar(tipo, datos = {}) {
   }
   guardarLocal(evento)
   enviar(evento).catch(() => {})
+}
+
+/**
+ * Qué se pidió, sin la frase: el OFICIO entendido (identificador del mapa,
+ * como `electronica`) y la ciudad donde busca. Así «sin_cobertura» dice a
+ * quién fichar y dónde (vista `demanda_sin_cubrir` en Supabase).
+ */
+export function demandaDe(analysis) {
+  const oficio = analysis?.oficios?.[0]
+  return {
+    oficio: /^[a-z0-9_]{1,40}$/.test(oficio || '') ? oficio : undefined,
+    ciudad: analysis?.ciudad || analysis?.ciudadElegida || undefined,
+  }
 }
 
 /** Para mirar lo acumulado desde la consola del navegador. */
