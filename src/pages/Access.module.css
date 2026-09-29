@@ -1,0 +1,67 @@
+.page { height: 100%; overflow-y: auto; overflow-x: hidden; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; padding: calc(var(--header-h) + 20px) 20px var(--reserva-nav); background: var(--surface-entry); }
+.card, .loginCard { width: 100%; max-width: 460px; margin: 0 auto 24px; padding: 26px; background: #FFFEFF; border: 1px solid #E0D6EB; border-radius: 26px; box-shadow: 0 18px 48px -32px #39214B55; }
+.icon { width: 48px; height: 48px; display: grid; place-items: center; margin-bottom: 18px; border: 1px solid #DED0ED; border-radius: 16px; background: #F1EAF9; color: var(--purple-ink); }
+.successIcon { background: #EAF5EF; color: #216653; border-color: #C7E0D3; }
+.eyebrow { margin: 0 0 8px; color: var(--purple-ink); font-size: 11px; font-weight: 650; line-height: 1.5; letter-spacing: .8px; text-transform: uppercase; }
+.title { margin: 0 0 12px; font-family: var(--font-voice); font-size: 27px; line-height: 1.25; letter-spacing: -.9px; font-weight: 750; color: var(--brand-deep); overflow-wrap: anywhere; }
+.description { margin: 0 0 26px; color: var(--ink-secondary); font-size: 14px; line-height: 1.65; overflow-wrap: anywhere; }
+.field { margin-bottom: 18px; }
+.label { display: block; margin-bottom: 8px; color: var(--ink-primary); font-size: 13px; line-height: 1.5; font-weight: 650; }
+.input, .passwordInput { width: 100%; min-width: 0; min-height: 52px; box-sizing: border-box; padding: 13px 14px; background: white; border: 1px solid #BFB0D0; border-radius: 13px; color: var(--ink-primary); font-family: inherit; font-size: 16px; line-height: 1.5; transition: border-color .18s, box-shadow .18s; }
+.input::placeholder { color: #786B84; }
+.input:focus, .passwordInput:focus { outline: none; border-color: var(--purple); box-shadow: 0 0 0 3px var(--purple-10); }
+.passwordWrap { position: relative; }
+.passwordInput { padding-right: 56px; }
+.reveal { position: absolute; right: 4px; top: 4px; width: 44px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 10px; background: transparent; color: var(--purple-ink); cursor: pointer; }
+.hint { margin: 8px 0 0; color: var(--ink-secondary); font-size: 12px; line-height: 1.55; }
+.textButton { display: block; min-height: 44px; margin-top: -8px; padding: 10px 0; border: 0; background: transparent; color: var(--purple-ink); font-family: inherit; font-size: 13px; font-weight: 600; line-height: 1.5; text-align: left; cursor: pointer; }
+.primary, .secondary, .suggestion { width: 100%; min-height: 50px; display: flex; align-items: center; justify-content: center; padding: 12px 16px; border: 1px solid transparent; border-radius: 14px; font-family: inherit; font-size: 14px; font-weight: 650; line-height: 1.5; text-align: center; cursor: pointer; overflow-wrap: anywhere; transition: background .18s, box-shadow .18s, border-color .18s; }
+.primary { margin-top: 18px; background: var(--purple); color: white; box-shadow: 0 6px 18px -12px #6030A7; }
+.primary:disabled { background: #ECE7F1; border-color: #DCD2E7; color: #70607D; box-shadow: none; cursor: default; }
+.secondary, .suggestion { background: #F7F3FC; border-color: #CEBCDF; color: var(--purple-ink); }
+.alternative { margin-top: 22px; padding-top: 20px; border-top: 1px solid #E7DFEF; }
+.alternative > .hint { margin: 0 0 12px; text-align: center; }
+.error, .notice { margin: 16px 0 0; padding: 13px 14px; border: 1px solid; border-radius: 13px; font-size: 13px; line-height: 1.65; overflow-wrap: anywhere; }
+.error { background: #FFF4F2; border-color: #EFC7BE; color: #95392C; }
+.notice { background: #EEF6F1; border-color: #CBDFD2; color: #295B49; }
+.suggestion { margin-top: 10px; }
+.card button:focus-visible, .loginCard button:focus-visible { outline: 3px solid var(--purple); outline-offset: 3px; }
+.loginPage { height: 100%; min-height: var(--app-layout-height, 100dvh); overflow-y: auto; overflow-x: hidden; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; padding: 24px 20px; background: var(--surface-entry); }
+.loginInner { width: 100%; max-width: 460px; margin: auto; }
+.brand { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 22px; }
+.brand img { object-fit: contain; }
+.loginCard { margin-bottom: 0; }
+.privacy { margin: 18px 14px 0; color: var(--ink-secondary); font-size: 12px; line-height: 1.6; text-align: center; }
+.build { margin: 12px 0 0; color: var(--ink-tertiary); font-size: 10px; text-align: center; }
+.steps { display: flex; gap: 6px; margin: 10px 0 22px; }
+.steps > span { flex: 1; height: 3px; border-radius: 3px; background: #E4DAED; }
+.steps > .stepActive { background: var(--purple); }
+.codeWrap { position: relative; border-radius: 14px; }
+.codeRow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.codeRow > span { height: 60px; display: grid; place-items: center; border: 1px solid #BFB0D0; border-radius: 12px; background: white; color: var(--ink-primary); font-size: 26px; font-weight: 650; }
+.codeRow > .codeFilled { border-color: var(--purple); background: #F4EFFB; }
+.codeInput { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; font-size: 16px; cursor: text; }
+.codeWrap:focus-within { outline: 3px solid var(--purple); outline-offset: 4px; }
+@media (hover: hover) { .secondary:hover, .suggestion:hover, .reveal:hover { background: #EDE3F7; } .primary:hover:not(:disabled) { background: var(--purple-ink); } .textButton:hover { text-decoration: underline; } }
+@media (min-width: 768px) { .page { padding-top: calc(var(--header-h) + 36px); } .card, .loginCard { padding: 32px; } }
+@media (max-width: 359px) { .page, .loginPage { padding-inline: 16px; } .card, .loginCard { padding: 22px 18px; } .title { font-size: 24px; } .codeRow { gap: 8px; } }
+@media (prefers-reduced-motion: reduce) { .input, .passwordInput, .primary, .secondary, .suggestion { transition: none; } }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.card, .loginCard { background: var(--glass-panel); border-color: var(--glass-edge); border-radius: var(--radius-glass); box-shadow: var(--glass-panel-shadow); }
+.input, .passwordInput { border-radius: 20px; background: var(--glass-control); }
+.primary:not(:disabled) { background: var(--grad-main); color: white; border-radius: 999px; box-shadow: var(--glass-primary-shadow); }
+.secondary, .suggestion { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
+.icon { border-radius: 50%; box-shadow: var(--glass-shine); }
+
+.primary { border-radius: 999px; }
+
+/* Repaso de controles: mismo material, geometría y estados conservados. */
+.reveal { background: var(--glass-control); border: 1px solid var(--glass-edge); border-radius: 50%; box-shadow: var(--glass-control-shadow); }
+.textButton { padding-inline: 14px; background: var(--glass-control); border: 1px solid var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
+.codeRow > span { background: var(--glass-control); border-color: var(--glass-edge); box-shadow: var(--glass-control-shadow); border-radius: 18px; }
+.codeRow > .codeFilled { background: var(--glass-selected); border-color: var(--glass-selected-edge); }
+
+/* Los errores mantienen su tinta de aviso sobre una superficie de cristal legible. */
+.error { background: linear-gradient(135deg, #FFF8F6F2, #FBECE7D9); border-color: #CE9C90; border-radius: 18px; box-shadow: var(--glass-shine); color: #87382D; }

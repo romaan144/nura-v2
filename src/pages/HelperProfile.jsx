@@ -1,21 +1,24 @@
+import ErrorPanel from '../components/ErrorPanel'
+import errorStyles from '../components/ErrorPanel.module.css'
 import { useTitulo } from '../utils/titulo'
 import PageHeader from '../components/PageHeader'
 import PostCard from '../components/PostCard'
 import { proximoHueco, ocupacionesDe } from '../data/horarios'
-import ElegirCita from '../components/ElegirCita'
-import { Button, SectionLabel, Skeleton } from '../components/ui'
+import CitaModal from '../components/CitaModal'
+import { Button, SectionLabel } from '../components/ui'
 import { getObraDeHelper, obraAPost } from '../data/obraPosts'
 import ErrorBoundary from '../components/ErrorBoundary'
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Star, Shield, MapPin, MessageCircle, Calendar,
          Share2, UserPlus, UserCheck, Briefcase, BookOpen, Award,
-         CheckCircle, Check, Globe, Zap, ChevronRight, Clock, ThumbsUp, ShieldCheck } from 'lucide-react'
+         CheckCircle, Check, Globe, Zap, ChevronRight, Clock, ThumbsUp, ShieldCheck, ChevronDown } from 'lucide-react'
 import { HELPERS_DEMO as HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
 import RatingModal from '../components/RatingModal'
-import { recordarDestino, contextoDeChat, hayContexto } from '../utils/contacto'
+import { recordarDestino, contextoDeChat } from '../utils/contacto'
 import styles from './HelperProfile.module.css'
+import PageLoading from '../components/PageLoading'
 import { DEMO_ENRICHMENTS } from '../data/demoEnrichments'
 import { showToast } from '../components/Toast'
 import { compartirEnlace, enlaceDeFicha } from '../utils/compartir'
@@ -56,86 +59,17 @@ function BookingModal({ helper, onClose, onBook, onNavigate, cambia: cambiaAlAbr
     setDone(true)
   }
 
-  const style = {
-    overlay: {position:'fixed',inset:0,background:'var(--surface-scrim)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:300,display:'flex',alignItems:'flex-end',justifyContent:'center'},
-    sheet: {background:'rgba(255,255,255,0.96)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',borderRadius:'24px 24px 0 0',padding:'var(--space-24) var(--space-20) calc(var(--nav-h) + var(--space-12))',width:'100%',maxWidth:'500px',maxHeight:'88dvh',overflowY:'auto',WebkitOverflowScrolling:'touch'},
-    handle: {width:'36px',height:'4px',background:'var(--surface-muted)',borderRadius:'2px',margin:'0 auto var(--space-20)'},
-    input: {width:'100%',padding:'var(--space-12) var(--space-16)',border:'1px solid rgba(33,29,51,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',fontFamily:'-apple-system,Inter,sans-serif',background:'var(--surface-subtle)',boxSizing:'border-box'},
-    btnPrimary: {width:'100%',padding:'var(--space-14)',background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:'pointer',transition:'opacity 0.2s'},
-    btnSecondary: {width:'100%',padding:'var(--space-12)',background:'var(--surface-subtle)',color:'var(--ink-tertiary)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'},
-  }
-
   return (
-    <div style={style.overlay}>
-      <div style={style.sheet}>
-        <div style={style.handle} />
-        {done ? (
-          <div style={{textAlign:'center',display:'flex',flexDirection:'column',alignItems:'center',gap:'var(--space-12)',padding:'var(--space-16) 0'}}>
-            {/* Helper avatar */}
-            <div style={{position:'relative'}}>
-              {helper?.avatarUrl
-                ? <img src={helper.avatarUrl} alt={name}
-                    style={{width:'68px',height:'68px',borderRadius:'50%',border:'3px solid var(--green-dot)'}} />
-                : <div style={{width:'68px',height:'68px',borderRadius:'50%',background:helper?.avatarColor||'var(--purple)',
-                    display:'flex',alignItems:'center',justifyContent:'center',color:'white',fontSize:'24px',fontWeight:700,
-                    border:'3px solid var(--green-dot)'}}>
-                    {helper?.avatar||name?.[0]}
-                  </div>
-              }
-              <span style={{position:'absolute',bottom:-2,right:-2,width:'22px',height:'22px',background:'var(--green-dot)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center'}}><svg width='12' height='12' viewBox='0 0 12 12' fill='none'><path d='M2 6l3 3 5-5' stroke='white' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round'/></svg></span>
-            </div>
-            <div>
-              <h3 style={{fontSize:'var(--text-heading)',fontWeight:800,margin:'0 0 var(--space-4)',color:'var(--ink-primary)',letterSpacing:'-0.3px'}}>
-                {cambia ? '¡Cambio enviado!' : '¡Solicitud enviada!'}
-              </h3>
-              <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:0,lineHeight:1.6}}>
-                {DEMO_MODE ? `${name} recibirá tu solicitud y confirmará en breve.` : `Se la hago llegar a ${name}. Su respuesta te llegará en el chat.`}
-              </p>
-            </div>
-            {/* Booking summary */}
-            {(date || time) && (
-              <div style={{background:'var(--surface-subtle)',border:'1px solid rgba(33,29,51,0.06)',
-                borderRadius:'var(--radius-card)',padding:'var(--space-12) var(--space-16)',width:'100%',textAlign:'left'}}>
-                {date && <p style={{margin:'0 0 var(--space-4)',fontSize:'var(--text-sm)',color:'var(--ink-tertiary)'}}>
-                  {new Date(date).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})}
-                </p>}
-                {time && <p style={{margin:0,fontSize:'var(--text-sm)',color:'var(--ink-tertiary)'}}><Clock size={12} style={{marginRight:'var(--space-4)',verticalAlign:'middle'}}/>{time}h</p>}
-              </div>
-            )}
-            <div style={{display:'flex',flexDirection:'column',gap:'var(--space-8)',width:'100%',marginTop:'var(--space-4)'}}>
-              <Button variant="primary" full onClick={() => { onClose(); onNavigate('/my-services') }}>
-                Ver Mis servicios
-              </Button>
-              <button onClick={onClose} style={style.btnSecondary}>Volver al perfil</button>
-            </div>
-          </div>
-        ) : (
-          <>
-            <h3 style={{fontSize:'var(--text-md)',fontWeight:800,margin:'0 0 var(--space-4)',color:'var(--ink-primary)',letterSpacing:'-0.3px'}}>{cambia ? 'Cambiar la hora' : 'Solicitar servicio'}</h3>
-            <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:'0 0 var(--space-20)'}}>
-              {cambia
-                ? `Tu cita con ${name} del ${diaLargo(cambia.date)}${cambia.time ? ` a las ${cambia.time}` : ''} se cancelará al enviar la nueva hora.`
-                : `${name} · ${helper?.price || 'Precio a consultar'}`}
-            </p>
-            <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)',marginBottom:'var(--space-20)'}}>
-              <ElegirCita helper={helper} date={date} time={time} onDate={setDate} onTime={setTime} />
-              <textarea value={note} onChange={e=>setNote(e.target.value)}
-                placeholder="Detalles adicionales (opcional)..." rows={3}
-                style={{...style.input, resize:'none'}} />
-            </div>
-            <div style={{display:'flex', alignItems:'center', gap:'var(--space-8)'}}>
-              <button onClick={onClose} style={{...style.btnSecondary, width:'auto', flex:1}}>Cancelar</button>
-              {/* Día Y hora: una cita sin hora no es una cita (en el chat ya se exigía). */}
-              <Button variant="primary" onClick={confirm} disabled={!date || !time || enviando}
-                style={{flex:2}}>
-                {enviando ? 'Enviando…' : cambia ? 'Cambiar a esta hora' : 'Enviar solicitud'}
-              </Button>
-            </div>
-            {fallo && <p role="alert" style={{margin:'var(--space-10) 0 0',fontSize:'var(--text-sm)',color:'var(--red-ink)',lineHeight:1.45}}>{fallo}</p>}
-          </>
-        )}
-      </div>
-    </div>
+    <CitaModal helper={helper} date={date} time={time} note={note}
+      onDate={setDate} onTime={setTime} onNote={setNote} onClose={onClose}
+      onConfirm={confirm} submitting={enviando} error={fallo} done={done}
+      title={cambia ? 'Cambiar la hora' : 'Solicitar servicio'}
+      notice={cambia ? `Tu cita con ${name} del ${diaLargo(cambia.date)}${cambia.time ? ` a las ${cambia.time}` : ''} se cancelará al enviar la nueva hora.` : ''}
+      confirmLabel={cambia ? 'Cambiar a esta hora' : 'Enviar solicitud'}
+      successTitle={cambia ? '¡Cambio enviado!' : '¡Solicitud enviada!'}
+      successText={DEMO_MODE ? `${name} recibirá tu solicitud y confirmará en breve.` : `Se la hago llegar a ${name}. Su respuesta te llegará en el chat.`}
+      onServices={() => { onClose(); onNavigate('/my-services') }}
+      backLabel="Volver al perfil" />
   )
 }
 
@@ -159,7 +93,10 @@ function HelperProfileInner() {
   const { id }     = useParams()
   const navigate   = useNavigate()
   const location   = useLocation()
-  const [verTodaLaObra, setVerTodaLaObra] = useState(false)
+  // El regreso desde el acceso puede apuntar a una publicación recogida.
+  const [obraView, setObraView] = useState(null)
+  const verTodaLaObra = obraView?.hash === location.hash
+    ? obraView.expanded : location.hash.startsWith('#comentarios-')
   const [verTrayectoria, setVerTrayectoria] = useState(false)
   const { user, addService, cancelarCita, citas, services } = useUser()
 
@@ -203,45 +140,18 @@ function HelperProfileInner() {
     }
   }, [id, intento])   // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (loading) return (
-    <div className={styles.page}>
-      <PageHeader showBack />
-      <div style={{padding:'var(--space-24) var(--space-16)'}}>
-        <Skeleton variant="card" />
-        <Skeleton variant="block" style={{marginTop:'var(--space-24)'}} />
-        <Skeleton variant="block" />
-      </div>
-    </div>
-  )
+  if (loading) return <PageLoading kind="helper" />
   if (!h) return (
-    <div className={styles.page}>
+    <div className={`${errorStyles.frame} ${errorStyles.withHeader}`}>
       <PageHeader showBack />
-      {/* Mismo trato que en Chat para la misma situacion: la ficha decia
-          "Perfil no encontrado." a secas y el chat dejaba un logo latiendo
-          para siempre. Dos pantallas, una situacion, una sola respuesta. */}
-      <div className={styles.notFound} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'var(--space-12)'}}>
-        <div style={{fontSize:'var(--text-xl)'}}>🤍</div>
-        <p style={{fontSize:'var(--text-base)',color:'var(--ink)',lineHeight:1.5,margin:0}}>
-          {sinRed ? 'No he podido cargar esta ficha.' : 'Esta persona ya no está en Nüra.'}
-        </p>
-        <p style={{fontSize:'var(--text-sm)',color:'var(--ink-secondary)',lineHeight:1.5,margin:0}}>
-          {sinRed ? 'Parece un problema de conexión. Vuelve a intentarlo en un momento.'
-                  : 'Puede que el enlace sea antiguo. Puedo buscarte a alguien ahora mismo.'}
-        </p>
-        {sinRed && (
-          <button onClick={() => { setLoading(true); setIntento(n => n + 1) }} style={{marginTop:'var(--space-8)',padding:'var(--space-12) var(--space-24)',
-            background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',
-            fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
-            Reintentar
-          </button>
-        )}
-        <button onClick={() => navigate('/')} style={{marginTop: sinRed ? 0 : 'var(--space-8)',padding:'var(--space-12) var(--space-24)',
-          ...(sinRed ? {background:'transparent',color:'var(--purple-ink)'} : {background:'var(--purple)',color:'white'}),
-          border:'none',borderRadius:'var(--radius-full)',
-          fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
-          Buscar a alguien
-        </button>
-      </div>
+      <ErrorPanel
+        title={sinRed ? 'No he podido cargar esta ficha' : 'Esta ficha ya no está disponible'}
+        hint={sinRed ? 'No he podido conectar. Puedes intentarlo de nuevo.' : 'Puede que el enlace sea antiguo. Puedes buscar a otro profesional.'}
+        actionLabel={sinRed ? 'Reintentar' : 'Buscar a alguien'}
+        onAction={sinRed ? () => { setLoading(true); setIntento(n => n + 1) } : () => navigate('/')}
+        secondaryLabel={sinRed ? 'Buscar a alguien' : undefined}
+        onSecondary={() => navigate('/')}
+      />
     </div>
   )
 
@@ -249,7 +159,7 @@ function HelperProfileInner() {
   // El próximo hueco libre, a la vista sin abrir la agenda.
   const hueco = proximoHueco(enrichedH, ocupacionesDe(citas, services))
 
-  // Primary education for hero display
+  // Resumen de formación en su bloque propio
   const mainEdu = enrichedH.education?.[0]
 
   function handleContact() {
@@ -258,10 +168,6 @@ function HelperProfileInner() {
       // La ficha abre una reja en vez de llevarte al registro: aqui la
       // persona ya esta leyendo un perfil y sacarla de golpe seria peor.
       setShowGate(true); return
-    }
-    if (hayContexto(location.state)) {
-      navigate(`/intro/${enrichedH.id}`, { state: contextoDeChat(h, location.state) })
-      return
     }
     navigate(`/chat/${enrichedH.id}`, { state: contextoDeChat(h, location.state) })
   }
@@ -396,7 +302,7 @@ function HelperProfileInner() {
             }}>
               {Math.floor(enrichedH.reviews * 0.08 + 2)} personas cerca de ti contactaron con {firstName} este mes
               {enrichedH.reviews >= 100 && (
-                <Badge variant="warning" style={{marginLeft:'var(--space-8)'}}>🔥 Muy solicitado</Badge>
+                <Badge variant="warning" style={{marginLeft:'var(--space-8)'}}><Zap size={12} aria-hidden="true" /> Muy solicitado</Badge>
               )}
             </div>
           )}
@@ -571,67 +477,47 @@ function HelperProfileInner() {
           </section>
         )}
 
-        {getObraDeHelper(enrichedH.id, 2).length > 0 && (
-          <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0ms forwards`}} className={styles.section}>
-            <h2 className={styles.sectionHeading}>Su obra</h2>
-            {/* ── EL MURO NO ES LA FICHA ──────────────────────────────
-                Se pintaban TODAS las publicaciones: tres pantallas de las
-                4,7 que medía la ficha. Era Comunidad dentro del perfil — el
-                mismo problema que el susurro en Home, en grande.
-                Ahora se ve UNA, prueba de que este profesional trabaja y lo
-                documenta. El resto sigue ahí, a un toque. */}
-            <div style={{display:'flex', flexDirection:'column', gap:'var(--space-10)'}}>
-              {(verTodaLaObra ? publicacionesDe(enrichedH) : publicacionesDe(enrichedH).slice(0, 1))
-                .map(p => <PostCard key={p.id} post={p} />)}
+        {/* Experiencia y estudios son una sección propia, antes de los casos. */}
+        {(enrichedH.experience?.length > 0 || enrichedH.education?.length > 0) && (
+          <section className={`${styles.section} ${styles.career}`} aria-labelledby="trayectoria-titulo">
+            <div className={styles.careerHeader}>
+              <span className={styles.careerIcon} aria-hidden="true"><Briefcase size={21} /></span>
+              <div>
+                <h2 id="trayectoria-titulo" className={styles.careerTitle}>Trayectoria y formación</h2>
+                <p className={styles.careerLead}>La experiencia y los estudios de {firstName}.</p>
+              </div>
             </div>
-            {!verTodaLaObra && publicacionesDe(enrichedH).length > 1 && (
-              <button onClick={() => setVerTodaLaObra(true)} style={{
-                width:'100%', marginTop:'var(--space-10)', minHeight:48,
-                background:'rgba(255,255,255,0.96)',
-                WebkitBackdropFilter:'blur(20px) saturate(160%)',
-                backdropFilter:'blur(20px) saturate(160%)',
-                border:'1px solid rgba(255,255,255,0.6)',
-                borderRadius:'var(--radius-md)',
-                boxShadow:'var(--alzado-reposo)',
-                fontSize:'var(--text-sm)', fontWeight:600, color:'var(--ink-secondary)',
-                fontFamily:'inherit', cursor:'pointer',
-              }}>
-                Ver los {publicacionesDe(enrichedH).length} casos de {getFirstName(enrichedH.name)}
-              </button>
+            {!verTrayectoria && (
+              <div className={styles.careerPreview}>
+                {enrichedH.experience?.[0] && (
+                  <div className={styles.careerFact}>
+                    <span className={styles.careerLabel}>Experiencia</span>
+                    <p className={styles.careerFactTitle}>{enrichedH.experience[0].role}</p>
+                    <p className={styles.careerMeta}>{[enrichedH.experience[0].company, enrichedH.experience[0].period].filter(Boolean).join(' · ')}</p>
+                  </div>
+                )}
+                {mainEdu && (
+                  <div className={styles.careerFact}>
+                    <span className={styles.careerLabel}>Formación</span>
+                    <p className={styles.careerFactTitle}>{mainEdu.title || mainEdu.degree}</p>
+                    <p className={styles.careerMeta}>{mainEdu.institution || mainEdu.school}</p>
+                  </div>
+                )}
+              </div>
             )}
-          </section>
-        )}
-
-        {/* ── EL CURRICULO, PLEGADO ──────────────────────────────────
-            Trayectoria y formacion existen para quien las busque, pero no
-            pueden ocupar media ficha. Quien duda de alguien no empieza por
-            su universidad: empieza por lo que dicen quienes ya le
-            contrataron. */}
-        {(enrichedH.experience?.length > 0 || enrichedH.education?.length > 0) && !verTrayectoria && (
-          <button onClick={() => setVerTrayectoria(true)} style={{
-            width:'100%', minHeight:52, marginBottom:'var(--space-20)',
-            background:'rgba(255,255,255,0.96)',
-            WebkitBackdropFilter:'blur(20px) saturate(160%)',
-            backdropFilter:'blur(20px) saturate(160%)',
-            border:'1px solid rgba(255,255,255,0.6)',
-            borderRadius:'var(--radius-md)',
-            boxShadow:'var(--alzado-reposo)',
-            fontSize:'var(--text-sm)', fontWeight:600, color:'var(--ink-secondary)',
-            fontFamily:'inherit', cursor:'pointer',
-          }}>
-            Ver su trayectoria y formación
-          </button>
-        )}
-
-        {verTrayectoria && (
-          <>
-
+            <button type="button" className={styles.careerToggle}
+              aria-expanded={verTrayectoria} aria-controls="trayectoria-detalles"
+              onClick={() => setVerTrayectoria(v => !v)}>
+              <span>{verTrayectoria ? 'Ocultar experiencia y estudios' : 'Ver experiencia y estudios'}</span>
+              <ChevronDown size={18} aria-hidden="true" />
+            </button>
+            <div id="trayectoria-detalles" className={styles.careerDetails} hidden={!verTrayectoria}>
         {/* ── Experiencia ── */}
         {enrichedH.experience?.length > 0 && (
           <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 160ms forwards`}} className={styles.section}>
-            <h2 className={styles.sectionHeading}>
+            <h3 className={styles.sectionHeading}>
               <Briefcase size={14} /> Trayectoria profesional
-            </h2>
+            </h3>
             <div className={styles.expList}>
               {enrichedH.experience.map((exp, i) => (
                 <div key={i} className={styles.expItem}>
@@ -664,7 +550,7 @@ function HelperProfileInner() {
                     {exp.managerOpinion && (
                       <div className={styles.quote}>
                         <p>"{exp.managerOpinion.text?.slice(0,120)}{exp.managerOpinion.text?.length > 120 ? '…' : ''}"</p>
-                        <span>— {exp.managerOpinion.name}, {exp.managerOpinion.role}</span>
+                        <span>{exp.managerOpinion.name}, {exp.managerOpinion.role}</span>
                       </div>
                     )}
                   </div>
@@ -677,9 +563,9 @@ function HelperProfileInner() {
         {/* ── Formación ── */}
         {enrichedH.education?.length > 0 && (
           <section style={{animation:`fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) 240ms forwards`}} className={styles.section}>
-            <h2 className={styles.sectionHeading}>
+            <h3 className={styles.sectionHeading}>
               <BookOpen size={14} /> Formación académica
-            </h2>
+            </h3>
             <div className={styles.expList}>
               {enrichedH.education.map((edu, i) => (
                 <div key={i} className={styles.expItem}>
@@ -698,9 +584,29 @@ function HelperProfileInner() {
             </div>
           </section>
         )}
-          </>
+            </div>
+          </section>
         )}
 
+        {getObraDeHelper(enrichedH.id, 2).length > 0 && (
+          <section className={`${styles.section} ${styles.workSection}`} aria-labelledby="su-obra-titulo">
+            <div className={styles.workHeading}>
+              <h2 id="su-obra-titulo" className={styles.sectionHeading}>Su obra</h2>
+              <p>Cómo trabaja, contado por {getFirstName(enrichedH.name)}.</p>
+            </div>
+            <div id="su-obra-publicaciones" className={styles.workList}>
+              {(verTodaLaObra ? publicacionesDe(enrichedH) : publicacionesDe(enrichedH).slice(0, 1))
+                .map(p => <PostCard key={p.id} post={p} />)}
+            </div>
+            {publicacionesDe(enrichedH).length > 1 && (
+              <button type="button" onClick={() => setObraView({ hash: location.hash, expanded: !verTodaLaObra })} className={styles.workMore}
+                aria-expanded={verTodaLaObra} aria-controls="su-obra-publicaciones">
+                <span>{verTodaLaObra ? 'Ver menos publicaciones' : `Ver las ${publicacionesDe(enrichedH).length} publicaciones de ${getFirstName(enrichedH.name)}`}</span>
+                <ChevronDown size={18} aria-hidden="true" />
+              </button>
+            )}
+          </section>
+        )}
 
         {/* ── Habilidades ── */}
         {enrichedH.skills?.length > 0 && (
@@ -795,7 +701,7 @@ function textoHueco({ fecha, hora, dentro }) {
 
 function tiempoHumano(min) {
   if (min < 60) return 'en menos de 1 h'
-  if (min < 180) return 'en 1–3 h'
+  if (min < 180) return 'entre 1 y 3 h'
   if (min < 1440) return 'el mismo día'
   return `en ${Math.round(min / 1440)} días`
 }

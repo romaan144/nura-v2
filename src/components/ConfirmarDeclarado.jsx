@@ -1,3 +1,4 @@
+import glass from './ui/glass'
 import { useState } from 'react'
 import { Check } from 'lucide-react'
 
@@ -16,19 +17,25 @@ export default function ConfirmarDeclarado({ items, onConfirmar, onSaltar, guard
   const elegidos = items.filter(i => !fuera.has(i.clave))
 
   return (
-    <div style={{ background: 'var(--white, #fff)', border: '1px solid var(--ink-border)', borderRadius: 'var(--radius-md)',
-      padding: 'var(--space-16)', boxShadow: 'var(--alzado-reposo)' }}>
+    <div style={{ background: 'var(--glass-panel)', border: '1px solid var(--glass-edge)', borderRadius: 'var(--radius-glass)',
+      padding: 'var(--space-16)', boxShadow: 'var(--glass-panel-shadow)' }}>
       <div role="group" aria-label="Datos de tu perfil" style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-8)' }}>
         {items.map(i => {
           const on = !fuera.has(i.clave)
           return (
-            <button key={i.clave} type="button" aria-pressed={on} onClick={() => alternar(i.clave)}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, minHeight: 40, padding: '8px 14px',
-                borderRadius: 999, fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 600, cursor: 'pointer',
-                border: `1.5px solid ${on ? 'var(--purple)' : 'var(--ink-border)'}`,
-                background: on ? 'var(--purple-05)' : 'transparent',
-                color: on ? 'var(--ink-primary)' : 'var(--ink-tertiary)',
-                textDecoration: on ? 'none' : 'line-through' }}>
+            <button className="nura-glass-action" key={i.clave} type="button" aria-pressed={on} onClick={() => alternar(i.clave)}
+              style={{ display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              minHeight: 40,
+              padding: '8px 14px',
+              fontFamily: 'inherit',
+              fontSize: 'var(--text-sm)',
+              fontWeight: 600,
+              cursor: 'pointer',
+              color: on ? 'var(--ink-primary)' : 'var(--ink-tertiary)',
+              textDecoration: on ? 'none' : 'line-through',
+              ...(on ? glass.selected : glass.control) }}>
               {on && <Check size={14} color="var(--purple)" aria-hidden="true" />}
               {i.etiqueta}
             </button>
@@ -39,14 +46,26 @@ export default function ConfirmarDeclarado({ items, onConfirmar, onSaltar, guard
         Toca lo que no sea correcto para quitarlo. En tu ficha pondrá que lo dices tú.
       </p>
       <div style={{ display: 'flex', gap: 'var(--space-8)', marginTop: 'var(--space-14)' }}>
-        <button type="button" onClick={onSaltar} disabled={guardando}
-          style={{ flex: 1, minHeight: 46, borderRadius: 999, border: 'none', background: 'var(--surface-subtle)',
-            color: 'var(--ink-secondary)', fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 600, cursor: 'pointer' }}>
+        <button className="nura-glass-action" type="button" onClick={onSaltar} disabled={guardando}
+          style={{ flex: 1,
+              minHeight: 46,
+              color: 'var(--ink-secondary)',
+              fontFamily: 'inherit',
+              fontSize: 'var(--text-sm)',
+              fontWeight: 600,
+              cursor: 'pointer',
+              ...(glass.control) }}>
           Sin esto
         </button>
-        <button type="button" onClick={() => onConfirmar(elegidos)} disabled={guardando}
-          style={{ flex: 2, minHeight: 46, borderRadius: 999, border: 'none', background: 'var(--purple)', color: 'white',
-            fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 700, cursor: 'pointer', opacity: guardando ? 0.6 : 1 }}>
+        <button className="nura-glass-action" type="button" onClick={() => onConfirmar(elegidos)} disabled={guardando}
+          style={{ flex: 2,
+              minHeight: 46,
+              fontFamily: 'inherit',
+              fontSize: 'var(--text-sm)',
+              fontWeight: 700,
+              cursor: 'pointer',
+              opacity: guardando ? 0.6 : 1,
+              ...(glass.primary) }}>
           {guardando ? 'Guardando…' : textoBoton}
         </button>
       </div>

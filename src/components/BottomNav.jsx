@@ -40,15 +40,19 @@ export default function BottomNav() {
 
   if (HIDE_ON.some(p => location.pathname.startsWith(p))) return null
 
+  const activeIndex = TABS.findIndex(({ path }) => path === '/'
+    ? location.pathname === '/'
+    : location.pathname.startsWith(path))
+
   return (
-    <nav className={styles.nav} aria-label="Navegación principal">
-      {TABS.map(({ path, icon: Icon, label }) => {
-        const active = path === '/'
-          ? location.pathname === '/'
-          : location.pathname.startsWith(path)
+    <nav className={styles.nav} aria-label="Navegación principal" style={{ '--active-tab': Math.max(activeIndex, 0) }}>
+      <span className={styles.lens} data-visible={activeIndex >= 0} aria-hidden="true" />
+      {TABS.map(({ path, icon: Icon, label }, index) => {
+        const active = index === activeIndex
         return (
           <button
             key={path}
+            type="button"
             className={`${styles.tab} ${active ? styles.tabActive : ''}`}
             onClick={() => navigate(path)}
             aria-current={active ? 'page' : undefined}

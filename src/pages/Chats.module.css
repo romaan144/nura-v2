@@ -1,4 +1,5 @@
 .page {
+  scroll-padding-block: calc(var(--header-h) + 12px) var(--reserva-nav);
   height: 100%;
   background: var(--paper);
   overflow-y: auto;
@@ -55,7 +56,6 @@
   -webkit-tap-highlight-color: transparent;
 }
 .chatRow:active {
-  transform: scale(0.985);
   box-shadow: var(--alzado-pulsado);
 }
 .chatUnread {
@@ -127,7 +127,6 @@
 .emptyTitle { font-size: var(--text-md); font-weight: 800; color: var(--ink-primary); margin: 0; letter-spacing: -0.3px; }
 .emptyDesc { font-size: var(--text-sm); color: var(--ink-tertiary); margin: 0; line-height: 1.65; max-width: 240px; text-align: center; }
 .emptyBtn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; max-width: 280px; padding: 13px; background: var(--purple); color: white; border: none; border-radius: var(--radius-full); font-size: var(--text-sm); font-weight: 700; cursor: pointer; transition: opacity 0.2s; font-family: inherit; }
-.emptyBtn:active { opacity: 0.75; }
 .emptyBtnSecondary { width: 100%; max-width: 280px; padding: 12px; background: var(--surface-subtle); color: var(--ink-secondary); border: none; border-radius: var(--radius-full); font-size: var(--text-sm); font-weight: 600; cursor: pointer; font-family: inherit; }
 
 @keyframes fadeSlideIn {
@@ -202,3 +201,61 @@
 
 /* El foco lo dibuja la cápsula completa, sin un segundo marco interior. */
 .searchInput:focus-visible { outline: none; }
+
+/* Detalle visual · septiembre 2026 */
+
+.searchBox { background: white; border: 1px solid var(--ink-border); border-radius: 20px; }
+.searchBox:focus-within { border-color: #9870C5; box-shadow: 0 0 0 4px var(--purple-05); }
+.chatRow { border-radius: 22px; background: white; box-shadow: 0 5px 20px -16px #30214235; transition: box-shadow 220ms ease, transform 220ms ease; }
+.chatUnread { background: linear-gradient(110deg, #F4EDFE, white); }
+.avatarImg, .avatar { border-radius: 18px; }
+@media (hover: hover) { }
+
+/* La persona y el último mensaje tienen espacio propio. */
+.intro { padding-bottom: 18px; }
+.intro h1 { margin-bottom: 8px; }
+.searchBox { min-height: 50px; }
+.chatRow { align-items: flex-start; padding: 16px; gap: 14px; min-height: 132px; }
+.chatUnread { padding-left: 14px; border-left-color: var(--purple-ink); background: #FAF7FF; }
+.avatarWrap { padding-top: 2px; }
+.avatarImg, .avatar { display: block; width: 64px; height: 72px; border-radius: 18px; object-fit: cover; background-color: var(--action-surface); }
+.avatar { display: flex; font-size: 20px; }
+.chatInfo { position: relative; padding-right: 44px; }
+.chatTop { margin-bottom: 7px; display: block; }
+.chatName { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; font-size: 15px; line-height: 1.35; min-height: 2.7em; }
+.chatAside { position: absolute; top: 1px; right: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+.chatTime { font-size: 11px; line-height: 1.4; white-space: nowrap; }
+.chatUnread .chatTime { color: var(--purple-ink); font-weight: 650; }
+.chatBottom { margin-right: -44px; }
+.chatLastMsg { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; white-space: normal; overflow-wrap: anywhere; line-height: 1.5; min-height: 3em; color: var(--ink-secondary); }
+.chatUnread .chatLastMsg { color: var(--ink); font-weight: 550; }
+.unreadBadge { min-width: 22px; height: 22px; border-radius: 8px; font-size: 11px; background: var(--purple-ink); }
+@media (max-width: 359px) {
+  .intro { padding-left: 16px; padding-right: 16px; }
+  .searchWrap, .list { padding-left: 16px; padding-right: 16px; }
+  .chatRow { padding: 14px 12px; gap: 10px; }
+  .chatUnread { padding-left: 10px; }
+  .avatarImg, .avatar { width: 56px; height: 64px; border-radius: 16px; }
+  .chatName { font-size: 14px; }
+}
+
+@media (min-width: 768px) {
+  .chatRow { min-height: 116px; align-items: center; }
+  .chatName { min-height: 0; }
+}
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.searchBox { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
+.searchBox:focus-within { border-color: var(--glass-selected-edge); box-shadow: var(--glass-focus); }
+.chatRow { background: var(--glass-panel); border-color: var(--glass-edge); border-radius: var(--radius-glass); box-shadow: var(--glass-panel-shadow); }
+.chatUnread { background: var(--glass-selected); }
+.emptyBtn { background: var(--grad-main); color: white; border-radius: 999px; box-shadow: var(--glass-primary-shadow); }
+.emptyBtnSecondary { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
+
+/* Repaso de controles: mismo material, geometría y estados conservados. */
+.searchBox, .searchBox:focus-within { background: var(--glass-floating); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
+
+/* El contenido aparece al estar listo, sin retener la vista de carga. */
+@media (prefers-reduced-motion: no-preference) { .page { animation: contentReady 180ms ease-out; } }
+@keyframes contentReady { from { opacity: .65; } to { opacity: 1; } }

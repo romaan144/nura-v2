@@ -1,9 +1,9 @@
 import { avatarDe } from '../utils/avatar'
 import { useState } from 'react'
 import PageHeader from '../components/PageHeader'
-import { EmptyState } from '../components/ui'
+import EmptyPanel from '../components/EmptyPanel'
 import { useNavigate } from 'react-router-dom'
-import { Search, MessageCircle } from 'lucide-react'
+import { Search, MessageCircle, Calendar } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import { HELPERS_DEMO as HELPERS } from '../data/helpers'
 import styles from './Chats.module.css'
@@ -163,10 +163,9 @@ export default function Chats() {
   return (
     <div className={styles.page}>
       <PageHeader />
-      <div className="nura-page-intro">
-        <span className="nura-eyebrow">Cada conexión empieza aquí</span>
+      <div className={`nura-page-intro ${styles.intro}`}>
         <h1>Tus conversaciones</h1>
-        <p>Un espacio para hablar, preguntar y dar el siguiente paso.</p>
+        <p>Continúa donde lo dejaste.</p>
       </div>
 
       <div className={styles.searchWrap}>
@@ -185,25 +184,29 @@ export default function Chats() {
       {user?.isHelper && !DEMO_MODE && <BandejaProfesional />}
 
       <div className={styles.list}>
-        {allChats.length === 0 && !user?.isHelper && (
-          <EmptyState
-            title="Cuando conectes con alguien, vuestra conversación vivirá aquí."
-            hint="Cuéntale a Nüra qué necesitas y ella encontrará a la persona."
-            actionLabel="Buscar a mi persona"
+        {allChats.length === 0 && !search.trim() && !user?.isHelper && (
+          <EmptyPanel
+            icon={MessageCircle}
+            title="Tu próxima conversación empieza aquí"
+            hint="Encuentra a un profesional y escríbele. Aquí podrás retomar vuestra conversación."
+            actionLabel="Buscar profesionales"
             onAction={() => navigate('/')}
           />
         )}
 
         {filtered.length === 0 && search.trim() && (
-          <div style={{textAlign:'center',padding:'48px var(--space-24)',color:'var(--ink-tertiary)'}}>
-            <Search size={36} color='rgba(33,29,51,0.12)' strokeWidth={1.3} style={{marginBottom:'var(--space-12)'}}/>
-            <p style={{fontSize:'var(--text-sm)',fontWeight:500}}>Sin resultados para "{search}"</p>
-            <p style={{fontSize:'var(--text-xs)',marginTop:'var(--space-4)'}}>Prueba con el nombre del profesional</p>
-          </div>
+          <EmptyPanel
+            icon={Search}
+            title="No encontramos esa conversación"
+            hint={<>Sin resultados para «{search}». Prueba con el nombre del profesional.</>}
+            actionLabel="Borrar búsqueda"
+            onAction={() => setSearch('')}
+          />
         )}
         {filtered.map((chat, i) => {
           const helper = getHelper(chat.helperId)
           const isDemo = demosToShow.some(d => d.helperId === chat.helperId)
+          const unreadCount = (chat.unread || 0) + (respuestasNuevas[String(chat.helperId)] || 0)
           return (
             <button key={i}
               className={`${styles.chatRow} ${chat.unread > 0 || respuestasNuevas[String(chat.helperId)] ? styles.chatUnread : ''}`}
@@ -226,7 +229,7 @@ export default function Chats() {
 
               <div className={styles.avatarWrap}>
                 {chat.avatarUrl
-                  ? <img src={chat.avatarUrl} alt={chat.helperName} className={styles.avatarImg} />
+                  ? <img src={chat.avatarUrl} alt="" className={styles.avatarImg} />
                   : <div className={styles.avatar} style={{background: chat.helperColor}}>{chat.helperAvatar}</div>
                 }
                 {/* Online status — green if active recently */}
@@ -240,8 +243,13 @@ export default function Chats() {
 
               <div className={styles.chatInfo}>
                 <div className={styles.chatTop}>
-                  <span className={styles.chatName}>{chat.helperName}</span>
-                  <span className={styles.chatTime}>{formatChatTime(chat.lastTime)}</span>
+                  <span className={styles.chatName} title={chat.helperName}>{chat.helperName}</span>
+                  <span className={styles.chatAside}>
+                    <span className={styles.chatTime}>{formatChatTime(chat.lastTime)}</span>
+                    {unreadCount > 0 && (
+                      <span className={styles.unreadBadge} aria-label={`${unreadCount} ${unreadCount === 1 ? 'mensaje' : 'mensajes'} sin leer`}>{unreadCount}</span>
+                    )}
+                  </span>
                 </div>
                 {(() => {
                   const lp = (personas || []).find(p => (p.contactedHelperIds || []).includes(chat.helperId))
@@ -253,7 +261,7 @@ export default function Chats() {
                   return (
                     <div style={{display:'flex', alignItems:'center', gap:'5px', margin:'1px 0 var(--space-2)', flexWrap:'wrap'}}>
                       {lp && <span style={{fontSize:'var(--text-xs)', color:'var(--ink-tertiary)', fontWeight:500}}>Te ayuda con {lp.label}</span>}
-                      {citaViva && <span style={{fontSize:'var(--text-xs)', color:'var(--purple-ink)', fontWeight:600}}>📅 {ci.label}</span>}
+                      {citaViva && <span style={{fontSize:'var(--text-xs)', color:'var(--purple-ink)', fontWeight:600}}><Calendar size={12} aria-hidden="true" style={{ verticalAlign: 'middle', marginRight: 4 }} />{ci.label}</span>}
                       {ok && <Badge variant="success" size="xs">✓ funcionó</Badge>}
                     </div>
                   )
@@ -264,9 +272,7 @@ export default function Chats() {
                       ? <strong style={{ color: 'var(--purple)' }}>Te ha contestado · tócalo para leerlo</strong>
                       : chat.lastMsg}
                   </span>
-                  {(chat.unread > 0 || respuestasNuevas[String(chat.helperId)]) && (
-                    <span className={styles.unreadBadge}>{(chat.unread || 0) + (respuestasNuevas[String(chat.helperId)] || 0)}</span>
-                  )}
+
                 </div>
               </div>
             </button>

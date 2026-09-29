@@ -1,3 +1,5 @@
+import glass from '../components/ui/glass'
+import ErrorPanel from '../components/ErrorPanel'
 // ── LA VUELTA ────────────────────────────────────────────────────────────
 //
 // Aqui aterriza un profesional cuando abre el enlace del aviso que le llego
@@ -147,7 +149,7 @@ function ResponderAviso({ token }) {
   }
 
   const marco = {
-    height: '100dvh', overflowY: 'auto', background: 'var(--paper)',
+    height: 'var(--app-layout-height, 100dvh)', overflowY: 'auto', background: 'var(--paper)',
     display: 'flex', flexDirection: 'column', alignItems: 'center',
     padding: 'max(env(safe-area-inset-top,0px),24px) var(--space-20) var(--space-32)',
   }
@@ -155,11 +157,11 @@ function ResponderAviso({ token }) {
     width: '100%', maxWidth: 520,
     // Cristal, como el resto del sistema. Esta caja es, casi siempre, la
     // primera impresion de un profesional con Nüra.
-    background: 'rgba(255,255,255,0.96)',
+    background: 'var(--glass-panel)',
     WebkitBackdropFilter: 'blur(20px) saturate(160%)',
     backdropFilter: 'blur(20px) saturate(160%)',
     borderRadius: 'var(--radius-xl)', border: '1px solid var(--ink-border)',
-    boxShadow: 'var(--alzado-flota)',
+    boxShadow: 'var(--glass-panel-shadow)',
     padding: 'var(--space-28)',
   }
 
@@ -171,33 +173,21 @@ function ResponderAviso({ token }) {
 
   if (estado === 'sinred') {
     return <div style={{...marco, justifyContent: 'center'}}>
-      <div style={{...caja, textAlign: 'center'}}>
-        <p style={{fontSize: 'var(--text-md)', fontWeight: 700, color: 'var(--ink-primary)', margin: '0 0 var(--space-8)'}}>
-          No he podido abrir el mensaje
-        </p>
-        <p style={{fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)', margin: '0 0 var(--space-16)', lineHeight: 1.6}}>
-          Parece un problema de conexión. El mensaje sigue esperándote.
-        </p>
-        <button onClick={() => { setEstado('cargando'); setIntento(n => n + 1) }}
-          style={{ width: '100%', minHeight: 48, border: 'none', cursor: 'pointer', borderRadius: 'var(--radius-full)',
-            background: 'var(--purple)', color: 'white', fontFamily: 'inherit', fontSize: 'var(--text-base)', fontWeight: 700 }}>
-          Reintentar
-        </button>
-      </div>
+      <ErrorPanel
+        title="No he podido abrir el mensaje"
+        hint="Parece un problema de conexión. Puedes intentarlo de nuevo."
+        actionLabel="Reintentar"
+        onAction={() => { setEstado('cargando'); setIntento(n => n + 1) }}
+      />
     </div>
   }
 
   if (estado === 'error') {
     return <div style={{...marco, justifyContent: 'center'}}>
-      <div style={{...caja, textAlign: 'center'}}>
-        <p style={{fontSize: 'var(--text-md)', fontWeight: 700, color: 'var(--ink-primary)', margin: '0 0 var(--space-8)'}}>
-          Este enlace ya no sirve
-        </p>
-        <p style={{fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)', margin: 0, lineHeight: 1.6}}>
-          Puede que sea antiguo o que se haya copiado a medias. Si alguien te
-          escribió, vuelve a abrir el mensaje que te llegó.
-        </p>
-      </div>
+      <ErrorPanel
+        title="Este enlace ya no está disponible"
+        hint="Puede que sea antiguo o que se haya copiado a medias. Vuelve a abrir el enlace del mensaje que recibiste."
+      />
     </div>
   }
 
@@ -212,14 +202,14 @@ function ResponderAviso({ token }) {
         </p>
 
         <div style={{
-          background: 'var(--surface-subtle)', borderRadius: 'var(--radius-card)',
+          background: 'var(--glass-control)', borderRadius: 'var(--radius-card)',
           padding: 'var(--space-16)', margin: '0 0 var(--space-20)',
           fontSize: 'var(--text-base)', lineHeight: 1.6,
           color: 'var(--ink-primary)', whiteSpace: 'pre-wrap',
         }}>{aviso?.mensaje}</div>
 
         {aviso?.cita?.estado === 'cancelada' && (
-          <div role="status" style={{ border: '1px solid var(--ink-border)', background: 'var(--surface-subtle)',
+          <div role="status" style={{ border: '1px solid var(--ink-border)', background: 'var(--glass-control)',
             borderRadius: 'var(--radius-card)', padding: 'var(--space-14) var(--space-16)', margin: '0 0 var(--space-16)' }}>
             <p style={{ margin: '0 0 var(--space-4)', fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--red-ink)' }}>Cita cancelada</p>
             <p style={{ margin: 0, fontSize: 'var(--text-sm)', color: 'var(--ink-primary)', lineHeight: 1.5 }}>
@@ -247,10 +237,15 @@ function ResponderAviso({ token }) {
               Se la hago llegar. Si quiere seguir contigo, te aviso.
             </p>
             {despues?.conCuenta && (
-              <button onClick={() => navigate(despues.siguiente ? `/r/${despues.siguiente}` : '/chats')}
-                style={{ marginTop: 'var(--space-20)', width: '100%', minHeight: 48, border: 'none', cursor: 'pointer',
-                  borderRadius: 'var(--radius-full)', background: 'var(--purple)', color: 'white',
-                  fontFamily: 'inherit', fontSize: 'var(--text-base)', fontWeight: 700 }}>
+              <button className="nura-glass-action" onClick={() => navigate(despues.siguiente ? `/r/${despues.siguiente}` : '/chats')}
+                style={{ marginTop: 'var(--space-20)',
+              width: '100%',
+              minHeight: 48,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              fontSize: 'var(--text-base)',
+              fontWeight: 700,
+              ...(glass.primary) }}>
                 {despues.siguiente
                   ? `Siguiente mensaje sin contestar${despues.quedan > 1 ? ` (${despues.quedan})` : ''}`
                   : 'Volver a mis mensajes'}
@@ -258,21 +253,33 @@ function ResponderAviso({ token }) {
             )}
             {despues && !despues.conCuenta && (
               <div style={{ marginTop: 'var(--space-24)', padding: 'var(--space-16)', borderRadius: 'var(--radius-card)',
-                background: 'var(--surface-subtle)', textAlign: 'left' }}>
+                background: 'var(--glass-control)', textAlign: 'left' }}>
                 <p style={{ margin: '0 0 var(--space-6)', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--ink-primary)' }}>
                   ¿Quieres verlo todo en un sitio?
                 </p>
                 <p style={{ margin: '0 0 var(--space-12)', fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)', lineHeight: 1.5 }}>
                   Con tu acceso ves aquí todo lo que te escriban y te aviso en el móvil. Usa el mismo correo que diste en Nüra.
                 </p>
-                <button onClick={() => navigate('/entrar?modo=crear&volver=/chats')}
-                  style={{ width: '100%', minHeight: 44, border: '1px solid var(--purple)', cursor: 'pointer', borderRadius: 'var(--radius-full)',
-                    background: 'transparent', color: 'var(--purple)', fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 700 }}>
+                <button className="nura-glass-action" onClick={() => navigate('/entrar?modo=crear&volver=/chats')}
+                  style={{ width: '100%',
+              minHeight: 44,
+              cursor: 'pointer',
+              color: 'var(--purple)',
+              fontFamily: 'inherit',
+              fontSize: 'var(--text-sm)',
+              fontWeight: 700,
+              ...(glass.control) }}>
                   Crear mi acceso
                 </button>
-                <button onClick={() => navigate('/entrar?volver=/chats')}
-                  style={{ width: '100%', minHeight: 40, marginTop: 'var(--space-6)', border: 'none', cursor: 'pointer', background: 'transparent',
-                    color: 'var(--ink-secondary)', fontFamily: 'inherit', fontSize: 'var(--text-sm)' }}>
+                <button className="nura-glass-action" onClick={() => navigate('/entrar?volver=/chats')}
+                  style={{ width: '100%',
+              minHeight: 40,
+              marginTop: 'var(--space-6)',
+              cursor: 'pointer',
+              color: 'var(--ink-secondary)',
+              fontFamily: 'inherit',
+              fontSize: 'var(--text-sm)',
+              ...(glass.control) }}>
                   Ya tengo acceso: entrar
                 </button>
               </div>
@@ -288,20 +295,31 @@ function ResponderAviso({ token }) {
                   {cuandoCita(aviso.cita)}
                 </p>
                 <div style={{ display: 'flex', gap: 'var(--space-8)' }}>
-                  <button type="button" disabled={enviando}
+                  <button className="nura-glass-action" type="button" disabled={enviando}
                     onClick={() => { setDecision('aceptada'); enviarAceptando.current = true }}
-                    style={{ flex: 1, minHeight: 44, border: 'none', borderRadius: 'var(--radius-full)', cursor: 'pointer',
-                      background: 'var(--purple)', color: 'white', fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 700 }}>
+                    style={{ flex: 1,
+              minHeight: 44,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              fontSize: 'var(--text-sm)',
+              fontWeight: 700,
+              ...(glass.primary) }}>
                     {enviando && decision === 'aceptada' ? 'Confirmando…' : 'Aceptar la cita'}
                   </button>
-                  <button type="button" disabled={enviando}
+                  <button className="nura-glass-action" type="button" disabled={enviando}
                     onClick={() => {
                       setDecision('rechazada')
                       if (!texto.trim()) setTexto('Esa hora no me va bien. ¿Te iría bien ')
                       requestAnimationFrame(() => { const t = document.getElementById('respuesta'); t?.focus(); t?.setSelectionRange(t.value.length, t.value.length) })
                     }}
-                    style={{ flex: 1, minHeight: 44, border: '1px solid var(--ink-border)', borderRadius: 'var(--radius-full)', cursor: 'pointer',
-                      background: 'white', color: 'var(--ink-primary)', fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 600 }}>
+                    style={{ flex: 1,
+              minHeight: 44,
+              cursor: 'pointer',
+              color: 'var(--ink-primary)',
+              fontFamily: 'inherit',
+              fontSize: 'var(--text-sm)',
+              fontWeight: 600,
+              ...(glass.control) }}>
                     No me va bien
                   </button>
                 </div>
@@ -318,21 +336,31 @@ function ResponderAviso({ token }) {
             </label>
             <div role="group" aria-label="Respuestas rápidas" style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-6)', margin: '0 0 var(--space-10)' }}>
               {rapidasPara(aviso?.mensaje).map(([etiqueta, frase]) => (
-                <button key={etiqueta} type="button"
+                <button className="nura-glass-action" key={etiqueta} type="button"
                   onClick={() => { setTexto(frase); requestAnimationFrame(() => { const t = document.getElementById('respuesta'); t?.focus(); t?.setSelectionRange(frase.length, frase.length) }) }}
-                  style={{ minHeight: 36, padding: '0 var(--space-12)', borderRadius: 'var(--radius-full)', cursor: 'pointer',
-                    border: '1px solid var(--ink-border)', background: 'white', color: 'var(--ink-primary)',
-                    fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 600 }}>
+                  style={{ minHeight: 36,
+              padding: '0 var(--space-12)',
+              cursor: 'pointer',
+              color: 'var(--ink-primary)',
+              fontFamily: 'inherit',
+              fontSize: 'var(--text-sm)',
+              fontWeight: 600,
+              ...(glass.control) }}>
                   {etiqueta}
                 </button>
               ))}
             </div>
-            <textarea id="respuesta" value={texto} onChange={e => setTexto(e.target.value)} rows={5}
+            <textarea className="nura-glass-field" id="respuesta" value={texto} onChange={e => setTexto(e.target.value)} rows={5}
               placeholder="Puedes decir si tienes hueco, cuándo, o simplemente que ahora no puedes."
-              style={{width: '100%', boxSizing: 'border-box', padding: 'var(--space-12) var(--space-14)',
-                border: '1px solid var(--ink-border)', borderRadius: 'var(--radius-card)',
-                fontSize: 'var(--text-base)', lineHeight: 1.6, fontFamily: 'inherit',
-                background: 'var(--surface-subtle)', resize: 'vertical', outline: 'none'}} />
+              style={{ width: '100%',
+              boxSizing: 'border-box',
+              padding: 'var(--space-12) var(--space-14)',
+              fontSize: 'var(--text-base)',
+              lineHeight: 1.6,
+              fontFamily: 'inherit',
+              resize: 'vertical',
+              outline: 'none',
+              ...(glass.field) }} />
 
             {estado === 'fallo' && (
               <p style={{fontSize: 'var(--text-sm)', color: 'var(--red)', margin: 'var(--space-8) 0 0'}}>
@@ -342,13 +370,15 @@ function ResponderAviso({ token }) {
               </p>
             )}
 
-            <button onClick={enviar} disabled={!texto.trim() || enviando}
-              style={{width: '100%', marginTop: 'var(--space-16)', minHeight: 48,
-                background: texto.trim() ? 'var(--purple)' : 'rgba(33,29,51,0.1)',
-                color: texto.trim() ? 'white' : 'var(--ink-tertiary)',   // desactivado, pero legible
-                border: 'none', borderRadius: 'var(--radius-full)',
-                fontSize: 'var(--text-sm)', fontWeight: 700,
-                cursor: texto.trim() ? 'pointer' : 'default'}}>
+            <button className="nura-glass-action" onClick={enviar} disabled={!texto.trim() || enviando}
+              style={{ width: '100%',
+              marginTop: 'var(--space-16)',
+              minHeight: 48,
+              color: texto.trim() ? 'white' : 'var(--ink-tertiary)',
+              fontSize: 'var(--text-sm)',
+              fontWeight: 700,
+              cursor: texto.trim() ? 'pointer' : 'default',
+              ...(texto.trim() ? glass.primary : glass.disabled) }}>
               {enviando ? 'Enviando…' : 'Enviar respuesta'}
             </button>
 

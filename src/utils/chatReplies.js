@@ -5,17 +5,17 @@ import { labelDe } from './personas'
 // Business logic for generating helper responses, separated from UI layer
 
 function generateFirstMessage(helper) {
-  const name = getFirstName(helper.name) || 'Hola'
+  const name = getFirstName(helper.name) || ''
   const map = {
-    logopeda:    `Hola ${name}, te contacto Hola, necesito ayuda con logopedia. ¿Tienes disponibilidad esta semana?`,
-    tecnico:     `Hola ${name}, Tengo un problema que necesita un técnico. ¿Cuándo podrías venir?`,
-    limpieza:    `Hola ${name}, Busco servicio de limpieza del hogar. ¿Estarías disponible?`,
-    cuidado:     `Hola ${name}, Busco a alguien de confianza para cuidar a un familiar. ¿Podríamos hablar?`,
-    mascotas:    `Hola ${name}, Necesito a alguien que cuide mi mascota. ¿Estarías disponible?`,
-    matematicas: `Hola ${name}, Mi hijo necesita refuerzo escolar. ¿Darías clases?`,
-    entrenador:  `Hola ${name}, Me gustaría empezar a entrenar. ¿Cuándo podría ser la primera sesión?`,
+    logopeda:    `Hola${name ? ` ${name}` : ''}, necesito ayuda con logopedia. ¿Tienes disponibilidad esta semana?`,
+    tecnico:     `Hola${name ? ` ${name}` : ''}, tengo un problema que necesita un técnico. ¿Cuándo podrías venir?`,
+    limpieza:    `Hola${name ? ` ${name}` : ''}, busco servicio de limpieza del hogar. ¿Estarías disponible?`,
+    cuidado:     `Hola${name ? ` ${name}` : ''}, busco a alguien de confianza para cuidar a un familiar. ¿Podríamos hablar?`,
+    mascotas:    `Hola${name ? ` ${name}` : ''}, necesito a alguien que cuide mi mascota. ¿Estarías disponible?`,
+    matematicas: `Hola${name ? ` ${name}` : ''}, mi hijo necesita refuerzo escolar. ¿Darías clases?`,
+    entrenador:  `Hola${name ? ` ${name}` : ''}, me gustaría empezar a entrenar. ¿Cuándo podría ser la primera sesión?`,
   }
-  return map[helper.category] || `Hola ${name}, te contacto Hola, ¿tienes disponibilidad?`
+  return map[helper.category] || `Hola${name ? ` ${name}` : ''}, ¿tienes disponibilidad?`
 }
 
 function getHelperReply(helper, count, userMsg = '', isIntroLetter = false) {
@@ -26,16 +26,16 @@ function getHelperReply(helper, count, userMsg = '', isIntroLetter = false) {
   if (isIntroLetter && count === 1) {
     const cat = helper.category || 'otro'
     const acknowledgments = {
-      logopeda:    `Hola, gracias por escribir. He leído el contexto que me ha pasado Nüra — me encajan bien estos casos. ¿Te viene bien que hablemos esta semana para concretar horarios?`,
+      logopeda:    `Hola, gracias por escribir. He leído el contexto que me ha pasado Nüra. Me encajan bien estos casos. ¿Te viene bien que hablemos esta semana para concretar horarios?`,
       cuidado:     `Hola, gracias por confiar en mí. Ya tengo una idea clara de la situación gracias al mensaje de Nüra. ¿Podemos hablar para conocer mejor los horarios y empezar pronto?`,
       tecnico:     `Hola, perfecto, ya veo de qué se trata. Puedo pasar a verlo. ¿Qué días te van mejor?`,
       salud:       `Hola, gracias por contarme tu situación a través de Nüra. Me gustaría agendar una primera sesión para conocernos mejor. ¿Tienes disponibilidad esta semana?`,
       legal:       `Hola, he leído el resumen de tu caso. Creo que puedo orientarte bien. ¿Te viene bien una primera llamada para hablar con más detalle?`,
       entrenador:  `Hola, genial que me escribas. Con el contexto que me ha dado Nüra ya tengo una idea de por dónde empezar. ¿Reservamos la primera sesión de valoración?`,
-      mascotas:    `Hola, gracias por el mensaje. Encantada de ayudar — ¿cuándo te vendría bien empezar?`,
+      mascotas:    `Hola, gracias por el mensaje. Encantada de ayudar. ¿Cuándo te vendría bien empezar?`,
       clases:      `Hola, gracias por escribir. Con lo que me cuenta Nüra ya sé por dónde enfocar las clases. ¿Empezamos esta semana?`,
     }
-    return acknowledgments[cat] || `Hola, gracias por escribirme con tanto detalle. Ya tengo claro el contexto — ¿cuándo te vendría bien que habláramos?`
+    return acknowledgments[cat] || `Hola, gracias por escribirme con tanto detalle. Ya tengo claro el contexto. ¿Cuándo te vendría bien que habláramos?`
   }
 
   // Initial greeting (count=0) — warm professional hello
@@ -58,20 +58,20 @@ function getHelperReply(helper, count, userMsg = '', isIntroLetter = false) {
     const cat = helper.category || 'otro'
     const specific = {
       logopeda:    `Hola, gracias por escribirme. ¿Me cuentas la edad y qué dificultades concretas observas?`,
-      cuidado:     `Hola, con mucho gusto. ¿Puedes contarme un poco sobre tu familiar — movilidad, horarios, lo que necesite?`,
+      cuidado:     `Hola, con mucho gusto. ¿Puedes contarme qué necesita tu familiar y en qué horarios? También me ayudará conocer su movilidad.`,
       tecnico:     `Hola, dime en qué consiste el problema exactamente. Así vengo preparado con lo necesario.`,
       limpieza:    `Hola, disponibilidad tengo. ¿Cuántos metros es la vivienda y con qué frecuencia lo necesitarías?`,
       entrenador:  `Hola, la primera sesión es de valoración gratuita. ¿Esta semana te viene bien?`,
       salud:       `Hola, cuéntame qué te ocurre. Así valoro si puedo ayudarte y cómo.`,
       legal:       `Hola, para orientarte bien necesito saber más sobre el caso. ¿Qué tipo de situación es?`,
-      nutricion:   `Hola, para ayudarte bien necesito saber: ¿tienes algún objetivo concreto — perder peso, ganar músculo, mejorar energía?`,
+      nutricion:   `Hola, ¿quieres perder peso, ganar músculo, tener más energía o tienes otro objetivo?`,
       psicologia:  `Hola, gracias por escribirme. ¿Llevas mucho tiempo con esto o es algo más reciente?`,
       fisio:       `Hola, cuéntame qué zona te molesta y cuándo empezó. Así valoro si puedo ayudarte.`,
       abogado:     `Hola, para orientarte necesito entender la situación. ¿Es un tema laboral, familiar o civil?`,
-      contable:    `Hola, ¿de qué tipo de gestión se trata — declaración de renta, autónomo, empresa?`,
-      mascotas:    `Hola, ¿qué raza y edad tiene? Y ¿qué servicio necesitas exactamente — cuidado, adiestramiento, paseos?`,
+      contable:    `Hola, ¿necesitas ayuda con la declaración de la renta, como autónomo o para una empresa?`,
+      mascotas:    `Hola, ¿qué raza y edad tiene? Y ¿necesitas cuidados, adiestramiento o paseos?`,
       educacion:   `Hola, ¿para qué curso y asignatura necesitas el apoyo? ¿Hay alguna fecha de examen próxima?`,
-      idiomas:     `Hola, ¿cuál es tu nivel actual y para qué necesitas el idioma — trabajo, viaje, examen?`,
+      idiomas:     `Hola, ¿cuál es tu nivel actual? ¿Necesitas el idioma para trabajar, viajar o preparar un examen?`,
     }
     return specific[cat] || `Hola, gracias por contactarme. Cuéntame qué necesitas exactamente y te digo cómo puedo ayudarte.`
   }
@@ -197,7 +197,7 @@ function getNuraIntervention(helper, count, messages) {
   // Count-based fallbacks for when no signals detected
   const fallbacks = {
     2: `¿Necesitas algo más antes de decidir? Puedo buscar alternativas si quieres comparar.`,
-    5: `**${name}** tiene ${helper.rating || 4.8}★ de media con ${helper.reviews || 0} valoraciones reales.`,
+    5: `**${name}** tiene ${helper.rating || 4.8} sobre 5 de media con ${helper.reviews || 0} valoraciones reales.`,
     7: `Cuando estés listo, confirma la reserva. Quedará en **Mis Servicios** con todos los detalles.`,
   }
   return fallbacks[count] || null
@@ -225,10 +225,10 @@ function buildLivingConversation({ helper, analysis, userQuery }) {
   const s = analysis?.complexSignals || {}
   const especial =
     s.alzheimer ? 'Los casos de Alzheimer son mi día a día desde hace años, así que entiendo bien lo que necesitáis.' :
-    s.infantil ? 'Trabajo muchísimo con peques — la paciencia y el juego son mi método.' :
+    s.infantil ? 'Trabajo con niños a través del juego y con mucha paciencia.' :
     s.sola ? 'Sé lo importante que es una compañía constante y de confianza.' :
     `Es exactamente el tipo de ayuda que doy cada semana${helper?.specialty ? ` como ${helper.specialty.toLowerCase()}` : ''}.`
-  const msg1 = `Hola, soy ${firstName} 😊 Acabo de leer tu mensaje con calma${persona ? ` — será un placer ayudar con ${persona}` : ''}. ${especial}`
+  const msg1 = `Hola, soy ${firstName}. Acabo de leer tu mensaje con calma${persona ? `. Será un placer ayudar con ${persona}` : ''}. ${especial}`
   const franja = detectFranja(userQuery)
   const day = nextBusinessDay()
   const msg2 = `Si te parece, podemos empezar con una primera visita sin compromiso para conocernos. ¿Te iría bien el ${day} ${franja}?`

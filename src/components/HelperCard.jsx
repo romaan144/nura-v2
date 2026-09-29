@@ -4,7 +4,8 @@ import { useUser } from '../context/UserContext'
 import { showToast } from './Toast'
 import { haptic } from '../utils/haptic'
 import { getFirstName } from '../utils/name'
-import { Badge, LiveDot } from './ui'
+import { ArrowUpRight, BadgeCheck, MapPin, MessageCircle, Star, Zap } from 'lucide-react'
+import styles from './HelperCard.module.css'
 import { recordarDestino, contextoDeChat } from '../utils/contacto'
 import { fmtNota, dondeEsta } from '../utils/formato'
 
@@ -25,7 +26,6 @@ export default function HelperCard({ helper, onContact, showContact = true, show
   if (!helper) return null
 
   const firstName = getFirstName(helper.name)
-  const lastInitial = helper.name?.split(' ')[1]?.[0]
 
   function handleTap() {
     const reason = window.__nuraMatchReasons?.[String(helper.id)]
@@ -47,86 +47,38 @@ export default function HelperCard({ helper, onContact, showContact = true, show
     navigate(`/chat/${helper.id}`, { state: contextoDeChat(helper) })
   }
 
-  const metaParts = []
-  if (helper.rating) metaParts.push(
-    <span key="r" style={{ color: 'var(--ink)', fontWeight: 700 }}>
-      <span style={{ color: 'var(--amber, #F59E0B)' }}>★</span> {fmtNota(helper.rating)}
-      {helper.reviews > 0 && <span style={{ color: 'var(--ink-tertiary)', fontWeight: 500 }}> ({helper.reviews})</span>}
-    </span>
-  )
-  if (showPrice && helper.price && helper.price !== 'Consultar')
-    metaParts.push(<span key="p" style={{ color: 'var(--ink)', fontWeight: 600 }}>{helper.price}</span>)
-  if (dondeEsta(helper))
-    metaParts.push(<span key="d" style={{ color: 'var(--ink-tertiary)' }}>{dondeEsta(helper)}</span>)
-  if (helper.urgent)
-    metaParts.push(<span key="u" style={{ color: 'var(--ink-tertiary)' }}>⚡ urgencias</span>)
+  const place = dondeEsta(helper)
+  const price = showPrice && helper.price && helper.price !== 'Consultar' ? helper.price : null
 
   return (
-    <div onClick={handleTap} role="button" aria-label={`Ver perfil de ${helper.name}`}
-      style={{
-        /* Esta es la tarjeta que de verdad se ve al explorar una categoria
-           —HelperCardTall solo vive en Home—. Cristal y la reaccion del
-           sistema: tocar a una persona es acercarse a ella. */
-        background: 'rgba(255,255,255,0.96)',
-        WebkitBackdropFilter: 'blur(20px) saturate(160%)',
-        backdropFilter: 'blur(20px) saturate(160%)',
-        border: '1px solid rgba(255,255,255,0.6)',
-        borderRadius: 'var(--radius-md)',
-        boxShadow: 'var(--alzado-reposo)',
-        transition: 'transform 0.18s cubic-bezier(0.22,1,0.36,1), box-shadow 0.18s ease',
-        WebkitTapHighlightColor: 'transparent',
-        padding: 'var(--space-14)', cursor: 'pointer', width: '100%',
-        display: 'flex', alignItems: 'center', gap: 'var(--space-12)',
-      }}>
-      <div style={{ position: 'relative', flexShrink: 0 }}>
-        {helper.avatarUrl
-          ? <img decoding="async" loading="eager" width="54" height="54" src={helper.avatarUrl} alt="" style={{ width: 54, height: 54, borderRadius: '50%', objectFit: 'cover', display: 'block' }} />
-          : <div style={{
-              width: 54, height: 54, borderRadius: '50%',
-              background: helper.avatarColor || 'var(--purple)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 18, fontWeight: 700, color: 'white',
-            }}>{helper.avatar || helper.name?.[0] || '?'}</div>
-        }
-        {helper.available && <LiveDot size={13} style={{ position: 'absolute', bottom: 1, right: 1 }} />}
-      </div>
-
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-6)' }}>
-          <span style={{
-            fontSize: 'var(--text-base)', fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.2px',
-            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-          }}>{firstName}{lastInitial ? ` ${lastInitial}.` : ''}</span>
-          {helper.verified && <Badge variant="success" size="xs">✓</Badge>}
-        </div>
-        <div style={{
-          fontSize: 'var(--text-xs)', color: 'var(--ink-secondary)', marginTop: 'var(--space-2)',
-          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-        }}>
-          {helper.specialty}{helper.zone ? ` · ${helper.zone}` : ''}
-        </div>
-        {metaParts.length > 0 && (
-          <div style={{ fontSize: 'var(--text-xs)', marginTop: 'var(--space-4)', display: 'flex', alignItems: 'center', gap: 'var(--space-4)', flexWrap: 'wrap' }}>
-            {metaParts.map((part, i) => (
-              <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-4)' }}>
-                {i > 0 && <span style={{ color: 'var(--ink-disabled, rgba(33,29,51,0.2))' }}>·</span>}
-                {part}
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {showContact && (
-        <button onClick={handleContact} aria-label={`Escribir a ${firstName}`}
-          style={{
-            flexShrink: 0, background: 'var(--purple-10)', color: 'var(--purple-ink)',
-            border: '1px solid var(--purple-20)', borderRadius: 'var(--radius-full)',
-            padding: 'var(--space-8) var(--space-14)', fontSize: 'var(--text-xs)', fontWeight: 700, cursor: 'pointer',
-          }}>
-          Escribir
-        </button>
-      )}
-    </div>
+    <article className={styles.card}>
+      <button type="button" className={styles.profile} onClick={handleTap} aria-label={`Ver perfil de ${helper.name}`}>
+        <span className={styles.avatarWrap}>
+          {helper.avatarUrl
+            ? <img decoding="async" loading="lazy" width="80" height="104" src={helper.avatarUrl} alt="" className={styles.avatar} />
+            : <span className={styles.avatarFallback}>{firstName?.[0]?.toUpperCase() || '?'}</span>}
+          {helper.available && <span className={styles.availDot} role="img" aria-label="Disponible ahora" />}
+        </span>
+        <span className={styles.info}>
+          <span className={styles.nameRow}>
+            <span className={styles.name} title={helper.name}>{helper.name}</span>
+            {helper.verified && <BadgeCheck size={16} className={styles.verified} aria-label="Identidad verificada" />}
+            <ArrowUpRight size={15} className={styles.profileArrow} aria-hidden="true" />
+          </span>
+          <span className={styles.specialty} title={helper.specialty}>{helper.specialty}</span>
+          <span className={styles.meta}>
+            {helper.rating > 0 && <span className={styles.rating}><Star size={13} aria-hidden="true" />{fmtNota(helper.rating)}{helper.reviews > 0 && <span className={styles.reviews}>({helper.reviews})</span>}</span>}
+            {helper.urgent && <span className={styles.urgent}><Zap size={13} aria-hidden="true" /><span>Urgencias</span></span>}
+          </span>
+          <span className={styles.location}>{place && <><MapPin size={12} aria-hidden="true" /><span>{place}</span></>}</span>
+        </span>
+      </button>
+      {(price || showContact) && <div className={styles.footer}>
+        <span className={styles.price} title={price || undefined}>{price}</span>
+        {showContact && <button type="button" className={styles.contactBtn} onClick={handleContact} aria-label={`Escribir a ${firstName}`}>
+          <MessageCircle size={16} aria-hidden="true" />Escribir
+        </button>}
+      </div>}
+    </article>
   )
 }

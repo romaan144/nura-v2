@@ -20,8 +20,10 @@ export default function EditarHorario({ valor, onCambio }) {
   const chip = (on, extra) => ({
     minHeight: 40, borderRadius: 'var(--radius-full)', cursor: 'pointer', fontFamily: 'inherit',
     fontSize: 'var(--text-sm)', fontWeight: 600,
-    border: on ? '1px solid transparent' : '1px solid var(--ink-border)',
-    background: on ? 'var(--purple)' : 'white', color: on ? 'white' : 'var(--ink-secondary)', ...extra,
+    border: on ? '1px solid var(--glass-selected-edge)' : '1px solid var(--glass-edge)',
+    background: on ? 'var(--glass-selected)' : 'var(--glass-control)',
+    color: on ? 'var(--glass-selected-ink)' : 'var(--ink-secondary)',
+    boxShadow: 'var(--glass-control-shadow)', ...extra,
   })
 
   return (

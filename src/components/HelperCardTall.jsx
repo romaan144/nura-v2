@@ -1,3 +1,5 @@
+import { BadgeCheck, MessageCircle, ArrowUpRight, Star } from 'lucide-react'
+import styles from './HelperCardTall.module.css'
 import { useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
@@ -15,7 +17,7 @@ import { fmtNota, dondeEsta } from '../utils/formato'
 // acción ancha. `small` la reduce para las alternativas: coherencia
 // por escala, no por invención.
 // ═══════════════════════════════════════════════════════════════
-export default function HelperCardTall({ helper, small = false }) {
+export default function HelperCardTall({ helper, small = false, compact = false, featured = false, comparison = false }) {
   // Navegacion diferida cancelable: si el componente se va antes de los
   // 600ms, el usuario NO acaba en Login sin haberlo pedido.
   const irLuego = useRef(null)
@@ -26,7 +28,8 @@ export default function HelperCardTall({ helper, small = false }) {
   if (!helper) return null
 
   const firstName = getFirstName(helper.name)
-  const lastInitial = helper.name?.split(' ')[1]?.[0]
+  const nameParts = helper.name?.trim().split(/\s+/) || []
+  const lastInitial = nameParts[nameParts.indexOf(firstName) + 1]?.[0]
   const av = small ? 62 : 96
   // MEDIDO sobre los 123 perfiles: `experience` es SIEMPRE trayectoria
   // (array de puestos) o no esta. Ninguno la trae como texto. Pintarla
@@ -65,8 +68,31 @@ export default function HelperCardTall({ helper, small = false }) {
     navigate(`/chat/${helper.id}`, { state: contextoDeChat(helper) })
   }
 
+  if (compact) return (
+    <article className={`${styles.compact} ${featured ? styles.featured : ''} ${comparison ? styles.comparison : ''}`}>
+      <button type="button" className={styles.profile} onClick={handleTap} aria-label={`Ver perfil de ${helper.name}`}>
+        {helper.avatarUrl
+          ? <img className={styles.avatar} src={helper.avatarUrl} alt="" loading="lazy" />
+          : <span className={styles.avatar} style={{ background: helper.avatarColor || 'var(--purple)' }}>{firstName?.[0]}</span>}
+        <span className={styles.info}>
+          <span className={styles.name}>{firstName}{lastInitial ? ` ${lastInitial}.` : ''}{helper.verified && <BadgeCheck size={15} aria-label="Verificado" />}</span>
+          <span className={styles.specialty}>{helper.specialty}</span>
+          <span className={styles.meta}>
+            {helper.rating > 0 && <span className={styles.rating}><Star size={12} aria-hidden="true" />{fmtNota(helper.rating)}</span>}
+            {helper.price && <span>{helper.price}</span>}
+            {!helper.price && dondeEsta(helper) && <span>{dondeEsta(helper)}</span>}
+          </span>
+          <span className={styles.open}>Ver perfil <ArrowUpRight size={12} aria-hidden="true" /></span>
+        </span>
+      </button>
+      <button type="button" className={styles.contact} onClick={handleContact} aria-label={`Escribir a ${firstName}`} title={`Escribir a ${firstName}`}>
+        <MessageCircle size={19} aria-hidden="true" />
+      </button>
+    </article>
+  )
+
   return (
-    <div onClick={handleTap} role="button" tabIndex={0}
+    <div className={`nura-person-card ${small ? 'nura-person-card--small' : ''}`} onClick={handleTap} role="button" tabIndex={0}
       onKeyDown={e => { if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); handleTap() } }} aria-label={`Ver perfil de ${helper.name}`}
       style={{
         /* LA TARJETA DEL HALLAZGO. Es la superficie mas importante de Nüra
@@ -75,7 +101,7 @@ export default function HelperCardTall({ helper, small = false }) {
            (modales, hojas), estando en reposo. La ley de la elevacion dice
            que la sombra comunica CAPA, no importancia: si algo debe
            destacar sin flotar, se destaca con contraste, no elevandolo. */
-        background: 'rgba(255,255,255,0.96)',
+        background: 'var(--person-card-surface)',
         WebkitBackdropFilter: 'blur(20px) saturate(160%)',
         backdropFilter: 'blur(20px) saturate(160%)',
         border: '1px solid var(--ink-border)',
@@ -84,12 +110,8 @@ export default function HelperCardTall({ helper, small = false }) {
         padding: small ? 'var(--space-14) var(--space-10) var(--space-12)' : 'var(--space-24) var(--space-20) var(--space-20)',
         display: 'flex', flexDirection: 'column', alignItems: 'center',
         textAlign: 'center', cursor: 'pointer', width: '100%',
-        transition: 'transform 0.18s cubic-bezier(0.22,1,0.36,1), box-shadow 0.18s ease',
         WebkitTapHighlightColor: 'transparent',
-      }}
-      onPointerDown={e => { e.currentTarget.style.transform = 'scale(0.985)' }}
-      onPointerUp={e => { e.currentTarget.style.transform = '' }}
-      onPointerLeave={e => { e.currentTarget.style.transform = '' }}>
+      }}>
       <div style={{ position: 'relative', marginBottom: small ? '8px' : '12px' }}>
         {helper.avatarUrl
           ? <img src={helper.avatarUrl} alt="" decoding="async" width={av} height={av}

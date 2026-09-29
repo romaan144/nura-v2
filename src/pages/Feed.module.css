@@ -114,7 +114,6 @@
   transition: opacity 0.15s;
   font-family: -apple-system, 'Inter', sans-serif;
 }
-.followBtn:active { opacity: 0.7; }
 .followingBtn {
   display: flex; align-items: center; gap: 4px;
   padding: 6px 12px; border-radius: var(--radius-full);
@@ -172,7 +171,6 @@
   border-radius: var(--radius-sm); transition: opacity 0.15s;
   font-family: -apple-system, 'Inter', sans-serif;
 }
-.action:active { opacity: 0.6; }
 .actionLiked { color: var(--red); }
 .actionSaved { color: var(--purple-ink); }
 .actionEnd { margin-left: auto; }
@@ -234,7 +232,6 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-.nuraPick:active { opacity: 0.75; }
 
 .nuraPickHeader {
   display: flex;
@@ -343,3 +340,12 @@
 .card:nth-child(3) { animation-delay: 115ms; }
 .card:nth-child(4) { animation-delay: 163ms; }
 .card:nth-child(n+5) { animation-delay: 204ms; }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.tabsInner { background: var(--glass-floating); border-color: var(--glass-edge); box-shadow: var(--glass-floating-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); border-radius: 999px; }
+.tab { border-radius: 999px; }
+.tabActive { background: var(--glass-selected); color: var(--glass-selected-ink); border-color: var(--glass-selected-edge); box-shadow: var(--glass-control-shadow), inset 0 0 0 1px var(--glass-selected-edge); }
+.card { background: var(--glass-panel); border-color: var(--glass-edge); border-radius: var(--radius-glass); box-shadow: var(--glass-panel-shadow); }
+.followingBtn { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
+.followBtn, .emptyBtn { background: var(--grad-main); color: white; border-radius: 999px; box-shadow: var(--glass-primary-shadow); }

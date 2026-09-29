@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
-import { Button } from '../components/ui'
+import styles from './Access.module.css'
+import { Phone, UserRound, KeyRound } from 'lucide-react'
 import { DEMO_MODE, NURA_BUILD } from '../config'
 
 // ═══════════════════════════════════════════════════════════════
@@ -12,109 +13,6 @@ import { DEMO_MODE, NURA_BUILD } from '../config'
 // Aqui solo hay un contenedor que ocupa lo que le dan y desplaza si
 // hace falta, con el contenido apilado de arriba abajo.
 // ═══════════════════════════════════════════════════════════════
-
-const S = {
-  // La estructura sigue siendo la simple que funciona: altura del padre,
-  // flujo normal, cero elementos posicionados a nivel de pagina. Lo bonito
-  // de la version original vuelve como SUPERFICIE, no como colocacion.
-  page: {
-    height: '100%', minHeight: '100dvh',
-    overflowY: 'auto', overflowX: 'hidden', overscrollBehaviorY: 'contain', WebkitOverflowScrolling: 'touch',
-    // Centrado SEGURO: flex + margin:auto en el hijo. A diferencia de
-    // justify-content:center, cuando el contenido no cabe el margen se
-    // reduce a cero y vuelve al flujo normal — nunca corta por arriba.
-    display: 'flex', flexDirection: 'column',
-    background: `radial-gradient(420px 320px at 88% -4%, rgba(255,59,92,0.10), transparent 64%),
-                 radial-gradient(520px 360px at 6% 4%, rgba(123,47,255,0.11), transparent 66%),
-                 radial-gradient(460px 300px at 50% 104%, rgba(0,212,200,0.08), transparent 62%),
-                 var(--paper)`,
-    /* Sin reserva de barra: BottomNav se oculta en /login
-       (BottomNav.jsx:14 HIDE_ON), asi que reservarla dejaba ~90px muertos. */
-    padding: 'var(--space-32) var(--space-20) var(--space-32)',
-  },
-  inner: { maxWidth: '420px', width: '100%', margin: 'auto' },
-
-  logo: {
-    width: '60px', height: '60px', display: 'block', margin: '0 auto',
-    animation: 'fadeInUp .36s ease both',
-  },
-  wordmark: { height: '26px', display: 'block', margin: 'var(--space-14) auto var(--space-6)' },
-  lema: {
-    fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)',
-    textAlign: 'center', margin: '0 0 var(--space-28)', letterSpacing: '-0.1px',
-  },
-
-  card: {
-    background: 'rgba(255,255,255,0.86)',
-    WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-    backdropFilter: 'blur(24px) saturate(180%)',
-    border: '1px solid var(--ink-border)',
-    borderRadius: 'var(--radius-md)',
-    boxShadow: 'var(--shadow-md)',
-    padding: 'var(--space-24) var(--space-20)',
-  },
-  pasos: { display: 'flex', gap: 'var(--space-6)', marginBottom: 'var(--space-24)' },
-  paso: hecho => ({
-    height: '3px', flex: 1, borderRadius: 'var(--radius-full)',
-    background: hecho ? 'var(--purple)' : 'var(--surface-muted)',
-    transition: 'background 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
-  }),
-
-  titulo: {
-    fontFamily: 'var(--font-voice)', fontSize: 'var(--text-page-title)', fontWeight: 700,
-    letterSpacing: '-0.6px', color: 'var(--ink)', margin: '0 0 var(--space-6)',
-    textAlign: 'center',
-  },
-  ayuda: {
-    fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)',
-    margin: '0 0 var(--space-20)', lineHeight: 1.5, textAlign: 'center',
-  },
-  campo: {
-    width: '100%', boxSizing: 'border-box',
-    border: '1px solid var(--ink-border)', borderRadius: 'var(--radius-card)',
-    padding: 'var(--space-14) var(--space-16)',
-    fontSize: '16px',
-    fontFamily: 'inherit', color: 'var(--ink)', textAlign: 'center',
-    background: 'var(--paper)', outline: 'none',
-    marginBottom: 'var(--space-14)', letterSpacing: '0.4px',
-  },
-
-  // Las casillas del codigo, de la version original
-  codeWrap: { position: 'relative', marginBottom: 'var(--space-16)' },
-  codeRow: { display: 'flex', gap: 'var(--space-10)', justifyContent: 'center' },
-  codeBox: lleno => ({
-    width: '54px', height: '62px', borderRadius: 'var(--radius-card)',
-    background: lleno ? 'var(--purple-05)' : 'var(--paper)',
-    border: '1.5px solid ' + (lleno ? 'var(--purple)' : 'var(--ink-border)'),
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    fontSize: '26px', fontWeight: 700, color: 'var(--ink)',
-    transition: 'all 0.2s cubic-bezier(0.22, 1, 0.36, 1)',
-  }),
-  codeHidden: {
-    position: 'absolute', inset: 0, width: '100%', height: '100%',
-    opacity: 0, border: 'none', background: 'transparent',
-    fontSize: '16px', cursor: 'pointer',
-  },
-
-  pista: {
-    fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)',
-    margin: '0 0 var(--space-12)', textAlign: 'center',
-  },
-  volver: {
-    background: 'none', border: 'none', color: 'var(--ink-tertiary)',
-    fontSize: 'var(--text-sm)', fontFamily: 'inherit',
-    padding: 'var(--space-14) 0 0', cursor: 'pointer', width: '100%',
-  },
-  confianza: {
-    display: 'block', margin: 'var(--space-20) 0 0',
-    fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)',
-    textAlign: 'center', lineHeight: 1.5,
-  },
-  sello: {
-    textAlign: 'center', fontSize: 'var(--text-xs)',
-    color: 'var(--ink-tertiary)', marginTop: 'var(--space-16)', opacity: 0.6,
-  },
-}
 
 const PASO = { phone: 0, code: 1, name: 2 }
 
@@ -173,91 +71,61 @@ export default function Login() {
   }
 
   return (
-    <div style={S.page}>
-      <div style={S.inner}>
-        <img src="/logo-iso.png" alt="" style={S.logo} />
-        <span className="nura-wordmark" style={{textAlign: 'center', margin: '12px auto 6px'}}>Nüra</span>
-        <p style={S.lema}>Encuentra a la persona adecuada</p>
-
-        <div style={S.card}>
-          {DEMO_MODE && (
-            <div style={S.pasos}>
-              {[0, 1, 2].map(i => <div key={i} style={S.paso(i <= PASO[step])} />)}
-            </div>
-          )}
-
-          {step === 'phone' && (
-            <>
-              <h1 style={S.titulo}>Tu teléfono</h1>
-              <p style={S.ayuda}>Te enviamos un código para confirmar que eres tú.</p>
-              <input style={S.campo} type="tel" inputMode="numeric" placeholder="612 345 678"
-                value={phone} maxLength={9}
-                onChange={e => setPhone(e.target.value.replace(/\D/g, ''))}
-                onKeyDown={e => { if (e.key === 'Enter') handlePhone() }} />
-              {/* La pista aparece solo si ya empezaste: explicar antes de que
-                nadie lo intente es regañar de entrada. */}
-            {phone.length > 0 && phone.length < 9 && (
-              <p style={S.pista}>Faltan {9 - phone.length} cifras</p>
-            )}
-            <Button variant="primary" full onClick={handlePhone} disabled={phone.length < 9 || loading}>
-                {loading ? 'Enviando…' : 'Continuar'}
-              </Button>
-            </>
-          )}
-
-          {step === 'code' && (
-            <>
-              <h1 style={S.titulo}>Tu código</h1>
-              <p style={S.ayuda}>Te lo hemos enviado al {phone}.</p>
-              <div style={S.codeWrap}>
-                <div style={S.codeRow}>
-                  {[0, 1, 2, 3].map(i => (
-                    <div key={i} style={S.codeBox(!!code[i])}>{code[i] || ''}</div>
-                  ))}
-                </div>
-                <input style={S.codeHidden} type="tel" inputMode="numeric" value={code} maxLength={4}
-                  aria-label="Código de verificación"
-                  onChange={e => setCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                  onKeyDown={e => { if (e.key === 'Enter') handleCode() }} />
-              </div>
-              {code.length > 0 && code.length < 4 && (
-              <p style={S.pista}>Faltan {4 - code.length} cifras</p>
-            )}
-            <Button variant="primary" full onClick={handleCode} disabled={code.length < 4 || loading}>
-                {loading ? 'Comprobando…' : 'Entrar'}
-              </Button>
-              <button style={S.volver} onClick={() => { setStep('phone'); setCode('') }}>
-                Cambiar de número
-              </button>
-            </>
-          )}
-
-          {step === 'name' && (
-            <>
-              <h1 style={S.titulo}>¿Cómo te llamas?</h1>
-              <p style={S.ayuda}>Así sabrán quién les escribe. Se guarda en este móvil.</p>
-              <input style={S.campo} placeholder="Tu nombre" value={name}
-                onChange={e => setName(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') handleName() }} />
-              <Button variant="primary" full onClick={handleName} disabled={!name.trim()}>
-                Entrar en Nüra
-              </Button>
-              {!DEMO_MODE && (
-                <button style={S.volver} onClick={() => navigate('/entrar?modo=crear&volver=' + encodeURIComponent(sessionStorage.getItem('nura_return_to') || '/'))}>
-                  ¿Quieres entrar desde cualquier móvil? Crea tu acceso con correo
-                </button>
-              )}
-            </>
-          )}
+    <div className={styles.loginPage}>
+      <div className={styles.loginInner}>
+        <div className={styles.brand}>
+          <img src="/logo-iso.png" alt="" width="44" height="44" />
+          <span className="nura-wordmark">Nüra</span>
         </div>
-
-        <p style={S.confianza}>
-          {DEMO_MODE
-            ? <>Tu teléfono no se muestra a nadie.<br />Solo sirve para entrar.</>
-            : <>Nunca analizamos tus conversaciones ni lo que buscas.</>}
-        </p>
-
-        <div style={S.sello}>{NURA_BUILD}</div>
+        <main className={styles.loginCard}>
+          <div className={styles.icon} aria-hidden="true">{step === 'phone' ? <Phone size={24} /> : step === 'code' ? <KeyRound size={24} /> : <UserRound size={24} />}</div>
+          {DEMO_MODE && <>
+            <p className={styles.eyebrow}>Demostración · Paso {PASO[step] + 1} de 3</p>
+            <div className={styles.steps} aria-hidden="true">{[0, 1, 2].map(i => <span key={i} className={i <= PASO[step] ? styles.stepActive : ''} />)}</div>
+          </>}
+          {step === 'phone' && <>
+            <h1 className={styles.title}>Tu teléfono</h1>
+            <p className={styles.description}>Prueba cómo es entrar en Nüra. En esta demostración no enviamos SMS.</p>
+            <div className={styles.field}>
+              <label htmlFor="login-phone" className={styles.label}>Número de teléfono</label>
+              <input id="login-phone" className={styles.input} type="tel" inputMode="numeric" autoComplete="tel-national" placeholder="612 345 678"
+                value={phone} maxLength={9} onChange={e => setPhone(e.target.value.replace(/\D/g, ''))}
+                onKeyDown={e => { if (e.key === 'Enter') handlePhone() }} />
+              {phone.length > 0 && phone.length < 9 && <p className={styles.hint} role="status">Faltan {9 - phone.length} cifras</p>}
+            </div>
+            <button type="button" className={styles.primary} onClick={handlePhone} disabled={phone.length < 9 || loading}>{loading ? 'Un momento…' : 'Continuar'}</button>
+          </>}
+          {step === 'code' && <>
+            <h1 className={styles.title}>Tu código</h1>
+            <p className={styles.description}>Para continuar la demostración, escribe cuatro cifras. No necesitas recibir un SMS.</p>
+            <label htmlFor="login-code" className={styles.label}>Código de verificación</label>
+            <div className={styles.codeWrap}>
+              <div className={styles.codeRow} aria-hidden="true">{[0, 1, 2, 3].map(i => <span key={i} className={code[i] ? styles.codeFilled : ''}>{code[i] || ''}</span>)}</div>
+              <input id="login-code" className={styles.codeInput} type="tel" inputMode="numeric" autoComplete="one-time-code" value={code} maxLength={4}
+                onChange={e => setCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                onKeyDown={e => { if (e.key === 'Enter') handleCode() }} />
+            </div>
+            {code.length > 0 && code.length < 4 && <p className={styles.hint} role="status">Faltan {4 - code.length} cifras</p>}
+            <button type="button" className={styles.primary} onClick={handleCode} disabled={code.length < 4 || loading}>{loading ? 'Comprobando…' : 'Entrar'}</button>
+            <div className={styles.alternative}><button type="button" className={styles.secondary} onClick={() => { setStep('phone'); setCode('') }}>Cambiar de número</button></div>
+          </>}
+          {step === 'name' && <>
+            <h1 className={styles.title}>¿Cómo te llamas?</h1>
+            <p className={styles.description}>Así sabrán quién les escribe. Se guarda en este móvil.</p>
+            <div className={styles.field}>
+              <label htmlFor="login-name" className={styles.label}>Tu nombre</label>
+              <input id="login-name" className={styles.input} autoComplete="name" placeholder="Escribe tu nombre" value={name}
+                onChange={e => setName(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') handleName() }} />
+            </div>
+            <button type="button" className={styles.primary} onClick={handleName} disabled={!name.trim()}>Entrar en Nüra</button>
+            {!DEMO_MODE && <div className={styles.alternative}>
+              <p className={styles.hint}>¿Quieres entrar desde cualquier móvil?</p>
+              <button type="button" className={styles.secondary} onClick={() => navigate('/entrar?modo=crear&volver=' + encodeURIComponent(sessionStorage.getItem('nura_return_to') || '/'))}>Crea tu acceso con correo</button>
+            </div>}
+          </>}
+        </main>
+        <p className={styles.privacy}>{DEMO_MODE ? 'Tu teléfono no se muestra a nadie.' : 'Nunca analizamos tus conversaciones ni lo que buscas.'}</p>
+        <p className={styles.build}>{NURA_BUILD}</p>
       </div>
     </div>
   )

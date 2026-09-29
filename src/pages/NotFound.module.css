@@ -29,7 +29,6 @@
   font-family: -apple-system,'Inter',sans-serif;
   transition: opacity 0.15s;
 }
-.btnSecondary:active { opacity: 0.7; }
 
 /* Nüra · dirección visual compartida, septiembre 2026. */
 
@@ -38,3 +37,19 @@
 
 
 .page { height: 100%; overflow-y: auto; }
+
+/* Detalle visual · septiembre 2026 */
+
+.page { background: var(--surface-entry); }
+.content { border-radius: 28px; box-shadow: 0 20px 60px -32px #30214250; }
+.logo { opacity: 1; padding: 12px; background: #F2EBFA; border-radius: 22px; }
+.btn { background: var(--grad-main); min-height: 48px; }
+
+/* Acciones secundarias con contorno compartido. */
+.btnSecondary { border: 1px solid var(--action-border); background: var(--action-surface); color: var(--purple-ink); min-height: 44px; line-height: 1.4; box-shadow: none; white-space: normal; }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.content { background: var(--glass-panel); border-color: var(--glass-edge); border-radius: var(--radius-glass); box-shadow: var(--glass-panel-shadow); }
+.btn { background: var(--grad-main); color: white; border-radius: 999px; box-shadow: var(--glass-primary-shadow); }
+.btnSecondary { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }

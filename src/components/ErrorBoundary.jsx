@@ -1,3 +1,5 @@
+import ErrorPanel from './ErrorPanel'
+import styles from './ErrorPanel.module.css'
 import { Component } from 'react'
 import { esVersionVieja, recargarPorVersionNueva } from '../utils/versionNueva'
 
@@ -17,43 +19,24 @@ export default class ErrorBoundary extends Component {
     if (this.state.recargando) return null
     if (this.state.error) {
       return (
-        <div style={{
-          padding:'var(--space-32) var(--space-24)', minHeight:'100dvh', display:'flex',
-          flexDirection:'column', alignItems:'center', justifyContent:'center',
-          gap:'var(--space-16)', background:'var(--bg, #F8F8FA)', textAlign:'center'
-        }}>
-          <div style={{
-            width:'56px', height:'56px', borderRadius:'50%',
-            background:'var(--purple-10)', display:'flex',
-            alignItems:'center', justifyContent:'center', fontSize:'24px'
-          }}>🤍</div>
-          <div>
-            <p style={{fontSize:'var(--text-base)',fontWeight:700,color:'var(--ink, #1a1a1a)',marginBottom:'var(--space-6)'}}>
-              Algo fue mal por mi lado
-            </p>
-            <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',lineHeight:1.5,maxWidth:'280px'}}>
-              Dame un segundo e inténtalo de nuevo. Si sigue pasando, vuelve atrás y prueba otra vez.
-            </p>
-          </div>
-          <div style={{display:'flex',gap:'var(--space-8)',marginTop:'var(--space-4)'}}>
-            <button onClick={() => window.history.back()}
-              style={{padding:'11px 22px',background:'white',color:'var(--ink, #1a1a1a)',border:'1px solid rgba(33,29,51,0.12)',borderRadius:'var(--radius-card)',fontSize:'var(--text-sm)',fontWeight:600}}>
-              Volver
-            </button>
-            <button onClick={() => window.location.reload()}
-              style={{padding:'11px 22px',background:'var(--purple, var(--purple))',color:'white',border:'none',borderRadius:'var(--radius-card)',fontSize:'var(--text-sm)',fontWeight:600}}>
-              Reintentar
-            </button>
-          </div>
-          <button onClick={() => this.setState({ showDetail: !this.state.showDetail })}
-            style={{marginTop:'var(--space-8)',fontSize:'var(--text-xs)',color:'var(--ink-tertiary)',background:'none',border:'none'}}>
-            {this.state.showDetail ? 'Ocultar detalle técnico' : 'Detalle técnico'}
-          </button>
-          {this.state.showDetail && (
-            <p style={{color:'#991B1B',fontSize:'var(--text-xs)',fontFamily:'monospace',background:'white',padding:'var(--space-12)',borderRadius:'var(--radius-sm)',whiteSpace:'pre-wrap',maxWidth:'320px',textAlign:'left'}}>
-              {this.state.error.message}
-            </p>
-          )}
+        <div className={styles.frame}>
+          <ErrorPanel
+            title="No he podido mostrar esta pantalla"
+            hint="Puedes volver a cargarla. Si el problema continúa, vuelve a la pantalla anterior."
+            actionLabel="Reintentar"
+            onAction={() => window.location.reload()}
+            secondaryLabel="Volver"
+            onSecondary={() => window.history.back()}
+          >
+            <div className={styles.details}>
+              <button type="button" className={styles.detailButton}
+                aria-expanded={this.state.showDetail}
+                onClick={() => this.setState({ showDetail: !this.state.showDetail })}>
+                {this.state.showDetail ? 'Ocultar detalle técnico' : 'Detalle técnico'}
+              </button>
+              {this.state.showDetail && <p className={styles.detailText}>{this.state.error.message}</p>}
+            </div>
+          </ErrorPanel>
         </div>
       )
     }

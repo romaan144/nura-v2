@@ -8,6 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "test:chat-scroll": "node scripts/test-chat-scroll.mjs",
+    "test:following": "node scripts/test-following.mjs",
     "test:matching": "node scripts/test-matching.mjs",
     "test:avisos": "node scripts/test-avisos.mjs",
     "test:vista": "node scripts/test-vista-previa.mjs",

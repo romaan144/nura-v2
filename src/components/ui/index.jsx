@@ -65,7 +65,7 @@ export function Bubble({ text, author, index = 0, style }) {
       }}>{initials}</div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{
-          background: 'var(--surface-subtle)', borderRadius: '0 12px 12px 12px',
+          background: 'var(--glass-panel)', borderRadius: '24px 24px 24px 8px', boxShadow: 'var(--glass-control-shadow)',
           padding: 'var(--space-10) var(--space-12)', marginBottom: 'var(--space-4)',
         }}>
           <p style={{
@@ -78,7 +78,7 @@ export function Bubble({ text, author, index = 0, style }) {
           <span style={{
             fontSize: 'var(--text-xs)', color: 'var(--ink-tertiary)',
             fontWeight: 500, paddingLeft: 'var(--space-4)',
-          }}>— {author}</span>
+          }}>{author}</span>
         )}
       </div>
     </div>
@@ -133,18 +133,17 @@ export function Button({
     fontSize: 'var(--text-sm)', fontWeight: 700,
     fontFamily: 'inherit', lineHeight: 1,
     cursor: disabled ? 'default' : 'pointer',
-    transition: 'opacity 0.18s cubic-bezier(0.22, 1, 0.36, 1)',
     opacity: disabled ? 0.45 : 1,
   }
   const skins = {
-    primary:   { background: 'var(--purple)', color: 'white', border: 'none' },
-    secondary: { background: 'white', color: 'var(--ink)', border: '1px solid var(--ink-border)' },
-    ghost:     { background: 'none', color: 'var(--purple-ink)', border: 'none' },
+    primary:   { background: 'var(--grad-main)', color: 'white', border: 'none' },
+    secondary: { background: 'var(--glass-control)', color: 'var(--purple-ink)', border: '1px solid var(--glass-edge)', minHeight: 48, padding: '10px var(--space-20)', lineHeight: 1.4, boxShadow: 'var(--glass-control-shadow)' },
+    ghost:     { background: 'var(--glass-control)', color: 'var(--purple-ink)', border: '1px solid var(--glass-edge)', boxShadow: 'var(--glass-control-shadow)' },
   }
   return (
     <button
       type="button"
-      className={`nura-button ${className}`}
+      className={`nura-button nura-button--${variant} ${className}`}
       disabled={disabled}
       onClick={disabled ? undefined : onClick}
       style={{ ...base, ...(skins[variant] || skins.primary), ...style }}
@@ -206,7 +205,7 @@ export function SectionLabel({ tone = 'muted', children, style, ...rest }) {
 // ═══════════════════════════════════════════════════════════════
 export function EmptyState({ title, hint, actionLabel, onAction, style }) {
   return (
-    <div style={{ textAlign: 'center', padding: '64px var(--space-24) var(--space-24)', ...style }}>
+    <div className="nura-empty-state" style={{ textAlign: 'center', padding: '40px var(--space-24)', ...style }}>
       <p style={{
         fontFamily: 'var(--font-voice)', fontSize: 'var(--text-heading)', fontWeight: 500,
         color: 'var(--ink)', lineHeight: 1.45, letterSpacing: '-0.3px',

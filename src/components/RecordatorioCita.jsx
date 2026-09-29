@@ -1,3 +1,4 @@
+import glass from './ui/glass'
 // ── EL RECORDATORIO DE LA CITA ────────────────────────────────────────────
 // Cuando falta un día o menos para una cita confirmada, sale arriba en
 // Inicio: cuándo y con quién, un atajo para escribirle y la opción de
@@ -21,7 +22,7 @@ function cuandoEs(c, ahora = new Date()) {
   return `${dia} a las ${c.hora}`
 }
 
-export default function RecordatorioCita() {
+export default function RecordatorioCita({ compact = false }) {
   const navigate = useNavigate()
   const { services, citas, cancelarCita } = useUser()
   const [ahora, setAhora] = useState(() => new Date())
@@ -60,19 +61,42 @@ export default function RecordatorioCita() {
     display: 'inline-flex', alignItems: 'center', gap: 'var(--space-6)',
   }
 
+  if (compact) return (
+    <button className="nura-glass-action" type="button" onClick={() => navigate('/my-services')} aria-label={`Ver tu cita con ${nombre}: ${cuandoEs(cita)}`}
+      style={{ display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              width: '100%',
+              minHeight: 52,
+              padding: '10px 12px',
+              textAlign: 'left',
+              color: 'var(--purple-ink)',
+              fontFamily: 'inherit',
+              cursor: 'pointer',
+              ...(glass.selected) }}>
+      <CalendarClock size={20} aria-hidden="true" style={{ flexShrink: 0 }} />
+      <span style={{ fontSize: 12, lineHeight: 1.4 }}><strong>{cuandoEs(cita)}</strong><br />Tu cita con {nombre}</span>
+    </button>
+  )
+
   return (
     <section aria-label="Recordatorio de tu cita"
       style={{
         position: 'relative', margin: '0 0 var(--space-12)', padding: 'var(--space-14)',
-        background: 'var(--purple-10, #F3EDFF)', border: '1px solid var(--purple-30, rgba(123,47,255,0.3))',
+        background: 'var(--glass-panel)', border: '1px solid var(--glass-edge)', boxShadow: 'var(--glass-panel-shadow)',
         borderRadius: 'var(--radius-card)',
       }}>
-      <button type="button" onClick={cerrar} aria-label="Cerrar recordatorio"
-        style={{ position: 'absolute', top: 4, right: 4, width: 36, height: 36, display: 'grid', placeItems: 'center',
-          background: 'transparent', border: 'none', color: 'var(--ink-secondary)', cursor: 'pointer', borderRadius: 'var(--radius-full)' }}>
+      <button className="nura-glass-action" type="button" onClick={cerrar} aria-label="Cerrar recordatorio"
+        style={{ position: 'absolute',
+              top: 4,
+              right: 4,
+              placeItems: 'center',
+              color: 'var(--ink-secondary)',
+              cursor: 'pointer',
+              ...(glass.circle) }}>
         <X size={16} />
       </button>
-      <div style={{ display: 'flex', gap: 'var(--space-10)', alignItems: 'flex-start', paddingRight: 28 }}>
+      <div style={{ display: 'flex', gap: 'var(--space-10)', alignItems: 'flex-start', paddingRight: 42 }}>
         <CalendarClock size={20} color="var(--purple-ink)" style={{ flexShrink: 0, marginTop: 2 }} aria-hidden="true" />
         <div>
           <p style={{ margin: 0, fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--purple-ink)' }}>Tu cita</p>
@@ -85,13 +109,16 @@ export default function RecordatorioCita() {
 
       {!preguntando ? (
         <div style={{ display: 'flex', gap: 'var(--space-8)', marginTop: 'var(--space-12)', flexWrap: 'wrap' }}>
-          <button type="button"
+          <button className="nura-glass-action" type="button"
             onClick={() => navigate(`/chat/${cita.helperId}`, { state: { helper: { id: cita.helperId, name: cita.helperName, specialty: cita.specialty, avatarUrl: cita.avatarUrl } } })}
-            style={{ ...boton, background: 'var(--purple)', color: 'white', border: 'none' }}>
+            style={{ ...boton,
+              ...(glass.primary) }}>
             <MessageCircle size={14} /> Escribir a {nombre}
           </button>
-          <button type="button" onClick={() => setPreguntando(true)}
-            style={{ ...boton, background: 'transparent', color: 'var(--ink-primary)', border: '1px solid var(--ink-border, rgba(33,29,51,0.16))' }}>
+          <button className="nura-glass-action" type="button" onClick={() => setPreguntando(true)}
+            style={{ ...boton,
+              color: 'var(--ink-primary)',
+              ...(glass.control) }}>
             Cancelar la cita
           </button>
         </div>
@@ -105,8 +132,10 @@ export default function RecordatorioCita() {
               style={{ ...boton, background: 'var(--red-ink, #B42318)', color: 'white', border: 'none' }}>
               {cancelando ? 'Cancelando…' : 'Sí, cancelar'}
             </button>
-            <button type="button" onClick={() => setPreguntando(false)} disabled={cancelando}
-              style={{ ...boton, background: 'transparent', color: 'var(--ink-primary)', border: '1px solid var(--ink-border, rgba(33,29,51,0.16))' }}>
+            <button className="nura-glass-action" type="button" onClick={() => setPreguntando(false)} disabled={cancelando}
+              style={{ ...boton,
+              color: 'var(--ink-primary)',
+              ...(glass.control) }}>
               No, la mantengo
             </button>
           </div>

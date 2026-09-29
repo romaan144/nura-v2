@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { CAT_HUMANA } from '../data/categorias'
 import { hayEnLaCiudad } from '../data/ciudades'
-import { Compass, Send, Mic, MicOff, RotateCcw, UserRound, ArrowUpRight, Heart, Home as House, Sparkles } from 'lucide-react'
+import { Compass, Send, Mic, MicOff, RotateCcw, UserRound, ArrowUpRight, Heart, Home as House, Sparkles, MapPin, Wallet, Star, Monitor, Users, SlidersHorizontal } from 'lucide-react'
 import { analyzeNeed, matchHelpers, getPriceContext } from '../utils/matching'
 import { barrioEnTexto } from '../data/barrios'
 import { getFirstName } from '../utils/name'
@@ -28,6 +28,9 @@ import { extractPersona } from '../utils/personas'
 import { proSignals } from '../utils/proSignals'
 import { fmtNota, fmtKm } from '../utils/formato'
 import RecordatorioCita from '../components/RecordatorioCita'
+import ResponseScreen from '../components/ResponseScreen'
+import { splitResponseText } from '../utils/responseLayout'
+import { pedirUbicacion, ordenarDesdeUbicacion, mensajeErrorUbicacion } from '../utils/ubicacion'
 
 // ── La Comprensión Visible — lo que Nüra ha entendido, en chips ──
 const PERSONA_CHIP = {
@@ -77,11 +80,11 @@ function buildWhy(helper, analysis) {
 
   // 2. Los años, si la bio los dice — es el dato que mas tranquiliza
   const años = (helper?.bio || '').match(/(\d+)\s*años de experiencia/)
-  if (años) parts.push(`lleva ${años[1]} años en esto`)
+  if (años) parts.push(`cuenta con ${años[1]} años de experiencia`)
 
   // 3. Cuantas personas le han valorado: una cifra pesa mas que un adjetivo
   if ((helper?.reviews || 0) >= 20 && (helper?.rating || 0) >= 4.7) {
-    parts.push(`${helper.reviews} personas le han valorado con un ${fmtNota(helper.rating)}`)
+    parts.push(`su valoración es de ${fmtNota(helper.rating)} sobre 5, con ${helper.reviews} opiniones`)
   }
 
   // 4. La distancia exacta, no "a unos minutos"
@@ -93,37 +96,19 @@ function buildWhy(helper, analysis) {
   if (helper?.__obra && parts.length < 2) parts.push('ha contado un caso muy parecido al tuyo')
   // «según su ficha, habla catalán y tiene coche y está a…» → con coma
   if (helper?.__declarado?.length === 2 && parts.length > 1) parts[0] = parts[0].replace(' y ', ', ')
-  return parts.slice(0, 2).join(' y ') || 'encaja con lo que necesitas'
+  return parts.slice(0, 2).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('. ') || 'Encaja con lo que necesitas'
 }
 
-function ResultsBlock({ results }) {
-  const navigate = useNavigate()
-  if (!results?.length) return null
-  const top = results[0]
-  const alts = results.slice(1, 4)
-  return (
-    <div>
-      <HelperCardTall helper={top} />
-      <div className="hilo" style={{margin:'var(--space-12) var(--space-6) var(--space-2)'}} />
-      {alts.length > 0 && (
-        <>
-          <div style={{fontSize:'var(--text-xs)', color:'var(--ink-secondary)', margin:'var(--space-14) 0 var(--space-8)', lineHeight:1.5}}>
-            {alts.length === 1 ? 'También encajaría:' : 'Si prefieres comparar, también encajarían:'}
-          </div>
-          {/* SISTEMA, NO PANTALLA: la rejilla es SIEMPRE de tres. Una tarjeta
-              pequeña mide lo mismo tenga tres hermanas o ninguna. Con
-              `repeat(alts.length)` la unica alternativa se estiraba a 358px
-              — un avatar de 62px flotando en una tarjeta del triple de
-              ancho — y le pasaba a TODA la categoria de logopedia, que solo
-              tiene dos profesionales. */}
-          <div style={{display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:'var(--space-8)', alignItems:'start'}}>
-            {alts.map((a, i) => <HelperCardTall key={a.id || i} helper={a} small />)}
-          </div>
-        </>
-      )}
-    </div>
-  )
+const REFINE_ICONS = {
+  'Más cerca': MapPin, 'Más barato': Wallet, 'Mejor valorado': Star,
+  'Online': Monitor, 'Ver todos': Users, 'Crear cuenta': UserRound,
+  'No es lo que buscaba': RotateCcw, 'Era otra cosa': RotateCcw,
 }
+function RefinementIcon({ label }) {
+  const Icon = REFINE_ICONS[label] || SlidersHorizontal
+  return <Icon size={17} aria-hidden="true" />
+}
+
 
 
 function getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas) {
@@ -154,8 +139,8 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
     return [
       saludo,
       citaProxima.personaLabel
-        ? `El ${citaProxima.label}, **${hf}** está con ${citaProxima.personaLabel}. Todo listo 💜`
-        : `El ${citaProxima.label} tienes tu primera cita con **${hf}**. Todo listo 💜`
+        ? `El ${citaProxima.label}, **${hf}** está con ${citaProxima.personaLabel}. Todo listo.`
+        : `El ${citaProxima.label} tienes tu primera cita con **${hf}**. Todo listo.`
     ]
   }
 
@@ -386,6 +371,23 @@ export default function Home() {
   const messages = nuraChatMessages
   const setMessages = setNuraChatMessages
   const [input, setInput] = useState('')
+  // Solo cambia la presentación: el historial sigue disponible para la comprensión.
+  const [viewStart, setViewStart] = useState(() => Math.max(0,
+    messages.findLastIndex(m => m.from === 'user'), messages.findLastIndex(m => m.results?.length)))
+  const pageRef = useRef(null)
+  const ubicacionRef = useRef(null)
+  function beginResponse() {
+    if (ubicacionRef.current) stopThinking()
+    setViewStart(messages.filter(m => !m.loading).length)
+  }
+  useEffect(() => () => {
+    if (!ubicacionRef.current) return
+    ubicacionRef.current.abort()
+    ubicacionRef.current = null
+    setMessages(prev => prev.filter(m => !m.loading))
+    setLoading(false)
+  }, [location.pathname, setMessages])
+
   const [forWhom, setForWhom] = useState(() => {
     try { return sessionStorage.getItem('nura_for_whom') || '' } catch { return '' }
   })
@@ -464,17 +466,7 @@ export default function Home() {
   const setShowSuggestions = () => {} // no-op, derived from messages
   const lastMatches = nuraLastMatches
   const setLastMatches = setNuraLastMatches
-  const bottomRef  = useRef(null)
-  const resultRef = useRef(null)   // el MENSAJE de la respuesta (no solo el bloque)
-  const scrollerRef = useRef(null) // el contenedor con scroll
-  const inputRef   = useRef(null)
-  const topRef     = useRef(null)
-  const [topH, setTopH] = useState(80)
-  const [floatH, setFloatH] = useState(84) /* header height fallback */
-
-  // Cero scroll automático: la vista NO se mueve sola. La respuesta entra
-  // debajo y el usuario baja cuando quiere. Ninguna mecánica puede fallar
-  // si no hay mecánica. (Ley del fundador, 3 intentos de auto-scroll.)
+  const inputRef = useRef(null)
 
   useEffect(() => {
     let lines = getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas)
@@ -562,7 +554,7 @@ export default function Home() {
           } else {
             lineas.push('Crea tu acceso con correo y cada semana te diré cuántas personas buscan lo que haces y cuántas veces sale tu ficha.')
           }
-          lineas.push(`💡 ${consejos[Math.floor(Math.random() * consejos.length)]}`)
+          lineas.push(`${consejos[Math.floor(Math.random() * consejos.length)]}`)
           try { localStorage.setItem('nura_last_pulso', String(Date.now())) } catch { /* sin memoria */ }
           setMessages(prev => prev.length > 1 ? prev : [...prev, {
             id: Date.now() + 77, from: 'nura', isPulso: true, lines: lineas,
@@ -639,7 +631,7 @@ export default function Home() {
     correctionRef.current = originalQuery || window.__nuraLastQuery || ''
     setCorrigiendo(true)
     setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-      lines: ['Vale — dime qué he entendido mal y ajusto la búsqueda.'],
+      lines: ['Dime qué he entendido mal y ajusto la búsqueda.'],
       chips: ['Era otra cosa'] }])
     setTimeout(() => inputRef.current?.focus?.(), 200)
   }
@@ -651,6 +643,8 @@ export default function Home() {
 
   // ── Una sola autoridad del estado "pensando" ──
   function stopThinking() {
+    ubicacionRef.current?.abort()
+    ubicacionRef.current = null
     try { clearInterval(window.__nuraStatusInterval) } catch {}
     setMessages(prev => prev.filter(m => !m.loading))
     setLoading(false)
@@ -684,6 +678,7 @@ export default function Home() {
     blurSinSalto()
     let msg = text || input
     if (!msg.trim()) return
+    beginResponse()
     // Nura es una conversacion, no un formulario. Si hablas otra vez
     // mientras busca, te escucha a ti y suelta lo anterior: el guardia de
     // secuencia (sid/alive) ya estaba construido para esto. Antes el
@@ -723,7 +718,7 @@ export default function Home() {
       setForWhom(val)
       setTimeout(() => {
         const replies = {
-          mi: 'Perfecto. Cuéntame qué necesitas — estoy aquí para ayudarte.',
+          mi: 'Cuéntame qué necesitas. Estoy aquí para ayudarte.',
           familia: 'Entendido. Cuéntame qué le pasa y encontraré a la persona adecuada para cuidar de los tuyos.',
           hogar: 'Perfecto. Cuéntame qué necesita tu hogar o negocio y busco a la persona indicada.'
         }
@@ -780,7 +775,7 @@ export default function Home() {
               id: 'me_' + hid, helperId: hid,
               helper: { id: hf.id, name: hf.name, specialty: hf.specialty, category: hf.category, zone: hf.zone, avatarUrl: hf.avatarUrl, avatar: hf.avatar, avatarColor: hf.avatarColor, rating: hf.rating, verified: hf.verified },
               seconds: null, timeAgo: 'hoy',
-              text: `${fn} encontró ${lp ? `ayuda de confianza para ${lp.label}` : 'la ayuda que necesitaba'}${ci ? ` — primera visita, el ${ci.label}` : ''}. ✓ Funcionó.`,
+              text: `${fn} encontró ${lp ? `ayuda de confianza para ${lp.label}` : 'la ayuda que necesitaba'}${ci ? `. La primera visita fue el ${ci.label}` : ''}. La ayuda funcionó.`,
             })
             // Y el momento de preguntarle como fue: es lo que construye la
             // ficha del profesional (perfil vivo) y ayuda a otros a elegir.
@@ -794,7 +789,7 @@ export default function Home() {
           setMessages(prev => [...prev, {
             id: Date.now(), from: 'nura',
             lines: [
-              `Me alegra mucho. **${helperName}** queda anotado como una conexión que funcionó. 🤍`,
+              `Me alegra mucho. **${helperName}** queda anotado como una conexión que funcionó.`,
               `Si me cuentas cómo fue, ayudarás a otros a elegir bien.`
             ]
           }])
@@ -864,16 +859,8 @@ export default function Home() {
           })
           refineLine = `Ordenados por precio. El más económico es **${refined[0]?.name?.split(' ')?.[0]}** a ${refined[0]?.price}.`
         } else if (t.includes('más cerca') || t.includes('cerca') || t.includes('zona')) {
-          // Sin su barrio no hay cercania que medir: se pregunta (antes se
-          // decia «está a 1,2 km» con una distancia inventada).
-          if (refined.every(h => typeof h.distance !== 'number')) {
-            setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-              lines: ['¿En qué barrio estás? Dímelo —por ejemplo, «en Gràcia»— y los ordeno por cercanía.'] }])
-            setLoading(false)
-            return
-          }
-          refined = refined.sort((a,b) => (a.distance ?? 99) - (b.distance ?? 99))
-          refineLine = `Ordenados por cercanía. **${refined[0]?.name?.split(' ')?.[0]}** está ${refined[0]?.distance < 0.5 ? `en ${refined[0]?.distanciaDesde}` : `a ${fmtKm(refined[0]?.distance)} de ${refined[0]?.distanciaDesde}`}.`
+          await buscarMasCerca()
+          return
         } else if (t.includes('mejor valorado') || t.includes('rating') || t.includes('valoración')) {
           refined = refined.sort((a,b) => (b.rating||0) - (a.rating||0))
           refineLine = `Ordenados por valoración. **${refined[0]?.name?.split(' ')?.[0]}** tiene ${fmtNota(refined[0]?.rating)}★.`
@@ -978,7 +965,7 @@ export default function Home() {
       window.__nuraLastAnalysis = analysis
       try { sessionStorage.setItem('nura_last_analysis', JSON.stringify(analysis)) } catch {}
       // Empathy acknowledgment — instant, before searching
-      const empathyLine = `Entendido${analysis?.persona && PERSONA_CHIP[analysis.persona] ? ' — ' + PERSONA_CHIP[analysis.persona].charAt(0).toLowerCase() + PERSONA_CHIP[analysis.persona].slice(1) : ''}.`
+      const empathyLine = `Entendido${analysis?.persona && PERSONA_CHIP[analysis.persona] ? '. Buscas ayuda ' + PERSONA_CHIP[analysis.persona].charAt(0).toLowerCase() + PERSONA_CHIP[analysis.persona].slice(1) : ''}.`
       setMessages(prev => [...prev, { id: Date.now() + 0.3, from: 'nura', lines: [empathyLine] }])
 
       // El pensando sereno — con dueño y cancelación (El Contrato)
@@ -1033,7 +1020,7 @@ export default function Home() {
           setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
             lines: urge
               ? ['Entiendo que corre prisa. Para encontrarte a alguien ya, dime qué ha pasado: ¿es algo de casa, de salud, o cuidar a alguien?']
-              : ['No estoy segura de haberte entendido del todo — ¿me lo cuentas con otras palabras? Por ejemplo: "entrenador personal cerca de casa" o "alguien que cuide a mi madre".'],
+              : ['No estoy segura de haberte entendido del todo. ¿Me lo cuentas con otras palabras? Por ejemplo: "entrenador personal cerca de casa" o "alguien que cuide a mi madre".'],
             chips: urge
               ? ['Algo se ha roto en casa', 'Necesito ayuda médica', 'Cuidar a un familiar']
               : ['Entrenador personal', 'Cuidar a un familiar', 'Una reparación en casa'] }])
@@ -1105,7 +1092,7 @@ export default function Home() {
       const topFirstName = getFirstName(top?.name) || ''
       // La Gramática de la Recomendación — humana, breve, segura
       const why = buildWhy(top, analysis)
-      const urgentTail = analysis?.urgente ? ' — y puede estar allí hoy mismo' : ''
+      const urgentTail = analysis?.urgente ? '. Puedes preguntarle si puede venir hoy' : ''
       // EL PORQUE SE SEPARA. Iba dentro de la misma frase que el anuncio,
       // asi que se leia en 15px como un dato mas. Pero "trabaja muchisimo
       // con peques y trabaja muy cerca de ti" es lo UNICO que ninguna otra
@@ -1157,7 +1144,7 @@ export default function Home() {
         // con la consulta original — el usuario no la reescribe.
         lines: (!navigator.onLine || /fetch|network|load failed/i.test(String(err?.message || err)))
           ? ['Parece que te has quedado sin conexión. Cuando vuelvas, lo intento otra vez.']
-          : ['Se me ha atascado la búsqueda. No es culpa tuya — inténtalo otra vez.'],
+          : ['No he podido completar la búsqueda. Puedes intentarlo otra vez.'],
         chips: [msg] }])
     }
     setLoading(false)
@@ -1180,6 +1167,7 @@ export default function Home() {
   }
 
   function handleChip(chip) {
+    beginResponse()
     if (chip === CONTESTAR) { navigate('/chats'); return }
     if (chip === LEER_RESPUESTA) { navigate(respuestaAbrir.current ? `/chat/${respuestaAbrir.current}` : '/chats'); return }
     const responde = (lines, chips) =>
@@ -1219,7 +1207,7 @@ export default function Home() {
       // ampliando aparecera alguien seria mentir dos veces.
       haptic('light')
       responde(
-        [`He mirado en toda ${window.__nuraLastAnalysis?.ciudad || 'la ciudad'}, no solo en tu barrio — todavía no tengo a nadie así.`],
+        [`He mirado en toda ${window.__nuraLastAnalysis?.ciudad || 'la ciudad'}, no solo en tu barrio. Todavía no tengo a nadie así.`],
         ['Avisame cuando tengas a alguien']
       )
       return
@@ -1275,19 +1263,124 @@ export default function Home() {
 
   const suggestions = user?.isHelper ? HELPER_SUGGESTIONS : getDynamicSuggestions(user, searchHistory)
 
-  // Measure floatTop height for messages top padding
-  useEffect(() => {
-    const top = topRef.current
-    if (!top) return
-    const measure = () => {
-      const tRect = top.getBoundingClientRect()
-      setTopH(Math.ceil(tRect.bottom) + 8)
+  async function buscarMasCerca() {
+    stopThinking()
+    const sid = ++searchSeqRef.current
+    const controller = new AbortController()
+    ubicacionRef.current = controller
+    const alive = () => !controller.signal.aborted && searchSeqRef.current === sid
+    const id = `ubicacion-${sid}`
+    setShowSuggestions(false)
+    setLoading(true)
+    setMessages(prev => [...prev, { id, from: 'nura', loading: true,
+      lines: ['Buscando tu ubicación. Si el dispositivo te pide permiso, pulsa «Permitir».'] }])
+    const answer = (lines, results) => setMessages(prev => prev.map(m => m.id === id
+      ? { id, from: 'nura', lines, results, refineChips: ['Más cerca', 'Más barato', 'Mejor valorado', 'Online'] } : m))
+    try {
+      const origin = await pedirUbicacion({ signal: controller.signal })
+      if (!alive()) return
+      const sorted = ordenarDesdeUbicacion(lastMatches, origin)
+      const located = sorted.filter(h => h.distance != null)
+      if (!located.length) {
+        answer(['Ya tengo tu ubicación, pero estos profesionales no tienen una zona que pueda localizar. Mantengo los resultados sin inventar distancias.'], sorted)
+      } else {
+        answer([`Ordenados por cercanía a tu ubicación, según la zona aproximada de cada profesional.${located.length < sorted.length ? ' Sin zona localizable, al final.' : ''}`], sorted)
+      }
+      setLastMatches(sorted)
+    } catch (error) {
+      if (alive()) answer([mensajeErrorUbicacion(error)])
+    } finally {
+      if (alive()) {
+        ubicacionRef.current = null
+        setLoading(false)
+      }
     }
-    const ro = new ResizeObserver(measure)
-    ro.observe(top)
-    measure()
-    return () => ro.disconnect()
-  }, [])
+  }
+
+  function handleRefine(chip) {
+    beginResponse()
+    if (chip === 'Crear cuenta') { navigate('/login'); return }
+    // La Correccion: el unico camino para "me entendiste
+    // mal". Los otros chips reordenan lo mismo; este admite
+    // que lo mismo no sirve.
+    if (chip === 'No es lo que buscaba') { haptic('light'); startCorrection(window.__nuraLastQuery); return }
+    // Ordenar una lista de UNO es teatro: la respuesta seria
+    // "X es el mas economico" sobre el unico que hay. Los
+    // chips de orden solo aparecen si hay algo que comparar.
+    const ordenar = (n, propios) => n >= 2 ? propios : []
+    if (chip === 'Era otra cosa') { haptic('light'); cancelCorrection()
+      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+        lines: ['Sin problema. Cuéntame qué necesitas.'] }])
+      setTimeout(() => inputRef.current?.focus?.(), 200); return }
+    if (chip === 'Ver todos') {
+      const todos = todosRef.current || []
+      if (!todos.length) return
+      haptic('light')
+      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+        lines: ['Aquí los tienes todos otra vez.'],
+        results: todos, refineChips: [...ordenar(todos.length, ['Más barato','Más cerca','Mejor valorado']), 'No es lo que buscaba'] }])
+      setLastMatches(todos); return
+    }
+    if (chip === 'Más barato' && lastMatches?.length > 0) {
+      const sorted = [...lastMatches].sort((a,b) => {
+        const pa = parseFloat((a.price||'').replace(/[^0-9.]/g,'')) || 9999
+        const pb = parseFloat((b.price||'').replace(/[^0-9.]/g,'')) || 9999
+        return pa - pb
+      })
+      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+        lines: [`${sorted[0]?.name?.split(' ')?.[0]} es el más económico. Su tarifa es ${sorted[0]?.price}.`],
+        results: sorted, refineChips: ['Más cerca','Mejor valorado','Online'] }])
+      setLastMatches(sorted); return
+    }
+    if (chip === 'Más cerca' && lastMatches?.length > 0) {
+      void buscarMasCerca()
+      return
+    }
+    if (chip === 'Mejor valorado' && lastMatches?.length > 0) {
+      const sorted = [...lastMatches].sort((a,b) => (b.rating||0)-(a.rating||0))
+      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+        lines: [`${sorted[0]?.name?.split(' ')?.[0]} tiene la mejor valoración: ${fmtNota(sorted[0]?.rating)} sobre 5.`],
+        results: sorted, refineChips: ['Más barato','Más cerca','Online'] }])
+      setLastMatches(sorted); return
+    }
+    if (chip === 'Online' && lastMatches?.length > 0) {
+      const online = lastMatches.filter(h => h.online)
+      if (online.length > 0) {
+        setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+          lines: [online.length === 1
+            ? 'Solo uno de ellos ofrece sesiones online.'
+            : `${online.length} de ellos ofrecen sesiones online.`],
+          results: online,
+          refineChips: [...ordenar(online.length, ['Más barato','Más cerca','Mejor valorado']), 'Ver todos'] }])
+        setLastMatches(online)
+      } else {
+        setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+          lines: ['Ninguno de estos profesionales ofrece sesiones online.'],
+          refineChips: ['No es lo que buscaba'] }])
+      }
+      return
+    }
+    handleSend(chip)
+  }
+
+  // La burbuja conserva el tamaño del lienzo; el contenedor compartido
+  // desplaza la página al abrir el teclado sin repaginar la respuesta.
+  useEffect(() => {
+    if (location.pathname !== '/') return
+    document.body.dataset.nuraFocus = 'true'
+    const page = pageRef.current
+    const resize = () => {
+      const height = page?.getBoundingClientRect().height || window.innerHeight
+      if (page) page.dataset.focusSize = height <= 420 ? 'tiny' : height <= 600 ? 'short' : 'full'
+    }
+    resize()
+    const observer = new ResizeObserver(resize)
+    if (page) observer.observe(page)
+    return () => {
+      observer.disconnect()
+      delete document.body.dataset.nuraFocus
+    }
+  }, [location.pathname])
 
 
   const isWelcome = nuraChatMessages.length <= 1
@@ -1305,35 +1398,71 @@ export default function Home() {
           }
         </div>
 
-        {/* ── PARA QUIEN NO SABE QUE ESCRIBIR ────────────────────────────
-            Profesionales deja de ser una pestaña (ver docs/revision-profunda.md):
-            era una segunda puerta a la misma cosa — su buscador ya mandaba
-            aqui—. Pero SI aportaba algo real: ver que hay sin saber que
-            pedir, con 13 categorias y sus especialidades.
-            Eso no se pierde. Vive aqui, bajo la capsula, donde alguien lo
-            busca cuando se queda en blanco. Sin ocupar pantalla. */}
-        {nuraChatMessages.length <= 1 && (
-          <button onClick={() => navigate('/explore')} className={styles.browseBelow}>
-            <Compass size={15} color="var(--purple)" style={{flexShrink:0}} />
-            {/* Decision del fundador. Paso por "Ver a quien puedes
-                encontrar" —con la tilde de "quién" perdida— y por "Ver con
-                qué te puedo ayudar". Se queda en el nombre llano: quien
-                llega aqui sabe lo que va a ver. */}
-            <span style={{fontSize:'var(--text-sm)', fontWeight:600, color:'var(--purple-ink)'}}>
-              Buscar profesionales
-            </span>
-          </button>
-        )}
 
   </>)
 
+  const turn = messages.slice(Math.min(viewStart, messages.length)).filter(m => m.from === 'nura')
+  const response = turn.filter(m => !m.loading || loading)
+  const responseKey = response[0]?.id || `waiting-${viewStart}`
+  const latestQuery = messages.slice().reverse().find(m => m.from === 'user')?.text
+  const blocks = []
+  if (isWelcome) blocks.push({ id: 'reminder', content: <RecordatorioCita compact /> })
+  response.forEach((msg, msgIndex) => {
+    const lines = msg.lines || (msg.text ? [msg.text] : [])
+    lines.forEach((line, i) => splitResponseText(line).forEach((part, j) => {
+      const hero = isWelcome && i === 1 && j === 0
+      blocks.push({ id: `${msg.id}-line-${i}-${j}`, content: hero
+        ? <h1 className={styles.screenTitle}>{formatLine(part)}</h1>
+        : <p className={`${styles.screenText} ${msg.results && i === 0 ? styles.screenLead : ''}`}>{formatLine(part)}</p> })
+    }))
+    if (msg.loading) blocks.push({ id: `${msg.id}-loading`, content: <div className={styles.typingDots} role="status" aria-label="Buscando"><span /><span /><span /></div> })
+    if (msg.results?.length) {
+      blocks.push({ id: `${msg.id}-primary`, content:
+        <div className={styles.screenResult}>
+          <div className={styles.screenResultLabel}>Primera opción</div>
+          <HelperCardTall helper={msg.results[0]} compact featured />
+        </div> })
+      const alternatives = msg.results.slice(1, 4)
+      if (alternatives.length) blocks.push({ id: `${msg.id}-alternatives`, section: 'Otras opciones', content:
+        <div className={styles.alternativeGroup} style={{ '--alternatives-count': alternatives.length }}>
+          <div className={styles.alternativeGrid}>
+            {alternatives.map(helper => <HelperCardTall key={helper.id} helper={helper} compact comparison />)}
+          </div>
+        </div> })
+    }
+    msg.quickOptions?.forEach((opt, i) => blocks.push({ id: `${msg.id}-quick-${i}`, content:
+      <button className={styles.screenChoice} onClick={() => {
+        beginResponse()
+        setShowSuggestions(false)
+        if (opt.includes('busca')) handleSend(searchHistory[0]?.query)
+        else setMessages(prev => [...prev, { id: Date.now(), from: 'nura', lines: ['Me alegra saberlo. Cuando lo necesites, vuelve a buscar.'] }])
+      }}>{opt}<ArrowUpRight size={16} aria-hidden="true" /></button> }))
+    msg.chips?.forEach((chip, i) => blocks.push({ id: `${msg.id}-chip-${i}`, content:
+      <button className={styles.screenChoice} onClick={() => handleChip(chip)}>
+        <span className={styles.choiceIcon} aria-hidden="true">{chip === 'Para mí' ? <UserRound size={18} /> : chip === 'Para alguien de mi familia' ? <Heart size={18} /> : chip === 'Para mi hogar o negocio' ? <House size={18} /> : <ArrowUpRight size={18} />}</span>
+        <span>{chip}</span><ArrowUpRight size={16} aria-hidden="true" />
+      </button> }))
+    if (msg.refineChips?.length) {
+      // Cada ajuste es una unidad: incluso en pantallas pequeñas se llega a todos.
+      msg.refineChips.forEach((chip, i) => blocks.push({ id: `${msg.id}-refine-${i}`, content:
+        <button className={styles.screenChoice} onClick={() => handleRefine(chip)}>
+          <span className={styles.choiceIcon}><RefinementIcon label={chip} /></span><span>{chip}</span><ArrowUpRight size={16} aria-hidden="true" />
+        </button>, section: 'Ajustar esta búsqueda' }))
+    }
+    if (showSuggestions && !msg.chips?.length && !msg.refineChips?.length && msgIndex === response.length - 1) {
+      suggestions.forEach((suggestion, i) => blocks.push({ id: `suggestion-${i}`, content:
+        <button className={styles.screenChoice} onClick={() => handleSend(suggestion.text)}><span className={styles.choiceIcon}><Sparkles size={18} aria-hidden="true" /></span><span>{suggestion.text}</span><ArrowUpRight size={16} aria-hidden="true" /></button> }))
+    }
+  })
+  if (!blocks.length) blocks.push({ id: 'waiting', content: <p className={styles.screenText} role="status">{loading ? 'Estoy buscando a quien puede ayudarte…' : 'Cuéntame qué necesitas.'}</p> })
+
   return (
-    <div className={`${styles.page} ${isWelcome ? styles.pageWelcome : ''} ${user ? styles.pageReturning : ''}`}>
+    <div ref={pageRef} className={`${styles.page} ${styles.focusPage} ${isWelcome ? styles.pageWelcome : ''} ${user ? styles.pageReturning : ''}`}>
       {/* New search button — appears when chat has content */}
 
 
       {/* Floating top — three independent bubbles */}
-      <div className={styles.floatTop} ref={topRef}>
+      <div className={styles.floatTop}>
         {/* ── BUSCAR PROFESIONALES, SIEMPRE A MANO ─────────────────────
             El enlace de abajo desaparece al buscar — y es justo entonces
             cuando puede hacer falta: si Nüra no acierta, quieres mirar tu.
@@ -1364,6 +1493,7 @@ export default function Home() {
                 stopThinking()
                 correctionRef.current = null
                 setCorrigiendo(false)
+                setViewStart(0)
                 setMessages([])
                 setLastMatches([])
                 setTimeout(() => setMessages([{ id: 1, from: 'nura', lines: getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas) }]), 100)
@@ -1375,9 +1505,9 @@ export default function Home() {
               aria-label, un lector de pantalla solo dice "boton". Y es el
               unico camino al perfil desde Inicio. */}
           <button
-            className={styles.logoBubble}
+            className={styles.profileBubble}
             aria-label="Tu perfil"
-            style={{position:'static',transform:'none',padding:'0',width:'42px',height:'42px',borderRadius:'50%',overflow:'hidden',display:'flex',alignItems:'center',justifyContent:'center',pointerEvents:'all'}}
+            style={{position:'static',transform:'none',padding:'0',width:'44px',height:'44px',borderRadius:'50%',overflow:'hidden',display:'flex',alignItems:'center',justifyContent:'center',pointerEvents:'all'}}
             onClick={() => navigate('/profile')}>
             {user?.name
               ? <UserAvatar user={user} decorative className={styles.userAvatar} />
@@ -1387,193 +1517,10 @@ export default function Home() {
         </div>
       </div>
 
-      <div className={styles.messages} ref={scrollerRef}
-        style={{paddingTop: topH + 'px'}}>
-        <RecordatorioCita />
-        {messages.map((msg, msgIdx) => {
-          const prevMsg = messages[msgIdx - 1]
-          const prevHadResults = prevMsg?.results?.length > 0
-          const firstOfNuraRun = msg.from === 'nura' && prevMsg?.from !== 'nura'
-          // Spacing: 16px between messages, 24px after carousel, 20px for user replies
-          const spacingClass = prevHadResults ? styles.afterCarousel : ''
-          return (
-          /* El `auto` del primer mensaje mantiene la conversacion pegada
-             abajo, que es correcto CUANDO HAY conversacion. En la pantalla
-             de bienvenida dejaba 368px muertos arriba — mas de un tercio de
-             pantalla en blanco antes de que empezara nada. Ahi el saludo
-             sube y respira. */
-          <div key={msg.id} className={msgIdx === 0 && isWelcome ? styles.welcomeBlock : undefined} style={{marginTop: msgIdx === 0 ? (nuraChatMessages.length <= 1 ? 'var(--space-32)' : 'auto') : msg.from === 'user' ? 'var(--chat-gap-md)' : 'var(--chat-gap)'}} ref={msg.results?.length ? resultRef : undefined}>
-            {msgIdx === 0 && isWelcome && <p className={styles.welcomeEyebrow}>PERSONAS QUE HACEN BIEN</p>}
-            <div className={`${styles.msgRow} ${msg.from === 'user' ? styles.msgRowUser : ''} ${spacingClass}`}>
-              {msg.from === 'nura' && (
-                firstOfNuraRun ? (
-                  <div className={styles.nuraAvatar}>
-                    <img src="/logo-iso.png" alt="Nüra" className={styles.nuraAvatarImg} />
-                  </div>
-                ) : (
-                  <div className={styles.nuraAvatarSpacer} />
-                )
-              )}
-              <div className={`${styles.bubble} ${msg.from === 'user' ? styles.bubbleUser : styles.bubbleNura} ${msgIdx === 0 && msg.from !== 'user' ? styles.greeting : ''} ${msgIdx === 0 && msg.from !== 'user' && nuraChatMessages.length > 1 ? styles.greetingRetirado : ''}`}>
-                {msg.text && <p>{msg.text}</p>}
-                {msg.lines?.map((line, i) => <p key={i}
-                  role={msgIdx === 0 && i === 1 && isWelcome ? 'heading' : undefined}
-                  aria-level={msgIdx === 0 && i === 1 && isWelcome ? 1 : undefined}>{formatLine(line)}</p>)}
-                {msg.loading && <div className={styles.typingDots}><span /><span /><span /></div>}
-
-              {msg.quickOptions && (
-                <div style={{display:'flex',gap:'var(--space-8)',flexWrap:'wrap',marginTop:'var(--space-8)'}}>
-                  {(msg.quickOptions||[]).map((opt,i) => (
-                    <button key={i}
-                      style={{padding:'7px var(--space-14)',background:'var(--paper)',border:'1.5px solid var(--rule)',borderRadius:'var(--radius-card)',fontSize:'var(--text-xs)',color:'var(--mid)',cursor:'pointer',transition:'all 0.15s'}}
-                      onClick={() => {
-                        setShowSuggestions(false)
-                        if (opt.includes('busca')) handleSend(searchHistory[0]?.query)
-                        else setMessages(prev => [...prev, {id:Date.now(),from:'nura',lines:['Me alegra saberlo. Cuando lo necesites, vuelve a buscar.']}])
-                      }}>
-                      {opt}
-                    </button>
-                  ))}
-                </div>
-              )}
-              </div>
-            </div>
-
-            {msgIdx === 0 && isWelcome && <div className={styles.welcomeComposer}>{composer}</div>}
-
-            {msg.results && (
-              <div className={styles.carouselBlock}>
-                <ResultsBlock results={msg.results} />
-              </div>
-            )}
-
-        {(() => {
-          const lastMsg = msg
-          // Los chips de conversacion: la respuesta a lo que Nura acaba de
-          // preguntar. Se producian en NUEVE sitios y no se pintaban en
-          // ninguno — la pregunta llegaba sin forma de contestarla. Van
-          // antes que las sugerencias: quien tiene una pregunta delante no
-          // necesita ademas tres ejemplos genericos.
-          // Los chips de RESPUESTA no son los de ajustar. Estos contestan a
-          // una pregunta —"¿para quien necesitas ayuda?"— y son una decision;
-          // los de ajustar son un retoque. Compartian estilo de pildora
-          // pequeña apretada, y eso hacia que responder pareciera rellenar un
-          // formulario.
-          if (lastMsg?.chips?.length) return (
-            <div className={styles.answerRow}>
-              {lastMsg.chips.map((chip, i) => (
-                <button key={i} className={styles.answerChip}
-                  onClick={() => handleChip(chip)}>{chip}</button>
-              ))}
-            </div>
-          )
-          const activeChips = lastMsg?.refineChips
-          if (activeChips) return (
-            <div className={styles.refineRow}>
-              <div className={styles.refineLabel}>Ajustar esta búsqueda</div>
-              {activeChips.map((chip, i) => (
-                <button key={i} className={styles.refineChip}
-                  onClick={() => {
-                    if (chip === 'Crear cuenta') { navigate('/login'); return }
-                    // La Correccion: el unico camino para "me entendiste
-                    // mal". Los otros chips reordenan lo mismo; este admite
-                    // que lo mismo no sirve.
-                    if (chip === 'No es lo que buscaba') { haptic('light'); startCorrection(window.__nuraLastQuery); return }
-                    // Ordenar una lista de UNO es teatro: la respuesta seria
-                    // "X es el mas economico" sobre el unico que hay. Los
-                    // chips de orden solo aparecen si hay algo que comparar.
-                    const ordenar = (n, propios) => n >= 2 ? propios : []
-                    if (chip === 'Era otra cosa') { haptic('light'); cancelCorrection()
-                      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-                        lines: ['Sin problema. Cuéntame qué necesitas.'] }])
-                      setTimeout(() => inputRef.current?.focus?.(), 200); return }
-                    if (chip === 'Ver todos') {
-                      const todos = todosRef.current || []
-                      if (!todos.length) return
-                      haptic('light')
-                      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-                        lines: ['Aquí los tienes todos otra vez.'],
-                        results: todos, refineChips: [...ordenar(todos.length, ['Más barato','Más cerca','Mejor valorado']), 'No es lo que buscaba'] }])
-                      setLastMatches(todos); return
-                    }
-                    if (chip === 'Más barato' && lastMatches?.length > 0) {
-                      const sorted = [...lastMatches].sort((a,b) => {
-                        const pa = parseFloat((a.price||'').replace(/[^0-9.]/g,'')) || 9999
-                        const pb = parseFloat((b.price||'').replace(/[^0-9.]/g,'')) || 9999
-                        return pa - pb
-                      })
-                      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-                        lines: [`${sorted[0]?.name?.split(' ')?.[0]} es el más económico — cobra ${sorted[0]?.price}.`],
-                        results: sorted, refineChips: ['Más cerca','Mejor valorado','Online'] }])
-                      setLastMatches(sorted); return
-                    }
-                    if (chip === 'Más cerca' && lastMatches?.length > 0) {
-                      if (lastMatches.every(h => typeof h.distance !== 'number')) {
-                        setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-                          lines: ['¿En qué barrio estás? Dímelo —por ejemplo, «en Gràcia»— y los ordeno por cercanía.'] }])
-                        return
-                      }
-                      const sorted = [...lastMatches].sort((a,b) => (a.distance ?? 99) - (b.distance ?? 99))
-                      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-                        lines: [`${sorted[0]?.name?.split(' ')?.[0]} es quien está más cerca: ${sorted[0]?.distance < 0.5 ? `en ${sorted[0]?.distanciaDesde}` : `a ${fmtKm(sorted[0]?.distance)} de ${sorted[0]?.distanciaDesde}`}.`],
-                        results: sorted, refineChips: ['Más barato','Mejor valorado','Online'] }])
-                      setLastMatches(sorted); return
-                    }
-                    if (chip === 'Mejor valorado' && lastMatches?.length > 0) {
-                      const sorted = [...lastMatches].sort((a,b) => (b.rating||0)-(a.rating||0))
-                      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-                        lines: [`${sorted[0]?.name?.split(' ')?.[0]} tiene la mejor valoración — ${fmtNota(sorted[0]?.rating)}★.`],
-                        results: sorted, refineChips: ['Más barato','Más cerca','Online'] }])
-                      setLastMatches(sorted); return
-                    }
-                    if (chip === 'Online' && lastMatches?.length > 0) {
-                      const online = lastMatches.filter(h => h.online)
-                      if (online.length > 0) {
-                        setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-                          lines: [online.length === 1
-                            ? 'Solo uno de ellos ofrece sesiones online.'
-                            : `${online.length} de ellos ofrecen sesiones online.`],
-                          results: online,
-                          refineChips: [...ordenar(online.length, ['Más barato','Más cerca','Mejor valorado']), 'Ver todos'] }])
-                        setLastMatches(online)
-                      } else {
-                        setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-                          lines: ['Ninguno de estos profesionales ofrece sesiones online.'],
-                          refineChips: ['No es lo que buscaba'] }])
-                      }
-                      return
-                    }
-                    handleSend(chip)
-                  }}>
-                  {chip === 'Más cerca' ? '📍' : chip === 'Más barato' ? '💰' : chip === 'Mejor valorado' ? '★' : chip === 'Online' ? '💻' : chip === 'No es lo que buscaba' ? '↺' : chip === 'Ver todos' ? '👥' : '✦'} {chip}
-                </button>
-              ))}
-            </div>
-          )
-          if (showSuggestions) return (
-            <div className={styles.suggestions}>
-              <p className={styles.suggestionsLabel}>Puedes empezar por aquí</p>
-              {(suggestions||[]).map((s, i) => (
-                <button key={i} className={styles.suggestion} onClick={() => handleSend(s.text)}>
-                  <span className={styles.suggestionMark} aria-hidden="true">{i === 0 ? <Heart size={18} /> : i === 1 ? <House size={18} /> : <Sparkles size={18} />}</span>
-                  <span className={styles.suggestionText}>{s.text}</span>
-                  <ArrowUpRight size={16} className={styles.suggestionArrow} aria-hidden="true" />
-                </button>
-              ))}
-            </div>
-          )
-          return null
-        })()}
-
-          </div>
-          )
-        })}
-        {/* Espaciadores retirados: la reserva vive en el padding del
-            scroller (CONTRATO regla 3: ningun hijo reserva nada). */}
-        <div ref={bottomRef} />
+      <div className={styles.screenArea}>
+        <ResponseScreen key={responseKey} blocks={blocks} welcome={isWelcome} query={isWelcome ? '' : latestQuery} />
       </div>
-
-      {!isWelcome && <div className={styles.floatBottom}>{composer}</div>}
+      <div className={styles.focusComposer}>{composer}</div>
 
       {showGate && <RegisterGate reason={gateReason} onClose={() => setShowGate(false)} />}
       {valorar && <RatingModal helper={valorar} onClose={() => setValorar(null)} />}

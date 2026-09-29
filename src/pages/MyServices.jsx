@@ -1,10 +1,11 @@
 import { avatarDe } from '../utils/avatar'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Calendar, CheckCircle, ChevronRight, Star, ClipboardList, MessageCircle, RotateCcw } from 'lucide-react'
+import { Calendar, CheckCircle, ChevronRight, Star, ClipboardList, MessageCircle, RotateCcw, Clock, XCircle } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import { DEMO_MODE } from '../config'
 import PageHeader from '../components/PageHeader'
+import EmptyPanel from '../components/EmptyPanel'
 import styles from './MyServices.module.css'
 import RatingModal from '../components/RatingModal'
 import { showToast } from '../components/Toast'
@@ -36,7 +37,7 @@ const DEMO_SERVICES = [
     avatar: 'CM',
     date: (() => { const d = new Date(); d.setDate(d.getDate()+3); return d.toISOString().split('T')[0] })(),
     time: '17:00',
-    note: 'Primera sesión de evaluación — Sofía',
+    note: 'Primera sesión de evaluación de Sofía',
     price: '50€/sesión',
     status: 'pending',
     isDemo: true,
@@ -51,7 +52,7 @@ const DEMO_SERVICES = [
     avatar: 'RS',
     date: (() => { const d = new Date(); d.setDate(d.getDate()-2); return d.toISOString().split('T')[0] })(),
     time: '11:00',
-    note: 'Revisión caldera — reparación válvula expansión',
+    note: 'Revisión de caldera y reparación de la válvula de expansión',
     price: '65€',
     status: 'completed',
     isDemo: true,
@@ -60,12 +61,12 @@ const DEMO_SERVICES = [
 ]
 
 const STATUS = {
-  pending:   { label: 'Pendiente',   color: '#D97706', bg: '#FFFBEB' },
-  confirmed: { label: 'Confirmado',  color: 'var(--green)', bg: 'var(--green-light)' },
-  completed: { label: 'Completado',  color: '#6B7280', bg: '#F9FAFB' },
-  cancelled: { label: 'Cancelado',   color: 'var(--red)', bg: 'var(--red-light)' },
+  pending:   { label: 'Por confirmar', icon: Clock, color: '#915509', bg: '#FFFBEB' },
+  confirmed: { label: 'Confirmada', icon: CheckCircle, color: '#216653', bg: '#EAF5EF' },
+  completed: { label: 'Completada', icon: CheckCircle, color: '#595367', bg: '#F0EEF4' },
+  cancelled: { label: 'Cancelada', icon: XCircle, color: '#A33B46', bg: '#FFF0F1' },
   // El profesional contestó que esa hora no le va (su mensaje está en el chat).
-  rejected:  { label: 'Propón otra hora', color: '#B45309', bg: '#FFFBEB' },
+  rejected:  { label: 'Propón otra hora', icon: RotateCcw, color: '#B45309', bg: '#FFFBEB' },
 }
 
 const TABS = ['Todos', 'Próximos', 'Completados']
@@ -129,105 +130,102 @@ export default function MyServices() {
     <div className={styles.page}>
       <PageHeader showBack />
       <div className={styles.content}>
-        <h2 className={styles.title}>Mis servicios</h2>
+        <header className={styles.heading}>
+          <h1 className={styles.title}>Mis servicios</h1>
+          <p className={styles.subtitle}>Tus citas, de la primera propuesta al servicio terminado.</p>
+        </header>
 
-        {/* Tabs */}
-        <div className={styles.tabs}>
-          {TABS.map(t => (
-            <button key={t}
-              className={`${styles.tab} ${tab === t ? styles.tabActive : ''}`}
-              onClick={() => setTab(t)}>
-              {t}
-              {t === 'Próximos' && tab !== 'Próximos' && (services||[]).filter(s => s.status === 'pending' || s.status === 'confirmed').length > 0 && (
-                <span className={styles.tabBadge}>
-                  {(services||[]).filter(s => s.status === 'pending' || s.status === 'confirmed').length}
-                </span>
-              )}
-            </button>
-          ))}
+        <div className={styles.tabs} role="group" aria-label="Filtrar servicios">
+          {TABS.map(t => {
+            const count = allServices.filter(s => t === 'Próximos'
+              ? s.status === 'pending' || s.status === 'confirmed'
+              : t === 'Completados' ? s.status === 'completed' : true).length
+            return (
+              <button key={t} type="button" aria-pressed={tab === t}
+                className={`${styles.tab} ${tab === t ? styles.tabActive : ''}`}
+                onClick={() => setTab(t)}>
+                <span>{t}</span><span className={styles.tabBadge}>{count}</span>
+              </button>
+            )
+          })}
         </div>
 
         {/* Empty state */}
         {filtered.length === 0 && (
-          <div className={styles.empty}>
-            <span style={{display:'block',marginBottom:'var(--space-12)',opacity:0.25}}>
-              {tab === 'Completados' ? <CheckCircle size={44} /> : tab === 'Próximos' ? <Calendar size={44} /> : <ClipboardList size={44} />}
-            </span>
-            <strong style={{fontSize:'var(--text-base)',color:'var(--ink-primary)',letterSpacing:'-0.2px'}}>
-              {/* Un profesional leia aqui "Aún no has contratado nada" y
-                  "Cuando contrates a un profesional...": la app le hablaba
-                  como al cliente que NO es. */}
-              {tab === 'Todos' ? (user?.isHelper ? 'Todavía no tienes citas' : 'Aún no has contratado nada')
-               : tab === 'Próximos' ? 'No tienes servicios próximos'
-               : 'Sin servicios completados'}
-            </strong>
-            <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',margin:'var(--space-4) 0 var(--space-16)',lineHeight:1.6,textAlign:'center',maxWidth:'220px'}}>
-              {tab === 'Todos'
-                ? (user?.isHelper
-                    ? 'Cuando alguien te contacte y concretéis una cita, aparecerá aquí.'
-                    : 'Cuando contrates a un profesional y concretéis una cita, aparecerá aquí.')
-                : tab === 'Próximos'
-                ? 'Cuando reserves una cita, aparecerá aquí con todos los detalles.'
-                : (user?.isHelper
-                    ? 'Cuando termines un servicio, aparecerá aquí con su resultado.'
-                    : 'Cuando finalices un servicio podrás valorar al profesional.')}
-            </p>
-            <button className={styles.emptyBtn} onClick={() => navigate('/')}>
-              Buscar profesionales
-            </button>
-          </div>
+          <EmptyPanel
+            icon={tab === 'Completados' ? CheckCircle : tab === 'Próximos' ? Calendar : ClipboardList}
+            title={tab === 'Todos' ? 'Tus citas aparecerán aquí'
+              : tab === 'Próximos' ? 'No tienes servicios próximos'
+              : 'Sin servicios completados'}
+            hint={tab === 'Todos'
+              ? (user?.isHelper
+                  ? 'Cuando alguien te contacte y concretéis una cita, aparecerá aquí.'
+                  : 'Cuando contrates a un profesional y concretéis una cita, aparecerá aquí.')
+              : tab === 'Próximos'
+              ? 'Aquí verás los detalles de tus próximas citas cuando estén acordadas.'
+              : (user?.isHelper
+                  ? 'Cuando termines un servicio, aparecerá aquí con su resultado.'
+                  : 'Cuando finalices un servicio podrás valorar al profesional.')}
+            actionLabel="Buscar profesionales"
+            onAction={() => navigate('/')}
+          />
         )}
 
         {/* Service list */}
         <div className={styles.list}>
           {filtered.map(s => {
             const st = STATUS[s.status] || STATUS.pending
+            const StatusIcon = st.icon
             const rated = hasRated(s.helperId) || s.rated
             return (
-              <div key={s.id} className={styles.card}
-                onClick={() => navigate(`/helper/${s.helperId}`)}>
-                <div className={styles.cardMain}>
+              <article key={s.id} className={styles.card} aria-label={`Cita con ${s.helperName}: ${st.label}`}
+                style={{ '--service-status': st.color, '--service-status-bg': st.bg }}>
+                <div className={styles.statusRow}>
+                  <span className={styles.statusBadge}>
+                    <StatusIcon size={14} aria-hidden="true" />{st.label}
+                  </span>
+                  {s.price && <span className={styles.price}>{s.price}</span>}
+                </div>
+                <button type="button" className={styles.cardMain} aria-label={`Ver perfil de ${s.helperName}`}
+                  onClick={() => navigate(`/helper/${s.helperId}`)}>
                   {/* Avatar */}
                   {s.avatarUrl
                     ? <img src={s.avatarUrl} alt="" className={styles.avatar} />
-                    : <div className={styles.avatarFallback} style={{background: s.avatarColor || 'var(--purple)'}}>
+                    : <span className={styles.avatarFallback} style={{background: s.avatarColor || 'var(--purple)'}}>
                         {s.avatar || s.helperName?.[0] || '?'}
-                      </div>
+                      </span>
                   }
 
                   {/* Info */}
-                  <div className={styles.info}>
-                    <div className={styles.helperName}>{s.helperName}</div>
-                    <div className={styles.specialty}>{s.specialty}</div>
-                    <div className={styles.meta}>
-                      <Calendar size={11} />
-                      <span>{formatDate(s.date)}{s.time ? ` · ${s.time}` : ''}</span>
-                    </div>
-                    {s.note && <div className={styles.note}>"{s.note}"</div>}
-                    {/* La canceló el profesional: se dice, con su nota si la dejó. */}
-                    {s.status === 'cancelled' && s.canceladaPor === 'profesional' && (
-                      <div className={styles.note} role="status" style={{ whiteSpace: 'normal' }}>
-                        {s.helperName?.split(' ')?.[0] || 'El profesional'} ha cancelado la cita. Esa hora ya no está reservada.
-                        {s.notaCancelacion && <> «{s.notaCancelacion}»</>}
-                      </div>
-                    )}
-                    {s.reprogramada && (
-                      <div className={styles.note} role="status" style={{ whiteSpace: 'normal' }}>
-                        Ya has pedido otra hora: {formatDate(s.reprogramada.date)}{s.reprogramada.time ? ` · ${s.reprogramada.time}` : ''}.
-                      </div>
-                    )}
-                  </div>
+                  <span className={styles.info}>
+                    <span className={styles.helperName}>{s.helperName}</span>
+                    <span className={styles.specialty}>{s.specialty}</span>
+                    <span className={styles.profileLink}>Ver perfil</span>
+                  </span>
 
-                  {/* Right */}
-                  <div className={styles.right}>
-                    {s.price && <span className={styles.price}>{s.price}</span>}
-                    <span className={styles.statusBadge}
-                      style={{color: st.color, background: st.bg}}>
-                      {st.label}
-                    </span>
-                    <ChevronRight size={14} color="rgba(33,29,51,0.25)" />
+                  <ChevronRight className={styles.profileArrow} size={18} aria-hidden="true" />
+                </button>
+
+                <div className={styles.appointment}>
+                  <Calendar size={19} aria-hidden="true" />
+                  <div className={styles.date}>
+                    <span className={styles.detailLabel}>Fecha de la cita</span>
+                    <span>{formatDate(s.date) || 'Fecha sin indicar'}</span>
                   </div>
+                  {s.time && <span className={styles.time}><Clock size={14} aria-hidden="true" />{s.time}</span>}
                 </div>
+                {s.note && <p className={styles.note}>{s.note}</p>}
+                {s.status === 'cancelled' && s.canceladaPor === 'profesional' && (
+                  <p className={styles.notice} role="status">
+                    {s.helperName?.split(' ')?.[0] || 'El profesional'} ha cancelado la cita. Esa hora ya no está reservada.
+                    {s.notaCancelacion && <> «{s.notaCancelacion}»</>}
+                  </p>
+                )}
+                {s.reprogramada && (
+                  <p className={styles.notice} role="status">
+                    Ya has pedido otra hora: {formatDate(s.reprogramada.date)}{s.reprogramada.time ? ` · ${s.reprogramada.time}` : ''}.
+                  </p>
+                )}
 
                 {/* Rate CTA */}
                 {/* Pending/confirmed → mark complete */}
@@ -244,9 +242,9 @@ export default function MyServices() {
                 {/* Pendiente o confirmada y aún por venir → cancelar (dos toques) */}
                 {(s.status === 'pending' || s.status === 'confirmed') && !String(s.id).startsWith('demo') && porVenir(s) && (
                   aCancelar === s.id ? (
-                    <div className={styles.postActions} role="group" aria-label="Confirmar cancelación"
-                      onClick={e => e.stopPropagation()} style={{ flexWrap: 'wrap' }}>
-                      <span style={{ flexBasis: '100%', fontSize: 'var(--text-sm)', color: 'var(--ink-primary)' }}>
+                    <div className={`${styles.postActions} ${styles.cancelConfirmation}`} role="group" aria-label="Confirmar cancelación"
+                      onClick={e => e.stopPropagation()}>
+                      <span className={styles.cancelQuestion}>
                         ¿Cancelar la cita? {s.helperName?.split(' ')?.[0]} lo verá y esa hora quedará libre.
                       </span>
                       <button className={styles.actionBtn} disabled={cancelando}
@@ -301,7 +299,7 @@ export default function MyServices() {
                 {/* Completed + rated → rebooking CTA */}
                 {rated && (
                   <div className={styles.postActions}>
-                    <div className={styles.ratedRow} style={{flex:1}}>
+                    <div className={styles.ratedRow}>
                       <CheckCircle size={12} color="var(--green)" />
                       <span>Valorado</span>
                     </div>
@@ -315,7 +313,7 @@ export default function MyServices() {
                     </button>
                   </div>
                 )}
-              </div>
+              </article>
             )
           })}
         </div>

@@ -78,8 +78,8 @@ function describeTiming(analysis) {
 
 function describeWhyThisProfessional(helper) {
   const reasons = []
-  if (helper?.specialty) reasons.push(`tu experiencia en ${helper.specialty.toLowerCase()}`)
-  if (helper?.reviews >= 50) reasons.push(`las ${helper.reviews} valoraciones que tienes`)
+  if (helper?.specialty) reasons.push('tu experiencia profesional')
+  if (helper?.reviews >= 50) reasons.push(`tus ${helper.reviews} valoraciones`)
   if (helper?.zone) reasons.push(`que estás cerca de su zona`)
   if (reasons.length === 0) return 'tu perfil'
   return reasons.slice(0, 2).join(' y ')
@@ -94,24 +94,16 @@ function describeWhyThisProfessional(helper) {
  * @param {object} params.user - usuario actual (puede ser null si no ha hecho login)
  * @returns {string} texto del mensaje, editable por el usuario
  */
-/**
- * La Carta del chat — la escribe el USUARIO, no Nüra.
- * Primera persona, sus propias palabras, y el porqué que Nüra vio.
- * (buildIntroLetter, más abajo, es la de la pantalla /intro: allí Nüra es
- *  la remitente y la tercera persona es la voz correcta.)
- */
-export function buildChatOpener({ helper, analysis, userQuery }) {
-  const q = String(userQuery || '').trim().replace(/[.?!]+$/, '')
-  if (!q) return ''
+/** Borrador breve en primera persona. Se edita y solo sale al pulsar Enviar. */
+export function buildChatOpener({ helper, userQuery }) {
   const first = getFirstName(helper?.name)
-  const cuerpo = q.charAt(0).toLowerCase() + q.slice(1)
-  const urgente = analysis?.urgente || analysis?.urgencia === 'urgente' ? ' Es algo urgente.' : ''
-
-  let porque = ''
-  if (helper?.specialty) porque = ` Nüra te ha recomendado por tu experiencia como ${helper.specialty.toLowerCase()}.`
-  else if (helper?.reviews >= 50) porque = ` Nüra te ha recomendado por tus ${helper.reviews} valoraciones.`
-
-  return `Hola${first ? ` ${first}` : ''}, ${cuerpo}.${urgente}${porque} ¿Podrías ayudarme?`
+  const greeting = `Hola${first ? ` ${first}` : ''}`
+  const query = String(userQuery || '').trim().replace(/\s+/g, ' ')
+  // No recortar una necesidad larga a mitad ni inventar un resumen de ella.
+  if (!query || query.length > 120) return `${greeting}, ¿tienes disponibilidad para ayudarme?`
+  const sentence = query.charAt(0).toUpperCase() + query.slice(1)
+  const end = /[.!?…]$/.test(sentence) ? '' : '.'
+  return `${greeting}. ${sentence}${end} ¿Podrías ayudarme?`
 }
 
 export function buildIntroLetter({ helper, analysis, userQuery, user }) {
@@ -127,13 +119,13 @@ export function buildIntroLetter({ helper, analysis, userQuery, user }) {
     : 'Hola, soy Nüra.'
 
   const intro = user?.name
-    ? `Te escribo en nombre de ${userFirstName} —`
-    : 'Te escribo en nombre de una persona que me ha contado lo siguiente —'
+    ? `Te escribo en nombre de ${userFirstName}.`
+    : 'Te escribo en nombre de una persona que busca ayuda.'
 
-  const body = `${intro} ${situation}.${timing}`
+  const body = `${intro} ${situation.charAt(0).toUpperCase()}${situation.slice(1)}.${timing}`
 
   const subjectName = user?.name ? userFirstName : 'Esta persona'
-  const closing = `Vi ${whyThis} y creo que encajáis bien. ${subjectName} está disponible para hablar cuando te vaya bien.`
+  const closing = `Pensé en ti por ${whyThis}. ${subjectName} está disponible para hablar cuando te vaya bien.`
 
   return `${greeting} ${body} ${closing}`
 }
@@ -153,5 +145,5 @@ export function regenerateIntroLetter(params) {
   const timing = describeTiming(params.analysis)
   const whyThis = describeWhyThisProfessional(helper)
 
-  return `Hola${helperFirstName ? ' ' + helperFirstName : ''}, soy Nüra — la IA que conecta a ${userFirstName} con profesionales de confianza. ${userFirstName} ${situation}.${timing} Pensé en ti por ${whyThis}. ¿Podrías ayudar?`
+  return `Hola${helperFirstName ? ' ' + helperFirstName : ''}, soy Nüra. Ayudo a ${userFirstName} a encontrar profesionales de confianza. ${situation.charAt(0).toUpperCase()}${situation.slice(1)}.${timing} Pensé en ti por ${whyThis}. ¿Podrías ayudar?`
 }

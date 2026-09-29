@@ -61,7 +61,6 @@
   cursor: pointer;
   transition: opacity 0.2s;
 }
-.circleBtn:active { opacity: 0.6; }
 
 @media (min-width: 768px) {
   .header { padding: 14px 24px; }
@@ -78,3 +77,15 @@
 .circleBtn { width: 44px; height: 44px; background: white; border-color: var(--ink-border); box-shadow: var(--shadow-xs); }
 .circleBtn:hover { background: var(--purple-05); color: var(--purple-ink); }
 .wordmark { font-family: var(--font-voice); font-size: var(--text-lg); font-weight: 750; letter-spacing: -1.1px; line-height: 1.25; }
+
+/* Detalle visual · septiembre 2026 */
+
+.logoPill { background: #FFFFFFCC; border-color: #FFFFFFD9; box-shadow: 0 2px 12px -8px #30214230; }
+.circleBtn { background: #FFFFFFE6; border-color: #FFFFFFD9; box-shadow: 0 3px 12px -8px #30214245; }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.logoPill, .circleBtn { background: var(--glass-floating); border-color: var(--glass-edge); box-shadow: var(--glass-floating-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
+
+/* Repaso de controles: mismo material, geometría y estados conservados. */
+.circleBtn:hover { background: var(--glass-floating); border-color: var(--glass-selected-edge); }

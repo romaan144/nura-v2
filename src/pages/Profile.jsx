@@ -28,6 +28,14 @@ import { quitarTodas } from '../utils/alertas'
 import { compartirEnlace, enlaceDeFicha } from '../utils/compartir'
 import { showToast } from '../components/Toast'
 
+// Acciones de apoyo: contorno visible también sobre las tarjetas blancas.
+const professionalInfoButton = {
+  minHeight: 48, marginTop: 10, padding: '10px 16px', lineHeight: 1.4,
+  border: '1px solid var(--glass-edge)', background: 'var(--glass-control)',
+  color: 'var(--purple-ink)', boxShadow: 'var(--glass-control-shadow)',
+}
+
+
 // ── Tu semana: la voz de Nüra para quien trabaja ──
 // Gramática: frase humana primero, cifras discretas después, cero vanidad.
 // CONTABA MAL: "abiertas" y "citas" salian de `contactedHelpers`, que son
@@ -154,7 +162,7 @@ export default function Profile() {
     // salto entre las dos pantallas no se nota. Estructura simple (altura
     // del padre, flujo normal), auroras como fondo, tarjeta de cristal.
     <div style={{
-      height: '100%', minHeight: '100dvh',
+      height: '100%', minHeight: 'var(--app-layout-height, 100dvh)',
       overflowY: 'auto', overflowX: 'hidden', overscrollBehaviorY: 'contain', WebkitOverflowScrolling: 'touch',
       display: 'flex', flexDirection: 'column',
       background: `radial-gradient(420px 320px at 88% -4%, rgba(255,59,92,0.10), transparent 64%),
@@ -181,10 +189,10 @@ export default function Profile() {
         </p>
 
         <div style={{
-          background:'rgba(255,255,255,0.86)',
-          WebkitBackdropFilter:'blur(24px) saturate(180%)', backdropFilter:'blur(24px) saturate(180%)',
-          border:'1px solid var(--ink-border)', borderRadius:'var(--radius-md)',
-          boxShadow:'0 8px 32px rgba(33,29,51,0.07)', padding:'var(--space-24) var(--space-20)',
+          background:'var(--glass-panel)',
+          WebkitBackdropFilter:'var(--glass-filter)', backdropFilter:'var(--glass-filter)',
+          border:'1px solid var(--glass-edge)', borderRadius:'var(--radius-glass)',
+          boxShadow:'var(--glass-panel-shadow)', padding:'var(--space-24) var(--space-20)',
         }}>
           <h2 style={{fontFamily:'var(--font-voice)', fontSize:'var(--text-heading)', fontWeight:700,
             letterSpacing:'-0.6px', color:'var(--ink)', margin:'0 0 var(--space-6)', textAlign:'center'}}>
@@ -217,12 +225,12 @@ export default function Profile() {
             Crear cuenta gratis
           </Button>
           <Button variant="secondary" full onClick={() => navigate('/register-helper')}
-            style={{minHeight:48, marginTop:'var(--space-10)', color:'var(--purple-ink)', boxShadow:'var(--alzado-reposo)'}}>
+            style={{minHeight:48, marginTop:'var(--space-10)', color:'var(--purple-ink)', boxShadow:'var(--glass-control-shadow)'}}>
             <User size={15} aria-hidden="true" /> Quiero ser profesional
           </Button>
           {/* Sin esto, una profesional con acceso que cambiaba de movil no
               tenia por donde entrar: solo "crear cuenta" y "darse de alta". */}
-          <Button variant="ghost" full onClick={() => navigate('/entrar')} style={{marginTop:'var(--space-6)'}}>
+          <Button variant="secondary" full onClick={() => navigate('/entrar')} style={professionalInfoButton}>
             ¿Ya tienes acceso de profesional? Entra
           </Button>
         </div>
@@ -492,7 +500,7 @@ export default function Profile() {
               </div>
 
               <Button variant="secondary" full onClick={() => setEditarAbierto(true)}
-                style={{color:'var(--purple-ink)', boxShadow:'var(--alzado-reposo)', minHeight:48}}>
+                style={{color:'var(--purple-ink)', boxShadow:'var(--glass-control-shadow)', minHeight:48}}>
                 <Edit2 size={15} aria-hidden="true" /> Editar mi ficha
               </Button>
 
@@ -509,7 +517,7 @@ export default function Profile() {
                     if (r === 'copiado') showToast('Enlace de tu ficha copiado')
                     else if (r === 'fallo') showToast('No he podido copiar el enlace')
                   }}
-                  style={{boxShadow:'var(--alzado-reposo)', minHeight:48}}>
+                  style={{boxShadow:'var(--glass-control-shadow)', minHeight:48}}>
                   <Share2 size={15} aria-hidden="true" /> Compartir mi ficha
                 </Button>
               )}
@@ -579,7 +587,7 @@ export default function Profile() {
                 <Button variant="primary" full onClick={() => navigate('/entrar?modo=crear')} style={{marginTop:'var(--space-16)'}}>
                   Crear mi acceso
                 </Button>
-                <Button variant="ghost" full onClick={() => navigate('/entrar')} style={{marginTop:'var(--space-4)'}}>
+                <Button variant="secondary" full onClick={() => navigate('/entrar')} style={professionalInfoButton}>
                   ¿Ya tienes acceso? Entra
                 </Button>
               </div>
@@ -595,7 +603,7 @@ export default function Profile() {
               <span className={styles.filaIcono} aria-hidden="true"><CalendarDays size={17} /></span>
               <p className={styles.tarjetaTexto} style={{color:'var(--ink)'}}>
                 El {citaProxima.label}, <strong>{nombre(citaProxima.helperName)}</strong>
-                {citaProxima.personaLabel ? <> está con {citaProxima.personaLabel}</> : <> — vuestra primera cita</>}. Todo listo.
+                {citaProxima.personaLabel ? <> está con {citaProxima.personaLabel}</> : <> tiene su primera cita contigo</>}. Todo listo.
               </p>
             </div>
           </section>
@@ -718,7 +726,7 @@ export default function Profile() {
                 style={{marginTop:'var(--space-16)', color:'var(--purple-ink)'}}>
                 <User size={15} aria-hidden="true" /> Crear perfil profesional
               </Button>
-              <Button variant="ghost" full onClick={() => navigate('/profesionales')} style={{marginTop:'var(--space-4)'}}>
+              <Button variant="secondary" full onClick={() => navigate('/profesionales')} style={professionalInfoButton}>
                 Cómo funciona para profesionales
               </Button>
             </div>

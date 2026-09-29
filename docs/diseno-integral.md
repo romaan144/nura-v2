@@ -57,3 +57,170 @@ Los datos ficticios de revisión viven fuera del repositorio de la app, en servi
 Leer `docs/ai-collaboration.md` y `docs/tasks.md` antes de trabajar. Codex mantiene la presentación; Claude mantiene lógica, datos y funcionalidades. Los archivos JSX pueden contener ambas cosas: repartirse responsabilidades no los convierte en archivos independientes. Si una tarea necesita el mismo archivo activo, se realiza después de integrar y actualizar la otra rama, o se acuerda una separación real.
 
 La autorización de Sergio para integrar y publicar diseño está dada. No se añade una aprobación estética previa; se mantienen pruebas técnicas y comprobación de lo publicado. GitHub es el registro compartido, no un canal de aviso instantáneo: la otra herramienta conoce los cambios cuando actualiza y lee el repositorio.
+
+## Evolución · 2026-09-27
+
+Primera entrega integrada en PR #65. La segunda iteración se documenta en `diseno-detalle.md`; el código actual de `src/design-system.css` y los módulos es la referencia vigente.
+
+## Actualización de Inicio · 2026-09-27
+
+La instrucción posterior de Sergio sustituye la presentación de Inicio descrita arriba: una burbuja de respuesta que ocupa el espacio disponible, sin scroll ni historial visible. Campo de escritura y menú debajo en móvil y escritorio. El contenido que no cabe se recorre con botones, sin recortarlo. Ver `docs/busqueda-pantalla.md`. El resto de pantallas conserva su navegación habitual.
+
+## Acciones secundarias · 2026-09-27
+
+Los botones secundarios usan `--action-border` (#C7B2DF) y `--action-surface` (#F7F3FC), separados del borde tenue de las tarjetas. La primitiva Button y las acciones locales de carta, servicios, profesionales, seguidos y error comparten el contorno. Las sugerencias del chat refuerzan solo el borde para mantener su superficie blanca. Botones de texto ghost sin sombra y con subrayado: no simular una cápsula sin borde. Texto largo con altura flexible y línea 1.4; controles secundarios de al menos 44 px, 48 en Button. Mantener los estados y manejadores existentes.
+
+Verificación: navegador a 390×844, 320×720 y escritorio; ficha/disponibilidad y cierre de solicitud, carta, acciones de citas y confirmación de conservarlas, pie para profesionales. Build, matching 255/255, smoke 8×2 + 120×4; lint sin nuevos diagnósticos y no-undef=0. Las comprobaciones de comportamiento usan datos locales aislados.
+
+## Cabecera del chat · 2026-09-27
+
+En móvil la identidad ocupa la primera fila y valoración/verificación/acción la segunda. Foto de 48 px (antes 30), nombre y especialidad con espacio y ajuste de texto. El acceso al perfil es un botón con nombre accesible. En ordenador se conserva una sola fila. La cabecera participa en el flujo: la conversación reserva su altura real, sin una separación fija que pueda solaparse. Se conservan estados, contratación, valoración y envío.
+
+Comprobado en 320×720, 320×568, 390×844 y 1280×900. Antes: especialidad invisible y nombre apretado a 320 px. Después: textos visibles, cero desbordamientos de botones, cabecera hasta y=140 y aviso de chat desde y=156; Próxima visita cabe en 320 px. Apertura/cierre de contratación y acceso al perfil verificados en servidor local. Simulación del teclado/pan Safari: campo y=427–449 dentro de 484 px visibles, lienzo 844 px. No equivale a una prueba física de iPhone. Build, matching 255/255, smoke 8×2 + 120×4; lint sin nuevos diagnósticos y no-undef=0.
+
+## Lista de conversaciones · 2026-09-27
+
+Fotos de 64×72 px (56×64 en móviles menores de 360), nombre y vista previa de hasta dos líneas. Fecha y contador sin leer tienen espacio propio y ya no estrechan la vista previa. Tarjeta sin leer con borde lila y fondo tenue; contador con nombre accesible. Introducción más breve para mostrar antes la lista. Altura regular de 132 px en móvil y 116 en escritorio para los ejemplos sin datos adicionales; las etiquetas de contexto pueden ampliar la tarjeta. Se conservan filtro, orden, markRead, historiales, datos y destino.
+
+Verificación: 390×844, 320×720 y 1280×900, sin desbordamientos; búsqueda por nombre, búsqueda sin coincidencias, apertura de Carlos y retorno con historial de prueba; lista vacía sin demo. Sin envíos reales. Build, matching 255/255, smoke 8×2 + 120×4; lint sin diagnósticos nuevos y no-undef=0.
+
+## Siguiendo · 2026-09-27
+
+Retratos de 80×104 px, 68×92 en móviles estrechos, y bloques separados para nombre, especialidad, valoración/zona y tarifa. El perfil se abre desde un botón nativo con indicación Ver perfil; seguir/dejar de seguir es un botón independiente de 44 px con etiqueta y aria-pressed. Evita controles interactivos anidados y que Enter/Espacio en seguimiento abran el perfil. Fondo blanco, borde definido, una columna móvil y dos en escritorio. Se conservan datos y handlers.
+
+Verificado en 390×844, 320×720 y 1280×900: tarjetas sin desbordamiento, alturas iguales en los ejemplos, acceso al perfil con Enter, cambio de estado de seguimiento sin navegación, y vacío sin demo. La desincronización preexistente entre favorites/following está anotada en tasks; no se presenta como corregida. Build, matching 255/255, smoke 8×2 + 120×4; lint sin diagnósticos nuevos y no-undef=0. Pruebas de interacción solo locales.
+
+
+## Mis servicios: estados y fecha de la cita · 2026-09-27
+
+Tarjetas blancas con una banda discreta de estado: ámbar por confirmar, verde confirmada, gris/lila completada y rojo cancelada. Siempre se incluye texto e icono; el color no es la única señal. La identidad tiene retrato de 60×70 px, nombre y acceso al perfil; día/hora viven en un bloque independiente. Las notas y avisos se leen completos fuera del botón del perfil.
+
+Filtros Todos/Próximos/Completados con recuento y `aria-pressed`. A 480 px o menos, todos los recuentos se sitúan debajo del texto de manera uniforme. Acciones de 46 px como mínimo, separación de 10 px y confirmación de cancelación dentro de su propio panel. Una sola reserva para la navegación inferior; ancho de lectura en escritorio. Se consolida el CSS local para evitar capas de reglas contradictorias.
+
+Verificado en navegador aislado a 390×844, 320×720 y 1280×900, con estados pendientes, confirmados, completados, cancelados, rechazados, valorados, reprogramados y vacíos. Textos largos sin recorte ni desbordamiento. Filtros/teclado, cancelar y mantener, valoración y agenda conservan sus destinos. No se envían solicitudes ni valoraciones reales. Build, matching 255/255 y smoke pasan; lint sin nuevos diagnósticos y no-undef=0.
+
+
+## Solicitud de cita compartida · 2026-09-27
+
+`CitaModal` da la misma presentación a la ficha y al chat sin unificar sus controladores de envío. Cabecera y pie permanecen visibles; el cuerpo se desplaza por dentro. Profesional con foto/inicial, precio, selección en dos pasos y nota opcional con etiqueta. Antes de enviar se ve el día completo y la hora; después se indica que falta confirmación del profesional.
+
+ElegirCita conserva sus cálculos de disponibilidad, pero presenta días con mes y fecha accesible completa, selección con marca e indicador, franjas uniformes y horas ocupadas/propias diferenciadas. El foco queda en la ventana, Escape la cierra y se devuelve el foco anterior cuando existe. La ventana usa el viewport visual compartido: al reducirse por teclado, solo ajusta el scroll de su nota, sin modificar el scroll de la app.
+
+Probado en navegador aislado a 390×844, 320×420 y 1280×900; solicitud y cambio de hora llegan a Mis servicios en demo. Bloqueos, reinicio de hora, teclado, Escape y recorrido de foco comprobados. Con altura visual simulada de 484 px: nota termina en y=349, pie empieza en 361; con pan de 90 px, ambos se desplazan 90 px. Pendiente la comprobación física en iPhone. Build, matching 255/255 y smoke correctos; lint sin nuevos diagnósticos, no-undef=0.
+
+
+## Valorar al profesional · 2026-09-27
+
+Preguntas en bloques independientes, Sí/No de 48 px, cualidades en dos columnas de altura uniforme y contador de máximo tres. Cinco estrellas con cifra propia, área táctil de 66 px de alto y estado seleccionado de contraste dorado. El grupo usa botones nativos con aria-pressed, compatible con volver a tocar para deseleccionar. Comentario con etiqueta, contador de 500 caracteres y consentimiento de publicación separado/desmarcado inicialmente.
+
+Cabecera y pie permanecen visibles; el cuerpo tiene scroll propio. Se extrae el comportamiento visual de CitaModal a `useModalSheet`, incluyendo el checkbox en el recorrido de foco. No se cambian estados de negocio, payload, analítica, callbacks, requisitos de envío ni tiempo de cierre. Los avatares sin fotografía usan iniciales.
+
+Verificado a 390×844, 320×420 y 1280×900, con nombre largo, máximo de cualidades, selección/deselección de estrellas, consentimiento, contador, envío local, Escape y foco contenido. Con teclado simulado de 484 px, el comentario termina 12 px sobre el pie; se conserva con pan de 90 px. Regresión de CitaModal: día/hora, nota, foco y cierre correctos. Pendiente comprobación física de iPhone. Build, matching 255/255 y smoke pasan; lint sin nuevos diagnósticos, no-undef=0. Sin datos ni envíos de prueba en producción.
+
+
+## Explorar: filtros y tarjetas · 2026-09-27
+
+Categorías en filas de 112 px en móvil, con icono propio y acceso de flecha; dos columnas a partir de 1000 px. Cabecera contextual al entrar en una categoría. Especialidades en selector nativo etiquetado, preferencias de 44 px con aria-pressed y botón Quitar filtros. Recuento anunciado; el vacío filtrado permite recuperar la categoría completa. Los algoritmos y opciones son los existentes.
+
+HelperCard pasa de estilos inline a su módulo CSS consolidado. Retrato de 80×104 px (68×100 en móvil estrecho), nombre completo en el dato y nombre accesible, especialidad de hasta dos líneas, valoración/zona y tarifa. Se reservan los mismos espacios para evitar tamaños dispares: las tarjetas probadas miden 186–187 px. Textos largos se abrevian visualmente; el perfil conserva el detalle. Fotografía conservada e inicial si falta, sin emojis añadidos. El botón de perfil y Escribir son hermanos nativos y conservan los manejadores. Feed y la vista previa inerte del profesional reutilizan el componente.
+
+Navegador aislado a 390×844, 320×720 y 1280×900: categorías, selección de especialidad, tres preferencias combinadas, quitar filtros, vacío y catálogo sin demo. Fixture externa de 34 profesionales para paginación, texto largo, tarifa larga y ausencia de datos. Enter abre el perfil; Escribir abre chat o login según sesión. Feed y Profile comprobados sin desbordamiento. Build, matching 255/255 y smoke pasan; lint sin diagnósticos nuevos, no-undef=0. Sin escrituras ni datos de prueba en producción.
+
+
+## Acceso y recuperación · 2026-09-27
+
+`Access.module.css` reúne las superficies de Login, Entrar y Restablecer. Tarjeta blanca de hasta 460 px sobre fondo de marca, iconos de trazo, etiquetas de 13 px y campos de 16 px/52 px de alto. Botones principales y alternativos definidos, áreas de 44 px como mínimo y foco visible. Errores en panel rojizo; confirmaciones en verde, con roles alert/status conservados. La opción de crear acceso queda separada por una línea y un botón con borde.
+
+`PasswordField` comparte solo la visibilidad de la contraseña; no cambia valores, autocompletado, validación ni guardado. El código de demostración conserva un input único con cuatro casillas decorativas y foco visible. La demo explica que no envía SMS; fuera de demo sigue pidiendo nombre y ofrece el acceso por correo. No se cambia el sistema común de teclado.
+
+Verificado en navegador aislado a 390×844, 320×568 y 1280×900, sin desbordamiento horizontal: mostrar/ocultar, mínimo de caracteres, error de acceso, sugerencia de dominio, confirmación de correo, enlace ausente y guardado simulado con error/éxito. Recorrido completo de demo y entrada sin demo conservados. Con teclado simulado a 484 px y pan de 90 px, el campo queda 16 px por encima del menú. Pendiente dispositivo físico; los estados de autenticación usan un módulo ficticio externo al repositorio. No se han enviado correos ni cambiado cuentas reales. Build, matching 255/255 y smoke pasan; lint sin nuevos diagnósticos y no-undef=0.
+
+
+## Su obra dentro de la ficha · 2026-09-27
+
+La sección mantiene su lugar después de Trayectoria y formación, pero deja el ancho a cada publicación sin otra tarjeta alrededor. Cabecera breve, una publicación inicial y botón definido para ver todas/recoger, con aria-expanded y aria-controls. Se conserva el conjunto y límite de publicaciones; no se vuelve a añadir Comunidad al menú.
+
+PostCard comparte un módulo CSS: autor de 44×48 px, nombre/rol/fecha diferenciados, título legible y texto completo que conserva párrafos. Resultado en bloque lila con etiqueta, sin presentarlo como validado. El sello de confirmación solo se muestra con post.confirmado. Acciones Me sirve y Comentarios de al menos 44 px, selección visible y contadores claros. Hilo separado, comentarios con espacio propio, respuestas rápidas identificadas como envío directo y campo de 16 px con botón de 48 px. Autor sin helperId deja de ser un botón sin acción.
+
+Verificado en navegador local a 390×844, 320×720 y 1280×900: reacciones reversibles, comentarios manuales y rápidos, hilo vacío, entrada sin sesión, desplegar/recoger cuatro publicaciones y versiones antiguas sin resultado/título. Fixture externa de texto largo, párrafos y palabra sin espacios: cero desbordamiento horizontal. Teclado simulado: campo a 16 px del menú, también con pan de 90 px; no equivale a iPhone físico. Profile y Feed conservan la pieza compartida. Build, matching 255/255 y smoke pasan; lint sin nuevos diagnósticos y no-undef=0. No hay escrituras de prueba en producción.
+
+## Avisos de búsqueda · 2026-09-28
+
+La ventana agrupa necesidad y zona en una tarjeta, canales en controles independientes y privacidad en un bloque breve. Cabecera y confirmación siempre visibles; el cuerpo se desplaza. El pie resume lo elegido, incluido solo perfil. Se mantienen las selecciones existentes, el permiso de notificaciones se pide únicamente al confirmar y el acceso por correo cierra la ventana antes de navegar.
+
+
+## Navegación de cristal · 2026-09-28
+
+Cápsula única de 62 px, máximo 340 px de ancho y margen seguro inferior. Cristal claro de papel/menta, borde continuo y reflejo interior; la selección es una lente translúcida lila que se desplaza en 360 ms. Iconos y etiquetas mantienen tinta legible, con violeta en la pestaña activa; la selección también se expresa por forma y peso. Los botones conservan 48 px de área táctil y foco visible. La lente es aria-hidden y no intercepta eventos.
+
+No se altera el contrato de teclado ni la navegación de escritorio. Fuera de las tres rutas principales, la lente se oculta. Sin desenfoque se usa una superficie opaca; movimiento reducido elimina transiciones, y mayor contraste/reducir transparencia refuerzan el material. Referencia: vídeo de Tinder aportado por Sergio y materiales Liquid Glass de Apple (https://developer.apple.com/design/human-interface-guidelines/materials). Esta es una adaptación web; al desarrollar una app iOS nativa se valorará la barra del sistema vigente.
+
+
+## Material de cristal transversal · 2026-09-28
+
+El lenguaje de la barra se comparte ahora con todas las familias visuales. `--glass-control` sirve a botones secundarios y cápsulas; `--glass-floating` añade transparencia/desenfoque solo a controles flotantes; `--glass-panel` es casi opaco para tarjetas y lectura prolongada. Bordes gris lila definidos, reflejo interior blanco y sombra corta. La selección usa `--glass-selected` con `--glass-selected-ink`, nunca texto blanco. CTA con gradiente morado y reflejo fino. No teñir todos los estados: errores, confirmaciones y estrellas mantienen sus colores semánticos.
+
+Botones en cápsula, tarjetas con radios amplios y mensajes con radios de 24 px y esquina de 8 px hacia quien habla. Mensajes propios lila claro con tinta oscura; tiempo y metadatos también oscuros. La carta conserva su papel cálido. Campos de varias líneas y opciones extensas conservan formas menos redondas para aprovechar el ancho. No modificar márgenes, alturas reservadas, navegación ni sistema de teclado para aplicar materiales. Reducir transparencia y aumentar contraste sustituyen el cristal por blanco opaco; se conserva la preferencia global de movimiento reducido.
+
+Aplicado a Inicio/resultados, chat/lista de chats, perfiles/edición, catálogo/seguidos, servicios, publicaciones, acceso/recuperación, alta profesional y modales. Los componentes compartidos Button y Bubble propagan el aspecto a las pantallas que los utilizan. Referencia adicional: captura de chat de Tinder facilitada por Sergio. Se conserva el tema claro de Nüra.
+
+
+## Transiciones de ventanas · 2026-09-28
+
+`ModalMotion.module.css` comparte velo de 240 ms y entrada de hoja de 280 ms, con 20 px de recorrido y curva de frenado suave. Cierre voluntario de 180 ms/16 px, contenido de edición a pantalla completa con entrada de 12 px y salida por opacidad. No animar altura ni desenfoque, para conservar geometría y teclado. Las reglas solo se activan con `prefers-reduced-motion: no-preference`.
+
+`useModalMotion` retrasa únicamente el cierre visual solicitado por la persona. Los botones que navegan, guardan o confirman mantienen su comportamiento inmediato. El fondo sigue capturando toques durante la salida, se bloquean nuevas acciones, el cierre se ejecuta una sola vez y se cancela al desmontar. Reutilizar este contrato para nuevas ventanas; no añadir temporizadores independientes a los enlaces.
+
+
+## Repaso del cristal · 28 de septiembre de 2026
+
+El primer pase tenía excepciones inline y reglas de foco más específicas que devolvían el blanco. El material flotante usa transparencia real, desenfoque y tinte lila/menta; controles y paneles usan los mismos reflejos con más opacidad para leer. Los botones de volver y cerrar comparten círculo; Inicio tiene una clase propia para el acceso al perfil.
+
+Para presentación inline reutilizar `src/components/ui/glass.js` (`control`, `panel`, `floating`, `field`, `circle`, `selected`, `primary`, `disabled`). Los componentes mantienen sus manejadores y selección. Las filas agrupadas y cabeceras clicables dentro de tarjetas heredan el panel: no se añade una burbuja a cada línea. No modificar la altura del menú o el contrato del teclado para cambiar materiales. Foco y hover deben conservar el cristal. Alto contraste/transparencia reducida tienen alternativa opaca mediante tokens.
+
+Alcance y pruebas por pantalla: `docs/revision-cristal.md`.
+
+
+## Movimiento de respuestas de Inicio
+
+`ResponseScreen` mantiene fija la superficie de cristal y anima el contenido ya medido: 240 ms, opacidad 0,3→1 y 8 px verticales (dirección inversa al volver). Evitar animar tamaños o cada bloque: alteraría mediciones/paginación. La navegación es inmediata; no añadir copias del contenido saliente ni esperas. Foco y bloques inertes conservados. El efecto se limpia al cambiar de paso o desmontar, no se repite al redimensionar y se omite con movimiento reducido.
+
+
+## Pulsación compartida
+
+Botones y elementos role=button usan scale:.985 y brightness(.97), recuperando escala en 160 ms. No aplicar opacidad al texto ni transform de pulsación por pantalla: el CSS compartido conserva transforms de posición. Disabled/aria-disabled no reaccionan; un padre con una acción descendiente activa no se comprime también. Los diálogos comparten la regla. Movimiento reducido fija --press-scale:none. Inputs y enlaces de texto quedan fuera. No introducir manejadores pointer que escriban estilos: evitarían esta regla y podrían quedar activos al cancelar un gesto.
+
+
+## Espera de perfiles y chats
+
+Reutilizar `PageLoading` para `helper`, `profile`, `chat` y `chats`, tanto en descarga de pantalla como en espera de datos. Mantener cabecera y salida; las siluetas son decorativas, ocultas a lectores de pantalla y sin controles falsos. El mensaje con role=status comunica la espera. No retrasar el contenido real para mostrar una animación. Entrada única por opacidad de 180 ms, sin movimiento con preferencia reducida; no añadir latidos o brillos repetidos.
+
+### Pantallas sin contenido · 2026-09-28
+
+`EmptyPanel` concentra los estados vacíos de Chats, Siguiendo y Mis servicios. Tarjeta con tokens de cristal, borde continuo, icono Lucide decorativo y título h2; una acción principal y, si procede, otra secundaria separada 12 px. Ancho máximo 620 px; texto secundario hasta 36 caracteres por línea y botones de al menos 48 px. Sin flotación repetida ni animación adicional. Conserva contenido y destinos por pantalla; no decide si los datos han llegado ni confunde carga con vacío. Las páginas reservan cabecera y menú mediante scroll-padding al desplazar el foco.
+
+### Voz de Nüra y puntuación · 2026-09-28
+
+Sergio pide respuestas naturales y cuidadas por toda la aplicación, sin rayas largas ni adornos de texto. Usar frases breves, puntos y comas; separar ideas en frases completas y evitar cadenas de «y». No usar emojis, estrellas de texto o marcas de verificación dentro de la prosa. Mantener los iconos de interfaz y las negritas que el componente sabe representar. No prometer disponibilidad confirmada solo porque la búsqueda sea urgente.
+
+Redactar bien en la plantilla que genera cada respuesta. Nunca limpiar globalmente el texto al renderizar: los mensajes de usuarios y profesionales, nombres, enlaces y fechas deben conservarse. Los chips que actúan como instrucciones tienen un contrato de texto exacto; cambiar su aspecto o la prosa no debe alterar esos identificadores. Claude debe aplicar esta pauta a las nuevas respuestas que incorpore. Las respuestas nuevas cambian; no se reescribe el historial guardado.
+
+### Avisos de error · 2026-09-28
+
+`ErrorPanel` reutiliza `EmptyPanel` con icono ámbar y role=alert solo en título/explicación. Los botones se mantienen fuera de la zona anunciada. Reintentar ocupa la primera posición, con salida secundaria separada. Los enlaces no disponibles no ofrecen reintentar una conexión. El detalle técnico permanece cerrado inicialmente, es adaptable y comunica su estado desplegado. Sin animaciones adicionales ni cambio de alturas del menú/teclado. Usar las mismas condiciones y callbacks de cada pantalla: la presentación no decide recuperar ni reenviar.
+
+## Cabecera de conversación · 2026-09-28
+
+Tres piezas: Volver, identidad centrada (foto circular de 64 px y cápsula separada con nombre/especialidad) y Contratar. Sin puntuación, insignias, disponibilidad ni banner con escudo en Chat. La ficha mantiene sus datos. Pie de 54 px con solo la entrada; sin margen mínimo artificial, respetando safe-area. Sugerencias dentro del flujo desplazable. Los estados del servicio y la apertura de solicitud/valoración se conservan.
+
+### Corrección de chat flotante · 2026-09-28
+
+Sustituye las medidas y distribución del apartado anterior: foto 44 px, cápsula de identidad unida con solapamiento de 5 px, nombre 13 px y especialidad 10 px en una línea cada uno. Cabecera y entrada se superponen al historial que ocupa toda la pantalla. Sin bandas que recorten mensajes al nivel de los controles; desvanecido gradual arriba y suave al borde inferior. Padding y scroll-padding protegen la lectura del primer/último mensaje. Safe-area y lógica de teclado conservadas. Verificar siempre un historial largo a mitad del desplazamiento.
+
+### Gesto nativo y acción principal en Chat · 2026-09-28
+
+En Chat, únicamente el historial es desplazable: el marco ocupa la altura visible también con teclado y los controles flotan dentro de él. La excepción se limita a data-screen=chat. El seguimiento del final no interrumpe la lectura anterior ni el gesto táctil; enviar un mensaje propio vuelve al final. Sin animaciones programáticas de scroll. Contratar usa fondo morado principal y texto blanco.
+
+### Contacto desde la ficha · 2026-09-28
+
+Escribir abre Chat directamente. La carta de presentación deja de ser una pantalla del recorrido y sus enlaces antiguos redirigen al chat. En un chat nuevo, borrador corto en primera persona dentro del campo, editable y nunca enviado al abrir. Si la búsqueda supera 120 caracteres, propuesta genérica breve para no copiar ni recortar información a medias. Con historial, campo vacío. Se conserva la comprobación de cuenta existente.

@@ -1,6 +1,6 @@
 .page {
   display: flex; flex-direction: column;
-  height: 100dvh; background: var(--paper);
+  height: var(--app-layout-height, 100dvh); background: var(--paper);
   position: relative; overflow: hidden;
 }
 
@@ -126,7 +126,6 @@
   transition: opacity 0.15s;
 }
 .sendBtn:disabled { opacity: 0.5; }
-.sendBtn:active:not(:disabled) { opacity: 0.85; }
 
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(10px); }
@@ -171,3 +170,30 @@
 .letterCard { padding: 24px; border: 1px solid var(--ink-border); box-shadow: var(--shadow-sm); }
 .letterCard:focus-within { border-color: var(--purple); }
 .letterText { min-height: 160px; line-height: 1.8; }
+
+/* Detalle visual · septiembre 2026 */
+
+.letterCard { border-radius: 24px; background: linear-gradient(160deg, #FFFEFA, #FCF9F3); border-color: #E7DFD3; box-shadow: 0 12px 30px -22px #6F544B50; }
+.helperChip { background: white; border-radius: 20px; border: 1px solid var(--ink-border); }
+.letterCard:focus-within { box-shadow: 0 0 0 4px var(--purple-05); }
+.sendBtn { background: var(--grad-main); }
+
+/* El envío tiene su propia franja sobre la navegación, también con teclado. */
+.page { padding-bottom: var(--nav-h); box-sizing: border-box; }
+.scroll { min-height: 0; }
+.letterText { font-size: 16px; }
+.floatBottom { padding: 12px 20px 14px; }
+.sendBtn { max-width: 740px; margin-inline: auto; min-height: 48px; }
+
+/* Acciones secundarias con contorno compartido. */
+.regenBtn { border: 1px solid var(--action-border); background: var(--action-surface); color: var(--purple-ink); min-height: 44px; line-height: 1.4; box-shadow: none; white-space: normal; }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.back { background: var(--glass-floating); border-color: var(--glass-edge); box-shadow: var(--glass-floating-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
+.helperChip { background: var(--glass-panel); border-color: var(--glass-edge); border-radius: var(--radius-glass); box-shadow: var(--glass-panel-shadow); }
+.regenBtn { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
+.sendBtn:not(:disabled) { background: var(--grad-main); color: white; border-radius: 999px; box-shadow: var(--glass-primary-shadow); }
+
+/* Repaso de controles: mismo material, geometría y estados conservados. */
+.letterCard { background: var(--glass-panel); border-color: var(--glass-edge); box-shadow: var(--glass-panel-shadow); }

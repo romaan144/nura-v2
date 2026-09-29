@@ -55,7 +55,7 @@ export default function Legal() {
   return (
     <div className={styles.page}>
       <PageHeader showBack />
-      <div className={styles.content}>
+      <div className={`${styles.content} nura-reading`}>
         <h1 className={styles.title}>{d.titulo}</h1>
         <p style={{ margin: '0 0 var(--space-20)', fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)', lineHeight: 1.5 }}>
           Versión provisional, pendiente de revisión legal.

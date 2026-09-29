@@ -1,11 +1,16 @@
+import glass from '../components/ui/glass'
+import ErrorPanel from '../components/ErrorPanel'
+import errorStyles from '../components/ErrorPanel.module.css'
+import PageHeader from '../components/PageHeader'
 import { getFirstName } from '../utils/name'
 import { useTitulo } from '../utils/titulo'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react'
+import { attachChatScroll } from '../utils/chatScroll'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, Send, Shield, Award, Calendar, Mic, MicOff } from 'lucide-react'
+import { ArrowLeft, Send, Mic, MicOff } from 'lucide-react'
 import { HELPERS_DEMO as HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
-import ElegirCita from '../components/ElegirCita'
+import CitaModal from '../components/CitaModal'
 import { getHelperById } from '../utils/supabase'
 import { registrarConversacion, respuestasDe, enviarPropuestaCita, enviarAlProfesional, idsPendientes } from '../utils/escrituras'
 import { avisarCuandoConteste, movilPuedeAvisar, esIphoneSinInstalar } from '../utils/alertas'
@@ -14,14 +19,14 @@ import { notifyServiceConfirmed } from '../utils/notifications'
 import { haptic } from '../utils/haptic'
 import RatingModal from '../components/RatingModal'
 import styles from './Chat.module.css'
-import { generateFirstMessage, getHelperReply, getNuraIntervention, buildLivingConversation } from '../utils/chatReplies'
+import PageLoading from '../components/PageLoading'
+import { generateFirstMessage, getHelperReply, getNuraIntervention } from '../utils/chatReplies'
 import { buildChatOpener } from '../utils/introLetter'
 import { DEMO_MODE } from '../config'
-import { Badge, SectionLabel } from '../components/ui'
+import { SectionLabel } from '../components/ui'
 import RegisterGate from '../components/RegisterGate'
 import { registrar } from '../utils/analitica'
 import { construirAviso } from '../utils/aviso'
-import { fmtNota } from '../utils/formato'
 
 // ── Context-aware first message ───────────────────────────────────────────
 
@@ -110,86 +115,15 @@ function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) 
   const [done, setDone] = useState(false)
   const name = getFirstName(helper.name) || helper.name
 
-  if (done) return (
-    <div style={{position:'fixed',inset:0,background: 'rgba(30,25,40,0.35)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:200,display:'flex',alignItems:'center',justifyContent:'center',padding:'var(--space-20)'}}>
-      <div style={{background:'rgba(255,255,255,0.95)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',border:'1px solid rgba(255,255,255,0.5)',borderRadius:'var(--radius-lg)',padding:'36px var(--space-28)',textAlign:'center',maxWidth:'320px',width:'100%',boxShadow:'0 8px 40px rgba(33,29,51,0.12)'}}>
-        {/* Avatar with checkmark */}
-        <div style={{position:'relative',display:'inline-block',marginBottom:'var(--space-12)'}}>
-          {helper.avatarUrl
-            ? <img src={helper.avatarUrl} alt={name}
-                style={{width:'64px',height:'64px',borderRadius:'50%',border:'3px solid var(--green-dot)',display:'block'}} />
-            : <div style={{width:'64px',height:'64px',borderRadius:'50%',background:helper.avatarColor||'var(--purple)',
-                display:'flex',alignItems:'center',justifyContent:'center',color:'white',fontSize:'var(--text-lg)',fontWeight:700,
-                border:'3px solid var(--green-dot)'}}>
-                {helper.avatar||name[0]}
-              </div>
-          }
-          <span style={{position:'absolute',bottom:-2,right:-2,width:'20px',height:'20px',background:'var(--green-dot)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center'}}><svg width='11' height='11' viewBox='0 0 12 12' fill='none'><path d='M2 6l3 3 5-5' stroke='white' strokeWidth='1.8' strokeLinecap='round' strokeLinejoin='round'/></svg></span>
-        </div>
-        <h3 className={styles.modalTitle}>¡Solicitud enviada!</h3>
-            <div className="hilo" style={{width:'56px', margin:'var(--space-2) auto var(--space-10)'}} />
-        <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',marginBottom:'var(--space-12)',lineHeight:1.6}}>{DEMO_MODE ? `${name} confirmará disponibilidad en breve.` : `Se la hago llegar a ${name}. Su respuesta te llegará en este chat.`}</p>
-        {(date || time) && (
-          <div style={{background:'var(--surface-subtle)',border:'1px solid rgba(33,29,51,0.06)',borderRadius:'var(--radius-card)',
-            padding:'var(--space-10) var(--space-14)',marginBottom:'var(--space-20)',textAlign:'left'}}>
-            {date && <p className={styles.metaXs3}>
-              {new Date(date).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})}
-            </p>}
-            {time && <p style={{margin:0,fontSize:'var(--text-xs)',color:'var(--ink-tertiary)'}}>{time}h</p>}
-          </div>
-        )}
-        <div className={styles.colFull}>
-          <button onClick={() => { onClose(); navigate('/my-services') }}
-            style={{padding:'13px',background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:'pointer',width:'100%'}}>
-            Ver mis servicios
-          </button>
-          <button onClick={onClose}
-            style={{padding:'var(--space-12)',background:'transparent',color:'var(--ink-tertiary)',border:'none',fontSize:'var(--text-sm)',cursor:'pointer'}}>
-            Volver al chat
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-
   return (
-    <div style={{position:'fixed',inset:0,background:'rgba(30,25,40,0.35)',WebkitBackdropFilter: 'blur(8px)', backdropFilter:'blur(8px)',zIndex:200,display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
-      <div style={{background:'rgba(255,255,255,0.95)',WebkitBackdropFilter: 'blur(32px)', backdropFilter:'blur(32px)',border:'1px solid rgba(255,255,255,0.5)',borderRadius:'24px 24px 0 0',padding:'var(--space-24) var(--space-20) var(--space-32)',width:'100%',maxWidth:'500px',boxShadow:'0 -8px 40px rgba(33,29,51,0.1)'}}>
-        <div style={{width:'36px',height:'4px',background:'var(--surface-muted)',borderRadius:'2px',margin:'0 auto var(--space-24)'}} />
-        <h3 style={{fontSize:'var(--text-md)',fontWeight:800,marginBottom:'var(--space-4)',color:'var(--ink-primary)',letterSpacing:'-0.3px'}}>Solicitar servicio</h3>
-        <div className="hilo" style={{width:'56px', margin:'var(--space-2) 0 var(--space-10)'}} />
-        <p style={{fontSize:'var(--text-sm)',color:'var(--ink-tertiary)',marginBottom: prefillDate ? '12px' : '20px'}}>Con {name} · {helper.price || 'Precio a consultar'}</p>
-        {prefillDate && (
-          <div style={{display:'flex',alignItems:'center',gap:'var(--space-6)',
-            background:'var(--purple-05)',border:'1px solid var(--purple-10)',
-            borderRadius:'var(--radius-sm)',padding:'var(--space-8) var(--space-12)',marginBottom:'var(--space-16)',
-          }}>
-            <img src="/logo-iso.png" alt="" style={{width:'12px',height:'12px',opacity:0.7}} />
-            <span className={styles.purpleLabel}>
-              Fecha detectada en la conversación
-            </span>
-          </div>
-        )}
-        <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)',marginBottom:'var(--space-20)'}}>
-          <ElegirCita helper={helper} date={date} time={time} onDate={setDate} onTime={setTime} />
-          <textarea value={note} onChange={e=>setNote(e.target.value)}
-            placeholder="Detalles adicionales (opcional)..." rows={3}
-            style={{padding:'var(--space-12) var(--space-16)',border:'1px solid rgba(33,29,51,0.1)',borderRadius:'var(--radius-card)',fontSize:'var(--text-base)',outline:'none',resize:'none',fontFamily:'-apple-system,Inter,sans-serif',color:'var(--ink-primary)',background:'var(--surface-subtle)'}} />
-        </div>
-        <div style={{display:'flex',gap:'var(--space-10)'}}>
-          <button onClick={onClose} style={{flex:1,padding:'var(--space-14)',background:'var(--surface-subtle)',color:'var(--ink-tertiary)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>Cancelar</button>
-          {/* HACEN FALTA DIA **Y** HORA. Antes bastaba el dia: en un sabado,
-              que el logopeda no trabaja, no aparecia ningun hueco y el boton
-              se activaba igual. Se podia enviar una solicitud sin hora — y
-              llegaba al profesional como "sabado, 5 de septiembre" a secas.
-              Una cita sin hora no es una cita. */}
-          <button onClick={()=>{ onConfirm?.(date, time, note); setDone(true); notifyServiceConfirmed(getFirstName(helper.name) || helper.name); haptic('success') }} disabled={!date || !time}
-            style={{flex:2,padding:'var(--space-14)',background:(date&&time)?'var(--purple)':'rgba(33,29,51,0.1)',color:(date&&time)?'white':'var(--ink-tertiary)',border:'none',borderRadius:'var(--radius-full)',fontSize:'var(--text-sm)',fontWeight:700,cursor:(date&&time)?'pointer':'default',transition:'all 0.2s'}}>
-            Enviar solicitud
-          </button>
-        </div>
-      </div>
-    </div>
+    <CitaModal helper={helper} date={date} time={time} note={note}
+      onDate={setDate} onTime={setTime} onNote={setNote} onClose={onClose}
+      done={done} title="Solicitar servicio"
+      notice={prefillDate ? 'Fecha detectada en la conversación' : ''}
+      onConfirm={() => { onConfirm?.(date, time, note); setDone(true); notifyServiceConfirmed(getFirstName(helper.name) || helper.name); haptic('success') }}
+      successText={DEMO_MODE ? `${name} confirmará disponibilidad en breve.` : `Se la hago llegar a ${name}. Su respuesta te llegará en este chat.`}
+      onServices={() => { onClose(); navigate('/my-services') }}
+      backLabel="Volver al chat" />
   )
 }
 
@@ -206,6 +140,7 @@ export default function Chat() {
   const [showRegGate, setShowRegGate] = useState(false)
 
   const [helper, setHelper] = useState(
+    (location.state?.helper && String(location.state.helper.id) === String(id) ? location.state.helper : null) ||
     helpersCache?.[parseInt(id)] || helpersCache?.[id] || helpersCache?.[String(id)] ||
     HELPERS.filter(Boolean).find(h => String(h.id) === String(id)) || null
   )
@@ -245,7 +180,7 @@ export default function Chat() {
     return []
   })
 
-  // Add welcome message from helper if chat is empty (only when there's no intro letter pending)
+  // Bienvenida solo cuando no hay historial.
   // LA VUELTA, ultimo tramo. Al abrir el chat se pregunta si el profesional
   // ya ha respondido desde su enlace. Si lo hizo, su mensaje entra aqui como
   // uno mas: para la persona que espera, es simplemente que le contestaron.
@@ -280,7 +215,7 @@ export default function Chat() {
   // poner en su boca un mensaje que nunca escribio («Hola, soy Carlos…»)
   // a alguien que aun no sabe que le han escrito.
   useEffect(() => {
-    if (DEMO_MODE && messages.length === 0 && helper && !location.state?.introLetterText) {
+    if (DEMO_MODE && messages.length === 0 && helper) {
       const firstName = getFirstName(helper.name) || helper.name
       const welcomeMsg = {
         id: 'welcome',
@@ -295,16 +230,9 @@ export default function Chat() {
   const userQuery = location.state?.userQuery || window.__nuraLastQuery
   const fromSearch = !!userQuery && !hasHistory
 
-  // Pre-fill input with contextual message when coming from search
+  // La propuesta permanece en el campo: no se añade al historial ni se envía.
   const [input, setInput] = useState(() =>
-    (!!location.state?.userQuery || !!window.__nuraLastQuery) && !hasHistory && !location.state?.introLetterText
-      ? buildChatOpener({
-          helper: helpersCache?.[parseInt(id)] || helpersCache?.[id] ||
-            HELPERS.filter(Boolean).find(h => String(h.id) === String(id)),
-          analysis: location.state?.analysis || window.__nuraLastAnalysis,
-          userQuery: location.state?.userQuery || window.__nuraLastQuery,
-        })
-      : ''
+    !hasHistory ? buildChatOpener({ helper, userQuery }) : ''
   )
   const [suggested, setSuggested] = useState('')
   const [typing, setTyping] = useState(false)
@@ -312,14 +240,14 @@ export default function Chat() {
   // ── La Conversación Viva: aceptar o mover la propuesta del profesional ──
   function answerProposal(msgId, accepted, label) {
     setMessages(prev => prev.map(m => m.id === msgId ? { ...m, proposalAnswered: true } : m))
-    const userText = accepted ? `Sí, ${label} me va bien 👍` : '¿Podemos buscar otro momento?'
+    const userText = accepted ? `Sí, ${label} me va bien` : '¿Podemos buscar otro momento?'
     setMessages(prev => [...prev, { id: Date.now(), from: 'user', text: userText, time: new Date().toISOString() }])
     setTyping(true)
     setTimeout(() => {
       setTyping(false)
       const replyText = accepted
-        ? `¡Perfecto! ${label.charAt(0).toUpperCase() + label.slice(1)} entonces 👌 Te escribo el día antes para confirmar los detalles. Cualquier cosa mientras tanto, aquí estoy.`
-        : '¡Claro, sin problema! Dime qué día y franja te encajan mejor y me adapto 🙂'
+        ? `¡Perfecto! ${label.charAt(0).toUpperCase() + label.slice(1)} entonces. Te escribo el día antes para confirmar los detalles. Cualquier cosa mientras tanto, aquí estoy.`
+        : '¡Claro, sin problema! Dime qué día y franja te encajan mejor y me adapto.'
       setMessages(prev => [...prev, { id: Date.now() + 1, from: 'helper', text: replyText, time: new Date().toISOString() }])
       if (accepted) {
         // La Cita — el acuerdo se convierte en un objeto vivo
@@ -336,52 +264,16 @@ export default function Chat() {
   const [showConfirm, setShowConfirm] = useState(false)
   const [msgCount, setMsgCount] = useState(() => Math.floor((getChatHistory(id)?.filter(m => m.from === 'helper')?.length || 0)))
   const [listening, setListening] = useState(false)
-  const bottomRef = useRef(null)
+  const scrollController = useRef(null)
+  const messagesRef = useCallback(node => {
+    scrollController.current?.destroy()
+    scrollController.current = node ? attachChatScroll(node) : null
+  }, [])
 
   useEffect(() => {
     if (!helper) return
     setSuggested(generateFirstMessage(helper))
     markRead?.(helper.id)
-
-    // If coming from the Intro Letter screen, send it as the first user message
-    if (location.state?.introLetterText && !hasHistory) {
-      const letterMsg = {
-        id: Date.now(),
-        from: 'user',
-        isLetter: true,
-        text: location.state.introLetterText,
-        time: new Date().toISOString()
-      }
-      setMessages([letterMsg])
-      const chatAnalysis = (() => { try { return window.__nuraLastAnalysis || JSON.parse(sessionStorage.getItem('nura_last_analysis') || 'null') } catch { return null } })()
-      if (DEMO_MODE && chatAnalysis) {
-        // La Conversación Viva — solo en demo; en producción responden humanos reales
-        const conv = buildLivingConversation({ helper, analysis: chatAnalysis, userQuery: location.state?.userQuery || window.__nuraLastQuery || '' })
-        setTyping(true)
-        setTimeout(() => {
-          setMessages(prev => [...prev, { id: Date.now() + 1, from: 'helper', text: conv.messages[0], time: new Date().toISOString() }])
-          setTimeout(() => {
-            setTyping(false)
-            setMessages(prev => [...prev, { id: Date.now() + 2, from: 'helper', text: conv.messages[1], time: new Date().toISOString(), proposal: conv.proposal }])
-          }, Math.min(2800, 800 + conv.messages[1].length * 14))
-        }, Math.min(2600, 700 + conv.messages[0].length * 14))
-      } else {
-        setTyping(true)
-        const delay = 1200 + Math.random() * 600
-        setTimeout(() => {
-          setTyping(false)
-          const reply = getHelperReply(helper, 1, location.state.introLetterText, true)
-          const replyMsg = {
-            id: Date.now() + 1,
-            from: 'helper',
-            text: reply,
-            time: new Date().toISOString()
-          }
-          setMessages(prev => [...prev, replyMsg])
-        }, delay)
-      }
-      return
-    }
 
     // Send initial greeting if no history
     if (!hasHistory) {
@@ -410,7 +302,9 @@ export default function Chat() {
     }
   }, [helper?.id])
 
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages, typing])
+  useLayoutEffect(() => {
+    scrollController.current?.update(messages.at(-1))
+  }, [messages, typing, helper?.id])
 
   // Persist chat history per helper
   useEffect(() => {
@@ -419,35 +313,18 @@ export default function Chat() {
     }
   }, [messages])
 
-  if (!helper && buscando) return (
-    <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100dvh',background:'var(--paper)'}}>
-      <img src="/logo-iso.png" alt="" style={{width:'40px',opacity:0.4,animation:'pulse 1.5s infinite'}} />
-    </div>
-  )
+  if (!helper && buscando) return <PageLoading kind="chat" />
   if (!helper) return (
-    <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
-      height:'100dvh',background:'var(--paper)',padding:'var(--space-32)',textAlign:'center',gap:'var(--space-12)'}}>
-      <div style={{fontSize:'var(--text-xl)'}}>🤍</div>
-      <p style={{fontSize:'var(--text-base)',color:'var(--ink)',lineHeight:1.5,margin:0}}>
-        {sinRed ? 'No he podido abrir esta conversación.' : 'Esta conversación ya no está disponible.'}
-      </p>
-      <p style={{fontSize:'var(--text-sm)',color:'var(--ink-secondary)',lineHeight:1.5,margin:0}}>
-        {sinRed ? 'Parece un problema de conexión. Vuelve a intentarlo en un momento.'
-                : 'Puede que el enlace sea antiguo. Puedo buscarte a alguien ahora mismo.'}
-      </p>
-      {sinRed && (
-        <button onClick={() => { setBuscando(true); setIntento(n => n + 1) }} style={{marginTop:'var(--space-8)',padding:'var(--space-12) var(--space-24)',
-          background:'var(--purple)',color:'white',border:'none',borderRadius:'var(--radius-full)',
-          fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
-          Reintentar
-        </button>
-      )}
-      <button onClick={() => navigate('/')} style={{marginTop: sinRed ? 0 : 'var(--space-8)',padding:'var(--space-12) var(--space-24)',
-        ...(sinRed ? {background:'transparent',color:'var(--purple-ink)'} : {background:'var(--purple)',color:'white'}),
-        border:'none',borderRadius:'var(--radius-full)',
-        fontSize:'var(--text-sm)',fontWeight:600,cursor:'pointer'}}>
-        Buscar a alguien
-      </button>
+    <div className={`${errorStyles.frame} ${errorStyles.withHeader} ${errorStyles.chat}`}>
+      <PageHeader showBack />
+      <ErrorPanel
+        title={sinRed ? 'No he podido abrir esta conversación' : 'Esta conversación ya no está disponible'}
+        hint={sinRed ? 'No he podido conectar. Puedes intentarlo de nuevo.' : 'Puede que el enlace sea antiguo. Puedes buscar a otro profesional.'}
+        actionLabel={sinRed ? 'Reintentar' : 'Buscar a alguien'}
+        onAction={sinRed ? () => { setBuscando(true); setIntento(n => n + 1) } : () => navigate('/')}
+        secondaryLabel={sinRed ? 'Buscar a alguien' : undefined}
+        onSecondary={() => navigate('/')}
+      />
     </div>
   )
 
@@ -661,64 +538,38 @@ export default function Chat() {
   return (
     <div className={styles.page}>
 
-      {/* Floating header */}
+      {/* Controles flotantes sobre el historial de pantalla completa. */}
       <header className={styles.header}>
         <button className={styles.back} onClick={() => navigate(-1)} aria-label="Volver">
           <ArrowLeft size={17} />
         </button>
 
-        <div className={styles.helperInfo} onClick={() => navigate(`/helper/${helper.id}`, { state: { helper } })}>
+        <button type="button" className={styles.helperInfo}
+          aria-label={`Ver perfil de ${helper.name}`}
+          onClick={() => navigate(`/helper/${helper.id}`, { state: { helper } })}>
           {helper.avatarUrl
-            ? <img src={helper.avatarUrl} alt={helper.name} className={styles.avatarImg} />
-            : <div className={styles.avatar} style={{ background: helper.avatarColor }}>{helper.avatar}</div>
+            ? <img src={helper.avatarUrl} alt="" className={styles.avatarImg} />
+            : <span className={styles.avatar} style={{ background: helper.avatarColor }} aria-hidden="true">{helper.avatar}</span>
           }
-          <div className={styles.helperMeta}>
-            <div className={styles.helperName}>
-              {chatDisplayName}
-              {helper.founder && <Award size={11} color='#92400E' style={{marginLeft:'var(--space-3)',verticalAlign:'middle'}} />}
-              {helper.dniVerified && <Shield size={10} color='var(--green)' style={{marginLeft:'var(--space-3)',verticalAlign:'middle'}} />}
-            </div>
-            <div className={styles.helperStatus} style={{display:'flex',alignItems:'center',gap:'var(--space-4)',minWidth:0}}>
-              {typing
-                ? <span className={styles.typingStatus}>escribiendo...</span>
-                : <>
-                    <span className={styles.onlineDot} style={{flexShrink:0}} />
-                    <span style={{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',minWidth:0}}>{chatSpecialty}</span>
-                    {helper.rating && (
-                      <span style={{flexShrink:0,fontSize:'var(--text-xs)',color:'var(--ink-tertiary)'}}>
-                        ★ {fmtNota(helper.rating)}
-                      </span>
-                    )}
-                    {helper.verified && (
-                      <Badge variant="success" size="xs" style={{flexShrink:0}}>✓ Verif.</Badge>
-                    )}
-                  </>
-              }
-            </div>
-          </div>
-        </div>
-
-        <button className={styles.contractBtn} onClick={() => serviceState === 'Valorar' ? setShowRating(true) : setShowConfirm(true)}>
-          <Calendar size={13} /> {serviceState}
+          <span className={styles.helperMeta}>
+            <span className={styles.helperName}>
+              <span className={styles.nameText}>{chatDisplayName}</span>
+            </span>
+            <span className={styles.helperSpecialty} title={helper.specialty}>{chatSpecialty}</span>
+          </span>
         </button>
 
+        <button className={styles.contractBtn} onClick={() => serviceState === 'Valorar' ? setShowRating(true) : setShowConfirm(true)}>
+          {serviceState}
+        </button>
       </header>
 
       {/* Messages — full screen */}
-      <div className={styles.messages}>
-
-        {/* System note */}
-        <div className={styles.systemNote}>
-          <Shield size={11} /> Chat seguro · Comparte datos personales solo cuando confíes
-        </div>
+      <div className={styles.messages} ref={messagesRef}>
 
         {/* Empty state */}
         {messages.length === 0 && (
           <div className={styles.emptyChat}>
-            {helper.avatarUrl
-              ? <img src={helper.avatarUrl} alt={helper.name} className={styles.emptyChatImg} />
-              : <div className={styles.emptyChatAvatar} style={{ background: helper.avatarColor }}>{helper.avatar}</div>
-            }
             {fromSearch && userQuery ? (
               <div style={{
                 background:'linear-gradient(135deg,var(--purple-05),rgba(0,212,200,0.04))',
@@ -732,14 +583,6 @@ export default function Chat() {
                 </p>
               </div>
             ) : null}
-            <p className={styles.emptyChatName}>{helper.name}</p>
-            <p className={styles.emptyChatDesc}>{helper.specialty} · {helper.zone}</p>
-            {helper.price && <p className={styles.emptyChatPrice}>{helper.price}</p>}
-            <div style={{display:'flex',gap:'var(--space-8)',flexWrap:'wrap',justifyContent:'center',marginTop:'var(--space-4)'}}>
-              {helper.dniVerified && <span style={{fontSize:'var(--text-xs)',color:'var(--green)',background:'var(--green-light)',border:'1px solid rgba(5,150,105,0.15)',borderRadius:'var(--radius-full)',padding:'var(--space-3) var(--space-10)',fontWeight:600}}>Verificado</span>}
-              {helper.available && <span style={{fontSize:'var(--text-xs)',color:'var(--green)',background:'var(--green-light)',border:'1px solid rgba(5,150,105,0.15)',borderRadius:'var(--radius-full)',padding:'var(--space-3) var(--space-10)',fontWeight:600}}>● Disponible</span>}
-              <span style={{fontSize:'var(--text-xs)',color:'var(--ink-tertiary)',background:'var(--surface-subtle)',borderRadius:'var(--radius-full)',padding:'var(--space-3) var(--space-10)'}}>⭐ {fmtNota(helper.rating)} · {helper.reviews} reseñas</span>
-            </div>
             {/* Conversation starters */}
             <div style={{display:'flex',flexDirection:'column',gap:'var(--space-8)',marginTop:'var(--space-20)',width:'100%',maxWidth:'280px'}}>
               <p style={{fontSize:'var(--text-xs)',color:'var(--ink-tertiary)',textAlign:'center',margin:0}}>Empieza la conversación</p>
@@ -750,16 +593,7 @@ export default function Chat() {
               ].map((q,i) => (
                 <button key={i}
                   onClick={() => sendMessage(q)}
-                  style={{
-                    padding:'11px var(--space-16)',
-                    background:'rgba(255,255,255,0.85)',
-                    border:'1px solid rgba(33,29,51,0.08)',
-                    borderRadius:'var(--radius-card)',
-                    fontSize:'var(--text-sm)',color:'var(--ink-secondary)',
-                    cursor:'pointer',textAlign:'left',
-                    fontFamily:'-apple-system,"Inter",sans-serif',
-                    transition:'opacity 0.15s',
-                  }}>
+                  className={styles.quickReply}>
                   {q}
                 </button>
               ))}
@@ -788,15 +622,19 @@ export default function Chat() {
                 <p>{msg.text}</p>
                 {msg.from === 'helper' && msg.proposal && !msg.proposalAnswered && (
                   <div style={{display:'flex', gap:'var(--space-6)', marginTop:'var(--space-8)', flexWrap:'wrap'}}>
-                    <button onClick={() => answerProposal(msg.id, true, msg.proposal.label)}
-                      style={{background:'var(--purple)', color:'white', border:'none',
-                        borderRadius:'var(--radius-full)', padding:'7px var(--space-14)', fontSize:'var(--text-xs)', fontWeight:600}}>
+                    <button className="nura-glass-action" onClick={() => answerProposal(msg.id, true, msg.proposal.label)}
+                      style={{ padding:'7px var(--space-14)',
+              fontSize:'var(--text-xs)',
+              fontWeight:600,
+              ...(glass.primary) }}>
                       ✓ Me va bien
                     </button>
-                    <button onClick={() => answerProposal(msg.id, false, msg.proposal.label)}
-                      style={{background:'var(--surface-subtle)', color:'var(--ink)',
-                        border:'1px solid var(--ink-border)', borderRadius:'var(--radius-full)',
-                        padding:'7px var(--space-14)', fontSize:'var(--text-xs)', fontWeight:600}}>
+                    <button className="nura-glass-action" onClick={() => answerProposal(msg.id, false, msg.proposal.label)}
+                      style={{ color:'var(--ink)',
+              padding:'7px var(--space-14)',
+              fontSize:'var(--text-xs)',
+              fontWeight:600,
+              ...(glass.control) }}>
                       Otro momento
                     </button>
                   </div>
@@ -804,21 +642,20 @@ export default function Chat() {
                 {isNura && msg.chips && (
                   <div style={{display:'flex',gap:'var(--space-6)',marginTop:'var(--space-8)',flexWrap:'wrap'}}>
                     {msg.chips.map((chip, ci) => (
-                      <button key={ci}
+                      <button className="nura-glass-action" key={ci}
                         onClick={() => {
                           if (chip === 'Confirmar reserva') { setShowConfirm(true); return }
                           if (chip === 'Todavía no') return
                           if (chip === AVISAME) { pedirAvisoRespuesta(msg.id); return }
                           sendMessage(chip)
                         }}
-                        style={{
-                          padding:'5px var(--space-12)',borderRadius:'var(--radius-full)',fontSize:'var(--text-xs)',fontWeight:600,
-                          cursor:'pointer',border:'none',
-                          background: chip === 'Confirmar reserva'
-                            ? 'var(--purple)' : 'rgba(33,29,51,0.07)',
-                          color: chip === 'Confirmar reserva' ? 'white' : 'var(--ink-secondary)',
-                          fontFamily:'inherit',
-                        }}>
+                        style={{ padding:'5px var(--space-12)',
+              fontSize:'var(--text-xs)',
+              fontWeight:600,
+              cursor:'pointer',
+              color: chip === 'Confirmar reserva' ? 'white' : 'var(--ink-secondary)',
+              fontFamily:'inherit',
+              ...(chip === 'Confirmar reserva' ? glass.primary : glass.control) }}>
                         {chip}
                       </button>
                     ))}
@@ -845,7 +682,13 @@ export default function Chat() {
           </div>
         )}
 
-        {/* Quick replies */}
+        {/* Las sugerencias pertenecen a la conversación, no al pie fijo. */}
+        {suggested && messages.length === 0 && (
+          <div className={styles.suggestionBar}>
+            <span className={styles.suggestionLabel}>Nüra sugiere</span>
+            <button className={styles.suggestionText} onClick={() => sendMessage(suggested)}>{suggested}</button>
+          </div>
+        )}
         {showQuickReplies && (
           <div className={styles.quickReplies}>
             {QUICK_REPLIES.map((r, i) => (
@@ -853,19 +696,8 @@ export default function Chat() {
             ))}
           </div>
         )}
-
-        <div ref={bottomRef} />
       </div>
 
-      {/* Nüra suggestion for first message */}
-      {suggested && messages.length === 0 && (
-        <div className={styles.suggestionBar}>
-          <span className={styles.suggestionLabel}>Nüra sugiere</span>
-          <button className={styles.suggestionText} onClick={() => sendMessage(suggested)}>{suggested}</button>
-        </div>
-      )}
-
-      {/* Floating input */}
       <div className={styles.inputWrap}>
         <div className={styles.inputBar}>
           <input className={styles.input} aria-label="Escribe tu mensaje"

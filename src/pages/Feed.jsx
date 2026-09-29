@@ -1,3 +1,4 @@
+import glass from '../components/ui/glass'
 import { getFirstName } from '../utils/name'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -28,7 +29,7 @@ function pulsoReal(posts) {
 
 export default function Feed() {
   const navigate = useNavigate()
-  const { user, myStories, following, utilesDe, contactedHelpers } = useUser()
+  const { user, myStories, isFollowing, utilesDe, contactedHelpers } = useUser()
   const [modo, setModo] = useState('todos')
   const [composerOpen, setComposerOpen] = useState(false)
   const [avisoNoPro, setAvisoNoPro] = useState(false)
@@ -68,7 +69,7 @@ export default function Feed() {
     if (b < deObra.length && a % 2 === 0) todos.push(deObra[b++])
   }
 
-  const sigue = id => (following || []).includes(id)
+  const sigue = isFollowing
 
   // Temas: la comunidad se recorre por lo que te preocupa
   // HELPERS puede traer huecos nulos: filtrar antes de buscar (lo cazo el smoke)
@@ -125,12 +126,14 @@ export default function Feed() {
 
         <div style={{ display: 'flex', gap: 'var(--space-8)', marginTop: 'var(--space-12)' }}>
           {['todos', 'siguiendo'].map(m => (
-            <button key={m} onClick={() => setModo(m)}
-              style={{ background: modo === m ? 'var(--purple)' : 'white',
-                color: modo === m ? 'white' : 'var(--ink)',
-                border: '1px solid ' + (modo === m ? 'var(--purple)' : 'var(--ink-border)'),
-                borderRadius: 'var(--radius-full)', padding: 'var(--space-6) var(--space-14)',
-                fontSize: 'var(--text-sm)', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
+            <button className="nura-glass-action" key={m} onClick={() => setModo(m)}
+              style={{ color: modo === m ? 'white' : 'var(--ink)',
+              padding: 'var(--space-6) var(--space-14)',
+              fontSize: 'var(--text-sm)',
+              fontWeight: 700,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              ...(modo === m ? glass.selected : glass.control) }}>
               {m === 'todos' ? 'Todo' : 'A quien sigues'}
             </button>
           ))}
@@ -142,12 +145,15 @@ export default function Feed() {
         <div style={{ display: 'flex', gap: 'var(--space-6)', overflowX: 'auto',
           padding: '0 var(--space-16) var(--space-4)', margin: 'var(--space-14) 0 0' }}>
           {[null, ...temas].map(t => (
-            <button key={t || 'all'} onClick={() => setTema(t)}
-              style={{ flexShrink: 0, background: tema === t ? 'var(--ink)' : 'white',
-                color: tema === t ? 'white' : 'var(--ink-secondary)',
-                border: '1px solid ' + (tema === t ? 'var(--ink)' : 'var(--ink-border)'),
-                borderRadius: 'var(--radius-full)', padding: 'var(--space-6) var(--space-12)',
-                fontSize: 'var(--text-sm)', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>
+            <button className="nura-glass-action" key={t || 'all'} onClick={() => setTema(t)}
+              style={{ flexShrink: 0,
+              color: tema === t ? 'white' : 'var(--ink-secondary)',
+              padding: 'var(--space-6) var(--space-12)',
+              fontSize: 'var(--text-sm)',
+              fontWeight: 600,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              ...(tema === t ? glass.selected : glass.control) }}>
               {t ? (CAT_HUMANA[t] || t) : 'Todo'}
             </button>
           ))}
@@ -168,22 +174,23 @@ export default function Feed() {
             termines un servicio podrás contar cómo te fue desde el chat.
           </p>
         )}
-        <button onClick={() => {
+        <button className="nura-glass-action" onClick={() => {
             if (!user) return navigate('/login')
             if (user.isHelper) return setComposerOpen(true)
             setAvisoNoPro(true)
           }}
-          style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-10)', width: '100%',
-            /* Cristal, como las tarjetas que tiene debajo y la capsula de
-               Home: es una invitacion a escribir, no un campo de formulario. */
-            background: 'rgba(255,255,255,0.96)',
-            WebkitBackdropFilter: 'blur(20px) saturate(160%)',
-            backdropFilter: 'blur(20px) saturate(160%)',
-            border: '1px solid rgba(255,255,255,0.6)', borderRadius: 'var(--radius-md)',
-            boxShadow: 'var(--alzado-reposo)',
-            padding: 'var(--space-14) var(--space-16)',
-            margin: 'var(--space-16) 0 var(--space-20)', cursor: 'pointer', textAlign: 'left',
-            fontFamily: 'inherit' }}>
+          style={{ display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--space-10)',
+              width: '100%',
+              WebkitBackdropFilter: 'blur(20px) saturate(160%)',
+              backdropFilter: 'blur(20px) saturate(160%)',
+              padding: 'var(--space-14) var(--space-16)',
+              margin: 'var(--space-16) 0 var(--space-20)',
+              cursor: 'pointer',
+              textAlign: 'left',
+              fontFamily: 'inherit',
+              ...(glass.floating) }}>
           <span style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--purple-10)',
             color: 'var(--purple-ink)', display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 'var(--text-sm)', fontWeight: 700, flexShrink: 0 }}>

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageHeader from '../components/PageHeader'
-import styles from './Siguiendo.module.css'
+import styles from './Access.module.css'
+import PasswordField from '../components/PasswordField'
+import { KeyRound, Check, Link2Off } from 'lucide-react'
 import { nuevaContrasena, sesionActual, escucharSesion, MIN_CONTRASENA } from '../utils/cuenta'
 
 // ── RESTABLECER LA CONTRASEÑA ────────────────────────────────────────────
@@ -41,50 +43,34 @@ export default function Restablecer() {
   return (
     <div className={styles.page}>
       <PageHeader showBack />
-      <div className={`${styles.content} nura-auth-card`}>
+      <main className={styles.card}>
+        <div className={`${styles.icon} ${estado === 'hecho' ? styles.successIcon : ''}`} aria-hidden="true">
+          {estado === 'hecho' ? <Check size={26} /> : estado === 'sinEnlace' ? <Link2Off size={24} /> : <KeyRound size={24} />}
+        </div>
+        <p className={styles.eyebrow}>Recuperar tu acceso</p>
         <h1 className={styles.title}>Contraseña nueva</h1>
-        {estado === 'comprobando' && <p style={{ color: 'var(--ink-tertiary)', fontSize: 'var(--text-sm)' }}>Comprobando el enlace…</p>}
-        {estado === 'sinEnlace' && (
-          <>
-            <p style={{ margin: '0 0 var(--space-16)', fontSize: 'var(--text-base)', color: 'var(--ink-secondary)', lineHeight: 1.5 }}>
-              Este enlace ya no sirve: puede que haya caducado o que ya se usara. Pide uno nuevo y ábrelo desde el correo.
-            </p>
-            <button onClick={() => navigate('/entrar')} style={{ width: '100%', minHeight: 48, border: 'none', borderRadius: 'var(--radius-full)',
-              background: 'var(--purple)', color: 'white', fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 700, cursor: 'pointer' }}>
-              Pedir un enlace nuevo
-            </button>
-          </>
-        )}
-        {estado === 'listo' && (
+        {estado === 'comprobando' && <p role="status" className={styles.description}>Comprobando el enlace…</p>}
+        {estado === 'sinEnlace' && <>
+          <p className={styles.description}>Este enlace ya no sirve: puede que haya caducado o que ya se usara. Pide uno nuevo y ábrelo desde el correo.</p>
+          <button type="button" onClick={() => navigate('/entrar')} className={styles.primary}>Pedir un enlace nuevo</button>
+        </>}
+        {estado === 'listo' && <>
+          <p className={styles.description}>Elige una contraseña para volver a entrar en tu cuenta.</p>
           <form onSubmit={e => { e.preventDefault(); guardar() }} noValidate>
-            <label htmlFor="r-pass" style={{ display: 'block', margin: 'var(--space-8) 0 var(--space-6)', fontSize: 'var(--text-sm)', fontWeight: 700, color: 'var(--ink-primary)' }}>
-              Tu contraseña nueva
-            </label>
-            <input id="r-pass" type="password" autoComplete="new-password" value={pass} onChange={e => setPass(e.target.value)}
-              placeholder={`Al menos ${MIN_CONTRASENA} caracteres`}
-              style={{ width: '100%', boxSizing: 'border-box', padding: 'var(--space-12) var(--space-14)', border: '1px solid var(--ink-border)',
-                borderRadius: 'var(--radius-card)', fontSize: 'var(--text-base)', fontFamily: 'inherit', background: 'white', outline: 'none' }} />
-            {error && <p role="alert" style={{ margin: 'var(--space-10) 0 0', fontSize: 'var(--text-sm)', color: 'var(--red-ink)' }}>{error}</p>}
-            <button type="submit" disabled={!listo} style={{ width: '100%', minHeight: 48, marginTop: 'var(--space-16)', border: 'none',
-              borderRadius: 'var(--radius-full)', fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 700,
-              cursor: listo ? 'pointer' : 'default', background: listo ? 'var(--purple)' : 'rgba(33,29,51,0.08)',
-              color: listo ? 'white' : 'var(--ink-tertiary)' }}>
-              {enviando ? 'Un momento…' : 'Guardar la contraseña'}
-            </button>
+            <div className={styles.field}>
+              <label htmlFor="r-pass" className={styles.label}>Tu contraseña nueva</label>
+              <PasswordField id="r-pass" autoComplete="new-password" value={pass} onChange={e => setPass(e.target.value)} aria-describedby="r-pass-hint" />
+              <p id="r-pass-hint" className={styles.hint}>Al menos {MIN_CONTRASENA} caracteres.</p>
+            </div>
+            {error && <p role="alert" className={styles.error}>{error}</p>}
+            <button type="submit" disabled={!listo} className={styles.primary}>{enviando ? 'Un momento…' : 'Guardar la contraseña'}</button>
           </form>
-        )}
-        {estado === 'hecho' && (
-          <>
-            <p role="status" style={{ margin: '0 0 var(--space-16)', fontSize: 'var(--text-base)', color: 'var(--ink-secondary)', lineHeight: 1.5 }}>
-              Listo. Ya puedes entrar con tu contraseña nueva.
-            </p>
-            <button onClick={() => navigate('/profile')} style={{ width: '100%', minHeight: 48, border: 'none', borderRadius: 'var(--radius-full)',
-              background: 'var(--purple)', color: 'white', fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 700, cursor: 'pointer' }}>
-              Ir a mi perfil
-            </button>
-          </>
-        )}
-      </div>
+        </>}
+        {estado === 'hecho' && <>
+          <p role="status" className={styles.notice}>Listo. Ya puedes entrar con tu contraseña nueva.</p>
+          <button type="button" onClick={() => navigate('/profile')} className={styles.primary}>Ir a mi perfil</button>
+        </>}
+      </main>
     </div>
   )
 }

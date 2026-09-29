@@ -3,19 +3,21 @@
 :root {
   --font-ui: 'Inter Variable', 'Inter', -apple-system, sans-serif;
   --font-voice: 'Plus Jakarta Sans Variable', 'Inter Variable', sans-serif;
-  --paper: #F5F5F9;
-  --paper-rgb: 245,245,249;
+  --paper: #F7F6FA;
+  --paper-rgb: 247,246,250;
   --paper-veil: rgba(var(--paper-rgb), .94);
   --paper-veil-soft: rgba(var(--paper-rgb), .88);
   --surface-card: #fff;
   --ink-border: rgba(33,29,51,.09);
+  --action-border: #C7B2DF;
+  --action-surface: #F7F3FC;
   --surface-subtle: rgba(33,29,51,.035);
   --rule: #E5E2EC;
   --radius-md: 20px;
   --radius-card: 14px;
   --radius-lg: 20px;
   --radius-xl: 24px;
-  --text-display: clamp(30px, 5vw, 46px);
+  --text-display: clamp(34px, 5vw, 54px);
   --text-page-title: 28px;
   --text-input: 16px;
   --space-40: 40px;
@@ -47,7 +49,7 @@ input::placeholder, textarea::placeholder { color: var(--ink-tertiary); opacity:
 ::selection { background: var(--purple-20); color: var(--ink); }
 .nura-button { box-shadow: var(--shadow-xs); }
 .nura-button:hover:not(:disabled) { filter: brightness(.98); box-shadow: var(--shadow-sm); }
-.nura-button:active:not(:disabled) { transform: translateY(1px); }
+.nura-button--ghost { text-decoration: none; }
 .nura-section-title { font-family: var(--font-voice); }
 .desktopMain { height: 100dvh; }
 
@@ -104,3 +106,151 @@ input::placeholder, textarea::placeholder { color: var(--ink-tertiary); opacity:
 
 
 span.nura-user-initials { display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: var(--purple-05); color: var(--purple-ink); font-family: var(--font-voice); font-weight: 650; }
+
+/* Detalle visual · septiembre 2026 */
+
+:root {
+  --brand-deep: #302142;
+  --brand-lilac: #EAE2F8;
+  --brand-mint: #E1EDE7;
+  --brand-peach: #FAEAE2;
+  --grad-main: linear-gradient(135deg, #7942D7, #5723A8);
+  --person-card-surface: linear-gradient(160deg, #F0EAF9 0, #F9F7FC 96px, white 190px);
+  --surface-cover: radial-gradient(ellipse at 90% 10%, #DFEBE4, transparent 65%), linear-gradient(125deg, #DFD2F3, #EEE8F6 60%, #ECF1EB);
+}
+.nura-button--primary { box-shadow: 0 4px 12px -4px #6534A852, inset 0 1px 0 #ffffff30; }
+.nura-button--primary:hover:not(:disabled) { box-shadow: 0 8px 22px -8px #6534A87A; filter: brightness(1.06); }
+.nura-button:disabled { box-shadow: none; }
+.nura-page-intro { padding-bottom: 28px; }
+.nura-page-intro h1 { font-size: clamp(28px, 3.4vw, 38px); letter-spacing: -1.3px; }
+.nura-page-intro .nura-eyebrow { display: inline-flex; align-items: center; gap: 8px; }
+.nura-page-intro .nura-eyebrow::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--purple); }
+.nura-auth-card { box-shadow: 0 18px 60px -36px #39214B60; border-top: 4px solid var(--brand-lilac); }
+.nura-auth-card h1, .nura-auth-card h2 { letter-spacing: -.8px; }
+.nura-person-card { position: relative; }
+.nura-person-card > div:first-child { box-shadow: 0 0 0 6px #ffffffc9, 0 8px 24px -12px #33223f80; border-radius: 50%; }
+@media (hover: hover) {
+  .nura-person-card:hover { border-color: var(--glass-selected-edge); }
+}
+.nura-person-card { transition: translate 220ms var(--motion-curve); }
+/* Shared form surfaces, including feature dialogs maintained by Claude. */
+[role='dialog'] h2 { font-family: var(--font-voice); }
+[role='dialog'] input:not([type='checkbox']):not([type='radio']), [role='dialog'] textarea, [role='dialog'] select {
+  box-shadow: inset 0 1px 3px #30214205; transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+[role='dialog'] input:focus-visible, [role='dialog'] textarea:focus-visible { box-shadow: 0 0 0 5px var(--purple-05); }
+@keyframes nura-surface-in { from { opacity: 0; translate: 0 10px; } to { opacity: 1; translate: 0 0; } }
+/* Focus remains visible; motion is finite and disabled by the global reduced-motion rule. */
+@media (prefers-reduced-motion: no-preference) { .nura-auth-card { animation: nura-surface-in 420ms var(--motion-curve) both; } }
+
+
+/* Detalle visual · septiembre 2026 */
+
+:root { --surface-entry: radial-gradient(ellipse at 85% 0, #E0ECE5, transparent 65%), radial-gradient(ellipse at 0 30%, #E9DFF5, transparent 65%), var(--paper); }
+span.nura-user-initials { background: #F0E9FA; }
+.nura-reading { background: white; border: 1px solid var(--ink-border); border-radius: 26px; margin-top: 20px !important; margin-bottom: 24px !important; width: calc(100% - 32px); }
+.nura-reading section { padding-top: 20px; border-top: 1px solid var(--ink-border); }
+.nura-empty-state { border: 1px dashed #D9CFE5; border-radius: 24px; background: linear-gradient(135deg, #FFFFFFB8, #F2EBFA80); }
+[aria-labelledby='editar-ficha-titulo'] > div, [aria-labelledby='editar-ficha-titulo'] > p { width: min(100%, 720px); margin-inline: auto !important; }
+.nura-work-composer > :not(button:first-child) { max-width: 680px; margin-left: auto !important; margin-right: auto !important; }
+.nura-work-composer input, .nura-work-composer textarea { box-shadow: 0 3px 14px -10px #30214230; }
+.nura-post { border-top: 3px solid #E6DCF1 !important; }
+
+@media (min-width: 768px) {
+  body[data-nura-focus] .desktopMain[data-screen='home'] { left: 0; width: 100%; --nav-h: 72px; }
+}
+
+/* Una ventana móvil desplazable sobre un lienzo estable: el teclado no
+   comprime las pantallas y el gesto conserva el scroll nativo. */
+.appCanvas { height: 100%; min-height: 0; }
+@media (max-width: 767px) {
+  .desktopMain {
+    position: fixed; inset: var(--app-visible-top, 0px) 0 auto; width: 100%;
+    height: var(--app-visible-height, 100dvh);
+    overflow-y: auto; overflow-x: hidden; overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch; scroll-behavior: auto; overflow-anchor: none;
+  }
+  .appCanvas { height: var(--app-layout-height, 100dvh); position: relative; transform: translateZ(0); }
+  nav[aria-label="Navegación principal"] {
+    bottom: calc(var(--app-keyboard-inset, 0px) + max(env(safe-area-inset-bottom, 0px), 10px));
+  }
+  .desktopMain input:not([type='checkbox']):not([type='radio']), .desktopMain textarea,
+  [role='dialog'] input, [role='dialog'] textarea { font-size: 16px; }
+}
+
+
+/* Materiales de cristal · septiembre 2026.
+   Tres niveles: controles, superficies de lectura y selección.
+   El desenfoque se reserva a piezas flotantes, no a cada tarjeta del listado. */
+:root {
+  --glass-edge: #BEB0CD;
+  --glass-control: linear-gradient(155deg, #FFFFFFE0 0%, #F3EDF8B8 52%, #E4EEE9B8 100%);
+  --glass-panel: linear-gradient(155deg, #FFFFFFEC 0%, #F7F3FBE0 64%, #EDF4F0D9 100%);
+  --glass-floating: var(--glass-control);
+  --glass-filter: none;
+  --glass-selected: linear-gradient(150deg, #F5EFFC, #E5D6F3 72%, #E3ECE9);
+  --glass-selected-edge: #AE91C9;
+  --glass-selected-ink: #583082;
+  --glass-message: linear-gradient(145deg, #F0E6FA, #E7DDF2);
+  --glass-shine: inset 0 2px 2px #FFFFFFF5, inset 1px 0 1px #FFFFFFA6, inset 0 -2px 3px #8D79A21A;
+  --glass-control-shadow: var(--glass-shine), 0 3px 9px -5px #30214245;
+  --glass-panel-shadow: var(--glass-shine), 0 8px 26px -21px #30214250;
+  --glass-floating-shadow: var(--glass-shine), 0 8px 26px -12px #30214240;
+  --glass-primary-shadow: inset 0 1px 0 #FFFFFF65, inset 0 0 0 1px #FFFFFF28, 0 5px 14px -9px #63359970;
+  --glass-focus: 0 0 0 3px #7951AA24, var(--glass-floating-shadow);
+  --radius-glass: 26px;
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root {
+    --glass-floating: linear-gradient(145deg, #FFFFFFB8 0%, #F0EAF580 52%, #DBEAE49E 100%);
+    --glass-filter: blur(22px) saturate(145%);
+  }
+}
+.nura-button--primary { box-shadow: var(--glass-primary-shadow); }
+.nura-button--secondary { -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
+.nura-reading, .nura-auth-card { background: var(--glass-panel); border-color: var(--glass-edge); box-shadow: var(--glass-panel-shadow); }
+.nura-work-composer input, .nura-work-composer textarea { border-radius: 20px; }
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  :root {
+    --glass-control: #FFFFFF;
+    --glass-panel: #FFFFFF;
+    --glass-floating: #FFFFFF;
+    --glass-filter: none;
+    --glass-edge: #9E8EAD;
+    --glass-selected: #E8D9F4;
+    --glass-selected-edge: #84629F;
+    --glass-selected-ink: #4C256E;
+    --glass-message: #EADDF4;
+  }
+}
+@media (forced-colors: active) {
+  :root { --glass-edge: CanvasText; --glass-selected-edge: Highlight; --glass-selected-ink: CanvasText; }
+}
+
+/* Controles explícitamente adaptados; nunca afectar a todos los botones por etiqueta. */
+.nura-glass-action { min-height: 44px; }
+.nura-glass-action:disabled { opacity: .55; cursor: default; }
+.nura-glass-field:focus-visible { outline: 2px solid var(--glass-selected-edge); outline-offset: 2px; }
+
+
+/* Pulsación común. scale no reemplaza transforms usados para posicionar.
+   Sin cambiar tamaño de layout, opacidad del texto ni estado seleccionado.
+   La exclusión :has evita pulsar dos superficies al tocar una acción anidada. */
+:root body :is(button, [role='button']) {
+  transition: scale 160ms var(--motion-curve), filter 120ms ease,
+    background 160ms ease, border-color 160ms ease, box-shadow 160ms ease, color 160ms ease;
+}
+:root body :is(button, [role='button']):not(:disabled):not([aria-disabled='true']):active:not(:has(:is(button, [role='button']):active)) {
+  scale: var(--press-scale, .985);
+  filter: brightness(.97);
+}
+@media (prefers-reduced-motion: reduce) {
+  :root { --press-scale: none; }
+}
+
+/* Chat: una única zona desplazable, también con teclado abierto.
+   El resto de pantallas conserva su lienzo estable. */
+@media (max-width: 767px) {
+  .desktopMain[data-screen='chat'] { overflow: hidden; }
+  .desktopMain[data-screen='chat'] .appCanvas { height: 100%; }
+}

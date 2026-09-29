@@ -62,6 +62,34 @@
   .user { margin-top: auto; border: 1px solid var(--ink-border); border-radius: var(--radius-md); background: var(--paper); text-align: left; width: 100%; }
   .footer { margin-top: auto; padding: var(--space-24) var(--space-12); border: none; color: var(--ink-tertiary); }
   .user + .footer { margin-top: var(--space-8); }
-  .footerVoice { font-family: var(--font-voice); font-size: var(--text-md); color: var(--ink-secondary); font-weight: 600; letter-spacing: -.4px; line-height: 1.5; margin-bottom: var(--space-12); }
 }
 .wordmark { font-family: var(--font-voice); font-size: var(--text-xl); font-weight: 750; letter-spacing: -1.3px; line-height: 1.25; }
+
+/* Detalle visual · septiembre 2026 */
+
+@media (min-width: 768px) {
+  .sidebar { background: linear-gradient(168deg, #352347, #251D32 72%); border-right: 1px solid #ffffff0c; }
+  .wordmark { color: #FCFAFF; }
+  .logoIso { background: white; border-radius: 11px; padding: 5px; width: 36px; height: 36px; }
+  .nav { gap: 8px; }
+  .navItem { color: #C5BACE; border: 1px solid transparent; min-height: 52px; }
+  .navItem:hover { background: #FFFFFF0C; color: white; }
+  .navItemActive, .navItemActive:hover { background: #F0E6FD; color: #452764; border-color: #FFFFFF75; box-shadow: 0 5px 18px #120A2418; }
+  .navIcon { transition: transform 200ms var(--motion-curve); }
+  .navItem:hover .navIcon { transform: translateX(2px); }
+  .footer { color: #B8ACC6; }
+  .user { background: #FFFFFF09; border-color: #FFFFFF18; padding: 14px 12px; }
+  .user:hover { background: #FFFFFF12; }
+  .userName { color: #F9F5FF; }
+  .userSub { color: #C6B3DD; }
+  .userAvatar { background: #EAE2F8; color: #452764; }
+}
+
+/* En Inicio, Sergio pide mantener la navegación debajo de la escritura. */
+:global(body[data-nura-focus]) .sidebar { display: none; }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.navItem { border-radius: 999px; }
+.navItemActive, .navItemActive:hover { background: var(--glass-selected); color: var(--glass-selected-ink); border-color: var(--glass-selected-edge); box-shadow: var(--glass-control-shadow), inset 0 0 0 1px var(--glass-selected-edge); }
+.user { border-radius: 24px; box-shadow: inset 0 1px 0 #FFFFFF14; }

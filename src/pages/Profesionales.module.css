@@ -11,7 +11,6 @@
 .cta { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; max-width: 360px; min-height: 54px;
   border: none; border-radius: 999px; background: var(--grad-main); color: white; font-family: inherit; font-size: var(--text-base);
   font-weight: 800; cursor: pointer; box-shadow: 0 8px 24px var(--purple-30); }
-.cta:active { transform: scale(0.98); }
 .nota { margin: var(--space-10) 0 0; font-size: var(--text-xs); color: var(--ink-tertiary); }
 
 .seccion { padding: var(--space-28, 28px) 0; border-top: 1px solid var(--ink-border); }
@@ -59,3 +58,24 @@
 .pasoIcono { border-radius: 14px; }
 .pasoTexto { line-height: 1.7; }
 @media (min-width: 900px) { .pasos { display: grid; grid-template-columns: 1fr 1fr; } }
+
+/* Detalle visual · septiembre 2026 */
+
+.hero { background: var(--surface-cover); border-radius: 30px; margin: 18px 0 8px; padding: 44px 28px; border: 1px solid white; }
+.title { color: var(--brand-deep); }
+.eyebrow { background: #FFFFFFA8; }
+.cta { background: var(--grad-main); box-shadow: 0 8px 24px -12px #6736A680; }
+.paso { border-radius: 22px; }
+.paso:nth-child(2n) .pasoIcono { background: var(--brand-mint); color: #32634F; }
+.final { background: #EEE8F580; border: 1px solid #E4DBEE; border-radius: 26px; padding: 28px 20px; }
+@media (max-width: 767px) { .hero { padding: 32px 20px; } .title { letter-spacing: -1px; } }
+
+/* Acciones secundarias con contorno compartido. */
+.secundario, .textoBoton { border: 1px solid var(--action-border); background: var(--action-surface); color: var(--purple-ink); min-height: 44px; line-height: 1.4; box-shadow: none; white-space: normal; }
+ .textoBoton { width: 100%; max-width: 360px; padding: 10px 16px; border-radius: var(--radius-full); }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.paso, .final { background: var(--glass-panel); border-color: var(--glass-edge); border-radius: var(--radius-glass); box-shadow: var(--glass-panel-shadow); }
+.chip, .secundario, .textoBoton { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
+.cta { background: var(--grad-main); color: white; border-radius: 999px; box-shadow: var(--glass-primary-shadow); }

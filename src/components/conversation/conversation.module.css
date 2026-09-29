@@ -69,7 +69,6 @@
   cursor: pointer; color: var(--ink-secondary);
   transition: opacity 0.2s; flex-shrink: 0;
 }
-.headerCircle:active { opacity: 0.6; }
 
 .headerPill {
   position: absolute;
@@ -131,7 +130,6 @@
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; cursor: pointer; transition: opacity 0.15s;
 }
-.plusBtn:active { opacity: 0.5; }
 
 .sendBtn {
   width: 38px; height: 38px; border-radius: 50%;
@@ -139,7 +137,6 @@
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; cursor: pointer; transition: opacity 0.2s;
 }
-.sendBtn:active { opacity: 0.7; }
 .sendBtn:disabled { background: #ddd; color: #aaa; }
 .micBtn { background: transparent; color: #999; box-shadow: none; }
 .micActive { background: var(--red); color: white; }
@@ -162,7 +159,6 @@
   white-space: nowrap; flex-shrink: 0;
   -webkit-tap-highlight-color: transparent;
 }
-.suggestion:active { opacity: 0.7; transform: scale(0.98); }
 .suggestionText { font-size: var(--text-sm); color: var(--ink-secondary); font-weight: 500; }
 
 /* ── MESSAGES / BUBBLES ─────────────────────────────── */
@@ -231,3 +227,11 @@
 
 /* Spacing between messages */
 .msgGap { height: var(--chat-gap, 10px); flex-shrink: 0; }
+
+
+/* Material compartido: conservar tamaños, reservas y estados de cada pantalla. */
+.headerCircle, .headerPill, .inputCapsule { background: var(--glass-floating); border-color: var(--glass-edge); box-shadow: var(--glass-floating-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
+.inputCapsule:focus-within { border-color: var(--glass-selected-edge); box-shadow: var(--glass-focus); }
+.suggestion { background: var(--glass-control); border-color: var(--glass-edge); border-radius: 999px; box-shadow: var(--glass-control-shadow); }
+.bubbleNura { background: var(--glass-panel); border-color: var(--glass-edge); border-radius: var(--radius-glass); box-shadow: var(--glass-panel-shadow); border-radius: 24px 24px 24px 8px; }
+.bubbleUser { background: var(--glass-message); color: var(--brand-deep); border-radius: 24px 24px 8px 24px; box-shadow: var(--glass-control-shadow); }

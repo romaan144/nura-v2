@@ -1,0 +1,32 @@
+.panel {
+  width: 100%; max-width: 620px; margin-inline: auto;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  padding: clamp(26px, 5vw, 40px) clamp(20px, 4vw, 36px);
+  border: 1px solid var(--glass-edge); border-radius: var(--radius-glass);
+  background: radial-gradient(ellipse at 50% 0%, #E8DCF44D, transparent 65%), var(--glass-panel);
+  box-shadow: var(--glass-panel-shadow);
+}
+.icon {
+  display: grid; place-items: center; width: 64px; height: 64px; flex-shrink: 0;
+  margin-bottom: 22px; border: 1px solid var(--glass-selected-edge); border-radius: 23px;
+  background: var(--glass-selected); color: var(--purple-ink); box-shadow: var(--glass-shine);
+}
+.title {
+  max-width: 26ch; margin: 0; color: var(--ink-primary);
+  font: 700 clamp(20px, 2.4vw, 24px)/1.35 var(--font-voice); letter-spacing: -.65px;
+  overflow-wrap: anywhere; text-wrap: balance;
+}
+.hint { max-width: 36ch; margin: 12px 0 0; color: var(--ink-secondary); font-size: 14px; line-height: 1.65; overflow-wrap: anywhere; }
+.actions { width: 100%; max-width: 320px; display: grid; gap: 12px; margin-top: 26px; }
+.primary, .secondary {
+  width: 100%; min-height: 48px; padding: 13px 18px; border-radius: 999px;
+  font: 650 14px/1.4 var(--font-ui); cursor: pointer; overflow-wrap: anywhere;
+}
+.primary { border: 1px solid transparent; background: var(--grad-main); color: white; box-shadow: var(--glass-primary-shadow); }
+.secondary { border: 1px solid var(--glass-edge); background: var(--glass-control); color: var(--purple-ink); box-shadow: var(--glass-control-shadow); }
+.primary:focus-visible, .secondary:focus-visible { outline: 3px solid var(--purple); outline-offset: 4px; }
+@media (max-width: 359px) { .icon { width: 56px; height: 56px; margin-bottom: 18px; } .actions { margin-top: 22px; } }
+@media (forced-colors: active) { .panel, .icon, .primary, .secondary { border-color: ButtonText; } }
+
+.message { width: 100%; display: flex; flex-direction: column; align-items: center; }
+.error .icon { background: linear-gradient(145deg, #FFF9F2E6, #F6E9D8AD); border-color: #C9A77E; color: #805522; }

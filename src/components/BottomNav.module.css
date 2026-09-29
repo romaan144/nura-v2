@@ -1,119 +1,134 @@
-/* ══════════════════════════════════════════════
-   BOTTOM NAV — mobile only, glass, floating
-   ══════════════════════════════════════════════ */
+/* Cristal de navegación. Mantener 62px: --nav-h y el teclado reservan esta altura. */
 .nav {
-  display: flex;
   position: fixed;
-  bottom: 0; left: 0; right: 0;
   z-index: 100;
-  /* La barra mide EXACTAMENTE lo que reserva --nav-h (antes se
-     autodimensionaba y quedaban unos px de desajuste con el fondo). */
+  display: flex;
+  isolation: isolate;
+  left: 12px;
+  right: 12px;
+  bottom: max(env(safe-area-inset-bottom, 0px), 10px);
+  max-width: 340px;
   height: 62px;
+  margin-inline: auto;
   box-sizing: border-box;
-  /* TRES CAPAS DE SEPARACION, porque cada una falla en un caso distinto:
-     la linea sobre fondos claros, la sombra sobre fondos oscuros, y el
-     contraste de superficie cuando el contenido es del mismo papel que la
-     barra — que era justo lo que pasaba. */
-  /* ── LA BARRA FLOTA ──────────────────────────────────────────────────
-     Antes: pegada al borde, de lado a lado, con linea superior y sombra
-     hacia arriba. Es el patron de 2018 — parte del marco del telefono, no
-     de la app.
-     Ahora: una isla que flota sobre el contenido, con margen a los lados y
-     abajo. El contenido pasa POR DEBAJO y se ve a traves del cristal, asi
-     que la app se siente mas grande y menos compartimentada. */
-  left: var(--space-12);
-  right: var(--space-12);
-  bottom: max(env(safe-area-inset-bottom), var(--space-10));
-  border-radius: var(--radius-full);
-  background: rgba(255,255,255,0.62);
-  -webkit-backdrop-filter: blur(32px) saturate(200%);
-  backdrop-filter: blur(32px) saturate(200%);
-  /* Sin linea superior: una isla no necesita separarse de nada, ya esta
-     separada. El borde claro le da el canto de cristal. */
-  border: 1px solid rgba(255,255,255,0.7);
-  box-shadow: 0 1px 2px rgba(33,29,51,0.04), 0 12px 32px -12px rgba(33,29,51,0.18);
-  padding: var(--space-6) 0;
+  padding: 6px;
+  border: 1px solid rgba(111, 96, 133, .24);
+  border-radius: 999px;
+  background: linear-gradient(135deg, white, var(--paper) 62%, var(--brand-mint));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .95),
+    inset 0 -1px 0 rgba(255, 255, 255, .52),
+    0 8px 26px -10px rgba(48, 33, 66, .28),
+    0 2px 5px rgba(48, 33, 66, .04);
 }
 
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .nav {
+    background: linear-gradient(135deg, rgba(255, 255, 255, .76), rgba(var(--paper-rgb), .65) 62%, color-mix(in srgb, var(--brand-mint) 70%, transparent));
+    -webkit-backdrop-filter: blur(24px) saturate(155%);
+    backdrop-filter: blur(24px) saturate(155%);
+  }
+}
+
+/* Una sola lente viaja entre las tres pestañas; no cambia su área táctil. */
+.lens {
+  position: absolute;
+  pointer-events: none;
+  inset: 6px auto 6px 6px;
+  width: calc((100% - 12px) / 3);
+  border: 1px solid rgba(127, 95, 166, .2);
+  border-radius: 999px;
+  background: linear-gradient(150deg, rgba(255, 255, 255, .8), rgba(212, 191, 242, .52) 68%, rgba(214, 235, 232, .48));
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, .96),
+    inset 0 -1px 1px rgba(131, 92, 175, .08),
+    0 2px 5px rgba(76, 47, 105, .09);
+  transform: translateX(calc(var(--active-tab) * 100%));
+  opacity: 1;
+  transition: transform 360ms cubic-bezier(.22, 1, .36, 1), opacity 180ms ease;
+}
+.lens[data-visible='false'] { opacity: 0; }
+
 .tab {
+  position: relative;
   flex: 1;
+  min-width: 0;
+  min-height: 48px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 3px;
-  padding: 6px 4px 2px;
-  background: none;
-  border: none;
+  padding: 3px 8px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #62596e;
   cursor: pointer;
-  transition: opacity 0.15s;
   -webkit-tap-highlight-color: transparent;
+  transition: color 180ms ease, transform 180ms ease;
 }
-.tab:active { opacity: 0.6; }
+.tabActive { color: #61369b; }
+.tab:focus-visible { outline: 2px solid #7448a7; outline-offset: 2px; }
 
 .iconWrap {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px; height: 28px;
-  border-radius: var(--radius-card);
-  transition: background 0.22s cubic-bezier(0.22,1,0.36,1);
+  width: 32px;
+  height: 24px;
 }
-
-.tab svg {
-  /* Estaban al 35% y 30%: las etiquetas de 11px no se leian, se adivinaban.
-     La barra quedo fuera del ciclo que subio los grises del sistema. */
-  color: var(--ink-tertiary);
-  transition: color 0.22s cubic-bezier(0.22,1,0.36,1), transform 0.22s cubic-bezier(0.22,1,0.36,1);
-}
-.tabActive svg {
-  color: var(--purple-ink);
-  transform: scale(1.1);
-}
-.tabActive .iconWrap {
-  background: var(--purple-10);
-}
-.tabActive .label {
-  color: var(--purple-ink);
-  font-weight: 700;
-}
-
+.tab svg { transition: transform 240ms cubic-bezier(.22, 1, .36, 1); }
+.tabActive svg { transform: translateY(-.5px); }
 .label {
-  font-size: var(--text-xs);
-  font-weight: 500;
-  color: var(--ink-tertiary);
-  font-family: -apple-system, 'Inter', sans-serif;
-  letter-spacing: -0.1px;
-  transition: color 0.15s;
+  color: inherit;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
   line-height: 1;
+  letter-spacing: -.1px;
 }
-/* Unread badge */
+.tabActive .label { font-weight: 750; }
+
 .badge {
   position: absolute;
-  top: -3px; right: -6px;
-  min-width: 16px; height: 16px;
-  border-radius: 8px;
-  background: var(--red);
-  color: white;
-  font-size: var(--text-xs);
-  font-weight: 700;
+  top: -3px;
+  right: -7px;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 16px;
+  height: 16px;
   padding: 0 4px;
-  border: 1.5px solid white;
+  border: 1.5px solid #fbf8ff;
+  border-radius: 999px;
+  background: #7440b8;
+  color: white;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 750;
+  line-height: 1;
 }
 
-/* Desktop: hide */
+@media (hover: hover) {
+  .tab:hover { color: #61369b; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lens, .tab, .tab svg { transition: none; }
+  .tab:active, .tabActive svg { transform: none; }
+}
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .nav { background: var(--paper); -webkit-backdrop-filter: none; backdrop-filter: none; border-color: #9684ad; }
+  .lens { background: #e9ddf5; border-color: #8665a8; }
+  .tab { color: #4e435c; }
+  .tabActive { color: #532587; }
+}
+@media (forced-colors: active) {
+  .nav { border-color: CanvasText; }
+  .lens { background: Highlight; border-color: Highlight; }
+  .tabActive { color: HighlightText; forced-color-adjust: none; }
+  .badge { background: Highlight; color: HighlightText; forced-color-adjust: none; }
+}
 @media (min-width: 768px) {
   .nav { display: none; }
+  :global(body[data-nura-focus]) .nav { display: flex; }
 }
-
-/* Una isla compacta; sus 62px conservan el contrato de reserva. */
-.nav { max-width: 340px; margin-inline: auto; background: rgba(255,255,255,.94); border: 1px solid var(--ink-border); padding: var(--space-6); box-shadow: var(--alzado-flota); }
-.tab { min-height: 48px; padding: var(--space-6) var(--space-8); border-radius: var(--radius-full); gap: var(--space-4); }
-.tabActive { background: var(--purple-05); }
-.tabActive .iconWrap { background: none; }
-.tabActive svg { transform: none; }
-.label { font-family: var(--font-ui); font-weight: 550; }
-.badge { background: var(--purple-ink); }

@@ -1,5 +1,33 @@
 # NÜRA 2 — CHANGELOG DE DECISIONES
 
+## 2026-09-28 · Escribir abre el chat directamente
+
+Sergio elimina la carta intermedia: el chat nuevo propone un borrador breve editable, sin envío automático. Chats existentes conservan su historial y no añaden presentación. Enlaces antiguos a /intro redirigen al chat; se retira el tratamiento automático de introLetterText.
+
+## 2026-09-28 · Un único desplazamiento en Chat
+
+El teclado dejaba dos contenedores desplazables y cada respuesta animaba el historial al final. Chat pasa a tener una sola zona de scroll y conserva el lugar de lectura ante respuestas o escritura nuevas; solo sigue el final si ya se estaba allí o se envía un mensaje propio. Contratar adopta el morado principal. Prueba de regresión dedicada y resto de pantallas sin alterar.
+
+## 2026-09-28 · Corregir cortes y tamaño del chat
+
+Sergio detecta en iPhone que la identidad ocupa demasiado y el historial se recorta bajo dos bandas rectangulares. Se compacta la foto/nombre y se superponen controles al historial de pantalla completa, con desvanecido gradual y reservas internas para leer sus extremos. Lección: comprobar conversaciones largas a mitad del desplazamiento, no solo saludos cortos.
+
+## 2026-09-28 · Chat centrado en la persona
+
+Por petición de Sergio, foto circular centrada con cápsula de nombre y especialidad, Volver a la izquierda y Contratar a la derecha. Se retiran metadatos repetidos y aviso con escudo. Solo la entrada permanece en el pie, sin margen artificial, y las sugerencias se desplazan con la conversación. Lógica de mensajes, citas y teclado conservada.
+
+## 2026-09-28 · Avisos de error coherentes y acciones visibles
+
+Fallo general, ficha, chat, catálogo y enlace de respuesta profesional comparten ErrorPanel: cristal, icono de aviso, explicación legible y reintento destacado. Los enlaces antiguos siguen distinguiéndose de los fallos de conexión. Detalle técnico adaptable y plegable; errores de acceso con borde definido. Sin cambios en consultas ni funcionamiento de los reintentos.
+
+## 2026-09-28 · Respuestas con una redacción más natural
+
+Se revisan las plantillas de Nüra por toda la app: frases cortas, puntuación sencilla y sin rayas largas de relleno. Recomendación, ajustes, presentación y sugerencias conservan sus datos; la urgencia deja de garantizar disponibilidad. No se transforman mensajes reales ni historial. Regla compartida de escritura en diseno-integral.md.
+
+## 2026-09-28 · Vacíos con el mismo material de cristal
+
+Chats, Siguiendo y Mis servicios usan `EmptyPanel`: marco definido, icono propio, explicación y acciones separadas. Borrar búsqueda devuelve la bandeja; los avisos vacíos de Chats no se duplican. Se reserva espacio al desplazar el foco bajo la cabecera y sobre el menú. Sin cambios de datos ni consultas.
+
 > Una línea por decisión importante, con fecha y **motivo**. Este documento es
 > la memoria longitudinal del proyecto: los porqués que el código no puede
 > contar. Se escribe hacia arriba (lo más reciente, primero).
@@ -9,6 +37,138 @@
 > **Hueco en este registro**: entre el 2026-07-05 y el 2026-09-23 no se
 > anotó nada aquí. Lo de ese periodo está en `git log` y en los apartados
 > históricos de `docs/current-status.md`.
+
+## 2026-09-28 — Espera reconocible en perfiles y chats
+
+Las pestañas de perfil y chats quedaban vacías mientras descargaban su código, y el chat mostraba un logotipo aislado al buscar al profesional. PageLoading da continuidad con cabecera, estado accesible y siluetas de cristal. Descarga y consulta comparten la misma vista; el contenido llega sin temporizadores de presentación y aparece con un fundido breve. Errores y reintentos permanecen intactos.
+
+## 2026-09-28 — Una sola respuesta de pulsación
+
+Se retiran efectos que encogían controles hasta un 6 % o bajaban su opacidad hasta el 50 %. Botones y superficies accionables se comprimen un 1,5 % con ligero cambio de brillo, sin alterar posición ni legibilidad. La regla común respeta desactivados, acciones anidadas y movimiento reducido; se evitan saltos hover en los controles principales.
+
+## 2026-09-28 — Transición interior de respuestas en Inicio
+
+Los pasos de una respuesta cambiaban de golpe mientras la animación existente movía el marco entero al aparecer. Se anima solo el contenido durante 240 ms y se distingue avanzar de retroceder. Campo, menú y marco permanecen fijos; sin demorar acciones ni animar medidas. Movimiento reducido cambia directamente.
+
+## 2026-09-28 — Cerrar las excepciones del cristal, página por página
+
+Sergio detecta que el primer pase no cubrió todos los controles. Se reduce la opacidad del material flotante y se corrigen estilos particulares y reglas de foco que lo volvían blanco. Los controles inline comparten recetas de presentación; se revisan también registro, respuestas profesionales, agenda y estados secundarios. La lectura conserva más opacidad, las acciones principales su morado y los avisos sus colores semánticos. Recorrido documentado en `revision-cristal.md`.
+
+## 2026-09-28 — Movimiento común al abrir y cerrar ventanas
+
+Reservas, valoraciones, avisos, acceso y edición de ficha entran con un desplazamiento corto y desaparecen en 180 ms al cerrar. Se bloquean acciones durante la salida y se cancela el cierre pendiente al desmontar; movimiento reducido no espera. Los enlaces y guardados siguen cerrando inmediatamente para evitar portales residuales al cambiar de pantalla. RegisterGate incorpora foco contenido y Escape.
+
+## 2026-09-28 — Material de cristal común a toda Nüra
+
+Se extiende la referencia visual de la navegación a controles, tarjetas y burbujas mediante tokens comunes. Controles flotantes translúcidos, lectura casi opaca, selección lila con tinta oscura y acciones principales moradas; mensajes propios claros para aligerar el chat. Se mantienen tonos de error/éxito, carta de presentación y reservas de teclado. Los estilos JSX cambian solo la presentación, sin nuevos comportamientos.
+
+## 2026-09-28 — Navegación con cristal y selección deslizante
+
+Buscar, Chats y Perfil comparten una cápsula translúcida con borde definido y una lente lila móvil, inspirada en el vídeo de Tinder aportado por Sergio. Se retira el bloque morado oscuro para integrar la selección con los materiales de Nüra. Misma altura de 62 px y botones de 48 px: se preservan las reservas de contenido y teclado. Rutas, contadores y lógica sin cambios; alternativas para movimiento reducido, mayor contraste y navegadores sin desenfoque.
+
+## 2026-09-28 — Avisos con opciones claras y confirmación siempre visible
+
+AlertaSheet separa búsqueda, zona, canales y privacidad; cabecera y pie fijos con cuerpo desplazable, opciones de borde visible y resumen de selección que explica también el modo solo perfil. Se comparte el foco y Escape de los modales existentes. El acceso por correo cierra primero la ventana para no dejar su portal sobre Entrar. Confirmación, datos y permisos se conservan.
+
+## 2026-09-28 — El acceso explica el motivo correcto
+
+Entrar distingue comentarios, avisos, mensajes, ficha profesional y regreso general. Tener un destino de regreso ya no significa que se esté pidiendo un aviso. AlertaSheet identifica su entrada con motivo=avisos, solo para el texto, que aclara que después hay que activar el aviso. Sin cambios en autenticación, permisos ni destinos.
+
+## 2026-09-28 — Entrar para comentar devuelve a la publicación de origen
+
+Se sustituye el destino fijo /feed por la ruta original y un ancla de comentarios. La ficha despliega las publicaciones y abre el hilo solicitado, incluso si antes estaba recogido. El desplazamiento espera el contenido y descarta copias ocultas en pestañas persistentes. Petición funcional explícita de Sergio; no cambia la autenticación ni publica comentarios o reacciones automáticamente.
+
+## 2026-09-27 — Su obra gana espacio y distingue los resultados
+
+Se elimina la tarjeta exterior redundante de Su obra para dar ancho a las publicaciones. PostCard separa autor, contenido, resultado y acciones con botones de 44 px, comentarios con nombre y contador y respuestas rápidas identificadas como publicación directa. El perfil conserva una publicación inicial y permite desplegar/recoger las demás. La etiqueta habla de publicaciones, porque no todas son casos. Sin cambios de datos ni reintroducir Comunidad en navegación.
+
+## 2026-09-27 — Acceso y recuperación con campos y estados claros
+
+Login, acceso por correo y recuperación comparten superficies y controles de contraste definido. Etiquetas persistentes, campos de 16 px, mostrar/ocultar contraseña y mensajes de error/confirmación diferenciados. La demo aclara que no envía SMS. Se conservan controladores, validaciones y destinos; pruebas de estados mediante respuestas locales simuladas, sin modificar credenciales reales.
+
+## 2026-09-27 — Explorar con filtros visibles y tarjetas comparables
+
+Las categorías pasan a filas compactas en móvil. Un selector muestra todas las especialidades, los filtros indican selección y pueden quitarse juntos. El vacío distingue falta de coincidencias de una categoría sin profesionales. Las tarjetas compartidas usan retratos mayores, tarifa disponible y dos botones independientes para perfil y contacto; altura uniforme, fondo blanco e iniciales si no hay foto. Se conserva la lógica de categorías, orden, búsqueda y contacto.
+
+## 2026-09-27 — Valoración con preguntas separadas y envío visible
+
+Estrellas numeradas con selección clara, cualidades uniformes con contador de tres y comentario etiquetado. El permiso de publicación se muestra en su propio bloque y sigue desmarcado inicialmente. La cabecera y el envío quedan visibles mientras el formulario se desplaza por dentro, también al abrir el teclado. Se comparte únicamente el comportamiento de foco/teclado con la ventana de cita; reglas y envío no cambian.
+
+## 2026-09-27 — Una presentación común para solicitar cita
+
+Ficha y chat comparten ventana visual: profesional, día con mes, horas uniformes, resumen y confirmación siempre accesible. El contenido se desplaza dentro de la ventana, con ajuste de la nota al teclado; foco contenido y cierre con Escape. Los dos controladores conservan su lógica de envío y el motor de disponibilidad no cambia.
+
+## 2026-09-27 — Estados y fechas claros en Mis servicios
+
+Cada cita separa estado, profesional y fecha/hora. Las bandas de estado tienen texto, icono y contraste; los filtros muestran recuentos consistentes y selección accesible. Fotos mayores, notas completas y confirmación de cancelación con espacio propio. Se conservan condiciones, manejadores, orden y destinos.
+
+## 2026-09-27 — Un solo estado para los profesionales seguidos
+
+Al dejar de seguir, la tarjeta y el contador cambian juntos. `favorites` se mantiene como alias compatible de `following`; los datos antiguos solo se recuperan cuando falta la lista principal. Una lista vacía guardada es una elección, también en demo. Se comparan IDs numéricos/texto sin duplicados y las acciones consecutivas usan el estado más reciente. La autorización funcional de Sergio y las pruebas quedan en `docs/tasks.md`.
+
+## 2026-09-27 — Fichas de Siguiendo con retratos y controles claros
+
+Se amplían fotos y se separan valoración/zona y tarifa. Abrir perfil y seguir/dejar de seguir pasan a botones nativos independientes, con etiqueta y estado accesible. Se documenta aparte una desincronización previa entre las dos listas internas de seguimiento, sin cambiar su lógica en esta entrega visual.
+
+## 2026-09-27 — Fotos y mensajes más legibles en la lista de chats
+
+Retratos mayores, nombres y últimos mensajes en dos líneas y fecha/contador en un espacio propio. La introducción se acorta y las tarjetas conservan ritmo uniforme, más compacto en ordenador. Se mantienen filtro, orden, lectura y navegación.
+
+## 2026-09-27 — Identidad y acciones legibles en la cabecera del chat
+
+La cabecera anterior ocultaba la especialidad en 320 px. Dos filas en móvil separan identidad y controles; foto de 48 px y nombre adaptable. La cabecera reserva su altura real en el flujo y el perfil se abre desde un botón accesible. Se mantienen las funciones y el comportamiento del teclado.
+
+## 2026-09-27 — Contorno coherente para acciones secundarias
+
+Tras la revisión pedida por Sergio, los botones secundarios comparten tokens de borde y superficie; se aplican también a acciones locales de carta, citas, seguidos y profesionales. Se retira la sombra de los enlaces ghost para evitar cápsulas difusas. Texto adaptable y mismos manejadores.
+
+## 2026-09-27 — Contorno visible en acciones profesionales del perfil
+
+Sergio señala que los botones de acceso profesional e información se pierden sobre la tarjeta blanca. Comparten ahora borde lila explícito, fondo tenue, separación de 10 px y altura adaptable al texto en dos líneas. Se conservan los destinos y manejadores.
+
+## 2026-09-27 — Corregir el doble desplazamiento al escribir en Safari
+
+La captura real posterior a PR #96 muestra contenido fuera de pantalla. Se reproduce el pan visual completo (la prueba anterior solo cambiaba la propiedad sin mover físicamente la vista). Marco y menú se posicionan respecto al viewport visual, restando su offset del espacio inferior y conservando el scroll interno nativo. Pruebas de regresión y limitación de hardware en `docs/teclado-movil.md`.
+
+## 2026-09-27 — El teclado desplaza la app sin comprimirla
+
+Sergio pide conservar el tamaño de las pantallas al escribir y corregir el movimiento invertido de Inicio. Una ventana visible y un contenido de altura estable sustituyen las dos gestiones locales del visualViewport. Se retira el seguimiento de offsetTop, se permite scroll nativo en Inicio y los chats desplazan solo su conversación. Pruebas simuladas y límites en `docs/teclado-movil.md`.
+
+## 2026-09-27 — Sugerencias del chat separadas de la escritura
+
+Sergio señala que las etiquetas se pegan a la cápsula inferior. Se reproduce un solapamiento de 2 px causado por posiciones absolutas independientes. Sugerencias y entrada pasan a un pie en el flujo con 18 px de separación, y la conversación reserva automáticamente su altura real. Mayor espacio entre etiquetas, mismos manejadores.
+
+## 2026-09-27 — La carta de presentación no queda bajo el menú
+
+La captura de Sergio revela un fallo reproducible: IntroLetter usaba toda la altura sin reservar el menú. Se reserva su altura compartida y se adapta la página al visualViewport al editar, manteniendo el envío sobre la navegación y sin cambiar el manejador. Editor a 16 px y limpieza de los ajustes al salir.
+
+## 2026-09-27 — Tarjetas neutras y fotos protagonistas
+
+Sergio prefiere el fondo de las tarjetas secundarias también en la principal: se retiran su degradado y el del botón de contacto. Fotos mayores, con formato de retrato, conservando alturas compactas, alternativas juntas y adaptación al teclado. Solo CSS; funciones intactas.
+
+## 2026-09-27 — Más cerca con ubicación automática
+
+Sergio pide que Más cerca use la ubicación del dispositivo sin preguntar el barrio. Solicitud tras pulsar, cálculo local y distancias aproximadas a las zonas conocidas; errores y cancelación sin bloquear la escritura. Encargo funcional explícito a Codex, sin tocar matching ni Supabase. Ver `docs/ubicacion-automatica.md`.
+
+## 2026-09-27 — Bienvenida limpia, cristal y alternativas juntas
+
+Sergio pide retirar la flecha sin destino y «A tu ritmo», aumentar ligeramente el contraste del cristal y mostrar todas las alternativas juntas en el paso siguiente a la recomendación principal. El grupo es indivisible al paginar y adapta su distribución a la altura disponible. Sin cambios en ordenación, búsqueda o datos. Ver `docs/alternativas-juntas.md`.
+
+## 2026-09-27 — Una respuesta por pantalla, sin scroll
+
+Sergio sustituye expresamente el chat acumulado de Inicio por una sola burbuja que cambia con cada búsqueda o acción. La respuesta completa se reparte por altura real en pasos navegables; escritura y menú permanecen debajo también en ordenador. El historial interno y los manejadores de comprensión se conservan. Esta decisión sustituye el contrato anterior de scroller en Inicio. Detalles y pruebas: `docs/busqueda-pantalla.md`.
+
+## 2026-09-27 — Resultados compactos, iconos e historial
+
+Sergio pide reducir las fichas de búsqueda y unificar sus tamaños: filas horizontales de 116 px con acceso al perfil y al chat, sin biografía ni trayectoria anticipadas. Ajustes en una rejilla compacta con iconos de trazo; retirados emojis decorativos de controles y plantillas revisadas. El historial separa estado, identidad y acciones, sin cambiar las reglas de citas. Pruebas y coordinación: `docs/resultados-compactos.md`.
+
+## 2026-09-27 — Trayectoria visible y separada de los casos
+
+A petición de Sergio, experiencia y formación pasan a un bloque propio antes de Su obra, con resumen real y detalles desplegables. Se mejora el selector de citas y la valoración; sus ventanas dejan de quedar bajo la navegación. Datos y reglas conservados. Comprobaciones y coordinación: `docs/ficha-trayectoria.md`.
+
+## 2026-09-27 — Diseño de detalle · Codex
+
+Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
 ## 2026-10-15 — El servidor lee la ciudad entre comas de la zona
 
