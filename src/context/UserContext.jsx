@@ -3,12 +3,20 @@ import { SEED_COMMENTS, SEED_REACCIONES } from '../data/obraPosts'
 import { cancelarCitaServidor } from '../utils/escrituras'
 
 import { DEMO_MODE } from '../config'
+import { avatarVigente } from '../utils/avatar'
 import { initialFollowing, hasFollowed, addFollowed, removeFollowed } from '../utils/following'
 
 const UserContext = createContext(null)
 
+// Los avatares guardados (chats, citas, seguidos…) se ponen al día al
+// leerlos: uno generado con el estilo anterior se rehace con el actual.
+const alDia = v => Array.isArray(v)
+  ? v.map(x => x && typeof x === 'object' && typeof x.avatarUrl === 'string'
+    ? { ...x, avatarUrl: avatarVigente(x.avatarUrl, x.helperName || x.name) || x.avatarUrl } : x)
+  : v
+
 export function UserProvider({ children }) {
-  const load = (key, def) => { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def } catch { return def } }
+  const load = (key, def) => { try { const v = localStorage.getItem(key); return v ? alDia(JSON.parse(v)) : def } catch { return def } }
   const save = (key, val) => { try { if (val === null) { localStorage.removeItem(key) } else { localStorage.setItem(key, JSON.stringify(val)) } } catch(e) { console.warn('localStorage write failed:', e) } }
 
   const [user, setUser] = useState(() => load('nura_user', null))

@@ -1,4 +1,4 @@
-import { avatarDe } from '../utils/avatar'
+import { avatarDe, avatarVigente } from '../utils/avatar'
 import { ciudadDeZona } from '../data/ciudades'
 import { DEMO_MODE } from '../config'
 // LA UNICA FUENTE. Estaban declaradas en TRES sitios y ya habian divergido:
@@ -129,7 +129,7 @@ function genPersonality(rating) {
 function normalize(h) {
   const name = h.name || 'Profesional'
   const specialty = h.speciality || h.specialty || h.category || 'Profesional'
-  const avatarUrl = h.avatarUrl || h.avatar_url || avatarDe(encodeURIComponent(name))
+  const avatarUrl = avatarVigente(h.avatarUrl || h.avatar_url, name) || avatarDe(encodeURIComponent(name))
 
   return {
     id: h.id,

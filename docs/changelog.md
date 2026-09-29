@@ -170,6 +170,13 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-25 — Avatares nuevos y fotos siempre redondas
+
+- Sergio elige, entre seis muestras, el estilo «micah» (ilustración sencilla sobre lila suave) para quien no tiene foto. Mismas semillas: cada persona conserva su avatar, con el dibujo nuevo. Las fotos reales no cambian.
+- Las 1008 fichas de la base traían el avatar como enlace a api.dicebear.com: cada visitante llamaba a ese servicio (la IP salía fuera), aunque `avatar.js` decía que ya no. Ahora `avatarVigente` los rehace en el propio móvil. También los que estaban guardados en el móvil (chats, citas, seguidos) con el estilo anterior.
+- Fotos redondas en toda la app, como ya lo eran en la ficha y el chat: resultados de búsqueda (principal y alternativas, en todos los tamaños), lista de Chats, Siguiendo, tarjetas de Explorar y publicaciones de Cerca de ti. Mismo ancho que antes; se quita el alto extra del retrato.
+- Comprobado midiendo cada foto visible en ocho pantallas (todas redondas) y con capturas a 390 y 320 px de ancho: las tarjetas no se descuadran.
+
 ## 2026-10-24 — El chat abierto desde una ficha ya no empieza arriba del todo
 
 - Sergio: el chat que se abre con «Escribir a…» desde la ficha se desplaza mal; el de Chats no. Es la misma pantalla y el mismo código; cambia cuándo aparece.

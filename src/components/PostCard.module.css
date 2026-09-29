@@ -1,7 +1,7 @@
 .card { min-width: 0; overflow: hidden; background: white; border: 1px solid #DFD7E9; border-radius: 22px; box-shadow: 0 6px 22px -19px #30214250; }
 .author { display: flex; align-items: center; gap: 11px; width: 100%; min-width: 0; padding: 18px 18px 16px; border: 0; border-bottom: 1px solid #EEE8F3; background: transparent; text-align: left; font-family: inherit; }
 button.author { cursor: pointer; }
-.avatar, .initial { flex-shrink: 0; width: 44px; height: 48px; border-radius: 13px; object-fit: cover; }
+.avatar, .initial { flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
 .initial { display: grid; place-items: center; background: #EEE6F7; color: var(--purple-ink); font-family: var(--font-voice); font-size: 20px; font-weight: 700; }
 .authorInfo { flex: 1; min-width: 0; }
 .authorName { display: flex; align-items: center; gap: 5px; color: var(--ink-primary); font-size: 13px; font-weight: 700; line-height: 1.5; overflow-wrap: anywhere; }

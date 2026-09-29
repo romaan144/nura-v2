@@ -53,7 +53,7 @@ export default function PostCard({ post }) {
     <article className={styles.card}>
       <Author className={styles.author} {...(post.helperId ? { type: 'button', onClick: irAlPerfil, 'aria-label': `Ver perfil de ${post.autor}` } : {})}>
         {post.avatarUrl
-          ? <img src={post.avatarUrl} alt="" decoding="async" loading="lazy" width={44} height={48} className={styles.avatar} />
+          ? <img src={post.avatarUrl} alt="" decoding="async" loading="lazy" width={44} height={44} className={styles.avatar} />
           : <span className={styles.initial}>{(post.autor || '?')[0]}</span>}
         <span className={styles.authorInfo}>
           <span className={styles.authorName}>{post.autor}{post.verified && <BadgeCheck size={15} aria-label="Identidad verificada" />}</span>
