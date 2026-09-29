@@ -21,10 +21,9 @@ import { haptic } from '../utils/haptic'
 import RatingModal from '../components/RatingModal'
 import styles from './Chat.module.css'
 import PageLoading from '../components/PageLoading'
-import { generateFirstMessage, getHelperReply, getNuraIntervention } from '../utils/chatReplies'
+import { getHelperReply, getNuraIntervention } from '../utils/chatReplies'
 import { buildChatOpener } from '../utils/introLetter'
 import { DEMO_MODE } from '../config'
-import { SectionLabel } from '../components/ui'
 import RegisterGate from '../components/RegisterGate'
 import { registrar } from '../utils/analitica'
 import { construirAviso } from '../utils/aviso'
@@ -212,30 +211,13 @@ export default function Chat() {
     return () => { vivo = false; clearInterval(cada); document.removeEventListener('visibilitychange', alVolver) }
   }, [helper?.id])
 
-  // El saludo automatico del profesional, SOLO en la demo. Fuera de ella era
-  // poner en su boca un mensaje que nunca escribio («Hola, soy Carlos…»)
-  // a alguien que aun no sabe que le han escrito.
-  useEffect(() => {
-    if (DEMO_MODE && messages.length === 0 && helper) {
-      const firstName = getFirstName(helper.name) || helper.name
-      const welcomeMsg = {
-        id: 'welcome',
-        from: 'helper',
-        text: `Hola, soy ${firstName}. Vi que me encontraste a través de Nüra. ¿En qué puedo ayudarte?`,
-        time: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
-      }
-      setTimeout(() => setMessages(prev => prev.length ? prev : [welcomeMsg]), 800)
-    }
-  }, [helper])
   const hasHistory = (getChatHistory(id)?.length > 0) || (location.state?.demoHistory?.length > 0)
   const userQuery = location.state?.userQuery || window.__nuraLastQuery
-  const fromSearch = !!userQuery && !hasHistory
 
   // La propuesta permanece en el campo: no se añade al historial ni se envía.
   const [input, setInput] = useState(() =>
     !hasHistory ? buildChatOpener({ helper, userQuery }) : ''
   )
-  const [suggested, setSuggested] = useState('')
   const [typing, setTyping] = useState(false)
 
   // ── La Conversación Viva: aceptar o mover la propuesta del profesional ──
@@ -277,37 +259,33 @@ export default function Chat() {
     scrollController.current = node ? attachChatScroll(node) : null
   }, [])
 
-  useEffect(() => {
+  // EL CHAT NUEVO SE ABRE YA EN SU FORMA FINAL (Sergio, 2026-09-29). Antes
+  // se pintaba un «chat vacío» (mensaje sugerido, tres preguntas, «Nüra
+  // sugiere», «escribiendo…») y a los 0,8 s llegaba el saludo y todo cambiaba.
+  // Ahora el saludo está desde el primer fotograma (antes de pintar).
+  useLayoutEffect(() => {
     if (!helper) return
-    setSuggested(generateFirstMessage(helper))
     markRead?.(helper.id)
 
-    // Send initial greeting if no history
     if (!hasHistory) {
-      // Fuera de la demo nadie esta escribiendo: sin «escribiendo…».
-      if (DEMO_MODE) setTyping(true)
-      const delay = DEMO_MODE ? 800 + Math.random() * 400 : 300
-      setTimeout(() => {
-        setTyping(false)
-        // Mismo motivo: sin demo, el saludo lo da Nüra en su nombre, no el
-        // profesional fingiendo estar al otro lado.
-        const greeting = DEMO_MODE
-          ? getHelperReply(helper, 0, '')
-          : `Escríbele a ${getFirstName(helper.name) || 'esta persona'}. Le aviso de que le has escrito y te traigo su respuesta aquí.`
-        const greetMsg = {
-          id: Date.now(),
-          // Lo dice Nüra, y se ve como de Nüra: con la foto del profesional
-          // al lado parecia que lo habia escrito el.
-          from: DEMO_MODE ? 'helper' : 'nura',
-          text: greeting,
-          time: new Date().toISOString()
-        }
-        // Sin pisar lo que ya haya llegado (una respuesta del profesional
-        // que entro antes que el saludo): el saludo nunca borra nada.
-        setMessages(prev => prev.length ? prev : [greetMsg])
-      }, delay)
+      // Solo en la demo lo dice el profesional (no escribió nada de verdad);
+      // fuera de ella, el saludo lo da Nüra en su nombre.
+      const greeting = DEMO_MODE
+        ? `Hola, soy ${getFirstName(helper.name) || helper.name}. Vi que me encontraste a través de Nüra. ¿En qué puedo ayudarte?`
+        : `Escríbele a ${getFirstName(helper.name) || 'esta persona'}. Le aviso de que le has escrito y te traigo su respuesta aquí.`
+      const greetMsg = {
+        id: Date.now(),
+        // Lo dice Nüra, y se ve como de Nüra: con la foto del profesional
+        // al lado parecia que lo habia escrito el.
+        from: DEMO_MODE ? 'helper' : 'nura',
+        text: greeting,
+        time: new Date().toISOString()
+      }
+      // Sin pisar lo que ya haya llegado (una respuesta del profesional
+      // que entro antes que el saludo): el saludo nunca borra nada.
+      setMessages(prev => prev.length ? prev : [greetMsg])
     }
-  }, [helper?.id])
+  }, [helper?.id])   // eslint-disable-line react-hooks/exhaustive-deps
 
   useLayoutEffect(() => {
     scrollController.current?.update(messages.at(-1))
@@ -343,7 +321,7 @@ export default function Chat() {
     if (!user && msgCount >= 4) { setShowRegGate(true); return }
     const newMsg = { id: Date.now(), text: msg, from: 'user', time: new Date().toISOString() }
     setMessages(prev => [...prev, newMsg])
-    setInput(''); setSuggested('')
+    setInput('')
     // 'user': lo escribo yo, no cuenta como no leido.
     addChat?.(helper.id, helper.name, helper.avatarColor, helper.avatar, msg, 'user')
     // EL AVISO SALE SOLO. La app promete "le aviso de que le has escrito" y
@@ -471,7 +449,9 @@ export default function Chat() {
 
   // Quick replies after helper responds
   const lastMsg = messages[messages.length - 1]
-  const showQuickReplies = lastMsg?.from === 'helper' && !typing
+  // Tras un mensaje del profesional, o mientras no se ha escrito nada (el
+  // saludo de Nüra fuera de la demo): siempre el mismo juego de preguntas.
+  const showQuickReplies = !typing && (lastMsg?.from === 'helper' || !messages.some(m => m.from === 'user'))
 
   // Context-aware quick replies based on conversation stage
   // Context-aware next steps — push toward booking
@@ -522,13 +502,9 @@ export default function Chat() {
     return filtered.slice(0, 2).join(' ')
   })()
 
-  // FIX 2: Shorten specialty (max 3 words, strip long suffixes)
-  const chatSpecialty = (() => {
-    const s = helper.specialty || ''
-    const words = s.split(' ')
-    if (words.length <= 3) return s
-    return words.slice(0, 3).join(' ')
-  })()
+  // El oficio entero: cortarlo a tres palabras dejaba «inglés todos los».
+  // Si no cabe, el CSS (.helperSpecialty) pone los puntos suspensivos.
+  const chatSpecialty = helper.specialty || ''
 
   // FIX 7: Contract button label based on service state
   const serviceState = (() => {
@@ -573,40 +549,6 @@ export default function Chat() {
 
       {/* Messages — full screen */}
       <div className={styles.messages} ref={messagesRef} data-scroll-propio>
-
-        {/* Empty state */}
-        {messages.length === 0 && (
-          <div className={styles.emptyChat}>
-            {fromSearch && userQuery ? (
-              <div style={{
-                background:'linear-gradient(135deg,var(--purple-05),rgba(0,212,200,0.04))',
-                border:'1px solid var(--purple-10)',
-                borderRadius:'var(--radius-card)',padding:'var(--space-10) var(--space-14)',
-                marginBottom:'var(--space-4)',maxWidth:'260px',textAlign:'left',
-              }}>
-                <SectionLabel tone="brand" style={{margin:'0 0 var(--space-4)'}}>Mensaje sugerido</SectionLabel>
-                <p style={{fontSize:'var(--text-xs)',color:'var(--ink-tertiary)',margin:0,lineHeight:1.6}}>
-                  Revisa el mensaje antes de enviarlo.
-                </p>
-              </div>
-            ) : null}
-            {/* Conversation starters */}
-            <div style={{display:'flex',flexDirection:'column',gap:'var(--space-8)',marginTop:'var(--space-20)',width:'100%',maxWidth:'280px'}}>
-              <p style={{fontSize:'var(--text-xs)',color:'var(--ink-tertiary)',textAlign:'center',margin:0}}>Empieza la conversación</p>
-              {[
-                `¿Tienes disponibilidad esta semana?`,
-                `¿Cuánto cobras por sesión?`,
-                `¿Puedes contarme más sobre tu experiencia?`,
-              ].map((q,i) => (
-                <button key={i}
-                  onClick={() => sendMessage(q)}
-                  className={styles.quickReply}>
-                  {q}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Messages */}
         {grouped.map((item, i) => {
@@ -689,13 +631,6 @@ export default function Chat() {
           </div>
         )}
 
-        {/* Las sugerencias pertenecen a la conversación, no al pie fijo. */}
-        {suggested && messages.length === 0 && (
-          <div className={styles.suggestionBar}>
-            <span className={styles.suggestionLabel}>Nüra sugiere</span>
-            <button className={styles.suggestionText} onClick={() => sendMessage(suggested)}>{suggested}</button>
-          </div>
-        )}
         {showQuickReplies && (
           <div className={styles.quickReplies}>
             {QUICK_REPLIES.map((r, i) => (

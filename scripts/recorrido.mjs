@@ -202,7 +202,14 @@ console.log('\n── El chat, desde una ficha ──')
   // El mismo profesional, ahora sin mensajes: un chat nuevo.
   await p.evaluate(() => { localStorage.removeItem('nura_chat_histories'); localStorage.removeItem('nura_chats') })
   await p.goto(BASE + '/chat/2001', { waitUntil: 'networkidle0' })
+  // EL CHAT NUEVO SE ABRE YA EN SU FORMA FINAL: nada aparece y desaparece
+  // (antes: «chat vacío» con tres preguntas y, a los 0,8 s, otras distintas).
+  const historial = () => p.evaluate(() => (document.querySelector('[data-scroll-propio]')?.innerText || '').replace(/\s+/g, ' ').replace(/\d\d:\d\d/g, ''))
+  const alEntrar = await historial()
   await espera(2000)
+  const luego = await historial()
+  paso('un chat nuevo se abre ya con el saludo, y no cambia después', /Vi que me encontraste|Escríbele a/.test(alEntrar) && alEntrar === luego)
+  paso('sin «Mensaje sugerido» ni «Nüra sugiere» repetidos', !/Mensaje sugerido|Nüra sugiere|Empieza la conversación/i.test(luego))
   paso('en un chat nuevo, el dedo no arrastra la web entera', await deslizar(500, 300) === true && await deslizar(60, 20) === true)
   await tocar(p, /disponibilidad esta semana/)
   await espera(2500)
