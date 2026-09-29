@@ -289,6 +289,12 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
+### Tarea activa · En el chat, el dedo ya no arrastra la web entera
+
+**Responsable:** Claude. **Rama:** `claude/funny-clarke-e6m64r`, desde `main` (5d9a9f0).
+**Motivo (Sergio, iPhone):** en un chat nuevo (sin mensajes), al deslizar el dedo se mueve toda la web: cabecera, mensajes y barra de escribir. En un chat con historial no pasa: el historial se desplaza y se queda el gesto. Sin nada que desplazar, Safari pasa el gesto a la página.
+**Archivos previstos:** nuevo `src/utils/sinArrastre.js`, `src/pages/Chat.jsx` (engancharlo a la pantalla; nada visual), `scripts/recorrido.mjs`, documentación.
+
 ### Última tarea integrada · Avatares nuevos y fotos siempre redondas
 
 Integrada el 2026-09-29 (ver `docs/changelog.md`, 2026-10-25). Tocó `src/utils/avatar.js` (estilo «micah»; nueva `avatarVigente`), `src/utils/supabase.js` y `src/utils/matching.js` (usan `avatarVigente`), `src/context/UserContext.jsx` (pone al día los avatares guardados), y el CSS de las fotos: `HelperCardTall`, `HelperCard`, `PostCard`, `Chats` y `Siguiendo` (más los atributos de tamaño de `HelperCard.jsx` y `PostCard.jsx`). Esos archivos quedan libres. **Regla para diseño:** las fotos de personas son siempre redondas (`border-radius: 50%`, ancho = alto).
