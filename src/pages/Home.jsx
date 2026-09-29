@@ -1415,7 +1415,9 @@ export default function Home() {
   const responseKey = response[0]?.id || `waiting-${viewStart}`
   const latestQuery = messages.slice().reverse().find(m => m.from === 'user')?.text
   const blocks = []
-  if (isWelcome) blocks.push({ id: 'reminder', content: <RecordatorioCita compact /> })
+  // La cita de las próximas 24 horas, mientras no haya buscado nada. No
+  // depende de isWelcome: un aviso («Laura te ha contestado») la escondía.
+  if (!messages.some(m => m.from === 'user')) blocks.push({ id: 'reminder', content: <RecordatorioCita compact /> })
   response.forEach((msg, msgIndex) => {
     const lines = msg.lines || (msg.text ? [msg.text] : [])
     lines.forEach((line, i) => splitResponseText(line).forEach((part, j) => {

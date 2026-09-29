@@ -50,9 +50,11 @@ async function escribirEn(p, texto, filtro = () => true) {
 
 const texto = p => p.evaluate(() => (document.body.innerText || '').replace(/\s+/g, ' '))
 const tocar = (p, re) => p.evaluate(r => {
-  const x = [...document.querySelectorAll('button')]
+  const x = [...document.querySelectorAll('button,a')]
     .filter(b => b.checkVisibility?.())
-    .find(b => new RegExp(r).test(b.textContent || ''))
+    // El nombre accesible cuenta: «Escribir a Carlos» es hoy un icono con
+    // aria-label, sin texto visible.
+    .find(b => new RegExp(r).test(b.getAttribute('aria-label') || b.textContent || ''))
   if (x) { x.click(); return true }
   return false
 }, re.source || re)
@@ -98,10 +100,10 @@ console.log('\n── La persona que busca ayuda ──')
   await tocar(p, /Escribir a/)
   await espera(2000)
   paso('para escribir, pide identificarse', (await p.evaluate(() => location.pathname)) === '/login')
-  await p.type('input[type="tel"]', '612345678', { delay: 6 })
+  await p.type('#login-phone', '612345678', { delay: 6 })
   await tocar(p, /Continuar/)
   await espera(1600)
-  await p.focus('input[aria-label="Código de verificación"]')
+  await p.focus('#login-code')
   await p.keyboard.type('1234', { delay: 6 })
   await tocar(p, /^Entrar$/)
   await espera(1400)
@@ -147,7 +149,7 @@ console.log('\n── El profesional ──')
   q.on('pageerror', e => errores.push('vuelta: ' + String(e.message).split('\n')[0].slice(0, 60)))
   await q.goto(BASE + '/r/tokeninventado', { waitUntil: 'networkidle0' })
   await espera(2600)
-  paso('la vuelta responde a un enlace inválido', /ya no sirve/.test(await texto(q)))
+  paso('la vuelta responde a un enlace inválido', /ya no sirve|ya no está disponible|antiguo/.test(await texto(q)))
   await q.close()
 }
 

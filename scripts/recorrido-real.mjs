@@ -36,7 +36,12 @@ const dist = mkdtempSync(join(tmpdir(), 'nura-real-'))
 console.log('Compilando sin demo…')
 execSync(`npx vite build --outDir ${dist}`, { cwd: raiz, stdio: 'ignore',
   env: { ...process.env, VITE_DEMO: 'false', VITE_EDGE_WRITES: 'true', VITE_EDGE_URL: FUNCION } })
-const servidor = spawn('npx', ['vite', 'preview', '--outDir', dist, '--port', String(PUERTO), '--strictPort'], { cwd: raiz, stdio: 'ignore' })
+// En su propio grupo de procesos: `npx` lanza vite como nieto, y matar solo
+// a npx dejaba vivo el servidor. La siguiente ejecución, con --strictPort,
+// no podía arrancar el suyo y probaba EN SILENCIO la compilación anterior.
+const servidor = spawn('npx', ['vite', 'preview', '--outDir', dist, '--port', String(PUERTO), '--strictPort'], { cwd: raiz, stdio: 'ignore', detached: true })
+const apagar = () => { try { process.kill(-servidor.pid) } catch { /* ya estaba apagado */ } }
+process.on('exit', apagar)
 await new Promise(r => setTimeout(r, 3000))
 
 // ── el servidor ficticio, con estado ──
@@ -108,7 +113,7 @@ async function pagina() {
 }
 const espera = ms => new Promise(r => setTimeout(r, ms))
 const texto = async p => (await p.evaluate(() => document.body.innerText)).replace(/\s+/g, ' ')
-const pulsar = async (p, t) => { await espera(300); return p.evaluate(t => { const el = [...document.querySelectorAll('button, a')].find(e => e.textContent.trim().includes(t) && e.offsetParent !== null); el?.click(); return !!el }, t).then(async r => { await espera(900); return r }) }
+const pulsar = async (p, t) => { await espera(300); return p.evaluate(t => { const el = [...document.querySelectorAll('button, a')].find(e => (e.textContent.trim() || e.getAttribute('aria-label') || '').includes(t) && e.offsetParent !== null); el?.click(); return !!el }, t).then(async r => { await espera(900); return r }) }
 const CAMPO = 'input[aria-label="Escribe tu mensaje"]', ENVIAR = '[aria-label="Enviar mensaje"]'
 const escribir = async (p, t) => { await p.click(CAMPO, { clickCount: 3 }); await p.keyboard.press('Backspace'); await p.type(CAMPO, t); await p.click(ENVIAR); await espera(1500) }
 
@@ -127,7 +132,7 @@ try {
   ok(c.url().includes('/login'), 'llega a crear su cuenta')
   const alta = await texto(c)
   ok(!/código|te lo hemos enviado/i.test(alta), 'no se promete ningún código por SMS (no se envía ninguno)')
-  await c.waitForSelector('input[placeholder="Tu nombre"]'); await c.type('input[placeholder="Tu nombre"]', 'Marta')
+  await c.waitForSelector('#login-name'); await c.type('#login-name', 'Marta')
   await pulsar(c, 'Entrar en Nüra'); await espera(1500)
   ok(/\/chat\/\d+/.test(c.url()), `tras crear la cuenta vuelve al chat que quería abrir (${c.url().replace(B, '')})`)
   const saludo = await texto(c)
@@ -158,10 +163,11 @@ try {
 
   console.log('\n── Propone una cita, la marca hecha y valora ──')
   ok(await pulsar(c, 'Contratar'), 'en el chat, «Contratar»')
-  // La hoja de cita (ElegirCita): el primer día con huecos y su primera hora libre.
-  const dia = await c.evaluate(() => { const d = [...document.querySelectorAll('[role=option]')].find(x => !x.disabled); d?.click(); return d?.getAttribute('aria-label') || null })
+  // La hoja de cita (ElegirCita): el primer día con huecos y su primera hora
+  // libre. Días y horas son botones (aria-pressed); las horas llevan data-state.
+  const dia = await c.evaluate(() => { const d = [...document.querySelectorAll('[aria-label="Elige un día"] button')].find(x => !x.disabled); d?.click(); return d?.getAttribute('aria-label') || null })
   await espera(500)
-  const hora = await c.evaluate(() => { const h = [...document.querySelectorAll('button[aria-pressed]')].find(x => !x.disabled); h?.click(); return h?.textContent.trim() || null })
+  const hora = await c.evaluate(() => { const h = [...document.querySelectorAll('button[data-state]')].find(x => !x.disabled); h?.click(); return h?.textContent.trim() || null })
   await espera(300)
   ok(Boolean(dia && hora) && await pulsar(c, 'Enviar solicitud'), `elige día (${dia}) y hora (${hora}), y envía la propuesta`)
   ok(/Se la hago llegar/.test(await texto(c)), 'dice que se la hace llegar (no «te confirmará en breve»)')
@@ -180,7 +186,7 @@ try {
 
   console.log('\n── Quien la pidió la ve confirmada; otra persona ve la hora ocupada ──')
   await c.goto(B + '/my-services', { waitUntil: 'networkidle0' }); await espera(2500)
-  ok(/Confirmado/.test(await texto(c)), 'en «Mis servicios» la cita sale Confirmada')
+  ok(/Confirmad[ao]/.test(await texto(c)), 'en «Mis servicios» la cita sale Confirmada')
   const otra = await (await b.createBrowserContext()).newPage()
   await otra.setViewport({ width: 390, height: 844 })
   await otra.setRequestInterception(true)
@@ -203,9 +209,9 @@ try {
   await otra.goto(B + '/helper/' + conCita.helper_id, { waitUntil: 'networkidle0' }); await espera(1200)
   await pulsar(otra, 'Disponibilidad'); await espera(800)
   const fechaCita = conCita.cita_fecha
-  await otra.evaluate(f => { const d = new Date(f + 'T12:00:00'); const n = String(d.getDate()); const o = [...document.querySelectorAll('[role=option]')].find(x => (x.getAttribute('aria-label') || '').includes(' ' + n + ':')); o?.click() }, fechaCita)
+  await otra.evaluate(f => { const d = new Date(f + 'T12:00:00'); const o = [...document.querySelectorAll('[aria-label="Elige un día"] button')].find(x => (x.getAttribute('aria-label') || '').startsWith(d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' }) + ':')); o?.click() }, fechaCita)
   await espera(1000)
-  const estadoHora = await otra.evaluate(h => [...document.querySelectorAll('button[aria-pressed]')].find(x => x.textContent.trim() === h)?.getAttribute('aria-label'), conCita.cita_hora)
+  const estadoHora = await otra.evaluate(h => [...document.querySelectorAll('button[data-state]')].find(x => x.textContent.trim() === h)?.getAttribute('aria-label'), conCita.cita_hora)
   ok(/ocupada/.test(estadoHora || ''), `otra persona ve esa hora ocupada en su agenda (${estadoHora})`)
   await otra.close()
 
@@ -220,8 +226,8 @@ try {
   console.log('\n── Otra cita: el recordatorio del día antes y cancelarla ──')
   await c.goto(B + '/helper/' + conCita.helper_id, { waitUntil: 'networkidle0' }); await espera(1500)
   ok(await pulsar(c, 'Disponibilidad'), 'desde la ficha, «Disponibilidad»')
-  await c.evaluate(() => { const d = [...document.querySelectorAll('[role=option]')].find(x => !x.disabled); d?.click() }); await espera(500)
-  await c.evaluate(() => { const h = [...document.querySelectorAll('button[aria-pressed]')].find(x => !x.disabled); h?.click() }); await espera(300)
+  await c.evaluate(() => { const d = [...document.querySelectorAll('[aria-label="Elige un día"] button')].find(x => !x.disabled); d?.click() }); await espera(500)
+  await c.evaluate(() => { const h = [...document.querySelectorAll('button[data-state]')].find(x => !x.disabled); h?.click() }); await espera(300)
   const antes = avisos.length
   ok(await pulsar(c, 'Enviar solicitud'), 'pide otra cita')
   await espera(1200)
@@ -244,15 +250,19 @@ try {
   }, adelanto)
   await c.goto(B + '/', { waitUntil: 'networkidle0' }); await espera(2000)
   const aviso = await texto(c)
-  ok(/Tu cita/.test(aviso) && new RegExp(`(Hoy|Mañana) a las ${hN}`).test(aviso) && /Con Laura/.test(aviso), `en Inicio sale el recordatorio: «${(aviso.match(/(Hoy|Mañana) a las \d\d:\d\d/) || [''])[0]}», con Laura`)
+  ok(/Tu cita/.test(aviso) && new RegExp(`(Hoy|Mañana) a las ${hN}`).test(aviso) && /con Laura/.test(aviso), `en Inicio sale el recordatorio: «${(aviso.match(/(Hoy|Mañana) a las \d\d:\d\d/) || [''])[0]}», con Laura`)
+  // El recordatorio de Inicio es un atajo: se cancela en «Mis servicios».
+  ok(await pulsar(c, 'Tu cita con Laura') && c.url().includes('/my-services'), 'el recordatorio lleva a «Mis servicios»')
+  await espera(1200)
   ok(await pulsar(c, 'Cancelar la cita'), 'pulsa «Cancelar la cita»')
   ok(/¿Cancelar la cita\?/.test(await texto(c)) && segunda.cita_estado === 'aceptada', 'pide confirmación antes de cancelar nada')
   ok(await pulsar(c, 'Sí, cancelar'), 'confirma')
   await espera(800)
   ok(segunda.cita_estado === 'cancelada', 'la cita queda cancelada en el servidor')
-  ok(!/Tu cita/.test(await texto(c)), 'y el recordatorio desaparece')
+  await c.goto(B + '/', { waitUntil: 'networkidle0' }); await espera(1500)
+  ok(!/Tu cita/.test(await texto(c)), 'y el recordatorio desaparece de Inicio')
   await c.goto(B + '/my-services', { waitUntil: 'networkidle0' }); await espera(1500)
-  ok(/Cancelado/.test(await texto(c)), 'en «Mis servicios» sale Cancelado')
+  ok(/Cancelad[ao]/.test(await texto(c)), 'en «Mis servicios» sale Cancelado')
   const pro4 = await pagina()
   await pro4.goto(B + '/r/' + segunda.token, { waitUntil: 'networkidle0' }); await espera(1000)
   ok(/Cita cancelada/.test(await texto(pro4)) && /vuelve a estar libre/.test(await texto(pro4)), 'el profesional ve en su enlace que se ha cancelado')
@@ -262,7 +272,7 @@ try {
   ok(false, 'el recorrido se ha roto: ' + e.message)
 } finally {
   ok(!errores.length, 'sin errores de JavaScript' + (errores.length ? ': ' + errores[0] : ''))
-  await b.close(); servidor.kill()
+  await b.close(); apagar()
 }
 
 console.log(`\n${fallos ? '❌' : '✅'} RECORRIDO REAL ${fallos ? `CON ${fallos} FALLO(S)` : 'COMPLETO'}\n`)

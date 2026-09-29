@@ -289,15 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · Poner al día las pruebas de recorrido completo
+### Última tarea integrada · Poner al día las pruebas de recorrido completo
 
-**Responsable:** Claude. **Rama:** `claude/funny-clarke-e6m64r`, desde `main` (a509e4f).
-**Motivo:** `recorrido` y `recorrido:real` fallan aunque la app funcione: siguen esperando el acceso por teléfono y la carta de presentación antiguos. Una prueba que siempre falla no avisa de nada.
-**Archivos previstos:** `scripts/recorrido.mjs`, `scripts/recorrido-real.mjs`, documentación. Sin cambios en la app.
-
-### Última tarea integrada · Búsqueda con Claude y el mapa de oficios de respaldo
-
-Integrada el 2026-09-29 (ver `docs/changelog.md`, 2026-10-18). Tocó la nueva función `supabase/functions/entender-busqueda/index.ts` (desplegada, versión 1, dormida sin `ANTHROPIC_API_KEY`), el nuevo `src/utils/entender.js`, `src/utils/matching.js` (Claude primero, mapa de respaldo), `src/utils/supabase.js` (nueva `searchEspecialidadesExactas`), `src/pages/Legal.jsx` (solo una frase de privacidad), `scripts/test-busqueda.mjs` (`--ia-simulada`, `--ia-caida`, `NURA_IA_URL`) y `package.json`. Esos archivos quedan libres.
+Integrada el 2026-09-29 (ver `docs/changelog.md`, 2026-10-19). Tocó `scripts/recorrido.mjs`, `scripts/recorrido-real.mjs` y `src/pages/Home.jsx` (solo la condición que muestra el recordatorio de cita; la presentación, intacta). Esos archivos quedan libres. `recorrido` y `recorrido:real` vuelven a pasar enteros: si fallan, es que algo se ha roto.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 

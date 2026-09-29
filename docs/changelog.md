@@ -170,6 +170,13 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-19 — Las pruebas de recorrido completo, al día (y un recordatorio que se escondía)
+
+- `recorrido` y `recorrido:real` fallaban siempre aunque la app funcionara: buscaban botones por su texto visible («Escribir a…» es hoy un icono con nombre accesible), campos antiguos del acceso y la hoja de cita de antes. Ahora miran también el nombre accesible y los campos actuales. Las dos pasan enteras.
+- `recorrido:real` dejaba vivo su servidor al terminar: la siguiente ejecución probaba EN SILENCIO la compilación anterior. Se lanza en su propio grupo de procesos y se apaga entero.
+- Fallo real encontrado: el recordatorio «Hoy a las 17:00 · Tu cita con Laura» desaparecía de Inicio en cuanto llegaba otro aviso («Laura te ha contestado»). Ahora sale siempre que no se haya buscado nada todavía. Solo cambia la condición; la presentación de Codex queda igual.
+- El recordatorio de Inicio es un atajo a «Mis servicios», donde se cancela: la prueba sigue ese camino.
+
 ## 2026-10-18 — La búsqueda con Claude, con el mapa de oficios de respaldo
 
 - Motivo (Sergio): habrá muchos más oficios que la plantilla actual y el mapa escrito a mano no escala.
