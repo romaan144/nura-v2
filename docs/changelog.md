@@ -170,6 +170,13 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Un chat leído deja de salir como no leído
+
+- Sergio: entras en un chat resaltado, lo lees, sales, y sigue sin leer. Dos causas:
+  - Los chats de ejemplo (demo) llevan el «sin leer» escrito en el código y abrirlos no cambiaba nada; la barra sumaba además un «1» fijo. Ahora se recuerda en el móvil cuáles se han abierto (`utils/demoLeidos.js`).
+  - Lo que contesta el profesional mientras estás dentro del chat se contaba como no leído. Ahora, si ese chat está abierto, no suma. `markRead` trabaja además sobre el estado más reciente, para no pisar un mensaje que acabe de entrar.
+- `npm run recorrido` lo comprueba: el chat de ejemplo deja de estar sin leer al abrirlo (también en la barra) y un chat propio no queda sin leer por lo que llega estando dentro.
+
 ## 2026-10-28 — Sin asteriscos ni rayas a la vista, y la foto en los chats nuevos
 
 - Sergio (captura del iPhone): «**Paula** tiene 5 sobre 5…» salía con los asteriscos en el chat, y por la app había rayas largas («—»). Además, un chat nuevo salía en Chats con una letra en vez de la foto.

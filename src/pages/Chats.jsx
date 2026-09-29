@@ -13,6 +13,7 @@ import BandejaProfesional from '../components/BandejaProfesional'
 import { useRespuestasNuevas } from '../utils/respuestasNuevas'
 import { sinMarcas } from '../utils/texto'
 import { avatarVigente } from '../utils/avatar'
+import { demoLeidos, marcarDemoLeido } from '../utils/demoLeidos'
 
 // ── REALISTIC DEMO CONVERSATIONS ─────────────────────────────────────────
 // These simulate what the app looks like with active users.
@@ -149,7 +150,10 @@ export default function Chats() {
   // persona, o ha reservado algo sin enterarse. Y apagar DEFAULT_DEMO —
   // que es lo que el preflight pide antes de abrir — NO las quitaba.
   const realIds = new Set((chats||[]).map(c => String(c.helperId)))
-  const demosToShow = DEMO_MODE ? DEMO_CHATS.filter(d => !realIds.has(String(d.helperId))) : []
+  // Los de ejemplo ya abiertos en este móvil dejan de salir sin leer.
+  const leidos = demoLeidos()
+  const demosToShow = DEMO_MODE ? DEMO_CHATS.filter(d => !realIds.has(String(d.helperId)))
+    .map(d => leidos.has(String(d.helperId)) ? { ...d, unread: 0 } : d) : []
   const allChats = [
     ...(chats||[]).filter(Boolean),
     ...demosToShow,
@@ -214,6 +218,7 @@ export default function Chats() {
               className={`${styles.chatRow} ${chat.unread > 0 || respuestasNuevas[String(chat.helperId)] ? styles.chatUnread : ''}`}
               onClick={() => {
                 markRead?.(chat.helperId)
+                if (isDemo) marcarDemoLeido(chat.helperId)
                 // For demo chats, pass history in state so Chat page shows it
                 const demoHistory = DEMO_HISTORIES[chat.helperId]
                 const helperData  = helper || {

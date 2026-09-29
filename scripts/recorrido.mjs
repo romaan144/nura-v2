@@ -253,6 +253,43 @@ console.log('\n── Textos limpios y fotos en Chats ──')
   await p.close()
 }
 
+// ── Un chat leído deja de salir como no leído (Sergio, 2026-09-29) ──────
+console.log('\n── Chats leídos ──')
+{
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('leídos: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Sergio', joined: new Date().toISOString() })) })
+  const sinLeer = () => p.evaluate(() => ({
+    filas: [...document.querySelectorAll('[aria-label*="sin leer"]')].map(e => e.closest('button')?.textContent.slice(0, 20)),
+    barra: document.querySelector('nav[aria-label="Navegación principal"]')?.innerText.match(/\d+/)?.[0] || '0',
+  }))
+  // 1) El chat de ejemplo resaltado: se abre, se vuelve, y ya no.
+  await p.goto(BASE + '/chats', { waitUntil: 'networkidle0' })
+  await espera(1500)
+  const antes = await sinLeer()
+  await tocar(p, /Elena/)
+  await espera(2000)
+  await p.goBack()
+  await espera(1500)
+  const despues = await sinLeer()
+  paso('el chat de ejemplo sin leer deja de estarlo al abrirlo', antes.filas.some(f => /Elena/.test(f)) && !despues.filas.some(f => /Elena/.test(f)) && despues.barra === '0', `antes ${antes.filas.length} (barra ${antes.barra}) · después ${despues.filas.length} (barra ${despues.barra})`)
+  // 2) Un chat propio: lo que contesta mientras estás dentro ya está leído.
+  await p.goto(BASE + '/helper/2001', { waitUntil: 'networkidle0' })
+  await espera(1500)
+  await tocar(p, /Escribir a/)
+  await espera(1500)
+  await p.keyboard.press('Enter')
+  await escribirEn(p, 'Hola, ¿tienes hueco?', 'x => /mensaje/i.test(x.placeholder || "")')
+  await p.keyboard.press('Enter')
+  await espera(3500)
+  await p.goto(BASE + '/chats', { waitUntil: 'networkidle0' })
+  await espera(1500)
+  const propio = await sinLeer()
+  paso('lo que contesta mientras estás en el chat no queda sin leer', !propio.filas.some(f => /Sara/.test(f)), propio.filas.join(' | '))
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')
