@@ -574,7 +574,8 @@ console.log('\n── El Pulso: cifras de verdad, solo de la ficha propia ──
   db.helpers = db.helpers.filter(h => !(h.owner_id === 'u1' && h.id !== 777))
   db.eventos.push(
     { id: 1, tipo: 'busqueda', categoria: 'hogar', fecha: hoy },
-    { id: 2, tipo: 'sin_cobertura', categoria: 'hogar', fecha: hoy },
+    // La misma búsqueda de id 1, que solo encontró algo parecido: no suma.
+    { id: 2, tipo: 'sin_cobertura', categoria: 'hogar', resultados: 2, fecha: hoy },
     { id: 3, tipo: 'busqueda', categoria: 'hogar', fecha: viejo },
     { id: 4, tipo: 'busqueda', categoria: 'salud', fecha: hoy },
     { id: 5, tipo: 'recomendacion_vista', helper_id: '777', fecha: hoy },
@@ -589,7 +590,7 @@ console.log('\n── El Pulso: cifras de verdad, solo de la ficha propia ──
   ok(r.estado === 401, 'sin sesión no hay Pulso → 401')
   r = await llamarG(funcion, { op: 'mi-pulso', sesion: 'sesion-confirmada', helperId: 8 })
   const p = r.datos?.pulso
-  ok(r.estado === 200 && p?.busquedas === 2, `cuenta las búsquedas de su oficio de esta semana (limpieza → hogar): ${p?.busquedas}`)
+  ok(r.estado === 200 && p?.busquedas === 1, `cuenta las búsquedas de su oficio de esta semana, una vez cada una (limpieza → hogar): ${p?.busquedas}`)
   ok(p?.apariciones === 1, 'cuenta solo las veces que salió SU ficha, no la que diga el móvil')
   ok(p?.recibidos === 2 && p?.respondidos === 1, 'mensajes de esta semana: recibidos y contestados')
   ok(!JSON.stringify(r.datos).includes('mensaje'), 'el Pulso no devuelve ningún mensaje ni frase de nadie')

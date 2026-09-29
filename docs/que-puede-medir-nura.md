@@ -75,6 +75,12 @@ y una obligación de privacidad.
 | `servicio_confirmado` | al confirmar una cita | categoría |
 | `resultado_registrado` | al cerrar con un resultado | categoría, si hay valoración |
 
+**Cómo va la búsqueda, día a día** (desde el 2026-09-29): vista
+`salud_busqueda`. Cada búsqueda deja exactamente un evento `busqueda`
+(categoría `otro` si no se entendió; `resultados` 0 si no había nadie), así
+que la vista da por día: búsquedas, no entendidas, sin nadie, solo algo
+parecido y el porcentaje entendido.
+
 **Qué oficios faltan y dónde** (desde el 2026-09-29): en Supabase, vista
 `demanda_sin_cubrir` (Table Editor o SQL). Una fila por oficio y ciudad:
 cuántas veces, cuántas personas, cuántas veces solo había algo parecido y la
