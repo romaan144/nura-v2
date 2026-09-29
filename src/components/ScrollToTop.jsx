@@ -15,7 +15,11 @@ export default function ScrollToTop() {
         // contenedor fijo, los overlays no). En vez de adivinar cual, se
         // resetea cualquiera que tenga desplazamiento. Solo corre al
         // cambiar de ruta, asi que el coste es irrelevante.
-        document.querySelectorAll('*').forEach(el => { if (el.scrollTop) el.scrollTop = 0 })
+        // Salvo lo que gestiona su propio desplazamiento (el historial del
+        // chat empieza abajo, en el último mensaje): si la pantalla aparece
+        // antes de esta pasada, la devolvía al principio y dejaba de seguir
+        // la conversación. Pasaba al abrir el chat desde una ficha.
+        document.querySelectorAll('*').forEach(el => { if (el.scrollTop && !el.closest('[data-scroll-propio]')) el.scrollTop = 0 })
       } catch { /* noop */ }
     }
     // Un regreso a comentarios conserva el hilo concreto. El perfil puede

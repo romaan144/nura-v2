@@ -170,6 +170,13 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-24 — El chat abierto desde una ficha ya no empieza arriba del todo
+
+- Sergio: el chat que se abre con «Escribir a…» desde la ficha se desplaza mal; el de Chats no. Es la misma pantalla y el mismo código; cambia cuándo aparece.
+- Causa medida: al cambiar de ruta, `ScrollToTop` pone arriba cualquier elemento desplazado (a los 0 y a los 120 ms). Desde la ficha, con el chat ya cargado en la visita, el historial aparece a los 14 ms en el último mensaje y a los 28 ms esa pasada lo devolvía al primero; el chat dejaba además de seguir la conversación. Desde Chats aparece a los ~330 ms y se libraba.
+- Arreglo: el historial del chat lleva `data-scroll-propio` y `ScrollToTop` no lo toca. Sin cambios visuales.
+- `npm run recorrido` lo comprueba abriendo el chat desde la ficha por segunda vez (con el chat ya cargado, que es cuando fallaba).
+
 ## 2026-10-23 — El teclado del móvil vuelve a proponer el teléfono y el nombre
 
 - Sergio notó que al registrarse el móvil ya no le ofrecía su número ni su nombre. El campo del teléfono pedía `autocomplete="tel-national"` (desde la renovación de formularios), que el autorrelleno de iPhone no reconoce; ahora pide `tel`, como antes lo deducía solo.

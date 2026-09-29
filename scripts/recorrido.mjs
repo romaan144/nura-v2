@@ -153,6 +153,38 @@ console.log('\n── El profesional ──')
   await q.close()
 }
 
+// ── el chat abierto desde una ficha ────────────────────────────────────
+// Es la misma pantalla que desde Chats, pero aparece al instante: la vuelta
+// arriba de cada cambio de ruta la devolvía al primer mensaje (2026-09-29).
+console.log('\n── El chat, desde una ficha ──')
+{
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('chat desde ficha: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => {
+    localStorage.clear()
+    localStorage.setItem('nura_user', JSON.stringify({ name: 'Sergio', joined: new Date().toISOString() }))
+    const msgs = Array.from({ length: 30 }, (_, i) => ({ id: i + 1, from: i % 2 ? 'helper' : 'user', text: 'Mensaje ' + (i + 1) + ' con texto para ocupar sitio.', time: new Date().toISOString() }))
+    localStorage.setItem('nura_chat_histories', JSON.stringify({ 2001: msgs }))
+  })
+  // Como en la vida real, con el chat ya abierto antes en esta visita: así
+  // aparece al instante, que es cuando fallaba.
+  await p.goto(BASE + '/helper/2001', { waitUntil: 'networkidle0' })
+  await espera(1500)
+  await tocar(p, /Escribir a/)
+  await espera(1500)
+  await p.goBack()
+  await espera(1500)
+  await tocar(p, /Escribir a/)
+  await espera(1500)
+  const fin = await p.evaluate(() => {
+    const m = document.querySelector('[data-scroll-propio]') || document.querySelector('[class*="_messages_"]')
+    return m ? m.scrollHeight - m.clientHeight - m.scrollTop : null
+  })
+  paso('abre en el último mensaje, no arriba del todo', fin !== null && fin < 50, fin === null ? 'sin historial' : `a ${Math.round(fin)} px del final`)
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')

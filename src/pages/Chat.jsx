@@ -565,7 +565,7 @@ export default function Chat() {
       </header>
 
       {/* Messages — full screen */}
-      <div className={styles.messages} ref={messagesRef}>
+      <div className={styles.messages} ref={messagesRef} data-scroll-propio>
 
         {/* Empty state */}
         {messages.length === 0 && (
