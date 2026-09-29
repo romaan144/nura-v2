@@ -11,6 +11,8 @@ import { DEMO_MODE } from '../config'
 import { Badge } from '../components/ui'
 import BandejaProfesional from '../components/BandejaProfesional'
 import { useRespuestasNuevas } from '../utils/respuestasNuevas'
+import { sinMarcas } from '../utils/texto'
+import { avatarVigente } from '../utils/avatar'
 
 // ── REALISTIC DEMO CONVERSATIONS ─────────────────────────────────────────
 // These simulate what the app looks like with active users.
@@ -228,8 +230,10 @@ export default function Chats() {
               }}>
 
               <div className={styles.avatarWrap}>
-                {chat.avatarUrl
-                  ? <img src={chat.avatarUrl} alt="" className={styles.avatarImg} />
+                {/* Su foto; si el chat se guardó sin ella (antes del 2026-09-29),
+                    la de su ficha o, al menos, su avatar: nunca solo iniciales. */}
+                {(chat.avatarUrl || helper?.avatarUrl || avatarVigente('', chat.helperName))
+                  ? <img src={chat.avatarUrl || helper?.avatarUrl || avatarVigente('', chat.helperName)} alt="" className={styles.avatarImg} />
                   : <div className={styles.avatar} style={{background: chat.helperColor}}>{chat.helperAvatar}</div>
                 }
                 {/* Online status — green if active recently */}
@@ -270,7 +274,7 @@ export default function Chats() {
                   <span className={styles.chatLastMsg}>
                     {respuestasNuevas[String(chat.helperId)]
                       ? <strong style={{ color: 'var(--purple)' }}>Te ha contestado · tócalo para leerlo</strong>
-                      : chat.lastMsg}
+                      : sinMarcas(chat.lastMsg)}
                   </span>
 
                 </div>

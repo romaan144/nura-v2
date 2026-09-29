@@ -7,6 +7,7 @@ import { useTitulo } from '../utils/titulo'
 import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react'
 import { attachChatScroll } from '../utils/chatScroll'
 import { sinArrastreDePagina } from '../utils/sinArrastre'
+import ConNegritas from '../components/ConNegritas'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Send, Mic, MicOff } from 'lucide-react'
 import { HELPERS_DEMO as HELPERS } from '../data/helpers'
@@ -323,7 +324,7 @@ export default function Chat() {
     setMessages(prev => [...prev, newMsg])
     setInput('')
     // 'user': lo escribo yo, no cuenta como no leido.
-    addChat?.(helper.id, helper.name, helper.avatarColor, helper.avatar, msg, 'user')
+    addChat?.(helper.id, helper.name, helper.avatarColor, helper.avatar, msg, 'user', helper.avatarUrl)
     // EL AVISO SALE SOLO. La app promete "le aviso de que le has escrito" y
     // hasta ahora eso dependia de que alguien ejecutase un comando a mano.
     // Se encola en el PRIMER mensaje de la conversacion: uno por persona que
@@ -404,7 +405,7 @@ export default function Chat() {
       setMessages(prev => [...prev, reply])
       const newCount = msgCount + 1
       setMsgCount(newCount)
-      addChat?.(helper.id, helper.name, helper.avatarColor, helper.avatar, replyText)
+      addChat?.(helper.id, helper.name, helper.avatarColor, helper.avatar, replyText, 'helper', helper.avatarUrl)
 
       // Nüra intervention at key moments
       const nura = getNuraIntervention(helper, newCount, messages)
@@ -568,7 +569,7 @@ export default function Chat() {
                 </div>
               )}
               <div className={`${styles.msgBubble} ${isNura ? styles.msgBubbleNura : ''} ${msg.isLetter ? styles.msgLetter : ''}`}>
-                <p>{msg.text}</p>
+                <p>{isNura ? <ConNegritas texto={msg.text} /> : msg.text}</p>
                 {msg.from === 'helper' && msg.proposal && !msg.proposalAnswered && (
                   <div style={{display:'flex', gap:'var(--space-6)', marginTop:'var(--space-8)', flexWrap:'wrap'}}>
                     <button className="nura-glass-action" onClick={() => answerProposal(msg.id, true, msg.proposal.label)}

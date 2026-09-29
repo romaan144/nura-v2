@@ -45,7 +45,7 @@ const CATEGORIES = [
     color: '#3B82F6',
     bg: 'rgba(59,130,246,0.10)',
     supabaseCategories: ['clases', 'educacion'],
-    subcategories: ['Todos', 'Inglés todos los niveles', 'Francés', 'Alemán', 'Chino mandarín', 'Matemáticas ESO y Bachillerato', 'Física y Química', 'Biología y Geología', 'Historia y Ciencias Sociales', 'Lengua y Literatura Española', 'Dibujo artístico', 'Piano y solfeo', 'Guitarra clásica y moderna', 'Programación Python y web', 'EBAU — Preparación acceso'],
+    subcategories: ['Todos', 'Inglés todos los niveles', 'Francés', 'Alemán', 'Chino mandarín', 'Matemáticas ESO y Bachillerato', 'Física y Química', 'Biología y Geología', 'Historia y Ciencias Sociales', 'Lengua y Literatura Española', 'Dibujo artístico', 'Piano y solfeo', 'Guitarra clásica y moderna', 'Programación Python y web', 'EBAU · Preparación acceso'],
     specialtyKeywords: ['profesor', 'clases', 'idiomas', 'inglés', 'matemáticas', 'música', 'guitarra', 'piano', 'refuerzo', 'academia', 'tutor'],
   },
   {
