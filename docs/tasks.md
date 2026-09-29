@@ -289,6 +289,13 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
+### Tarea activa · Sin asteriscos ni rayas a la vista, y la foto en los chats nuevos
+
+**Responsable:** Claude. **Rama:** `claude/funny-clarke-e6m64r`, desde `main` (e5f20dc).
+**Motivo (Sergio, con captura):** en el chat salen mensajes de Nüra con asteriscos («**Paula** tiene 5 sobre 5…») y por la app hay rayas largas («—»). Además, un chat nuevo aparece en Chats con una letra en vez de la foto.
+**Medido:** los asteriscos solo salen sin convertir en el chat (Inicio y Perfil ya los ponen en negrita). Las rayas vienen de las historias de ejemplo, de los perfiles de ejemplo del código y de 975 de las 1008 fichas de ejemplo de la base. El chat nuevo se guarda sin su foto (`addChat` no la recibe).
+**Archivos previstos:** nuevo `src/utils/texto.js` (negritas y rayas), `src/pages/Chat.jsx`, `src/pages/Chats.jsx`, `src/context/UserContext.jsx` (`addChat` guarda la foto), `src/utils/supabase.js` y `src/utils/matching.js` (limpiar rayas al mostrar), textos de ejemplo en `src/data/` y `src/utils/titulo.js`, `scripts/recorrido.mjs`, documentación. Sin cambios en la base de datos.
+
 ### Última tarea integrada · El chat nuevo se abre ya en su forma final
 
 Integrada el 2026-09-29 (ver `docs/changelog.md`, 2026-10-27). Tocó `src/pages/Chat.jsx` (saludo inmediato, un solo juego de preguntas, fuera el estado vacío y «Nüra sugiere», oficio entero en la cabecera) y `scripts/recorrido.mjs`. El aspecto de lo que queda no cambia. Esos archivos quedan libres.
