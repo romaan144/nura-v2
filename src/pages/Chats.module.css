@@ -208,7 +208,7 @@
 .searchBox:focus-within { border-color: #9870C5; box-shadow: 0 0 0 4px var(--purple-05); }
 .chatRow { border-radius: 22px; background: white; box-shadow: 0 5px 20px -16px #30214235; transition: box-shadow 220ms ease, transform 220ms ease; }
 .chatUnread { background: linear-gradient(110deg, #F4EDFE, white); }
-.avatarImg, .avatar { border-radius: 18px; }
+.avatarImg, .avatar { border-radius: 50%; }
 @media (hover: hover) { }
 
 /* La persona y el último mensaje tienen espacio propio. */
@@ -218,7 +218,7 @@
 .chatRow { align-items: flex-start; padding: 16px; gap: 14px; min-height: 132px; }
 .chatUnread { padding-left: 14px; border-left-color: var(--purple-ink); background: #FAF7FF; }
 .avatarWrap { padding-top: 2px; }
-.avatarImg, .avatar { display: block; width: 64px; height: 72px; border-radius: 18px; object-fit: cover; background-color: var(--action-surface); }
+.avatarImg, .avatar { display: block; width: 64px; height: 64px; border-radius: 50%; object-fit: cover; background-color: var(--action-surface); }
 .avatar { display: flex; font-size: 20px; }
 .chatInfo { position: relative; padding-right: 44px; }
 .chatTop { margin-bottom: 7px; display: block; }
@@ -235,7 +235,7 @@
   .searchWrap, .list { padding-left: 16px; padding-right: 16px; }
   .chatRow { padding: 14px 12px; gap: 10px; }
   .chatUnread { padding-left: 10px; }
-  .avatarImg, .avatar { width: 56px; height: 64px; border-radius: 16px; }
+  .avatarImg, .avatar { width: 56px; height: 56px; border-radius: 50%; }
   .chatName { font-size: 14px; }
 }
 

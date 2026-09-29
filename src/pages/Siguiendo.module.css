@@ -139,7 +139,7 @@
 /* Fotos protagonistas; abrir el perfil y seguir son controles independientes. */
 .card { display: flex; flex-direction: column; align-items: stretch; padding: 0; gap: 0; height: 100%; background: white; cursor: default; }
 .profileButton { display: grid; grid-template-columns: 80px minmax(0, 1fr); gap: 16px; align-items: start; width: 100%; flex: 1; padding: 18px; border: none; border-radius: 22px 22px 0 0; background: transparent; font-family: inherit; text-align: left; cursor: pointer; }
-.avatar { width: 80px; height: 104px; border-radius: 18px; object-fit: cover; background: var(--action-surface); }
+.avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; background: var(--action-surface); }
 .details { display: flex; flex-direction: column; min-width: 0; }
 .name { font-family: var(--font-voice); font-size: 15px; line-height: 1.35; min-height: 2.7em; margin-bottom: 4px; }
 .spec { font-size: 13px; line-height: 1.4; min-height: 2.8em; font-weight: 500; margin-bottom: 8px; color: var(--ink-secondary); }
@@ -156,7 +156,7 @@
 @media (max-width: 359px) {
   .content { padding-left: 16px; padding-right: 16px; }
   .profileButton { grid-template-columns: 68px minmax(0, 1fr); gap: 12px; padding: 14px; }
-  .avatar { width: 68px; height: 92px; border-radius: 16px; }
+  .avatar { width: 68px; height: 68px; border-radius: 50%; }
   .cardFooter { padding: 10px 14px; }
 }
 

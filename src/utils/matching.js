@@ -1,4 +1,4 @@
-import { avatarDe } from '../utils/avatar'
+import { avatarDe, avatarVigente } from '../utils/avatar'
 import { getFirstName } from './name'
 
 // ── Contexto de precio por categoría (mercado Barcelona) ──────────────────
@@ -705,7 +705,7 @@ function normalizeHelper(h) {
   return {
     ...h,
     avatarColor: h.avatar_color || h.avatarColor || '#1A56DB',
-    avatarUrl: h.avatarUrl || avatarDe(encodeURIComponent((h.name || '').split(' ')[0])),
+    avatarUrl: avatarVigente(h.avatarUrl, h.name) || avatarDe(encodeURIComponent((h.name || '').split(' ')[0])),
     avatar: (h.name || 'H').split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase(),
     responseTime: h.response_time || h.responseTime || '< 1 hora',
     completionRate: h.completion_rate || h.completionRate || 95,
