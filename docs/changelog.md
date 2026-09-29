@@ -170,6 +170,13 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-27 — El chat nuevo se abre ya en su forma final
+
+- Sergio (capturas del iPhone): al abrir por primera vez el chat con alguien salía el «chat vacío» («Mensaje sugerido», tres preguntas, «Nüra sugiere» y «escribiendo…») y a los 0,8 s llegaba el saludo y todo cambiaba por otras tres preguntas. No era un fallo de carga: dos pantallas pensadas por separado que se sucedían. Había además dos saludos de la demo compitiendo (uno a los 0,8 s y otro a los 0,8–1,2 s).
+- Acordado con Sergio: el saludo está desde el primer fotograma (se añade antes de pintar), sin «escribiendo…»; un solo juego de tres preguntas que no cambia (también fuera de la demo, tras el saludo de Nüra); el borrador sigue en la barra de escribir; fuera «Mensaje sugerido», «Empieza la conversación» y «Nüra sugiere», que repetían lo mismo.
+- La cabecera ya no corta el oficio a tres palabras («inglés todos los»): va entero y, si no cabe, el CSS pone puntos suspensivos.
+- `npm run recorrido` comprueba que un chat nuevo se abre con el saludo y no cambia después, y que no quedan las propuestas repetidas. Lint de `Chat.jsx`: 7 avisos (antes 9).
+
 ## 2026-10-26 — En el chat, el dedo ya no arrastra la web entera
 
 - Sergio (iPhone): en un chat nuevo, al deslizar el dedo «se desplaza todo, como toda la web». El arreglo del 2026-10-24 (el historial que volvía arriba) era real, pero no era esto.

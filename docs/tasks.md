@@ -289,16 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · El chat nuevo se abre ya en su forma final
+### Última tarea integrada · El chat nuevo se abre ya en su forma final
 
-**Responsable:** Claude. **Rama:** `claude/funny-clarke-e6m64r`, desde `main` (876d0a0).
-**Motivo (Sergio, con capturas):** al abrir un chat nuevo sale el «chat vacío» («Mensaje sugerido», tres preguntas, «Nüra sugiere» y «escribiendo…») y medio segundo después llega el saludo y todo cambia por otras tres preguntas. Además la cabecera corta el oficio a tres palabras («inglés todos los»).
-**Acordado con Sergio:** el saludo aparece al instante, sin «escribiendo…»; un solo juego de tres preguntas que no cambia; el borrador sigue en la barra de escribir; fuera «Mensaje sugerido» y «Nüra sugiere»; el oficio entero en la cabecera (con puntos suspensivos si no cabe).
-**Archivos previstos:** `src/pages/Chat.jsx`, `scripts/recorrido.mjs`, documentación.
-
-### Última tarea integrada · En el chat, el dedo ya no arrastra la web entera
-
-Integrada el 2026-09-29 (ver `docs/changelog.md`, 2026-10-26). Tocó el nuevo `src/utils/sinArrastre.js`, `src/pages/Chat.jsx` (solo lo engancha a la pantalla) y `scripts/recorrido.mjs`. Nada visual. Esos archivos quedan libres. Si otra pantalla fija sufre lo mismo en iPhone, basta con engancharle `sinArrastreDePagina`.
+Integrada el 2026-09-29 (ver `docs/changelog.md`, 2026-10-27). Tocó `src/pages/Chat.jsx` (saludo inmediato, un solo juego de preguntas, fuera el estado vacío y «Nüra sugiere», oficio entero en la cabecera) y `scripts/recorrido.mjs`. El aspecto de lo que queda no cambia. Esos archivos quedan libres.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
