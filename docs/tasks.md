@@ -289,6 +289,13 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
+### Tarea activa · Medir la búsqueda por significado (modelo gratuito de Supabase)
+
+**Responsable:** Claude. **Rama:** `claude/funny-clarke-e6m64r`, desde `main` (4c05b92).
+**Motivo:** Sergio: habrá muchos más oficios que la plantilla actual; el mapa escrito a mano no escala. Antes de construir la búsqueda por significado, medir si el modelo gratuito de Supabase (gte-small) entiende español con las 358 frases de `test:busqueda`.
+**Cómo:** función temporal en Supabase que calcula huellas de significado; tabla de prueba (solo frases de prueba y nombres de especialidades, sin datos de personas); extensiones `vector` y `pg_net`. Al terminar se borran tabla, función y `pg_net`.
+**Archivos previstos:** nuevo `scripts/medir-significado.mjs` (prepara los datos y lee el resultado), documentación. Sin cambios en la app.
+
 ### Última tarea integrada · La búsqueda entiende el OFICIO, no solo la categoría
 
 Integrada el 2026-09-29 (ver `docs/changelog.md`, 2026-10-16). Tocó el nuevo `src/data/oficios.js`, `src/utils/matching.js`, `src/utils/supabase.js` (nueva `searchPorEspecialidad`; se corrige `speciality`), `src/pages/Home.jsx` (solo dos textos del mensaje de resultados: «Todavía no tengo a nadie…» y sin cobertura; presentación de Codex intacta), nuevos `scripts/test-busqueda.mjs` y `scripts/fixtures/profesionales.json`, `scripts/test-matching.mjs` y `package.json` (`test:busqueda`). Esos archivos quedan libres. Añadir un oficio o una forma de pedirlo: una línea en `oficios.js` y una frase en `test-busqueda.mjs`.
