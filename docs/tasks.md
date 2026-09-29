@@ -289,15 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · El chat abierto desde una ficha empezaba arriba del todo
+### Última tarea integrada · El chat abierto desde una ficha empezaba arriba del todo
 
-**Responsable:** Claude. **Rama:** `claude/funny-clarke-e6m64r`, desde `main` (d1ae493).
-**Motivo (Sergio):** el chat que se abre desde la ficha («Escribir a…») se desplaza mal; el de Chats no. Es la misma pantalla: la diferencia es que desde la ficha el chat aparece al instante y `ScrollToTop` (que pone arriba cualquier elemento desplazado al cambiar de ruta) lo devuelve al principio a los 28 ms; desde Chats aparece más tarde y se libra.
-**Archivos previstos:** `src/components/ScrollToTop.jsx`, `src/pages/Chat.jsx` (solo un atributo en el historial), `scripts/recorrido.mjs`, documentación. Sin cambios visuales.
-
-### Última tarea integrada · Que el teclado del móvil vuelva a proponer el teléfono y el nombre
-
-Integrada el 2026-09-29 (ver `docs/changelog.md`, 2026-10-23). Tocó `src/pages/Login.jsx` (atributos del teléfono y del nombre; el número autorrellenado se queda en 9 cifras) y `src/pages/RegisterHelper.jsx` (atributos del campo según la pregunta). Nada visual. Esos archivos quedan libres.
+Integrada el 2026-09-29 (ver `docs/changelog.md`, 2026-10-24). Tocó `src/components/ScrollToTop.jsx` (no toca lo marcado con `data-scroll-propio`), `src/pages/Chat.jsx` (solo ese atributo en el historial) y `scripts/recorrido.mjs` (comprobación nueva). Nada visual. Esos archivos quedan libres. Si otra pantalla gestiona su propio desplazamiento, basta con marcarla igual.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
