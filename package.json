@@ -19,7 +19,7 @@
     "avisar": "node scripts/avisar.mjs",
     "recorrido": "node scripts/recorrido.mjs",
     "recorrido:real": "node scripts/recorrido-real.mjs",
-    "test:busqueda": "NURA_BUSQUEDA_MIN=95 NURA_BUSQUEDA_MIN_NUEVAS=95 node scripts/test-busqueda.mjs"
+    "test:busqueda": "NURA_BUSQUEDA_MIN=95 NURA_BUSQUEDA_MIN_NUEVAS=95 node scripts/test-busqueda.mjs && NURA_BUSQUEDA_MIN=95 NURA_BUSQUEDA_MIN_NUEVAS=95 node scripts/test-busqueda.mjs --ia-simulada && NURA_BUSQUEDA_MIN=95 NURA_BUSQUEDA_MIN_NUEVAS=95 node scripts/test-busqueda.mjs --ia-caida"
   },
   "dependencies": {
     "@dicebear/collection": "^9.4.2",

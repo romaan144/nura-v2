@@ -296,6 +296,22 @@ export async function searchPorEspecialidad(patrones = []) {
   } catch (e) { console.error('Supabase searchPorEspecialidad:', e); return null }
 }
 
+// Las fichas con EXACTAMENTE estas especialidades (las que eligió Claude en
+// `entender-busqueda`). Entre comillas: una especialidad puede llevar comas
+// o paréntesis.
+export async function searchEspecialidadesExactas(lista = []) {
+  const limpias = [...new Set(lista.map(e => String(e).trim()).filter(Boolean))].slice(0, 10)
+  if (!limpias.length) return []
+  try {
+    const valores = limpias.map(e => `"${e.replace(/["\\]/g, '\\$&')}"`).join(',')
+    const url = `${SUPABASE_URL}/rest/v1/helpers?select=${columnasHelpers()}&limit=200&order=rating.desc&specialty=in.(${encodeURIComponent(valores)})`
+    const res = await fetch(url, { headers, signal: AbortSignal.timeout(DEMO_MODE ? 2500 : 7000) })
+    if (!res.ok) return null
+    const data = await res.json()
+    return Array.isArray(data) ? data.map(normalize) : null
+  } catch (e) { console.error('Supabase searchEspecialidadesExactas:', e); return null }
+}
+
 // null = la ficha NO EXISTE. Un fallo de red o del servidor LANZA: antes
 // ambos daban null, y con mala cobertura un enlace compartido decia «Esta
 // persona ya no está en Nüra» de alguien que sí estaba.

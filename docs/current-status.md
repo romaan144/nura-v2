@@ -61,6 +61,11 @@ actualizar por eso mismo.
   (revisado el 2026-09-24). Las que quedan dependen de DEMO_MODE y se van
   al apagarlo: saludo del profesional, «X personas cerca de ti
   contactaron», respuestas automáticas del chat.
+- **Función `entender-busqueda` versión 1** (2026-09-29): Claude entiende
+  la búsqueda y elige entre las especialidades que existen. **Inactiva
+  hasta que exista `ANTHROPIC_API_KEY`**; mientras, busca el mapa de
+  oficios (100 % en las 358 frases de prueba). Necesita también
+  `VITE_EDGE_WRITES=true` y `VITE_EDGE_URL` en Vercel (como `perfil-ia`).
 - **Función `perfil-ia` versión 1** (2026-09-24): ordena lo que escribe
   el profesional con Claude. **Inactiva hasta que exista
   `ANTHROPIC_API_KEY`** (abajo); sin ella la app sigue igual.
@@ -77,6 +82,9 @@ actualizar por eso mismo.
    pegarla en ningún chat).
 3. Opcional: `NURA_IA_MAX_DIA` (llamadas al día; 300 por defecto).
 Coste estimado: menos de 1 céntimo por perfil ordenado.
+La misma clave enciende la búsqueda con Claude (`entender-busqueda`).
+Opcional `NURA_BUSQUEDA_IA_MAX_DIA` (búsquedas con IA al día; 3000 por
+defecto; pasado el tope decide el mapa de oficios).
 
 ### Pendiente del fundador: correos de Nüra (Resend)
 
