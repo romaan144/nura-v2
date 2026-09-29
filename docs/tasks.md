@@ -289,16 +289,16 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · Medir la búsqueda por significado (modelo gratuito de Supabase)
+### Tarea activa · Búsqueda con Claude y el mapa de oficios de respaldo
 
-**Responsable:** Claude. **Rama:** `claude/funny-clarke-e6m64r`, desde `main` (4c05b92).
-**Motivo:** Sergio: habrá muchos más oficios que la plantilla actual; el mapa escrito a mano no escala. Antes de construir la búsqueda por significado, medir si el modelo gratuito de Supabase (gte-small) entiende español con las 358 frases de `test:busqueda`.
-**Cómo:** función temporal en Supabase que calcula huellas de significado; tabla de prueba (solo frases de prueba y nombres de especialidades, sin datos de personas); extensiones `vector` y `pg_net`. Al terminar se borran tabla, función y `pg_net`.
-**Archivos previstos:** nuevo `scripts/medir-significado.mjs` (prepara los datos y lee el resultado), documentación. Sin cambios en la app.
+**Responsable:** Claude. **Rama:** `claude/funny-clarke-e6m64r`, desde `main` (726b1cb).
+**Motivo:** el mapa de oficios escrito a mano no escala a los oficios futuros. Claude lee la frase en el servidor y elige, de las especialidades que existen en las fichas, las que resuelven la necesidad. Si no hay clave o Claude no responde, se usa el mapa actual (`oficios.js`) sin que la persona note nada.
+**Privacidad:** la frase se envía a Claude en el momento de buscar y no se guarda ni se registra (docs/perfil-vivo.md §1).
+**Archivos previstos:** nueva `supabase/functions/entender-busqueda/index.ts`, nuevo `src/utils/entender.js`, `src/utils/matching.js`, `scripts/test-busqueda.mjs`, documentación. Sin cambios visuales.
 
-### Última tarea integrada · La búsqueda entiende el OFICIO, no solo la categoría
+### Última tarea integrada · Medir la búsqueda por significado
 
-Integrada el 2026-09-29 (ver `docs/changelog.md`, 2026-10-16). Tocó el nuevo `src/data/oficios.js`, `src/utils/matching.js`, `src/utils/supabase.js` (nueva `searchPorEspecialidad`; se corrige `speciality`), `src/pages/Home.jsx` (solo dos textos del mensaje de resultados: «Todavía no tengo a nadie…» y sin cobertura; presentación de Codex intacta), nuevos `scripts/test-busqueda.mjs` y `scripts/fixtures/profesionales.json`, `scripts/test-matching.mjs` y `package.json` (`test:busqueda`). Esos archivos quedan libres. Añadir un oficio o una forma de pedirlo: una línea en `oficios.js` y una frase en `test-busqueda.mjs`.
+Medido el 2026-09-29. El modelo gratuito de Supabase (gte-small) acierta solo el 30–46 % de las 358 frases en español: no sirve. Tabla, función temporal y `pg_net` retirados; la función `medir-significado` responde 410 y puede borrarse desde el panel. No tocó la app.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 

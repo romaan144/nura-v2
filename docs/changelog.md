@@ -170,6 +170,11 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-17 — El modelo gratuito de significado no entiende español
+
+- Medido con las 358 frases de `test:busqueda`: gte-small (Supabase) acierta el 30–46 %, frente al 100 % del mapa de oficios. Se descarta.
+- Decisión: la búsqueda que crece sola la hará Claude en el servidor, con el mapa de oficios como respaldo automático.
+
 ## 2026-10-16 — La búsqueda entiende el OFICIO, no solo la categoría
 
 - Motivo (Sergio): su hermano buscó «reparar altavoces 2.1» y le salió un
