@@ -82,8 +82,8 @@ const errores = []
 const BD = [{ id: 7001, name: 'Laura Vidal Soler', specialty: 'Logopeda infantil', category: 'logopedia', zone: 'Gràcia',
   bio: 'Logopeda infantil: dislalias, la r y la s, con juego.', rating: 4.9, reviews: 12, services: 30,
   available: true, presential: true, online: false, verified: true, tags: ['logopedia infantil', 'dislalia'] }]
-async function pagina() {
-  const p = await b.newPage()
+async function pagina(ctx = b) {
+  const p = await ctx.newPage()
   await p.setViewport({ width: 390, height: 844 })
   await p.setRequestInterception(true)
   const H = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': '*', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS' }
@@ -274,6 +274,27 @@ try {
   ok(/Cita cancelada/.test(await texto(pro4)) && /vuelve a estar libre/.test(await texto(pro4)), 'el profesional ve en su enlace que se ha cancelado')
   await pro4.close(); await pro3.close()
   ok(!backend({ op: 'ocupadas', helperId: segunda.helper_id }).ocupadas.some(o => o.fecha === fN && o.hora === hN), 'y esa hora ya no sale ocupada para nadie')
+
+  console.log('\n── Una búsqueda que no se entiende ──')
+  const nueva = await pagina(await b.createBrowserContext())
+  await nueva.goto(B + '/', { waitUntil: 'networkidle0' }); await espera(1200)
+  const antesNo = eventos.length
+  await nueva.type('textarea, input', 'zxcv qwerty asdf'); await nueva.keyboard.press('Enter')
+  await espera(5000)
+  ok(/con otras palabras|corre prisa/.test(await texto(nueva)), 'pide que lo cuente con otras palabras')
+  const suyos = eventos.slice(antesNo)
+  ok(suyos.filter(e => e.tipo === 'busqueda').length === 1 && suyos.find(e => e.tipo === 'busqueda')?.categoria === 'otro',
+    'se cuenta como UNA búsqueda no entendida (categoría «otro»)')
+  ok(!JSON.stringify(suyos).includes('qwerty'), 'sin la frase')
+  // En la base simulada solo hay una logopeda: un fontanero no lo hay.
+  const antesSin = eventos.length
+  await nueva.type('textarea, input', 'necesito un fontanero, gotea el grifo'); await nueva.keyboard.press('Enter')
+  await espera(5000)
+  const sin = eventos.slice(antesSin)
+  ok(sin.filter(e => e.tipo === 'busqueda').length === 1 && sin.find(e => e.tipo === 'busqueda')?.resultados === 0,
+    'una búsqueda sin nadie también cuenta UNA búsqueda (con 0 resultados)')
+  ok(sin.some(e => e.tipo === 'sin_cobertura' && e.oficio === 'fontanero'), 'y deja su demanda: oficio «fontanero»')
+  await nueva.close()
 } catch (e) {
   ok(false, 'el recorrido se ha roto: ' + e.message)
 } finally {

@@ -1001,7 +1001,10 @@ export default function Home() {
           const ciudadBusca = analysis.ciudad || analysis.ciudadElegida || null
           sinCoberturaRef.current = { categoria: analysis.categoria, que: CAT_HUMANA[analysis.categoria] || queEs, zona: analysis.zona || null, ciudad: ciudadBusca }
           registrarDemanda?.({ categoria: analysis.categoria, fecha: Date.now() })
-          registrar('sin_cobertura', { categoria: analysis.categoria, ...demandaDe(analysis) })
+          // Cada búsqueda deja UN evento `busqueda` (con 0 resultados aquí): así
+          // se cuentan todas, también las que no encuentran a nadie.
+          registrar('busqueda', { categoria: analysis.categoria, resultados: 0, ...demandaDe(analysis) })
+          registrar('sin_cobertura', { categoria: analysis.categoria, resultados: 0, ...demandaDe(analysis) })
           setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
             lines: [ciudadBusca && ciudadBusca !== 'Barcelona'
               // Sin «Te he entendido»: justo antes ya se dice «Entendido».
@@ -1020,6 +1023,9 @@ export default function Home() {
         // ejemplo sobre entrenador personal: detectaba la urgencia y no la
         // reconocia. Sonaba sorda justo cuando mas importa no sonarlo.
         {
+          // No entendida: se cuenta como búsqueda de categoría «otro», con su
+          // ciudad y sin la frase (vista `salud_busqueda` en Supabase).
+          registrar('busqueda', { categoria: 'otro', resultados: 0, ...demandaDe(analysis) })
           const urge = /\b(urgent\w*|emergenc\w*|ahora mismo|cuanto antes|ya mismo|se me ha roto|no puedo esperar)\b/i.test(msg)
           setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
             lines: urge

@@ -289,15 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · Cuántas búsquedas no se entienden
+### Última tarea integrada · Cuántas búsquedas no se entienden
 
-**Responsable:** Claude. **Rama:** `claude/funny-clarke-e6m64r`, desde `main` (323c8b5).
-**Motivo:** hoy una búsqueda que la app no entiende no deja rastro, y una sin nadie solo cuenta como `sin_cobertura`. Cada búsqueda pasará a dejar exactamente un evento `busqueda` (categoría `otro` si no se entendió; nunca la frase), y el Pulso contará solo esos (corrige que una búsqueda con «solo algo parecido» contara dos veces).
-**Archivos previstos:** `src/pages/Home.jsx` (solo llamadas a `registrar`), `supabase/functions/helpers-write/index.ts` (op `mi-pulso`), migración con la vista `salud_busqueda`, `scripts/recorrido-real.mjs`, documentación.
-
-### Última tarea integrada · Qué oficios faltan y dónde (búsquedas sin nadie)
-
-Integrada el 2026-09-29 (ver `docs/changelog.md`, 2026-10-20). Tocó la migración `20261019000000_demanda_por_oficio.sql` (aplicada: columnas `oficio` y `ciudad` en `eventos`, vista `demanda_sin_cubrir`), `supabase/functions/helpers-write/index.ts` (desplegada, versión 25), `src/utils/analitica.js` (`demandaDe`), `src/pages/Home.jsx` (solo los datos de las llamadas a `registrar`), `scripts/recorrido-real.mjs` y documentación. Esos archivos quedan libres.
+Integrada el 2026-09-29 (ver `docs/changelog.md`, 2026-10-21). Tocó `src/pages/Home.jsx` (solo llamadas a `registrar`), `supabase/functions/helpers-write/index.ts` (op `mi-pulso`; desplegada, versión 26), la migración `20261020000000_salud_busqueda.sql` (aplicada), `scripts/recorrido-real.mjs` y documentación. Esos archivos quedan libres.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 

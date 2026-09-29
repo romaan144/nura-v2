@@ -1253,7 +1253,9 @@ Deno.serve(async (req: Request) => {
       return r.ok ? (await r.json()).length : null
     }
     const [busquedas, apariciones, recibidos, respondidos] = await Promise.all([
-      CATEGORIA_OK.test(catApp) ? contar(`eventos?tipo=in.(busqueda,sin_cobertura)&categoria=eq.${catApp}&fecha=gt.${desde}&select=id`) : null,
+      // Solo `busqueda`: cada búsqueda deja exactamente una (también las que no
+      // encuentran a nadie). Contar además `sin_cobertura` la contaba dos veces.
+      CATEGORIA_OK.test(catApp) ? contar(`eventos?tipo=eq.busqueda&categoria=eq.${catApp}&fecha=gt.${desde}&select=id`) : null,
       contar(`eventos?tipo=eq.recomendacion_vista&helper_id=eq.${id}&fecha=gt.${desde}&select=id`),
       contar(`avisos?helper_id=eq.${id}&fecha=gt.${desde}&select=id`),
       contar(`avisos?helper_id=eq.${id}&fecha=gt.${desde}&respondido_en=not.is.null&select=id`),

@@ -170,6 +170,13 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-21 — Cuántas búsquedas no se entienden
+
+- Antes, una búsqueda que la app no entendía no dejaba rastro, y una sin nadie no contaba como búsqueda. Ahora cada búsqueda deja exactamente un evento `busqueda`: categoría `otro` si no se entendió, 0 resultados si no había nadie. Nunca la frase.
+- Vista `salud_busqueda` para el fundador (por día: búsquedas, no entendidas, sin nadie, solo parecido y % entendido), cerrada al público.
+- Corregido: el Pulso del profesional contaba dos veces una búsqueda con «solo algo parecido» (`busqueda` + `sin_cobertura`). Ahora cuenta solo `busqueda` (`helpers-write` v26).
+- `recorrido:real` comprueba una búsqueda no entendida y una sin nadie: un solo evento de búsqueda cada una y sin la frase.
+
 ## 2026-10-20 — Qué oficios faltan y dónde
 
 - Motivo: `sin_cobertura` solo decía la categoría («técnico»), y eso no dice a quién fichar.
