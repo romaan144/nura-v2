@@ -73,6 +73,10 @@ function backend(c) {
     }
     case 'valorar': { const a = porLlave(c.llave); if (!a) return { __estado: 404 }; valoraciones.push({ helper_id: a.helper_id, ...c }); return { ok: true } }
     case 'evento': eventos.push(c.payload); return { ok: true }
+    case 'demanda-oficio': {
+      const mes = e => e.oficio === c.oficio && Date.parse(e.fecha) > Date.now() - 30 * 864e5
+      return { ok: true, busquedas: eventos.filter(e => e.tipo === 'busqueda' && mes(e)).length, sinNadie: eventos.filter(e => e.tipo === 'sin_cobertura' && mes(e)).length }
+    }
     default: return { ok: true }
   }
 }
@@ -295,6 +299,37 @@ try {
     'una búsqueda sin nadie también cuenta UNA búsqueda (con 0 resultados)')
   ok(sin.some(e => e.tipo === 'sin_cobertura' && e.oficio === 'fontanero'), 'y deja su demanda: oficio «fontanero»')
   await nueva.close()
+
+  console.log('\n── Al darse de alta: quién le busca, y oficios que ya existen ──')
+  const darseDeAlta = async (nombre, especialidad) => {
+    const p = await pagina(await b.createBrowserContext())
+    await p.goto(B + '/register-helper', { waitUntil: 'networkidle0' }); await espera(1500)
+    for (const r of [nombre, especialidad]) { await p.type('input', r); await p.keyboard.press('Enter'); await espera(2500) }
+    await espera(1500)
+    return p
+  }
+  const fon = await darseDeAlta('Pedro Sanz', 'Fontanero')
+  ok(/una persona buscó técnico|buscó fontanero|buscaron fontanero/.test(await texto(fon)) && /Te estaban esperando/.test(await texto(fon)),
+    'un fontanero se entera de que alguien lo buscó sin encontrar a nadie')
+  ok(/formación/.test(await texto(fon)), 'y sigue con la pregunta siguiente')
+  await fon.close()
+  // Existe una técnica de electrodomésticos; de electrónica no hay nadie ni lo ha buscado nadie.
+  BD.push({ id: 7002, name: 'Rosa Martí Gil', specialty: 'Técnico de electrodomésticos', category: 'tecnico', zone: 'Sants',
+    bio: 'Lavadoras y neveras.', rating: 4.7, reviews: 5, services: 9, available: true, presential: true, online: false, verified: true, tags: [] })
+  const ele = await darseDeAlta('Luis Pons', 'Técnico de electrónica')
+  ok(/Todavía nadie ofrece técnico de electrónica en Nüra y nadie lo ha buscado/.test(await texto(ele)), 'si su profesión no existe y nadie la busca, se le dice')
+  ok(!/formación/.test(await texto(ele)), 'y espera a que elija antes de seguir')
+  ok(await pulsar(ele, 'Técnico de electrodomésticos'), 'le recomienda una que sí existe y puede elegirla')
+  await espera(1500)
+  const t2 = await texto(ele)
+  ok(/formación/.test(t2) && /Mantener/.test(t2) === false, 'al elegirla sigue el alta, con esa especialidad')
+  await ele.close()
+  const tar = await darseDeAlta('Ana Ruiz', 'Tarotista')
+  ok(/Todavía no conozco «Tarotista» en Nüra/.test(await texto(tar)), 'una profesión que no reconoce: se lo dice y le deja escribirla de otra forma')
+  ok(await pulsar(tar, 'Mantener «Tarotista»'), 'o quedarse con la suya')
+  await espera(1500)
+  ok(/formación/.test(await texto(tar)), 'y el alta sigue')
+  await tar.close()
 } catch (e) {
   ok(false, 'el recorrido se ha roto: ' + e.message)
 } finally {
