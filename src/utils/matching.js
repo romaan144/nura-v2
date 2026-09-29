@@ -47,7 +47,8 @@ export function getPriceContext(helper, categoria) {
 
 import { HELPERS as LOCAL_HELPERS } from '../data/helpers'
 import { obraSignal } from '../data/obraPosts'
-import { searchHelpers, searchPorEspecialidad } from './supabase'
+import { searchHelpers, searchPorEspecialidad, searchEspecialidadesExactas } from './supabase'
+import { entenderBusqueda } from './entender'
 import { oficiosDe, oficio, esDelOficio, puntosRefina, patronesDe } from '../data/oficios'
 import { DEMO_MODE } from '../config'
 import { barrioEnTexto, barrioDeZona, kmEntre } from '../data/barrios'
@@ -694,6 +695,8 @@ export function analyzeNeed(userTextOriginal) {
     // «que repare aparatos de sonido o imagen»: para decir con verdad que falta.
     oficioQuien: oficios.length ? oficio(oficios[0].id).quien : null,
     texto: userText,
+    // Tal cual la escribió, para que Claude la lea (utils/entender.js).
+    textoOriginal: userTextOriginal,
   })
 }
 
@@ -743,11 +746,30 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
   // POR OFICIO, si se ha entendido uno: se piden las fichas de ese oficio
   // (y de los parecidos, por si no hay nadie) estén en la categoría que
   // estén. Si no, como siempre, por categoría.
-  const ids = analysis.oficios || []
-  const porOficio = ids.length > 0
-  const parecidos = porOficio ? (oficio(ids[0])?.parecidos || []) : []
-  const delOficio = h => ids.some(id => esDelOficio(h?.specialty, id))
-  const deParecido = h => parecidos.some(id => esDelOficio(h?.specialty, id))
+  //
+  // CLAUDE PRIMERO, EL MAPA DE RESPALDO. Si la función `entender-busqueda`
+  // está encendida, Claude elige de las especialidades que existen las que
+  // resuelven lo que cuenta (así entran solos los oficios nuevos). Si no
+  // responde, decide el mapa de oficios como siempre.
+  const ia = await entenderBusqueda(analysis.textoOriginal || analysis.texto)
+  const exactas = ia ? ia.especialidades.map(e => e.especialidad) : []
+  const porIA = exactas.length > 0
+  if (porIA) {
+    // Home habla con esto: «Buscas a alguien que…», «Todavía no tengo a nadie que…».
+    const cat = toApp(ia.especialidades[0].categoria || '')
+    if (cat && cat !== 'otro') analysis.categoria = cat
+    if (ia.nombre) analysis.oficioNombre = ia.nombre
+    if (ia.quien) analysis.oficioQuien = ia.quien
+  }
+  const rangoIA = h => exactas.indexOf(h?.specialty)
+  const ids = porIA ? [] : (analysis.oficios || [])
+  const porOficio = porIA || ids.length > 0
+  const parecidos = ids.length ? (oficio(ids[0])?.parecidos || []) : []
+  // Si Claude dice que solo hay algo PARECIDO, todo lo elegido es parecido.
+  const delOficio = porIA ? (h => ia.exacto && rangoIA(h) >= 0) : (h => ids.some(id => esDelOficio(h?.specialty, id)))
+  const deParecido = porIA ? (h => !ia.exacto && rangoIA(h) >= 0) : (h => parecidos.some(id => esDelOficio(h?.specialty, id)))
+  const hayParecidos = porIA ? !ia.exacto : parecidos.length > 0
+  const aproximado = porIA ? { oficio: ia.nombre, quien: ia.quien } : ids.length ? { oficio: oficio(ids[0]).nombre, quien: oficio(ids[0]).quien } : null
   const demoPool = DEMO_MODE ? LOCAL_HELPERS
     .filter(h => h?.id >= 2000 && (porOficio ? (delOficio(h) || deParecido(h)) : toApp(h?.category) === analysis.categoria))
     .map(normalizeHelper).filter(Boolean) : []
@@ -756,8 +778,8 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
   try {
     const SIN_RESPUESTA = Symbol('sin respuesta')
     const espera = new Promise(res => setTimeout(() => res(SIN_RESPUESTA), DEMO_MODE ? 2200 : 7500))
-    const pregunta = porOficio
-      ? searchPorEspecialidad(patronesDe([...ids, ...parecidos]))
+    const pregunta = porIA ? searchEspecialidadesExactas(exactas)
+      : porOficio ? searchPorEspecialidad(patronesDe([...ids, ...parecidos]))
       : searchHelpers(categoriasEnBD(analysis.categoria), analysis.palabrasClave)
     const r = await Promise.race([pregunta, espera])
     remote = r === SIN_RESPUESTA ? null : r
@@ -804,7 +826,11 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
     // EL OFICIO MANDA: ser del oficio pedido pesa más que todo lo demás
     // junto; el primero entendido, más que el segundo. Y dentro del oficio,
     // la especialidad que encaja con lo que cuenta («terapia de pareja»).
-    if (porOficio) {
+    if (porIA) {
+      // El orden de Claude: la especialidad que mejor encaja, primero.
+      const i = rangoIA(h)
+      if (i >= 0) score += 150 - 20 * i
+    } else if (porOficio) {
       const i = ids.findIndex(id => esDelOficio(h.specialty, id))
       if (i >= 0) score += 150 - 40 * i + puntosRefina(h.specialty, ids[i], analysis.texto || '')
       // Lo infantil, solo si habla de un niño: «psicólogo para mí» no es el
@@ -892,9 +918,9 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
   let compatibles = finalPool.filter(h => (porOficio ? delOficio(h) : toApp(h?.category) === analysis.categoria) && enSuCiudad(h))
   // NADIE DEL OFICIO: lo más parecido, pero DICIÉNDOLO (Home lo cuenta con
   // «Todavía no tengo a nadie que…»). Si tampoco hay parecidos, nadie.
-  if (porOficio && !compatibles.length && parecidos.length) {
+  if (porOficio && !compatibles.length && hayParecidos) {
     compatibles = finalPool.filter(h => deParecido(h) && enSuCiudad(h))
-      .map(h => ({ ...h, __aproximado: { oficio: oficio(ids[0]).nombre, quien: oficio(ids[0]).quien } }))
+      .map(h => ({ ...h, __aproximado: aproximado }))
   }
   // LO DECLARADO. Si pide algo comprobable («que hable catalán», «con
   // coche»), se miran los datos que los mejores candidatos confirmaron de si

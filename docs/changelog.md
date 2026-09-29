@@ -170,6 +170,15 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-18 — La búsqueda con Claude, con el mapa de oficios de respaldo
+
+- Motivo (Sergio): habrá muchos más oficios que la plantilla actual y el mapa escrito a mano no escala.
+- Nueva función `entender-busqueda`: Claude lee la frase y elige, de las especialidades que existen en las fichas, las que resuelven la necesidad (hasta 5, la mejor primero) y si es exacto o solo parecido. Un oficio nuevo en una ficha ya se encuentra solo.
+- Respaldo automático: sin clave (503), con fallo o si tarda más de 7 s, decide el mapa de oficios (`oficios.js`) como hasta ahora. Tras un 503 la app deja de preguntar en esa visita.
+- Privacidad: la frase se envía en el momento y no se guarda ni se registra; solo se cuenta cuántas búsquedas hubo al día (tope `NURA_BUSQUEDA_IA_MAX_DIA`, 3000). Línea añadida en Legal.
+- Pruebas: `test:busqueda` corre las 358 frases tres veces: sin IA, con una IA de prueba que acierta (la app usa bien su respuesta, también lo «aproximado») y con la IA caída (decide el mapa). Las tres, 100 %. La calidad real de Claude se mide con `NURA_IA_URL` cuando exista la clave.
+- Desplegada (versión 1), dormida hasta que exista `ANTHROPIC_API_KEY`.
+
 ## 2026-10-17 — El modelo gratuito de significado no entiende español
 
 - Medido con las 358 frases de `test:busqueda`: gte-small (Supabase) acierta el 30–46 %, frente al 100 % del mapa de oficios. Se descarta.

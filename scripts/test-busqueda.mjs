@@ -17,6 +17,13 @@
 // DECIRLO (resultado `aproximado`).
 //
 // Uso: npm run test:busqueda            (resumen y fallos)
+//      npm run test:busqueda -- --ia-simulada  (la vía de Claude, con una IA
+//        de prueba que acierta: comprueba que la app usa bien su respuesta)
+//      npm run test:busqueda -- --ia-caida     (Claude encendido pero sin
+//        responder: tiene que decidir el mapa de oficios, igual de bien)
+//      NURA_IA_URL=https://…/functions/v1/entender-busqueda NURA_IA_ORIGIN=https://…
+//        npm run test:busqueda   (mide Claude DE VERDAD; necesita la clave
+//        puesta en Supabase y cuesta una llamada por frase)
 //      npm run test:busqueda -- --todo  (cada frase)
 //      npm run test:busqueda -- --ver "frase"  (quién sale y con cuántos puntos)
 // ═══════════════════════════════════════════════════════════════════════
@@ -36,6 +43,15 @@ const src = process.env.NURA_SRC || join(root, 'src')
 cpSync(join(src, 'utils'), join(stage, 'utils'), { recursive: true })
 cpSync(join(src, 'data'), join(stage, 'data'), { recursive: true })
 cpSync(join(src, 'config.js'), join(stage, 'config.js'))
+// La vía de Claude: en la copia, la app cree que las funciones están encendidas.
+const IA_SIM = process.argv.includes('--ia-simulada'), IA_CAIDA = process.argv.includes('--ia-caida')
+const IA_URL = process.env.NURA_IA_URL || ''
+if (IA_SIM || IA_CAIDA || IA_URL) {
+  const c = join(stage, 'config.js')
+  writeFileSync(c, readFileSync(c, 'utf8')
+    .replace(/export const EDGE_WRITES = .*/, 'export const EDGE_WRITES = true')
+    .replace(/export const EDGE_URL = .*/, "export const EDGE_URL = 'https://prueba.invalid/functions/v1/helpers-write'"))
+}
 try { symlinkSync(join(root, 'node_modules'), join(stage, 'node_modules'), 'dir') } catch { /* ya existe */ }
 for (const dir of ['utils', 'data']) {
   for (const f of readdirSync(join(stage, dir))) {
@@ -57,7 +73,11 @@ function postgrest(url) {
   const u = new URL(url)
   let filas = FILAS
   for (const [k, v] of u.searchParams) {
-    if (k === 'category' && v.startsWith('ilike.')) filas = filas.filter(r => ilike(r.category, v.slice(6)))
+    if (k === 'specialty' && v.startsWith('in.(')) {
+      const s = [...v.slice(4, -1).matchAll(/"((?:[^"\\]|\\.)*)"/g)].map(m => m[1].replace(/\\(.)/g, '$1'))
+      filas = filas.filter(r => s.includes(r.specialty))
+    }
+    else if (k === 'category' && v.startsWith('ilike.')) filas = filas.filter(r => ilike(r.category, v.slice(6)))
     else if (k === 'category' && v.startsWith('in.(')) { const s = v.slice(4, -1).split(','); filas = filas.filter(r => s.includes(r.category)) }
     else if (k === 'id' && v.startsWith('eq.')) filas = filas.filter(r => String(r.id) === v.slice(3))
     else if (k === 'or') {
@@ -69,8 +89,26 @@ function postgrest(url) {
   const lim = Number(u.searchParams.get('limit') || 1000)
   return filas.slice(0, lim)
 }
-globalThis.fetch = async (url) => {
+// La IA de prueba: contesta con las especialidades que la frase da por
+// buenas (lo que diría un Claude que acierta). Así se prueba la vía entera
+// sin gastar: la calidad real de Claude se mide con NURA_IA_URL.
+const FRASE = new Map()
+const ESPECIALIDADES = [...new Map(FILAS.map(r => [r.specialty, r.category]))]
+const fetchReal = globalThis.fetch
+function iaSimulada(texto) {
+  const f = FRASE.get(texto)
+  if (!f || f.nadie) return { ok: true, especialidades: [] }
+  const elegidas = ESPECIALIDADES.filter(([e]) => f.ok.test(sinTildes(e))).slice(0, 5)
+  return { ok: true, especialidades: elegidas.map(([especialidad, categoria]) => ({ especialidad, categoria })),
+    exacto: !f.falta, nombre: 'alguien', quien: 'que haga eso' }
+}
+globalThis.fetch = async (url, opciones = {}) => {
   const s = String(url)
+  if (s.includes('/entender-busqueda')) {
+    if (IA_URL) return fetchReal(IA_URL, { ...opciones, headers: { ...opciones.headers, Origin: process.env.NURA_IA_ORIGIN || '' } })
+    if (IA_CAIDA) return new Response('{"error":"ia no disponible"}', { status: 502 })
+    return new Response(JSON.stringify(iaSimulada(JSON.parse(opciones.body).texto)), { status: 200 })
+  }
   const cuerpo = /\/rest\/v1\/helpers\?/.test(s) ? postgrest(s) : []
   return new Response(JSON.stringify(cuerpo), { status: 200, headers: { 'Content-Type': 'application/json' } })
 }
@@ -517,6 +555,8 @@ const pct = x => Math.round(100 * x / frases.length)
 console.log(`${nombre}: primera recomendación correcta ${bien}/${frases.length} (${pct(bien)}%) · alguna correcta entre las 3 primeras ${bienTop3}/${frases.length} (${pct(bienTop3)}%)\n`)
 return pct(bien)
 }
+for (const f of [...FRASES, ...NUEVAS, ...TERCERA]) FRASE.set(f.q, f)
+if (IA_SIM || IA_CAIDA || IA_URL) console.log(IA_URL ? 'Con Claude DE VERDAD\n' : IA_SIM ? 'Con una IA de prueba que acierta\n' : 'Con Claude encendido y sin responder (decide el mapa)\n')
 const p1 = await medir('Frases de construcción', FRASES)
 const p2 = await medir('Frases nuevas', NUEVAS)
 const p3 = await medir('Tercera tanda', TERCERA)
