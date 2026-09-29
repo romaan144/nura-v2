@@ -26,10 +26,10 @@ export const HELPERS = [
     responseTime: "< 15 min", completionRate: 98, services: 60,
     founder: true, dniVerified: true, criminalRecordClear: true,
     education: [
-      { title: "Grado en Logopedia", institution: "Universitat Ramon Llull — Blanquerna", year: "2013–2017", details: "Especialización en logopedia infantil. Fonología clínica, Audiología, CAA. Prácticas en Hospital Sant Joan de Déu.", verified: true },
+      { title: "Grado en Logopedia", institution: "Universitat Ramon Llull · Blanquerna", year: "2013–2017", details: "Especialización en logopedia infantil. Fonología clínica, Audiología, CAA. Prácticas en Hospital Sant Joan de Déu.", verified: true },
       { title: "Máster en Atención Temprana y Logopedia Infantil", institution: "Universitat Autònoma de Barcelona (UAB)", year: "2017–2019", details: "TFM: Intervención fonológica en TEL. Nota: 9,5/10.", verified: true },
-      { title: "Certificación en Terapia Miofuncional Orofacial", institution: "AELFA-IF — Asociación Española de Logopedia", year: "2021", details: "60 horas. Tratamiento de disfunciones orofaciales en niños de 3 a 12 años.", verified: true },
-      { title: "Colegiado — Col·legi de Logopedes de Catalunya", institution: "Col·legi de Logopedes de Catalunya", year: "2017", details: "Número de colegiación: CLC-4892. Seguro de responsabilidad civil activo.", verified: true },
+      { title: "Certificación en Terapia Miofuncional Orofacial", institution: "AELFA-IF · Asociación Española de Logopedia", year: "2021", details: "60 horas. Tratamiento de disfunciones orofaciales en niños de 3 a 12 años.", verified: true },
+      { title: "Colegiado · Col·legi de Logopedes de Catalunya", institution: "Col·legi de Logopedes de Catalunya", year: "2017", details: "Número de colegiación: CLC-4892. Seguro de responsabilidad civil activo.", verified: true },
     ],
     experience: [
       { role: "Logopeda infantil", company: "Clínica Sant Pau", companyLogo: "SP", period: "2019–2022", location: "Barcelona", competencies: ["diagnóstico fonológico", "terapia grupal e individual", "coordinación con pedagogos", "informes clínicos"], verifiedByCompany: true,
@@ -74,9 +74,9 @@ managerOpinion: { name:"Dra. Marta Puig", role:"Directora clínica", text:"Carlo
     founder: false, dniVerified: true, criminalRecordClear: true,
     education: [
       { title: "Grado en Logopedia", institution: "Universitat Autònoma de Barcelona (UAB)", year: "2015–2019", details: "Patología del lenguaje adulto, Neurolingüística, Intervención temprana. Nota media: 7,8/10.", verified: true },
-      { title: "Máster en Logopedia Neurológica — Adultos con daño cerebral", institution: "Universitat de Barcelona (UB)", year: "2019–2021", details: "Disfasia adquirida, disartria, disfagia. Prácticas en Hospital Vall d'Hebron.", verified: true },
-      { title: "Colegiada — Col·legi de Logopedes de Catalunya", institution: "Col·legi de Logopedes de Catalunya", year: "2019", details: "Número de colegiación: CLC-5217. Seguro de responsabilidad civil activo.", verified: true },
-      { title: "Certificación en Comunicación Aumentativa y Alternativa (CAA)", institution: "ISAAC — International Society for Augmentative and Alternative Communication", year: "2022", details: "PECS, tableros de comunicación, aplicaciones para personas con disfasia grave.", verified: true },
+      { title: "Máster en Logopedia Neurológica · Adultos con daño cerebral", institution: "Universitat de Barcelona (UB)", year: "2019–2021", details: "Disfasia adquirida, disartria, disfagia. Prácticas en Hospital Vall d'Hebron.", verified: true },
+      { title: "Colegiada · Col·legi de Logopedes de Catalunya", institution: "Col·legi de Logopedes de Catalunya", year: "2019", details: "Número de colegiación: CLC-5217. Seguro de responsabilidad civil activo.", verified: true },
+      { title: "Certificación en Comunicación Aumentativa y Alternativa (CAA)", institution: "ISAAC · International Society for Augmentative and Alternative Communication", year: "2022", details: "PECS, tableros de comunicación, aplicaciones para personas con disfasia grave.", verified: true },
     ],
     experience: [
       { role: "Logopeda", company: "Hospital Vall d'Hebron", companyLogo: "SP", period: "2019–2021", location: "Barcelona", competencies: ["disfagia neurológica", "trabajo en equipo multidisciplinar", "rehabilitación post-ACV"], verifiedByCompany: true,
@@ -115,10 +115,10 @@ colleagueOpinions: [{ name:"Núria Mas", role:"Fisioterapeuta", text:"Colaborar 
     urgent: true, founder: true, dniVerified: true, criminalRecordClear: true,
     education: [
       { title: "FP Superior Climatización y Frío Industrial", institution: "IES Escola del Treball, Barcelona", year: "2005–2007", details: "Instalaciones de climatización, mantenimiento de calefacción, normativa gas, eficiencia energética.", verified: true },
-      { title: "Certificado Técnico Gas Natural — Habilitación oficial Naturgy", institution: "Naturgy España", year: "2010", details: "Habilitado para instalación y mantenimiento de sistemas de gas natural en instalaciones domésticas.", verified: true },
-      { title: "Certificado de Instalador de Gas — Categoría B", institution: "Agència de l'Energia de Catalunya", year: "2013", details: "Habilitación oficial. Instalación y mantenimiento de equipos de gas en domicilios y locales.", verified: true },
-      { title: "Habilitación RITE — Reglamento de Instalaciones Térmicas en Edificios", institution: "Agència de l'Energia de Catalunya", year: "2014", details: "Instalaciones térmicas hasta 70 kW. Renovación 2020 vigente.", verified: true },
-      { title: "Técnico Oficial Certificado — Calderas Viessmann Vitodens", institution: "Viessmann España", year: "2019", details: "Certificación para calderas de condensación Vitodens 050/100/200. Reparación oficial en garantía.", verified: true },
+      { title: "Certificado Técnico Gas Natural · Habilitación oficial Naturgy", institution: "Naturgy España", year: "2010", details: "Habilitado para instalación y mantenimiento de sistemas de gas natural en instalaciones domésticas.", verified: true },
+      { title: "Certificado de Instalador de Gas · Categoría B", institution: "Agència de l'Energia de Catalunya", year: "2013", details: "Habilitación oficial. Instalación y mantenimiento de equipos de gas en domicilios y locales.", verified: true },
+      { title: "Habilitación RITE · Reglamento de Instalaciones Térmicas en Edificios", institution: "Agència de l'Energia de Catalunya", year: "2014", details: "Instalaciones térmicas hasta 70 kW. Renovación 2020 vigente.", verified: true },
+      { title: "Técnico Oficial Certificado · Calderas Viessmann Vitodens", institution: "Viessmann España", year: "2019", details: "Certificación para calderas de condensación Vitodens 050/100/200. Reparación oficial en garantía.", verified: true },
     ],
     
     experience: [
@@ -160,9 +160,9 @@ colleagueOpinions: [{ name:"Paco Llopis", role:"Técnico", text:"El mejor compa�
     qualificationLevel: "experienced", responseTime: "< 1 hora", completionRate: 97, services: 58,
     founder: true, dniVerified: true, criminalRecordClear: true,
     education: [
-      { title: "Certificado de Profesionalidad — Limpieza de superficies y mobiliario", institution: "SEPE — Servicio Público de Empleo Estatal", year: "2018", details: "320 horas: técnicas de limpieza, productos y maquinaria profesional, gestión de residuos, prevención de riesgos laborales.", verified: true },
+      { title: "Certificado de Profesionalidad · Limpieza de superficies y mobiliario", institution: "SEPE · Servicio Público de Empleo Estatal", year: "2018", details: "320 horas: técnicas de limpieza, productos y maquinaria profesional, gestión de residuos, prevención de riesgos laborales.", verified: true },
       { title: "Curso de Limpieza con Productos Ecológicos y Sostenibles", institution: "Escola de Medi Ambient de Barcelona", year: "2020", details: "24 horas. Productos certificados Ecolabel. Reducción de impacto químico en espacios domésticos.", verified: true },
-      { title: "Certificación en Organización del Hogar — Método KonMari", institution: "KonMari Certified Consultants Program", year: "2022", details: "Metodología oficial Marie Kondo. Organización de armarios, cocinas y espacios de almacenaje.", verified: true },
+      { title: "Certificación en Organización del Hogar · Método KonMari", institution: "KonMari Certified Consultants Program", year: "2022", details: "Metodología oficial Marie Kondo. Organización de armarios, cocinas y espacios de almacenaje.", verified: true },
     ],
     experience: [
       { role: "Auxiliar de geriatría", company: "Residencia Les Corts", companyLogo: "RC", period: "2018–2022", location: "Barcelona", competencies: ["higiene personal", "administración de medicación", "estimulación cognitiva", "urgencias sanitarias básicas"], verifiedByCompany: true,
@@ -171,7 +171,7 @@ managerOpinion: { name:"Dra. Pilar Mas", role:"Directora médica", text:"Elena t
 { name:"Montse Vilar", role:"Auxiliar de enfermería", text:"La mejor compañera que he tenido en geriatría. Siempre tranquila, incluso en las situaciones más difíciles.", avatar:"MV"},
         ]
       },
-      { role: "Cuidadora a domicilio", company: "Atendo — Barcelona", companyLogo: "AT", period: "2022–2024", location: "Barcelona", competencies: ["acompañamiento personalizado", "fisioterapia básica de mantenimiento", "coordinación médica"], verifiedByCompany: true,
+      { role: "Cuidadora a domicilio", company: "Atendo · Barcelona", companyLogo: "AT", period: "2022–2024", location: "Barcelona", competencies: ["acompañamiento personalizado", "fisioterapia básica de mantenimiento", "coordinación médica"], verifiedByCompany: true,
 managerOpinion: { name:"Carles Font", role:"Coordinador de servicios", text:"Con Elena teníamos cero incidencias y cero quejas. Las familias la renovaban siempre.", avatar:"CF", rating: 5 },
         colleagueOpinions: []
       },
@@ -211,8 +211,8 @@ managerOpinion: { name:"Carles Font", role:"Coordinador de servicios", text:"Con
     education: [
       { title: "Técnico en Cuidados Auxiliares de Enfermería (TCAE)", institution: "IES Consell de Cent, Barcelona", year: "2018–2019", details: "Higiene y cuidados del paciente, técnicas básicas de enfermería, apoyo psicológico, primeros auxilios.", verified: true },
       { title: "Certificado en Alzheimer y demencias avanzadas", institution: "Associació de Familiars d'Alzheimer de Catalunya (AFAC)", year: "2021", details: "Manejo conductual, estimulación cognitiva, técnicas de contención no farmacológica.", verified: true },
-      { title: "Certificado en Cuidados Paliativos — Atención al final de la vida", institution: "Fundació Institut Català de Palliativa", year: "2022", details: "40 horas. Comunicación con pacientes y familias en situación terminal y duelo anticipado.", verified: true },
-      { title: "RCP y uso de DEA — Certificación vigente", institution: "Cruz Roja Española", year: "2023", details: "Reanimación cardiopulmonar básica y uso de desfibrilador externo. Renovación anual.", verified: true },
+      { title: "Certificado en Cuidados Paliativos · Atención al final de la vida", institution: "Fundació Institut Català de Palliativa", year: "2022", details: "40 horas. Comunicación con pacientes y familias en situación terminal y duelo anticipado.", verified: true },
+      { title: "RCP y uso de DEA · Certificación vigente", institution: "Cruz Roja Española", year: "2023", details: "Reanimación cardiopulmonar básica y uso de desfibrilador externo. Renovación anual.", verified: true },
     ],
     experience: [
       { role: "Auxiliar de geriatría", company: "Residencia Les Corts", companyLogo: "RC", period: "2018–2022", location: "Barcelona", competencies: ["higiene personal", "administración de medicación", "estimulación cognitiva", "urgencias sanitarias básicas"], verifiedByCompany: true,
@@ -221,7 +221,7 @@ managerOpinion: { name:"Dra. Pilar Mas", role:"Directora médica", text:"Elena t
 { name:"Montse Vilar", role:"Auxiliar de enfermería", text:"La mejor compañera que he tenido en geriatría. Siempre tranquila, incluso en las situaciones más difíciles.", avatar:"MV"},
         ]
       },
-      { role: "Cuidadora a domicilio", company: "Atendo — Barcelona", companyLogo: "AT", period: "2022–2024", location: "Barcelona", competencies: ["acompañamiento personalizado", "fisioterapia básica de mantenimiento", "coordinación médica"], verifiedByCompany: true,
+      { role: "Cuidadora a domicilio", company: "Atendo · Barcelona", companyLogo: "AT", period: "2022–2024", location: "Barcelona", competencies: ["acompañamiento personalizado", "fisioterapia básica de mantenimiento", "coordinación médica"], verifiedByCompany: true,
 managerOpinion: { name:"Carles Font", role:"Coordinador de servicios", text:"Con Elena teníamos cero incidencias y cero quejas. Las familias la renovaban siempre.", avatar:"CF", rating: 5 },
         colleagueOpinions: []
       },
@@ -258,9 +258,9 @@ managerOpinion: { name:"Carles Font", role:"Coordinador de servicios", text:"Con
     qualificationLevel: "experienced", responseTime: "< 45 min", completionRate: 96, services: 43,
     founder: false, dniVerified: true, criminalRecordClear: false,
     education: [
-      { title: "Curso de Cuidador y Adiestrador Canino — Certificado profesional", institution: "Escola de Formació en Mascotes de Catalunya", year: "2018", details: "Etología canina, técnicas de adiestramiento positivo, cuidados veterinarios básicos, manejo de grupos.", verified: true },
+      { title: "Curso de Cuidador y Adiestrador Canino · Certificado profesional", institution: "Escola de Formació en Mascotes de Catalunya", year: "2018", details: "Etología canina, técnicas de adiestramiento positivo, cuidados veterinarios básicos, manejo de grupos.", verified: true },
       { title: "Certificación en Primeros Auxilios para Animales", institution: "Col·legi de Veterinaris de Catalunya", year: "2020", details: "Actuación ante urgencias veterinarias. Reconocimiento de signos de dolor o enfermedad.", verified: true },
-      { title: "Responsabilidad Civil — Seguro específico para cuidadores de mascotas", institution: "Reale Seguros", year: "2019", details: "Cobertura activa. Incluye daños a terceros durante el cuidado de animales de compañía.", verified: true },
+      { title: "Responsabilidad Civil · Seguro específico para cuidadores de mascotas", institution: "Reale Seguros", year: "2019", details: "Cobertura activa. Incluye daños a terceros durante el cuidado de animales de compañía.", verified: true },
       { title: "Curso de Nutrición y Alimentación Canina", institution: "Escola de Especialización en Animales de Compañía", year: "2021", details: "Alimentación BARF, dietas especiales, suplementación, manejo de alergias alimentarias en perros.", verified: true },
     ],
     experience: [
@@ -300,9 +300,9 @@ managerOpinion: { name:"Dr. Pau Roca", role:"Veterinario titular", text:"Marta t
     founder: true, dniVerified: true, criminalRecordClear: true,
     education: [
       { title: "Grado en Matemáticas (4º año en curso)", institution: "Universitat de Barcelona (UB)", year: "2021–presente", details: "Álgebra lineal, Cálculo, Estadística, Topología, Análisis matemático. Nota media: 8,4/10.", verified: true },
-      { title: "Bachillerato Científico — Premio extraordinario", institution: "IES Gaudí, Barcelona", year: "2019–2021", details: "Media: 9,2/10. Mención especial en Matemáticas II y Física.", verified: true },
-      { title: "Certificación en Pedagogía y Didáctica de las Matemáticas", institution: "Escola de Formació del Professorat — Universitat de Barcelona", year: "2023", details: "40 horas. Técnicas de enseñanza adaptada, detección de dificultades, metodologías activas.", verified: true },
-      { title: "Preparadora oficial EBAU — Matemáticas II", institution: "Acadèmia Àgora, Barcelona", year: "2022–presente", details: "9 alumnos presentados, 8 aprobados. Primera sesión de evaluación gratuita.", verified: true },
+      { title: "Bachillerato Científico · Premio extraordinario", institution: "IES Gaudí, Barcelona", year: "2019–2021", details: "Media: 9,2/10. Mención especial en Matemáticas II y Física.", verified: true },
+      { title: "Certificación en Pedagogía y Didáctica de las Matemáticas", institution: "Escola de Formació del Professorat · Universitat de Barcelona", year: "2023", details: "40 horas. Técnicas de enseñanza adaptada, detección de dificultades, metodologías activas.", verified: true },
+      { title: "Preparadora oficial EBAU · Matemáticas II", institution: "Acadèmia Àgora, Barcelona", year: "2022–presente", details: "9 alumnos presentados, 8 aprobados. Primera sesión de evaluación gratuita.", verified: true },
     ],
     experience: [
       { role: "Profesora particular", company: "Cuenta propia", companyLogo: "CP", period: "2022–presente", location: "Barcelona", competencies: ["adaptación al nivel del alumno", "paciencia pedagógica", "preparación de exámenes"], verifiedByCompany: false },
@@ -339,9 +339,9 @@ managerOpinion: { name:"Dr. Pau Roca", role:"Veterinario titular", text:"Marta t
     founder: false, dniVerified: true, criminalRecordClear: true,
     education: [
       { title: "Grado en Ciencias de la Actividad Física y del Deporte (CAFYD)", institution: "Universitat de Barcelona (UB)", year: "2013–2017", details: "Especialización en entrenamiento personal y fitness. Fisiología del ejercicio, Biomecánica, Nutrición deportiva. Nota media: 8,1.", verified: true },
-      { title: "Certificación NSCA-CSCS — Certified Strength and Conditioning Specialist", institution: "National Strength and Conditioning Association (NSCA)", year: "2018", details: "Certificación internacional de referencia mundial en entrenamiento de fuerza y acondicionamiento.", verified: true },
-      { title: "Máster en Nutrición Deportiva y Rendimiento", institution: "INEFC — Institut Nacional d'Educació Física de Catalunya", year: "2019–2020", details: "Planificación nutricional para deportistas, suplementación legal, composición corporal.", verified: true },
-      { title: "Certificación en Entrenamiento Funcional — TRX Suspension Training", institution: "Fitness Anywhere (TRX)", year: "2021", details: "Instructor oficial TRX. Programas de fuerza funcional para todos los niveles.", verified: true },
+      { title: "Certificación NSCA-CSCS · Certified Strength and Conditioning Specialist", institution: "National Strength and Conditioning Association (NSCA)", year: "2018", details: "Certificación internacional de referencia mundial en entrenamiento de fuerza y acondicionamiento.", verified: true },
+      { title: "Máster en Nutrición Deportiva y Rendimiento", institution: "INEFC · Institut Nacional d'Educació Física de Catalunya", year: "2019–2020", details: "Planificación nutricional para deportistas, suplementación legal, composición corporal.", verified: true },
+      { title: "Certificación en Entrenamiento Funcional · TRX Suspension Training", institution: "Fitness Anywhere (TRX)", year: "2021", details: "Instructor oficial TRX. Programas de fuerza funcional para todos los niveles.", verified: true },
     ],
     experience: [
       { role: "Entrenador personal", company: "Holmes Place Barcelona", companyLogo: "HP", period: "2018–2022", location: "Barcelona", competencies: ["evaluación física", "diseño de programas", "motivación del cliente", "nutrición básica"], verifiedByCompany: true,
@@ -444,16 +444,16 @@ managerOpinion: { name:"Dr. Francesc Vilar", role:"Director clínico", text:"La 
       { title: "LLM en Derecho Corporativo y Mercados de Capital", institution: "ESADE Law School, Barcelona", year: "2014–2015", details: "Especialización en estructuración de operaciones M&A, venture capital y financiación de startups.", verified: true },
       { title: "Licenciatura en Derecho", institution: "Universitat Pompeu Fabra (UPF)", year: "2006–2011", details: "Especialización en Derecho Mercantil y Derecho Internacional Privado. Premio de la promoción.", verified: true },
       { title: "Máster en Acceso a la Abogacía", institution: "UPF Barcelona School of Management", year: "2011–2013", details: "Formación práctica. Prácticas en Garrigues Abogados. Nota media: 8,6/10.", verified: true },
-      { title: "Colegiado — Il·lustre Col·legi de l'Advocacia de Barcelona (ICAB)", institution: "Il·lustre Col·legi de l'Advocacia de Barcelona", year: "2013", details: "Número de colegiación: ICAB 38.421. Activo y en ejercicio.", verified: true },
+      { title: "Colegiado · Il·lustre Col·legi de l'Advocacia de Barcelona (ICAB)", institution: "Il·lustre Col·legi de l'Advocacia de Barcelona", year: "2013", details: "Número de colegiación: ICAB 38.421. Activo y en ejercicio.", verified: true },
     ],
     experience: [
-      { role: "Abogado senior — Departamento Mercantil", company: "Garrigues Barcelona", companyLogo: "GA", period: "2014–2021", location: "Barcelona", competencies: ["M&A", "due diligence", "contratos internacionales", "arbitraje", "operaciones de inversión", "reestructuraciones societarias"], verifiedByCompany: true,
-managerOpinion: { name:"Marta Alonso", role:"Socia directora — Garrigues BCN", text:"Jordi es uno de los abogados más completos que he tenido en el despacho. Su capacidad de simplificar lo complejo para el cliente es extraordinaria. No es habitual.", avatar:"MA", rating: 5 },
+      { role: "Abogado senior · Departamento Mercantil", company: "Garrigues Barcelona", companyLogo: "GA", period: "2014–2021", location: "Barcelona", competencies: ["M&A", "due diligence", "contratos internacionales", "arbitraje", "operaciones de inversión", "reestructuraciones societarias"], verifiedByCompany: true,
+managerOpinion: { name:"Marta Alonso", role:"Socia directora · Garrigues BCN", text:"Jordi es uno de los abogados más completos que he tenido en el despacho. Su capacidad de simplificar lo complejo para el cliente es extraordinaria. No es habitual.", avatar:"MA", rating: 5 },
         colleagueOpinions: [
 { name:"Rafael Soler", role:"Abogado senior", text:"El mejor en operaciones de M&A que he visto en su rango de edad. Metódico, claro y siempre orientado al resultado.", avatar:"RS"},
         ]
       },
-      { role: "Abogado independiente — Legal Advisor", company: "Jordi Prat Legal", companyLogo: "JP", period: "2021–presente", location: "Barcelona / Remoto", competencies: ["asesoramiento a fundadores", "rondas de inversión", "pactos de socios", "propiedad intelectual tecnológica", "RGPD avanzado"], verifiedByCompany: false },
+      { role: "Abogado independiente · Legal Advisor", company: "Jordi Prat Legal", companyLogo: "JP", period: "2021–presente", location: "Barcelona / Remoto", competencies: ["asesoramiento a fundadores", "rondas de inversión", "pactos de socios", "propiedad intelectual tecnológica", "RGPD avanzado"], verifiedByCompany: false },
     ],
     languages: ["Catalán (nativo)", "Español (nativo)", "Inglés (C2)", "Francés (B1)"],
     personality: { patience: 9.0, empathy: 8.5, communication: 9.6, punctuality: 9.8, autonomy: 9.9 },
@@ -493,12 +493,12 @@ managerOpinion: { name:"Marta Alonso", role:"Socia directora — Garrigues BCN",
       { title: "Doctorado en Medicina Interna y Enfermedades Infecciosas", institution: "Universitat de Barcelona (UB)", year: "2016–2020", details: "Tesis: Biomarcadores de progresión en enfermedades autoinmunes. Publicada en The Lancet Rheumatology.", verified: true },
       { title: "Especialidad MIR en Medicina Interna", institution: "Hospital Clínic de Barcelona", year: "2012–2016", details: "Residencia médica de 4 años. Rotaciones en UCI, Urgencias, Enfermedades Infecciosas, Reumatología.", verified: true },
       { title: "Licenciatura en Medicina y Cirugía", institution: "Universitat de Barcelona (UB)", year: "2006–2012", details: "Nota: 9,1/10. Matrícula de Honor en Patología General y Farmacología Clínica.", verified: true },
-      { title: "Colegiada — Col·legi de Metges de Barcelona (COMB)", institution: "Col·legi de Metges de la província de Barcelona", year: "2012", details: "Número de colegiación: COMB 40.127. Especialista en Medicina Interna activa.", verified: true },
+      { title: "Colegiada · Col·legi de Metges de Barcelona (COMB)", institution: "Col·legi de Metges de la província de Barcelona", year: "2012", details: "Número de colegiación: COMB 40.127. Especialista en Medicina Interna activa.", verified: true },
       { title: "Certificación en Medicina Preventiva y Vacunología del Viajero", institution: "Centre de Vacunació Internacional, Hospital Clínic", year: "2021", details: "Vacunación internacional, consejo médico para viajeros, profilaxis antipalúdica.", verified: true },
     ],
     experience: [
-      { role: "Médica adjunta — Servicio de Medicina Interna", company: "Hospital Clínic de Barcelona", companyLogo: "SP", period: "2015–2022", location: "Barcelona", competencies: ["diagnóstico diferencial complejo", "coordinación de equipos", "investigación clínica", "docencia universitaria", "atención a casos de alta complejidad"], verifiedByCompany: true,
-managerOpinion: { name:"Dr. Antoni Mas", role:"Jefe de servicio — Medicina Interna", text:"La Dra. Mercadé tiene una capacidad diagnóstica sobresaliente. Pero lo que la distingue es cómo comunica con el paciente. Hace accesible lo complejo sin simplificarlo.", avatar:"AM", rating: 5 },
+      { role: "Médica adjunta · Servicio de Medicina Interna", company: "Hospital Clínic de Barcelona", companyLogo: "SP", period: "2015–2022", location: "Barcelona", competencies: ["diagnóstico diferencial complejo", "coordinación de equipos", "investigación clínica", "docencia universitaria", "atención a casos de alta complejidad"], verifiedByCompany: true,
+managerOpinion: { name:"Dr. Antoni Mas", role:"Jefe de servicio · Medicina Interna", text:"La Dra. Mercadé tiene una capacidad diagnóstica sobresaliente. Pero lo que la distingue es cómo comunica con el paciente. Hace accesible lo complejo sin simplificarlo.", avatar:"AM", rating: 5 },
         colleagueOpinions: [
 { name:"Núria Valls", role:"Médica residente (R4)", text:"Aprendí más en 3 meses trabajando con ella que en los 2 años anteriores.", avatar:"NV"},
 { name:"Dr. Marc Puig", role:"Cardiólogo", text:"Una internista de referencia. Siempre la primera a quien consulto casos complejos.", avatar:"MP"},
@@ -540,10 +540,10 @@ managerOpinion: { name:"Dr. Antoni Mas", role:"Jefe de servicio — Medicina Int
     qualificationLevel: "professional", responseTime: "< 3 horas", completionRate: 96, services: 34,
     founder: false, dniVerified: true, criminalRecordClear: true,
     education: [
-      { title: "Máster en Arquitectura Sostenible y Bioclimática", institution: "ETH Zürich — Eidgenössische Technische Hochschule", year: "2014–2016", details: "Proyecto fin de máster: Rehabilitación pasiva de edificios plurifamiliares en Barcelona. Distinción.", verified: true },
-      { title: "Grado en Arquitectura (ETSAB)", institution: "Escola Tècnica Superior d'Arquitectura de Barcelona — UPC", year: "2008–2014", details: "Nota media: 8,4/10. Proyecto fin de carrera: Sistema modular de vivienda social flexible. Matrícula de honor.", verified: true },
-      { title: "Arquitecto Colegiado — COAC", institution: "Col·legi d'Arquitectes de Catalunya (COAC)", year: "2016", details: "Número de colegiación: COAC 47.892. Dirección de obra y visado de proyectos activos.", verified: true },
-      { title: "Certificación en Passivhaus — Designer acreditado", institution: "Passivhaus Institut, Darmstadt (Alemania)", year: "2020", details: "Diseño de edificios con consumo casi nulo de energía (ECCN). Certificación más exigente de Europa.", verified: true },
+      { title: "Máster en Arquitectura Sostenible y Bioclimática", institution: "ETH Zürich · Eidgenössische Technische Hochschule", year: "2014–2016", details: "Proyecto fin de máster: Rehabilitación pasiva de edificios plurifamiliares en Barcelona. Distinción.", verified: true },
+      { title: "Grado en Arquitectura (ETSAB)", institution: "Escola Tècnica Superior d'Arquitectura de Barcelona · UPC", year: "2008–2014", details: "Nota media: 8,4/10. Proyecto fin de carrera: Sistema modular de vivienda social flexible. Matrícula de honor.", verified: true },
+      { title: "Arquitecto Colegiado · COAC", institution: "Col·legi d'Arquitectes de Catalunya (COAC)", year: "2016", details: "Número de colegiación: COAC 47.892. Dirección de obra y visado de proyectos activos.", verified: true },
+      { title: "Certificación en Passivhaus · Designer acreditado", institution: "Passivhaus Institut, Darmstadt (Alemania)", year: "2020", details: "Diseño de edificios con consumo casi nulo de energía (ECCN). Certificación más exigente de Europa.", verified: true },
     ],
     experience: [
       { role: "Arquitecto asociado", company: "Enric Ruiz-Geli / Cloud 9 Studio", companyLogo: "JP", period: "2017–2020", location: "Barcelona", competencies: ["proyectos innovadores", "integración tecnología-arquitectura", "coordinación de obra", "BIM avanzado", "presentaciones internacionales"], verifiedByCompany: true,
@@ -563,7 +563,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
 { text:"Muy transparente en costes y plazos. Cero sorpresas.", user:"Pareja, reforma Eixample", date:"Ene 2026", avatar:"P"},
     ],
     posts: [
-{ id: 1, type:"work", text:"Reforma finalizada en el Eixample: un piso de 1960 transformado con criterios de passive house. La calefacción de invierno pasó de 180€/mes a 45€/mes. La arquitectura bien hecha no es más cara — es más inteligente.", date:"Hace 4 días", likes: 312, comments: 48, verifiedWork: true },
+{ id: 1, type:"work", text:"Reforma finalizada en el Eixample: un piso de 1960 transformado con criterios de passive house. La calefacción de invierno pasó de 180€/mes a 45€/mes. La arquitectura bien hecha no es más cara · es más inteligente.", date:"Hace 4 días", likes: 312, comments: 48, verifiedWork: true },
     ],
     evolution: [{ period: "2020", rating: 4.7, services: 6 }, { period: "2021", rating: 4.8, services: 14 }, { period: "2022", rating: 4.8, services: 22 }, { period: "2023", rating: 4.8, services: 34 }],
   },
@@ -1188,7 +1188,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
   {
     id: 2053,
     name: "Carla Mas Vilar",
-    specialty: "ebau — preparación acceso",
+    specialty: "ebau · preparación acceso",
     category: "clases",
     bio: "Profesora especializada en EBAU/Selectividad con 97% de aprobados en 9 años. Estrategias de estudio, gestión del tiempo y técnicas de examen. Grupos reducidos y clases individuales. Online y presencial en Barcelona.",
     quote: "No existen alumnos que no puedan aprender. Solo métodos que aún no hemos encontrado.",
@@ -1388,7 +1388,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
     name: "Jordi Pons Mas",
     specialty: "asesor financiero",
     category: "legal",
-    bio: "Asesor financiero certificado (EFA) con 10 años de experiencia. Planificación financiera personal, inversiones, fondos, pensiones y seguros. Sin conflicto de interés — trabajo solo para el cliente.",
+    bio: "Asesor financiero certificado (EFA) con 10 años de experiencia. Planificación financiera personal, inversiones, fondos, pensiones y seguros. Sin conflicto de interés · trabajo solo para el cliente.",
     quote: "Mi trabajo es que el derecho esté de tu lado. Y si no lo está, hacerlo estar.",
     rating: 4.9,
     reviews: 73,

@@ -1,4 +1,5 @@
 import { avatarDe, avatarVigente } from '../utils/avatar'
+import { sinRayas } from './texto'
 import { getFirstName } from './name'
 
 // ── Contexto de precio por categoría (mercado Barcelona) ──────────────────
@@ -702,7 +703,7 @@ export function analyzeNeed(userTextOriginal) {
 
 function normalizeHelper(h) {
   if (!h) return null
-  return {
+  return sinRayas({
     ...h,
     avatarColor: h.avatar_color || h.avatarColor || '#1A56DB',
     avatarUrl: avatarVigente(h.avatarUrl, h.name) || avatarDe(encodeURIComponent((h.name || '').split(' ')[0])),
@@ -722,7 +723,7 @@ function normalizeHelper(h) {
     reviews: parseInt(h.reviews) || 0,
     services: parseInt(h.services) || 0,
     price: h.price || null,
-  }
+  })
 }
 
 export async function matchHelpers(analysis, limit = 4, refinement = null, previousResults = null) {

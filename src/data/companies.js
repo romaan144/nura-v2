@@ -45,7 +45,7 @@ export const COMPANIES = [
   {
     id: 'c3',
     type: 'company',
-    name: 'AtendoCare — Cuidados a domicilio',
+    name: 'AtendoCare · Cuidados a domicilio',
     handle: '@atendocare',
     avatar: 'AC',
     avatarColor: '#DB2777',

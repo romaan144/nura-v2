@@ -16,13 +16,13 @@ export const TYPE_META = {
 
 export const SEED_OBRA = [
   { id: 'o1', helperId: 1, who: { name: 'Carlos Martínez Vidal', specialty: 'Logopeda infantil' }, type: 'caso', verified: true,
-    title: 'El caso de la R', body: 'Llegó con 6 años y la R escondida. Trabajamos con juegos de soplo y espejo, ocho sesiones cortas, sin presión — la familia practicaba dos minutos al día en el coche.', result: 'Hoy pronuncia la R en conversación espontánea.' },
+    title: 'El caso de la R', body: 'Llegó con 6 años y la R escondida. Trabajamos con juegos de soplo y espejo, ocho sesiones cortas, sin presión. La familia practicaba dos minutos al día en el coche.', result: 'Hoy pronuncia la R en conversación espontánea.' },
   { id: 'o3', helperId: 3, who: { name: 'Roberto Sánchez Ferrer', specialty: 'Técnico de calderas' }, type: 'trabajo', verified: true,
     title: 'Renovación completa de una instalación de 1987', body: 'Piso en Gràcia con caldera original y radiadores a media vida. Sustitución completa, purga de circuito y termostato inteligente en dos jornadas.', result: 'Consumo estimado un 30% menor este invierno.' },
   { id: 'o8', helperId: 8, who: { name: 'David Moreno Llopis', specialty: 'Entrenador personal' }, type: 'evolucion', verified: true,
     title: 'Seis meses de Jordi: de cero a su primer 10K', body: 'Empezamos caminando 20 minutos. Tres días por semana, progresión suave, cero lesiones. Lo importante no fue el plan: fue que nunca dejó de venir.', result: '10K en 58 minutos y el hábito consolidado.' },
   { id: 'o5', helperId: 5, who: { name: 'Elena Fernández Ros', specialty: 'Auxiliar de geriatría' }, type: 'caso', verified: true,
-    title: 'Acompañar sin invadir', body: 'Señora de 84 con Alzheimer inicial que rechazaba "cuidadoras". Entré como compañía de paseos. En tres semanas, las mañanas tenían rutina: mercado, banco del parque, crucigrama.', result: 'La familia recuperó sus mañanas — y ella, las suyas.' },
+    title: 'Acompañar sin invadir', body: 'Señora de 84 con Alzheimer inicial que rechazaba "cuidadoras". Entré como compañía de paseos. En tres semanas, las mañanas tenían rutina: mercado, banco del parque, crucigrama.', result: 'La familia recuperó sus mañanas, y ella, las suyas.' },
   { id: 'o10', helperId: 10, who: { name: 'Jordi Prat Vidal', specialty: 'Abogado mercantil' }, type: 'actualidad',
     title: 'Lo que de verdad cambia con la nueva ley de startups', body: 'Tres puntos que afectan a cualquiera que facture como autónomo societario: stock options, deducción I+D y la ventanilla única. El resto es ruido de titulares.' },
   { id: 'o12', helperId: 12, who: { name: 'Marc Tort Alemany', specialty: 'Arquitecto' }, type: 'trabajo',
@@ -34,9 +34,9 @@ export const SEED_OBRA = [
   { id: 'o6', helperId: 6, who: { name: 'Marta Puig Sala', specialty: 'Cuidadora de animales' }, type: 'consejo',
     title: 'Paseos que cansan la cabeza, no solo las patas', body: 'Diez minutos de olfato libre cansan más que media hora de tirar de correa. Deja que el perro "lea el periódico": el paseo es suyo, no tuyo.' },
   { id: 'o4', helperId: 4, who: { name: 'María López Castillo', specialty: 'Limpiadora de hogar' }, type: 'consejo',
-    title: 'El orden que se mantiene solo', body: 'Quince minutos al final del día, siempre a la misma hora, siempre en el mismo orden: cocina, salón, entrada. No es limpiar más — es no dejar que se acumule.' },
+    title: 'El orden que se mantiene solo', body: 'Quince minutos al final del día, siempre a la misma hora, siempre en el mismo orden: cocina, salón, entrada. No es limpiar más: es no dejar que se acumule.' },
   { id: 'o11', helperId: 11, who: { name: 'Dra. Laia Mercadé Font', specialty: 'Médica internista' }, type: 'actualidad',
-    title: 'Chequeos que sí importan a partir de los 50', body: 'Colonoscopia, densitometría si hay factores, y la analítica anual bien leída — no la del "todo normal" de dos minutos. Prevenir es aburrido hasta que deja de serlo.' },
+    title: 'Chequeos que sí importan a partir de los 50', body: 'Colonoscopia, densitometría si hay factores, y la analítica anual bien leída, no la del "todo normal" de dos minutos. Prevenir es aburrido hasta que deja de serlo.' },
   { id: 'o2', helperId: 2, who: { name: 'Sara Gómez Puig', specialty: 'Logopeda' }, type: 'hito',
     title: 'Certificada en terapia miofuncional', body: 'Tres meses de formación para tratar mejor la deglución atípica y los hábitos orales. Lo que aprendo fuera vuelve siempre a la consulta.' },
 ]
@@ -44,7 +44,7 @@ export const SEED_OBRA = [
 // Comentarios semilla — el tono del mandato: útiles, firmados, sin ruido
 export const SEED_COMMENTS = {
   o1: [
-    { id: 'c1', author: 'Marta G.', text: 'Gracias por compartir esto. Mi hija tiene 5 años y está igual — me has dado esperanza.', ago: 'hace 6 días' },
+    { id: 'c1', author: 'Marta G.', text: 'Gracias por compartir esto. Mi hija tiene 5 años y está igual. Me has dado esperanza.', ago: 'hace 6 días' },
     { id: 'c2', author: 'Nuria P.', text: '¿Cuántas sesiones suelen hacer falta en un caso así?', ago: 'hace 4 días' },
   ],
   o3: [

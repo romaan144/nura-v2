@@ -1,4 +1,5 @@
 import { avatarDe, avatarVigente } from '../utils/avatar'
+import { sinRayas } from './texto'
 import { ciudadDeZona } from '../data/ciudades'
 import { DEMO_MODE } from '../config'
 // LA UNICA FUENTE. Estaban declaradas en TRES sitios y ya habian divergido:
@@ -41,8 +42,8 @@ function genHiddenSkills(s) {
 function genEducation(s) {
   const m = {
     logopeda: [{ title:'Grado en Logopedia', institution:'Universitat de Barcelona', year:'2015–2019', details:'Especialización en intervención logopédica clínica.', verified:true }],
-    tecnico: [{ title:'FP Superior — Instalaciones Térmicas', institution:'Institut Politècnic de Barcelona', year:'2010–2012', details:'Habilitación para gas, electricidad y climatización.', verified:true }],
-    limpieza: [{ title:'Certificado de Profesionalidad — Limpieza', institution:'INCUAL', year:'2014', details:'Técnicas de limpieza industrial y doméstica.', verified:true }],
+    tecnico: [{ title:'FP Superior · Instalaciones Térmicas', institution:'Institut Politècnic de Barcelona', year:'2010–2012', details:'Habilitación para gas, electricidad y climatización.', verified:true }],
+    limpieza: [{ title:'Certificado de Profesionalidad · Limpieza', institution:'INCUAL', year:'2014', details:'Técnicas de limpieza industrial y doméstica.', verified:true }],
     cuidado: [{ title:'FP Atención a Personas en Situación de Dependencia', institution:'Escola Sant Gervasi', year:'2013–2015', details:'Especialización en geriatría y discapacidad.', verified:true }],
     mascotas: [{ title:'Técnico en Cuidados Auxiliares Veterinarios', institution:'Escola Agrària de Manresa', year:'2016–2018', details:'Adiestramiento canino y cuidado de animales.', verified:true }],
     entrenador: [{ title:'Grado en Ciencias de la Actividad Física', institution:'INEFC Barcelona', year:'2014–2018', details:'Entrenamiento personal y deporte adaptado.', verified:true }],
@@ -131,7 +132,9 @@ function normalize(h) {
   const specialty = h.speciality || h.specialty || h.category || 'Profesional'
   const avatarUrl = avatarVigente(h.avatarUrl || h.avatar_url, name) || avatarDe(encodeURIComponent(name))
 
-  return {
+  // Sin rayas largas a la vista («Colegiado — Col·legi…» → « · »): las
+  // fichas de ejemplo de la base las traen en títulos y textos (utils/texto.js).
+  return sinRayas({
     id: h.id,
     name,
     avatar: name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(),
@@ -180,7 +183,7 @@ function normalize(h) {
     // Dynamic AI data — Claude writes whatever it wants here
     aiData: h.ai_data || {},
     aiAnalyzedAt: h.ai_analyzed_at || null,
-  }
+  })
 }
 
 // ── API FUNCTIONS ─────────────────────────────────────────────────────────

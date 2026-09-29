@@ -177,16 +177,18 @@ export function UserProvider({ children }) {
    * y la insignia de la barra decia 2 sin leer, apuntando a tus propias
    * palabras. Medido en navegador.
    */
-  function addChat(helperId, helperName, helperColor, helperAvatar, lastMsg, deQuien = 'helper') {
+  // `avatarUrl`: su foto o avatar. Sin ella, la lista de Chats enseñaba sus
+  // iniciales en vez de la cara que se ve en el chat.
+  function addChat(helperId, helperName, helperColor, helperAvatar, lastMsg, deQuien = 'helper', avatarUrl) {
     const existing = (chats||[]).find(c => c.helperId === helperId)
     const suma = deQuien === 'user' ? 0 : 1
     let updated
     if (existing) {
       updated = (chats||[]).map(c => c.helperId === helperId
-        ? { ...c, lastMsg, lastTime: new Date().toISOString(), unread: (c.unread || 0) + suma }
+        ? { ...c, lastMsg, lastTime: new Date().toISOString(), unread: (c.unread || 0) + suma, avatarUrl: c.avatarUrl || avatarUrl }
         : c)
     } else {
-      updated = [...chats, { helperId, helperName, helperColor, helperAvatar, lastMsg, lastTime: new Date().toISOString(), unread: 0 }]
+      updated = [...chats, { helperId, helperName, helperColor, helperAvatar, avatarUrl, lastMsg, lastTime: new Date().toISOString(), unread: 0 }]
     }
     setChats(updated)
     save('nura_chats', updated)

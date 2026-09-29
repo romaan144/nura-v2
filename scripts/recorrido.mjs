@@ -217,6 +217,42 @@ console.log('\n── El chat, desde una ficha ──')
   await p.close()
 }
 
+// ── Sin asteriscos ni rayas a la vista (Sergio, 2026-09-29) ─────────────
+// Los mensajes de Nüra en el chat marcan nombres con **…**: se ven en
+// negrita, nunca los asteriscos. Y nada de rayas largas «—» en fichas e
+// historias. Además, un chat nuevo sale en Chats con su foto, no su inicial.
+console.log('\n── Textos limpios y fotos en Chats ──')
+{
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('textos: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Sergio', joined: new Date().toISOString() })) })
+  await p.goto(BASE + '/helper/2001', { waitUntil: 'networkidle0' })
+  await espera(1500)
+  await tocar(p, /Escribir a/)
+  await espera(1500)
+  for (const m of ['hola', '¿cuánto cobras?', 'el sábado a las 10', 'vale, perfecto', 'voy a reservar ahora', 'gracias']) {
+    await escribirEn(p, m, 'x => /mensaje/i.test(x.placeholder || "")')
+    await p.keyboard.press('Enter')
+    await espera(2600)
+  }
+  const chat = await texto(p)
+  paso('en el chat no se ven asteriscos', !chat.includes('**'))
+  paso('y lo que Nüra marca sale en negrita', await p.evaluate(() => document.querySelectorAll('[data-scroll-propio] strong').length > 0))
+  await p.goto(BASE + '/chats', { waitUntil: 'networkidle0' })
+  await espera(1500)
+  paso('el chat nuevo sale en Chats con su foto', await p.evaluate(() =>
+    [...document.querySelectorAll('button')].filter(b => /Sara/.test(b.textContent)).some(b => b.querySelector('img'))))
+  let rayas = ''
+  for (const r of ['/helper/2001', '/helper/2004', '/feed']) {
+    await p.goto(BASE + r, { waitUntil: 'networkidle0' })
+    await espera(1500)
+    if ((await texto(p)).includes('—')) rayas += ' ' + r
+  }
+  paso('sin rayas largas en fichas ni historias', !rayas, rayas.trim())
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')

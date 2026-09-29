@@ -170,6 +170,14 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-28 — Sin asteriscos ni rayas a la vista, y la foto en los chats nuevos
+
+- Sergio (captura del iPhone): «**Paula** tiene 5 sobre 5…» salía con los asteriscos en el chat, y por la app había rayas largas («—»). Además, un chat nuevo salía en Chats con una letra en vez de la foto.
+- Medido recorriendo la app: los asteriscos solo salían sin convertir en el chat (Inicio y Perfil ya ponían la negrita). Ahora los mensajes de Nüra en el chat pintan la negrita (`components/ConNegritas.jsx`) y la vista previa de Chats las quita (`sinMarcas`).
+- Rayas: las historias de «Cerca de ti» se reescriben sin raya; en títulos y nombres de ejemplo («Colegiado — Col·legi…») la raya pasa a « · », el separador del resto de la app. 975 de las 1008 fichas de ejemplo de la base las traen: se limpian al mostrarlas (`sinRayas` en `normalize`), sin tocar la base. El título de la pestaña también pasa a « · ».
+- La foto: `addChat` no la recibía, así que el chat se guardaba sin ella. Ahora se guarda; y los chats ya guardados sin foto toman la de su ficha o su avatar, nunca solo iniciales.
+- `npm run recorrido` comprueba las cuatro cosas; contra la versión anterior, las cuatro fallan.
+
 ## 2026-10-27 — El chat nuevo se abre ya en su forma final
 
 - Sergio (capturas del iPhone): al abrir por primera vez el chat con alguien salía el «chat vacío» («Mensaje sugerido», tres preguntas, «Nüra sugiere» y «escribiendo…») y a los 0,8 s llegaba el saludo y todo cambiaba por otras tres preguntas. No era un fallo de carga: dos pantallas pensadas por separado que se sucedían. Había además dos saludos de la demo compitiendo (uno a los 0,8 s y otro a los 0,8–1,2 s).

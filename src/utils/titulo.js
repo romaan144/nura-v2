@@ -4,10 +4,10 @@
 // así una ficha de otra. Antes todas se llamaban igual.
 import { useEffect } from 'react'
 
-export const TITULO_INICIO = 'Nüra — Encuentra a la persona adecuada'
+export const TITULO_INICIO = 'Nüra · Encuentra a la persona adecuada'
 
 export function ponerTitulo(texto) {
-  document.title = texto ? `${texto} — Nüra` : TITULO_INICIO
+  document.title = texto ? `${texto} · Nüra` : TITULO_INICIO
 }
 
 /** Para pantallas con datos (una ficha, un chat): el título llega con ellos. */
