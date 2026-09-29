@@ -47,7 +47,8 @@ export function getPriceContext(helper, categoria) {
 
 import { HELPERS as LOCAL_HELPERS } from '../data/helpers'
 import { obraSignal } from '../data/obraPosts'
-import { searchHelpers } from './supabase'
+import { searchHelpers, searchPorEspecialidad } from './supabase'
+import { oficiosDe, oficio, esDelOficio, puntosRefina, patronesDe } from '../data/oficios'
 import { DEMO_MODE } from '../config'
 import { barrioEnTexto, barrioDeZona, kmEntre } from '../data/barrios'
 import { ciudadEnTexto, ciudadDe } from '../data/ciudades'
@@ -641,6 +642,17 @@ export function analyzeNeed(userTextOriginal) {
   // usuario no habia escrito.
   const palabrasPropias = propias.slice(0, 6)
   
+  // ── EL OFICIO ─────────────────────────────────────────────────────────
+  // Antes de la categoría, qué OFICIO hace falta: «reparar altavoces» no es
+  // «técnico» (fontanero, cerrajero…), es alguien que repare electrónica.
+  // Si se entiende el oficio, manda él (ver data/oficios.js).
+  const oficios = oficiosDe(userText)
+  if (oficios.length) {
+    const o = oficio(oficios[0].id)
+    categoria = o.cat
+    maxScore = Math.max(maxScore, oficios[0].puntos)
+  }
+
   const resumenMap = {
     logopedia: 'Busca un logopeda', tecnico: 'Necesita un técnico o profesional del hogar',
     limpieza: 'Busca servicio de limpieza', cuidado: 'Busca cuidado de personas',
@@ -675,6 +687,11 @@ export function analyzeNeed(userTextOriginal) {
     // recomienda primero.
     complexSignals: senalesDe(normExpanded, normOriginal),
     confidence: maxScore, // so UI can show fallback if confidence is 0
+    // Los oficios entendidos, del más claro al menos, y su nombre para
+    // hablar («buscas un electricista»). Vacío si no se entiende ninguno.
+    oficios: oficios.map(x => x.id),
+    oficioNombre: oficios.length ? oficio(oficios[0].id).nombre : null,
+    texto: userText,
   })
 }
 
@@ -721,15 +738,26 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
   // siempre con los reales y, si la base de datos no contestaba a tiempo, se
   // recomendaban SOLO los de ejemplo: fuera de la demo, alguien con mala
   // cobertura habria visto personas inventadas como si fueran reales.
+  // POR OFICIO, si se ha entendido uno: se piden las fichas de ese oficio
+  // (y de los parecidos, por si no hay nadie) estén en la categoría que
+  // estén. Si no, como siempre, por categoría.
+  const ids = analysis.oficios || []
+  const porOficio = ids.length > 0
+  const parecidos = porOficio ? (oficio(ids[0])?.parecidos || []) : []
+  const delOficio = h => ids.some(id => esDelOficio(h?.specialty, id))
+  const deParecido = h => parecidos.some(id => esDelOficio(h?.specialty, id))
   const demoPool = DEMO_MODE ? LOCAL_HELPERS
-    .filter(h => h?.id >= 2000 && toApp(h?.category) === analysis.categoria)
+    .filter(h => h?.id >= 2000 && (porOficio ? (delOficio(h) || deParecido(h)) : toApp(h?.category) === analysis.categoria))
     .map(normalizeHelper).filter(Boolean) : []
 
   let remote
   try {
     const SIN_RESPUESTA = Symbol('sin respuesta')
     const espera = new Promise(res => setTimeout(() => res(SIN_RESPUESTA), DEMO_MODE ? 2200 : 7500))
-    const r = await Promise.race([searchHelpers(categoriasEnBD(analysis.categoria), analysis.palabrasClave), espera])
+    const pregunta = porOficio
+      ? searchPorEspecialidad(patronesDe([...ids, ...parecidos]))
+      : searchHelpers(categoriasEnBD(analysis.categoria), analysis.palabrasClave)
+    const r = await Promise.race([pregunta, espera])
     remote = r === SIN_RESPUESTA ? null : r
   } catch (e) { console.error('[Nüra] Supabase no disponible:', e); remote = null }
   if (remote?.length) {
@@ -771,6 +799,14 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
     // valoracion 5. El boost no protegia la demo: la empeoraba justo en el
     // caso que uno querria enseñar.
     if (toApp(h.category) === analysis.categoria) score += 40
+    // EL OFICIO MANDA: ser del oficio pedido pesa más que todo lo demás
+    // junto; el primero entendido, más que el segundo. Y dentro del oficio,
+    // la especialidad que encaja con lo que cuenta («terapia de pareja»).
+    if (porOficio) {
+      const i = ids.findIndex(id => esDelOficio(h.specialty, id))
+      if (i >= 0) score += 150 - 40 * i + puntosRefina(h.specialty, ids[i], analysis.texto || '')
+      else if (deParecido(h)) score += 60
+    }
     // EL OFICIO PESA MAS QUE LA ETIQUETA. Medido: buscar "yoga" devolvia
     // primero a un entrenador personal y al instructor de yoga SEGUNDO, por
     // un punto. "abogado de familia" daba el mercantil. La causa: que la
@@ -844,7 +880,13 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
   // LA CIUDAD. Quien busca en Madrid no quiere un fontanero de Barcelona.
   // Si no la nombra, no se filtra (hoy casi todo es Barcelona).
   const enSuCiudad = h => !analysis.ciudad || h.online || ciudadDe(h) === analysis.ciudad
-  const compatibles = finalPool.filter(h => toApp(h?.category) === analysis.categoria && enSuCiudad(h))
+  let compatibles = finalPool.filter(h => (porOficio ? delOficio(h) : toApp(h?.category) === analysis.categoria) && enSuCiudad(h))
+  // NADIE DEL OFICIO: lo más parecido, pero DICIÉNDOLO (Home lo cuenta con
+  // «Todavía no tengo a nadie que…»). Si tampoco hay parecidos, nadie.
+  if (porOficio && !compatibles.length && parecidos.length) {
+    compatibles = finalPool.filter(h => deParecido(h) && enSuCiudad(h))
+      .map(h => ({ ...h, __aproximado: { oficio: oficio(ids[0]).nombre, quien: oficio(ids[0]).quien } }))
+  }
   // LO DECLARADO. Si pide algo comprobable («que hable catalán», «con
   // coche»), se miran los datos que los mejores candidatos confirmaron de si
   // mismos y se reordena. Una sola peticion, con tope de tiempo: si no

@@ -265,13 +265,35 @@ export async function searchHelpers(category, keywords = []) {
     if (data.length === 0) return []
     if (keywords?.length > 0) {
       const filtered = data.filter(h => {
-        const text = [h.name, h.speciality, h.bio, h.zone, h.category, ...(Array.isArray(h.tags)?h.tags:[])].join(' ').toLowerCase()
+        // `specialty` es la columna real: `speciality` no existe y el oficio
+        // no contaba nunca en este filtro.
+        const text = [h.name, h.specialty, h.speciality, h.bio, h.zone, h.category, ...(Array.isArray(h.tags)?h.tags:[])].join(' ').toLowerCase()
         return keywords.some(k => k && text.includes(k.toLowerCase()))
       })
       return (filtered.length > 0 ? filtered : data).map(normalize)
     }
     return data.map(normalize)
   } catch(e) { console.error('Supabase searchHelpers:', e); return null }
+}
+
+/**
+ * Los profesionales de unos OFICIOS, estén en la categoría que estén (la
+ * base guarda a los logopedas como «salud» y a los informáticos como
+ * «técnico»). `patrones`: trozos de la especialidad, como en ilike (`_` es
+ * una letra: así «m_viles» encuentra «móviles»). [] = no hay nadie; null =
+ * no se pudo preguntar.
+ */
+export async function searchPorEspecialidad(patrones = []) {
+  const limpios = patrones.map(p => String(p).replace(/[^\p{L}\d _-]/gu, '').trim()).filter(Boolean).slice(0, 30)
+  if (!limpios.length) return []
+  try {
+    const or = limpios.map(p => `specialty.ilike.*${p}*`).join(',')
+    const url = `${SUPABASE_URL}/rest/v1/helpers?select=${columnasHelpers()}&limit=200&order=rating.desc&or=(${encodeURIComponent(or)})`
+    const res = await fetch(url, { headers, signal: AbortSignal.timeout(DEMO_MODE ? 2500 : 7000) })
+    if (!res.ok) return null
+    const data = await res.json()
+    return Array.isArray(data) ? data.map(normalize) : null
+  } catch (e) { console.error('Supabase searchPorEspecialidad:', e); return null }
 }
 
 // null = la ficha NO EXISTE. Un fallo de red o del servidor LANZA: antes
