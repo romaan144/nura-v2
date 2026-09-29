@@ -16,6 +16,13 @@ import { DEMO_MODE, NURA_BUILD } from '../config'
 
 const PASO = { phone: 0, code: 1, name: 2 }
 
+// El autorrelleno del móvil entrega el número como lo tenga guardado:
+// «+34 612 34 56 78» o «0034…». Se queda en las 9 cifras nacionales.
+const nueveCifras = v => {
+  const d = String(v || '').replace(/\D/g, '')
+  return (d.length > 9 && /^(0034|34)/.test(d) ? d.replace(/^(0034|34)/, '') : d).slice(0, 9)
+}
+
 export default function Login() {
   // SIN SMS NO HAY CODIGO. La pantalla decia «te lo hemos enviado» y no se
   // enviaba nada: valia cualquier numero de 4 cifras, y una persona real se
@@ -88,8 +95,8 @@ export default function Login() {
             <p className={styles.description}>Prueba cómo es entrar en Nüra. En esta demostración no enviamos SMS.</p>
             <div className={styles.field}>
               <label htmlFor="login-phone" className={styles.label}>Número de teléfono</label>
-              <input id="login-phone" className={styles.input} type="tel" inputMode="numeric" autoComplete="tel-national" placeholder="612 345 678"
-                value={phone} maxLength={9} onChange={e => setPhone(e.target.value.replace(/\D/g, ''))}
+              <input id="login-phone" className={styles.input} type="tel" inputMode="tel" autoComplete="tel" name="tel" placeholder="612 345 678"
+                value={phone} onChange={e => setPhone(nueveCifras(e.target.value))}
                 onKeyDown={e => { if (e.key === 'Enter') handlePhone() }} />
               {phone.length > 0 && phone.length < 9 && <p className={styles.hint} role="status">Faltan {9 - phone.length} cifras</p>}
             </div>
@@ -114,7 +121,7 @@ export default function Login() {
             <p className={styles.description}>Así sabrán quién les escribe. Se guarda en este móvil.</p>
             <div className={styles.field}>
               <label htmlFor="login-name" className={styles.label}>Tu nombre</label>
-              <input id="login-name" className={styles.input} autoComplete="name" placeholder="Escribe tu nombre" value={name}
+              <input id="login-name" className={styles.input} autoComplete="name" name="name" autoCapitalize="words" placeholder="Escribe tu nombre" value={name}
                 onChange={e => setName(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') handleName() }} />
             </div>
             <button type="button" className={styles.primary} onClick={handleName} disabled={!name.trim()}>Entrar en Nüra</button>
