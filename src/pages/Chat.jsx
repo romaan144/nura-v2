@@ -25,6 +25,9 @@ import { citaDeLaConversacion } from '../utils/citaDeLaConversacion'
 import { ocupacionesDe } from '../data/horarios'
 import { getHelperReply, getNuraIntervention, respuestasRapidas, CONTRATAR, OTRAS_OPCIONES } from '../utils/chatReplies'
 import { buildChatOpener } from '../utils/introLetter'
+import { notaDeCita } from '../utils/citaAviso'
+
+const VER_SERVICIOS = 'Ver mis servicios'
 import { DEMO_MODE } from '../config'
 import RegisterGate from '../components/RegisterGate'
 import { registrar } from '../utils/analitica'
@@ -146,10 +149,21 @@ export default function Chat() {
       marcarVistas(rs.map(r => r.llave))   // las esta viendo: ya no son «nuevas»
       setMessages(prev => {
         const yaEstan = new Set(prev.filter(m => m.__deAviso).map(m => m.text))
-        const nuevas = rs
-          .filter(r => r.respuesta && !yaEstan.has(r.respuesta))
-          .map(r => ({ id: 'av-' + r.respondido_en, from: 'helper', text: r.respuesta,
-            time: r.respondido_en, __deAviso: true }))
+        const ids = new Set(prev.map(m => m.id))
+        const nombre = getFirstName(helper.name) || helper.name
+        const nuevas = []
+        for (const r of rs) {
+          if (r.respuesta && !yaEstan.has(r.respuesta)) {
+            nuevas.push({ id: 'av-' + r.respondido_en, from: 'helper', text: r.respuesta, time: r.respondido_en, __deAviso: true })
+          }
+          // Lo que pasa con la cita, dicho claro (una vez por estado).
+          const nota = notaDeCita(r.cita, nombre)
+          const idNota = nota && `cita-${r.llave}-${nota.clave}`
+          if (nota && !ids.has(idNota)) {
+            nuevas.push({ id: idNota, from: 'nura', text: nota.texto, time: r.respondido_en,
+              chips: nota.clave === 'rechazada' ? undefined : [VER_SERVICIOS] })
+          }
+        }
         return nuevas.length ? [...prev, ...nuevas] : prev
       })
     })
@@ -158,7 +172,7 @@ export default function Chat() {
     const alVolver = () => { if (document.visibilityState === 'visible') mirar() }
     document.addEventListener('visibilitychange', alVolver)
     return () => { vivo = false; clearInterval(cada); document.removeEventListener('visibilitychange', alVolver) }
-  }, [helper?.id])
+  }, [helper?.id, helper?.name])
 
   const hasHistory = (getChatHistory(id)?.length > 0) || (location.state?.demoHistory?.length > 0)
   const userQuery = location.state?.userQuery || window.__nuraLastQuery
@@ -521,6 +535,7 @@ export default function Chat() {
                       <button className="nura-glass-action" key={ci}
                         onClick={() => {
                           if (chip === 'Confirmar reserva') { setShowConfirm(true); return }
+                          if (chip === VER_SERVICIOS) { navigate('/my-services'); return }
                           // Quita los botones del aviso: vuelven las respuestas rápidas.
                           if (chip === 'Todavía no') { setMessages(prev => prev.map(m => m.id === msg.id ? { ...m, chips: undefined } : m)); return }
                           // Repite la búsqueda en Inicio: la que trajo aquí o, si no hay, el oficio.
