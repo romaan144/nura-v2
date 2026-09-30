@@ -17,6 +17,9 @@ const ESTADO = {
   'por-contestar': { texto: 'Por contestar', color: 'var(--purple-ink, #5B21B6)' },
   'sin-decidir':   { texto: 'Sin confirmar', color: '#B45309' },
   'cancelada':     { texto: 'Cancelada',     color: 'var(--ink-secondary)' },
+  // Hoy, con la hora ya pasada.
+  'hecha':         { texto: 'Ya pasó',       color: 'var(--ink-secondary)' },
+  'caducada':      { texto: 'Pasó sin confirmar', color: 'var(--ink-secondary)' },
 }
 
 function tituloDia(fecha, ahora) {
@@ -33,7 +36,8 @@ export default function AgendaProfesional({ avisos }) {
   const navigate = useNavigate()
   const ahora = new Date()
   const dias = agendaDe(avisos, ahora, DIAS)
-  const porContestar = dias.flatMap(d => d.citas).filter(c => c.estado === 'por-contestar').length
+  // Una propuesta cuya hora ya pasó no se puede aceptar: no cuenta.
+  const porContestar = dias.flatMap(d => d.citas).filter(c => c.estado === 'por-contestar' && !c.pasada).length
   // Las que le han cancelado y aún no ha visto: arriba, hasta «Entendido».
   const [vistas, setVistas] = useState(cancelacionesVistas)
   const nuevas = cancelacionesNuevas(avisos, vistas, ahora)
@@ -153,6 +157,8 @@ export default function AgendaProfesional({ avisos }) {
                 {d.citas.map(c => {
                   const e = c.estado === 'cancelada' && c.cancela === 'profesional' ? { ...ESTADO.cancelada, texto: 'La cancelaste' }
                     : c.estado === 'cancelada' && c.cancela === 'cambio' ? { ...ESTADO.cancelada, texto: 'Cambiada' }
+                    : c.pasada && c.estado === 'confirmada' ? ESTADO.hecha
+                    : c.pasada && c.estado !== 'cancelada' ? ESTADO.caducada
                     : ESTADO[c.estado]
                   const cancelada = c.estado === 'cancelada'
                   return (

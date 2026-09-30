@@ -615,6 +615,9 @@ for (const t of NEGATIVE) {
     ['la rechazada no sale', !planas.some(c => c.id === 4)],
     ['ni la de ayer, ni la de dentro de un mes, ni un mensaje sin cita', !planas.some(c => [5, 6, 8].includes(c.id))],
     ['sin nada, agenda vacía', H.agendaDe([], ahora).length === 0 && H.agendaDe(null, ahora).length === 0],
+    // 2026-09-30: hoy a las 9:00 con reloj a las 10:30 ya pasó; mañana no.
+    ['la de hoy a una hora ya pasada va marcada como pasada', planas.find(c => c.id === 2)?.pasada === true],
+    ['las de otro día, no', [1, 3, 7].every(id => planas.find(c => c.id === id)?.pasada === false)],
   ]
   for (const [n, ok] of casos) { if (!ok) failed++; console.log(`${ok ? '✓' : '✗'} agenda del profesional: ${n}`) }
 }

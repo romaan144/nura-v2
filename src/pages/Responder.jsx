@@ -22,6 +22,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { abrirAviso, responderAviso, misAvisos, porLaFuncion } from '../utils/escrituras'
 import { refrescarSinContestar } from '../utils/sinContestar'
+import { yaPaso } from '../utils/citaAviso'
 
 // RESPUESTAS RAPIDAS: en el movil escribir cuesta. Rellenan la caja (no
 // envian): la profesional las retoca y decide. Si el mensaje es una
@@ -91,6 +92,11 @@ function ResponderAviso({ token }) {
   // escribe), que hacer ahora: con cuenta, el siguiente mensaje o su bandeja;
   // sin cuenta, la invitacion a verlo todo en Nüra. null = aun no se sabe.
   const [despues, setDespues] = useState(null)
+  // Le propusieron una hora que ya pasó sin que contestara: no se puede
+  // aceptar (antes el botón seguía ahí). Se le ofrece proponer otro día, y
+  // al enviar la cita queda como «no le va bien» para quien la pidió.
+  const caducada = aviso?.cita?.estado === 'propuesta' && yaPaso(aviso.cita.fecha, aviso.cita.hora) === true
+  const decisionVista = caducada ? 'rechazada' : decision
 
   useEffect(() => {
     let vivo = true
@@ -141,7 +147,7 @@ function ResponderAviso({ token }) {
     if (!cuerpo || enviandoRef.current) return
     enviandoRef.current = true
     setEnviando(true)
-    const r = await responderAviso(token, cuerpo, decision || undefined)
+    const r = await responderAviso(token, cuerpo, decision || (caducada ? 'rechazada' : undefined))
     enviandoRef.current = false
     setEnviando(false)
     // Esa hora ya la tiene aceptada con otra persona: no se guarda nada y
@@ -301,7 +307,16 @@ function ResponderAviso({ token }) {
           </div>
         ) : (
           <>
-            {aviso?.cita?.estado === 'propuesta' && decision !== 'rechazada' && (
+            {caducada && (
+              <div role="status" style={{ border: '1px solid var(--ink-border)', background: 'var(--glass-control)',
+                borderRadius: 'var(--radius-card)', padding: 'var(--space-14) var(--space-16)', margin: '0 0 var(--space-16)' }}>
+                <p style={{ margin: '0 0 var(--space-4)', fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--ink-secondary)' }}>Esa hora ya pasó</p>
+                <p style={{ margin: 0, fontSize: 'var(--text-sm)', color: 'var(--ink-primary)', lineHeight: 1.5 }}>
+                  Te propuso el {cuandoCita(aviso.cita).replace(' · ', ' a las ')}. Si aún puedes ayudarle, proponle otro día.
+                </p>
+              </div>
+            )}
+            {aviso?.cita?.estado === 'propuesta' && !caducada && decision !== 'rechazada' && (
               <div style={{ border: '1px solid var(--purple-30, rgba(123,47,255,0.3))', background: 'var(--purple-05, #F7F3FF)',
                 borderRadius: 'var(--radius-card)', padding: 'var(--space-14) var(--space-16)', margin: '0 0 var(--space-16)' }}>
                 <p style={{ margin: '0 0 var(--space-4)', fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--purple-ink)' }}>Te propone una cita</p>
@@ -339,7 +354,7 @@ function ResponderAviso({ token }) {
                 </div>
               </div>
             )}
-            {decision === 'rechazada' && aviso?.cita && (
+            {decision === 'rechazada' && !caducada && aviso?.cita && (
               <p style={{ margin: '0 0 var(--space-10)', fontSize: 'var(--text-sm)', color: ocupada ? 'var(--red-ink)' : 'var(--ink-secondary)', lineHeight: 1.5 }}>
                 {ocupada ? 'Esa hora ya la tienes aceptada con otra persona. ' : ''}Dile qué otro día u hora te va bien.
               </p>
@@ -348,9 +363,9 @@ function ResponderAviso({ token }) {
               fontWeight: 700, color: 'var(--ink-secondary)', margin: '0 0 var(--space-8)'}}>
               Tu respuesta
             </label>
-            {rapidasPara(aviso?.mensaje, aviso?.cita, decision).length > 0 && (
+            {rapidasPara(aviso?.mensaje, aviso?.cita, decisionVista).length > 0 && (
             <div role="group" aria-label="Respuestas rápidas" style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-6)', margin: '0 0 var(--space-10)' }}>
-              {rapidasPara(aviso?.mensaje, aviso?.cita, decision).map(([etiqueta, frase]) => (
+              {rapidasPara(aviso?.mensaje, aviso?.cita, decisionVista).map(([etiqueta, frase]) => (
                 <button className="nura-glass-action" key={etiqueta} type="button"
                   onClick={() => { setTexto(frase); requestAnimationFrame(() => { const t = document.getElementById('respuesta'); t?.focus(); t?.setSelectionRange(frase.length, frase.length) }) }}
                   style={{ minHeight: 36,
