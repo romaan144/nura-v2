@@ -374,6 +374,11 @@ export const OFICIOS = [
     esp: ['abogad_ de familia'],
     dice: ['pension|6', 'pension de mis hijos|10', 'no me pagan la pension|10', 'mis hijos|1', 'divorcio|9', 'divorciar|9', 'divorciarme|9', 'separacion|6', 'separarme|7', 'custodia|8',
       'pension alimenticia|9', 'regimen de visitas|9', 'abogado de familia|10'] },
+  // Sin fichas todavía: así se dice «todavía no tengo a nadie que sea
+  // notario» y se ofrece lo más parecido, en vez de un laboralista como
+  // «quien mejor encaja».
+  { id: 'notario', nombre: 'notario', cat: 'legal', quien: 'que sea notario',
+    esp: ['notari'], dice: ['notario|10', 'notaria|10', 'notarial|8', 'ante notario|10'] },
   { id: 'laboralista', nombre: 'abogado laboralista', cat: 'legal', quien: 'que sea abogado laboralista',
     esp: ['laboralista'],
     dice: ['despedir|9', 'baja laboral|6', 'de baja|4', 'la empresa|3', 'mi jefe|3', 'no me pagan el sueldo|9', 'nomina|3', 'despido|9', 'despedido|9', 'despedida|6', 'me han despedido|10', 'finiquito|9', 'laboralista|10', 'ere|6',

@@ -584,6 +584,29 @@ console.log('\n── Primer mensaje a un profesional: un borrador natural ─�
   await p.close()
 }
 
+console.log('\n── Búsqueda: cuando no hay nadie, decirlo bien ──')
+{
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('sin nadie: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  const buscar = async q => {
+    await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+    await p.evaluate(() => { localStorage.clear(); sessionStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Sergio', joined: new Date().toISOString() })); sessionStorage.setItem('nura_for_whom', 'mi') })
+    await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+    await espera(1200)
+    await escribirEn(p, q); await p.keyboard.press('Enter'); await espera(3500)
+    return p.evaluate(() => (document.querySelector('section[aria-label="Respuesta de Nüra"]')?.innerText || '').replace(/\s+/g, ' '))
+  }
+  let r = await buscar('fontanero en Madrid')
+  paso('otra ciudad: nombra el oficio y solo ofrece el aviso', /En Madrid todavía no tengo a nadie que sea fontanero/.test(r) && !/técnico de guardia|Ampliar la zona/.test(r), r.match(/En Madrid[^.]+/)?.[0] || r.slice(0, 80))
+  r = await buscar('busco un tatuador')
+  paso('un oficio que no hay no es «no te he entendido»', /Todavía no tengo a nadie de «tatuador»/.test(r) && !/No estoy segura/.test(r), r.slice(12, 90))
+  r = await buscar('fontanero en Gràcia')
+  paso('una ficha sin ciudad cuenta como Barcelona («en Gràcia» encuentra al fontanero)', /Primera opción \S+ \S+ fontanero/.test(r), r.match(/Primera opción .{0,30}/)?.[0] || r.slice(0, 80))
+  r = await buscar('clases de chino en Bilbao')
+  paso('si la primera opción es online y de otra ciudad, se dice', /En Bilbao todavía no tengo a nadie en persona, pero \S+ trabaja online/.test(r), r.match(/En Bilbao[^.]+/)?.[0] || '')
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')

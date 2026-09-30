@@ -919,7 +919,9 @@ export async function matchHelpers(analysis, limit = 4, refinement = null, previ
   const finalPool = withContent.length > 0 ? withContent : sorted
   // LA CIUDAD. Quien busca en Madrid no quiere un fontanero de Barcelona.
   // Si no la nombra, no se filtra (hoy casi todo es Barcelona).
-  const enSuCiudad = h => !analysis.ciudad || h.online || ciudadDe(h) === analysis.ciudad
+  // Una ficha sin ciudad es de Barcelona (donde nace Nüra): antes quedaba
+  // fuera con «fontanero en Gràcia» y se decía que no había nadie.
+  const enSuCiudad = h => !analysis.ciudad || h.online || (ciudadDe(h) || 'Barcelona') === analysis.ciudad
   let compatibles = finalPool.filter(h => (porOficio ? delOficio(h) : toApp(h?.category) === analysis.categoria) && enSuCiudad(h))
   // NADIE DEL OFICIO: lo más parecido, pero DICIÉNDOLO (Home lo cuenta con
   // «Todavía no tengo a nadie que…»). Si tampoco hay parecidos, nadie.

@@ -2,7 +2,7 @@ import UserAvatar from '../components/UserAvatar'
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { CAT_HUMANA } from '../data/categorias'
-import { hayEnLaCiudad } from '../data/ciudades'
+import { hayEnLaCiudad, ciudadDe } from '../data/ciudades'
 import { Compass, Send, Mic, MicOff, RotateCcw, UserRound, ArrowUpRight, Heart, Home as House, Sparkles, MapPin, Wallet, Star, Monitor, Users, SlidersHorizontal } from 'lucide-react'
 import { analyzeNeed, matchHelpers, getPriceContext } from '../utils/matching'
 import { barrioEnTexto } from '../data/barrios'
@@ -1055,6 +1055,7 @@ export default function Home() {
       const analysis = (await analyzeNeed(msg))
         || { categoria: 'otro', palabrasClave: msg.toLowerCase().split(' '), complexSignals: {} }
       if (zonaForzada) analysis.zona = zonaForzada
+      if (opciones.sinZona) analysis.zona = null
       try {
         if (forWhom) analysis.paraQuien = forWhom
         // El Espejo — detectar y recordar a la persona de esta búsqueda
@@ -1117,35 +1118,25 @@ export default function Home() {
         // bien y el vacio es de oferta, no suyo.
         const comprendida = analysis?.categoria && analysis.categoria !== 'otro'
         if (comprendida) {
-          const alternativas = {
-          logopeda:    { alt: 'logopeda online', chip1: 'Buscar online', chip2: 'Ampliar zona' },
-          tecnico:     { alt: 'técnico de guardia', chip1: 'Urgencias 24h', chip2: 'Ampliar zona' },
-          limpieza:    { alt: 'servicio de limpieza online', chip1: 'Ampliar zona', chip2: 'Ver todos' },
-          cuidado:     { alt: 'cuidadora a domicilio', chip1: 'Ver cuidadoras', chip2: 'Ampliar zona' },
-          mascotas:    { alt: 'cuidador de mascotas', chip1: 'Ver cuidadores', chip2: 'Ampliar zona' },
-          matematicas: { alt: 'profesor online', chip1: 'Buscar online', chip2: 'Ampliar zona' },
-          entrenador:  { alt: 'entrenador online', chip1: 'Buscar online', chip2: 'Ampliar zona' },
-          otro:        { alt: 'profesional similar', chip1: 'Ampliar zona', chip2: 'Ver todos' },
-        }
-          const alt = alternativas[analysis.categoria] || alternativas.otro
           const queEs = (CAT_HUMANA[analysis.categoria] || 'eso').toLowerCase()
           // La ciudad donde busca: la que nombra o la de su perfil.
           const ciudadBusca = analysis.ciudad || analysis.ciudadElegida || null
-          sinCoberturaRef.current = { categoria: analysis.categoria, que: CAT_HUMANA[analysis.categoria] || queEs, zona: analysis.zona || null, ciudad: ciudadBusca }
+          sinCoberturaRef.current = { categoria: analysis.categoria, que: CAT_HUMANA[analysis.categoria] || queEs, zona: analysis.zona || null, ciudad: ciudadBusca, consulta: msg }
           registrarDemanda?.({ categoria: analysis.categoria, fecha: Date.now() })
           // Cada búsqueda deja UN evento `busqueda` (con 0 resultados aquí): así
           // se cuentan todas, también las que no encuentran a nadie.
           registrar('busqueda', { categoria: analysis.categoria, resultados: 0, ...demandaDe(analysis) })
           registrar('sin_cobertura', { categoria: analysis.categoria, resultados: 0, ...demandaDe(analysis) })
+          // El oficio entendido, no la categoría («arreglo técnico» no decía
+          // nada). Y solo botones que sirven: «Buscar técnico de guardia» o
+          // «Ampliar la zona» en otra ciudad buscaban en Barcelona.
+          const quienEs = analysis.oficioQuien || `de ${queEs}`
           setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
             lines: [ciudadBusca && ciudadBusca !== 'Barcelona'
               // Sin «Te he entendido»: justo antes ya se dice «Entendido».
-              ? `Buscas ${queEs} en ${ciudadBusca}. Nüra acaba de empezar y todavía no tengo a nadie allí.`
-              : analysis.oficioQuien
-                // El oficio entendido, no la categoría: «buscas a alguien que haga mudanzas».
-                ? `Buscas a alguien ${analysis.oficioQuien}. Todavía no tengo a nadie así cerca de ti.`
-                : `Buscas ${queEs}. Ahora mismo no tengo a nadie así cerca de ti.`],
-            chips: [`Buscar ${alt.alt}`, 'Ampliar la zona', 'Avísame cuando tengas a alguien'] }])
+              ? `En ${ciudadBusca} todavía no tengo a nadie ${quienEs}: Nüra acaba de empezar allí. Si quieres, te aviso en cuanto llegue alguien.`
+              : `Todavía no tengo a nadie ${quienEs} ${analysis.zona?.nombre ? `cerca de ${analysis.zona.nombre}` : 'en Nüra'}. Si quieres, te aviso en cuanto llegue alguien.`],
+            chips: ['Avísame cuando tengas a alguien', ...(analysis.zona ? ['Ampliar la zona'] : [])] }])
           // Aqui NO se pregunta si recordar: solo se ven las opciones del
           // ultimo mensaje, y taparia estas.
           return
@@ -1162,6 +1153,19 @@ export default function Home() {
           // contradecía: si no se ha entendido, sin «Entendido».
           setMessages(prev => prev.filter(m => m.id !== empatiaId))
           const urge = /\b(urgent\w*|emergenc\w*|ahora mismo|cuanto antes|ya mismo|se me ha roto|no puedo esperar)\b/i.test(msg)
+          // «busco un tatuador», «herrero»: SÍ se entiende; es un oficio que
+          // Nüra aún no tiene. Decir «no te he entendido» sonaba sorda.
+          const oficioSuelto = msg.trim().match(/^(?:hola[,.!]?\s+)?(?:(?:busco|necesito|quiero|me hace falta|hay)\s+)?(?:a\s+)?(?:un|una|algun|algún|alguna)?\s*([a-záéíóúñü]{4,}(?:\s+[a-záéíóúñü]{3,})?)\s*[.!?]?$/i)?.[1]
+          // Solo si suena a oficio: lo pide («busco un…») o termina como uno
+          // (-ero, -ista, -dor, -logo…). «xyzzy blabla» no es un oficio.
+          const pideAlguien = /^(hola[,.!]?\s+)?(busco|necesito|quiero|me hace falta|hay)\b/i.test(msg.trim())
+          const sufijoOficio = /(er[oa]|ista|dor[a]?|log[oa]|ari[oa]|ter[oa]|ic[oa]|ist[oa]|nt[ae])$/i.test(oficioSuelto || '')
+          if (!urge && oficioSuelto && oficioSuelto.split(/\s+/).length <= 2 && (pideAlguien || sufijoOficio)) {
+            setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
+              lines: [`Todavía no tengo a nadie de «${oficioSuelto.toLowerCase()}» en Nüra. Si me cuentas qué necesitas exactamente, busco lo más parecido.`],
+              chips: ['Ver todas las categorías'] }])
+            return
+          }
           setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
             lines: urge
               ? ['Entiendo que corre prisa. Para encontrarte a alguien ya, dime qué ha pasado: ¿es algo de casa, de salud, o cuidar a alguien?']
@@ -1254,7 +1258,11 @@ export default function Home() {
         : `**${topFirstName}** es quien mejor encaja.`
       // «¿Cuánto cuesta un electricista?»: se contesta, no solo se recomienda.
       const precioTail = prefs.precio && top?.price ? `. Cobra ${top.price}` : ''
-      const whyLine = `${why.charAt(0).toUpperCase()}${why.slice(1)}${urgentTail}${precioTail}.`
+      // Nombró una ciudad y la primera opción no está allí: trabaja online.
+      // Se dice («clases de chino en Bilbao» enseñaba a alguien de Barcelona).
+      const onlineTail = analysis?.ciudad && top?.online && ciudadDe(top) !== analysis.ciudad
+        ? `. En ${analysis.ciudad} todavía no tengo a nadie en persona, pero ${topFirstName} trabaja online` : ''
+      const whyLine = `${why.charAt(0).toUpperCase()}${why.slice(1)}${urgentTail}${precioTail}${onlineTail}.`
 
 
       // Build rich match explanation — the core AI differentiator
@@ -1334,6 +1342,7 @@ export default function Home() {
 
   function handleChip(chip) {
     beginResponse()
+    if (chip === 'Ver todas las categorías') { navigate('/explore'); return }
     if (otraNecesidadRef.current && chip === otraNecesidadRef.current.etiqueta) {
       const { texto } = otraNecesidadRef.current
       otraNecesidadRef.current = null
@@ -1375,13 +1384,14 @@ export default function Home() {
     }
 
     if (chip === 'Ampliar la zona') {
-      // Honestidad: el vacio no es de zona, es de oferta. Prometer que
-      // ampliando aparecera alguien seria mentir dos veces.
+      // Antes contestaba «he mirado en toda la ciudad, no tengo a nadie» SIN
+      // mirar: con «fontanero en Gràcia» había un fontanero en otra zona.
+      // Ahora repite la búsqueda sin el barrio; si tampoco hay nadie, lo dice
+      // la propia búsqueda.
       haptic('light')
-      responde(
-        [`He mirado en toda ${window.__nuraLastAnalysis?.ciudad || 'la ciudad'}, no solo en tu barrio. Todavía no tengo a nadie así.`],
-        ['Avisame cuando tengas a alguien']
-      )
+      const consulta = sinCoberturaRef.current?.consulta
+      if (consulta) { handleSend(consulta, { nueva: true, sinZona: true }); return }
+      responde(['Cuéntame otra vez qué necesitas y lo busco en toda la ciudad.'])
       return
     }
 

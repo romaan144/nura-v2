@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · Búsqueda: cuando no hay nadie, decirlo bien
+### Última tarea integrada · Búsqueda: cuando no hay nadie, decirlo bien
 
-Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Probado: «fontanero en Madrid» decía «Buscas arreglo técnico en Madrid» y ofrecía «Buscar técnico de guardia» / «Ampliar la zona» (que buscaban en Barcelona); «clases de chino en Bilbao» enseñaba a alguien online sin decirlo; «tatuador», «herrero», «astrólogo» recibían «No estoy segura de haberte entendido»; «notario» daba un abogado laboralista como «quien mejor encaja». Archivos: `src/pages/Home.jsx` (textos y botones de esas respuestas; nada visual), `src/data/oficios.js` (oficio `notario`, sin fichas: sale «lo más parecido»), `scripts/recorrido.mjs`.
+Integrada el 2026-09-30 (ver `docs/changelog.md`, 2026-10-29). Tocó `src/pages/Home.jsx` (textos y botones sin cobertura, oficio que no hay, «trabaja online», «Ampliar la zona» busca de verdad; nada visual), `src/utils/matching.js` (ficha sin ciudad = Barcelona), `src/data/oficios.js` (`notario`) y `scripts/recorrido.mjs`. Esos archivos quedan libres.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
