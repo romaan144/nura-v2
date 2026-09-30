@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Última tarea integrada · Búsqueda: la primera respuesta encaja mejor con lo que pides
+### Tarea activa · Búsqueda: dos cosas a la vez
 
-Integrada el 2026-09-30 (ver `docs/changelog.md`, 2026-10-29). Tocó `src/utils/seguimiento.js` (`preferenciasDe`), `src/pages/Home.jsx` (orden por franja u online y textos de la respuesta; nada visual), `src/utils/matching.js` (solo palabras de horario fuera de las palabras clave; búsqueda 100 % en las tres tandas) y `scripts/recorrido.mjs`. Esos archivos quedan libres.
+Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Tanda difícil (faltas, mensajes largos, varias cosas): lo largo y con faltas se entiende; falla pedir dos cosas («fontanero y electricista», «limpiar mi casa y que me planche la ropa»): solo se busca una, sin decirlo. Ahora se busca la primera y se ofrece buscar la otra con un botón. Archivos: `src/utils/seguimiento.js` (`necesidadesDe`), `src/pages/Home.jsx` (aviso y botón; nada visual), `scripts/recorrido.mjs`.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
