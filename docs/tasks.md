@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Última tarea integrada · Servidor: no aceptar horas pasadas y valoraciones en el Pulso
+### Tarea activa · Al confirmar el correo, entrar ya reconocido
 
-Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Dos cambios en `supabase/functions/helpers-write/index.ts`: `responder-aviso` guarda la respuesta pero no confirma una cita cuya hora ya pasó (hora de España, con una hora de margen); `mi-pulso` añade cuántas valoraciones recibió en 7 días y su media (solo cifras, ningún comentario). La app lo muestra en el Pulso y avisa si la cita no quedó confirmada. Archivos: la función, `src/pages/Home.jsx` (una línea del Pulso), `src/pages/Responder.jsx` (el aviso), `scripts/test-avisos.mjs`. Desplegada como v29 (la copia desplegada pasa las 204 pruebas de test:avisos). Comprobado también: build, recorrido, recorrido-real, smoke, test:vista, test:chat-scroll, test:busqueda, test:matching 257; lint igual que en `main`.
+Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Un profesional (o cliente) que crea su acceso y confirma el correo vuelve a Nüra con sesión, pero si ese móvil no le conocía veía la pantalla de invitado y tenía que entrar otra vez. Ahora, con sesión y sin usuario en el móvil, Nüra busca su ficha (`reclamar-ficha`, sin cambios en el servidor) y le deja dentro: como profesional si la encuentra, si no como cliente. Archivos: `src/utils/usuarioDeFicha.js` (nuevo, compartido con Entrar), `src/pages/Profile.jsx` y `src/pages/Entrar.jsx` (solo lógica), `scripts/recorrido-real.mjs`.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
