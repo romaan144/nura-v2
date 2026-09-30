@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Última tarea integrada · Inicio: el dedo no arrastra la página entera
+### Tarea activa · Toda la app: el dedo no arrastra la página entera
 
-Integrada el 2026-09-30 (ver `docs/changelog.md`, 2026-10-29). Tocó `src/pages/Home.jsx` (el efecto de la ruta `/` activa `sinArrastreDePagina` en el cuerpo y lo quita al salir; nada visual) y `scripts/recorrido.mjs`. Pendiente de confirmar en iPhone físico. Esos archivos quedan libres.
+Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Sergio: también pasa en otras pantallas (Ver todos → categoría «viajar», sin profesionales). Se pasa `sinArrastreDePagina` a toda la app (una vez, en `App.jsx`), y ahora reconoce también el desplazamiento del documento y los contenedores anidados. Se retiran las dos aplicaciones sueltas (Inicio y Chat). Archivos: `src/utils/sinArrastre.js`, `src/App.jsx` (un efecto), `src/pages/Home.jsx` y `src/pages/Chat.jsx` (se quita la llamada suelta), `scripts/recorrido.mjs`.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
