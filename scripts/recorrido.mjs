@@ -701,6 +701,90 @@ console.log('\n── Ver todos: volver de un profesional deja en su categoría 
   await p.close()
 }
 
+console.log('\n── Después de la cita: preguntar a tiempo y «Mis servicios» coherente ──')
+{
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('tras la cita: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  const dia = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10) }
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); sessionStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Sergio', joined: new Date().toISOString() })) })
+  // A quién recomienda Nüra para esto (el que luego «no funcionó»).
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await espera(1500)
+  await escribirEn(p, 'Mi hijo de 5 años no pronuncia la R', 'x => x.getBoundingClientRect().width > 100')
+  await p.keyboard.press('Enter')
+  await espera(5400)
+  const primero = await p.evaluate(() => [...document.querySelectorAll('button[aria-label^="Ver perfil de"]')].find(b => b.checkVisibility())?.getAttribute('aria-label')?.replace('Ver perfil de ', ''))
+  await tocar(p, /^Ver perfil de/)
+  await espera(1500)
+  const hid = Number((p.url().match(/\/helper\/(\d+)/) || [])[1])
+  const q = await p.evaluate(() => sessionStorage.getItem('nura_last_query'))
+  await p.close()
+
+  // Contactado hace 4 días, con la visita MAÑANA: aún no se pregunta.
+  const sembrar = async (pg, fecha) => {
+    await pg.goto(BASE + '/', { waitUntil: 'networkidle0' })
+    await pg.evaluate((hid, nombre, fecha, q) => {
+      localStorage.setItem('nura_contacted', JSON.stringify([{ id: hid, name: nombre, contactedAt: Date.now() - 4 * 864e5 }]))
+      localStorage.setItem('nura_citas', JSON.stringify([{ id: 'c1', helperId: hid, helperName: nombre, fecha, hora: '10:00', estado: 'confirmada', label: 'jueves a las 10:00', createdAt: Date.now() - 4 * 864e5 }]))
+      localStorage.setItem('nura_services', JSON.stringify([{ id: 's1', helperId: hid, helperName: nombre, specialty: 'Logopeda', date: fecha, time: '10:00', status: 'confirmed' }]))
+      localStorage.removeItem('nura_ratings')
+      sessionStorage.setItem('nura_last_query', q)
+    }, hid, primero, fecha, q)
+    await pg.goto(BASE + '/', { waitUntil: 'networkidle0' })
+    await espera(2200)
+  }
+  let pg = await navegador.newPage()
+  await sembrar(pg, dia(1))
+  paso('con la visita aún por venir, no pregunta «¿qué tal fue?»', hid > 0 && !/Qué tal fue|Pudiste resolver/.test(await texto(pg)), `${primero} (${hid})`)
+  await pg.close()
+
+  // La visita fue AYER: ahora sí.
+  pg = await navegador.newPage()
+  pg.on('pageerror', e => errores.push('tras la cita: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  await sembrar(pg, dia(-1))
+  paso('pasada la visita, pregunta cómo fue', /Qué tal fue la visita/.test(await texto(pg)))
+  await tocar(pg, /^No del todo$/)
+  await espera(1500)
+  await tocar(pg, /Sí, busca otra persona/)
+  await espera(6000)
+  const otro = await pg.evaluate(() => [...document.querySelectorAll('button[aria-label^="Ver perfil de"]')].filter(b => b.checkVisibility()).map(b => b.getAttribute('aria-label').replace('Ver perfil de ', '')))
+  const t2 = await texto(pg)
+  paso('«busca otra persona» no vuelve a proponer a la misma', otro.length > 0 && !otro.includes(primero) && !/Cuentame|Aqui estare/.test(t2), otro.join(', '))
+  await pg.close()
+
+  // «Sí, genial» deja su cita pasada como hecha en «Mis servicios».
+  pg = await navegador.newPage()
+  await sembrar(pg, dia(-1))
+  await tocar(pg, /^Sí, genial$/)
+  await espera(2000)
+  const estado = await pg.evaluate(() => JSON.parse(localStorage.getItem('nura_services') || '[]')[0]?.status)
+  paso('«Sí, genial» marca su cita pasada como hecha', estado === 'completed', estado)
+  await pg.close()
+
+  // «Mis servicios»: una cita pasada sin marcar y otra futura con alguien ya valorado.
+  pg = await navegador.newPage()
+  await pg.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await pg.evaluate((a, b) => {
+    localStorage.setItem('nura_contacted', '[]'); localStorage.setItem('nura_citas', '[]')
+    localStorage.setItem('nura_ratings', JSON.stringify([{ helperId: 2, rating: 5 }]))
+    localStorage.setItem('nura_services', JSON.stringify([
+      { id: 'f1', helperId: 2, helperName: 'Ana Futura', specialty: 'Fisioterapeuta', date: b, time: '10:00', status: 'confirmed' },
+      { id: 'p1', helperId: 3, helperName: 'Pau Pasada', specialty: 'Fontanero', date: a, time: '10:00', status: 'confirmed' },
+    ]))
+  }, dia(-1), dia(2))
+  await pg.goto(BASE + '/my-services', { waitUntil: 'networkidle0' })
+  await espera(1500)
+  const tarjetas = await pg.evaluate(() => Object.fromEntries([...document.querySelectorAll('article')].map(a => [a.getAttribute('aria-label'), a.innerText.replace(/\s+/g, ' ')])))
+  const futura = Object.entries(tarjetas).find(([k]) => /Ana Futura/.test(k))?.[1] || ''
+  const pasada = Object.entries(tarjetas).find(([k]) => /Pau Pasada/.test(k))?.[1] || ''
+  const proximos = await pg.evaluate(() => [...document.querySelectorAll('button[aria-pressed]')].find(b => /Próximos/.test(b.textContent))?.textContent.replace(/\D/g, ''))
+  paso('cita futura con alguien ya valorado: se puede cancelar, sin «Valorado» ni «marcar como hecho»', /Cancelar la cita/.test(futura) && !/Valorado|Repetir|como hecho/.test(futura), futura.slice(0, 90))
+  paso('cita ya pasada: «¿Ya se hizo?» y «Marcar como hecho y valorar», sin cancelar', /Ya se hizo/.test(pasada) && /Marcar como hecho y valorar/.test(pasada) && !/Cancelar la cita/.test(pasada), pasada.slice(0, 90))
+  paso('en «Próximos» solo cuenta la que está por venir', proximos === '1', `Próximos ${proximos}`)
+  await pg.close()
+}
+
 await navegador.close()
 
 console.log('')

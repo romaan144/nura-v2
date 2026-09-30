@@ -170,6 +170,17 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Después de la cita: preguntar a tiempo y «Mis servicios» coherente
+
+- Inicio preguntaba «¿Qué tal fue la visita del jueves?» a los 3 días del contacto aunque el jueves aún no hubiera llegado, o con una cita cancelada. Ahora espera a que pase la visita; si se canceló o rechazó, pregunta en general.
+- «No del todo» → «Sí, busca otra persona» repetía la búsqueda y podía proponer a la misma persona. Ahora la deja fuera (si es la única, lo dice). Arregladas también dos frases sin tildes.
+- «Sí, genial» deja su cita pasada como hecha en «Mis servicios».
+- «Mis servicios»:
+  - «Marcar completado y valorar» salía en citas futuras (se podía dar por hecha la de mañana). Ahora solo cuando la hora ya pasó, con la etiqueta «¿Ya se hizo?»; si ya valoraste a esa persona, solo «Marcar como hecho».
+  - Una cita nueva con alguien valorado antes salía «Valorado · Repetir», sin poder cancelarla. Ahora «Valorado» es de cada cita terminada.
+  - «Próximos» ya no cuenta citas cuya hora pasó.
+- `src/pages/Home.jsx`, `src/pages/MyServices.jsx` (sin cambiar estilos), `src/utils/citaAviso.js` (`yaPaso`). `npm run recorrido` comprueba los siete casos (con el código anterior fallaban cinco de seis); `recorrido-real` marca la cita como hecha solo una vez pasada.
+
 ## 2026-10-29 — Ver todos: al volver de un profesional, la lista sigue donde estaba
 
 - Sergio: al volver de una persona, la lista de su categoría se recargaba y aparecía arriba del todo; había que volver a bajar.

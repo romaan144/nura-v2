@@ -9,6 +9,7 @@ import EmptyPanel from '../components/EmptyPanel'
 import styles from './MyServices.module.css'
 import RatingModal from '../components/RatingModal'
 import { showToast } from '../components/Toast'
+import { yaPaso } from '../utils/citaAviso'
 
 // Demo services for realistic preview
 const DEMO_SERVICES = [
@@ -67,6 +68,8 @@ const STATUS = {
   cancelled: { label: 'Cancelada', icon: XCircle, color: '#A33B46', bg: '#FFF0F1' },
   // El profesional contestó que esa hora no le va (su mensaje está en el chat).
   rejected:  { label: 'Propón otra hora', icon: RotateCcw, color: '#B45309', bg: '#FFFBEB' },
+  // Pedida o confirmada, y su hora ya pasó: falta decir si se hizo.
+  pasada:    { label: '¿Ya se hizo?', icon: Clock, color: '#595367', bg: '#F0EEF4' },
 }
 
 const TABS = ['Todos', 'Próximos', 'Completados']
@@ -96,6 +99,12 @@ export default function MyServices() {
     showToast('Cita cancelada.')
   }
 
+  // Pedida o confirmada y con la hora ya pasada: ni «próxima» ni cancelable;
+  // es el momento de decir si se hizo y valorar. Sin fecha, no se sabe.
+  const enCurso = s => s.status === 'pending' || s.status === 'confirmed'
+  const pasada = s => enCurso(s) && yaPaso(s.date, s.time, ahora) === true
+  const proxima = s => enCurso(s) && !pasada(s)
+
   // Merge real + demo (real take priority by helperId)
   const realIds = new Set((services||[]).map(s => String(s.helperId)))
   // Show demo services only to guests — authenticated users see only real data
@@ -106,7 +115,7 @@ export default function MyServices() {
   const allServices = [...(services||[]), ...demosToShow]
 
   const filtered = allServices.filter(s => {
-    if (tab === 'Próximos')   return s.status === 'pending' || s.status === 'confirmed'
+    if (tab === 'Próximos')   return proxima(s)
     if (tab === 'Completados') return s.status === 'completed'
     return true
   })
@@ -138,7 +147,7 @@ export default function MyServices() {
         <div className={styles.tabs} role="group" aria-label="Filtrar servicios">
           {TABS.map(t => {
             const count = allServices.filter(s => t === 'Próximos'
-              ? s.status === 'pending' || s.status === 'confirmed'
+              ? proxima(s)
               : t === 'Completados' ? s.status === 'completed' : true).length
             return (
               <button key={t} type="button" aria-pressed={tab === t}
@@ -174,9 +183,13 @@ export default function MyServices() {
         {/* Service list */}
         <div className={styles.list}>
           {filtered.map(s => {
-            const st = STATUS[s.status] || STATUS.pending
+            const st = pasada(s) ? STATUS.pasada : (STATUS[s.status] || STATUS.pending)
             const StatusIcon = st.icon
-            const rated = hasRated(s.helperId) || s.rated
+            // Valorada ESTA cita. Antes bastaba con haber valorado alguna vez
+            // a la persona: una cita nueva con ella salía «Valorado · Repetir»
+            // y sin poder cancelarla ni marcarla como hecha.
+            const rated = s.rated || (s.status === 'completed' && hasRated(s.helperId))
+            const yaValorada = hasRated(s.helperId)
             return (
               <article key={s.id} className={styles.card} aria-label={`Cita con ${s.helperName}: ${st.label}`}
                 style={{ '--service-status': st.color, '--service-status-bg': st.bg }}>
@@ -228,19 +241,25 @@ export default function MyServices() {
                 )}
 
                 {/* Rate CTA */}
-                {/* Pending/confirmed → mark complete */}
-                {(s.status === 'pending' || s.status === 'confirmed') && !rated && (
+                {/* Ya pasó → marcar como hecha (y valorar, si aún no). Antes
+                    salía también en citas futuras: se podía dar por hecha
+                    una cita de mañana. Sin fecha, se deja como estaba. */}
+                {enCurso(s) && !rated && (pasada(s) || !s.date) && (
                   <div className={styles.postActions}>
                     <button className={styles.rateBtn}
-                      onClick={e => { e.stopPropagation(); updateService(s.id, { status: 'completed' }); setRatingModal({...s, status:'completed'}) }}
+                      onClick={e => {
+                        e.stopPropagation()
+                        if (yaValorada) { updateService(s.id, { status: 'completed', rated: true }); showToast('Anotado como hecho.'); return }
+                        updateService(s.id, { status: 'completed' }); setRatingModal({...s, status:'completed'})
+                      }}
                       style={{flex:1}}>
-                      <CheckCircle size={13} /> Marcar completado y valorar
+                      <CheckCircle size={13} /> {yaValorada ? 'Marcar como hecho' : 'Marcar como hecho y valorar'}
                     </button>
                   </div>
                 )}
 
                 {/* Pendiente o confirmada y aún por venir → cancelar (dos toques) */}
-                {(s.status === 'pending' || s.status === 'confirmed') && !String(s.id).startsWith('demo') && porVenir(s) && (
+                {enCurso(s) && !String(s.id).startsWith('demo') && porVenir(s) && (
                   aCancelar === s.id ? (
                     <div className={`${styles.postActions} ${styles.cancelConfirmation}`} role="group" aria-label="Confirmar cancelación"
                       onClick={e => e.stopPropagation()}>
@@ -283,7 +302,7 @@ export default function MyServices() {
                 )}
 
                 {/* Completed + not yet rated → rate CTA */}
-                {s.status === 'completed' && !rated && (
+                {s.status === 'completed' && !rated && !yaValorada && (
                   <div className={styles.postActions}>
                     <button className={styles.actionBtn}
                       onClick={e => { e.stopPropagation(); setRatingModal(s) }}>
@@ -297,7 +316,7 @@ export default function MyServices() {
                 )}
 
                 {/* Completed + rated → rebooking CTA */}
-                {rated && (
+                {s.status === 'completed' && (rated || yaValorada) && (
                   <div className={styles.postActions}>
                     <div className={styles.ratedRow}>
                       <CheckCircle size={12} color="var(--green)" />

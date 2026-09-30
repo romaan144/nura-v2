@@ -14,6 +14,16 @@ export function fechaDeCita(c) {
 }
 
 /**
+ * ¿Ya pasó la cita? `fecha` 'AAAA-MM-DD' y `hora` 'HH:MM' (sin hora, cuenta
+ * el final del día). Sin fecha no se sabe: devuelve null.
+ */
+export function yaPaso(fecha, hora, ahora = Date.now()) {
+  if (!fecha) return null
+  const t = new Date(`${fecha}T${hora ? String(hora).padStart(5, '0') : '23:59'}:00`).getTime()
+  return Number.isFinite(t) ? t <= ahora : null
+}
+
+/**
  * La nota de Nüra para una respuesta con cita, o null si no hay nada que
  * decir (sin cita, o aún propuesta). `cita`: { fecha, hora, estado, cancela, nota }.
  */

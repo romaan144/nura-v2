@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · Después de la cita: preguntar a tiempo y «Mis servicios» coherente
+### Última tarea integrada · Después de la cita: preguntar a tiempo y «Mis servicios» coherente
 
-Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Revisión de lo que ve el cliente tras una cita: Inicio preguntaba «¿qué tal fue la visita?» aunque la visita aún no hubiera pasado o estuviera cancelada; «busca otra persona» podía devolver a la misma; «Mis servicios» dejaba marcar como hecha una cita futura, mostraba «Valorado · Repetir» en citas nuevas con alguien ya valorado y dejaba citas pasadas en «Próximos». Archivos: `src/pages/Home.jsx` (solo la lógica de la pregunta), `src/pages/MyServices.jsx` (qué botones y estados se muestran; sin cambiar estilos), `src/utils/citaAviso.js`, `scripts/recorrido.mjs`.
+Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Revisión de lo que ve el cliente tras una cita: Inicio preguntaba «¿qué tal fue la visita?» aunque la visita aún no hubiera pasado o estuviera cancelada; «busca otra persona» podía devolver a la misma; «Mis servicios» dejaba marcar como hecha una cita futura, mostraba «Valorado · Repetir» en citas nuevas con alguien ya valorado y dejaba citas pasadas en «Próximos». Archivos: `src/pages/Home.jsx` (solo la lógica de la pregunta), `src/pages/MyServices.jsx` (qué botones y estados se muestran; sin cambiar estilos), `src/utils/citaAviso.js`, `scripts/recorrido.mjs`, `scripts/recorrido-real.mjs`. Comprobado: build, recorrido, recorrido-real, smoke, test:vista, test:chat-scroll, test:busqueda (100%), test:matching 255, test:avisos 199; lint igual que en `main`.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
