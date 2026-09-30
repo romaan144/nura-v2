@@ -483,6 +483,28 @@ console.log('\n── Búsqueda: lo que se dice después de buscar ──')
   await p.close()
 }
 
+console.log('\n── Búsqueda: la primera respuesta encaja con lo que pides ──')
+{
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('primera: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  const buscar = async q => {
+    await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+    await p.evaluate(() => { localStorage.clear(); sessionStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Sergio', joined: new Date().toISOString() })); sessionStorage.setItem('nura_for_whom', 'mi') })
+    await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+    await espera(1200)
+    await escribirEn(p, q); await p.keyboard.press('Enter'); await espera(3500)
+    return p.evaluate(() => (document.querySelector('section[aria-label="Respuesta de Nüra"]')?.innerText || '').replace(/\s+/g, ' '))
+  }
+  const primera = r => r.match(/Primera opción .{0,50}/)?.[0] || ''
+  let r = await buscar('busco alguien que cuide a mi madre por las tardes')
+  paso('«por las tardes» no da primero una cuidadora nocturna ni una canguro', /Primera opción/.test(r) && !/noctur|canguro/i.test(primera(r)), primera(r))
+  r = await buscar('¿cuánto cuesta un electricista?')
+  paso('si preguntas el precio, lo dice', /Cobra \d/.test(r), r.match(/Cobra [^.]+/)?.[0] || '')
+  r = await buscar('abogado para un despido')
+  paso('el porqué nombra lo que es, no «su especialidad es justo eso»', /Es abogado laboralista, justo lo que buscas/.test(r) && !/justo eso:/.test(r), r.match(/Es [^.]+/)?.[0] || '')
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')

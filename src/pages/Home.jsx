@@ -23,7 +23,7 @@ import { useSinContestar } from '../utils/sinContestar'
 import { useRespuestasNuevas } from '../utils/respuestasNuevas'
 import RatingModal from '../components/RatingModal'
 import { oficiosDe } from '../data/oficios'
-import { entenderSeguimiento, puntosFranja, NOMBRE_FRANJA } from '../utils/seguimiento'
+import { entenderSeguimiento, puntosFranja, preferenciasDe, NOMBRE_FRANJA } from '../utils/seguimiento'
 import { tieneAlerta, misAlertas, alertasGuardadas } from '../utils/alertas'
 import styles from './Home.module.css'
 import { PULSO_THRESHOLD, PULSO_DELAY, CONFIRMACION_THRESHOLD } from '../config'
@@ -76,7 +76,15 @@ function buildWhy(helper, analysis) {
   const clave = (analysis?.palabrasPropias || []).find(w =>
     w.length > 4 && !/^(pronunc|necesit|busc|quier|tengo|hacer)/.test(w) &&
     etiquetas.some(e => e.includes(w)))
-  if (clave) parts.push(`su especialidad es justo eso: ${clave}`)
+  // «Su especialidad es justo eso: abogado» sonaba a plantilla: se nombra
+  // lo que ES («es abogado laboralista, justo lo que buscas»).
+  const esp = String(helper?.specialty || '').trim()
+  // Quien da clases tiene de especialidad la materia («guitarra clásica»).
+  const materia = ['clases', 'educacion', 'matematicas', 'idiomas'].includes(helper?.category)
+    && !/^(profesor|profesora|maestr|tutor|monitor|entrenador|instructor)/i.test(esp)
+  const espMin = `${esp.charAt(0).toLowerCase()}${esp.slice(1)}`
+  if (clave && esp) parts.push(`${materia ? 'da clases de ' : 'es '}${espMin}, justo lo que buscas`)
+  else if (clave) parts.push(`trabaja justo esto: ${clave}`)
   else if (s.alzheimer) parts.push('lleva años acompañando casos de Alzheimer')
   else if (s.infantil) parts.push('se dedica a niños, no es algo que haga de vez en cuando')
   else if (paraLabel) parts.push(`atiende casos como el ${paraLabel.replace('para ', 'de ')}`)
@@ -1086,6 +1094,14 @@ export default function Home() {
         else unicoOpcion = true
       }
       excluirRef.current = null
+      // Lo que pidió además del oficio: primero quien encaja con la franja
+      // («por las tardes» ya no da primero una cuidadora nocturna) o con
+      // «online». Orden estable: dentro de cada grupo manda el buscador.
+      const prefs = preferenciasDe(msg)
+      if (matches?.length > 1 && (prefs.franja || prefs.online)) {
+        const p = h => (prefs.franja ? puntosFranja(h, prefs.franja) : 1) + (prefs.online && h.online === true ? 1 : 0)
+        matches = matches.map((h, i) => ({ h, i, p: p(h) })).sort((a, b) => b.p - a.p || a.i - b.i).map(x => x.h)
+      }
       clearTimeout(thinkingTimer)
       if (!alive()) return
       // Honestidad antes que confianza falsa: sin comprensión no hay tarjetas
@@ -1236,7 +1252,9 @@ export default function Home() {
         : aproximado
         ? `Todavía no tengo a nadie ${aproximado.quien}. Lo más parecido es **${topFirstName}**.`
         : `**${topFirstName}** es quien mejor encaja.`
-      const whyLine = `${why.charAt(0).toUpperCase()}${why.slice(1)}${urgentTail}.`
+      // «¿Cuánto cuesta un electricista?»: se contesta, no solo se recomienda.
+      const precioTail = prefs.precio && top?.price ? `. Cobra ${top.price}` : ''
+      const whyLine = `${why.charAt(0).toUpperCase()}${why.slice(1)}${urgentTail}${precioTail}.`
 
 
       // Build rich match explanation — the core AI differentiator

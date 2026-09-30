@@ -170,6 +170,19 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Búsqueda: la primera respuesta encaja mejor con lo que pides
+
+- Probadas frases reales en el navegador:
+  - «busco alguien que cuide a mi madre por las tardes» daba primero una cuidadora **nocturna** (120 €/noche) y, detrás, una canguro;
+  - «¿cuánto cuesta un electricista?» no decía el precio;
+  - el porqué decía «Su especialidad es justo eso: abogado / canguro / reforma / lavadora».
+- Ahora:
+  - Si pides una franja («por las tardes», «por las noches», «el fin de semana») u «online», primero va quien encaja, según su horario y su oficio. Orden estable: dentro de cada grupo manda el buscador.
+  - Las palabras de horario («tardes», «noches», «fin de semana»…) ya no cuentan como lo que necesitas: la canguro entraba porque su ficha dice «disponible tardes».
+  - Si preguntas el precio, lo dice («Cobra 55€/hora»).
+  - El porqué nombra lo que es: «Es abogado laboralista, justo lo que buscas»; y para quien da clases, «Da clases de guitarra clásica y moderna».
+- Búsqueda 100 % en las tres tandas. `npm run recorrido` lo comprueba.
+
 ## 2026-10-29 — Búsqueda: Nüra entiende lo que dices después de buscar
 
 - Sergio pide mejorar sobre todo la experiencia de la búsqueda principal. Probadas conversaciones reales en el navegador; fallaban:

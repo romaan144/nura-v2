@@ -60,3 +60,21 @@ export function puntosFranja(helper, franja) {
   if (franja === 'noche' && /noctur/.test(plano(helper?.specialty))) return 2
   return trabajaEn(helper, franja) ? 1 : 0
 }
+
+/**
+ * Lo que pide la PRIMERA búsqueda además del oficio: { franja, online, precio }.
+ * «alguien que cuide a mi madre por las tardes» → { franja: 'tarde' }.
+ * «esta noche» también es noche; «mañana» a secas es un día, no una franja.
+ */
+export function preferenciasDe(msg) {
+  const t = plano(msg)
+  const franja = /\b(fin(es)? de semana|finde|sabados?|domingos?)\b/.test(t) ? 'finde'
+    : /\btardes?\b/.test(t) ? 'tarde'
+    : /\bnoches?\b/.test(t) ? 'noche'
+    : /\b(por la manana|las mananas|por las mananas|mananas)\b/.test(t) ? 'manana' : null
+  return {
+    franja,
+    online: /\b(online|on line|en linea|videollamada|a distancia)\b/.test(t),
+    precio: /\b(cuanto (cobra|cobran|cuesta|cuestan|vale|valen|sale|salen)|precio\w*|tarifa\w*)\b/.test(t),
+  }
+}
