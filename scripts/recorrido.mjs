@@ -670,13 +670,31 @@ console.log('\n── Ver todos: volver de un profesional deja en su categoría 
   await tocar(p, /Arreglar algo en casa/)
   await espera(2000)
   const enCategoria = p.url()
-  const abierto = await p.evaluate(() => { const a = document.querySelector('button[aria-label^="Ver perfil de"]'); a?.click(); return !!a })
+  // Sergio, 2026-09-30: y al volver, la lista sigue donde estaba (ni se
+  // recarga ni sube al principio). Se baja, se abre a alguien de más abajo.
+  const cuerpo = 'div[data-scroll-propio]'
+  const antes = await p.evaluate(sel => {
+    const el = [...document.querySelectorAll(sel)].find(x => x.getClientRects().length)
+    el.scrollTop = 900
+    const b = [...el.querySelectorAll('button[aria-label^="Ver perfil de"]')].find(x => { const r = x.getBoundingClientRect(); return r.top > 150 && r.bottom < innerHeight - 120 })
+    return { y: el.scrollTop, quien: b?.getAttribute('aria-label') }
+  }, cuerpo)
+  await espera(400)
+  const abierto = await p.evaluate(q => { const a = document.querySelector(`button[aria-label="${q}"]`); a?.click(); return !!a }, antes.quien)
   await espera(2000)
   const enFicha = /\/helper\//.test(p.url())
   await p.goBack()
-  await espera(2500)
+  // Justo al volver: sin esqueletos de carga, ya en su sitio.
+  await espera(350)
+  const vuelta = await p.evaluate(sel => {
+    const el = [...document.querySelectorAll(sel)].find(x => x.getClientRects().length)
+    return { y: el?.scrollTop, cargando: !!document.querySelector('[class*="keleton"]') }
+  }, cuerpo)
+  await espera(2000)
+  const despues = await p.evaluate(sel => [...document.querySelectorAll(sel)].find(x => x.getClientRects().length)?.scrollTop, cuerpo)
   const t = await texto(p)
   paso('al volver de un profesional, sigue en la lista de su categoría', abierto && enFicha && p.url() === enCategoria && /Fontaner|electricist/i.test(t) && !/Cuidar mi salud/.test(t), `${enCategoria.replace(BASE, '')} → ficha → ${p.url().replace(BASE, '')}`)
+  paso('y en el mismo sitio de la lista, sin recargarla', antes.y > 500 && Math.abs(vuelta.y - antes.y) < 5 && Math.abs(despues - antes.y) < 5 && !vuelta.cargando, `bajado ${antes.y} · al volver ${vuelta.y} · luego ${despues}${vuelta.cargando ? ' · recargando' : ''}`)
   await p.goBack()
   await espera(1500)
   paso('y otro «atrás» vuelve a las categorías', /Cuidar mi salud/.test(await texto(p)))
