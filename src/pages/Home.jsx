@@ -23,6 +23,7 @@ import { useSinContestar } from '../utils/sinContestar'
 import { useRespuestasNuevas } from '../utils/respuestasNuevas'
 import RatingModal from '../components/RatingModal'
 import { oficiosDe } from '../data/oficios'
+import { entenderSeguimiento, puntosFranja, NOMBRE_FRANJA } from '../utils/seguimiento'
 import { tieneAlerta, misAlertas, alertasGuardadas } from '../utils/alertas'
 import styles from './Home.module.css'
 import { PULSO_THRESHOLD, PULSO_DELAY, CONFIRMACION_THRESHOLD } from '../config'
@@ -844,6 +845,71 @@ export default function Home() {
       }
     }
 
+    // ── Lo que se dice después de buscar (ver utils/seguimiento) ──────
+    const seg = entenderSeguimiento(msg, { hayResultados: lastMatches?.length > 0, oficiosAntes: window.__nuraLastAnalysis?.oficios || [] })
+    const responder = (lines, extra = {}) => setTimeout(() => {
+      setMessages(prev => [...prev, { id: Date.now(), from: 'nura', lines, ...extra }])
+      setLoading(false)
+    }, 600)
+    const nombreDe = h => getFirstName(h?.name) || h?.name || ''
+    if (seg === 'saludo') {
+      const fn = user?.name?.split(' ')?.[0]
+      responder([`¡Hola${fn ? `, **${fn}**` : ''}! Cuéntame qué necesitas y busco a la persona adecuada.`],
+        { chips: ['Una reparación en casa', 'Cuidar a un familiar', 'Clases particulares'] })
+      return
+    }
+    if (seg === 'gracias') {
+      const top = lastMatches?.[0]
+      responder(top
+        ? [`¡De nada! Si te encaja **${nombreDe(top)}**, escríbele desde su tarjeta.`]
+        : ['¡De nada! Aquí estoy para lo que necesites.'],
+        top ? { chips: [`Escribir a ${nombreDe(top)}`] } : {})
+      return
+    }
+    // Con resultados: se contesta sobre ESOS resultados.
+    const mostrar = (lines, results) => {
+      setMessages(prev => [...prev, { id: Date.now(), from: 'nura', lines, results,
+        refineChips: ['Más cerca', 'Mejor valorado', 'Más barato'] }])
+      setLastMatches(results)
+      setLoading(false)
+    }
+    if (seg === 'precio') {
+      const con = lastMatches.filter(h => h.price).slice(0, 3)
+      const frase = con.length === 1 ? `**${nombreDe(con[0])}** cobra ${con[0].price}.`
+        : con.length ? `**${nombreDe(con[0])}** cobra ${con[0].price}, ${con.slice(1).map(h => `**${nombreDe(h)}** ${h.price}`).join(' y ')}.`
+        : 'No tengo sus tarifas. Puedes preguntárselo en el chat.'
+      mostrar([frase], lastMatches)
+      return
+    }
+    if (seg === 'online' || seg === 'presencial' || seg?.franja) {
+      const puntos = seg === 'online' ? h => (h.online === true ? 1 : 0)
+        : seg === 'presencial' ? h => (h.presential !== false ? 1 : 0)
+        : h => puntosFranja(h, seg.franja)
+      const que = seg === 'online' ? 'online' : seg === 'presencial' ? 'en persona' : NOMBRE_FRANJA[seg.franja]
+      // Orden estable: primero quien más encaja; si todos igual, lo mismo.
+      const ordenados = lastMatches.map((h, i) => ({ h, i, p: puntos(h) }))
+        .sort((a, b) => b.p - a.p || a.i - b.i).map(x => x.h)
+      const si = ordenados.filter(h => puntos(h) > 0)
+      if (si.length) {
+        const igual = ordenados.every((h, i) => h === lastMatches[i]) && si.length === lastMatches.length
+        mostrar([igual ? `Todas estas opciones trabajan ${que}.` : `Primero, quien trabaja ${que}: **${nombreDe(si[0])}**.`], ordenados)
+      } else {
+        mostrar([`Ninguna de estas opciones trabaja ${que}. Te dejo las mismas; puedes preguntárselo en el chat.`], lastMatches)
+      }
+      return
+    }
+    if (seg === 'otra') {
+      if (lastMatches.length > 1) {
+        const rotados = [...lastMatches.slice(1), lastMatches[0]]
+        mostrar([`Otra opción: **${nombreDe(rotados[0])}**.`], rotados)
+      } else {
+        mostrar([`Por ahora **${nombreDe(lastMatches[0])}** es la única opción que tengo para esto.`], lastMatches)
+      }
+      return
+    }
+    // Otra búsqueda («no, era fontanero»): no se «ajusta» la anterior.
+    const nueva = seg === 'nueva'
+
     const intent = detectIntent(msg, user)
 
     // Context-aware responses
@@ -859,7 +925,7 @@ export default function Home() {
     // Y un asentimiento es CORTO. Una peticion de doce palabras no es un "si".
     const esBreve = msg.trim().split(/\s+/).length <= 6
 
-    if (lastMatches?.length > 0) {
+    if (!nueva && lastMatches?.length > 0) {
       // User confirms — guide to profile
       if (esBreve && (palabra('sí','si','vale','ok','ese','esa','bien','genial','perfecto') || t.includes('me convence'))) {
         const topMatch = lastMatches?.[0]
@@ -924,7 +990,7 @@ export default function Home() {
     }
 
     // Refinement — if user is refining previous results
-    if (lastMatches?.length > 0 && intent === 'search') {
+    if (!nueva && lastMatches?.length > 0 && intent === 'search') {
       const refined = await matchHelpers({ categoria: 'otro', palabrasClave: msg.toLowerCase().split(' ') }, 4, msg, lastMatches)
       if (refined?.length) {
         const resultMsg = { id: Date.now(), from: 'nura', lines: [`He ajustado los resultados.`], results: refined }
@@ -1003,7 +1069,8 @@ export default function Home() {
       try { sessionStorage.setItem('nura_last_analysis', JSON.stringify(analysis)) } catch {}
       // Empathy acknowledgment — instant, before searching
       const empathyLine = `Entendido${analysis?.persona && PERSONA_CHIP[analysis.persona] ? '. Buscas ayuda ' + PERSONA_CHIP[analysis.persona].charAt(0).toLowerCase() + PERSONA_CHIP[analysis.persona].slice(1) : ''}.`
-      setMessages(prev => [...prev, { id: Date.now() + 0.3, from: 'nura', lines: [empathyLine] }])
+      const empatiaId = Date.now() + 0.3
+      setMessages(prev => [...prev, { id: empatiaId, from: 'nura', lines: [empathyLine] }])
 
       // El pensando sereno — con dueño y cancelación (El Contrato)
       const thinkingTimer = setTimeout(() => {
@@ -1071,6 +1138,9 @@ export default function Home() {
           // No entendida: se cuenta como búsqueda de categoría «otro», con su
           // ciudad y sin la frase (vista `salud_busqueda` en Supabase).
           registrar('busqueda', { categoria: 'otro', resultados: 0, ...demandaDe(analysis) })
+          // «Entendido.» seguido de «No estoy segura de haberte entendido» se
+          // contradecía: si no se ha entendido, sin «Entendido».
+          setMessages(prev => prev.filter(m => m.id !== empatiaId))
           const urge = /\b(urgent\w*|emergenc\w*|ahora mismo|cuanto antes|ya mismo|se me ha roto|no puedo esperar)\b/i.test(msg)
           setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
             lines: urge

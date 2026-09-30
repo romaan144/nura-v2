@@ -450,6 +450,39 @@ console.log('\n── Tras «Sí, genial», Nüra entiende lo que le cuentas ─
   await p.close()
 }
 
+console.log('\n── Búsqueda: lo que se dice después de buscar ──')
+{
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('seguimiento: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  const respuesta = () => p.evaluate(() => (document.querySelector('section[aria-label="Respuesta de Nüra"]')?.innerText || '').replace(/\s+/g, ' '))
+  const nueva = async () => {
+    await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+    await p.evaluate(() => { localStorage.clear(); sessionStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Sergio', joined: new Date().toISOString() })); sessionStorage.setItem('nura_for_whom', 'mi') })
+    await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+    await espera(1200)
+  }
+  const decir = async q => { await escribirEn(p, q); await p.keyboard.press('Enter'); await espera(3500); return respuesta() }
+  await nueva()
+  let r = await decir('hola')
+  paso('«hola» recibe un saludo, no «no te he entendido»', /¡Hola/.test(r) && !/No estoy segura/.test(r), r.slice(12, 80))
+  r = await decir('xyzzy blabla')
+  paso('si no entiende, no empieza por «Entendido.»', /No estoy segura/.test(r) && !/Entendido\./.test(r), r.slice(12, 70))
+  await nueva()
+  await decir('electricista')
+  r = await decir('no, era fontanero')
+  paso('«no, era fontanero» busca fontanero', /Primera opción \S+ \S+ fontanero/.test(r), r.match(/Primera opción \S+ \S+ \S+/)?.[0] || r.slice(0, 80))
+  await nueva()
+  const a = await decir('cuidadora para mi padre con alzheimer')
+  r = await decir('¿cuánto cobra?')
+  paso('«¿cuánto cobra?» dice los precios', /cobra \d/.test(r), r.match(/\S+ cobra [^.]+/)?.[0] || r.slice(0, 80))
+  r = await decir('otra persona')
+  const primera = x => x.match(/Primera opción (\S+ \S+)/)?.[1]
+  paso('«otra persona» enseña a otra persona', primera(r) && primera(r) !== primera(a), `${primera(a)} → ${primera(r)}`)
+  r = await decir('por la noche')
+  paso('«por la noche» pone primero a quien trabaja de noche', /noctur/i.test(r.match(/Primera opción .{0,60}/)?.[0] || ''), r.match(/Primera opción .{0,40}/)?.[0] || '')
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')

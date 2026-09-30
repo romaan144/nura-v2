@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · Búsqueda: Nüra entiende lo que dices después de buscar
+### Última tarea integrada · Búsqueda: Nüra entiende lo que dices después de buscar
 
-Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Sergio pide mejorar sobre todo la experiencia de la búsqueda principal. Probadas frases reales: tras unos resultados, «no, era fontanero» seguía con el electricista, «otra persona» devolvía a la misma, «¿cuánto cobra?», «que sea online» y «mejor por la tarde» recibían «No estoy segura de haberte entendido»; «hola» y «gracias» también, y precedido de «Entendido.». Nuevo `src/utils/seguimiento.js` (qué quiere decir un mensaje tras una búsqueda) y su uso en `src/pages/Home.jsx` (solo la lógica; nada visual). Prueba en `scripts/recorrido.mjs`.
+Integrada el 2026-09-30 (ver `docs/changelog.md`, 2026-10-29). Tocó el nuevo `src/utils/seguimiento.js`, `src/pages/Home.jsx` (respuestas tras una búsqueda y sin «Entendido.» cuando no entiende; nada visual) y `scripts/recorrido.mjs`. Esos archivos quedan libres.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
