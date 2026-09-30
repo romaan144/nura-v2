@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · El profesional sin correo en su ficha: no confundirle
+### Última tarea integrada · El profesional sin correo en su ficha: no confundirle
 
-Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Quien se dio de alta con un teléfono no puede vincular su acceso (se comprueba por correo). Hoy «Responder» le pide «el mismo correo que diste» y, si crea el acceso igualmente, Nüra le deja dentro como cliente (bandeja vacía). Ahora el acceso que se crea desde un mensaje recibido se marca como de profesional: sin ficha con ese correo, no entra como cliente y se le explica qué pasa. La vinculación por teléfono queda como decisión de Sergio. Archivos: `src/pages/Responder.jsx` y `src/components/BandejaProfesional.jsx` (texto y enlace), `src/pages/Entrar.jsx`, `src/pages/Profile.jsx` (solo lógica), `scripts/recorrido-real.mjs`.
+Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Quien se dio de alta con un teléfono no puede vincular su acceso (se comprueba por correo). Hoy «Responder» le pide «el mismo correo que diste» y, si crea el acceso igualmente, Nüra le deja dentro como cliente (bandeja vacía). Ahora el acceso que se crea desde un mensaje recibido se marca como de profesional: sin ficha con ese correo, no entra como cliente y se le explica qué pasa. La vinculación por teléfono queda como decisión de Sergio. Archivos: `src/pages/Responder.jsx` y `src/components/BandejaProfesional.jsx` (texto y enlace), `src/pages/Entrar.jsx`, `src/pages/Profile.jsx` (solo lógica), `scripts/recorrido-real.mjs`. Comprobado: build, recorrido, recorrido-real (con el código anterior fallaba), smoke, test:vista, test:chat-scroll, test:busqueda 100%, test:matching 257, test:avisos 204; lint igual que en `main`.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
