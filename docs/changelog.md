@@ -170,6 +170,15 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Textos automáticos honestos y bien escritos
+
+- Revisados avisos, notificaciones, confirmaciones y mensajes de Nüra en el chat. Las conversaciones de ejemplo están bien escritas; se corrige:
+  - El recordatorio tras buscar («¿Te convencieron los resultados? Tienes 4 profesionales disponibles…») llegaba aunque ya se hubiera escrito a alguien, uno por cada búsqueda y afirmando disponibilidad. Ahora `recordarTrasBuscar`: uno solo (la siguiente búsqueda lo sustituye), nada si mientras tanto escribió a alguien, y sin prometer: «¿Encontraste a quien buscabas? Si te encaja Antoni, puedes escribirle desde Nüra.»
+  - Se retiran funciones de notificación sin uso que prometían cosas falsas («X está disponible», «nuevos profesionales se han unido cerca de ti»).
+  - Ficha: «1 valoración» y «1 mensaje» (antes «1 valoraciones», «1 mensajes»).
+  - Aviso al profesional: «Hola, Antoni. Soy Nüra.»
+- Recordatorio comprobado aparte (sin escribir → llega; ya escribió → no; dos búsquedas → uno).
+
 ## 2026-10-29 — Primer mensaje a un profesional: un borrador natural
 
 - Sergio (captura): el borrador del primer mensaje decía «Hola Àngel. Cocinar. ¿Podrías ayudarme?». `buildChatOpener` pegaba la búsqueda tal cual.

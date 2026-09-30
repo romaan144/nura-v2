@@ -1,4 +1,5 @@
 // Web Push Notifications — no server needed for local notifications
+import { getFirstName } from './name'
 // Safari iOS 16.4+, Chrome, Firefox
 
 export async function requestNotificationPermission() {
@@ -18,18 +19,10 @@ export function scheduleLocalNotification(title, body, delayMs = 0, icon = '/log
   }
 }
 
-export function scheduleRetentionNotifications(userName = 'tú') {
-  if (!('Notification' in window) || Notification.permission !== 'granted') return
-
-  // Sin cifras inventadas: antes prometia «más de 1.200 profesionales
-  // verificados». Ya no se llama desde el acceso (el permiso se pide solo
-  // cuando la persona quiere un aviso: «te aviso si aparece alguien»).
-  scheduleLocalNotification(
-    '¿Encontraste lo que buscabas?',
-    'Cuéntale a Nüra qué necesitas y te busco a la persona adecuada.',
-    24 * 60 * 60 * 1000
-  )
-}
+// Sin cifras ni promesas inventadas. Antes había aquí avisos que decían
+// «X está disponible», «nuevos profesionales se han unido cerca de ti» o
+// «más de 1.200 profesionales verificados» sin saberlo; nadie los usaba y se
+// han retirado para que nadie los use.
 
 export function notifyServiceConfirmed(helperName) {
   scheduleLocalNotification(
@@ -38,59 +31,21 @@ export function notifyServiceConfirmed(helperName) {
   )
 }
 
-export function notifySearchComplete(count, specialty) {
-  scheduleLocalNotification(
-    `${count} profesionales encontrados`,
-    `Nüra encontró ${count} ${specialty || 'profesionales'} cerca de ti.`
-  )
-}
-
-// ── RETENTION TRIGGERS ────────────────────────────────────────────────────
-
-export function notifyHelperViewed(helperName, specialty) {
-  // Fires 2h after viewing a profile without contacting
-  scheduleLocalNotification(
-    `¿Contactaste con ${helperName}?`,
-    `${helperName} está disponible. Solo tarda un mensaje.`,
-    2 * 60 * 60 * 1000
-  )
-}
-
-export function notifySearchAbandoned(specialty) {
-  // Fires 4h after searching without contacting
-  scheduleLocalNotification(
-    'Tu búsqueda en Nüra',
-    specialty
-      ? `Encontramos ${specialty || 'profesionales'} disponibles. ¿Quieres continuar?`
-      : 'Hay nuevos profesionales disponibles cerca de ti.',
-    4 * 60 * 60 * 1000
-  )
-}
-
-export function notifyMorningReminder(name, pendingCount) {
-  // Morning nudge for pending services
-  const now = new Date()
-  const tomorrow9am = new Date(now)
-  tomorrow9am.setDate(tomorrow9am.getDate() + 1)
-  tomorrow9am.setHours(9, 0, 0, 0)
-  const delay = tomorrow9am.getTime() - now.getTime()
-
-  scheduleLocalNotification(
-    `Buenos días${name ? `, ${name}` : ''}`,
-    pendingCount > 0
-      ? `Tienes ${pendingCount} servicio${pendingCount > 1 ? 's' : ''} pendiente${pendingCount > 1 ? 's' : ''} en Nüra.`
-      : 'Nüra te ayuda a encontrar quien necesitas hoy.',
-    delay
-  )
-}
-
-export function notifyWeeklyDigest(newHelpers = 0) {
-  // Weekly digest — 7 days after last notification
-  scheduleLocalNotification(
-    'Esta semana en Nüra',
-    newHelpers > 0
-      ? `${newHelpers} nuevos profesionales se han unido cerca de ti.`
-      : 'Nuevos profesionales disponibles. ¿Qué necesitas esta semana?',
-    7 * 24 * 60 * 60 * 1000
-  )
+// Un recordatorio tras buscar, si no ha escrito a nadie: uno solo (la
+// siguiente búsqueda lo sustituye) y nada si mientras tanto escribió a alguien.
+// Antes: uno por cada búsqueda, llegaba aunque ya hubiera escrito, y hablaba
+// de «profesionales disponibles» sin saberlo.
+let recordatorio = null
+export function recordarTrasBuscar(helper, espera = 2 * 60 * 60 * 1000) {
+  clearTimeout(recordatorio)
+  if (!('Notification' in window) || Notification.permission !== 'granted' || !helper) return
+  const desde = Date.now()
+  const nombre = getFirstName(helper.name) || helper.name
+  recordatorio = setTimeout(() => {
+    try {
+      const contactos = JSON.parse(localStorage.getItem('nura_contacted') || '[]')
+      if (contactos.some(c => Number(c?.contactedAt) >= desde)) return
+    } catch { /* sin memoria: se avisa igual */ }
+    scheduleLocalNotification('¿Encontraste a quien buscabas?', `Si te encaja ${nombre}, puedes escribirle desde Nüra.`)
+  }, espera)
 }
