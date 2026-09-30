@@ -4,7 +4,9 @@
 // No es una plantilla genérica: se construye combinando lo que el motor
 // de matching ya sabe sobre la necesidad del usuario.
 
-import { suyoDe } from './personas'
+import { suyoDe, labelDe } from './personas'
+import { oficiosDe, oficio, esDelOficio } from '../data/oficios'
+import { preferenciasDe, NOMBRE_FRANJA } from './seguimiento'
 import { getFirstName } from './name'   // una sola: la copia de aqui discrepaba en 'DJ Marc Mas'
 
 // Frases que describen la situación, basadas en categoría y señales complejas
@@ -94,16 +96,77 @@ function describeWhyThisProfessional(helper) {
  * @param {object} params.user - usuario actual (puede ser null si no ha hecho login)
  * @returns {string} texto del mensaje, editable por el usuario
  */
-/** Borrador breve en primera persona. Se edita y solo sale al pulsar Enviar. */
-export function buildChatOpener({ helper, userQuery }) {
+// ── El borrador del primer mensaje ───────────────────────────────────────
+// Antes pegaba la búsqueda tal cual entre un saludo y una pregunta: «Hola
+// Àngel. Cocinar. ¿Podrías ayudarme?» (Sergio, 2026-09-30). Ahora:
+//   · si lo que escribió ya es una frase suya («Tengo una fuga debajo del
+//     fregadero»), se usan SUS palabras;
+//   · si no (una palabra, una pregunta, un texto muy largo), se redacta la
+//     necesidad con el oficio entendido («Busco a alguien que cocine a
+//     domicilio») y lo que se sabe: para quién, si urge, a qué hora;
+//   · una búsqueda anterior que no es de este profesional no se usa.
+// Nada inventado: ni motivos, ni valoraciones, ni disponibilidad. Se edita y
+// solo sale al pulsar Enviar.
+const planoOp = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+const FRASE_SUYA = /^(necesito|necesitamos|necesitaria|busco|buscamos|buscaba|quiero|queremos|quisiera|tengo|tenemos|me |mi |mis |se me|se nos|se ha|se han|estoy|estamos|hay |no me|no nos|no puedo|nuestr|llevo|mi hijo|mi hija|mi madre|mi padre)/
+const URGE = /\b(urgente|urgencia|cuanto antes|lo antes posible|ahora mismo|hoy mismo)\b/
+
+function sinSaludo(q) {
+  let t = String(q || '').trim().replace(/\s+/g, ' ')
+  // «Hola buenas tardes, …»: todos los saludos del principio (si no, «buenas
+  // tardes» parecía pedir «por la tarde»).
+  for (let i = 0; i < 3; i++) {
+    t = t.replace(/^(buenas tardes|buenas noches|buenos d[ií]as|hola|buenas|hey)( nura)?[\s,.!:;-]*/i, '').trim()
+  }
+  return t
+}
+
+export function buildChatOpener({ helper, userQuery, analysis } = {}) {
   const first = getFirstName(helper?.name)
-  const greeting = `Hola${first ? ` ${first}` : ''}`
-  const query = String(userQuery || '').trim().replace(/\s+/g, ' ')
-  // No recortar una necesidad larga a mitad ni inventar un resumen de ella.
-  if (!query || query.length > 120) return `${greeting}, ¿tienes disponibilidad para ayudarme?`
-  const sentence = query.charAt(0).toUpperCase() + query.slice(1)
-  const end = /[.!?…]$/.test(sentence) ? '' : '.'
-  return `${greeting}. ${sentence}${end} ¿Podrías ayudarme?`
+  const saludo = first ? `Hola, ${first}.` : 'Hola.'
+  let q = sinSaludo(userQuery)
+
+  // ¿La búsqueda es de ESTE profesional? Si nombra otro oficio (una búsqueda
+  // anterior, de otra cosa), no se usa.
+  const oficios = q ? oficiosDe(q) : []
+  const suyo = oficios.find(o => esDelOficio(helper?.specialty || '', o.id) || oficio(o.id)?.cat === helper?.category)
+  if (oficios.length && !suyo) q = ''
+  const a = q ? analysis : null
+  const t = planoOp(q)
+
+  const partes = [saludo]
+  // Sus palabras, si ya son una frase suya (aunque sea larga: los detalles
+  // «84 años», «la ducha» son lo que el profesional necesita saber).
+  const esFraseSuya = q && FRASE_SUYA.test(t) && q.length <= 280 && !q.includes('?') && q.split(' ').length >= 3
+  if (esFraseSuya) {
+    const f = q.charAt(0).toUpperCase() + q.slice(1)
+    partes.push(/[.!…]$/.test(f) ? f : `${f}.`)
+  } else if (suyo) {
+    const o = oficio(suyo.id)
+    // «Busco un fontanero» antes que «a alguien que sea fontanero».
+    partes.push(/^que sea /.test(o.quien)
+      ? `Busco un ${o.nombre} y he visto tu perfil en Nüra.`
+      : `Busco a alguien ${o.quien} y he visto tu perfil en Nüra.`)
+  } else {
+    partes.push('He visto tu perfil en Nüra y me gustaría contar contigo.')
+  }
+
+  // Lo que se sabe y no está ya dicho con sus palabras. «para mi hijo de 10
+  // años» se conserva tal cual; si no, la persona entendida.
+  if (!esFraseSuya) {
+    const suPara = q.match(/\bpara (mi|mis|nuestr[oa]s?) [^,.;?¿!]+/i)?.[0]
+    const para = labelDe(a?.persona)
+    if (suPara) partes.push(`Es ${suPara.trim()}.`)
+    else if (para) partes.push(`Es para ${para.replace(/^tu /, 'mi ')}.`)
+  }
+  const urge = Boolean(a?.urgente) || URGE.test(t)
+  if (urge && !esFraseSuya) partes.push('Es bastante urgente.')
+  const { franja, precio } = preferenciasDe(q)
+  if (franja && !esFraseSuya) partes.push(`Me vendría mejor ${NOMBRE_FRANJA[franja]}.`)
+
+  partes.push(urge ? '¿Tendrías hueco hoy o mañana?' : '¿Tienes disponibilidad en los próximos días?')
+  if (precio) partes.push('¿Y qué precio tendría?')
+  return partes.join(' ')
 }
 
 export function buildIntroLetter({ helper, analysis, userQuery, user }) {

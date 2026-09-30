@@ -165,7 +165,7 @@ export default function Chat() {
 
   // La propuesta permanece en el campo: no se añade al historial ni se envía.
   const [input, setInput] = useState(() =>
-    !hasHistory ? buildChatOpener({ helper, userQuery }) : ''
+    !hasHistory ? buildChatOpener({ helper, userQuery, analysis: location.state?.analysis || window.__nuraLastAnalysis }) : ''
   )
   const [typing, setTyping] = useState(false)
 

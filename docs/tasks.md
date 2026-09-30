@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · Primer mensaje a un profesional: un borrador natural
+### Última tarea integrada · Primer mensaje a un profesional: un borrador natural
 
-Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Sergio (captura): el borrador del primer mensaje decía «Hola Àngel. Cocinar. ¿Podrías ayudarme?»: pegaba la búsqueda tal cual. Se reescribe `buildChatOpener`: usa las palabras de la persona si ya son una frase; si no, redacta la necesidad («Busco a alguien que cocine a domicilio»); añade para quién, urgencia y franja; ignora una búsqueda anterior que no es de este profesional. Sin inventar nada. Archivos: `src/utils/introLetter.js` (`buildChatOpener`), `src/pages/Chat.jsx` (le pasa también el análisis; nada visual), `scripts/recorrido.mjs`. También lo usa el aviso (`src/utils/aviso.js`, sin cambios).
+Integrada el 2026-09-30 (ver `docs/changelog.md`, 2026-10-29). Tocó `src/utils/introLetter.js` (`buildChatOpener`), `src/pages/Chat.jsx` (le pasa el análisis; nada visual) y `scripts/recorrido.mjs`. Esos archivos quedan libres.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 

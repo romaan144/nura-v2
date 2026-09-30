@@ -170,6 +170,18 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Primer mensaje a un profesional: un borrador natural
+
+- Sergio (captura): el borrador del primer mensaje decía «Hola Àngel. Cocinar. ¿Podrías ayudarme?». `buildChatOpener` pegaba la búsqueda tal cual.
+- Ahora (`src/utils/introLetter.js`):
+  - si lo que escribió ya es una frase suya, se usan sus palabras, aunque sea larga: «Hola, Elena. Mi madre tiene 84 años, se ha caído… ¿Tienes disponibilidad en los próximos días?»;
+  - si no (una palabra, una pregunta), se redacta la necesidad con el oficio entendido: «Hola, Àngel. Busco a alguien que cocine a domicilio y he visto tu perfil en Nüra.» / «Busco un fontanero…»;
+  - se añade lo que se sabe: para quién («Es para mi hijo de 10 años»), si urge («Es bastante urgente. ¿Tendrías hueco hoy o mañana?»), la franja y, si preguntó, el precio;
+  - los saludos del principio («Hola buenas tardes») se quitan y no cuentan como «por la tarde»;
+  - una búsqueda anterior de otro oficio no se usa.
+- Nada inventado: ni motivos, ni valoraciones, ni disponibilidad. Lo usa también el aviso al profesional (`aviso.js`).
+- `npm run recorrido` lo comprueba con «cocinar» y con una frase propia.
+
 ## 2026-10-29 — Toda la app: el dedo no arrastra la página entera
 
 - Sergio: también pasa en otras pantallas, p. ej. «Ver todos» → «Viajar o hablar otro idioma» (sin profesionales): se mueve la pantalla entera.
