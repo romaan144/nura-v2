@@ -285,7 +285,9 @@ export function agendaDe(avisos = [], ahora = new Date(), dias = 14) {
     : null
   const citas = (avisos || [])
     .filter(a => a?.cita_fecha && a?.cita_hora && a.cita_fecha >= hoy && a.cita_fecha <= hasta)
-    .map(a => ({ id: a.id, token: a.token, fecha: a.cita_fecha, hora: a.cita_hora, estado: estadoDe(a), mensaje: a.mensaje, cancela: a.cita_cancela ?? null }))
+    .map(a => ({ id: a.id, token: a.token, fecha: a.cita_fecha, hora: a.cita_hora, estado: estadoDe(a), mensaje: a.mensaje, cancela: a.cita_cancela ?? null,
+      // Hoy, pero la hora ya pasó: ni «por contestar» ni aceptable.
+      pasada: new Date(`${a.cita_fecha}T${String(a.cita_hora).padStart(5, '0')}:00`).getTime() <= ahora.getTime() }))
     .filter(c => c.estado)
     .sort((x, y) => (x.fecha + x.hora.padStart(5, '0')).localeCompare(y.fecha + y.hora.padStart(5, '0')))
   const porDia = []

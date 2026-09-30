@@ -341,6 +341,24 @@ try {
   await espera(1500)
   ok(/formación/.test(await texto(tar)), 'y el alta sigue')
   await tar.close()
+
+  console.log('\n── El profesional abre una propuesta cuya hora ya pasó ──')
+  {
+    // 2026-09-30: antes seguía el botón «Aceptar la cita» para una hora pasada.
+    const ayer = new Date(Date.now() - 864e5).toISOString().slice(0, 10)
+    const tk = azar()
+    avisos.push({ helper_id: '7001', mensaje: 'Hola Laura, ¿podrías ver a mi hijo?', token: tk, lectura_hash: sha(azar()), respuesta: null, cita_fecha: ayer, cita_hora: '10:00', cita_estado: 'propuesta' })
+    const pro = await pagina()
+    await pro.goto(B + '/r/' + tk, { waitUntil: 'networkidle0' }); await espera(1000)
+    const t = await texto(pro)
+    ok(/Esa hora ya pasó/.test(t) && !/Aceptar la cita/.test(t), 'dice que esa hora ya pasó y no deja aceptarla')
+    ok(await pulsar(pro, 'Proponer otro día'), 'ofrece proponer otro día')
+    await pro.type('#respuesta', 'el lunes a las 17:00?')
+    await pulsar(pro, 'Enviar respuesta'); await espera(800)
+    const av = avisos.find(a => a.token === tk)
+    ok(av.respuesta && av.cita_estado === 'rechazada', `la respuesta llega y la cita queda como «no le va» (${av.cita_estado})`)
+    await pro.close()
+  }
 } catch (e) {
   ok(false, 'el recorrido se ha roto: ' + e.message)
 } finally {
