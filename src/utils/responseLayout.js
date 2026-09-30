@@ -1,6 +1,8 @@
 // Texto completo en unidades pequeñas, sin cortar expresiones en negrita.
 export function splitResponseText(text, limit = 160) {
-  const words = String(text).match(/\*\*[^*]+\*\*|\S+/g) || []
+  // Una negrita y el signo pegado a ella («**Sergio**.») son UNA palabra:
+  // separados, se unían con un espacio y salía «Sergio .».
+  const words = String(text).match(/(?:\*\*[^*]+\*\*|[^\s*])+|\S+/g) || []
   const chunks = []
   let chunk = ''
   for (const word of words) {

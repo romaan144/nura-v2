@@ -24,7 +24,7 @@ import { useRespuestasNuevas } from '../utils/respuestasNuevas'
 import RatingModal from '../components/RatingModal'
 import { tieneAlerta, misAlertas, alertasGuardadas } from '../utils/alertas'
 import styles from './Home.module.css'
-import { PULSO_THRESHOLD, PULSO_DELAY, CONFIRMACION_THRESHOLD, CONFIRMACION_DELAY } from '../config'
+import { PULSO_THRESHOLD, PULSO_DELAY, CONFIRMACION_THRESHOLD } from '../config'
 import { extractPersona } from '../utils/personas'
 import { proSignals } from '../utils/proSignals'
 import { fmtNota, fmtKm } from '../utils/formato'
@@ -175,15 +175,11 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
   }
 
   // If there are contacts pending confirmation (no answer yet)
-  const pendingContacts = (contactedHelpers || []).filter(c => c?.id && c?.confirmed === undefined)
-  if (pendingContacts.length > 0) {
-    const last = pendingContacts[pendingContacts.length - 1]
-    const helperFirst = getFirstName(last.name) || last.name
-    return [
-      saludo,
-      `¿Pudiste resolver lo que necesitabas con **${helperFirst}**? ¿O buscamos otra persona?`
-    ]
-  }
+  // Antes aquí ya se preguntaba «¿Pudiste resolver…?» y, 4 segundos después,
+  // llegaba OTRO mensaje con la misma pregunta y sus botones: la pantalla
+  // dejaba de ser la de bienvenida y parecía recargarse. Ahora la pregunta
+  // sale una vez, en el saludo y con sus botones (ver «La Confirmación
+  // Humana» en Home). Aquí, solo un saludo que no la adelanta.
 
   // ── El Espejo — persona conocida, aún sin conexión cerrada ──────────
   if ((personas || []).length > 0) {
@@ -495,6 +491,33 @@ export default function Home() {
     // Returning user — single message + immediate action chips
     const msgs = [{ id: 1, from: 'nura', lines }]
 
+    // ── La Confirmación Humana ──────────────────────────────────────────
+    // 3 días reales tras el contacto (30s en demo) Nüra pregunta si funcionó.
+    // En el MISMO saludo y con sus botones desde el principio: antes llegaba
+    // como un segundo mensaje a los 4 s, repetía la pregunta y la pantalla
+    // saltaba del modo bienvenida al de respuesta.
+    const pending = (contactedHelpers || []).find(c => {
+      if (!c?.contactedAt) return false
+      const elapsed = Date.now() - c.contactedAt
+      const alreadyAnswered = c.confirmed !== undefined
+      return elapsed >= CONFIRMACION_THRESHOLD && !alreadyAnswered
+    })
+    if (pending && user && !user.isHelper) {
+      const lp = (personas || []).find(p => (p.contactedHelperIds || []).includes(pending.id))
+      const ci = (citas || []).slice().reverse().find(x => x.helperId === pending.id)
+      const hn = getFirstName(pending.name) || pending.name
+      const pregunta = ci
+        ? `¿Qué tal fue la visita del ${ci.label} con **${hn}**${lp ? ` para ${lp.label}` : ''}? ¿Pudisteis resolverlo?`
+        : lp
+          ? `¿Pudiste resolver lo que necesitabas para ${lp.label} con **${hn}**?`
+          : `¿Pudiste resolver lo que necesitabas con **${hn}**?`
+      msgs[0] = {
+        id: 1, from: 'nura', lines: [lines[0], pregunta],
+        isConfirmacion: true, confirmacionHelperId: pending.id, confirmacionHelperName: pending.name,
+        chips: ['Sí, genial', 'No del todo'],
+      }
+    }
+
     // ── La Pregunta — contexto antes del texto ──
     // Solo cuando no hay memoria que continuar ni búsqueda previa que retomar
     let forWhomAnswered; try { forWhomAnswered = sessionStorage.getItem('nura_for_whom') } catch {}
@@ -575,41 +598,6 @@ export default function Home() {
           })
         }, 8000))
       }
-    }
-
-    // ── La Confirmación Humana ──────────────────────────────────────────
-    // 3 días reales tras el contacto (30s en demo) Nüra pregunta si funcionó
-
-    const pending = (contactedHelpers || []).find(c => {
-      if (!c?.contactedAt) return false
-      const elapsed = Date.now() - c.contactedAt
-      const alreadyAnswered = c.confirmed !== undefined
-      return elapsed >= CONFIRMACION_THRESHOLD && !alreadyAnswered
-    })
-
-    if (pending && user && nuraChatMessages.length === 0) {
-      timers.push(setTimeout(() => {
-        setMessages(prev => {
-          if (prev.some(m => m.isConfirmacion)) return prev
-          return [...prev, {
-            id: Date.now() + 88,
-            from: 'nura',
-            isConfirmacion: true,
-            confirmacionHelperId: pending.id,
-            confirmacionHelperName: pending.name,
-            lines: [(() => {
-              const lp = (personas || []).find(p => (p.contactedHelperIds || []).includes(pending.id))
-              const ci = (citas || []).slice().reverse().find(x => x.helperId === pending.id)
-              const hn = getFirstName(pending.name) || pending.name
-              if (ci) return `¿Qué tal fue la visita del ${ci.label} con **${hn}**${lp ? ` para ${lp.label}` : ''}? ¿Pudisteis resolverlo?`
-              return lp
-                ? `¿Pudiste resolver lo que necesitabas para ${lp.label} con **${hn}**?`
-                : `¿Pudiste resolver lo que necesitabas con **${hn}**?`
-            })()],
-            chips: ['Sí, genial', 'No del todo'],
-          }]
-        })
-      }, CONFIRMACION_DELAY))
     }
 
     return () => timers.forEach(clearTimeout)
