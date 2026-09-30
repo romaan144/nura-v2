@@ -170,6 +170,14 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — La pregunta por el último contacto sale una vez y sin saltos
+
+- Sergio: al volver, Nüra pregunta qué tal fue con la última persona y a los 4 o 5 segundos la página parece recargarse, cambia el diseño del texto y aparecen respuestas.
+- Causa: el saludo ya preguntaba «¿Pudiste resolver…? ¿O buscamos otra persona?» y a los 4 s (`CONFIRMACION_DELAY` en demo) se añadía un segundo mensaje con la misma pregunta y los botones. Con dos mensajes la pantalla deja de ser la de bienvenida («Cerca de ti», pregunta grande) y pasa a la de respuesta («Tu búsqueda»).
+- Ahora la pregunta sale una sola vez, en el saludo, con «Sí, genial» / «No del todo» desde el principio. El saludo ya no la adelanta si aún no toca preguntar.
+- De paso: tras una negrita, el signo salía separado («Sergio .», «Antoni ?»). `splitResponseText` trata la negrita y su signo como una sola palabra.
+- `npm run recorrido` lo comprueba (una sola pregunta, la pantalla igual a los 1,5 s y a los 6,5 s, sin espacio antes del signo).
+
 ## 2026-10-29 — Contratar con el día y la hora acordados en el chat
 
 - La hoja de Contratar ya intentaba rellenar día y hora de la conversación, pero:

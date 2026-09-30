@@ -402,6 +402,28 @@ console.log('\n── Contratar con el día y la hora acordados ──')
   await p.close()
 }
 
+console.log('\n── La pregunta por el último contacto, una vez y sin saltos ──')
+{
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('confirmación: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => {
+    localStorage.clear()
+    localStorage.setItem('nura_user', JSON.stringify({ name: 'Sergio', joined: new Date().toISOString() }))
+    localStorage.setItem('nura_contacted', JSON.stringify([{ id: 2020, name: 'Antoni Pérez Mas', category: 'tecnico', contactedAt: Date.now() - 3600e3 }]))
+  })
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await espera(1500)
+  const antes = await texto(p)
+  await espera(5000)
+  const despues = await texto(p)
+  const veces = (despues.match(/Pudiste resolver/g) || []).length
+  paso('la pregunta sale una vez, con sus botones desde el principio', veces === 1 && /Sí, genial/.test(antes), `${veces} vez/veces`)
+  paso('a los segundos la pantalla no cambia', antes === despues, antes === despues ? '' : despues.slice(0, 120))
+  paso('sin espacio antes del signo tras una negrita', !/\S \.|Antoni \?/.test(despues), despues.match(/.{0,12}Sergio.{0,3}/)?.[0] || '')
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')
