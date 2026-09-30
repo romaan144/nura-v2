@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Última tarea integrada · Búsqueda: cuando no hay nadie, decirlo bien
+### Tarea activa · Alta de profesional: una conversación más natural
 
-Integrada el 2026-09-30 (ver `docs/changelog.md`, 2026-10-29). Tocó `src/pages/Home.jsx` (textos y botones sin cobertura, oficio que no hay, «trabaja online», «Ampliar la zona» busca de verdad; nada visual), `src/utils/matching.js` (ficha sin ciudad = Barcelona), `src/data/oficios.js` (`notario`) y `scripts/recorrido.mjs`. Esos archivos quedan libres.
+Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Recorrido completo del alta en el navegador (sin enviar nada): «Encantada, Marta Ruiz» (nombre completo); «no tengo» formación o «a convenir» de tarifa pasaban a la siguiente pregunta sin decir nada. Se usa el nombre de pila, se contesta con una frase breve y útil en esos casos y el cierre dice qué pasa ahora. Archivos: `src/pages/RegisterHelper.jsx` (solo textos y la frase de acuse; nada visual), `scripts/recorrido.mjs`.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
