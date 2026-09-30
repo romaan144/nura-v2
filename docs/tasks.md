@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Última tarea integrada · La pregunta por el último contacto sale una vez y sin saltos
+### Tarea activa · Tras «Sí, genial», Nüra entiende lo que le cuentas
 
-Integrada el 2026-09-30 (ver `docs/changelog.md`, 2026-10-29). Tocó `src/pages/Home.jsx` (saludo y «La Confirmación Humana»: la pregunta va en el primer mensaje, sin temporizador; nada visual), `src/utils/responseLayout.js` (`splitResponseText`) y `scripts/recorrido.mjs`. `CONFIRMACION_DELAY` sigue en `src/config.js` pero ya no se usa. Esos archivos quedan libres.
+Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Sergio: tras «Sí, genial», Nüra pide «Si me cuentas cómo fue…», él escribe «Muy bien!» y Nüra contesta «No estoy segura de haberte entendido». Además «Júlia queda anotado». La ventana de valorar solo se abre si aún no se ha valorado; si ya estaba valorada, se pedía algo imposible. Se ajusta el texto (sin género y según si ya valoró), un botón para valorar si se cierra la ventana, y una respuesta breve sin buscar cuando lo que escribe es cómo le fue (no se guarda el texto). Archivos: `src/pages/Home.jsx` (solo ese tramo, nada visual), `scripts/recorrido.mjs`.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
