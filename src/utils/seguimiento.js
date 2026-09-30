@@ -6,7 +6,7 @@
 // entendido», o en un «He ajustado los resultados» que enseñaba lo mismo.
 // Aquí se decide QUÉ quiere decir; Home decide cómo contestar.
 
-import { oficiosDe } from '../data/oficios'
+import { oficiosDe, oficio } from '../data/oficios'
 import { horarioDe } from '../data/horarios'
 
 const plano = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
@@ -77,4 +77,20 @@ export function preferenciasDe(msg) {
     online: /\b(online|on line|en linea|videollamada|a distancia)\b/.test(t),
     precio: /\b(cuanto (cobra|cobran|cuesta|cuestan|vale|valen|sale|salen)|precio\w*|tarifa\w*)\b/.test(t),
   }
+}
+
+/**
+ * Las cosas distintas que pide un mismo mensaje, unidas con «y», «también»
+ * o «además»: «fontanero y electricista», «limpiar mi casa y también que me
+ * planche la ropa». [{ id, nombre, texto }] (texto: el trozo que lo pide).
+ * Una sola necesidad (o ninguna clara) → [] o un elemento.
+ */
+export function necesidadesDe(msg) {
+  const salida = []
+  for (const trozo of String(msg || '').split(/\b(?:y|e|tambi[eé]n|adem[aá]s)\b/i)) {
+    const texto = trozo.trim().replace(/^[,.;:\s]+|[,.;:\s]+$/g, '')
+    const o = texto && oficiosDe(texto)[0]
+    if (o && o.puntos >= 5 && !salida.some(x => x.id === o.id)) salida.push({ id: o.id, nombre: oficio(o.id)?.nombre || o.id, texto })
+  }
+  return salida
 }

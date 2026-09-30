@@ -505,6 +505,25 @@ console.log('\n── Búsqueda: la primera respuesta encaja con lo que pides �
   await p.close()
 }
 
+console.log('\n── Búsqueda: dos cosas a la vez ──')
+{
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('dos cosas: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); sessionStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Sergio', joined: new Date().toISOString() })); sessionStorage.setItem('nura_for_whom', 'mi') })
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await espera(1200)
+  await escribirEn(p, 'fontanero y electricista'); await p.keyboard.press('Enter'); await espera(3500)
+  const resp = () => p.evaluate(() => (document.querySelector('section[aria-label="Respuesta de Nüra"]')?.innerText || '').replace(/\s+/g, ' '))
+  let r = await resp()
+  paso('dice que también pide la otra cosa, en la primera página', /También me pides electricista/.test(r) && /Buscar electricista/.test(r), r.match(/También[^.]+/)?.[0] || '')
+  await tocar(p, /^Buscar electricista$/)
+  await espera(3500)
+  r = await resp()
+  paso('el botón busca la otra cosa', /Primera opción \S+ \S+ electricista/.test(r), r.match(/Primera opción .{0,30}/)?.[0] || '')
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')
