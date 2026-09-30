@@ -22,8 +22,8 @@ import AlertaSheet from '../components/AlertaSheet'
 import { useSinContestar } from '../utils/sinContestar'
 import { useRespuestasNuevas } from '../utils/respuestasNuevas'
 import RatingModal from '../components/RatingModal'
-import { oficiosDe } from '../data/oficios'
-import { entenderSeguimiento, puntosFranja, preferenciasDe, NOMBRE_FRANJA } from '../utils/seguimiento'
+import { oficiosDe, esDelOficio } from '../data/oficios'
+import { entenderSeguimiento, puntosFranja, preferenciasDe, necesidadesDe, NOMBRE_FRANJA } from '../utils/seguimiento'
 import { tieneAlerta, misAlertas, alertasGuardadas } from '../utils/alertas'
 import styles from './Home.module.css'
 import { PULSO_THRESHOLD, PULSO_DELAY, CONFIRMACION_THRESHOLD } from '../config'
@@ -668,6 +668,8 @@ export default function Home() {
   // «Buscar otras opciones» desde un chat: esa búsqueda no vuelve a poner
   // primero al profesional con el que ya se hablaba.
   const excluirRef = useRef(null)
+  // La otra cosa que pidió en el mismo mensaje (ver «DOS COSAS A LA VEZ»).
+  const otraNecesidadRef = useRef(null)
   useEffect(() => {
     const q = location.state?.q
     if (!q || entranteRef.current === q) return
@@ -678,7 +680,7 @@ export default function Home() {
     return () => clearTimeout(t)
   }, [location.state?.q])   // eslint-disable-line react-hooks/exhaustive-deps
 
-  async function handleSend(text) {
+  async function handleSend(text, opciones = {}) {
     blurSinSalto()
     let msg = text || input
     if (!msg.trim()) return
@@ -854,7 +856,9 @@ export default function Home() {
     }
 
     // ── Lo que se dice después de buscar (ver utils/seguimiento) ──────
-    const seg = entenderSeguimiento(msg, { hayResultados: lastMatches?.length > 0, oficiosAntes: window.__nuraLastAnalysis?.oficios || [] })
+    // `opciones.nueva`: la manda un botón («Buscar electricista»): siempre es
+    // una búsqueda nueva, aunque el oficio saliera en la anterior.
+    const seg = opciones.nueva ? 'nueva' : entenderSeguimiento(msg, { hayResultados: lastMatches?.length > 0, oficiosAntes: window.__nuraLastAnalysis?.oficios || [] })
     const responder = (lines, extra = {}) => setTimeout(() => {
       setMessages(prev => [...prev, { id: Date.now(), from: 'nura', lines, ...extra }])
       setLoading(false)
@@ -1273,6 +1277,18 @@ export default function Home() {
           ? ['Más cerca', 'Mejor valorado', 'Más barato', 'No es lo que buscaba']
           : ['Ampliar búsqueda', 'Cambiar zona', 'Online también']
       }
+      // DOS COSAS A LA VEZ («fontanero y electricista»): se enseña la primera
+      // y se ofrece la otra con un botón, arriba, junto al texto (al final de
+      // la respuesta, en otra página, no lo veía nadie). Antes solo se
+      // buscaba una y no se decía nada de la otra.
+      const necesidades = necesidadesDe(msg)
+      const otra = necesidades.length > 1 && necesidades.find(n => !esDelOficio(matches[0]?.specialty || '', n.id))
+      otraNecesidadRef.current = otra ? { etiqueta: `Buscar ${otra.nombre}`, texto: otra.texto } : null
+      if (otra) {
+        resultMsg.lines = [...resultMsg.lines, `También me pides **${otra.nombre}**: lo busco aparte para que no se mezcle.`]
+        resultMsg.chips = [`Buscar ${otra.nombre}`]
+        resultMsg.chipsPrimero = true
+      }
       setMessages(prev => [...prev, resultMsg])
       // SU CIUDAD SIN NADIE: eligió Madrid en su perfil y todos los que
       // encajan trabajan en otra ciudad. Se le dice claro y se le ofrece el
@@ -1322,6 +1338,12 @@ export default function Home() {
 
   function handleChip(chip) {
     beginResponse()
+    if (otraNecesidadRef.current && chip === otraNecesidadRef.current.etiqueta) {
+      const { texto } = otraNecesidadRef.current
+      otraNecesidadRef.current = null
+      handleSend(texto, { nueva: true })
+      return
+    }
     if (chip === CONTESTAR) { navigate('/chats'); return }
     if (chip === LEER_RESPUESTA) { navigate(respuestaAbrir.current ? `/chat/${respuestaAbrir.current}` : '/chats'); return }
     const responde = (lines, chips) =>
@@ -1572,6 +1594,13 @@ export default function Home() {
         : <p className={`${styles.screenText} ${msg.results && i === 0 ? styles.screenLead : ''}`}>{formatLine(part)}</p> })
     }))
     if (msg.loading) blocks.push({ id: `${msg.id}-loading`, content: <div className={styles.typingDots} role="status" aria-label="Buscando"><span /><span /><span /></div> })
+    // Un botón que va con el texto («Buscar electricista»), antes de las tarjetas.
+    const chipBlock = (chip, i) => ({ id: `${msg.id}-chip-${i}`, content:
+      <button className={styles.screenChoice} onClick={() => handleChip(chip)}>
+        <span className={styles.choiceIcon} aria-hidden="true">{chip === 'Para mí' ? <UserRound size={18} /> : chip === 'Para alguien de mi familia' ? <Heart size={18} /> : chip === 'Para mi hogar o negocio' ? <House size={18} /> : <ArrowUpRight size={18} />}</span>
+        <span>{chip}</span><ArrowUpRight size={16} aria-hidden="true" />
+      </button> })
+    if (msg.chipsPrimero) msg.chips?.forEach((chip, i) => blocks.push(chipBlock(chip, i)))
     if (msg.results?.length) {
       blocks.push({ id: `${msg.id}-primary`, content:
         <div className={styles.screenResult}>
@@ -1593,11 +1622,7 @@ export default function Home() {
         if (opt.includes('busca')) handleSend(searchHistory[0]?.query)
         else setMessages(prev => [...prev, { id: Date.now(), from: 'nura', lines: ['Me alegra saberlo. Cuando lo necesites, vuelve a buscar.'] }])
       }}>{opt}<ArrowUpRight size={16} aria-hidden="true" /></button> }))
-    msg.chips?.forEach((chip, i) => blocks.push({ id: `${msg.id}-chip-${i}`, content:
-      <button className={styles.screenChoice} onClick={() => handleChip(chip)}>
-        <span className={styles.choiceIcon} aria-hidden="true">{chip === 'Para mí' ? <UserRound size={18} /> : chip === 'Para alguien de mi familia' ? <Heart size={18} /> : chip === 'Para mi hogar o negocio' ? <House size={18} /> : <ArrowUpRight size={18} />}</span>
-        <span>{chip}</span><ArrowUpRight size={16} aria-hidden="true" />
-      </button> }))
+    if (!msg.chipsPrimero) msg.chips?.forEach((chip, i) => blocks.push(chipBlock(chip, i)))
     if (msg.refineChips?.length) {
       // Cada ajuste es una unidad: incluso en pantallas pequeñas se llega a todos.
       msg.refineChips.forEach((chip, i) => blocks.push({ id: `${msg.id}-refine-${i}`, content:

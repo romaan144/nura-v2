@@ -170,6 +170,13 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Búsqueda: dos cosas a la vez
+
+- Tanda difícil probada en el navegador: faltas («nesesito un fontanro», «electrisista»), abreviaturas («profe de mates pa mi hija») y mensajes largos se entienden bien. Fallaba pedir dos cosas: «fontanero y electricista» o «limpiar mi casa y también que me planche la ropa» buscaban solo una, sin decir nada de la otra.
+- `necesidadesDe` (`src/utils/seguimiento.js`) separa lo que se pide unido con «y», «también» o «además», y se queda con los oficios claros.
+- Home enseña la primera y, en la misma primera página, antes de las tarjetas: «También me pides **electricista**: lo busco aparte para que no se mezcle», con un botón «Buscar electricista» que hace esa búsqueda.
+- Búsqueda 100 % en las tres tandas. `npm run recorrido` lo comprueba.
+
 ## 2026-10-29 — Búsqueda: la primera respuesta encaja mejor con lo que pides
 
 - Probadas frases reales en el navegador:
