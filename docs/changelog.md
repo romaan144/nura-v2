@@ -170,6 +170,21 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Búsqueda: Nüra entiende lo que dices después de buscar
+
+- Sergio pide mejorar sobre todo la experiencia de la búsqueda principal. Probadas conversaciones reales en el navegador; fallaban:
+  - «no, era fontanero» tras buscar electricista seguía enseñando al electricista;
+  - «otra persona» decía «He ajustado los resultados» y enseñaba a la misma;
+  - «¿cuánto cobra?», «que sea online», «mejor por la tarde», «hola» y «gracias» recibían «No estoy segura de haberte entendido», y encima precedido de «Entendido.».
+- Nuevo `src/utils/seguimiento.js`: decide qué quiere decir un mensaje tras una búsqueda. Home contesta sobre ESOS resultados:
+  - otro oficio → búsqueda nueva;
+  - precio → las tarifas de las opciones («Pilar cobra 16€/hora, Amalia 18€/hora y Carmen 120€/noche»);
+  - online, en persona, mañana, tarde, noche o fin de semana → primero quien encaja, según su horario y su oficio («cuidadora nocturna»); si nadie, se dice;
+  - otra persona → la siguiente opción; si es la única, se dice;
+  - «hola» → saludo con ejemplos; «gracias» → «de nada», con botón para escribir a la primera opción.
+- Si no entiende, ya no empieza por «Entendido.».
+- Búsqueda 100 % en las tres tandas. `npm run recorrido` lo comprueba.
+
 ## 2026-10-29 — Tras «Sí, genial», Nüra entiende lo que le cuentas
 
 - Sergio: tras «Sí, genial», Nüra pidió «Si me cuentas cómo fue…»; escribió «Muy bien!» y Nüra contestó «No estoy segura de haberte entendido». Además decía «Júlia queda anotado».
