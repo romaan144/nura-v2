@@ -57,6 +57,26 @@ async function saveHelperToSupabase(answers, declarado = []) {
   } catch (e) { console.warn('[Nüra] alta profesional no guardada:', e?.message || e); return null }
 }
 
+// El nombre de pila: «Encantada, Marta», no «Encantada, Marta Ruiz».
+const pila = n => String(n || '').trim().split(/\s+/)[0] || ''
+
+/**
+ * Una frase breve cuando la respuesta la pide. Solo en dos casos, y útil:
+ * sin formación (la experiencia también cuenta) y sin tarifa (una
+ * orientativa hace que te escriban más). En el resto, nada: no se
+ * comenta cada respuesta.
+ */
+function acuseDe(id, val) {
+  const t = String(val || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim()
+  if (id === 'formation' && /^(no|ninguna|ninguno|nada|sin|todavia no|aun no)\b/.test(t)) {
+    return 'Sin problema: la experiencia también cuenta, y puedes contarla en tu perfil.'
+  }
+  if (id === 'price' && !/\d/.test(t)) {
+    return 'Vale. Si más adelante pones una tarifa orientativa (por ejemplo, «15 €/hora»), te escribirá más gente.'
+  }
+  return ''
+}
+
 const QUESTIONS = [
   // `campo`: lo que el teclado del móvil puede proponer (su nombre, su correo).
   { id: 'name',           text: 'Hola, vamos a crear tu perfil profesional. ¿Cómo te llamas?',        placeholder: 'Tu nombre completo', campo: { autoComplete: 'name', name: 'name', autoCapitalize: 'words' } },
@@ -82,7 +102,7 @@ export default function RegisterHelper() {
   // se saluda y se empieza por la pregunta siguiente.
   const nombrePrevio = (location.state?.name || '').trim()
   const [messages, setMessages]   = useState(() => nombrePrevio
-    ? [{ id: 1, from: 'nura', text: QUESTIONS[1].text.replace('{name}', nombrePrevio) }]
+    ? [{ id: 1, from: 'nura', text: QUESTIONS[1].text.replace('{name}', pila(nombrePrevio)) }]
     : [{ id: 1, from: 'nura', text: QUESTIONS[0].text }])
   const [input, setInput]         = useState('')
   const [qIdx, setQIdx]           = useState(nombrePrevio ? 1 : 0)
@@ -131,7 +151,7 @@ export default function RegisterHelper() {
       setTyping(false)
       setMessages(prev => [...prev,
         ...avisos.map((text, i) => ({ id: Date.now() + i, from: 'nura', text })),
-        { id: Date.now() + 9, from: 'nura', text: QUESTIONS[next].text.replace('{name}', newAnswers.name || '') }])
+        { id: Date.now() + 9, from: 'nura', text: QUESTIONS[next].text.replace('{name}', pila(newAnswers.name)) }])
       setQIdx(next)
     }, 800)
   }
@@ -205,7 +225,7 @@ export default function RegisterHelper() {
       setAnswers(conCiudad)
       setTimeout(() => {
         setTyping(false)
-        setMessages(prev => [...prev, { id: Date.now(), from: 'nura', text: QUESTIONS[qIdx + 1].text.replace('{name}', conCiudad.name || '') }])
+        setMessages(prev => [...prev, { id: Date.now(), from: 'nura', text: QUESTIONS[qIdx + 1].text.replace('{name}', pila(conCiudad.name)) }])
         setQIdx(qIdx + 1)
       }, 800)
       return
@@ -250,7 +270,9 @@ export default function RegisterHelper() {
       setTyping(true)
       setTimeout(() => {
         setTyping(false)
-        const text = QUESTIONS[next].text.replace('{name}', newAnswers.name || val)
+        // Una frase breve si la respuesta lo pide («no tengo», «a convenir»):
+        // antes pasaba a la siguiente pregunta como si no hubiera oído nada.
+        const text = [acuseDe(q.id, val), QUESTIONS[next].text.replace('{name}', pila(newAnswers.name || val))].filter(Boolean).join(' ')
         setMessages(prev => [...prev, { id: Date.now(), from: 'nura', text }])
         setQIdx(next)
       }, 800)
@@ -283,8 +305,8 @@ export default function RegisterHelper() {
         setTyping(false); setDone(true)
         setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
           text: publicado
-            ? `Perfecto, ${newAnswers.name || val}. Tu perfil está listo. ¡Ya formas parte de la red!`
-            : `Perfecto, ${newAnswers.name || val}. Tu perfil está guardado aquí, pero todavía no he podido publicarlo para que te encuentren. Lo reintento; si mañana no apareces en las búsquedas, vuelve a entrar y avísame.` }])
+            ? `Perfecto, ${pila(newAnswers.name || val)}. Tu perfil está listo: desde ahora ya pueden encontrarte en Nüra.`
+            : `Perfecto, ${pila(newAnswers.name || val)}. Tu perfil está guardado aquí, pero todavía no he podido publicarlo para que te encuentren. Lo reintento; si mañana no apareces en las búsquedas, vuelve a entrar y avísame.` }])
         if (publicado) setTimeout(() => setMessages(prev => [...prev, { id: Date.now()+1, from: 'nura',
           text: 'Cada valoración que recibas fortalecerá tu reputación. ¡Mucha suerte!' }]), 1800)
         login({ ...(JSON.parse(localStorage.getItem('nura_user') || 'null') || {}), name: newAnswers.name || val, isHelper: true, helperProfile: newAnswers, joined: new Date().toISOString() })

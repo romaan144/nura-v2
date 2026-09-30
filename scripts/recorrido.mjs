@@ -607,6 +607,28 @@ console.log('\n── Búsqueda: cuando no hay nadie, decirlo bien ──')
   await p.close()
 }
 
+console.log('\n── Alta de profesional: una conversación natural ──')
+{
+  // Sin enviar nada: cualquier escritura al servidor se contesta aquí mismo.
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('alta natural: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  await p.setRequestInterception(true)
+  p.on('request', r => (/supabase\.co|functions\/v1/.test(r.url()) && r.method() !== 'GET') ? r.respond({ status: 503, body: '{}' }) : r.continue())
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); sessionStorage.clear() })
+  await p.goto(BASE + '/register-helper', { waitUntil: 'networkidle0' })
+  await espera(1500)
+  const decir = async t => { await escribirEn(p, t); await p.keyboard.press('Enter'); await espera(3200) }
+  for (const t of ['Marta Ruiz', 'limpieza de casas', 'no tengo']) await decir(t)
+  let r = await texto(p)
+  paso('usa el nombre de pila', /Encantada, Marta\./.test(r) && !/Encantada, Marta Ruiz/.test(r))
+  paso('sin formación, una frase breve antes de seguir', /la experiencia también cuenta/.test(r))
+  for (const t of ['Valencia, Ruzafa', 'a convenir']) await decir(t)
+  r = await texto(p)
+  paso('sin tarifa, sugiere una orientativa', /tarifa orientativa/.test(r))
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')
