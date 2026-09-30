@@ -524,6 +524,37 @@ console.log('\n── Búsqueda: dos cosas a la vez ──')
   await p.close()
 }
 
+console.log('\n── Inicio: el dedo no arrastra la página entera ──')
+{
+  // Sergio, iPhone, 2026-09-30: en Inicio «todo se mueve hacia abajo, la
+  // página entera», como antes en el chat. Inicio no tiene nada desplazable.
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('inicio arrastre: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); sessionStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Sergio', joined: new Date().toISOString() })); sessionStorage.setItem('nura_for_whom', 'mi') })
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await espera(1500)
+  const cdp = await p.target().createCDPSession()
+  const alto = await p.evaluate(() => window.innerHeight)
+  const deslizar = async (y1, y2) => {
+    await p.evaluate(() => { window.__anulado = null; window.addEventListener('touchmove', e => { window.__anulado = e.defaultPrevented }, { once: true }) })
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 200, y: y1 }] })
+    for (let k = 1; k <= 8; k++) { await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: 200, y: y1 + (y2 - y1) * k / 8 }] }); await espera(16) }
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
+    await espera(400)
+    return p.evaluate(() => window.__anulado)
+  }
+  const bienvenida = [await deslizar(alto * 0.4, alto * 0.7), await deslizar(alto - 40, alto - 140)]
+  await escribirEn(p, 'fontanero y electricista'); await p.keyboard.press('Enter'); await espera(3500)
+  const resultados = [await deslizar(alto * 0.5, alto * 0.8), await deslizar(alto * 0.8, alto * 0.5)]
+  paso('en Inicio, el dedo no arrastra la web (bienvenida, barra de abajo y resultados)', [...bienvenida, ...resultados].every(x => x === true), JSON.stringify([...bienvenida, ...resultados]))
+  // Fuera de Inicio (que sigue montado, oculto) no se bloquea nada.
+  await p.goto(BASE + '/profile', { waitUntil: 'networkidle0' })
+  await espera(1200)
+  paso('fuera de Inicio, el dedo sigue desplazando', (await deslizar(alto * 0.7, alto * 0.3)) === false)
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')

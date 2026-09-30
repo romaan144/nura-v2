@@ -170,6 +170,13 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Inicio: el dedo no arrastra la página entera
+
+- Sergio: en la página principal, al deslizar, «todo se mueve hacia abajo, la página entera», como pasaba en el chat.
+- Medido: Inicio no tiene nada desplazable (documento 664/664, ningún contenedor con scroll, en bienvenida y con resultados). Es el estirón del iPhone sobre una página fija.
+- Mientras se está en Inicio, `sinArrastreDePagina` (el mismo del chat) se aplica a todo el cuerpo: también la barra de abajo y el campo de escribir arrastraban. Lo que sí se desplaza (el contenedor con el teclado abierto, una hoja larga) sigue funcionando. Al salir de Inicio se quita: el resto de páginas se desplazan como siempre.
+- `npm run recorrido` lo comprueba con el dedo simulado: en Inicio se anula; en Perfil, no.
+
 ## 2026-10-29 — Búsqueda: dos cosas a la vez
 
 - Tanda difícil probada en el navegador: faltas («nesesito un fontanro», «electrisista»), abreviaturas («profe de mates pa mi hija») y mensajes largos se entienden bien. Fallaba pedir dos cosas: «fontanero y electricista» o «limpiar mi casa y también que me planche la ropa» buscaban solo una, sin decir nada de la otra.
