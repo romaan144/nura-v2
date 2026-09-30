@@ -821,6 +821,15 @@ Deno.serve(async (req: Request) => {
   }
 
   // ── LA VUELTA: el profesional responde ──
+  // ¿Ya pasó esa hora? Las citas se guardan en hora de España. Con una hora
+  // de margen (Canarias va una hora por detrás): nunca da por pasada una
+  // cita que aún no lo está.
+  const horaPasada = (fecha: string, hora: string) => {
+    const ahora = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit',
+      day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date(Date.now() - 3600e3))
+    return `${fecha} ${String(hora).padStart(5, '0')}` < ahora.replace('T', ' ')
+  }
+
   if (op === 'responder-aviso') {
     const token = String(cuerpo.token ?? '').trim()
     const respuesta = String(cuerpo.respuesta ?? '').trim().slice(0, 4000)
@@ -829,7 +838,12 @@ Deno.serve(async (req: Request) => {
     if (!FORMATO_LLAVE.test(token)) return json({ error: 'no existe' }, 404, cors)
     // La cita propuesta, aceptada o rechazada con un botón. Solo cambia si
     // HABÍA una cita propuesta en este aviso (`cita_estado=eq.propuesta`).
-    const decision = cuerpo.cita === 'aceptada' || cuerpo.cita === 'rechazada' ? cuerpo.cita : null
+    let decision = cuerpo.cita === 'aceptada' || cuerpo.cita === 'rechazada' ? cuerpo.cita : null
+    // Una cita cuya hora ya pasó no se confirma: la respuesta se guarda y la
+    // cita queda como «no le va bien», para que quien la pidió proponga otro
+    // día (la app ya no ofrece aceptarla; esto cubre un móvil con la hora
+    // mal o una pantalla abierta desde hace horas).
+    let citaPasada = false
     if (decision === 'aceptada') {
       // Esa hora, ¿la tiene ya aceptada con otra persona?
       const lec = await fetch(
@@ -837,7 +851,10 @@ Deno.serve(async (req: Request) => {
         { headers: rest },
       )
       const [av] = lec.ok ? await lec.json() : []
-      if (av?.cita_estado === 'propuesta') {
+      if (av?.cita_estado === 'propuesta' && av.cita_fecha && av.cita_hora && horaPasada(av.cita_fecha, av.cita_hora)) {
+        citaPasada = true
+        decision = 'rechazada'
+      } else if (av?.cita_estado === 'propuesta') {
         const choca = await fetch(
           `${SUPABASE_URL}/rest/v1/avisos?helper_id=eq.${encodeURIComponent(String(av.helper_id))}&cita_fecha=eq.${av.cita_fecha}&cita_hora=eq.${encodeURIComponent(av.cita_hora)}&cita_estado=eq.aceptada&select=id&limit=1`,
           { headers: rest },
@@ -883,7 +900,7 @@ Deno.serve(async (req: Request) => {
         method: 'PATCH', headers: { ...rest, Prefer: 'return=minimal' }, body: JSON.stringify({ push: null }),
       })
     }
-    return json(citaOcupada ? { ok: true, cita: 'hora ocupada' } : { ok: true }, 200, cors)
+    return json(citaOcupada ? { ok: true, cita: 'hora ocupada' } : citaPasada ? { ok: true, cita: 'hora pasada' } : { ok: true }, 200, cors)
   }
 
   // ── «AVISAME CUANDO CONTESTE» ──
@@ -1269,13 +1286,23 @@ Deno.serve(async (req: Request) => {
       const r = await fetch(`${SUPABASE_URL}/rest/v1/${ruta}&limit=5000`, { headers: rest })
       return r.ok ? (await r.json()).length : null
     }
-    const [busquedas, apariciones, recibidos, respondidos] = await Promise.all([
+    // Las valoraciones de esta semana: cuántas y la media de estrellas. Solo
+    // cifras: ni comentarios ni de quién.
+    const valoracionesSemana = async () => {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/valoraciones?helper_id=eq.${id}&fecha=gt.${desde}&select=estrellas&limit=5000`, { headers: rest })
+      if (!r.ok) return null
+      const filas: { estrellas: number | null }[] = await r.json()
+      const con = filas.map(f => f.estrellas).filter((e): e is number => Number.isInteger(e))
+      return { n: filas.length, media: con.length ? Math.round(con.reduce((a, b) => a + b, 0) / con.length * 10) / 10 : null }
+    }
+    const [busquedas, apariciones, recibidos, respondidos, valoraciones] = await Promise.all([
       // Solo `busqueda`: cada búsqueda deja exactamente una (también las que no
       // encuentran a nadie). Contar además `sin_cobertura` la contaba dos veces.
       CATEGORIA_OK.test(catApp) ? contar(`eventos?tipo=eq.busqueda&categoria=eq.${catApp}&fecha=gt.${desde}&select=id`) : null,
       contar(`eventos?tipo=eq.recomendacion_vista&helper_id=eq.${id}&fecha=gt.${desde}&select=id`),
       contar(`avisos?helper_id=eq.${id}&fecha=gt.${desde}&select=id`),
       contar(`avisos?helper_id=eq.${id}&fecha=gt.${desde}&respondido_en=not.is.null&select=id`),
+      valoracionesSemana(),
     ])
     // Lo que buscaron en SU ciudad, de lo suyo, y se quedó sin nadie (o solo
     // con algo parecido), por oficio. Solo identificadores del mapa y
@@ -1294,7 +1321,7 @@ Deno.serve(async (req: Request) => {
         sinEncontrar = { ciudad, oficios }
       }
     }
-    return json({ ok: true, pulso: { busquedas, apariciones, recibidos, respondidos, sinEncontrar } }, 200, cors)
+    return json({ ok: true, pulso: { busquedas, apariciones, recibidos, respondidos, valoraciones, sinEncontrar } }, 200, cors)
   }
 
   // ── RECLAMAR LA FICHA (etapa 6b de docs/estudio-perfil.md) ─────────────

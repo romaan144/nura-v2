@@ -170,12 +170,19 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Servidor: no confirma horas pasadas y el Pulso cuenta las valoraciones
+
+- `responder-aviso`: si el profesional acepta una cita cuya hora ya pasó (hora de España, con una hora de margen por Canarias), la respuesta se guarda, la cita no se confirma y queda como «no le va bien» para que quien la pidió proponga otro día. Cierra lo pendiente de la entrada anterior. La app lo dice en «Responder» si llegara a pasar.
+- `mi-pulso`: añade `valoraciones` de los últimos 7 días (cuántas y la media de estrellas; ningún comentario ni de quién). En Inicio, el Pulso dice «Te han valorado **2** personas, con **4,5** estrellas de media.» (solo si hay alguna).
+- Función desplegada como **v29** en Supabase. La copia desplegada se descargó y pasó las 204 pruebas de `test:avisos` (difiere del repositorio solo en cómo está escrito un rango de caracteres, equivalente).
+- Archivos: `supabase/functions/helpers-write/index.ts`, `src/pages/Home.jsx`, `src/pages/Responder.jsx`, `scripts/test-avisos.mjs` (con la función anterior fallaban 3).
+
 ## 2026-10-29 — El profesional y las horas ya pasadas
 
 - En «Mi agenda», una propuesta de hoy cuya hora ya había pasado seguía «Por contestar» y contaba en el aviso de arriba. Ahora sale «Pasó sin confirmar» (o «Ya pasó» si estaba confirmada) y no cuenta.
 - Al abrir esa propuesta, seguía el botón «Aceptar la cita» para una hora pasada. Ahora dice «Esa hora ya pasó» y ofrece proponer otro día; al enviar, quien la pidió ve que ese momento no le iba bien y puede pedir otro.
 - `src/data/horarios.js` (`agendaDe` marca `pasada`), `src/components/AgendaProfesional.jsx` y `src/pages/Responder.jsx` (reutiliza los estilos existentes). Pruebas: `test:matching` (257) y `recorrido-real` (con el código anterior fallaba).
-- Pendiente, en el servidor: que tampoco acepte una hora pasada si alguien lo intenta por fuera de la app.
+- En el servidor: resuelto en la entrada siguiente (v29).
 
 ## 2026-10-29 — Después de la cita: preguntar a tiempo y «Mis servicios» coherente
 
