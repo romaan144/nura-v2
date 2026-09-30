@@ -373,6 +373,35 @@ console.log('\n── Nüra ofrece otras opciones solo si se atasca ──')
   await p.close()
 }
 
+console.log('\n── Contratar con el día y la hora acordados ──')
+{
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('contratar: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Sergio', joined: new Date().toISOString() })) })
+  await p.goto(BASE + '/chat/2020', { waitUntil: 'networkidle0' })
+  await espera(1500)
+  await escribirEn(p, '', 'x => /mensaje/i.test(x.placeholder || "")')
+  await p.keyboard.down('Control'); await p.keyboard.press('a'); await p.keyboard.up('Control'); await p.keyboard.press('Backspace')
+  // Un número que NO es una hora: el lector anterior lo tomaba por las 5:00.
+  await p.keyboard.type('Hace 5 años que tengo la caldera y ahora gotea', { delay: 4 }); await p.keyboard.press('Enter')
+  await espera(3500)
+  const pulsar = async re => { await p.evaluate(r => [...document.querySelectorAll('button[class*="quickReply"]')].find(b => new RegExp(r).test(b.textContent))?.click(), re.source); await espera(3500) }
+  await pulsar(/^¿Qué día podrías\?$/)
+  const dia = await p.evaluate(() => [...document.querySelectorAll('button[class*="quickReply"]')].map(b => b.textContent).find(t => /^(Mañana|El )/.test(t)) || '')
+  await pulsar(new RegExp('^' + dia + '$'))
+  // Tras acordar, Nüra propone «Confirmar reserva» (o queda el botón Contratar).
+  await tocar(p, /^(Confirmar reserva|Contratar)$/)
+  await espera(1200)
+  const hoja = await p.evaluate(() => ({
+    dia: document.querySelector('[aria-label="Elige un día"] button[aria-pressed="true"]')?.getAttribute('aria-label') || '',
+    hora: [...document.querySelectorAll('button[data-state][aria-pressed="true"]')].map(b => b.textContent)[0] || '',
+  }))
+  const tarde = /tarde/.test(dia), h = parseInt(hoja.hora, 10)
+  paso('la hoja de Contratar sale con el día y la hora acordados', Boolean(hoja.dia) && Boolean(hoja.hora) && h !== 5 && (tarde ? h >= 14 && h < 20 : h < 14), `«${dia}» → ${hoja.dia.split(':')[0]} · ${hoja.hora}`)
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')

@@ -22,6 +22,8 @@ import { haptic } from '../utils/haptic'
 import RatingModal from '../components/RatingModal'
 import styles from './Chat.module.css'
 import PageLoading from '../components/PageLoading'
+import { citaDeLaConversacion } from '../utils/citaDeLaConversacion'
+import { ocupacionesDe } from '../data/horarios'
 import { getHelperReply, getNuraIntervention, respuestasRapidas, CONTRATAR, OTRAS_OPCIONES } from '../utils/chatReplies'
 import { buildChatOpener } from '../utils/introLetter'
 import { DEMO_MODE } from '../config'
@@ -51,59 +53,6 @@ function formatDateLabel(dateStr) {
   return date.toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long' })
 }
 
-
-// ── Extract date/time from conversation ──────────────────────────────────
-function extractDateFromMessages(messages) {
-  const text = (messages || [])
-    .map(m => (m.text || m.lines?.join(' ') || '').toLowerCase())
-    .join(' ')
-
-  let extractedDate = ''
-  let extractedTime = ''
-
-  // Extract time: "a las 10", "10h", "10:00", "las 9"
-  const timeMatch = text.match(/(?:a las |las )?(\d{1,2})(?::00)?(?:h|:00)?\ ?(?:de la (?:mañana|tarde))?/)
-  if (timeMatch) {
-    const h = parseInt(timeMatch[1])
-    if (h >= 7 && h <= 22) {
-      extractedTime = `${h}:00`
-    }
-  }
-
-  // Extract day of week → map to next occurrence
-  const today = new Date()
-  const days = { lunes:1, martes:2, miércoles:3, jueves:4, viernes:5, sábado:6, domingo:0 }
-  for (const [dayName, dayNum] of Object.entries(days)) {
-    if (text.includes(dayName)) {
-      const d = new Date()
-      const diff = (dayNum - d.getDay() + 7) % 7 || 7
-      d.setDate(d.getDate() + diff)
-      extractedDate = d.toISOString().split('T')[0]
-      break
-    }
-  }
-
-  // "mañana"
-  if (!extractedDate && text.includes('mañana')) {
-    const d = new Date()
-    d.setDate(d.getDate() + 1)
-    extractedDate = d.toISOString().split('T')[0]
-  }
-
-  // "hoy"
-  if (!extractedDate && text.includes('hoy')) {
-    extractedDate = new Date().toISOString().split('T')[0]
-  }
-
-  // "esta semana" or "próxima" → default to next available weekday
-  if (!extractedDate && (text.includes('esta semana') || text.includes('próxima semana'))) {
-    const d = new Date()
-    d.setDate(d.getDate() + (d.getDay() === 5 ? 3 : d.getDay() === 6 ? 2 : 1))
-    extractedDate = d.toISOString().split('T')[0]
-  }
-
-  return { extractedDate, extractedTime }
-}
 
 // ── Confirm Service Modal ─────────────────────────────────────────────────
 function ConfirmModal({ helper, onClose, onConfirm, prefillDate, prefillTime }) {
@@ -137,7 +86,7 @@ export default function Chat() {
   const location = useLocation()
   const { addChat, markRead, hasRated, helpersCache, addService,
     services, getChatHistory, saveChatHistory, user
- , personas, addCita } = useUser()
+ , personas, addCita, citas } = useUser()
   const [showRegGate, setShowRegGate] = useState(false)
 
   const [helper, setHelper] = useState(
@@ -642,7 +591,9 @@ export default function Chat() {
       {showRegGate && <RegisterGate reason="chat" onClose={() => setShowRegGate(false)} />}
       {showRating && <RatingModal helper={helper} onClose={() => setShowRating(false)} />}
       {showConfirm && (() => {
-        const { extractedDate, extractedTime } = extractDateFromMessages(messages)
+        // El día y la hora de los que ya se ha hablado (si ese profesional
+        // trabaja entonces y está libre).
+        const { date: extractedDate, time: extractedTime } = citaDeLaConversacion(messages, helper, ocupacionesDe(citas, services))
         return <ConfirmModal
           helper={helper}
           onClose={() => setShowConfirm(false)}

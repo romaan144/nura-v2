@@ -170,6 +170,16 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Contratar con el día y la hora acordados en el chat
+
+- La hoja de Contratar ya intentaba rellenar día y hora de la conversación, pero:
+  - tomaba el primer número como hora («hace 5 años» dejaba la hora sin poner; «mi hijo de 8 años» ponía las 8:00);
+  - confundía «por la mañana» con el día de mañana;
+  - se quedaba con el primer día de la semana que apareciera en todo el chat, no con el último acordado;
+  - calculaba la fecha en hora UTC (de madrugada podía salir el día anterior).
+- Nuevo `src/utils/citaDeLaConversacion.js`: manda el último mensaje que nombra un día; la hora solo si se dice («a las 10», «5 de la tarde», «17:00», «10h»); con solo franja («por la tarde»), el primer hueco libre de esa franja. Y solo si ese profesional trabaja ese día y esa hora está libre.
+- `npm run recorrido` lo comprueba (fallaba con el lector anterior).
+
 ## 2026-10-29 — Nüra ofrece otras opciones solo si la conversación se atasca
 
 - Fuera el «¿Necesitas algo más antes de decidir? Puedo buscar alternativas» del segundo mensaje, que salía mientras aún contabas el problema.
