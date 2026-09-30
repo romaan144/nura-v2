@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Última tarea integrada · Inicio del profesional: sin frases equivocadas ni botones que no hacen nada
+### Tarea activa · Responder: la cita se acepta de verdad
 
-Integrada el 2026-09-30 (ver `docs/changelog.md`, 2026-10-29). Tocó `src/pages/Home.jsx` (saludo tras el alta, botones del profesional, respuesta a «he trabajado…», sin la pregunta «¿para quién?» al profesional; nada visual), `src/pages/Profile.jsx` (llegar con `state.editar === 'ficha'` abre la hoja, como ya se hacía con los bloqueos) y `scripts/recorrido.mjs`. Esos archivos quedan libres.
+Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Probada la pantalla de responder (`/r/:token`) con un mensaje simulado: con una cita propuesta, la respuesta rápida «Me va bien» solo escribía «¡Perfecto! Me va bien… Nos vemos» y, al enviarla, la cita quedaba SIN aceptar; la fecha salía «Viernes, 2 De Octubre»; «Hola Antoni, alguien te necesita». Con cita pendiente, se responde con sus dos botones (aceptar / no me va bien); fecha con una sola mayúscula; saludo con la puntuación de siempre. Archivos: `src/pages/Responder.jsx` (lógica de las respuestas rápidas y dos textos; nada visual), `scripts/recorrido.mjs`.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
