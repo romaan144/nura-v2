@@ -8,6 +8,7 @@ import { crearCuenta, entrar, pedirRestablecer, sesionActual, MIN_CONTRASENA } f
 import { reclamarFicha } from '../utils/escrituras'
 import { useUser } from '../context/UserContext'
 import { revisarContacto } from '../utils/contactoProfesional'
+import { usuarioDeFicha, usuarioCliente } from '../utils/usuarioDeFicha'
 
 // El motivo solo cambia el texto: no los permisos ni el destino del acceso.
 const TEXTOS_ACCESO = {
@@ -85,7 +86,7 @@ export default function Entrar() {
     setEnviando(false)
     if (r.error) { setError(r.error); return }
     if (modo === 'olvido') { setAviso(`Si hay una cuenta con ${email.trim()}, te hemos enviado un correo con un enlace para poner una contraseña nueva.`); return }
-    if (modo === 'crear' && r.pendienteConfirmar) { setAviso(`Te hemos enviado un correo a ${email.trim()}. Pulsa el enlace para confirmarlo y ya podrás entrar.`); return }
+    if (modo === 'crear' && r.pendienteConfirmar) { setAviso(`Te hemos enviado un correo a ${email.trim()}. Pulsa el enlace para confirmarlo: volverás a Nüra ya dentro.`); return }
     // ── DESDE UN MOVIL NUEVO (etapa 8) ────────────────────────────────
     // Si este movil no sabe quien es (no hay usuario guardado), se pide su
     // ficha al servidor y se reconstruye a la profesional con ella. Antes,
@@ -96,12 +97,9 @@ export default function Entrar() {
       const f = ses ? await reclamarFicha(ses.access_token) : null
       setEnviando(false)
       if (f?.ok && f.helper) {
-        const h = f.helper
-        login({ name: h.name || email.split('@')[0], isHelper: true, helperId: h.id, joined: new Date().toISOString(),
-          helperProfile: { specialty: h.specialty || '', zone: h.zone || '', price: h.price || '', contacto: h.contacto || '',
-            formation: h.bio || '', modality: h.online ? 'Las dos' : 'Presencial' } })
+        login(usuarioDeFicha(f.helper, email))
       } else if (volver) {
-        login({ name: email.trim().split('@')[0], isHelper: false, joined: new Date().toISOString() })
+        login(usuarioCliente(email))
       } else {
         setAviso('Has entrado, pero no encontramos una ficha de profesional con este correo. Si te diste de alta con otro contacto, escríbenos.')
         return

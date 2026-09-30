@@ -21,6 +21,7 @@ import { NURA_BUILD, CONTACTO_EMAIL, DEMO_MODE } from '../config'
 import EditarFicha from '../components/EditarFicha'
 import { fmtTel } from '../utils/formato'
 import { reclamarFicha, borrarCuenta } from '../utils/escrituras'
+import { usuarioDeFicha, usuarioCliente } from '../utils/usuarioDeFicha'
 import FotoPerfil from '../components/FotoPerfil'
 import MisAlertas from '../components/MisAlertas'
 import LoQueSabeNura from '../components/LoQueSabeNura'
@@ -73,7 +74,7 @@ function buildSemana({ misObras, obraPropia }) {
 
 export default function Profile() {
   const {
-    user, logout, updateUser,
+    user, login, logout, updateUser,
     chats, ratings, searchHistory, favorites, isFollowing, following,
     services, personas, removePersona, helpersCache, contactedHelpers, citas, misObras
   } = useUser()
@@ -153,10 +154,59 @@ export default function Profile() {
     return () => { vivo = false }
   }, [user?.isHelper, user?.helperId])
 
+  // ── LA VUELTA DEL CORREO DE CONFIRMACIÓN ──────────────────────────────
+  // Quien crea su acceso confirma el correo y vuelve aquí con la sesión en
+  // la dirección. Si este móvil no le conocía (lo normal: abrió el enlace de
+  // su primer mensaje), antes veía la pantalla de invitado y tenía que
+  // entrar otra vez. Ahora se busca su ficha y queda dentro: profesional si
+  // la tiene, si no quien busca ayuda. Solo con sesión de verdad (la de la
+  // dirección o una guardada): al cerrar sesión se borra y esto no corre.
+  const haySesionQueLeer = () => {
+    if (/access_token=|[?&]code=|error_description=/.test(window.location.hash + window.location.search)) return true
+    try { return Boolean(JSON.parse(localStorage.getItem('nura_sesion') || 'null')?.access_token) } catch { return false }
+  }
+  const [reconociendo, setReconociendo] = useState(() => !user && haySesionQueLeer())
+  useEffect(() => {
+    if (user || !haySesionQueLeer()) return
+    let vivo = true
+    import('../utils/cuenta').then(async ({ sesionActual }) => {
+      const s = await sesionActual()
+      if (!vivo) return
+      if (!s) {
+        setReconociendo(false)
+        if (/error_description=/.test(window.location.hash + window.location.search)) {
+          showToast('Ese enlace ya no vale. Entra con tu correo y tu contraseña.')
+          navigate('/entrar', { replace: true })
+        }
+        return
+      }
+      const email = s.user?.email || ''
+      const r = await reclamarFicha(s.access_token)
+      if (!vivo) return
+      setReconociendo(false)
+      if (r?.ok && r.helper) {
+        login(usuarioDeFicha(r.helper, email))
+        showToast('Ya tienes tu acceso. Lo que te escriban, en «Chats».')
+      } else if (r?.motivo === 'sin-ficha' || r?.motivo === 'varias') {
+        login(usuarioCliente(email))
+        showToast('Ya tienes tu acceso.')
+      }
+    })
+    return () => { vivo = false }
+  }, [user])   // eslint-disable-line react-hooks/exhaustive-deps
+
   const [editingName, setEditingName]   = useState(false)
   const [nameInput,   setNameInput]     = useState('')
   const [editingPhone, setEditingPhone] = useState(false)
   const [phoneInput,  setPhoneInput]    = useState('')
+
+  // Mientras se reconoce a quien vuelve del correo: ni la pantalla de invitado.
+  if (!user && reconociendo) return (
+    <div role="status" aria-label="Entrando" style={{ height: '100%', minHeight: 'var(--app-layout-height, 100dvh)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--paper)' }}>
+      <img src="/logo-iso.png" alt="" style={{ width: 40, opacity: 0.35 }} />
+    </div>
+  )
 
   /* ── Guest ─────────────────────────────────────────────── */
   if (!user) return (
