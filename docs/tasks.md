@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · Ver todos: volver de un profesional deja en su categoría
+### Última tarea integrada · Ver todos: volver de un profesional deja en su categoría
 
-Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Sergio: Ver todos → una categoría → un profesional → atrás lleva a la rejilla de categorías (dos pasos atrás). La categoría abierta solo vivía en la memoria de la pantalla; ahora va en la dirección (`/explore?c=salud`), así «atrás» la recupera. Archivos: `src/pages/Explore.jsx` (solo cómo se abre y se cierra la categoría; nada visual), `scripts/recorrido.mjs`.
+Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Sergio: Ver todos → una categoría → un profesional → atrás lleva a la rejilla de categorías (dos pasos atrás). La categoría abierta solo vivía en la memoria de la pantalla; ahora va en la dirección (`/explore?c=salud`), así «atrás» la recupera. Archivos: `src/pages/Explore.jsx` (solo cómo se abre y se cierra la categoría; nada visual), `scripts/recorrido.mjs`. Comprobado: build, recorrido (atrás → `/explore?c=tecnico` con su lista; otro atrás → categorías), recorrido-real, smoke, test:vista, test:chat-scroll; lint de Explore igual que en `main`.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
