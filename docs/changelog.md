@@ -170,6 +170,17 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Tras «Sí, genial», Nüra entiende lo que le cuentas
+
+- Sergio: tras «Sí, genial», Nüra pidió «Si me cuentas cómo fue…»; escribió «Muy bien!» y Nüra contestó «No estoy segura de haberte entendido». Además decía «Júlia queda anotado».
+- Causa: la ventana de valorar solo se abre si aún no se ha valorado a esa persona; si ya estaba valorada, no se abría pero el texto la pedía igual, y lo escrito caía en el buscador.
+- Ahora:
+  - «Anoto que con Júlia funcionó» (sin género, que no lo sabemos).
+  - Si ya la valoró: «Ya me contaste cómo fue. Gracias». Si no, se abre la ventana y queda un botón «Valorar a Júlia» por si la cierra.
+  - Lo que escribe justo después, si no nombra ningún oficio, se agradece en vez de buscarlo. El texto no se guarda. Si nombra un oficio, sigue como búsqueda.
+  - `hasRated` compara los ids como texto (un id numérico y uno en texto no casaban).
+- `npm run recorrido` lo comprueba con el caso de Sergio.
+
 ## 2026-10-29 — La pregunta por el último contacto sale una vez y sin saltos
 
 - Sergio: al volver, Nüra pregunta qué tal fue con la última persona y a los 4 o 5 segundos la página parece recargarse, cambia el diseño del texto y aparecen respuestas.

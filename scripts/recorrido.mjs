@@ -424,6 +424,32 @@ console.log('\n── La pregunta por el último contacto, una vez y sin saltos 
   await p.close()
 }
 
+console.log('\n── Tras «Sí, genial», Nüra entiende lo que le cuentas ──')
+{
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('tras sí: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  // El caso de Sergio: ya la había valorado, así que la ventana no se abre.
+  await p.evaluate(() => {
+    localStorage.clear()
+    localStorage.setItem('nura_user', JSON.stringify({ name: 'Sergio', joined: new Date().toISOString() }))
+    localStorage.setItem('nura_contacted', JSON.stringify([{ id: 2020, name: 'Júlia Pérez', category: 'tecnico', contactedAt: Date.now() - 3600e3 }]))
+    localStorage.setItem('nura_ratings', JSON.stringify([{ helperId: 2020, rating: 5 }]))
+  })
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await espera(1500)
+  await tocar(p, /Sí, genial/)
+  await espera(2000)
+  const tras = await texto(p)
+  paso('sin género inventado ni pedir lo que no se puede hacer', /Anoto que con Júlia funcionó/.test(tras) && !/queda anotado/.test(tras) && !/Si me cuentas cómo fue/.test(tras), tras.match(/Me alegra.{0,120}/)?.[0] || '')
+  await escribirEn(p, 'Muy bien!')
+  await p.keyboard.press('Enter')
+  await espera(2000)
+  const r = await texto(p)
+  paso('«Muy bien!» se agradece, no se toma por una búsqueda', /Gracias por contármelo/.test(r) && !/No estoy segura/.test(r), r.match(/Muy bien!.{0,90}/)?.[0] || '')
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')

@@ -227,7 +227,7 @@ export function UserProvider({ children }) {
   }
 
   function hasRated(helperId) {
-    return (ratings||[]).some(r => r.helperId === helperId)
+    return (ratings||[]).some(r => String(r.helperId) === String(helperId))
   }
 
   function addSearch(query, category) {
