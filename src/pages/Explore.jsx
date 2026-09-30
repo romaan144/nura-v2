@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import PageHeader from '../components/PageHeader'
 import ErrorPanel from '../components/ErrorPanel'
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -165,12 +165,43 @@ export default function Explore() {
   // la pantalla se creaba de nuevo y aparecía la rejilla de categorías (dos
   // pasos atrás). Ahora «atrás» vuelve a la lista de esa categoría. Sin `c`
   // (o al tocar «Ver todos» otra vez) se ve la rejilla.
+  //
+  // Explorar sigue montada (oculta) mientras se ve la ficha de alguien. Antes
+  // reaccionaba a esa otra dirección: vaciaba la lista y, al volver, la
+  // cargaba de nuevo desde arriba. Ahora solo atiende a `/explore`, y si se
+  // vuelve al mismo paso del historial lo deja tal cual estaba.
+  const visible = location.pathname === '/explore'
   const catId = new URLSearchParams(location.search).get('c')
+  const pasoCargado = useRef(null)
   useEffect(() => {
+    if (!visible || pasoCargado.current === location.key) return
+    pasoCargado.current = location.key
     const cat = catId && CATEGORIES.find(c => c.id === catId)
     if (cat) cargarCategoria(cat)
     else { setActiveCategory(null); setCategoryResults([]); setSearchText('') }
-  }, [catId, location.key])
+  }, [visible, catId, location.key])
+
+  // EL SITIO EN LA LISTA. Al ocultarse, la pantalla pierde su desplazamiento
+  // (y la vuelta a Inicio lo ponía a cero). Se recuerda el de cada paso del
+  // historial y se repone al volver a él; un paso nuevo empieza arriba.
+  const cuerpoRef = useRef(null)
+  const sitios = useRef({})
+  const pasoVisible = useRef(null)
+  pasoVisible.current = visible ? location.key : null
+  function guardarSitio(e) {
+    if (pasoVisible.current) sitios.current[pasoVisible.current] = e.currentTarget.scrollTop
+  }
+  useLayoutEffect(() => {
+    const el = cuerpoRef.current
+    if (!visible || !el) return
+    const y = sitios.current[location.key] || 0
+    const poner = () => { if (el.scrollTop !== y) el.scrollTop = y }
+    poner()
+    // Por si el contenido tarda un instante en tener su altura (imágenes).
+    const f = requestAnimationFrame(poner)
+    const t = setTimeout(poner, 150)
+    return () => { cancelAnimationFrame(f); clearTimeout(t) }
+  }, [visible, location.key])
   const [categoryResults, setCategoryResults] = useState([])
   const [loadingCat,      setLoadingCat]     = useState(false)
   const [sinRed,          setSinRed]         = useState(false)
@@ -352,7 +383,7 @@ export default function Explore() {
         onBack={goBack}
       />
 
-      <div className={styles.body}>
+      <div className={styles.body} ref={cuerpoRef} onScroll={guardarSitio} data-scroll-propio>
         <div className={styles.intro}>
           <span className={styles.eyebrow}>Explorar profesionales</span>
           <h1>{activeCategory ? activeCategory.label : '¿Qué necesitas resolver?'}</h1>
