@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Última tarea integrada · El profesional después de la cita: horas ya pasadas
+### Tarea activa · Servidor: no aceptar horas pasadas y valoraciones en el Pulso
 
-Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. En «Mi agenda», una propuesta de hoy cuya hora ya pasó seguía «Por contestar» (y contaba en el aviso) y, al abrirla, se podía «Aceptar la cita» para una hora pasada. Ahora la agenda marca lo que ya pasó y «Responder» ofrece proponer otro día en vez de aceptar. Archivos: `src/data/horarios.js` (`agendaDe` añade `pasada`), `src/components/AgendaProfesional.jsx` (solo texto del estado y el contador), `src/pages/Responder.jsx` (lógica de la cita pasada, reutilizando los estilos existentes), `scripts/test-matching.mjs`, `scripts/recorrido-real.mjs`. Comprobado: build, recorrido, recorrido-real (la propuesta pasada no se acepta; con el código anterior fallaba), smoke, test:vista, test:chat-scroll, test:busqueda, test:matching 257, test:avisos; lint igual que en `main`.
+Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Dos cambios en `supabase/functions/helpers-write/index.ts`: `responder-aviso` guarda la respuesta pero no confirma una cita cuya hora ya pasó (hora de España, con una hora de margen); `mi-pulso` añade cuántas valoraciones recibió en 7 días y su media (solo cifras, ningún comentario). La app lo muestra en el Pulso y avisa si la cita no quedó confirmada. Archivos: la función, `src/pages/Home.jsx` (una línea del Pulso), `src/pages/Responder.jsx` (el aviso), `scripts/test-avisos.mjs`. Se despliega la función en Supabase tras las pruebas.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
