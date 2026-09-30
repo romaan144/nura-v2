@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Última tarea integrada · Toda la app: el dedo no arrastra la página entera
+### Tarea activa · Primer mensaje a un profesional: un borrador natural
 
-Integrada el 2026-09-30 (ver `docs/changelog.md`, 2026-10-29). Tocó `src/utils/sinArrastre.js` (también el documento y contenedores anidados), `src/App.jsx` (un efecto que lo aplica a toda la app), `src/pages/Home.jsx` y `src/pages/Chat.jsx` (se quita la aplicación suelta; nada visual) y `scripts/recorrido.mjs`. Pendiente de confirmar en iPhone físico. Esos archivos quedan libres.
+Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Sergio (captura): el borrador del primer mensaje decía «Hola Àngel. Cocinar. ¿Podrías ayudarme?»: pegaba la búsqueda tal cual. Se reescribe `buildChatOpener`: usa las palabras de la persona si ya son una frase; si no, redacta la necesidad («Busco a alguien que cocine a domicilio»); añade para quién, urgencia y franja; ignora una búsqueda anterior que no es de este profesional. Sin inventar nada. Archivos: `src/utils/introLetter.js` (`buildChatOpener`), `src/pages/Chat.jsx` (le pasa también el análisis; nada visual), `scripts/recorrido.mjs`. También lo usa el aviso (`src/utils/aviso.js`, sin cambios).
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
