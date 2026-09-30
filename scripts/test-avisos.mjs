@@ -594,6 +594,28 @@ console.log('\n── El Pulso: cifras de verdad, solo de la ficha propia ──
   ok(p?.apariciones === 1, 'cuenta solo las veces que salió SU ficha, no la que diga el móvil')
   ok(p?.recibidos === 2 && p?.respondidos === 1, 'mensajes de esta semana: recibidos y contestados')
   ok(!JSON.stringify(r.datos).includes('mensaje'), 'el Pulso no devuelve ningún mensaje ni frase de nadie')
+  ok(p?.sinEncontrar === null, 'sin ciudad conocida en su ficha, no hay «buscaron en tu ciudad»')
+
+  // Lo que buscaron en SU ciudad, de lo suyo, sin encontrar a nadie.
+  db.helpers.find(h => h.id === 777).zone = 'Triana, Sevilla'
+  db.eventos.push(
+    { id: 40, tipo: 'sin_cobertura', categoria: 'hogar', oficio: 'limpieza', ciudad: 'Sevilla', fecha: hoy },
+    { id: 41, tipo: 'sin_cobertura', categoria: 'hogar', oficio: 'limpieza', ciudad: 'Sevilla', fecha: hoy },
+    { id: 42, tipo: 'sin_cobertura', categoria: 'hogar', oficio: 'plancha', ciudad: 'Sevilla', fecha: hoy },
+    { id: 43, tipo: 'sin_cobertura', categoria: 'hogar', oficio: 'limpieza', ciudad: 'Madrid', fecha: hoy },
+    { id: 44, tipo: 'sin_cobertura', categoria: 'salud', oficio: 'fisio', ciudad: 'Sevilla', fecha: hoy },
+    { id: 45, tipo: 'sin_cobertura', categoria: 'hogar', oficio: 'limpieza', ciudad: 'Sevilla', fecha: viejo },
+    { id: 46, tipo: 'sin_cobertura', categoria: 'hogar', ciudad: 'Sevilla', fecha: hoy },
+    { id: 47, tipo: 'busqueda', categoria: 'hogar', oficio: 'limpieza', ciudad: 'Sevilla', resultados: 0, fecha: hoy },
+  )
+  r = await llamarG(funcion, { op: 'mi-pulso', sesion: 'sesion-confirmada' })
+  const se = r.datos?.pulso?.sinEncontrar
+  ok(se?.ciudad === 'Sevilla', `la ciudad sale de su ficha: ${se?.ciudad}`)
+  ok(JSON.stringify(se?.oficios) === JSON.stringify([{ oficio: 'limpieza', veces: 2 }, { oficio: 'plancha', veces: 1 }]),
+    `solo su categoría, su ciudad y esta semana, por oficio y de más a menos: ${JSON.stringify(se?.oficios)}`)
+  ok(!JSON.stringify(r.datos).includes('Madrid'), 'lo de otras ciudades no aparece')
+  db.eventos = db.eventos.filter(e => e.id < 40 || e.id > 47)
+  delete db.helpers.find(h => h.id === 777).zone
 
   // ¿Alguien busca este oficio? (al darse de alta): solo dos cifras del mes.
   db.eventos.push(
