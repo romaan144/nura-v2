@@ -170,6 +170,13 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Al confirmar el correo, se vuelve a Nüra ya dentro
+
+- El profesional que recibe su primer mensaje contesta desde el enlace y crea su acceso. Al pulsar el enlace de confirmación del correo volvía a Nüra con la sesión, pero ese móvil no le conocía: veía la pantalla de invitado («Encuentra a la persona adecuada») y tenía que entrar otra vez.
+- Ahora, al volver con la sesión, Nüra busca su ficha (la misma comprobación de siempre: el correo confirmado coincide con el de su alta) y le deja dentro como profesional, con el aviso «Ya tienes tu acceso. Lo que te escriban, en «Chats»». Sin ficha, entra como quien busca ayuda. Si el enlace ha caducado, se lo dice y le lleva a «Entrar».
+- «Entrar» comparte el mismo código (`src/utils/usuarioDeFicha.js`) y su aviso tras crear la cuenta dice «volverás a Nüra ya dentro». Cerrar sesión sigue cerrándola: no vuelve a entrar solo.
+- Sin cambios en el servidor. `npm run recorrido-real` lo comprueba (con el código anterior fallaba).
+
 ## 2026-10-29 — Servidor: no confirma horas pasadas y el Pulso cuenta las valoraciones
 
 - `responder-aviso`: si el profesional acepta una cita cuya hora ya pasó (hora de España, con una hora de margen por Canarias), la respuesta se guarda, la cita no se confirma y queda como «no le va bien» para que quien la pidió proponga otro día. Cierra lo pendiente de la entrada anterior. La app lo dice en «Responder» si llegara a pasar.

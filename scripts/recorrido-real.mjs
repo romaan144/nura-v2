@@ -73,6 +73,10 @@ function backend(c) {
     }
     case 'valorar': { const a = porLlave(c.llave); if (!a) return { __estado: 404 }; valoraciones.push({ helper_id: a.helper_id, ...c }); return { ok: true } }
     case 'evento': eventos.push(c.payload); return { ok: true }
+    // La cuenta de Laura (correo confirmado) encuentra su ficha; otra, ninguna.
+    case 'reclamar-ficha': return c.token === 'sesion-pro'
+      ? { ok: true, helper: { id: 7001, name: 'Laura Vidal Soler', specialty: 'Logopeda infantil', zone: 'Gràcia', contacto: 'laura@ficticia.test' } }
+      : { ok: false, motivo: 'sin-ficha' }
     case 'demanda-oficio': {
       const mes = e => e.oficio === c.oficio && Date.parse(e.fecha) > Date.now() - 30 * 864e5
       return { ok: true, busquedas: eventos.filter(e => e.tipo === 'busqueda' && mes(e)).length, sinNadie: eventos.filter(e => e.tipo === 'sin_cobertura' && mes(e)).length }
@@ -104,6 +108,12 @@ async function pagina(ctx = b) {
     if (!u.startsWith(B)) {
       if (r.method() === 'OPTIONS') return r.respond({ status: 204, headers: H })
       let cuerpo = []
+      // La vuelta del correo de confirmación: la librería pregunta quién es.
+      if (u.includes('/auth/v1/user')) {
+        const tk = (r.headers().authorization || '').replace(/^Bearer /, '')
+        return r.respond({ status: 200, headers: H, contentType: 'application/json',
+          body: JSON.stringify({ id: 'u-' + tk, aud: 'authenticated', role: 'authenticated', email: tk === 'sesion-pro' ? 'laura@ficticia.test' : 'cliente@ficticia.test', email_confirmed_at: '2026-09-01T00:00:00Z' }) })
+      }
       if (u.includes('/rest/v1/helpers')) {
         const id = (u.match(/[?&]id=eq\.(\d+)/) || [])[1]
         const cat = decodeURIComponent((u.match(/category=(?:ilike\.|in\.\()([^&)]+)/) || [])[1] || '')
@@ -358,6 +368,34 @@ try {
     const av = avisos.find(a => a.token === tk)
     ok(av.respuesta && av.cita_estado === 'rechazada', `la respuesta llega y la cita queda como «no le va» (${av.cita_estado})`)
     await pro.close()
+  }
+
+  console.log('\n── Al confirmar el correo, vuelve a Nüra ya dentro ──')
+  {
+    // 2026-09-30: antes veía la pantalla de invitado y tenía que entrar otra vez.
+    const ctx = await b.createBrowserContext()
+    const pro = await pagina(ctx)
+    await pro.goto(B + '/', { waitUntil: 'networkidle0' })
+    await pro.evaluate(() => localStorage.clear())
+    const exp = Math.floor(Date.now() / 1000) + 3600
+    await pro.goto(`${B}/profile#access_token=sesion-pro&refresh_token=r1&expires_in=3600&expires_at=${exp}&token_type=bearer&type=signup`, { waitUntil: 'networkidle0' })
+    await espera(2500)
+    const u1 = await pro.evaluate(() => JSON.parse(localStorage.getItem('nura_user') || 'null'))
+    ok(u1?.isHelper === true && String(u1?.helperId) === '7001', `el profesional queda dentro con su ficha (${u1 ? u1.name + ' · ' + u1.helperId : 'nadie'})`)
+    ok(/Ya tienes tu acceso/.test(await texto(pro)), 'y Nüra se lo dice')
+    // Cerrar sesión: no vuelve a entrar solo.
+    await pulsar(pro, 'Cerrar sesión'); await pulsar(pro, 'Toca otra vez para cerrar sesión')
+    await pro.goto(B + '/profile', { waitUntil: 'networkidle0' }); await espera(1500)
+    ok(!(await pro.evaluate(() => localStorage.getItem('nura_user') && JSON.parse(localStorage.getItem('nura_user')))), 'al cerrar sesión no vuelve a entrar solo')
+    await pro.close(); await ctx.close()
+
+    const ctx2 = await b.createBrowserContext()
+    const cli = await pagina(ctx2)
+    await cli.goto(`${B}/profile#access_token=sesion-cliente&refresh_token=r2&expires_in=3600&expires_at=${exp}&token_type=bearer&type=signup`, { waitUntil: 'networkidle0' })
+    await espera(2500)
+    const u2 = await cli.evaluate(() => JSON.parse(localStorage.getItem('nura_user') || 'null'))
+    ok(u2 && u2.isHelper === false && u2.name === 'cliente', `sin ficha, entra como quien busca ayuda (${u2 ? u2.name : 'nadie'})`)
+    await cli.close(); await ctx2.close()
   }
 } catch (e) {
   ok(false, 'el recorrido se ha roto: ' + e.message)
