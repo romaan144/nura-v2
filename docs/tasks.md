@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · Nüra ofrece alternativas solo si la conversación se atasca
+### Última tarea integrada · Nüra ofrece otras opciones solo si la conversación se atasca
 
-Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Se quita el «¿Necesitas algo más antes de decidir?» del segundo mensaje. Nüra ofrece otras opciones solo si el profesional no puede cuando se le necesita o si tras varios mensajes no hay día acordado, con un botón que repite la búsqueda. Archivos: `src/utils/chatReplies.js` (`getNuraIntervention`), `src/pages/Chat.jsx` (solo los botones de ese aviso), `scripts/recorrido.mjs`.
+Integrada el 2026-09-30 (ver `docs/changelog.md`, 2026-10-29). Tocó `src/utils/chatReplies.js` (`getNuraIntervention`, `getHelperReply`), `src/pages/Chat.jsx` (botones del aviso de Nüra), `src/pages/Home.jsx` (una búsqueda que llega con `excluir` no pone primero a ese profesional; texto si es el único; nada visual) y `scripts/recorrido.mjs`. Esos archivos quedan libres.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 

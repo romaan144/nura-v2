@@ -22,7 +22,7 @@ import { haptic } from '../utils/haptic'
 import RatingModal from '../components/RatingModal'
 import styles from './Chat.module.css'
 import PageLoading from '../components/PageLoading'
-import { getHelperReply, getNuraIntervention, respuestasRapidas, CONTRATAR } from '../utils/chatReplies'
+import { getHelperReply, getNuraIntervention, respuestasRapidas, CONTRATAR, OTRAS_OPCIONES } from '../utils/chatReplies'
 import { buildChatOpener } from '../utils/introLetter'
 import { DEMO_MODE } from '../config'
 import RegisterGate from '../components/RegisterGate'
@@ -412,12 +412,13 @@ export default function Chat() {
       if (nura) {
         setTimeout(() => {
           const isBookingMoment = nura.includes('Confirmo la reserva') || nura.includes('confirmar')
+          const ofreceOtras = nura.includes('otras opciones')
           setMessages(prev => [...prev, {
             id: Date.now() + 2,
             text: nura,
             from: 'nura',
             time: new Date().toISOString(),
-            chips: isBookingMoment ? ['Confirmar reserva', 'Todavía no'] : undefined,
+            chips: isBookingMoment ? ['Confirmar reserva', 'Todavía no'] : ofreceOtras ? [OTRAS_OPCIONES, 'Todavía no'] : undefined,
           }])
         }, 800)
       }
@@ -575,7 +576,10 @@ export default function Chat() {
                       <button className="nura-glass-action" key={ci}
                         onClick={() => {
                           if (chip === 'Confirmar reserva') { setShowConfirm(true); return }
-                          if (chip === 'Todavía no') return
+                          // Quita los botones del aviso: vuelven las respuestas rápidas.
+                          if (chip === 'Todavía no') { setMessages(prev => prev.map(m => m.id === msg.id ? { ...m, chips: undefined } : m)); return }
+                          // Repite la búsqueda en Inicio: la que trajo aquí o, si no hay, el oficio.
+                          if (chip === OTRAS_OPCIONES) { navigate('/', { state: { q: location.state?.userQuery || window.__nuraLastQuery || helper.specialty, excluir: helper.id } }); return }
                           if (chip === AVISAME) { pedirAvisoRespuesta(msg.id); return }
                           sendMessage(chip)
                         }}

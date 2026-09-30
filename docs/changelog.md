@@ -170,6 +170,14 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Nüra ofrece otras opciones solo si la conversación se atasca
+
+- Fuera el «¿Necesitas algo más antes de decidir? Puedo buscar alternativas» del segundo mensaje, que salía mientras aún contabas el problema.
+- Nüra ofrece otras opciones una sola vez y solo si se atasca: el profesional no puede cuando lo necesitas («hoy lo tengo complicado») o, tras seis mensajes, no hay día acordado. Con botones «Buscar otras opciones» y «Todavía no».
+- «Buscar otras opciones» repite la búsqueda en Inicio sin poner primero al profesional con el que hablabas; si es el único, lo dice («Por ahora X es la única opción que tengo para esto»). «Todavía no» quita los botones del aviso y vuelven las respuestas rápidas.
+- El profesional de ejemplo ya no repite la pregunta por el día.
+- `npm run recorrido` lo comprueba.
+
 ## 2026-10-29 — Respuestas rápidas del chat según la conversación
 
 - Los botones bajo el último mensaje ya no sugieren lo que ya se ha preguntado (antes, tras preguntar el precio, seguía ofreciendo «Me parece bien el precio» o volvía a él por palabras sueltas como «semana»).

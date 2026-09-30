@@ -123,7 +123,12 @@ function getHelperReply(helper, count, userMsg = '', { historial = [] } = {}) {
   if (!pregunto || cuentaAlgo) {
     const pendiente = oficio.preguntas.find(q => !dichoPorMi.includes(plano(q).slice(1, 25)))
     if (pendiente && !(pideDia && cuando)) partes.push(pendiente)
-    else if (!pideDia) partes.push(`Con eso me hago una idea. ¿Qué día te vendría bien que ${oficio.paso}?`)
+    else if (!pideDia) {
+      // La pregunta por el día, una vez: si ya la hizo, no insiste.
+      partes.push(/con eso me hago una idea/.test(dichoPorMi)
+        ? 'Sin prisa. Cuando lo tengas claro, dime un día y lo organizamos.'
+        : `Con eso me hago una idea. ¿Qué día te vendría bien que ${oficio.paso}?`)
+    }
   }
   return partes.join(' ') || 'Cuéntame un poco más y te digo cómo puedo ayudarte.'
 }
@@ -167,9 +172,11 @@ function respuestasRapidas(messages = [], hoy = new Date()) {
   return salida.length ? salida : [CONTRATAR]
 }
 
+const OTRAS_OPCIONES = 'Buscar otras opciones'
+
 function getNuraIntervention(helper, count, messages) {
   const name = getFirstName(helper.name) || helper.name
-  if (count < 2) return null
+  if (count < 1) return null
 
   // Read all message text to detect booking signals
   const allText = (messages || [])
@@ -198,9 +205,19 @@ function getNuraIntervention(helper, count, messages) {
     return `El precio está claro. Si todo te parece bien, puedes confirmar desde el botón **Contratar**.`
   }
 
+  // OTRAS OPCIONES, solo si se atasca: antes salía en el segundo mensaje,
+  // mientras aún le estabas contando el problema. Ahora, si el profesional
+  // no puede cuando lo necesitas, o si tras varios mensajes no hay día
+  // acordado. Una sola vez; Chat le pone el botón OTRAS_OPCIONES.
+  const yaOfrecio = (messages || []).some(m => m.from === 'nura' && /otras opciones/.test(m.text || ''))
+  const acordado = (messages || []).some(m => m.from === 'helper' && /me va bien/i.test(m.text || ''))
+  if (!yaOfrecio && !acordado) {
+    if (/lo tengo complicado/i.test(ultimo)) return `Si lo necesitas hoy, puedo buscarte otras opciones que atiendan urgencias.`
+    if (count >= 6) return `Parece que aún no concretáis. ¿Quieres que te busque otras opciones para comparar?`
+  }
+
   // Count-based fallbacks for when no signals detected
   const fallbacks = {
-    2: `¿Necesitas algo más antes de decidir? Puedo buscar alternativas si quieres comparar.`,
     5: `**${name}** tiene ${String(helper.rating || 4.8).replace('.', ',')} sobre 5 de media con ${helper.reviews || 0} valoraciones reales.`,
     7: `Cuando estés listo, confirma la reserva. Quedará en **Mis Servicios** con todos los detalles.`,
   }
@@ -239,4 +256,4 @@ function buildLivingConversation({ helper, analysis, userQuery }) {
   return { messages: [msg1, msg2], proposal: { label: `${day} ${franja}` } }
 }
 
-export { generateFirstMessage, getHelperReply, getNuraIntervention, buildLivingConversation, respuestasRapidas, CONTRATAR }
+export { generateFirstMessage, getHelperReply, getNuraIntervention, buildLivingConversation, respuestasRapidas, CONTRATAR, OTRAS_OPCIONES }

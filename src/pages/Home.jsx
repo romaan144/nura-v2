@@ -667,10 +667,14 @@ export default function Home() {
   // contesta con SU motor (comprension, el porque, el silencio honesto,
   // la carta). Antes habia dos motores y el segundo era el pobre.
   const entranteRef = useRef(null)
+  // «Buscar otras opciones» desde un chat: esa búsqueda no vuelve a poner
+  // primero al profesional con el que ya se hablaba.
+  const excluirRef = useRef(null)
   useEffect(() => {
     const q = location.state?.q
     if (!q || entranteRef.current === q) return
     entranteRef.current = q
+    excluirRef.current = location.state?.excluir ?? null
     window.history.replaceState({}, '')
     const t = setTimeout(() => handleSend(q), 260)
     return () => clearTimeout(t)
@@ -976,6 +980,14 @@ export default function Home() {
         setMessages(prev => [...prev, { id: Date.now() + 0.5, from: 'nura', lines: ['Dame un segundo. Estoy pensando en quién encaja de verdad.'], loading: true }])
       }, 450)
       let matches = await matchHelpers(analysis, 4)
+      // Si no hay nadie más, se enseña igual, pero se dice (resultLine).
+      let unicoOpcion = false
+      if (excluirRef.current != null && matches?.length) {
+        const otros = matches.filter(h => String(h.id) !== String(excluirRef.current))
+        if (otros.length) matches = otros
+        else unicoOpcion = true
+      }
+      excluirRef.current = null
       clearTimeout(thinkingTimer)
       if (!alive()) return
       // Honestidad antes que confianza falsa: sin comprensión no hay tarjetas
@@ -1118,7 +1130,9 @@ export default function Home() {
       // NADIE DEL OFICIO: se dice, y se ofrece lo más parecido sin llamarlo
       // «quien mejor encaja» («reparar altavoces» → técnico de electrodomésticos).
       const aproximado = top?.__aproximado
-      const resultLine = aproximado
+      const resultLine = unicoOpcion
+        ? `Por ahora **${topFirstName}** es la única opción que tengo para esto.`
+        : aproximado
         ? `Todavía no tengo a nadie ${aproximado.quien}. Lo más parecido es **${topFirstName}**.`
         : `**${topFirstName}** es quien mejor encaja.`
       const whyLine = `${why.charAt(0).toUpperCase()}${why.slice(1)}${urgentTail}.`
