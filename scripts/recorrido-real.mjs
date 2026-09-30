@@ -231,8 +231,13 @@ try {
   ok(/ocupada/.test(estadoHora || ''), `otra persona ve esa hora ocupada en su agenda (${estadoHora})`)
   await otra.close()
 
+  // Una cita futura ya no se puede dar por hecha (2026-09-30): se da por
+  // pasada moviéndola a ayer en este móvil; la valoración sigue su camino real.
   await c.goto(B + '/my-services', { waitUntil: 'networkidle0' }); await espera(1200)
-  ok(await pulsar(c, 'Marcar completado y valorar'), 'en «Mis servicios» se puede marcar hecho y valorar')
+  ok(!(await c.evaluate(() => /Marcar como hecho/.test(document.body.innerText))), 'una cita por venir no se puede marcar como hecha')
+  await c.evaluate(() => { const ayer = new Date(Date.now() - 864e5).toISOString().slice(0, 10); const s = JSON.parse(localStorage.getItem('nura_services') || '[]'); localStorage.setItem('nura_services', JSON.stringify(s.map(x => ({ ...x, date: ayer })))) })
+  await c.goto(B + '/my-services', { waitUntil: 'networkidle0' }); await espera(1200)
+  ok(await pulsar(c, 'Marcar como hecho y valorar'), 'pasada la cita, en «Mis servicios» se puede marcar hecha y valorar')
   await pulsar(c, 'Sí'); await pulsar(c, 'Paciente')
   await c.evaluate(() => document.querySelector('[aria-label="5 estrellas"]')?.click())
   await pulsar(c, 'Enviar'); await espera(1500)

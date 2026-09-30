@@ -16,7 +16,7 @@ import HelperCarousel from '../components/HelperCarousel'
 import RegisterGate from '../components/RegisterGate'
 import { haptic } from '../utils/haptic'
 import { recordarTrasBuscar } from '../utils/notifications'
-import { fechaDeCita } from '../utils/citaAviso'
+import { fechaDeCita, yaPaso } from '../utils/citaAviso'
 import { registrar, demandaDe } from '../utils/analitica'
 import { lineasSinEncontrar } from '../utils/pulso'
 import AlertaSheet from '../components/AlertaSheet'
@@ -376,7 +376,7 @@ const LEER_RESPUESTA = 'Leer la respuesta'
 export default function Home() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { chats: chatsUsuario, user, addSearch, searchHistory, favorites, helpersCache, nuraChatMessages, setNuraChatMessages, nuraLastMatches, setNuraLastMatches, cacheHelpers, contactedHelpers, confirmContact, following, personas, upsertPersona, citas, addStory , registrarDemanda, hasRated } = useUser()
+  const { chats: chatsUsuario, user, addSearch, searchHistory, favorites, helpersCache, nuraChatMessages, setNuraChatMessages, nuraLastMatches, setNuraLastMatches, cacheHelpers, contactedHelpers, confirmContact, following, personas, upsertPersona, citas, addStory , registrarDemanda, hasRated, services, updateService } = useUser()
   // messages persisted in context so they survive navigation
   const messages = nuraChatMessages
   const setMessages = setNuraChatMessages
@@ -514,15 +514,24 @@ export default function Home() {
     // En el MISMO saludo y con sus botones desde el principio: antes llegaba
     // como un segundo mensaje a los 4 s, repetía la pregunta y la pantalla
     // saltaba del modo bienvenida al de respuesta.
+    // Con una cita aún por delante, todavía no: antes preguntaba «¿qué tal
+    // fue la visita del jueves?» el lunes. Se pregunta cuando haya pasado.
+    // Una cita cancelada o rechazada no es «la visita»: pregunta general.
+    const citaCon = hid => {
+      const c = (citas || []).slice().reverse().find(x => String(x.helperId) === String(hid))
+      return c && c.estado !== 'cancelada' && c.estado !== 'rechazada' ? c : null
+    }
     const pending = (contactedHelpers || []).find(c => {
       if (!c?.contactedAt) return false
       const elapsed = Date.now() - c.contactedAt
       const alreadyAnswered = c.confirmed !== undefined
+      const ci = citaCon(c.id)
+      if (ci && yaPaso(ci.fecha, ci.hora) === false) return false
       return elapsed >= CONFIRMACION_THRESHOLD && !alreadyAnswered
     })
     if (pending && user && !user.isHelper) {
       const lp = (personas || []).find(p => (p.contactedHelperIds || []).includes(pending.id))
-      const ci = (citas || []).slice().reverse().find(x => x.helperId === pending.id)
+      const ci = citaCon(pending.id)
       const hn = getFirstName(pending.name) || pending.name
       const pregunta = ci
         ? `¿Qué tal fue la visita del ${ci.label} con **${hn}**${lp ? ` para ${lp.label}` : ''}? ¿Pudisteis resolverlo?`
@@ -789,7 +798,7 @@ export default function Home() {
             const hid = confirmMsg.confirmacionHelperId
             const hf = (helpersCache && (helpersCache[hid] || helpersCache[String(hid)])) || { id: hid, name: confirmMsg.confirmacionHelperName }
             const lp = (personas || []).find(p => (p.contactedHelperIds || []).includes(hid))
-            const ci = (citas || []).slice().reverse().find(c => c.helperId === hid)
+            const ci = (citas || []).slice().reverse().find(c => String(c.helperId) === String(hid) && c.estado !== 'cancelada' && c.estado !== 'rechazada' && yaPaso(c.fecha, c.hora) !== false)
             const fn = user?.name?.split(' ')?.[0] || 'Alguien'
             addStory({
               id: 'me_' + hid, helperId: hid,
@@ -801,6 +810,13 @@ export default function Home() {
             // ficha del profesional (perfil vivo) y ayuda a otros a elegir.
             paraValorar = { ...hf, id: hf.id ?? hid, name: hf.name || confirmMsg.confirmacionHelperName || '' }
             if (!yaValorado) setValorar(paraValorar)
+            // Y en «Mis servicios», su cita ya pasada queda como hecha (antes
+            // seguía «Confirmada», como si estuviera por venir).
+            for (const sv of services || []) {
+              if (String(sv.helperId) === String(hid) && (sv.status === 'confirmed' || sv.status === 'pending') && yaPaso(sv.date, sv.time)) {
+                updateService(sv.id, yaValorado ? { status: 'completed', rated: true } : { status: 'completed' })
+              }
+            }
           } catch (e) { console.error('[Nüra] historia:', e) }
         }
       }
@@ -828,7 +844,9 @@ export default function Home() {
             lines: [
               `Lo siento. ¿Quieres que busque otra persona para lo que necesitabas?`
             ],
-            chips: ['Sí, busca otra persona', 'Ya lo resolví de otra forma']
+            chips: ['Sí, busca otra persona', 'Ya lo resolví de otra forma'],
+            // Para no volver a proponer a la misma persona.
+            otraQueNo: confirmMsg.confirmacionHelperId ?? null
           }])
         }
         setLoading(false)
@@ -1424,15 +1442,17 @@ export default function Home() {
     if (chip === 'Si, busca otra persona' || chip === 'Sí, busca otra persona') {
       let q = window.__nuraLastQuery
       if (!q) { try { q = sessionStorage.getItem('nura_last_query') } catch { /* sin memoria */ } }
-      if (q) { handleSend(q); return }
+      // Sin la persona con la que no funcionó (si es la única, se dice).
+      const noEsta = [...messages].reverse().find(m => m.otraQueNo != null)?.otraQueNo
+      if (q) { excluirRef.current = noEsta ?? null; handleSend(q, { nueva: true }); return }
       haptic('light')
-      responde(['Cuentame otra vez que necesitas y te busco a alguien distinto.'])
+      responde(['Cuéntame otra vez qué necesitas y te busco a alguien distinto.'])
       return
     }
 
     if (chip === 'Ya lo resolvi de otra forma' || chip === 'Ya lo resolví de otra forma') {
       haptic('light')
-      responde(['Me alegro de que se resolviera. Aqui estare cuando vuelvas a necesitarme.'])
+      responde(['Me alegro de que se resolviera. Aquí estaré cuando vuelvas a necesitarme.'])
       return
     }
 
