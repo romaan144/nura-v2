@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Última tarea integrada · El Pulso dice qué buscaron en tu ciudad sin encontrar a nadie
+### Tarea activa · Respuestas coherentes en los chats de ejemplo
 
-Integrada el 2026-09-30 (ver `docs/changelog.md`, 2026-10-29). Tocó `supabase/functions/helpers-write/index.ts` (op `mi-pulso`, desplegada v28), el nuevo `src/utils/pulso.js`, `src/pages/Home.jsx` (una línea del Pulso y su import; nada visual) y `scripts/test-avisos.mjs`. Esos archivos quedan libres.
+Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Solo modo demo: las respuestas automáticas repiten el saludo, no contestan al precio y usan el nombre del profesional para dirigirse a quien escribe. Se reescribe la lógica para que respondan a lo que se pregunta y no repitan preguntas. Archivos: `src/utils/chatReplies.js`, `src/pages/Chat.jsx` (solo la llamada a `getHelperReply`, nada visual), `scripts/recorrido.mjs`.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
