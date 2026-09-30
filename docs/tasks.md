@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Última tarea integrada · Ver todos: al volver de un profesional, la lista sigue donde estaba
+### Tarea activa · Después de la cita: preguntar a tiempo y «Mis servicios» coherente
 
-Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Sergio: al volver de una persona, la lista de su categoría se recargaba y subía al principio. Explorar sigue montada (oculta) mientras se ve la ficha, pero se reiniciaba al cambiar la dirección y el desplazamiento se perdía. Ahora solo reacciona a su propia dirección y recuerda el desplazamiento de cada paso del historial. Archivos: `src/pages/Explore.jsx` (solo lógica; nada visual), `scripts/recorrido.mjs`. Comprobado: build, recorrido (baja 900 px, abre a alguien, vuelve: mismo punto y sin cargar), recorrido-real, smoke, test:vista, test:chat-scroll; lint de Explore igual que en `main`.
+Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Revisión de lo que ve el cliente tras una cita: Inicio preguntaba «¿qué tal fue la visita?» aunque la visita aún no hubiera pasado o estuviera cancelada; «busca otra persona» podía devolver a la misma; «Mis servicios» dejaba marcar como hecha una cita futura, mostraba «Valorado · Repetir» en citas nuevas con alguien ya valorado y dejaba citas pasadas en «Próximos». Archivos: `src/pages/Home.jsx` (solo la lógica de la pregunta), `src/pages/MyServices.jsx` (qué botones y estados se muestran; sin cambiar estilos), `src/utils/citaAviso.js`, `scripts/recorrido.mjs`.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
