@@ -562,6 +562,28 @@ console.log('\n── Toda la app: el dedo no arrastra la página entera ──'
   await p.close()
 }
 
+console.log('\n── Primer mensaje a un profesional: un borrador natural ──')
+{
+  // Sergio, 2026-09-30: «Hola Àngel. Cocinar. ¿Podrías ayudarme?».
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('borrador: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  const borradorTras = async q => {
+    await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+    await p.evaluate(() => { localStorage.clear(); sessionStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Sergio', joined: new Date().toISOString() })); sessionStorage.setItem('nura_for_whom', 'mi') })
+    await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+    await espera(1200)
+    await escribirEn(p, q); await p.keyboard.press('Enter'); await espera(3500)
+    await tocar(p, /Escribir a/)
+    await espera(2000)
+    return p.evaluate(() => document.querySelector('input[aria-label="Escribe tu mensaje"]')?.value || '')
+  }
+  let b = await borradorTras('cocinar')
+  paso('una sola palabra se convierte en una petición', /Busco a alguien que cocine/.test(b) && !/\. Cocinar\./.test(b), b)
+  b = await borradorTras('tengo una fuga de agua debajo del fregadero')
+  paso('una frase suya se usa con sus palabras', /Tengo una fuga de agua debajo del fregadero\./.test(b), b)
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')
