@@ -18,155 +18,110 @@ function generateFirstMessage(helper) {
   return map[helper.category] || `Hola${name ? ` ${name}` : ''}, ¿tienes disponibilidad?`
 }
 
-function getHelperReply(helper, count, userMsg = '', isIntroLetter = false) {
-  const name = getFirstName(helper.name) || ''
-  const t = userMsg.toLowerCase()
+// ── Respuestas del profesional de ejemplo (solo modo demo) ───────────────
+// Contesta a LO QUE SE PREGUNTA (precio, día, zona, urgencia…) y, si le
+// cuentan el problema, pide lo que falta sin repetir preguntas ya hechas.
+// Antes volvía a saludar tras leer el problema, contestaba al precio con
+// otra pregunta y se despedía con su propio nombre.
 
-  // Response to a Nüra-written intro letter — acknowledge the context, don't re-ask basics
-  if (isIntroLetter && count === 1) {
-    const cat = helper.category || 'otro'
-    const acknowledgments = {
-      logopeda:    `Hola, gracias por escribir. He leído el contexto que me ha pasado Nüra. Me encajan bien estos casos. ¿Te viene bien que hablemos esta semana para concretar horarios?`,
-      cuidado:     `Hola, gracias por confiar en mí. Ya tengo una idea clara de la situación gracias al mensaje de Nüra. ¿Podemos hablar para conocer mejor los horarios y empezar pronto?`,
-      tecnico:     `Hola, perfecto, ya veo de qué se trata. Puedo pasar a verlo. ¿Qué días te van mejor?`,
-      salud:       `Hola, gracias por contarme tu situación a través de Nüra. Me gustaría agendar una primera sesión para conocernos mejor. ¿Tienes disponibilidad esta semana?`,
-      legal:       `Hola, he leído el resumen de tu caso. Creo que puedo orientarte bien. ¿Te viene bien una primera llamada para hablar con más detalle?`,
-      entrenador:  `Hola, genial que me escribas. Con el contexto que me ha dado Nüra ya tengo una idea de por dónde empezar. ¿Reservamos la primera sesión de valoración?`,
-      mascotas:    `Hola, gracias por el mensaje. Encantada de ayudar. ¿Cuándo te vendría bien empezar?`,
-      clases:      `Hola, gracias por escribir. Con lo que me cuenta Nüra ya sé por dónde enfocar las clases. ¿Empezamos esta semana?`,
-    }
-    return acknowledgments[cat] || `Hola, gracias por escribirme con tanto detalle. Ya tengo claro el contexto. ¿Cuándo te vendría bien que habláramos?`
+const plano = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+
+// Categorías de la base con otro nombre en la app.
+const ALIAS_CATEGORIA = { limpieza: 'hogar', matematicas: 'clases', educacion: 'clases', logopeda: 'logopedia' }
+
+// Por categoría: cómo encaja lo que le cuentan, qué le falta saber (en orden)
+// y cuál es el siguiente paso natural.
+const OFICIOS = {
+  tecnico: { encaja: 'Es el tipo de avería que arreglo a menudo.', preguntas: ['¿Desde cuándo pasa?', '¿Me puedes mandar una foto por aquí? Así llevo lo necesario.'], paso: 'pase a verlo' },
+  hogar: { encaja: 'Es justo el tipo de trabajo que hago.', preguntas: ['¿Cuántos metros tiene la vivienda, más o menos?', '¿Con qué frecuencia lo necesitarías?'], paso: 'pase a verlo' },
+  clases: { encaja: 'Doy clases justo de eso.', preguntas: ['¿En qué curso está y qué le cuesta más?', '¿Hay algún examen cerca?'], paso: 'hagamos la primera clase' },
+  logopedia: { encaja: 'Son casos que trabajo a diario.', preguntas: ['¿Qué edad tiene?', '¿Qué dificultades concretas notáis?'], paso: 'hagamos una primera valoración' },
+  salud: { encaja: 'Es algo que trato a menudo.', preguntas: ['¿Desde cuándo te pasa?', '¿Te lo ha visto ya algún otro profesional?'], paso: 'hagamos una primera sesión' },
+  cuidado: { encaja: 'Tengo experiencia en situaciones así.', preguntas: ['¿Qué necesita exactamente y en qué horario?', '¿Cómo está de movilidad?'], paso: 'nos conozcamos sin compromiso' },
+  mascotas: { encaja: 'Me encargo de eso a menudo.', preguntas: ['¿Qué animal es y qué edad tiene?', '¿Qué días lo necesitarías?'], paso: 'nos conozcamos con tu mascota' },
+  legal: { encaja: 'Es un tipo de caso que llevo.', preguntas: ['¿Tienes algún documento relacionado?', '¿Hay algún plazo que corra prisa?'], paso: 'tengamos una primera consulta' },
+  tecnologia: { encaja: 'Es algo que resuelvo a menudo.', preguntas: ['¿Qué aparato o programa es?', '¿Qué pasa exactamente cuando falla?'], paso: 'lo miremos juntos' },
+  diseno: { encaja: 'Es el tipo de proyecto que hago.', preguntas: ['¿Para cuándo lo necesitas?', '¿Tienes algún ejemplo de lo que te gusta?'], paso: 'hablemos del proyecto' },
+  eventos: { encaja: 'Organizo cosas así a menudo.', preguntas: ['¿Qué fecha tenéis pensada?', '¿Para cuántas personas es?'], paso: 'lo hablemos con calma' },
+  automocion: { encaja: 'Es una avería que veo a menudo.', preguntas: ['¿Qué coche es y de qué año?', '¿Desde cuándo lo notas?'], paso: 'le eche un vistazo' },
+  entrenador: { encaja: 'Es justo con lo que trabajo.', preguntas: ['¿Qué objetivo tienes?', '¿Tienes alguna lesión que deba tener en cuenta?'], paso: 'hagamos la primera sesión' },
+}
+const GENERICO = { encaja: 'Creo que puedo ayudarte.', preguntas: ['¿Me cuentas un poco más?'], paso: 'lo hablemos' }
+
+const DIAS_RE = /\b(hoy|manana|pasado manana|lunes|martes|miercoles|jueves|viernes|sabado|domingo|esta semana|la semana que viene|el finde|fin de semana)\b/
+const FRANJA_RE = /\b(por la manana|por la tarde|por la noche|a mediodia|a las \d{1,2}(:\d{2})?|\d{1,2} ?h\b|\d{1,2}:\d{2})/
+
+function diaYFranja(t) {
+  const dia = t.match(DIAS_RE)?.[0]
+  const franja = t.match(FRANJA_RE)?.[0]
+  if (!dia && !franja) return null
+  const bonito = s => s.replace('manana', 'mañana').replace('miercoles', 'miércoles').replace('sabado', 'sábado').replace('mediodia', 'mediodía')
+  const conArticulo = dia && /^(lunes|martes|miercoles|jueves|viernes|sabado|domingo)$/.test(dia) ? `el ${dia}` : dia
+  return [conArticulo, franja].filter(Boolean).map(bonito).join(' ')
+}
+
+/**
+ * La respuesta del profesional de ejemplo a `userMsg`.
+ * `historial`: los mensajes anteriores del chat ({ from, text }).
+ */
+function getHelperReply(helper, count, userMsg = '', { historial = [] } = {}) {
+  const t = plano(userMsg).replace(/[¿?¡!.,;]/g, ' ').replace(/\s+/g, ' ').trim()
+  const cat = ALIAS_CATEGORIA[helper?.category] || helper?.category
+  const oficio = OFICIOS[cat] || GENERICO
+  const dichoPorMi = historial.filter(m => m.from === 'helper').map(m => plano(m.text)).join(' | ')
+  const yaContado = historial.some(m => m.from === 'user' && plano(m.text).length >= 25)
+  const zona = helper?.zone || helper?.city || ''
+
+  const partes = []
+  const cuando = diaYFranja(t)
+  const pideUrgencia = /\b(urgente|urgencia|cuanto antes|ahora mismo|ya mismo|lo antes posible)\b/.test(t) || /^hoy\b|\bhoy mismo\b/.test(t)
+  const pidePrecio = /\b(precio|cuanto (cobras|cuesta|costaria|sale|saldria|seria|pides)|coste|tarifa|presupuesto|cobras)\b|€/.test(t)
+  const pideDia = cuando || /\b(disponib\w*|cuando|hueco|horario|agenda|puedes venir|podrias venir|te va bien)\b/.test(t)
+  const pideZona = /\b(donde|zona|domicilio|a casa|online|videollamada|desplaz\w*|vienes)\b/.test(t)
+  const pideOpiniones = /\b(opinion\w*|resena\w*|valoracion\w*|referencias)\b/.test(t)
+  const pideExperiencia = /\b(experiencia|cuantos anos|titulo|titulacion|colegiad\w*)\b/.test(t)
+  const cierra = /^(vale|ok|okey|perfecto|genial|de acuerdo|gracias|muchas gracias|estupendo|hecho|trato hecho|guay|me parece bien|sí|si)( .{0,30})?$/.test(t)
+  const soloSaludo = /^(hola|buenas|buenos dias|buenas tardes|buenas noches|hey|holi)( [a-z]+)?$/.test(t)
+
+  if (soloSaludo) return '¡Hola! Cuéntame qué necesitas y te digo cómo puedo ayudarte.'
+
+  // Si es la primera vez que cuenta algo con detalle, primero se reconoce.
+  const cuentaAlgo = !yaContado && t.length >= 25
+  if (cuentaAlgo) partes.push(`Entendido, gracias por contármelo. ${oficio.encaja}`)
+
+  if (pideUrgencia) {
+    partes.push(helper?.urgent ? 'Atiendo urgencias, así que puedo pasar hoy mismo.' : 'Hoy lo tengo complicado, pero te busco el primer hueco que tenga.')
+  }
+  if (pidePrecio) {
+    partes.push(helper?.price ? `Mi tarifa es de ${helper.price}.` : 'El precio depende del trabajo. Cuando lo vea te doy un presupuesto cerrado.')
+  }
+  if (pideDia && !pideUrgencia) {
+    partes.push(cuando ? `${cuando[0].toUpperCase()}${cuando.slice(1)} me va bien. Si te encaja, lo confirmas con el botón Contratar.` : '¿Qué día y a qué hora te vendría bien?')
+  }
+  if (pideZona) {
+    const donde = zona ? `en ${zona}` : 'en persona'
+    partes.push(helper?.online && helper?.presential ? `Trabajo ${donde} y también online. ¿Qué prefieres?` : helper?.online && !helper?.presential ? 'Trabajo online, por videollamada.' : `Trabajo ${donde}.`)
+  }
+  if (pideOpiniones) partes.push(helper?.reviews ? `Tengo ${helper.reviews} opiniones, con una media de ${helper.rating}. Están en mi perfil.` : 'Las opiniones de quienes han trabajado conmigo están en mi perfil.')
+  if (pideExperiencia) partes.push('Sí, es a lo que me dedico. En mi perfil tienes mi experiencia y formación.')
+
+  const pregunto = pideUrgencia || pidePrecio || pideDia || pideZona || pideOpiniones || pideExperiencia
+  if (!pregunto && cierra) {
+    const hayDia = historial.some(m => DIAS_RE.test(plano(m.text)))
+    return hayDia ? '¡Perfecto! Nos vemos entonces. Si surge algo, escríbeme por aquí.' : '¡Genial! Cuando quieras concretamos el día.'
   }
 
-  // Initial greeting (count=0) — warm professional hello
-  if (count === 0) {
-    const cat = helper.category || 'otro'
-    const greetings = {
-      logopedia:  `¡Hola! Soy ${name}. ¿En qué puedo ayudarte?`,
-      cuidado:    `¡Hola! Soy ${name}. ¿En qué puedo ayudarte?`,
-      tecnico:    `¡Hola! Soy ${name}. ¿En qué puedo ayudarte?`,
-      limpieza:   `¡Hola! Soy ${name}. ¿En qué puedo ayudarte?`,
-      entrenador: `¡Hola! Soy ${name}. ¿En qué puedo ayudarte?`,
-      salud:      `¡Hola! Soy ${name}. ¿En qué puedo ayudarte?`,
-      legal:      `¡Hola! Soy ${name}. ¿En qué puedo ayudarte?`,
-    }
-    return greetings[cat] || `¡Hola! Soy ${name}. ¿En qué puedo ayudarte?`
-  }
+  // Con el día ya acordado, no se vuelve a preguntar por él.
+  const acordado = historial.some(m => m.from === 'helper' && /me va bien/.test(plano(m.text)))
+  if (!pregunto && acordado) return 'Te lo confirmo por aquí antes del día. Cualquier otra duda, pregúntame.'
 
-  // First user message — respond with category-specific question
-  if (count === 1) {
-    const cat = helper.category || 'otro'
-    const specific = {
-      logopeda:    `Hola, gracias por escribirme. ¿Me cuentas la edad y qué dificultades concretas observas?`,
-      cuidado:     `Hola, con mucho gusto. ¿Puedes contarme qué necesita tu familiar y en qué horarios? También me ayudará conocer su movilidad.`,
-      tecnico:     `Hola, dime en qué consiste el problema exactamente. Así vengo preparado con lo necesario.`,
-      limpieza:    `Hola, disponibilidad tengo. ¿Cuántos metros es la vivienda y con qué frecuencia lo necesitarías?`,
-      entrenador:  `Hola, la primera sesión es de valoración gratuita. ¿Esta semana te viene bien?`,
-      salud:       `Hola, cuéntame qué te ocurre. Así valoro si puedo ayudarte y cómo.`,
-      legal:       `Hola, para orientarte bien necesito saber más sobre el caso. ¿Qué tipo de situación es?`,
-      nutricion:   `Hola, ¿quieres perder peso, ganar músculo, tener más energía o tienes otro objetivo?`,
-      psicologia:  `Hola, gracias por escribirme. ¿Llevas mucho tiempo con esto o es algo más reciente?`,
-      fisio:       `Hola, cuéntame qué zona te molesta y cuándo empezó. Así valoro si puedo ayudarte.`,
-      abogado:     `Hola, para orientarte necesito entender la situación. ¿Es un tema laboral, familiar o civil?`,
-      contable:    `Hola, ¿necesitas ayuda con la declaración de la renta, como autónomo o para una empresa?`,
-      mascotas:    `Hola, ¿qué raza y edad tiene? Y ¿necesitas cuidados, adiestramiento o paseos?`,
-      educacion:   `Hola, ¿para qué curso y asignatura necesitas el apoyo? ¿Hay alguna fecha de examen próxima?`,
-      idiomas:     `Hola, ¿cuál es tu nivel actual? ¿Necesitas el idioma para trabajar, viajar o preparar un examen?`,
-    }
-    return specific[cat] || `Hola, gracias por contactarme. Cuéntame qué necesitas exactamente y te digo cómo puedo ayudarte.`
+  // Lo siguiente que falta saber, sin repetir lo ya preguntado.
+  if (!pregunto || cuentaAlgo) {
+    const pendiente = oficio.preguntas.find(q => !dichoPorMi.includes(plano(q).slice(1, 25)))
+    if (pendiente && !(pideDia && cuando)) partes.push(pendiente)
+    else if (!pideDia) partes.push(`Con eso me hago una idea. ¿Qué día te vendría bien que ${oficio.paso}?`)
   }
-
-  // Universal keyword responses (override category)
-  if (t.includes('precio') || t.includes('cuánto') || t.includes('coste') || t.includes('tarifa'))
-    return `Mi tarifa es ${helper.price || 'a consultar según el servicio'}. ¿Te parece bien?`
-  if (t.includes('disponib') || t.includes('cuándo') || t.includes('horario') || t.includes('esta semana'))
-    return `Sí, tengo disponibilidad. ¿Qué día y hora te vendría mejor?`
-  if (t.includes('dónde') || t.includes('zona') || t.includes('domicilio') || t.includes('online'))
-    return helper.online && helper.presential
-      ? `Trabajo tanto presencial en ${helper.zone || 'tu zona'} como online. ¿Cuál prefieres?`
-      : `Trabajo en ${helper.zone || 'Barcelona'}. ¿Te queda bien?`
-  if (t.includes('urgente') || t.includes('hoy') || t.includes('ahora') || t.includes('rápido'))
-    return helper.urgent
-      ? `Sí, atiendo urgencias. ¿Me cuentas más?`
-      : `No hago urgencias normalmente, pero dime qué necesitas y lo vemos.`
-  if (t.includes('gracias') || t.includes('perfecto') || t.includes('genial') || t.includes('de acuerdo')) {
-    const firstName = getFirstName(helper.name) || ''
-    const options = [
-      `¡Perfecto! Cuando quieras cerramos los detalles, ${firstName}.`,
-      `Genial. Avísame cuando quieras concretar y lo organizamos.`,
-      `Cuando quieras seguir, aquí estaremos.`,
-    ]
-    return options[Math.floor(Math.random() * options.length)]
-  }
-  if (t.includes('referencia') || t.includes('opinión') || t.includes('reseña') || t.includes('valoración'))
-    return `Tengo ${helper.reviews || 0} valoraciones con una media de ${helper.rating || 4.5} estrellas. Puedes verlas en mi perfil.`
-  if (t.includes('contrat') || t.includes('reservar') || t.includes('apuntar'))
-    return `Con mucho gusto. Dime cuándo y te confirmo disponibilidad.`
-  // Only generic greeting if ONLY a greeting (no other content)
-  if ((t.includes('hola') || t.includes('buenas') || t.includes('buenos')) && t.length < 15)
-    return `¡Hola! Soy ${name}. ¿En qué puedo ayudarte?`
-
-  const replies = {
-    logopeda: [
-      `¡Hola! Claro, tengo disponibilidad esta semana. ¿Me cuentas más sobre el caso para ver si es mi especialidad?`,
-      `Perfecto. ¿Cuántos años tiene y qué dificultades concretas has observado?`,
-      `Podemos empezar con una sesión de evaluación para conocer el punto de partida. ¿Te viene bien esta semana?`,
-    ],
-    tecnico: [
-      `Hola, puedo pasarme hoy o mañana. ¿De qué se trata exactamente? Así vengo preparado.`,
-      `Entendido. ¿Cuándo empezó el problema? Eso me ayuda a saber qué materiales traer.`,
-      `Perfecto, te confirmo la hora. El desplazamiento dentro de tu zona no tiene coste adicional.`,
-    ],
-    limpieza: [
-      `¡Hola! Sí, tengo huecos disponibles. ¿Cuántos metros tiene la casa aproximadamente?`,
-      `Trabajo con productos ecológicos sin coste adicional. ¿Qué días te vendrían mejor?`,
-      `Puedo empezar esta misma semana. ¿El jueves a las 10h te iría bien?`,
-    ],
-    cuidado: [
-      `Buenas, con mucho gusto. ¿Me puedes contar un poco sobre tu familiar? ¿Movilidad, medicación, horarios?`,
-      `Tengo experiencia con personas mayores y situaciones de dependencia. ¿Cuántas horas al día necesitarías?`,
-      `Podríamos quedar primero para conocernos sin compromiso. ¿Te parece bien esta semana?`,
-    ],
-    mascotas: [
-      `¡Hola! ¿Qué raza y tamaño tiene tu mascota? ¿Necesita paseos diarios o cuidado en casa?`,
-      `Mando fotos y actualizaciones cada pocas horas para que estés tranquilo.`,
-      `¿Qué fechas necesitarías? Cuanto antes lo reservemos mejor, ya que tengo agenda limitada.`,
-    ],
-    matematicas: [
-      `¡Hola! ¿En qué curso está y qué temas le cuestan más? Así preparo el material adecuado.`,
-      `Puedo dar clases presenciales o por videollamada, el precio es el mismo. ¿Cuál prefieres?`,
-      `Empezamos con una sesión de diagnóstico para ver el nivel exacto y diseñar el plan.`,
-    ],
-    entrenador: [
-      `¡Hola! La primera sesión es gratuita para evaluar objetivos y estado físico. ¿Te viene bien esta semana?`,
-      `Trabajo a domicilio, en parque o en tu gimnasio. ¿Cuál prefieres y cuántos días a la semana?`,
-      `¿Tienes alguna lesión o condición física que deba tener en cuenta?`,
-    ],
-  }
-  const extraReplies = {
-    salud: [
-      `Hola, con mucho gusto. ¿Me comentas qué síntomas o dudas tienes? Así puedo orientarte mejor antes de la consulta.`,
-      `Puedo hacer la primera valoración de forma presencial u online, como prefieras.`,
-      `Cuéntame con más detalle y te digo si es algo que trato directamente o si te derivo a un especialista.`,
-    ],
-    legal: [
-      `Buenos días. ¿Me explicas brevemente la situación? Con eso puedo decirte si es de mi especialidad y el enfoque que daría.`,
-      `La primera consulta es orientativa, sin compromiso. ¿Tienes alguna documentación relacionada?`,
-      `Trabajo principalmente en Barcelona pero puedo hacer consultas por videollamada también.`,
-    ],
-    hogar: [
-      `Hola, cuéntame el proyecto. ¿Es una reforma completa, una habitación o algo más puntual?`,
-      `¿Tienes ya alguna idea de lo que quieres o empezamos desde cero? En ambos casos podemos trabajar.`,
-      `Puedo visitarte sin compromiso para ver el espacio y darte una valoración más concreta.`,
-    ],
-  }
-  const allReplies = { ...replies, ...extraReplies }
-  const r = allReplies[helper.category] || [
-    `Hola, gracias por escribirme. ¿Me cuentas un poco más sobre lo que necesitas?`,
-    `Cuéntame con más detalle para poder orientarte mejor.`,
-    `Podemos hacer una primera consulta sin compromiso esta semana si te parece bien.`,
-  ]
-  return r[Math.min(count, r.length - 1)]
+  return partes.join(' ') || 'Cuéntame un poco más y te digo cómo puedo ayudarte.'
 }
 
 function getNuraIntervention(helper, count, messages) {
@@ -180,24 +135,30 @@ function getNuraIntervention(helper, count, messages) {
 
   const hasDia = /lunes|martes|miércoles|jueves|viernes|sábado|domingo|mañana|semana|esta semana|próxima|pasado|día [0-9]/i.test(allText)
   const hasHora = /[0-9]+h|[0-9]+:[0-9]+|por la mañana|por la tarde|por la noche|a las/i.test(allText)
-  const hasPrecio = /€|precio|cobro|cuesta|tarifa/i.test(allText)
+  // «me cuesta dormir» no es hablar de precio: solo señales claras.
+  const hasPrecio = /€|\bprecio\b|tarifa|cu[aá]nto cobr|presupuesto/i.test(allText)
+  // Si el profesional acaba de mencionar Contratar, Nüra no lo repite.
+  const ultimo = (messages || []).filter(m => m.from === 'helper').pop()?.text || ''
+  const yaDijoContratar = /contratar/i.test(ultimo)
   const hasPositivo = /perfecto|genial|ok|bien|de acuerdo|confirmado|confirmamos|me viene|me parece|trato|vale|sí|claro/i.test(allText)
   const hasBookingSignal = hasDia && hasPositivo
 
   // BOOKING MOMENT: date mentioned + positive response → push CTA now
-  if (hasBookingSignal && count >= 3) {
+  // Una sola vez: si ya lo ha preguntado, no insiste.
+  const yaPropuso = (messages || []).some(m => m.from === 'nura' && /Confirmo la reserva/.test(m.text || ''))
+  if (hasBookingSignal && count >= 3 && !yaPropuso) {
     return `Todo apunta a que habéis llegado a un acuerdo. ¿Confirmo la reserva con **${name}**?`
   }
 
   // Price discussed → reassure
-  if (hasPrecio && count === 3) {
+  if (hasPrecio && count === 3 && !yaDijoContratar) {
     return `El precio está claro. Si todo te parece bien, puedes confirmar desde el botón **Contratar**.`
   }
 
   // Count-based fallbacks for when no signals detected
   const fallbacks = {
     2: `¿Necesitas algo más antes de decidir? Puedo buscar alternativas si quieres comparar.`,
-    5: `**${name}** tiene ${helper.rating || 4.8} sobre 5 de media con ${helper.reviews || 0} valoraciones reales.`,
+    5: `**${name}** tiene ${String(helper.rating || 4.8).replace('.', ',')} sobre 5 de media con ${helper.reviews || 0} valoraciones reales.`,
     7: `Cuando estés listo, confirma la reserva. Quedará en **Mis Servicios** con todos los detalles.`,
   }
   return fallbacks[count] || null

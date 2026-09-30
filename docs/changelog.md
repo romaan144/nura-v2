@@ -170,6 +170,13 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Respuestas coherentes en los chats de ejemplo
+
+- Solo modo demo. El profesional de ejemplo volvía a saludar después de que le contaras el problema, contestaba al precio con otra pregunta y se despedía usando su propio nombre.
+- `getHelperReply` (`src/utils/chatReplies.js`) se reescribe: responde a lo que se pregunta (precio, día y hora, zona, urgencia, opiniones, experiencia, varias a la vez), reconoce el problema la primera vez y pide lo que falta por categoría sin repetir preguntas. Con el día acordado ya no lo vuelve a pedir.
+- Nüra ya no confunde «me cuesta dormir» con hablar de precio, no repite la propuesta de reserva y escribe 4,9 con coma.
+- `npm run recorrido` lo comprueba con una conversación con el fontanero de ejemplo.
+
 ## 2026-10-29 — El Pulso dice qué buscaron en tu ciudad sin encontrar a nadie
 
 - En el Pulso semanal del profesional, si su ficha dice su ciudad: qué oficios de su categoría se buscaron allí esta semana y se quedaron sin nadie (o solo con algo parecido), y cuántas veces (máximo 3).

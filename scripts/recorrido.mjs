@@ -290,6 +290,33 @@ console.log('\n── Chats leídos ──')
   await p.close()
 }
 
+console.log('\n── Respuestas de ejemplo coherentes ──')
+{
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('respuestas: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Sergio', joined: new Date().toISOString() })) })
+  await p.goto(BASE + '/chat/2020', { waitUntil: 'networkidle0' })
+  await espera(1500)
+  // Borra el borrador que propone el chat y escribe lo nuestro.
+  const decir = async m => {
+    await escribirEn(p, '', 'x => /mensaje/i.test(x.placeholder || "")')
+    await p.keyboard.down('Control'); await p.keyboard.press('a'); await p.keyboard.up('Control'); await p.keyboard.press('Backspace')
+    await p.keyboard.type(m, { delay: 4 }); await p.keyboard.press('Enter')
+    await espera(3200)
+    return p.evaluate(() => ((JSON.parse(localStorage.getItem('nura_chat_histories') || '{}')['2020'] || []).filter(x => x.from === 'helper').pop() || {}).text || '')
+  }
+  const r1 = await decir('Tengo una fuga de agua debajo del fregadero')
+  paso('tras contar el problema no vuelve a saludar', !/soy antoni|en qué puedo ayudarte/i.test(r1) && /\?/.test(r1), r1)
+  const r2 = await decir('¿Cuánto cobras?')
+  paso('a «¿cuánto cobras?» contesta con su tarifa', /60€/.test(r2), r2)
+  const r3 = await decir('¿Podrías venir mañana por la tarde?')
+  paso('al proponer día y hora, lo recoge', /mañana por la tarde/i.test(r3), r3)
+  const r4 = await decir('Vale, perfecto')
+  paso('al despedirse no te llama por su propio nombre', !/antoni/i.test(r4), r4)
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')
