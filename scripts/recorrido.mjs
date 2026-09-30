@@ -317,6 +317,30 @@ console.log('\n── Respuestas de ejemplo coherentes ──')
   await p.close()
 }
 
+console.log('\n── Respuestas rápidas según la conversación ──')
+{
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('rápidas: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Sergio', joined: new Date().toISOString() })) })
+  await p.goto(BASE + '/chat/2020', { waitUntil: 'networkidle0' })
+  await espera(1500)
+  const botones = () => p.evaluate(() => [...document.querySelectorAll('button[class*="quickReply"]')].map(b => b.textContent))
+  const pulsar = async t => { await p.evaluate(t => [...document.querySelectorAll('button[class*="quickReply"]')].find(b => b.textContent === t)?.click(), t); await espera(3500) }
+  const ultima = () => p.evaluate(() => ((JSON.parse(localStorage.getItem('nura_chat_histories') || '{}')['2020'] || []).filter(x => x.from === 'helper').pop() || {}).text || '')
+  await pulsar('¿Cuál es tu precio?')
+  const tras = await botones()
+  paso('tras preguntar el precio no vuelve a sugerirlo', tras.length > 0 && !tras.some(b => /precio|cobras/i.test(b)), tras.join(' | '))
+  await pulsar('¿Qué día podrías?')
+  const dias = await botones()
+  const dia = dias.find(b => /^(Mañana|El )/.test(b))
+  paso('si pregunta qué día, los botones proponen días', Boolean(dia), dias.join(' | '))
+  if (dia) await pulsar(dia)
+  const r = await ultima()
+  paso('al tocar un día, el profesional lo acepta', /me va bien/i.test(r), r)
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')

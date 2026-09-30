@@ -22,7 +22,7 @@ import { haptic } from '../utils/haptic'
 import RatingModal from '../components/RatingModal'
 import styles from './Chat.module.css'
 import PageLoading from '../components/PageLoading'
-import { getHelperReply, getNuraIntervention } from '../utils/chatReplies'
+import { getHelperReply, getNuraIntervention, respuestasRapidas, CONTRATAR } from '../utils/chatReplies'
 import { buildChatOpener } from '../utils/introLetter'
 import { DEMO_MODE } from '../config'
 import RegisterGate from '../components/RegisterGate'
@@ -452,34 +452,10 @@ export default function Chat() {
   const lastMsg = messages[messages.length - 1]
   // Tras un mensaje del profesional, o mientras no se ha escrito nada (el
   // saludo de Nüra fuera de la demo): siempre el mismo juego de preguntas.
-  const showQuickReplies = !typing && (lastMsg?.from === 'helper' || !messages.some(m => m.from === 'user'))
-
-  // Context-aware quick replies based on conversation stage
-  // Context-aware next steps — push toward booking
-  const lastMsgText = messages[messages.length - 1]?.text?.toLowerCase() || ''
-  const mentionedPrice = messages.some(m => m.text?.includes('€') || m.text?.toLowerCase()?.includes('precio'))
-  const mentionedDate  = messages.some(m => m.text?.toLowerCase().includes('lunes') || m.text?.toLowerCase().includes('martes') || m.text?.toLowerCase().includes('semana') || m.text?.toLowerCase().includes('mañana'))
-
-  const QUICK_REPLIES = msgCount === 0 ? [
-    '¿Tienes disponibilidad esta semana?',
-    '¿Cuál es tu precio?',
-    '¿Trabajas en mi zona?',
-  ] : mentionedDate && mentionedPrice ? [
-    'Perfecto, lo confirmo',
-    'Quiero reservar',
-  ] : mentionedDate ? [
-    '¿Cuánto cobras?',
-    'Me interesa, ¿cómo lo reservamos?',
-  ] : mentionedPrice ? [
-    '¿Tienes hueco esta semana?',
-    'Me parece bien el precio',
-  ] : msgCount <= 3 ? [
-    '¿Cuándo puedes empezar?',
-    '¿Tienes experiencia con casos como el mío?',
-  ] : [
-    'Quiero contratarte',
-    'Voy a reservar ahora',
-  ]
+  // Un aviso de Nüra detrás de la respuesta no quita los botones, salvo que
+  // traiga los suyos (p. ej. «Confirmar reserva»).
+  const ultimoNoNura = [...messages].reverse().find(m => m.from !== 'nura')
+  const showQuickReplies = !typing && !lastMsg?.chips && (ultimoNoNura?.from === 'helper' || !messages.some(m => m.from === 'user'))
 
   // ── Mic ────────────────────────────────────────────────────────────────
   function toggleMic() {
@@ -518,6 +494,10 @@ export default function Chat() {
     if (svc.status === 'completed')  return 'Finalizado'
     return 'Contratar'
   })()
+
+  // Los botones según cómo va la conversación (ver respuestasRapidas).
+  // Contratar solo si aún no hay un servicio con este profesional.
+  const QUICK_REPLIES = respuestasRapidas(messages).filter(r => r !== CONTRATAR || serviceState === 'Contratar')
 
   return (
     <div className={styles.page} ref={pageRef}>
@@ -632,10 +612,10 @@ export default function Chat() {
           </div>
         )}
 
-        {showQuickReplies && (
+        {showQuickReplies && QUICK_REPLIES.length > 0 && (
           <div className={styles.quickReplies}>
             {QUICK_REPLIES.map((r, i) => (
-              <button key={i} className={styles.quickReply} onClick={() => sendMessage(r)}>{r}</button>
+              <button key={i} className={styles.quickReply} onClick={() => r === CONTRATAR ? setShowConfirm(true) : sendMessage(r)}>{r}</button>
             ))}
           </div>
         )}
