@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Última tarea integrada · Contratar con el día y la hora acordados en el chat
+### Tarea activa · La pregunta «¿Pudiste resolverlo?» sale una vez y sin saltos
 
-Integrada el 2026-09-30 (ver `docs/changelog.md`, 2026-10-29). Tocó el nuevo `src/utils/citaDeLaConversacion.js`, `src/pages/Chat.jsx` (se retira `extractDateFromMessages`; la hoja recibe el día y la hora del lector nuevo; nada visual) y `scripts/recorrido.mjs`. Esos archivos quedan libres.
+Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Petición de Sergio: al volver, Nüra pregunta por el último contacto y a los 4 segundos la pantalla «se recarga», cambia de diseño y salen respuestas. Causa: el saludo ya preguntaba y a los 4 s se añadía otro mensaje con la misma pregunta y botones, que saca la pantalla del modo bienvenida. Se hace una sola pregunta, desde el principio y con sus botones. De paso, sin espacio antes del signo tras una negrita («Sergio .»). Archivos: `src/pages/Home.jsx` (saludo y confirmación, sin tocar diseño), `src/utils/responseLayout.js` (`splitResponseText`), `scripts/recorrido.mjs`.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
