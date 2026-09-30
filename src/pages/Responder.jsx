@@ -78,6 +78,8 @@ function ResponderAviso({ token }) {
   // La cita propuesta: 'aceptada' | 'rechazada' | null (aún no ha decidido).
   const [decision, setDecision] = useState(null)
   const [ocupada, setOcupada] = useState(false)
+  // El servidor no confirmó la cita porque su hora ya había pasado.
+  const [pasadaServidor, setPasadaServidor] = useState(false)
   // «Aceptar la cita» envía en cuanto la decisión está puesta.
   const enviarAceptando = useRef(false)
   useEffect(() => {
@@ -162,6 +164,7 @@ function ResponderAviso({ token }) {
     // una respuesta que no existe.
     setEstado(r?.ok ? 'enviado' : 'fallo')
     if (r?.ok && r.cita === 'hora ocupada') setOcupada(true)
+    if (r?.ok && r.cita === 'hora pasada') setPasadaServidor(true)
     if (r?.ok) {
       refrescarSinContestar()   // uno menos en su barra
       try { localStorage.removeItem(BORRADOR) } catch { /* nada */ }
@@ -241,9 +244,9 @@ function ResponderAviso({ token }) {
         {estado === 'enviado' ? (
           <div style={{textAlign: 'center', padding: 'var(--space-12) 0'}}>
             <p style={{fontSize: 'var(--text-md)', fontWeight: 700, color: 'var(--green)', margin: '0 0 var(--space-8)'}}>
-              {decision === 'aceptada' && !ocupada ? 'Cita confirmada' : 'Respuesta enviada'}
+              {decision === 'aceptada' && !ocupada && !pasadaServidor ? 'Cita confirmada' : 'Respuesta enviada'}
             </p>
-            {decision === 'aceptada' && !ocupada && aviso?.cita && (
+            {decision === 'aceptada' && !ocupada && !pasadaServidor && aviso?.cita && (
               <p style={{fontSize: 'var(--text-base)', fontWeight: 600, color: 'var(--ink-primary)', margin: '0 0 var(--space-8)'}}>
                 {mayus(cuandoCita(aviso.cita))}
               </p>
@@ -251,6 +254,11 @@ function ResponderAviso({ token }) {
             {ocupada && (
               <p style={{fontSize: 'var(--text-sm)', color: 'var(--red-ink)', margin: '0 0 var(--space-8)'}}>
                 Tu respuesta ha llegado, pero esa hora acababa de ocuparse: la cita no ha quedado confirmada.
+              </p>
+            )}
+            {pasadaServidor && (
+              <p style={{fontSize: 'var(--text-sm)', color: 'var(--red-ink)', margin: '0 0 var(--space-8)'}}>
+                Tu respuesta ha llegado, pero esa hora ya había pasado: la cita no ha quedado confirmada. Se lo digo para que te proponga otro día.
               </p>
             )}
             <p style={{fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)', margin: 0, lineHeight: 1.6}}>

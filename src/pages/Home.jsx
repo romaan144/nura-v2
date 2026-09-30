@@ -604,6 +604,8 @@ export default function Home() {
             if (pulso.recibidos != null) lineas.push(pulso.recibidos
               ? `Te escribieron ${n(pulso.recibidos, 'persona', 'personas')} y contestaste a ${pulso.respondidos ?? 0}.`
               : 'Esta semana nadie te ha escrito todavía.')
+            // Lo que dijeron de ti: cuántas valoraciones y la media (sin comentarios).
+            if (pulso.valoraciones?.n) lineas.push(`Te ${pulso.valoraciones.n === 1 ? 'ha' : 'han'} valorado ${n(pulso.valoraciones.n, 'persona', 'personas')}${pulso.valoraciones.media != null ? `, con **${String(pulso.valoraciones.media).replace('.', ',')}** estrellas de media` : ''}.`)
             lineas.push(...lineasSinEncontrar(pulso.sinEncontrar, user?.helperProfile?.specialty))
           } else {
             lineas.push('Crea tu acceso con correo y cada semana te diré cuántas personas buscan lo que haces y cuántas veces sale tu ficha.')

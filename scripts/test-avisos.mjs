@@ -595,6 +595,21 @@ console.log('\n── El Pulso: cifras de verdad, solo de la ficha propia ──
   ok(p?.recibidos === 2 && p?.respondidos === 1, 'mensajes de esta semana: recibidos y contestados')
   ok(!JSON.stringify(r.datos).includes('mensaje'), 'el Pulso no devuelve ningún mensaje ni frase de nadie')
   ok(p?.sinEncontrar === null, 'sin ciudad conocida en su ficha, no hay «buscaron en tu ciudad»')
+  ok(p?.valoraciones?.n === 0 && p?.valoraciones?.media === null, `sin valoraciones esta semana: 0 y sin media (${JSON.stringify(p?.valoraciones)})`)
+
+  // Las valoraciones de esta semana: cuántas y la media, solo de SU ficha.
+  db.valoraciones.push(
+    { id: 901, helper_id: '777', aviso_id: 9001, estrellas: 5, comentario: 'Comentario privado ficticio', fecha: hoy },
+    { id: 902, helper_id: '777', aviso_id: 9002, estrellas: 4, fecha: hoy },
+    { id: 903, helper_id: '777', aviso_id: 9003, estrellas: null, volveria: true, fecha: hoy },
+    { id: 904, helper_id: '777', aviso_id: 9004, estrellas: 1, fecha: viejo },
+    { id: 905, helper_id: '8', aviso_id: 9005, estrellas: 1, fecha: hoy },
+  )
+  r = await llamarG(funcion, { op: 'mi-pulso', sesion: 'sesion-confirmada' })
+  const v = r.datos?.pulso?.valoraciones
+  ok(v?.n === 3 && v?.media === 4.5, `valoraciones de esta semana y de su ficha: 3, media 4,5 (${JSON.stringify(v)})`)
+  ok(!r.texto.includes('Comentario privado'), 'el Pulso no devuelve comentarios de las valoraciones')
+  db.valoraciones = db.valoraciones.filter(x => x.id < 901 || x.id > 905)
 
   // Lo que buscaron en SU ciudad, de lo suyo, sin encontrar a nadie.
   db.helpers.find(h => h.id === 777).zone = 'Triana, Sevilla'
@@ -729,6 +744,17 @@ console.log('\n── La cita: se acepta con un botón y ocupa la hora para todo
   ok(r.estado === 200 && f4.cita_hora === '19:00' && f4.cita_estado === 'propuesta', 'la cita también viaja al ampliar la conversación')
   r = await llamar(funcion, { op: 'ocupadas', helperId: 'abc' })
   ok(r.estado === 400, 'ocupadas sin un id válido → 400')
+
+  // 2026-09-30: una propuesta cuya hora ya pasó no se confirma.
+  const ayer = new Date(Date.now() - 864e5).toISOString().slice(0, 10)
+  const tkP = 'b'.repeat(32)
+  db.avisos.push({ id: 9901, helper_id: '900', mensaje: 'Propuesta de ayer', token: tkP, respuesta: null, cita_fecha: ayer, cita_hora: '10:00', cita_estado: 'propuesta' })
+  const fP = db.avisos.find(x => x.id === 9901)
+  r = await llamar(funcion, { op: 'responder-aviso', token: tkP, respuesta: 'Sí, perfecto', cita: 'aceptada' })
+  ok(r.estado === 200 && r.datos?.cita === 'hora pasada' && fP.respuesta === 'Sí, perfecto' && fP.cita_estado === 'rechazada',
+    `aceptar una cita cuya hora ya pasó: la respuesta llega y la cita queda como «no le va», no confirmada (${r.datos?.cita}, ${fP.cita_estado})`)
+  r = await llamar(funcion, { op: 'ocupadas', helperId: 900 })
+  ok(!r.datos.ocupadas.some(o => o.fecha === ayer), 'y esa hora pasada no queda ocupada')
 
   console.log('\n── Cancelar la cita: solo quien la pidió, y la hora queda libre ──')
   r = await llamar(funcion, { op: 'cancelar-cita', llaves: [c2.datos.lectura], fecha: d, hora: '17:00' })
