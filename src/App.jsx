@@ -4,6 +4,7 @@ import { useUser } from './context/UserContext'
 import { ponerTitulo, tituloDeRuta } from './utils/titulo'
 
 import { installKeyboardViewport } from './utils/keyboardViewport'
+import { sinArrastreDePagina } from './utils/sinArrastre'
 import { NURA_BUILD } from './config'
 console.log('[Nüra] build', NURA_BUILD)   // preflight-ok: el sello es como se sabe QUE hay desplegado; no lleva dato de nadie
 // El navegador restauraba la posicion de scroll al navegar. Con rutas que
@@ -46,6 +47,8 @@ import ErrorBoundary from './components/ErrorBoundary'
 
 function AppRoutes() {
   useEffect(() => installKeyboardViewport(), [])
+  // En toda la app, el dedo no arrastra la web entera (utils/sinArrastre.js).
+  useEffect(() => sinArrastreDePagina(document.body), [])
   // Entrada directa: un solo respiro del iso mientras arranca el JS
   const [booting, setBooting] = useState(true)
   useEffect(() => {

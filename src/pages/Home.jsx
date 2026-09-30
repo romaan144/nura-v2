@@ -23,7 +23,6 @@ import { useSinContestar } from '../utils/sinContestar'
 import { useRespuestasNuevas } from '../utils/respuestasNuevas'
 import RatingModal from '../components/RatingModal'
 import { oficiosDe, esDelOficio } from '../data/oficios'
-import { sinArrastreDePagina } from '../utils/sinArrastre'
 import { entenderSeguimiento, puntosFranja, preferenciasDe, necesidadesDe, NOMBRE_FRANJA } from '../utils/seguimiento'
 import { tieneAlerta, misAlertas, alertasGuardadas } from '../utils/alertas'
 import styles from './Home.module.css'
@@ -1553,15 +1552,8 @@ export default function Home() {
     resize()
     const observer = new ResizeObserver(resize)
     if (page) observer.observe(page)
-    // Inicio no se desplaza: el dedo no puede arrastrar la web entera (el
-    // estirón del iPhone, como pasaba en el chat). En todo el cuerpo, porque
-    // la barra de abajo y el campo también se arrastraban. Lo que sí se
-    // desplaza (el contenedor con el teclado abierto, una hoja larga) sigue
-    // funcionando: ver utils/sinArrastre.js.
-    const quitarArrastre = sinArrastreDePagina(document.body)
     return () => {
       observer.disconnect()
-      quitarArrastre()
       delete document.body.dataset.nuraFocus
     }
   }, [location.pathname])
