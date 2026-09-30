@@ -240,7 +240,7 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
 
 function detectIntent(text, user) {
   const t = text.toLowerCase()
-  if (user?.isHelper && (t.includes('aprendido') || t.includes('certificado') || t.includes('estudié') || t.includes('trabajé')))
+  if (user?.isHelper && /aprendido|certificad|certificaci|estudi[eé]|he estudiado|trabaj[eé]\b|he trabajado|curso de|me he formado|titulo de|título de/.test(t))
     return 'update_profile'
   if (t.includes('empresa') || t.includes('contratar') || t.includes('empleado') || t.includes('trabajó'))
     return 'b2b'
@@ -359,11 +359,13 @@ function getDynamicSuggestions(user, searchHistory) {
   return combined.slice(0, 3).map(text => ({ text }))
 }
 
+// Lo que un profesional hace desde Inicio. Antes eran cuatro frases
+// («Cambiar mis tarifas»…) que se mandaban al buscador como una búsqueda.
+// Ahora llevan a donde se hace de verdad.
+const EDITAR_FICHA = 'Editar mi ficha'
 const HELPER_SUGGESTIONS = [
-  { text: 'Añadir nueva certificación' },
-  { text: 'Actualizar disponibilidad' },
-  { text: 'Añadir experiencia reciente' },
-  { text: 'Cambiar mis tarifas' },
+  { text: EDITAR_FICHA, ir: '/profile', estado: { editar: 'ficha' } },
+  { text: 'Ver mis mensajes', ir: '/chats' },
 ]
 
 
@@ -483,10 +485,12 @@ export default function Home() {
       sessionStorage.removeItem('nura_helper_registered')
       const firstName = user?.name?.split(' ')?.[0] || user?.name || ''
       lines = [
-        `${firstName}, ya puedes encontrar a quien necesitas.`,
-        `Tu perfil ya está visible. Los primeros usuarios pueden encontrarte desde ahora. Tu perfil se irá enriqueciendo automáticamente con cada interacción.`
+        // Antes: «ya puedes encontrar a quien necesitas», la frase de quien
+        // busca ayuda, a quien acaba de ofrecerla.
+        `${firstName}, tu ficha ya está publicada.`,
+        `Cuando alguien te escriba, te llegará un aviso con su mensaje. Mientras, una foto y tu tarifa ayudan a que te escriban.`
       ]
-      setTimeout(() => setMessages([{ id: 1, from: 'nura', lines }]), 300)
+      setTimeout(() => setMessages([{ id: 1, from: 'nura', lines, chips: [EDITAR_FICHA] }]), 300)
       return
     }
 
@@ -532,7 +536,9 @@ export default function Home() {
     // Solo cuando no hay memoria que continuar ni búsqueda previa que retomar
     let forWhomAnswered; try { forWhomAnswered = sessionStorage.getItem('nura_for_whom') } catch {}
     const lastQPre = searchHistory?.[0]?.query
-    if (!forWhomAnswered && !lastQPre && !(contactedHelpers?.length)) {
+    // No al profesional: «¿para quién necesitas ayuda?» es de quien busca, y
+    // tapaba sus botones («Editar mi ficha», «Ver mis mensajes»).
+    if (!user?.isHelper && !forWhomAnswered && !lastQPre && !(contactedHelpers?.length)) {
       msgs[0] = {
         ...msgs[0],
         lines: [...msgs[0].lines, '¿Para quién necesitas ayuda?'],
@@ -1017,7 +1023,8 @@ export default function Home() {
 
     if (intent === 'update_profile') {
       setTimeout(() => {
-        setMessages(prev => [...prev, { id: Date.now(), from: 'nura', lines: ['He actualizado tu perfil con esta información. Se analizará y añadirán las habilidades relevantes automáticamente.'] }])
+        // Antes decía «He actualizado tu perfil» sin cambiar nada.
+        setMessages(prev => [...prev, { id: Date.now(), from: 'nura', lines: ['¡Qué bien! Para que conste en tu ficha y lo vea quien te busca, añádelo en «Editar mi ficha».'], chips: [EDITAR_FICHA] }])
         setLoading(false)
       }, 1200)
       return
@@ -1342,6 +1349,7 @@ export default function Home() {
 
   function handleChip(chip) {
     beginResponse()
+    if (chip === EDITAR_FICHA) { navigate('/profile', { state: { editar: 'ficha' } }); return }
     if (chip === 'Ver todas las categorías') { navigate('/explore'); return }
     if (otraNecesidadRef.current && chip === otraNecesidadRef.current.etiqueta) {
       const { texto } = otraNecesidadRef.current
@@ -1638,7 +1646,7 @@ export default function Home() {
     }
     if (showSuggestions && !msg.chips?.length && !msg.refineChips?.length && msgIndex === response.length - 1) {
       suggestions.forEach((suggestion, i) => blocks.push({ id: `suggestion-${i}`, content:
-        <button className={styles.screenChoice} onClick={() => handleSend(suggestion.text)}><span className={styles.choiceIcon}><Sparkles size={18} aria-hidden="true" /></span><span>{suggestion.text}</span><ArrowUpRight size={16} aria-hidden="true" /></button> }))
+        <button className={styles.screenChoice} onClick={() => suggestion.ir ? navigate(suggestion.ir, suggestion.estado ? { state: suggestion.estado } : undefined) : handleSend(suggestion.text)}><span className={styles.choiceIcon}><Sparkles size={18} aria-hidden="true" /></span><span>{suggestion.text}</span><ArrowUpRight size={16} aria-hidden="true" /></button> }))
     }
   })
   if (!blocks.length) blocks.push({ id: 'waiting', content: <p className={styles.screenText} role="status">{loading ? 'Estoy buscando a quien puede ayudarte…' : 'Cuéntame qué necesitas.'}</p> })

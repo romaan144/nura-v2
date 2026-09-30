@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · Inicio del profesional: sin frases equivocadas ni botones que no hacen nada
+### Última tarea integrada · Inicio del profesional: sin frases equivocadas ni botones que no hacen nada
 
-Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Tras el alta, Nüra decía «ya puedes encontrar a quien necesitas» (frase de quien busca); los botones «Añadir nueva certificación», «Actualizar disponibilidad», «Añadir experiencia reciente», «Cambiar mis tarifas» mandaban ese texto al buscador; «he trabajado en…» recibía «He actualizado tu perfil» sin cambiar nada. Ahora: saludo de ficha publicada, botones que llevan a editar la ficha o a los mensajes, y respuesta honesta. Archivos: `src/pages/Home.jsx` (textos y a dónde llevan esos botones; nada visual), `scripts/recorrido.mjs`.
+Integrada el 2026-09-30 (ver `docs/changelog.md`, 2026-10-29). Tocó `src/pages/Home.jsx` (saludo tras el alta, botones del profesional, respuesta a «he trabajado…», sin la pregunta «¿para quién?» al profesional; nada visual), `src/pages/Profile.jsx` (llegar con `state.editar === 'ficha'` abre la hoja, como ya se hacía con los bloqueos) y `scripts/recorrido.mjs`. Esos archivos quedan libres.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
