@@ -189,6 +189,9 @@ try {
   const pro2 = await pagina()
   await pro2.goto(B + '/r/' + conCita.token, { waitUntil: 'networkidle0' }); await espera(1000)
   ok(/Te propone una cita/.test(await texto(pro2)), 'al abrir su enlace ve la cita propuesta')
+  // «Me va bien» solo escribía el texto: la cita quedaba sin aceptar.
+  ok(!(await pro2.evaluate(() => [...document.querySelectorAll('[aria-label="Respuestas rápidas"] button')].some(b => /Me va bien/.test(b.textContent)))), 'con la cita pendiente no hay una rápida «Me va bien» que no la acepte')
+  ok(!/ De [A-ZÁÉÍÓÚ][a-z]+ ·/.test(await texto(pro2)), 'la fecha con una sola mayúscula («2 de octubre»)')
   ok(await pulsar(pro2, 'Aceptar la cita'), 'pulsa «Aceptar la cita»')
   await espera(800)
   ok(conCita.cita_estado === 'aceptada' && /Cita confirmada/.test(await texto(pro2)), 'la cita queda aceptada y se lo confirma')

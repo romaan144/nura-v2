@@ -26,7 +26,17 @@ import { refrescarSinContestar } from '../utils/sinContestar'
 // RESPUESTAS RAPIDAS: en el movil escribir cuesta. Rellenan la caja (no
 // envian): la profesional las retoca y decide. Si el mensaje es una
 // propuesta de cita, las del sí/no a esa cita.
-function rapidasPara(mensaje) {
+// Con una cita PENDIENTE se contesta con sus dos botones (aceptar / no me va
+// bien): la rápida «Me va bien» solo escribía el texto y, al enviarlo, la
+// cita se quedaba sin aceptar aunque el profesional creyera que sí.
+function rapidasPara(mensaje, cita, decision) {
+  if (cita?.estado === 'propuesta') {
+    if (decision !== 'rechazada') return []
+    return [
+      ['Proponer otro día', 'Ese momento no me va bien. ¿Te iría bien el '],
+      ['No puedo', 'Lo siento, estos días no tengo hueco. Si quieres, Nüra te ayuda a encontrar a otra persona.'],
+    ]
+  }
   if (/te propone una cita/i.test(String(mensaje || ''))) return [
     ['Me va bien', '¡Perfecto! Me va bien ese día y a esa hora. Nos vemos.'],
     ['Proponer otro día', 'Ese momento no me va bien. ¿Te iría bien el '],
@@ -42,6 +52,10 @@ function rapidasPara(mensaje) {
 // Una pantalla por mensaje: al pasar al siguiente (otro token) se monta de
 // nuevo, limpia, sin arrastrar lo escrito en el anterior.
 // «lunes 28 de septiembre · 16:00»
+// «Viernes, 2 de octubre»: solo la primera en mayúscula (el CSS
+// `capitalize` daba «2 De Octubre»).
+const mayus = t => t.charAt(0).toUpperCase() + t.slice(1)
+
 function cuandoCita(c) {
   try { return `${new Date(c.fecha + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })} · ${c.hora}` }
   catch { return `${c.fecha} · ${c.hora}` }
@@ -198,7 +212,7 @@ function ResponderAviso({ token }) {
       <span className="nura-wordmark" style={{marginBottom: 24}}>Nüra</span>
       <div style={caja}>
         <p style={{fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)', margin: '0 0 var(--space-12)'}}>
-          {nombre ? `Hola ${nombre}, alguien te necesita.` : 'Alguien te necesita.'}
+          {nombre ? `Hola, ${nombre}. Alguien te necesita.` : 'Alguien te necesita.'}
         </p>
 
         <div style={{
@@ -224,8 +238,8 @@ function ResponderAviso({ token }) {
               {decision === 'aceptada' && !ocupada ? 'Cita confirmada' : 'Respuesta enviada'}
             </p>
             {decision === 'aceptada' && !ocupada && aviso?.cita && (
-              <p style={{fontSize: 'var(--text-base)', fontWeight: 600, color: 'var(--ink-primary)', margin: '0 0 var(--space-8)', textTransform: 'capitalize'}}>
-                {cuandoCita(aviso.cita)}
+              <p style={{fontSize: 'var(--text-base)', fontWeight: 600, color: 'var(--ink-primary)', margin: '0 0 var(--space-8)'}}>
+                {mayus(cuandoCita(aviso.cita))}
               </p>
             )}
             {ocupada && (
@@ -291,8 +305,8 @@ function ResponderAviso({ token }) {
               <div style={{ border: '1px solid var(--purple-30, rgba(123,47,255,0.3))', background: 'var(--purple-05, #F7F3FF)',
                 borderRadius: 'var(--radius-card)', padding: 'var(--space-14) var(--space-16)', margin: '0 0 var(--space-16)' }}>
                 <p style={{ margin: '0 0 var(--space-4)', fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--purple-ink)' }}>Te propone una cita</p>
-                <p style={{ margin: '0 0 var(--space-12)', fontSize: 'var(--text-md)', fontWeight: 700, color: 'var(--ink-primary)', textTransform: 'capitalize' }}>
-                  {cuandoCita(aviso.cita)}
+                <p style={{ margin: '0 0 var(--space-12)', fontSize: 'var(--text-md)', fontWeight: 700, color: 'var(--ink-primary)' }}>
+                  {mayus(cuandoCita(aviso.cita))}
                 </p>
                 <div style={{ display: 'flex', gap: 'var(--space-8)' }}>
                   <button className="nura-glass-action" type="button" disabled={enviando}
@@ -334,8 +348,9 @@ function ResponderAviso({ token }) {
               fontWeight: 700, color: 'var(--ink-secondary)', margin: '0 0 var(--space-8)'}}>
               Tu respuesta
             </label>
+            {rapidasPara(aviso?.mensaje, aviso?.cita, decision).length > 0 && (
             <div role="group" aria-label="Respuestas rápidas" style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-6)', margin: '0 0 var(--space-10)' }}>
-              {rapidasPara(aviso?.mensaje).map(([etiqueta, frase]) => (
+              {rapidasPara(aviso?.mensaje, aviso?.cita, decision).map(([etiqueta, frase]) => (
                 <button className="nura-glass-action" key={etiqueta} type="button"
                   onClick={() => { setTexto(frase); requestAnimationFrame(() => { const t = document.getElementById('respuesta'); t?.focus(); t?.setSelectionRange(frase.length, frase.length) }) }}
                   style={{ minHeight: 36,
@@ -350,6 +365,7 @@ function ResponderAviso({ token }) {
                 </button>
               ))}
             </div>
+            )}
             <textarea className="nura-glass-field" id="respuesta" value={texto} onChange={e => setTexto(e.target.value)} rows={5}
               placeholder="Puedes decir si tienes hueco, cuándo, o simplemente que ahora no puedes."
               style={{ width: '100%',
