@@ -631,7 +631,11 @@ export function analyzeNeed(userTextOriginal) {
   // daba []. Resultado: el instructor de yoga salia SEGUNDO por un punto, y
   // el masajista no se encontraba nunca.
   const RUIDO = new Set(['para','con','que','una','uno','los','las','del','por','mi','me',
-    'necesito','busco','quiero','alguien','ayuda','favor','algo','tengo','hay'])
+    'necesito','busco','quiero','alguien','ayuda','favor','algo','tengo','hay',
+    // CUÁNDO, no QUÉ: «cuide a mi madre por las tardes» traía a la canguro
+    // porque su ficha dice «tardes». La franja la ordena Home (seguimiento.js).
+    'tarde','tardes','manana','mananas','noche','noches','semana','fines','finde',
+    'sabado','sabados','domingo','domingos','esta','este'])
   const propias = normalize(userText).split(/[^\p{L}\d]+/u)
     .filter(w => w.length > 3 && !RUIDO.has(w))
   const delCatalogo = (CATEGORY_KEYWORDS[categoria] || [])

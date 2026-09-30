@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · Búsqueda: la primera respuesta encaja mejor con lo que pides
+### Última tarea integrada · Búsqueda: la primera respuesta encaja mejor con lo que pides
 
-Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Probadas frases reales: «cuide a mi madre por las tardes» daba primero una cuidadora nocturna; «¿cuánto cuesta un electricista?» no decía el precio; el porqué decía «Su especialidad es justo eso: abogado / canguro / reforma». Se ordenan primero quienes encajan con la franja u online pedidos (sin tocar el motor de búsqueda), se dice el precio si se pregunta y el porqué nombra su especialidad. Archivos: `src/utils/seguimiento.js` (`preferenciasDe`), `src/pages/Home.jsx` (orden y textos de la respuesta; nada visual), `scripts/recorrido.mjs`.
+Integrada el 2026-09-30 (ver `docs/changelog.md`, 2026-10-29). Tocó `src/utils/seguimiento.js` (`preferenciasDe`), `src/pages/Home.jsx` (orden por franja u online y textos de la respuesta; nada visual), `src/utils/matching.js` (solo palabras de horario fuera de las palabras clave; búsqueda 100 % en las tres tandas) y `scripts/recorrido.mjs`. Esos archivos quedan libres.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
