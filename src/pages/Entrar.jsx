@@ -4,7 +4,7 @@ import PageHeader from '../components/PageHeader'
 import styles from './Access.module.css'
 import PasswordField from '../components/PasswordField'
 import { KeyRound, Mail, UserRoundPlus } from 'lucide-react'
-import { crearCuenta, entrar, pedirRestablecer, sesionActual, MIN_CONTRASENA } from '../utils/cuenta'
+import { crearCuenta, entrar, pedirRestablecer, sesionActual, salir, MIN_CONTRASENA } from '../utils/cuenta'
 import { reclamarFicha } from '../utils/escrituras'
 import { useUser } from '../context/UserContext'
 import { revisarContacto } from '../utils/contactoProfesional'
@@ -24,6 +24,11 @@ const TEXTOS_ACCESO = {
     crear: 'Crea tu acceso con correo para continuar con tus mensajes en Nüra.',
     entrar: 'Entra con tu correo y contraseña para continuar con tus mensajes.',
   },
+  // Desde un mensaje recibido: es la profesional, y su ficha se encuentra por el correo.
+  proMensajes: {
+    crear: 'Usa el correo que diste al darte de alta en Nüra: así encontramos tu ficha y ves aquí todo lo que te escriban.',
+    entrar: 'Entra con el correo de tu alta para ver aquí todo lo que te escriban.',
+  },
   profesional: {
     crear: 'Con tu correo y una contraseña podrás cambiar tu ficha desde cualquier móvil.',
     entrar: 'Entra con el correo de tu cuenta para gestionar tu ficha profesional.',
@@ -33,6 +38,12 @@ const TEXTOS_ACCESO = {
     entrar: 'Entra con tu correo y contraseña para continuar donde estabas.',
   },
 }
+
+// La profesional entra, pero su ficha no tiene ese correo (dio un teléfono u
+// otro correo). Perfil trae aquí con `sinFicha=1` al volver del correo de
+// confirmación. En los dos casos la sesión se cierra: si quedara abierta,
+// más tarde entraría sola como cliente.
+const SIN_FICHA = 'Tu acceso está creado, pero tu ficha no tiene este correo: quizá diste un teléfono u otro correo al darte de alta. De momento, sigue contestando desde los enlaces que te llegan con cada mensaje.'
 
 // ── ENTRAR / CREAR ACCESO / OLVIDÉ LA CONTRASEÑA ─────────────────────────
 // Etapa 6 de docs/estudio-perfil.md: correo y contraseña, como casi todas
@@ -47,14 +58,18 @@ export default function Entrar() {
   // El destino puede ser una publicación, un chat o una búsqueda.
   const volver = (params.get('volver') || '').startsWith('/') && !(params.get('volver') || '').startsWith('//') ? params.get('volver') : ''
   const rutaDestino = volver.split(/[?#]/)[0]
-  const contexto = volver.split('#')[1]?.startsWith('comentarios-') ? 'comentarios'
+  // `pro=1`: viene de un mensaje que le llegó como profesional. Sin ficha con
+  // ese correo NO se le deja dentro como cliente (vería una bandeja vacía).
+  const esPro = params.get('pro') === '1'
+  const contexto = esPro ? 'proMensajes'
+    : volver.split('#')[1]?.startsWith('comentarios-') ? 'comentarios'
     : params.get('motivo') === 'avisos' && volver ? 'avisos'
     : rutaDestino === '/chats' || rutaDestino.startsWith('/chat/') ? 'mensajes'
     : !volver ? 'profesional' : 'continuar'
   const [email, setEmail] = useState('')
   const [pass, setPass] = useState('')
   const [error, setError] = useState('')
-  const [aviso, setAviso] = useState('')
+  const [aviso, setAviso] = useState(params.get('sinFicha') === '1' ? SIN_FICHA : '')
   const [enviando, setEnviando] = useState(false)
   // Correo con falta en el dominio («gmial.com»): se sugiere el bueno. Si
   // lo vuelve a enviar igual, se respeta (puede que sea así de verdad).
@@ -86,6 +101,8 @@ export default function Entrar() {
     setEnviando(false)
     if (r.error) { setError(r.error); return }
     if (modo === 'olvido') { setAviso(`Si hay una cuenta con ${email.trim()}, te hemos enviado un correo con un enlace para poner una contraseña nueva.`); return }
+    // Al volver del correo de confirmación (Perfil) se sabrá que era la profesional.
+    if (modo === 'crear' && r.pendienteConfirmar && esPro) { try { localStorage.setItem('nura_acceso_pro', '1') } catch { /* sin almacenamiento */ } }
     if (modo === 'crear' && r.pendienteConfirmar) { setAviso(`Te hemos enviado un correo a ${email.trim()}. Pulsa el enlace para confirmarlo: volverás a Nüra ya dentro.`); return }
     // ── DESDE UN MOVIL NUEVO (etapa 8) ────────────────────────────────
     // Si este movil no sabe quien es (no hay usuario guardado), se pide su
@@ -98,6 +115,10 @@ export default function Entrar() {
       setEnviando(false)
       if (f?.ok && f.helper) {
         login(usuarioDeFicha(f.helper, email))
+      } else if (esPro && (f?.motivo === 'sin-ficha' || f?.motivo === 'varias')) {
+        await salir()
+        setAviso(SIN_FICHA)
+        return
       } else if (volver) {
         login(usuarioCliente(email))
       } else {

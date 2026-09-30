@@ -65,7 +65,7 @@ export default function BandejaProfesional() {
   if (!avisos) return null
   if (avisos === 'sin-sesion') return (
     <section style={{ padding: 'var(--space-8) var(--space-16) var(--space-4)' }}>
-      <button className={styles.chatRow} onClick={() => navigate('/entrar?volver=/chats')}>
+      <button className={styles.chatRow} onClick={() => navigate('/entrar?pro=1&volver=/chats')}>
         <Inbox size={20} aria-hidden="true" style={{ color: 'var(--purple)', flexShrink: 0 }} />
         <span style={{ fontSize: 'var(--text-sm)', color: 'var(--ink)', lineHeight: 1.4 }}>
           <strong>Entra con tu cuenta</strong> para ver aquí quién te ha escrito y contestar sin salir de Nüra.

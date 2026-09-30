@@ -109,6 +109,12 @@ async function pagina(ctx = b) {
       if (r.method() === 'OPTIONS') return r.respond({ status: 204, headers: H })
       let cuerpo = []
       // La vuelta del correo de confirmación: la librería pregunta quién es.
+      // Entrar con correo y contraseña: una profesional que dio un teléfono.
+      if (u.includes('/auth/v1/token')) {
+        return r.respond({ status: 200, headers: H, contentType: 'application/json', body: JSON.stringify({
+          access_token: 'sesion-telefono', token_type: 'bearer', expires_in: 3600, expires_at: Math.floor(Date.now() / 1000) + 3600, refresh_token: 'r3',
+          user: { id: 'u-tel', aud: 'authenticated', role: 'authenticated', email: 'otra@ficticia.test', email_confirmed_at: '2026-09-01T00:00:00Z' } }) })
+      }
       if (u.includes('/auth/v1/user')) {
         const tk = (r.headers().authorization || '').replace(/^Bearer /, '')
         return r.respond({ status: 200, headers: H, contentType: 'application/json',
@@ -396,6 +402,28 @@ try {
     const u2 = await cli.evaluate(() => JSON.parse(localStorage.getItem('nura_user') || 'null'))
     ok(u2 && u2.isHelper === false && u2.name === 'cliente', `sin ficha, entra como quien busca ayuda (${u2 ? u2.name : 'nadie'})`)
     await cli.close(); await ctx2.close()
+
+    // Una profesional que dio un teléfono crea el acceso desde su mensaje:
+    // al volver del correo, NO entra como cliente y se le explica.
+    const ctx3 = await b.createBrowserContext()
+    const tel = await pagina(ctx3)
+    await tel.goto(B + '/', { waitUntil: 'networkidle0' })
+    await tel.evaluate(() => { localStorage.clear(); localStorage.setItem('nura_acceso_pro', '1') })
+    await tel.goto(`${B}/profile#access_token=sesion-telefono&refresh_token=r4&expires_in=3600&expires_at=${exp}&token_type=bearer&type=signup`, { waitUntil: 'networkidle0' })
+    await espera(2500)
+    const t3 = await texto(tel)
+    const e3 = await tel.evaluate(() => ({ user: localStorage.getItem('nura_user'), sesion: localStorage.getItem('nura_sesion') }))
+    ok(/\/entrar/.test(tel.url()) && /tu ficha no tiene este correo/.test(t3) && (!e3.user || e3.user === 'null') && !e3.sesion,
+      'profesional sin correo en su ficha: no entra como cliente, se le explica y la sesión se cierra')
+    // Y si entra con correo y contraseña desde un mensaje (pro=1): lo mismo.
+    await tel.goto(B + '/entrar?pro=1&volver=/chats', { waitUntil: 'networkidle0' }); await espera(800)
+    await tel.type('input[type="email"]', 'otra@ficticia.test')
+    await tel.type('input[type="password"]', 'contrasena-ficticia')
+    await pulsar(tel, 'Entrar'); await espera(2000)
+    const e4 = await tel.evaluate(() => ({ user: localStorage.getItem('nura_user'), sesion: localStorage.getItem('nura_sesion') }))
+    ok(/tu ficha no tiene este correo/.test(await texto(tel)) && (!e4.user || e4.user === 'null') && !e4.sesion && /\/entrar/.test(tel.url()),
+      'al entrar desde un mensaje sin ficha con ese correo: tampoco entra como cliente')
+    await tel.close(); await ctx3.close()
   }
 } catch (e) {
   ok(false, 'el recorrido se ha roto: ' + e.message)
