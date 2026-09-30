@@ -6,7 +6,6 @@ import { getFirstName } from '../utils/name'
 import { useTitulo } from '../utils/titulo'
 import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react'
 import { attachChatScroll } from '../utils/chatScroll'
-import { sinArrastreDePagina } from '../utils/sinArrastre'
 import ConNegritas from '../components/ConNegritas'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Send, Mic, MicOff } from 'lucide-react'
@@ -198,12 +197,9 @@ export default function Chat() {
   const [msgCount, setMsgCount] = useState(() => Math.floor((getChatHistory(id)?.filter(m => m.from === 'helper')?.length || 0)))
   const [listening, setListening] = useState(false)
   const scrollController = useRef(null)
-  // El dedo mueve los mensajes, nunca la web entera (utils/sinArrastre.js).
-  const quitarArrastre = useRef(null)
-  const pageRef = useCallback(node => {
-    quitarArrastre.current?.()
-    quitarArrastre.current = node ? sinArrastreDePagina(node) : null
-  }, [])
+  // El dedo mueve los mensajes, nunca la web entera: lo hace toda la app
+  // (App.jsx, utils/sinArrastre.js).
+  const pageRef = useRef(null)
   const messagesRef = useCallback(node => {
     scrollController.current?.destroy()
     scrollController.current = node ? attachChatScroll(node) : null

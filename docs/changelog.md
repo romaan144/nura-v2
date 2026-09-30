@@ -170,6 +170,13 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Toda la app: el dedo no arrastra la página entera
+
+- Sergio: también pasa en otras pantallas, p. ej. «Ver todos» → «Viajar o hablar otro idioma» (sin profesionales): se mueve la pantalla entera.
+- `sinArrastreDePagina` se aplica ahora a toda la app, una vez (`App.jsx`), y se retiran las dos aplicaciones sueltas (Inicio y Chat).
+- Además reconoce la propia página (el documento) y los contenedores anidados: si el de dentro está en su tope, puede moverse el de fuera. Así las pantallas largas (la lista de categorías, Perfil) se desplazan como siempre y solo se anula el arrastre cuando no hay nada que mover, o en el tope (el estirón).
+- `npm run recorrido` lo comprueba con el dedo simulado en Inicio, el chat, «Ver todos», «Viajar» y Perfil.
+
 ## 2026-10-29 — Inicio: el dedo no arrastra la página entera
 
 - Sergio: en la página principal, al deslizar, «todo se mueve hacia abajo, la página entera», como pasaba en el chat.

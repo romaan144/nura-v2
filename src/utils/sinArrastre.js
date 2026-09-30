@@ -7,25 +7,30 @@
 //
 // Aquí, dentro de `raiz`, un deslizamiento vertical solo se permite si
 // empieza sobre algo que de verdad puede desplazarse en esa dirección (el
-// historial con mensajes de sobra, un texto largo que se edita). Si no, se
-// anula. Los toques, las pulsaciones y el zoom con dos dedos no se tocan.
+// historial con mensajes de sobra, una lista larga, la página misma). Si no,
+// se anula. Los toques, las pulsaciones y el zoom con dos dedos no se tocan.
+// Se aplica a TODA la app, una vez (App.jsx): pasaba en Inicio, en el chat
+// y en cualquier pantalla con poco contenido («Ver todos» → viajar).
 export function sinArrastreDePagina(raiz) {
   let x0 = 0, y0 = 0
   const inicio = e => {
     const t = e.touches[0]
     x0 = t.clientX; y0 = t.clientY
   }
+  // ¿Hay algo, desde donde empieza el dedo hacia fuera, que pueda moverse en
+  // esa dirección? Un contenedor con scroll o la propia página (el
+  // documento). Si el de dentro ya está en su tope, puede moverse el de fuera.
+  const puede = (el, dy) => {
+    if (dy > 0) return el.scrollTop > 0
+    return el.scrollTop + el.clientHeight < el.scrollHeight - 1
+  }
   const puedeDesplazar = (el, dy) => {
-    for (; el && el !== raiz.parentElement; el = el.parentElement) {
-      if (el.nodeType !== 1) continue
+    for (; el && el.nodeType === 1 && el !== document.documentElement; el = el.parentElement) {
       const oy = getComputedStyle(el).overflowY
-      if ((oy === 'auto' || oy === 'scroll') && el.scrollHeight > el.clientHeight + 1) {
-        // Hacia abajo (dedo baja) necesita espacio arriba, y al revés.
-        if (dy > 0) return el.scrollTop > 0
-        return el.scrollTop + el.clientHeight < el.scrollHeight - 1
-      }
+      if ((oy === 'auto' || oy === 'scroll') && el.scrollHeight > el.clientHeight + 1 && puede(el, dy)) return true
     }
-    return false
+    const doc = document.scrollingElement || document.documentElement
+    return doc.scrollHeight > doc.clientHeight + 1 && puede(doc, dy)
   }
   const mover = e => {
     if (e.touches.length !== 1 || !e.cancelable) return
