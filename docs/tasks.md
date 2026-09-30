@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Última tarea integrada · Textos automáticos honestos y bien escritos
+### Tarea activa · Búsqueda: cuando no hay nadie, decirlo bien
 
-Integrada el 2026-09-30 (ver `docs/changelog.md`, 2026-10-29). Tocó `src/utils/notifications.js` (`recordarTrasBuscar`; se retiran funciones sin uso), `src/pages/Home.jsx` (usa el recordatorio nuevo), `src/pages/HelperProfile.jsx` (dos plurales; nada visual) y `src/utils/aviso.js` (saludo). Esos archivos quedan libres.
+Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Probado: «fontanero en Madrid» decía «Buscas arreglo técnico en Madrid» y ofrecía «Buscar técnico de guardia» / «Ampliar la zona» (que buscaban en Barcelona); «clases de chino en Bilbao» enseñaba a alguien online sin decirlo; «tatuador», «herrero», «astrólogo» recibían «No estoy segura de haberte entendido»; «notario» daba un abogado laboralista como «quien mejor encaja». Archivos: `src/pages/Home.jsx` (textos y botones de esas respuestas; nada visual), `src/data/oficios.js` (oficio `notario`, sin fichas: sale «lo más parecido»), `scripts/recorrido.mjs`.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
