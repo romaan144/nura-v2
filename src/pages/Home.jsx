@@ -17,6 +17,7 @@ import RegisterGate from '../components/RegisterGate'
 import { haptic } from '../utils/haptic'
 import { scheduleLocalNotification, notifySearchAbandoned } from '../utils/notifications'
 import { registrar, demandaDe } from '../utils/analitica'
+import { lineasSinEncontrar } from '../utils/pulso'
 import AlertaSheet from '../components/AlertaSheet'
 import { useSinContestar } from '../utils/sinContestar'
 import { useRespuestasNuevas } from '../utils/respuestasNuevas'
@@ -551,6 +552,7 @@ export default function Home() {
             if (pulso.recibidos != null) lineas.push(pulso.recibidos
               ? `Te escribieron ${n(pulso.recibidos, 'persona', 'personas')} y contestaste a ${pulso.respondidos ?? 0}.`
               : 'Esta semana nadie te ha escrito todavía.')
+            lineas.push(...lineasSinEncontrar(pulso.sinEncontrar, user?.helperProfile?.specialty))
           } else {
             lineas.push('Crea tu acceso con correo y cada semana te diré cuántas personas buscan lo que haces y cuántas veces sale tu ficha.')
           }

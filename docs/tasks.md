@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · El Pulso avisa de lo que buscaron en tu ciudad sin encontrar a nadie
+### Última tarea integrada · El Pulso dice qué buscaron en tu ciudad sin encontrar a nadie
 
-Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Al profesional, en su Pulso semanal: cuántas búsquedas de su categoría en SU ciudad se quedaron sin nadie, por oficio (solo cifras). Si es su propio oficio, revisar ficha; si es otro, añadirlo si lo hace. Archivos: `supabase/functions/helpers-write/index.ts` (op `mi-pulso`), `src/pages/Home.jsx` (solo las líneas del Pulso, sin tocar diseño), `src/utils/pulso.js` nuevo, `scripts/test-avisos.mjs`.
+Integrada el 2026-09-30 (ver `docs/changelog.md`, 2026-10-29). Tocó `supabase/functions/helpers-write/index.ts` (op `mi-pulso`, desplegada v28), el nuevo `src/utils/pulso.js`, `src/pages/Home.jsx` (una línea del Pulso y su import; nada visual) y `scripts/test-avisos.mjs`. Esos archivos quedan libres.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 

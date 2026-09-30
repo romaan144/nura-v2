@@ -1253,7 +1253,7 @@ Deno.serve(async (req: Request) => {
     if (!u.ok) return json({ error: 'sesion no valida' }, 401, cors)
     const usuario = await u.json()
     if (!usuario?.id) return json({ error: 'sesion sin usuario' }, 401, cors)
-    const f = await fetch(`${SUPABASE_URL}/rest/v1/helpers?owner_id=eq.${usuario.id}&select=id,category&limit=1`, { headers: rest })
+    const f = await fetch(`${SUPABASE_URL}/rest/v1/helpers?owner_id=eq.${usuario.id}&select=id,category,city,zone,online&limit=1`, { headers: rest })
     if (!f.ok) return json({ error: 'lectura rechazada', estado: f.status }, 502, cors)
     const [ficha] = await f.json()
     if (!ficha) return json({ error: 'sin ficha' }, 404, cors)
@@ -1277,7 +1277,24 @@ Deno.serve(async (req: Request) => {
       contar(`avisos?helper_id=eq.${id}&fecha=gt.${desde}&select=id`),
       contar(`avisos?helper_id=eq.${id}&fecha=gt.${desde}&respondido_en=not.is.null&select=id`),
     ])
-    return json({ ok: true, pulso: { busquedas, apariciones, recibidos, respondidos } }, 200, cors)
+    // Lo que buscaron en SU ciudad, de lo suyo, y se quedó sin nadie (o solo
+    // con algo parecido), por oficio. Solo identificadores del mapa y
+    // cuántas veces: ni frases ni personas. Sin ciudad conocida, nada.
+    const ciudad = ciudadDelProfesional(ficha)
+    let sinEncontrar: { ciudad: string, oficios: { oficio: string, veces: number }[] } | null = null
+    if (ciudad && CATEGORIA_OK.test(catApp)) {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/eventos?tipo=eq.sin_cobertura&categoria=eq.${catApp}&ciudad=eq.${encodeURIComponent(ciudad)}&oficio=not.is.null&fecha=gt.${desde}&select=oficio&limit=5000`, { headers: rest })
+      if (r.ok) {
+        const veces = new Map<string, number>()
+        for (const e of await r.json()) {
+          const o = String(e?.oficio || '')
+          if (/^[a-z0-9_]{1,40}$/.test(o)) veces.set(o, (veces.get(o) || 0) + 1)
+        }
+        const oficios = [...veces].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([oficio, n]) => ({ oficio, veces: n }))
+        sinEncontrar = { ciudad, oficios }
+      }
+    }
+    return json({ ok: true, pulso: { busquedas, apariciones, recibidos, respondidos, sinEncontrar } }, 200, cors)
   }
 
   // ── RECLAMAR LA FICHA (etapa 6b de docs/estudio-perfil.md) ─────────────
