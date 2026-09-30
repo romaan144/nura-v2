@@ -170,6 +170,14 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Inicio del profesional: sin frases equivocadas ni botones que no hacen nada
+
+- Tras el alta, Nüra decía «Marta, ya puedes encontrar a quien necesitas» (la frase de quien busca ayuda). Ahora: «Marta, tu ficha ya está publicada. Cuando alguien te escriba, te llegará un aviso con su mensaje. Mientras, una foto y tu tarifa ayudan a que te escriban», con el botón «Editar mi ficha».
+- Los botones del profesional («Añadir nueva certificación», «Actualizar disponibilidad», «Añadir experiencia reciente», «Cambiar mis tarifas») mandaban ese texto al buscador como una búsqueda. Ahora son «Editar mi ficha», que abre la hoja de editar en Perfil, y «Ver mis mensajes».
+- «He trabajado en…», «he hecho un curso de…» recibían «He actualizado tu perfil con esta información» sin cambiar nada. Ahora: «¡Qué bien! Para que conste en tu ficha y lo vea quien te busca, añádelo en «Editar mi ficha»», con el botón.
+- Al profesional ya no se le pregunta «¿Para quién necesitas ayuda?» al entrar: es de quien busca y tapaba sus botones.
+- `npm run recorrido` lo comprueba.
+
 ## 2026-10-29 — Alta de profesional: una conversación más natural
 
 - Recorrido completo del alta en el navegador, sin enviar nada al servidor. Funciona de principio a fin (también la corrección de correos mal escritos). Se mejora:

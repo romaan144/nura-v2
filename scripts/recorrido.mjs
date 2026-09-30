@@ -629,6 +629,34 @@ console.log('\n── Alta de profesional: una conversación natural ──')
   await p.close()
 }
 
+console.log('\n── Inicio del profesional: frases y botones que sirven ──')
+{
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('inicio pro: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => {
+    localStorage.clear(); sessionStorage.clear()
+    localStorage.setItem('nura_user', JSON.stringify({ name: 'Marta Ruiz', isHelper: true, helperProfile: { specialty: 'limpieza de casas' }, joined: new Date().toISOString() }))
+    sessionStorage.setItem('nura_helper_registered', '1')
+  })
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await espera(1500)
+  const resp = () => p.evaluate(() => (document.querySelector('section[aria-label="Respuesta de Nüra"]')?.innerText || '').replace(/\s+/g, ' '))
+  let r = await resp()
+  paso('tras el alta: «tu ficha ya está publicada», no «ya puedes encontrar a quien necesitas»', /tu ficha ya está publicada/.test(r) && !/encontrar a quien necesitas/.test(r))
+  await tocar(p, /^Editar mi ficha$/)
+  await espera(1800)
+  paso('«Editar mi ficha» abre la hoja de editar', /\/profile$/.test(p.url()) && await p.evaluate(() => !!document.querySelector('[role="dialog"]')))
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await espera(1500)
+  r = await resp()
+  paso('en su inicio, sus botones y sin «¿para quién necesitas ayuda?»', /Editar mi ficha/.test(r) && /Ver mis mensajes/.test(r) && !/Para quién necesitas ayuda/.test(r))
+  await escribirEn(p, 'he trabajado dos años en una residencia'); await p.keyboard.press('Enter'); await espera(2500)
+  r = await resp()
+  paso('no dice «he actualizado tu perfil» sin hacerlo', !/He actualizado tu perfil/.test(r) && /Editar mi ficha/.test(r))
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')

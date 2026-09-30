@@ -117,9 +117,11 @@ export default function Profile() {
   // se abre en ese apartado. Al cerrarla se borra, para que no vuelva a abrirse.
   const location = useLocation()
   const pideBloqueos = location.state?.editar === 'bloqueos'
+  // Desde Inicio («Editar mi ficha») se llega con la hoja ya abierta.
+  const pideFicha = location.state?.editar === 'ficha'
   const cerrarEditar = () => {
     setEditarAbierto(false)
-    if (pideBloqueos) navigate(location.pathname, { replace: true, state: null })
+    if (pideBloqueos || pideFicha) navigate(location.pathname, { replace: true, state: null })
   }
   const [borrarAbierto, setBorrarAbierto] = useState(false)
   const [vinculo, setVinculo] = useState('')
@@ -826,7 +828,7 @@ export default function Profile() {
       </div>
     </div>
     {composerOpen && <ObraComposer onClose={() => setComposerOpen(false)} />}
-    {(editarAbierto || pideBloqueos) && <EditarFicha foco={pideBloqueos ? 'bloqueos' : undefined} onClose={cerrarEditar} />}
+    {(editarAbierto || pideBloqueos || pideFicha) && <EditarFicha foco={pideBloqueos ? 'bloqueos' : undefined} onClose={cerrarEditar} />}
     </>
   )
 }
