@@ -51,6 +51,10 @@ const GENERICO = { encaja: 'Creo que puedo ayudarte.', preguntas: ['¿Me cuentas
 const DIAS_RE = /\b(hoy|manana|pasado manana|lunes|martes|miercoles|jueves|viernes|sabado|domingo|esta semana|la semana que viene|el finde|fin de semana)\b/
 const FRANJA_RE = /\b(por la manana|por la tarde|por la noche|a mediodia|a las \d{1,2}(:\d{2})?|\d{1,2} ?h\b|\d{1,2}:\d{2})/
 
+const PRECIO_RE = /\b(precio|cuanto (cobras|cuesta|costaria|sale|saldria|seria|pides)|coste|tarifa|presupuesto|cobras)\b|€/
+const PIDE_DIA_RE = /\b(disponib\w*|cuando|hueco|horario|agenda|puedes venir|podrias venir|te va bien|que dia)\b/
+const ZONA_RE = /\b(donde|zona|domicilio|a casa|online|videollamada|desplaz\w*|vienes)\b/
+
 function diaYFranja(t) {
   const dia = t.match(DIAS_RE)?.[0]
   const franja = t.match(FRANJA_RE)?.[0]
@@ -75,9 +79,9 @@ function getHelperReply(helper, count, userMsg = '', { historial = [] } = {}) {
   const partes = []
   const cuando = diaYFranja(t)
   const pideUrgencia = /\b(urgente|urgencia|cuanto antes|ahora mismo|ya mismo|lo antes posible)\b/.test(t) || /^hoy\b|\bhoy mismo\b/.test(t)
-  const pidePrecio = /\b(precio|cuanto (cobras|cuesta|costaria|sale|saldria|seria|pides)|coste|tarifa|presupuesto|cobras)\b|€/.test(t)
-  const pideDia = cuando || /\b(disponib\w*|cuando|hueco|horario|agenda|puedes venir|podrias venir|te va bien)\b/.test(t)
-  const pideZona = /\b(donde|zona|domicilio|a casa|online|videollamada|desplaz\w*|vienes)\b/.test(t)
+  const pidePrecio = PRECIO_RE.test(t)
+  const pideDia = cuando || PIDE_DIA_RE.test(t)
+  const pideZona = ZONA_RE.test(t)
   const pideOpiniones = /\b(opinion\w*|resena\w*|valoracion\w*|referencias)\b/.test(t)
   const pideExperiencia = /\b(experiencia|cuantos anos|titulo|titulacion|colegiad\w*)\b/.test(t)
   const cierra = /^(vale|ok|okey|perfecto|genial|de acuerdo|gracias|muchas gracias|estupendo|hecho|trato hecho|guay|me parece bien|sí|si)( .{0,30})?$/.test(t)
@@ -122,6 +126,45 @@ function getHelperReply(helper, count, userMsg = '', { historial = [] } = {}) {
     else if (!pideDia) partes.push(`Con eso me hago una idea. ¿Qué día te vendría bien que ${oficio.paso}?`)
   }
   return partes.join(' ') || 'Cuéntame un poco más y te digo cómo puedo ayudarte.'
+}
+
+// ── Respuestas rápidas: los botones bajo el último mensaje ─────────────────
+// Según cómo va la conversación: no sugiere lo ya preguntado, propone días
+// concretos cuando el profesional pregunta cuándo y, con el día acordado,
+// ofrece Contratar (Chat abre con él la hoja de contratar, no manda texto).
+const CONTRATAR = 'Contratar'
+const DIAS_SEMANA = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado']
+
+/** Dos propuestas de día: mañana (si es laborable) y el siguiente laborable. */
+function proximosDias(hoy = new Date()) {
+  const d = new Date(hoy)
+  const salida = []
+  for (let dias = 1; salida.length < 2; dias++) {
+    d.setDate(d.getDate() + 1)
+    if (d.getDay() === 0 || d.getDay() === 6) continue
+    salida.push(dias === 1 ? 'Mañana por la tarde' : `El ${DIAS_SEMANA[d.getDay()]} por la mañana`)
+  }
+  return salida
+}
+
+function respuestasRapidas(messages = [], hoy = new Date()) {
+  const de = quien => (messages || []).filter(m => m.from === quien).map(m => plano(m.text).replace(/[¿?¡!.,;]/g, ' '))
+  const yo = de('user'), el = de('helper')
+  if (!yo.length) return ['¿Tienes disponibilidad esta semana?', '¿Cuál es tu precio?', '¿Trabajas en mi zona?']
+  if (el.some(t => /me va bien/.test(t))) return [CONTRATAR, 'Gracias, hasta entonces']
+
+  const precio = yo.some(t => PRECIO_RE.test(t)) || el.some(t => /tarifa|presupuesto/.test(t))
+  const zona = yo.some(t => ZONA_RE.test(t)) || el.some(t => /\btrabajo (en|online)/.test(t))
+  const dia = yo.some(t => DIAS_RE.test(t) || PIDE_DIA_RE.test(t))
+  const ultimo = el[el.length - 1] || ''
+
+  // Si acaba de preguntar qué día, se contesta con días.
+  if (/que dia/.test(ultimo)) return [...proximosDias(hoy), ...(precio ? [] : ['¿Cuánto cobras?'])]
+  const salida = []
+  if (!dia) salida.push('¿Qué día podrías?')
+  if (!precio) salida.push('¿Cuánto cobras?')
+  if (!zona && salida.length < 2) salida.push('¿Trabajas en mi zona?')
+  return salida.length ? salida : [CONTRATAR]
 }
 
 function getNuraIntervention(helper, count, messages) {
@@ -196,4 +239,4 @@ function buildLivingConversation({ helper, analysis, userQuery }) {
   return { messages: [msg1, msg2], proposal: { label: `${day} ${franja}` } }
 }
 
-export { generateFirstMessage, getHelperReply, getNuraIntervention, buildLivingConversation }
+export { generateFirstMessage, getHelperReply, getNuraIntervention, buildLivingConversation, respuestasRapidas, CONTRATAR }

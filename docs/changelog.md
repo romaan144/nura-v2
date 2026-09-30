@@ -170,6 +170,13 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Respuestas rápidas del chat según la conversación
+
+- Los botones bajo el último mensaje ya no sugieren lo que ya se ha preguntado (antes, tras preguntar el precio, seguía ofreciendo «Me parece bien el precio» o volvía a él por palabras sueltas como «semana»).
+- Si el profesional pregunta qué día, los botones proponen días concretos («Mañana por la tarde», «El lunes por la mañana»). Con el día acordado ofrecen «Contratar», que abre la misma hoja que el botón de arriba, y solo si aún no hay un servicio con ese profesional.
+- Un aviso de Nüra detrás de la respuesta ya no quita los botones, salvo que traiga los suyos.
+- Lógica en `respuestasRapidas` (`src/utils/chatReplies.js`). Mismo aspecto. `npm run recorrido` lo comprueba.
+
 ## 2026-10-29 — Respuestas coherentes en los chats de ejemplo
 
 - Solo modo demo. El profesional de ejemplo volvía a saludar después de que le contaras el problema, contestaba al precio con otra pregunta y se despedía usando su propio nombre.
