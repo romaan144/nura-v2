@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Última tarea integrada · Primer mensaje a un profesional: un borrador natural
+### Tarea activa · Textos automáticos honestos y bien escritos
 
-Integrada el 2026-09-30 (ver `docs/changelog.md`, 2026-10-29). Tocó `src/utils/introLetter.js` (`buildChatOpener`), `src/pages/Chat.jsx` (le pasa el análisis; nada visual) y `scripts/recorrido.mjs`. Esos archivos quedan libres.
+Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Revisión de avisos, notificaciones y confirmaciones: el recordatorio tras buscar llegaba aunque ya se hubiera escrito a alguien, uno por búsqueda y hablando de «profesionales disponibles»; funciones de notificación sin uso prometían cosas falsas («X está disponible», «nuevos profesionales se han unido»); «1 valoraciones», «1 mensajes». Archivos: `src/utils/notifications.js`, `src/pages/Home.jsx` (solo el recordatorio), `src/pages/HelperProfile.jsx` (solo dos textos), `src/utils/aviso.js`.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
