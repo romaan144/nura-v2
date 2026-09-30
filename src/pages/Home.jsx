@@ -22,6 +22,7 @@ import AlertaSheet from '../components/AlertaSheet'
 import { useSinContestar } from '../utils/sinContestar'
 import { useRespuestasNuevas } from '../utils/respuestasNuevas'
 import RatingModal from '../components/RatingModal'
+import { oficiosDe } from '../data/oficios'
 import { tieneAlerta, misAlertas, alertasGuardadas } from '../utils/alertas'
 import styles from './Home.module.css'
 import { PULSO_THRESHOLD, PULSO_DELAY, CONFIRMACION_THRESHOLD } from '../config'
@@ -752,6 +753,10 @@ export default function Home() {
       const helperName = confirmMsg.confirmacionHelperName?.split(' ')?.[0] || 'el profesional'
       const isPositive = msg.toLowerCase().includes('sí') || msg.toLowerCase().includes('genial')
 
+      // A quién valorar y si ya lo hizo: si ya valoró, la ventana no se abre y
+      // no tiene sentido pedirle «cuéntame cómo fue».
+      let paraValorar = null
+      const yaValorado = Boolean(confirmMsg.confirmacionHelperId && hasRated?.(confirmMsg.confirmacionHelperId))
       // Persist the confirmation in context
       if (confirmMsg.confirmacionHelperId) {
         confirmContact(confirmMsg.confirmacionHelperId, isPositive)
@@ -773,19 +778,28 @@ export default function Home() {
             })
             // Y el momento de preguntarle como fue: es lo que construye la
             // ficha del profesional (perfil vivo) y ayuda a otros a elegir.
-            if (!hasRated?.(hid)) setValorar({ ...hf, id: hf.id ?? hid, name: hf.name || confirmMsg.confirmacionHelperName || '' })
+            paraValorar = { ...hf, id: hf.id ?? hid, name: hf.name || confirmMsg.confirmacionHelperName || '' }
+            if (!yaValorado) setValorar(paraValorar)
           } catch (e) { console.error('[Nüra] historia:', e) }
         }
       }
 
       setTimeout(() => {
         if (isPositive) {
+          // «Júlia queda anotado»: sin género, que no lo sabemos. Y si ya lo
+          // valoró, no se le pide otra vez; si no, un botón por si cierra la
+          // ventana. Lo que escriba después lo recoge «Tras la confirmación».
+          const puedeValorar = !yaValorado && paraValorar
           setMessages(prev => [...prev, {
             id: Date.now(), from: 'nura',
             lines: [
-              `Me alegra mucho. **${helperName}** queda anotado como una conexión que funcionó.`,
-              `Si me cuentas cómo fue, ayudarás a otros a elegir bien.`
-            ]
+              `Me alegra mucho. Anoto que con **${helperName}** funcionó.`,
+              puedeValorar
+                ? `Si me cuentas cómo fue, ayudarás a otros a elegir bien.`
+                : `Ya me contaste cómo fue. Gracias: eso ayuda a otros a elegir bien.`,
+            ],
+            chips: puedeValorar ? [`Valorar a ${helperName}`] : undefined,
+            trasConfirmacion: { helperName, valorar: puedeValorar ? paraValorar : null },
           }])
         } else {
           setMessages(prev => [...prev, {
@@ -799,6 +813,35 @@ export default function Home() {
         setLoading(false)
       }, 800)
       return
+    }
+
+    // ── Tras la confirmación ────────────────────────────────────────
+    // Después de «Sí, genial», lo que escribe suele ser CÓMO le fue («Muy
+    // bien!»), no una búsqueda: antes Nüra contestaba «No estoy segura de
+    // haberte entendido». Si no nombra ningún oficio, se agradece y ya (el
+    // texto no se guarda). Si nombra uno, sigue como búsqueda.
+    const tras = messages[messages.length - 1]?.trasConfirmacion
+    if (tras) {
+      const quien = tras.helperName
+      if (msg === `Valorar a ${quien}` && tras.valorar) {
+        setValorar(tras.valorar)
+        setLoading(false)
+        return
+      }
+      if (msg.trim().length <= 80 && !oficiosDe(msg).length) {
+        setTimeout(() => {
+          setMessages(prev => [...prev, {
+            id: Date.now(), from: 'nura',
+            lines: tras.valorar
+              ? [`¡Gracias por contármelo! Para que cuente en la ficha de **${quien}** y ayude a otros, puedes valorarle aquí.`]
+              : [`¡Gracias por contármelo! Me alegra que fuera bien con **${quien}**. Si necesitas algo más, dime qué buscas.`],
+            chips: tras.valorar ? [`Valorar a ${quien}`] : undefined,
+            trasConfirmacion: tras.valorar ? tras : undefined,
+          }])
+          setLoading(false)
+        }, 600)
+        return
+      }
     }
 
     const intent = detectIntent(msg, user)
