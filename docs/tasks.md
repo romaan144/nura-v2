@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Última tarea integrada · Búsqueda: dos cosas a la vez
+### Tarea activa · Inicio: el dedo no arrastra la página entera
 
-Integrada el 2026-09-30 (ver `docs/changelog.md`, 2026-10-29). Tocó `src/utils/seguimiento.js` (`necesidadesDe`), `src/pages/Home.jsx` (aviso y botón de la otra búsqueda; un mensaje con `chipsPrimero` pinta su botón antes de las tarjetas, con el mismo estilo de siempre) y `scripts/recorrido.mjs`. Esos archivos quedan libres.
+Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Sergio: en la página principal, al deslizar, se mueve toda la web hacia abajo (como pasaba en el chat). Inicio no tiene nada desplazable (medido: documento 664/664, ningún contenedor con scroll), así que es el estirón del iPhone. Se aplica a Inicio el mismo `sinArrastreDePagina` que al chat. Archivos: `src/pages/Home.jsx` (solo el ref de la página; nada visual), `scripts/recorrido.mjs`.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
