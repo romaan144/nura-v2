@@ -170,6 +170,23 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Búsqueda: cuando no hay nadie, decirlo bien
+
+- Probado en el navegador; fallaba:
+  - «fontanero en Madrid»: «Buscas arreglo técnico en Madrid…» y botones «Buscar técnico de guardia» / «Ampliar la zona», que buscaban en Barcelona;
+  - «tatuador», «herrero», «astrólogo»: «No estoy segura de haberte entendido»;
+  - «notario»: un abogado laboralista como «quien mejor encaja»;
+  - «clases de chino en Bilbao»: alguien online de otra ciudad, sin decirlo;
+  - «fontanero en Gràcia»: «no hay nadie», porque el fontanero de ejemplo no tiene ciudad en su ficha y quedaba fuera; y «Ampliar la zona» contestaba «he mirado en toda la ciudad, no hay nadie» sin mirar.
+- Ahora:
+  - Sin nadie: «En Madrid todavía no tengo a nadie que sea fontanero: Nüra acaba de empezar allí. Si quieres, te aviso en cuanto llegue alguien», solo con el botón del aviso (y «Ampliar la zona» si buscó en un barrio). Sin barrio, «en Nüra» en vez de «cerca de ti».
+  - «Ampliar la zona» repite la búsqueda de verdad, sin el barrio.
+  - Un oficio que Nüra no tiene: «Todavía no tengo a nadie de «tatuador» en Nüra. Si me cuentas qué necesitas exactamente, busco lo más parecido», con «Ver todas las categorías». Solo si suena a oficio: lo pide («busco un…») o termina como uno.
+  - Oficio `notario` en el mapa, sin fichas: se dice que aún no hay.
+  - Si nombró una ciudad y la primera opción trabaja online desde otra: «En Bilbao todavía no tengo a nadie en persona, pero Li trabaja online».
+  - `matching.js`: una ficha sin ciudad cuenta como de Barcelona. Búsqueda 100 % en las tres tandas.
+- `npm run recorrido` lo comprueba.
+
 ## 2026-10-29 — Textos automáticos honestos y bien escritos
 
 - Revisados avisos, notificaciones, confirmaciones y mensajes de Nüra en el chat. Las conversaciones de ejemplo están bien escritas; se corrige:
