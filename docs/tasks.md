@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Última tarea integrada · Respuestas coherentes en los chats de ejemplo
+### Tarea activa · Respuestas rápidas del chat según la conversación
 
-Integrada el 2026-09-30 (ver `docs/changelog.md`, 2026-10-29). Tocó `src/utils/chatReplies.js`, `src/pages/Chat.jsx` (solo los datos que reciben `getHelperReply` y `getNuraIntervention`; nada visual) y `scripts/recorrido.mjs`. Esos archivos quedan libres.
+Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Los botones de respuesta rápida dejan de sugerir preguntas ya contestadas, proponen días concretos cuando el profesional pregunta cuándo y, con el día acordado, ofrecen Contratar (abre la misma hoja que el botón de la cabecera). Mismo aspecto. Archivos: `src/utils/chatReplies.js` (nueva `respuestasRapidas`), `src/pages/Chat.jsx` (solo la lista y el clic de esos botones), `scripts/recorrido.mjs`.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
