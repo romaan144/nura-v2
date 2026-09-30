@@ -16,6 +16,7 @@ import HelperCarousel from '../components/HelperCarousel'
 import RegisterGate from '../components/RegisterGate'
 import { haptic } from '../utils/haptic'
 import { recordarTrasBuscar } from '../utils/notifications'
+import { fechaDeCita } from '../utils/citaAviso'
 import { registrar, demandaDe } from '../utils/analitica'
 import { lineasSinEncontrar } from '../utils/pulso'
 import AlertaSheet from '../components/AlertaSheet'
@@ -445,7 +446,10 @@ export default function Home() {
     const nombres = ids.map(nombre)
     setMessages(prev => [...(prev || []), { id: Date.now() + 92, from: 'nura',
       lines: [ids.length === 1
-        ? `**${nombres[0]}** te ha contestado. Tienes su respuesta en el chat.`
+        // Si además confirmó la cita, se dice: es lo que más importa.
+        ? (confirmada => confirmada
+            ? `**${nombres[0]}** ha confirmado tu cita: ${fechaDeCita(confirmada.cita)}. Tienes su respuesta en el chat.`
+            : `**${nombres[0]}** te ha contestado. Tienes su respuesta en el chat.`)(respuestasSinVer.find(r => r.cita?.estado === 'aceptada'))
         : `Te han contestado **${nombres.slice(0, -1).join(', ')} y ${nombres.at(-1)}**. Tienes sus respuestas en Chats.`],
       chips: [LEER_RESPUESTA] }])
   }, [respuestasSinVer, messages?.length, setMessages, user?.isHelper, chatsUsuario])

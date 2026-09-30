@@ -196,6 +196,9 @@ try {
   await espera(800)
   ok(conCita.cita_estado === 'aceptada' && /Cita confirmada/.test(await texto(pro2)), 'la cita queda aceptada y se lo confirma')
   await pro2.close(); await c.bringToFront()
+  // En su chat, Nüra dice claro que la cita está confirmada y dónde verla.
+  await c.reload({ waitUntil: 'networkidle0' }); await espera(2500)
+  ok(/ha confirmado la cita: .+ a las \d/.test(await texto(c)) && /Ver mis servicios/.test(await texto(c)), 'en su chat, Nüra dice que la cita está confirmada, con el día')
 
   console.log('\n── Quien la pidió la ve confirmada; otra persona ve la hora ocupada ──')
   await c.goto(B + '/my-services', { waitUntil: 'networkidle0' }); await espera(2500)

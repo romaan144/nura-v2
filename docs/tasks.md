@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · El cliente ve claro qué pasa con su cita
+### Última tarea integrada · El cliente ve claro qué pasa con su cita
 
-Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. Cuando el profesional contesta y acepta, rechaza o cancela la cita, el cliente solo veía su texto en el chat. Ahora Nüra lo dice debajo («Carlos ha confirmado la cita: jueves 2 de octubre a las 10:00. La tienes en «Mis servicios»», con botón), y el aviso de Inicio nombra la cita confirmada. Archivos: nuevo `src/utils/citaAviso.js`, `src/pages/Chat.jsx` (una nota de Nüra tras la respuesta; nada visual), `src/pages/Home.jsx` (texto del aviso), `scripts/recorrido-real.mjs`.
+Integrada el 2026-09-30 (ver `docs/changelog.md`, 2026-10-29). Tocó el nuevo `src/utils/citaAviso.js`, `src/pages/Chat.jsx` (nota de Nüra tras una respuesta con cita y su botón; nada visual), `src/pages/Home.jsx` (texto del aviso) y `scripts/recorrido-real.mjs`. Esos archivos quedan libres.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 

@@ -170,6 +170,16 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — El cliente ve claro qué pasa con su cita
+
+- Cuando el profesional contestaba y además aceptaba, rechazaba o cancelaba la cita, en el chat del cliente solo aparecía su texto: nadie decía «cita confirmada» ni dónde verla.
+- Ahora Nüra lo dice debajo de la respuesta, una vez por estado (`src/utils/citaAviso.js`):
+  - «Carlos ha confirmado la cita: jueves, 1 de octubre a las 10:00. La tienes en «Mis servicios».», con el botón «Ver mis servicios»;
+  - «A Carlos no le va bien ese momento. Si quieres, pídele otro día desde «Contratar».»;
+  - «Carlos ha cancelado la cita del jueves, 1 de octubre a las 10:00. Te deja esta nota: «…». Esa hora ya no está reservada.»
+- El aviso de Inicio también: «**Carlos** ha confirmado tu cita: jueves, 1 de octubre a las 10:00. Tienes su respuesta en el chat.»
+- `npm run recorrido-real` lo comprueba tras aceptar el profesional la cita.
+
 ## 2026-10-29 — Responder: la cita se acepta de verdad
 
 - Probada la pantalla donde el profesional contesta (`/r/:token`) con mensajes simulados, con y sin cita.
