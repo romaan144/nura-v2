@@ -170,6 +170,12 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Ver todos: «atrás» desde un profesional vuelve a su categoría
+
+- Sergio: Ver todos → una categoría → un profesional → atrás llevaba a la rejilla de categorías, dos pasos atrás.
+- La categoría abierta solo vivía en la memoria de la pantalla y se borraba al volver. Ahora va en la dirección (`/explore?c=tecnico`), así «atrás» la recupera con su lista; otro «atrás» vuelve a las categorías. Tocar «Profesionales» abajo sigue llevando a la rejilla.
+- `src/pages/Explore.jsx` (sin cambios visuales); `npm run recorrido` lo comprueba.
+
 ## 2026-10-29 — El cliente ve claro qué pasa con su cita
 
 - Cuando el profesional contestaba y además aceptaba, rechazaba o cancelaba la cita, en el chat del cliente solo aparecía su texto: nadie decía «cita confirmada» ni dónde verla.

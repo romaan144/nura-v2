@@ -160,11 +160,17 @@ export default function Explore() {
   const [activeCategory,  setActiveCategory] = useState(null)  // null = grid view
   const location = useLocation()
 
-  // Reset to grid when user taps Profesionales in BottomNav while already in /explore
+  // LA CATEGORÍA VA EN LA DIRECCIÓN (`/explore?c=salud`). Antes solo vivía
+  // en la memoria de esta pantalla: al abrir un profesional y volver atrás,
+  // la pantalla se creaba de nuevo y aparecía la rejilla de categorías (dos
+  // pasos atrás). Ahora «atrás» vuelve a la lista de esa categoría. Sin `c`
+  // (o al tocar «Ver todos» otra vez) se ve la rejilla.
+  const catId = new URLSearchParams(location.search).get('c')
   useEffect(() => {
-    setActiveCategory(null)
-    setSearchText('')
-  }, [location.key])
+    const cat = catId && CATEGORIES.find(c => c.id === catId)
+    if (cat) cargarCategoria(cat)
+    else { setActiveCategory(null); setCategoryResults([]); setSearchText('') }
+  }, [catId, location.key])
   const [categoryResults, setCategoryResults] = useState([])
   const [loadingCat,      setLoadingCat]     = useState(false)
   const [sinRed,          setSinRed]         = useState(false)
@@ -195,7 +201,12 @@ export default function Explore() {
   }
 
   // ── Category navigation ───────────────────────────────────────
-  async function openCategory(cat) {
+  // Abrir una categoría es un paso más en el historial (ver arriba).
+  function openCategory(cat) {
+    navigate(`/explore?c=${encodeURIComponent(cat.id)}`, { state: { desdeRejilla: true } })
+  }
+
+  async function cargarCategoria(cat) {
     setActiveCategory(cat)
     setSearchText('')
     setVisibleCount(20)
@@ -245,10 +256,11 @@ export default function Explore() {
     setLoadingCat(false)
   }
 
+  // La flecha de la pantalla hace lo mismo que «atrás»; si se entró directo
+  // a una categoría (un enlace), vuelve a la rejilla sin salir de Nüra.
   function goBack() {
-    setActiveCategory(null)
-    setCategoryResults([])
-    setVisibleCount(20)
+    if (location.state?.desdeRejilla) navigate(-1)
+    else navigate('/explore', { replace: true })
   }
 
   // ── Display list ──────────────────────────────────────────────
@@ -463,7 +475,7 @@ export default function Explore() {
                 title="No he podido cargar esta categoría."
                 hint="Parece un problema de conexión. Vuelve a intentarlo en un momento."
                 actionLabel="Reintentar"
-                onAction={() => openCategory(activeCategory)}
+                onAction={() => cargarCategoria(activeCategory)}
               />
             ) : hasFilters ? (
               <EmptyState

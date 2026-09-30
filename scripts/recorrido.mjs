@@ -657,6 +657,32 @@ console.log('\n── Inicio del profesional: frases y botones que sirven ──
   await p.close()
 }
 
+console.log('\n── Ver todos: volver de un profesional deja en su categoría ──')
+{
+  // Sergio, 2026-09-30: categoría → profesional → atrás llevaba a la
+  // rejilla de categorías, dos pasos atrás.
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('ver todos: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Sergio', joined: new Date().toISOString() })) })
+  await p.goto(BASE + '/explore', { waitUntil: 'networkidle0' })
+  await espera(1200)
+  await tocar(p, /Arreglar algo en casa/)
+  await espera(2000)
+  const enCategoria = p.url()
+  const abierto = await p.evaluate(() => { const a = document.querySelector('button[aria-label^="Ver perfil de"]'); a?.click(); return !!a })
+  await espera(2000)
+  const enFicha = /\/helper\//.test(p.url())
+  await p.goBack()
+  await espera(2500)
+  const t = await texto(p)
+  paso('al volver de un profesional, sigue en la lista de su categoría', abierto && enFicha && p.url() === enCategoria && /Fontaner|electricist/i.test(t) && !/Cuidar mi salud/.test(t), `${enCategoria.replace(BASE, '')} → ficha → ${p.url().replace(BASE, '')}`)
+  await p.goBack()
+  await espera(1500)
+  paso('y otro «atrás» vuelve a las categorías', /Cuidar mi salud/.test(await texto(p)))
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')
