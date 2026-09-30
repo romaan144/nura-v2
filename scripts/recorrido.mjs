@@ -341,6 +341,38 @@ console.log('\n── Respuestas rápidas según la conversación ──')
   await p.close()
 }
 
+console.log('\n── Nüra ofrece otras opciones solo si se atasca ──')
+{
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('opciones: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Sergio', joined: new Date().toISOString() })) })
+  const decir = async m => {
+    await escribirEn(p, '', 'x => /mensaje/i.test(x.placeholder || "")')
+    await p.keyboard.down('Control'); await p.keyboard.press('a'); await p.keyboard.up('Control'); await p.keyboard.press('Backspace')
+    await p.keyboard.type(m, { delay: 4 }); await p.keyboard.press('Enter')
+    await espera(3500)
+  }
+  const deNura = id => p.evaluate(id => (JSON.parse(localStorage.getItem('nura_chat_histories') || '{}')[id] || []).filter(x => x.from === 'nura').map(x => x.text), id)
+  await p.goto(BASE + '/chat/2001', { waitUntil: 'networkidle0' })
+  await espera(1500)
+  await decir('Últimamente tengo mucha ansiedad y me cuesta dormir')
+  await decir('Hace unos meses')
+  const pronto = await deNura('2001')
+  paso('mientras cuentas el problema, Nüra no ofrece alternativas', !pronto.some(t => /alternativas|otras opciones/.test(t)), pronto.join(' | ') || 'sin avisos')
+  await p.evaluate(() => localStorage.setItem('nura_chat_histories', '{}'))
+  await p.goto(BASE + '/chat/2001', { waitUntil: 'networkidle0' })
+  await espera(1500)
+  await decir('Necesito que me atiendas hoy, es urgente')
+  const urg = await deNura('2001')
+  paso('si no puede cuando lo necesitas, Nüra ofrece otras opciones', urg.some(t => /otras opciones/.test(t)), urg.join(' | '))
+  await tocar(p, /^Buscar otras opciones$/)
+  await espera(5000)
+  const inicio = await texto(p)
+  paso('el botón repite la búsqueda sin poner primero a quien ya era', /Primera opción/.test(inicio) && !/Primera opción Sara/.test(inicio), inicio.match(/Primera opción \S+ \S+/)?.[0] || inicio.slice(0, 80))
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')
