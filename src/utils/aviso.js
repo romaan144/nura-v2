@@ -44,7 +44,7 @@ export function construirAviso({ helper, analysis, userQuery, user }) {
   // DENTRO de Nüra, que es donde queda el registro de lo que pasó. Dar el
   // telefono de una madre a alguien que aun no ha dicho que si es otra cosa.
   const cuerpo = [
-    `Hola${suNombre ? ` ${suNombre}` : ''}, soy Nüra.`,
+    `Hola${suNombre ? `, ${suNombre}` : ''}. Soy Nüra.`,
     dequien
       ? `${dequien} te ha escrito buscando ayuda:`
       : 'Alguien te ha escrito buscando ayuda:',

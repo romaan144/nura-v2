@@ -15,7 +15,7 @@ import { getObra, TYPE_META } from '../data/obraPosts'
 import HelperCarousel from '../components/HelperCarousel'
 import RegisterGate from '../components/RegisterGate'
 import { haptic } from '../utils/haptic'
-import { scheduleLocalNotification, notifySearchAbandoned } from '../utils/notifications'
+import { recordarTrasBuscar } from '../utils/notifications'
 import { registrar, demandaDe } from '../utils/analitica'
 import { lineasSinEncontrar } from '../utils/pulso'
 import AlertaSheet from '../components/AlertaSheet'
@@ -1188,12 +1188,8 @@ export default function Home() {
       matches.slice(0, 6).forEach(h => registrar('recomendacion_vista', {
         categoria: analysis?.categoria, resultados: matches.length, helperId: h?.id != null ? String(h.id) : undefined }))
       setLastMatches(matches)
-      // Schedule reminder if user doesn't contact
-      scheduleLocalNotification(
-        '¿Te convencieron los resultados?',
-        `Tienes ${matches.length} profesionales disponibles. ¿Ya les has escrito?`,
-        2 * 60 * 60 * 1000
-      )
+      // Un recordatorio si no escribe a nadie (ver utils/notifications).
+      recordarTrasBuscar(matches[0])
       // Cache helpers for instant profile + chat loading
       if (matches?.length) {
         const cacheMap = {}

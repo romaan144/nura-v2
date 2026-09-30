@@ -250,7 +250,7 @@ function HelperProfileInner() {
 
             {/* Stats como logros — no como números */}
             <StatBar stats={[
-              enrichedH.rating && { value: `${fmtNota(enrichedH.rating)}★`, label: `${enrichedH.reviews} valoraciones` },
+              enrichedH.rating && { value: `${fmtNota(enrichedH.rating)}★`, label: enrichedH.reviews === 1 ? '1 valoración' : `${enrichedH.reviews} valoraciones` },
               enrichedH.price && enrichedH.price !== 'Consultar' && {
                 value: enrichedH.price.split('/')[0],
                 label: enrichedH.price.includes('/') ? enrichedH.price.split('/')[1] : 'por sesión'
@@ -722,7 +722,7 @@ function ConPrueba({ atributos, firstName, sinNota }) {
   const filas = [
     volveria && { icono: <ThumbsUp size={15} />, texto: `${volveria.valor.si} de ${volveria.valor.total} volverían a llamar a ${firstName}`, fuente: 'Lo dicen sus clientes' },
     estrellas && { icono: <Star size={15} />, texto: `${fmtNota(estrellas.valor.media)} de nota`, fuente: estrellas.prueba },
-    tiempo && { icono: <Clock size={15} />, texto: `Suele contestar ${tiempoHumano(tiempo.valor.mediana_minutos)}`, fuente: `Medido por Nüra en ${tiempo.valor.n} mensajes` },
+    tiempo && { icono: <Clock size={15} />, texto: `Suele contestar ${tiempoHumano(tiempo.valor.mediana_minutos)}`, fuente: `Medido por Nüra en ${tiempo.valor.n === 1 ? '1 mensaje' : `${tiempo.valor.n} mensajes`}` },
     tasa && { icono: <MessageCircle size={15} />, texto: `Contesta ${Math.round(100 * tasa.valor.respondidos / tasa.valor.recibidos)} % de los mensajes`, fuente: `Medido por Nüra · ${tasa.prueba}` },
   ].filter(Boolean)
 
