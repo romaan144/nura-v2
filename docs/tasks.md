@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Última tarea integrada · Nüra ofrece otras opciones solo si la conversación se atasca
+### Tarea activa · Contratar con el día y la hora acordados en el chat
 
-Integrada el 2026-09-30 (ver `docs/changelog.md`, 2026-10-29). Tocó `src/utils/chatReplies.js` (`getNuraIntervention`, `getHelperReply`), `src/pages/Chat.jsx` (botones del aviso de Nüra), `src/pages/Home.jsx` (una búsqueda que llega con `excluir` no pone primero a ese profesional; texto si es el único; nada visual) y `scripts/recorrido.mjs`. Esos archivos quedan libres.
+Desde 2026-09-30. Rama `claude/funny-clarke-e6m64r`. La hoja de Contratar ya intentaba rellenar día y hora de la conversación, pero tomaba cualquier número como hora («hace 5 años» → 5:00), confundía «por la mañana» con mañana y no elegía el último día acordado. Se sustituye por un lector que usa el último día mencionado, la hora solo si se dice («a las 10», «5 de la tarde») o el primer hueco libre de la franja, y solo si ese profesional trabaja ese día y hora. Archivos: nuevo `src/utils/citaDeLaConversacion.js`, `src/pages/Chat.jsx` (solo el relleno de la hoja), `scripts/recorrido.mjs`.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
