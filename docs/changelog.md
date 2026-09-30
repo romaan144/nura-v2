@@ -170,6 +170,14 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — El profesional sin correo en su ficha: no confundirle
+
+- Quien se dio de alta con un teléfono no puede vincular su acceso: se comprueba por el correo de la ficha. Aun así, al contestar su primer mensaje, Nüra le pedía «el mismo correo que diste» y, si creaba el acceso, le dejaba dentro como cliente, con una bandeja vacía en vez de sus mensajes.
+- Ahora el texto es honesto: «Funciona con el correo que diste al darte de alta; si diste un teléfono, de momento sigue contestando desde estos enlaces».
+- El acceso que se crea o se abre desde un mensaje recibido va marcado como de profesional (`pro=1`). Si no hay ficha con ese correo, no entra como cliente: se le explica («tu ficha no tiene este correo…») y la sesión se cierra, para que no entre sola más tarde. Pasa igual al volver del correo de confirmación.
+- Pendiente de Sergio: cómo vincular a quien dio un teléfono (opciones en el informe de esta tarea).
+- `src/pages/Responder.jsx`, `src/components/BandejaProfesional.jsx`, `src/pages/Entrar.jsx`, `src/pages/Profile.jsx`; `npm run recorrido-real` (con el código anterior fallaba).
+
 ## 2026-10-29 — Al confirmar el correo, se vuelve a Nüra ya dentro
 
 - El profesional que recibe su primer mensaje contesta desde el enlace y crea su acceso. Al pulsar el enlace de confirmación del correo volvía a Nüra con la sesión, pero ese móvil no le conocía: veía la pantalla de invitado («Encuentra a la persona adecuada») y tenía que entrar otra vez.

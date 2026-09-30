@@ -286,9 +286,9 @@ function ResponderAviso({ token }) {
                   ¿Quieres verlo todo en un sitio?
                 </p>
                 <p style={{ margin: '0 0 var(--space-12)', fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)', lineHeight: 1.5 }}>
-                  Con tu acceso ves aquí todo lo que te escriban y te aviso en el móvil. Usa el mismo correo que diste en Nüra.
+                  Con tu acceso ves aquí todo lo que te escriban y te aviso en el móvil. Funciona con el correo que diste al darte de alta; si diste un teléfono, de momento sigue contestando desde estos enlaces.
                 </p>
-                <button className="nura-glass-action" onClick={() => navigate('/entrar?modo=crear&volver=/chats')}
+                <button className="nura-glass-action" onClick={() => navigate('/entrar?modo=crear&pro=1&volver=/chats')}
                   style={{ width: '100%',
               minHeight: 44,
               cursor: 'pointer',
@@ -299,7 +299,7 @@ function ResponderAviso({ token }) {
               ...(glass.control) }}>
                   Crear mi acceso
                 </button>
-                <button className="nura-glass-action" onClick={() => navigate('/entrar?volver=/chats')}
+                <button className="nura-glass-action" onClick={() => navigate('/entrar?pro=1&volver=/chats')}
                   style={{ width: '100%',
               minHeight: 40,
               marginTop: 'var(--space-6)',

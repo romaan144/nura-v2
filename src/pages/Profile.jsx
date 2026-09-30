@@ -169,7 +169,7 @@ export default function Profile() {
   useEffect(() => {
     if (user || !haySesionQueLeer()) return
     let vivo = true
-    import('../utils/cuenta').then(async ({ sesionActual }) => {
+    import('../utils/cuenta').then(async ({ sesionActual, salir }) => {
       const s = await sesionActual()
       if (!vivo) return
       if (!s) {
@@ -184,9 +184,18 @@ export default function Profile() {
       const r = await reclamarFicha(s.access_token)
       if (!vivo) return
       setReconociendo(false)
+      // ¿Creó el acceso desde un mensaje que le llegó como profesional?
+      let comoPro = false
+      try { comoPro = localStorage.getItem('nura_acceso_pro') === '1' } catch { /* sin almacenamiento */ }
       if (r?.ok && r.helper) {
+        try { localStorage.removeItem('nura_acceso_pro') } catch { /* nada */ }
         login(usuarioDeFicha(r.helper, email))
         showToast('Ya tienes tu acceso. Lo que te escriban, en «Chats».')
+      } else if (comoPro && (r?.motivo === 'sin-ficha' || r?.motivo === 'varias')) {
+        // No como cliente: vería una bandeja vacía. Se le explica en «Entrar».
+        try { localStorage.removeItem('nura_acceso_pro') } catch { /* nada */ }
+        await salir()
+        navigate('/entrar?pro=1&sinFicha=1&volver=/chats', { replace: true })
       } else if (r?.motivo === 'sin-ficha' || r?.motivo === 'varias') {
         login(usuarioCliente(email))
         showToast('Ya tienes tu acceso.')
