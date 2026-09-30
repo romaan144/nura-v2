@@ -396,7 +396,7 @@ export default function Chat() {
     const delay = 1000 + Math.random() * 600
     setTimeout(() => {
       setTyping(false)
-      const replyText = getHelperReply(helper, msgCount, msg)
+      const replyText = getHelperReply(helper, msgCount, msg, { historial: messages })
       const reply = { id: Date.now() + 1, text: replyText, from: 'helper', time: new Date().toISOString() }
       // Log for future Claude analysis (silently)
       if (helper.isFromSupabase) {
@@ -408,7 +408,7 @@ export default function Chat() {
       addChat?.(helper.id, helper.name, helper.avatarColor, helper.avatar, replyText, 'helper', helper.avatarUrl)
 
       // Nüra intervention at key moments
-      const nura = getNuraIntervention(helper, newCount, messages)
+      const nura = getNuraIntervention(helper, newCount, [...messages, newMsg, reply])
       if (nura) {
         setTimeout(() => {
           const isBookingMoment = nura.includes('Confirmo la reserva') || nura.includes('confirmar')
