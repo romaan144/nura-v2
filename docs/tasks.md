@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Última tarea integrada · Notificaciones: al tocarlas, a la pantalla correcta
+### Tarea activa · La primera vez: preguntas de quien no conoce Nüra
 
-Desde 2026-10-01. Rama `claude/funny-clarke-e6m64r`. Revisión de los avisos al móvil (`public/sw.js`). (1) La notificación «Te han escrito» de la profesional llega por otro canal (ámbito `/pro/`) que no controla las páginas de la app: con Nüra abierta, el trabajador no podía cambiar de pantalla y se quedaba donde estuviera. Ahora, si no puede, se lo pide a la app (mensaje `nura-ir`) y la app navega. (2) Si al llegar un aviso no se puede consultar quién ha contestado, ya no dice «Ha llegado alguien» por defecto: dice que hay una novedad. Archivos: `public/sw.js`, `src/App.jsx` (solo el oyente del mensaje), `scripts/test-sw.mjs` (nuevo, `npm run test:sw`), `package.json` (el comando). Comprobado: build, recorrido, recorrido-real, smoke, test:vista, test:chat-scroll, test:busqueda 100%, test:matching 261, test:avisos 204, test:sw 10 (con el sw.js anterior fallaba); lint igual que en `main`.
+Desde 2026-10-01. Rama `claude/funny-clarke-e6m64r`. Probado como visitante nuevo: «qué es Nüra», «cómo funciona», «cuánto cuesta», «ayuda» y «no sé qué necesito» recibían «No estoy segura de haberte entendido»; «busco trabajo» decía que no hay nadie de «trabajo»; «quiero ofrecer mis servicios» recomendaba a un técnico informático. Ahora se reconocen antes de buscar (solo si no nombran un oficio) y se contestan; quien quiere ofrecer sus servicios va al alta de profesional. Sin inventar precios ni condiciones de Nüra. Archivos: `src/utils/seguimiento.js`, `src/pages/Home.jsx` (respuestas y un botón), `scripts/test-matching.mjs`, `scripts/recorrido.mjs`.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
