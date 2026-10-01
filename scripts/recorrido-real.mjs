@@ -244,7 +244,11 @@ try {
   await otra.evaluate(f => { const d = new Date(f + 'T12:00:00'); const o = [...document.querySelectorAll('[aria-label="Elige un día"] button')].find(x => (x.getAttribute('aria-label') || '').startsWith(d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' }) + ':')); o?.click() }, fechaCita)
   await espera(1000)
   const estadoHora = await otra.evaluate(h => [...document.querySelectorAll('button[data-state]')].find(x => x.textContent.trim() === h)?.getAttribute('aria-label'), conCita.cita_hora)
-  ok(/ocupada/.test(estadoHora || ''), `otra persona ve esa hora ocupada en su agenda (${estadoHora})`)
+  // Si era la última hora libre del día, el día entero sale «Completo» (y no
+  // se puede abrir): también es verla ocupada. Pasa si la prueba corre por la
+  // tarde y la cita cae hoy.
+  const diaCita = await otra.evaluate(f => { const d = new Date(f + 'T12:00:00'); return [...document.querySelectorAll('[aria-label="Elige un día"] button')].map(x => x.getAttribute('aria-label') || '').find(x => x.startsWith(d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' }) + ':')) }, fechaCita)
+  ok(/ocupada/.test(estadoHora || '') || /: Completo$/.test(diaCita || ''), `otra persona ve esa hora ocupada en su agenda (${estadoHora || diaCita})`)
   await otra.close()
 
   // Una cita futura ya no se puede dar por hecha (2026-09-30): se da por

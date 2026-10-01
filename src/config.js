@@ -34,8 +34,10 @@ export const PULSO_THRESHOLD = DEMO_MODE ? 35 * 1000 : 7 * 24 * 60 * 60 * 1000
 export const PULSO_DELAY = DEMO_MODE ? 5000 : 1000
 
 
-// Sello de build visible — para verificar qué versión corre el dispositivo
-export const NURA_BUILD = '2026.07.09-m'
+// Sello de build visible — para verificar qué versión corre el dispositivo.
+// Lo pone vite.config.js al publicar (fecha y commit); fuera de Vite, 'dev'.
+/* global __NURA_BUILD__ */
+export const NURA_BUILD = typeof __NURA_BUILD__ !== 'undefined' ? __NURA_BUILD__ : 'dev'
 
 // ── CONTACTO ─────────────────────────────────────────────────────────────
 // El correo al que una persona escribe para pedir ayuda o que se borre su
