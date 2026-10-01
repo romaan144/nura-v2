@@ -364,6 +364,7 @@ function getDynamicSuggestions(user, searchHistory) {
 // («Cambiar mis tarifas»…) que se mandaban al buscador como una búsqueda.
 // Ahora llevan a donde se hace de verdad.
 const EDITAR_FICHA = 'Editar mi ficha'
+const DARSE_DE_ALTA = 'Darme de alta como profesional'
 const HELPER_SUGGESTIONS = [
   { text: EDITAR_FICHA, ir: '/profile', estado: { editar: 'ficha' } },
   { text: 'Ver mis mensajes', ir: '/chats' },
@@ -900,6 +901,34 @@ export default function Home() {
         { chips: ['Una reparación en casa', 'Cuidar a un familiar', 'Clases particulares'] })
       return
     }
+    // ── Lo que pregunta quien aún no conoce Nüra ──
+    // Sin inventar condiciones: ni «es gratis» ni comisiones que no sabemos.
+    if (seg === 'ofrecer') {
+      responder(user?.isHelper
+        ? ['Ya tienes tu ficha publicada: quien busca lo que haces ya puede encontrarte. Si quieres, la mejoramos.']
+        : ['¡Qué bien! Para ofrecer tus servicios en Nüra, crea tu ficha de profesional: son siete preguntas y al terminar ya pueden encontrarte.'],
+        { chips: [user?.isHelper ? EDITAR_FICHA : DARSE_DE_ALTA] })
+      return
+    }
+    if (seg === 'que_es') {
+      responder([
+        'Soy **Nüra**: te ayudo a encontrar a la persona adecuada para lo que necesitas, desde un fontanero hasta alguien que cuide de tu madre o clases para tu hijo.',
+        'Me cuentas qué pasa con tus palabras, te digo quién encaja mejor y por qué, y le escribes desde aquí.',
+      ], { chips: ['Una reparación en casa', 'Cuidar a un familiar', 'Clases particulares'] })
+      return
+    }
+    if (seg === 'coste') {
+      responder([
+        'Cada profesional pone su precio y lo ves en su ficha antes de escribirle.',
+        'Dime qué necesitas y te enseño quién encaja y cuánto cobra.',
+      ], { chips: ['Una reparación en casa', 'Cuidar a un familiar', 'Clases particulares'] })
+      return
+    }
+    if (seg === 'no_se') {
+      responder(['Te ayudo a aclararlo. Cuéntame qué pasa, aunque sea a medias, o empieza por aquí:'],
+        { chips: ['Una reparación en casa', 'Cuidar a un familiar', 'Clases particulares', 'Ver todas las categorías'] })
+      return
+    }
     if (seg === 'gracias') {
       const top = lastMatches?.[0]
       responder(top
@@ -1375,6 +1404,7 @@ export default function Home() {
     beginResponse()
     if (chip === EDITAR_FICHA) { navigate('/profile', { state: { editar: 'ficha' } }); return }
     if (chip === 'Ver todas las categorías') { navigate('/explore'); return }
+    if (chip === DARSE_DE_ALTA) { navigate('/register-helper'); return }
     if (otraNecesidadRef.current && chip === otraNecesidadRef.current.etiqueta) {
       const { texto } = otraNecesidadRef.current
       otraNecesidadRef.current = null

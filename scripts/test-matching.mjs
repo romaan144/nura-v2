@@ -760,6 +760,30 @@ for (const t of NEGATIVE) {
   for (const [nombre, ok] of casos) { if (!ok) failed++; console.log(`${ok ? '✓' : '✗'} tu ciudad: ${nombre}`) }
 }
 
+
+// ── Lo que pregunta quien aún no conoce Nüra (2026-10-01) ──
+{
+  const { entenderSeguimiento } = await import(join(stage, 'utils/seguimiento.js'))
+  const casos = [
+    ['qué es Nüra', 'que_es'], ['¿Cómo funciona?', 'que_es'], ['para qué sirve esto', 'que_es'], ['quién eres', 'que_es'],
+    ['cuánto cuesta', 'coste'], ['¿es gratis?', 'coste'],
+    ['ayuda', 'no_se'], ['no sé qué necesito', 'no_se'], ['ni idea', 'no_se'],
+    ['busco trabajo', 'ofrecer'], ['quiero ofrecer mis servicios', 'ofrecer'], ['soy fontanero y quiero ofrecer mis servicios', 'ofrecer'], ['cómo puedo darme de alta como profesional', 'ofrecer'],
+    // Siguen siendo búsquedas:
+    ['cuánto cuesta un fontanero', null], ['necesito ayuda con mi madre', null], ['busco un fontanero', null], ['necesito una canguro', null],
+  ]
+  for (const [t, esperado] of casos) {
+    const r = entenderSeguimiento(t)
+    const b = r === esperado
+    if (!b) failed++
+    console.log(`${b ? '✓' : '✗'} primera vez: «${t}» → ${r}`)
+  }
+  // Con resultados en pantalla, «cuánto cuesta» es por esas personas.
+  const conRes = entenderSeguimiento('cuánto cuesta', { hayResultados: true })
+  if (conRes !== 'precio') failed++
+  console.log(`${conRes === 'precio' ? '✓' : '✗'} primera vez: con resultados, «cuánto cuesta» → ${conRes}`)
+}
+
 // El total se contaba sumando los tres catalogos, asi que se quedo en 32
 // mientras las pruebas reales llegaban a 51: cada bloque añadido despues
 // (obra, agenda, silencios, interceptor, aviso) pasaba sin figurar. Un
