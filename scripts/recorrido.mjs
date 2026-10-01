@@ -886,6 +886,28 @@ console.log('\n── Lo que Nüra recuerda del cliente: solo con permiso ──
   await p.close()
 }
 
+console.log('\n── La portada pregunta siempre «¿Para quién necesitas ayuda?» ──')
+{
+  // 2026-10-01 (Sergio, opción A): antes desaparecía si ya la había
+  // contestado en esa pestaña o había escrito a alguien.
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('portada: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  const pregunta = () => p.evaluate(() => /Para quién necesitas ayuda/.test(document.body.innerText) && [...document.querySelectorAll('button')].some(b => b.textContent.trim() === 'Para mí'))
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); sessionStorage.clear() })
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1500)
+  const primera = await pregunta()
+  await tocar(p, /^Para mí$/); await espera(1500)
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1500)
+  const trasContestar = await pregunta()
+  // Con alguien a quien ya escribió (sin pregunta de «¿pudiste resolver?» pendiente).
+  await p.evaluate(() => localStorage.setItem('nura_contacted', JSON.stringify([{ id: 2001, name: 'Carlos Martínez Vidal', contactedAt: Date.now() - 60000 }])))
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1500)
+  const conContacto = await pregunta()
+  paso('la portada pregunta siempre: la primera vez, tras contestarla y tras escribir a alguien', primera && trasContestar && conContacto, `${primera} · ${trasContestar} · ${conContacto}`)
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')

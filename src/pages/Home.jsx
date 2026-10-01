@@ -391,9 +391,9 @@ export default function Home() {
     setLoading(false)
   }, [location.pathname, setMessages])
 
-  const [forWhom, setForWhom] = useState(() => {
-    try { return sessionStorage.getItem('nura_for_whom') || '' } catch { return '' }
-  })
+  // Para quién busca: solo cuenta en la conversación en curso. Antes se
+  // recordaba en la pestaña y la portada cambiaba sin motivo aparente.
+  const [forWhom, setForWhom] = useState('')
   const correctionRef = useRef(null)
   // La correccion era un modo INVISIBLE: el usuario escribia en un campo de
   // aspecto normal con una consulta anterior pegada por delante sin saberlo.
@@ -539,12 +539,12 @@ export default function Home() {
     }
 
     // ── La Pregunta — contexto antes del texto ──
-    // Solo cuando no hay memoria que continuar ni búsqueda previa que retomar
-    let forWhomAnswered; try { forWhomAnswered = sessionStorage.getItem('nura_for_whom') } catch {}
-    const lastQPre = searchHistory?.[0]?.query
-    // No al profesional: «¿para quién necesitas ayuda?» es de quien busca, y
-    // tapaba sus botones («Editar mi ficha», «Ver mis mensajes»).
-    if (!user?.isHelper && !forWhomAnswered && !lastQPre && !(contactedHelpers?.length)) {
+    // SIEMPRE a quien busca ayuda (decisión de Sergio, 2026-10-01): antes
+    // desaparecía si ya la había contestado en esa pestaña o había escrito a
+    // alguien, y la portada parecía cambiar sola. Salvo al profesional (tiene
+    // sus botones: «Editar mi ficha», «Ver mis mensajes») y cuando Nüra
+    // pregunta «¿Pudiste resolver…?» tras un contacto: esos botones van antes.
+    if (!user?.isHelper && !msgs[0].isConfirmacion) {
       msgs[0] = {
         ...msgs[0],
         lines: [...msgs[0].lines, '¿Para quién necesitas ayuda?'],
@@ -734,7 +734,6 @@ export default function Home() {
     const FOR_WHOM = { 'Para mí': 'mi', 'Para alguien de mi familia': 'familia', 'Para mi hogar o negocio': 'hogar' }
     if (FOR_WHOM[msg]) {
       const val = FOR_WHOM[msg]
-      try { sessionStorage.setItem('nura_for_whom', val) } catch {}
       setForWhom(val)
       setTimeout(() => {
         const replies = {
