@@ -536,20 +536,30 @@ export default function Home() {
       const c = (citas || []).slice().reverse().find(x => String(x.helperId) === String(hid))
       return c && c.estado !== 'cancelada' && c.estado !== 'rechazada' ? c : null
     }
+    // La cita pedida con «Contratar» se guarda en Mis servicios, no en
+    // `citas`: también cuenta (2026-10-01: preguntaba «¿pudiste resolverlo?»
+    // minutos después de pedir cita para el lunes).
+    const servicioCon = hid => (services || []).slice().reverse()
+      .find(x => String(x.helperId) === String(hid) && !['cancelled', 'rejected'].includes(x.status)) || null
     const pending = (contactedHelpers || []).find(c => {
       if (!c?.contactedAt) return false
       const elapsed = Date.now() - c.contactedAt
       const alreadyAnswered = c.confirmed !== undefined
       const ci = citaCon(c.id)
       if (ci && yaPaso(ci.fecha, ci.hora) === false) return false
+      const sv = servicioCon(c.id)
+      if (sv && sv.status !== 'completed' && yaPaso(sv.date, sv.time) === false) return false
       return elapsed >= CONFIRMACION_THRESHOLD && !alreadyAnswered
     })
     if (pending && user && !user.isHelper) {
       const lp = (personas || []).find(p => (p.contactedHelperIds || []).includes(pending.id))
       const ci = citaCon(pending.id)
+      const sv = servicioCon(pending.id)
       const hn = getFirstName(pending.name) || pending.name
       const pregunta = ci
         ? `¿Qué tal fue la visita del ${ci.label} con **${hn}**${lp ? ` para ${lp.label}` : ''}? ¿Pudisteis resolverlo?`
+        : sv?.date
+          ? `¿Qué tal fue la visita del ${fechaDeCita({ fecha: sv.date })} con **${hn}**${lp ? ` para ${lp.label}` : ''}? ¿Pudisteis resolverlo?`
         : lp
           ? `¿Pudiste resolver lo que necesitabas para ${lp.label} con **${hn}**?`
           : `¿Pudiste resolver lo que necesitabas con **${hn}**?`

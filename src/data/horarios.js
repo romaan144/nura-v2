@@ -206,7 +206,10 @@ export function motivoSinHuecos(helper, fechaISO) {
   const dia = new Date(fechaISO + 'T12:00:00').getDay()
   if (!h.dias.includes(dia)) return 'cerrado'
   if (bloqueoDe(helper, fechaISO) === 'dia') return 'bloqueado'
-  if (fechaISO === isoLocal()) return 'tarde'
+  // «Terminado» solo si de verdad ya no le quedan horas hoy. Si le quedan
+  // pero están cogidas, está completo (2026-10-01: a las 18:00, con las
+  // 19:00 ya aceptadas, decía «Terminado»).
+  if (fechaISO === isoLocal() && !h.horas.some(hora => parseInt(hora, 10) > new Date().getHours())) return 'tarde'
   return 'completo'
 }
 

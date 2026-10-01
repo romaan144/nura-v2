@@ -751,6 +751,25 @@ console.log('\n── Después de la cita: preguntar a tiempo y «Mis servicios�
   paso('con la visita aún por venir, no pregunta «¿qué tal fue?»', hid > 0 && !/Qué tal fue|Pudiste resolver/.test(await texto(pg)), `${primero} (${hid})`)
   await pg.close()
 
+  // Pedida con «Contratar»: la cita solo está en Mis servicios (2026-10-01:
+  // preguntaba «¿pudiste resolverlo?» minutos después de pedirla).
+  const soloServicio = async (pg, fecha) => {
+    await pg.goto(BASE + '/', { waitUntil: 'networkidle0' })
+    await pg.evaluate((hid, nombre, fecha) => {
+      localStorage.setItem('nura_contacted', JSON.stringify([{ id: hid, name: nombre, contactedAt: Date.now() - 4 * 864e5 }]))
+      localStorage.removeItem('nura_citas'); localStorage.removeItem('nura_ratings')
+      localStorage.setItem('nura_services', JSON.stringify([{ id: 's2', helperId: hid, helperName: nombre, specialty: 'Logopeda', date: fecha, time: '10:00', status: 'pending' }]))
+    }, hid, primero, fecha)
+    await pg.goto(BASE + '/', { waitUntil: 'networkidle0' })
+    await espera(2200)
+  }
+  pg = await navegador.newPage()
+  await soloServicio(pg, dia(3))
+  paso('cita pedida con «Contratar» para dentro de 3 días: no pregunta todavía', !/Qué tal fue|Pudiste resolver/.test(await texto(pg)))
+  await soloServicio(pg, dia(-1))
+  paso('y pasada esa cita, pregunta por la visita con su fecha', /Qué tal fue la visita del \S+, \d+ de \S+/.test(await texto(pg)), (await texto(pg)).match(/Qué tal fue[^?]*/)?.[0] || '')
+  await pg.close()
+
   // La visita fue AYER: ahora sí.
   pg = await navegador.newPage()
   pg.on('pageerror', e => errores.push('tras la cita: ' + String(e.message).split('\n')[0].slice(0, 60)))
