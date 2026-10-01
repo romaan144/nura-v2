@@ -908,7 +908,7 @@ console.log('\n── La portada pregunta siempre «¿Para quién necesitas ayud
   await p.close()
 }
 
-console.log('\n── Las respuestas cortas de Nüra, tan legibles como la portada ──')
+console.log('\n── La frase principal de Nüra, grande en todas las respuestas ──')
 {
   // 2026-10-01 (Sergio): tras «Para mí» la respuesta salía en texto pequeño.
   const p = await navegador.newPage()
@@ -923,6 +923,19 @@ console.log('\n── Las respuestas cortas de Nüra, tan legibles como la porta
   })
   paso('tras «Para alguien de mi familia», la respuesta se lee en grande', tam >= 20, `${tam}px`)
   await p.close()
+  // Y con resultados, su frase principal también («X es quien mejor encaja»).
+  const q = await navegador.newPage()
+  await q.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await q.evaluate(() => { localStorage.clear(); sessionStorage.clear() })
+  await q.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1500)
+  await escribirEn(q, 'necesito un fontanero', 'x => x.getBoundingClientRect().width > 100')
+  await q.keyboard.press('Enter'); await espera(5500)
+  const tamRes = await q.evaluate(() => {
+    const el = [...document.querySelectorAll('section[aria-label="Respuesta de Nüra"] p')].find(x => /mejor encaja/.test(x.textContent))
+    return el ? parseFloat(getComputedStyle(el).fontSize) : 0
+  })
+  paso('con resultados, «… es quien mejor encaja» también en grande', tamRes >= 20, `${tamRes}px`)
+  await q.close()
 }
 
 await navegador.close()
