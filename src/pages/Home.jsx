@@ -574,8 +574,9 @@ export default function Home() {
     msgs[0] = conPregunta(msgs[0], user)
 
 
-    // Only init if no previous conversation
-    if (nuraChatMessages.length === 0) {
+    // Solo si no hay conversación. El saludo solo (id 1) sí se rehace: era
+    // el de antes de entrar o darse de alta (Inicio no se desmonta nunca).
+    if (nuraChatMessages.length === 0 || (nuraChatMessages.length === 1 && nuraChatMessages[0]?.id === 1)) {
       setTimeout(() => setMessages(msgs), 300)
     }
 
@@ -645,7 +646,10 @@ export default function Home() {
     }
 
     return () => timers.forEach(clearTimeout)
-  }, [user?.id])
+    // Quién es, no solo su id (las cuentas del móvil no tienen): al darse de
+    // alta como profesional o entrar, Inicio seguía con el saludo de invitado
+    // porque esta pantalla se queda montada (2026-10-01).
+  }, [user?.id, user?.isHelper, user?.name, user?.helperId])
 
   // No scroll JS needed — justify-content:flex-end handles positioning
   // New messages naturally appear at bottom via flex layout
