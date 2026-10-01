@@ -170,6 +170,10 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — «Te enseño primero a quienes trabajan allí» (Claude)
+
+El hermano de Sergio notó que «te enseño primero a quien trabaja allí» se leía raro. Era correcto, pero ahora va en plural: «a quienes trabajan allí».
+
 ## 2026-10-29 — Correo y móvil en cada cuenta, los dos confirmados (Claude)
 
 Sergio: cada persona registrada con correo y móvil, para no perder la cuenta si cambia uno de los dos, y cada cambio confirmado (enlace al correo nuevo, SMS al móvil nuevo) para que nadie ponga los datos de otro. Claude decide el orden: primero el correo (gratis, y ya era el acceso) y después el móvil por SMS. Se puede entrar con cualquiera de los dos y recuperar la cuenta con un SMS. Los SMS empiezan a salir cuando se active un proveedor en Supabase.
