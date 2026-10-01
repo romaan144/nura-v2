@@ -109,6 +109,8 @@ const SESIONES = {
   'sesion-confirmada': { id: 'u1', email: 'Cliente@Ficticio.test', email_confirmed_at: '2026-09-01T00:00:00Z' },
   'sesion-sin-confirmar': { id: 'u2', email: 'otra@ficticio.test' },
 }
+const cuentasBorradas = []
+const almacen = new Set()   // fotos del almacén ficticio: «<cuenta>/<nombre>»
 const tocados = []   // notificaciones enviadas al servicio de push ficticio
 const correos = []   // correos enviados al proveedor ficticio
 let pushResponde = 201
@@ -120,6 +122,16 @@ globalThis.fetch = async (url, init) => {
   }
   if (String(url).startsWith('https://fcm.googleapis.com/')) { tocados.push({ url: String(url), init }); return new Response(null, { status: pushResponde }) }
   if (String(url) === 'https://api.resend.com/emails') { correos.push(JSON.parse(init.body)); return Response.json({ id: 'x' }) }
+  if (String(url).startsWith(SUPA + '/auth/v1/admin/users/') && init?.method === 'DELETE') { cuentasBorradas.push(String(url).split('/').pop()); return Response.json({}) }
+  // El almacén de fotos, ficticio: listar una carpeta y borrar varias.
+  if (String(url) === SUPA + '/storage/v1/object/list/fotos') {
+    const { prefix } = JSON.parse(init.body)
+    return Response.json([...almacen].filter(n => n.startsWith(prefix + '/')).map(n => ({ name: n.slice(prefix.length + 1) })))
+  }
+  if (String(url) === SUPA + '/storage/v1/object/fotos' && init?.method === 'DELETE') {
+    for (const n of JSON.parse(init.body).prefixes) almacen.delete(n)
+    return Response.json([])
+  }
   if (String(url).startsWith(SUPA)) return postgrest(String(url), init)
   throw new Error('salida de red no permitida en la prueba: ' + url)
 }
@@ -822,6 +834,32 @@ console.log('\n── La cita: se acepta con un botón y ocupa la hora para todo
   r = await llamarG(funcion, { op: 'mis-avisos', sesion: 'sesion-confirmada' })
   ok(r.estado === 200 && (r.datos.avisos || []).find(a => a.id === fS.id)?.cita_cambia_de === `${d} 10:00`, 'la bandeja del profesional trae de qué hora viene cada cambio')
   void c5
+}
+
+// ── Las fotos de perfil: cambiar, quitar y borrar la cuenta (2026-10-01) ──
+{
+  for (const n of ['u1/perfil-1.jpg', 'u1/perfil-2.jpg', 'u2/perfil-9.jpg']) almacen.add(n)
+  let r = await llamar(funcion, { op: 'limpiar-fotos', conservar: 'u1/perfil-2.jpg' })
+  ok(r.estado === 401 && almacen.size === 3, 'limpiar fotos sin sesión: 401 y no borra nada')
+  r = await llamar(funcion, { op: 'limpiar-fotos', token: 'sesion-falsa' })
+  ok(r.estado === 401 && almacen.size === 3, 'con una sesión falsa: 401 y no borra nada')
+  r = await llamar(funcion, { op: 'limpiar-fotos', token: 'sesion-confirmada', conservar: 'u1/perfil-2.jpg' })
+  ok(r.estado === 200 && !almacen.has('u1/perfil-1.jpg') && almacen.has('u1/perfil-2.jpg') && almacen.has('u2/perfil-9.jpg'),
+    'al cambiar la foto: borra las viejas de SU carpeta y conserva la nueva')
+  r = await llamar(funcion, { op: 'limpiar-fotos', token: 'sesion-confirmada', conservar: 'u2/perfil-9.jpg' })
+  ok(r.estado === 200 && !almacen.has('u1/perfil-2.jpg') && almacen.has('u2/perfil-9.jpg'),
+    'no puede «conservar» ni tocar la carpeta de otra cuenta')
+  almacen.add('u1/perfil-3.jpg')
+  r = await llamar(funcion, { op: 'limpiar-fotos', token: 'sesion-confirmada', conservar: 'u1/../u2/perfil-9.jpg' })
+  ok(r.estado === 200 && !almacen.has('u1/perfil-3.jpg') && almacen.has('u2/perfil-9.jpg'), 'un nombre con «..» no sirve para escapar de su carpeta')
+  almacen.add('u1/perfil-4.jpg')
+  r = await llamar(funcion, { op: 'limpiar-fotos', token: 'sesion-confirmada', conservar: '' })
+  ok(r.estado === 200 && ![...almacen].some(n => n.startsWith('u1/')) && almacen.has('u2/perfil-9.jpg'), 'quitar la foto borra todas las suyas, ninguna ajena')
+  for (const n of ['u1/perfil-5.jpg', 'u1/perfil-6.jpg']) almacen.add(n)
+  r = await llamar(funcion, { op: 'borrar-cuenta', token: 'sesion-confirmada' })
+  ok(r.estado === 200 && cuentasBorradas.includes('u1') && ![...almacen].some(n => n.startsWith('u1/')) && almacen.has('u2/perfil-9.jpg'),
+    'al borrar la cuenta se borran TODAS sus fotos (no solo la última) y ninguna ajena' + (r.estado !== 200 ? ` (${r.texto})` : ''))
+  almacen.clear()
 }
 
 const servidor = http.createServer(async (req, res) => {

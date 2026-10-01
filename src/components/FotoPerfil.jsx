@@ -12,6 +12,11 @@ import { Camera } from 'lucide-react'
 // podria cambiar la foto de cualquiera. La foto va a `fotos/<su cuenta>/`,
 // y el almacenamiento solo le deja escribir en esa carpeta.
 //
+// Cada foto se sube con su propio nombre (perfil-<hora>.jpg) y el servidor
+// borra las anteriores: el almacén no deja «ver» la carpeta desde el
+// navegador, y sin eso no se puede sobrescribir una foto. «Quitar foto»
+// deja la ficha sin foto y borra las de su carpeta (2026-10-01).
+//
 // Se recorta en cuadrado y se reduce EN EL MOVIL antes de subir: 480x480 en
 // JPEG, unos 50 kB. Una foto de camara pesa 3-5 MB; con mala cobertura no
 // subiria nunca, y la ficha la descargaria cada persona que la mire.
@@ -40,6 +45,7 @@ export default function FotoPerfil({ actual, helperId, onCambio }) {
   const [previa, setPrevia] = useState(null)   // { blob, url }
   const [subiendo, setSubiendo] = useState(false)
   const [error, setError] = useState('')
+  const [quitando, setQuitando] = useState(false)   // pidiendo confirmación
 
   async function elegida(e) {
     const f = e.target.files?.[0]; e.target.value = ''
@@ -56,8 +62,8 @@ export default function FotoPerfil({ actual, helperId, onCambio }) {
       const { cuentas } = await import('../utils/cuenta')
       const { data: { session } } = await cuentas.auth.getSession()
       if (!session) throw new Error('sin sesion')
-      const ruta = `${session.user.id}/perfil.jpg`
-      const sub = await cuentas.storage.from('fotos').upload(ruta, previa.blob, { upsert: true, contentType: 'image/jpeg' })
+      const ruta = `${session.user.id}/perfil-${Date.now()}.jpg`
+      const sub = await cuentas.storage.from('fotos').upload(ruta, previa.blob, { contentType: 'image/jpeg' })
       if (sub.error) throw sub.error
       // ?v= para que nadie siga viendo la foto anterior guardada en cache.
       const url = cuentas.storage.from('fotos').getPublicUrl(ruta).data.publicUrl + '?v=' + Date.now()
@@ -65,8 +71,29 @@ export default function FotoPerfil({ actual, helperId, onCambio }) {
       if (error || !data?.length) throw error || new Error('ninguna fila')
       URL.revokeObjectURL(previa.url); setPrevia(null)
       onCambio(url)
+      // Las anteriores sobran. Si falla, se reintenta en el próximo cambio.
+      const { limpiarFotos } = await import('../utils/escrituras')
+      limpiarFotos(session.access_token, ruta)
     } catch {
       setError('No se ha podido subir la foto. Revisa tu conexión y vuelve a probar.')
+    } finally { setSubiendo(false) }
+  }
+
+  async function quitar() {
+    if (subiendo) return
+    setSubiendo(true); setError('')
+    try {
+      const { cuentas } = await import('../utils/cuenta')
+      const { data: { session } } = await cuentas.auth.getSession()
+      if (!session) throw new Error('sin sesion')
+      const { data, error } = await cuentas.from('helpers').update({ avatarUrl: null }).eq('id', helperId).select('id')
+      if (error || !data?.length) throw error || new Error('ninguna fila')
+      setQuitando(false)
+      onCambio(null)
+      const { limpiarFotos } = await import('../utils/escrituras')
+      limpiarFotos(session.access_token, '')
+    } catch {
+      setError('No se ha podido quitar la foto. Revisa tu conexión y vuelve a probar.')
     } finally { setSubiendo(false) }
   }
 
@@ -86,10 +113,10 @@ export default function FotoPerfil({ actual, helperId, onCambio }) {
           : <div style={{ ...circulo, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Camera size={26} color="var(--purple-ink)" /></div>}
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{ margin: 0, fontSize: 'var(--text-base)', fontWeight: 600, color: 'var(--ink-primary)' }}>
-            {previa ? 'Así se verá en tu ficha' : actual ? 'Tu foto' : 'Añade tu foto'}
+            {previa ? 'Así se verá en tu ficha' : quitando ? '¿Quitar tu foto?' : actual ? 'Tu foto' : 'Añade tu foto'}
           </p>
           <p style={{ margin: 'var(--space-2) 0 0', fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)', lineHeight: 1.45 }}>
-            {previa ? 'Se recorta en cuadrado.' : actual ? 'Es lo primero que ven de ti.' : 'Los perfiles con foto reciben más mensajes.'}
+            {previa ? 'Se recorta en cuadrado.' : quitando ? 'Tu ficha se quedará sin foto y la borraremos.' : actual ? 'Es lo primero que ven de ti.' : 'Los perfiles con foto reciben más mensajes.'}
           </p>
         </div>
       </div>
@@ -104,13 +131,24 @@ export default function FotoPerfil({ actual, helperId, onCambio }) {
               flex: 2,
               ...(glass.primary) }}>
             {subiendo ? 'Subiendo…' : 'Usar esta foto'}</button>
-        </>) : (
+        </>) : quitando ? (<>
+          <button className="nura-glass-action" onClick={() => setQuitando(false)} disabled={subiendo}
+            style={{ ...boton('none', 'var(--ink-secondary)', '1px solid var(--ink-border)'), flex: 1, ...(glass.control) }}>Mantenerla</button>
+          <button className="nura-glass-action" onClick={quitar} disabled={subiendo}
+            style={{ ...boton('none', 'var(--red-ink)', '1px solid var(--ink-border)'), flex: 1, ...(glass.control) }}>
+            {subiendo ? 'Quitando…' : 'Sí, quitarla'}</button>
+        </>) : (<>
           <button className="nura-glass-action" onClick={() => entrada.current?.click()}
             style={{ ...boton('white', 'var(--purple-ink)', '1px solid var(--ink-border)'),
-              width: '100%',
+              flex: 2,
               ...(glass.control) }}>
             {actual ? 'Cambiar foto' : 'Elegir una foto'}</button>
-        )}
+          {actual && (
+            <button className="nura-glass-action" onClick={() => { setError(''); setQuitando(true) }}
+              style={{ ...boton('none', 'var(--ink-secondary)', '1px solid var(--ink-border)'), flex: 1, ...(glass.control) }}>
+              Quitar</button>
+          )}
+        </>)}
       </div>
     </div>
   )

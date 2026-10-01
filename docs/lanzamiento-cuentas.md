@@ -88,6 +88,8 @@ create policy fotos_borrar_propia on storage.objects for delete to authenticated
   using (bucket_id = 'fotos' and (storage.foldername(name))[1] = auth.uid()::text);
 ```
 
+**2026-10-01 · Cambiar y quitar la foto.** El almacén no tiene permiso de «ver» (SELECT), y Supabase lo exige para sobrescribir o borrar. Por eso «Cambiar foto» habría fallado en la segunda foto (nadie había subido ninguna todavía). No se añade ese permiso: el usuario de la base de datos que usa Claude no puede cambiar los permisos del almacén. En su lugar, cada foto se sube con su propio nombre (`perfil-<hora>.jpg`, solo hace falta INSERT) y la función `helpers-write` (op `limpiar-fotos`, con la sesión) borra las demás de SU carpeta. «Quitar foto» pone `avatarUrl` a null y borra la carpeta, y borrar la cuenta borra la carpeta entera (antes solo `perfil.jpg`).
+
 ### Comprobar que ha ido bien
 
 ```sql
