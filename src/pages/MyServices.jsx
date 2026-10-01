@@ -1,4 +1,4 @@
-import { avatarDe } from '../utils/avatar'
+import { avatarDe, avatarVigente } from '../utils/avatar'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Calendar, CheckCircle, ChevronRight, Star, ClipboardList, MessageCircle, RotateCcw, Clock, XCircle } from 'lucide-react'
@@ -202,8 +202,9 @@ export default function MyServices() {
                 <button type="button" className={styles.cardMain} aria-label={`Ver perfil de ${s.helperName}`}
                   onClick={() => navigate(`/helper/${s.helperId}`)}>
                   {/* Avatar */}
-                  {s.avatarUrl
-                    ? <img src={s.avatarUrl} alt="" className={styles.avatar} />
+                  {/* Sin foto, su avatar ilustrado (como en Chats), no una letra. */}
+                  {avatarVigente(s.avatarUrl, s.helperName)
+                    ? <img src={avatarVigente(s.avatarUrl, s.helperName)} alt="" className={styles.avatar} />
                     : <span className={styles.avatarFallback} style={{background: s.avatarColor || 'var(--purple)'}}>
                         {s.avatar || s.helperName?.[0] || '?'}
                       </span>

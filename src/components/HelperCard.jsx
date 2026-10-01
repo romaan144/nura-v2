@@ -8,6 +8,7 @@ import { ArrowUpRight, BadgeCheck, MapPin, MessageCircle, Star, Zap } from 'luci
 import styles from './HelperCard.module.css'
 import { recordarDestino, contextoDeChat } from '../utils/contacto'
 import { fmtNota, dondeEsta } from '../utils/formato'
+import { avatarVigente } from '../utils/avatar'
 
 // ═══════════════════════════════════════════════════════════════
 // La Tarjeta Persona — representación canónica del profesional
@@ -54,8 +55,8 @@ export default function HelperCard({ helper, onContact, showContact = true, show
     <article className={styles.card}>
       <button type="button" className={styles.profile} onClick={handleTap} aria-label={`Ver perfil de ${helper.name}`}>
         <span className={styles.avatarWrap}>
-          {helper.avatarUrl
-            ? <img decoding="async" loading="lazy" width="80" height="80" src={helper.avatarUrl} alt="" className={styles.avatar} />
+          {avatarVigente(helper.avatarUrl, helper.name)
+            ? <img decoding="async" loading="lazy" width="80" height="80" src={avatarVigente(helper.avatarUrl, helper.name)} alt="" className={styles.avatar} />
             : <span className={styles.avatarFallback}>{firstName?.[0]?.toUpperCase() || '?'}</span>}
           {helper.available && <span className={styles.availDot} role="img" aria-label="Disponible ahora" />}
         </span>

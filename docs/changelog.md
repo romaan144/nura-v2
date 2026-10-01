@@ -170,6 +170,10 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Sin foto, su avatar ilustrado y no una letra (Claude)
+
+En «Mis servicios» (y al valorar o pedir cita), un profesional sin foto era un cuadrado de color con una letra. Ahora sale su avatar ilustrado, el mismo que en Chats, y se reconoce a cada persona de un vistazo.
+
 ## 2026-10-29 — La foto del profesional: cambiarla, quitarla y borrarla con la cuenta (Claude)
 
 Subir la foto ya funcionaba, pero cambiarla habría fallado a la segunda: el almacén no deja sobrescribir sin un permiso que no tiene. Ahora cada foto se guarda con su propio nombre y el servidor borra las viejas. Hay un botón para quitarla (con confirmación), y al borrar la cuenta se borran todas sus fotos, no solo la última.

@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import { Calendar, Clock, CheckCircle, X, ArrowRight } from 'lucide-react'
 import ElegirCita from './ElegirCita'
 import styles from './CitaModal.module.css'
+import { avatarVigente } from '../utils/avatar'
 
 // Presentación compartida. Los dos padres conservan sus propios envíos y estados.
 export default function CitaModal({ helper, date, time, note, onDate, onTime, onNote,
@@ -32,7 +33,7 @@ export default function CitaModal({ helper, date, time, note, onDate, onTime, on
         </header>
         <div className={styles.body} ref={body}>
           <div className={styles.person}>
-            {helper?.avatarUrl ? <img src={helper.avatarUrl} alt="" className={styles.avatar} />
+            {avatarVigente(helper?.avatarUrl, helper?.name) ? <img src={avatarVigente(helper?.avatarUrl, helper?.name)} alt="" className={styles.avatar} />
               : <span className={styles.avatarFallback}>{helper?.name?.[0] || '?'}</span>}
             <div><strong>{helper?.name}</strong><span>{helper?.price || 'Precio a consultar'}</span></div>
             {done && <CheckCircle className={styles.successIcon} size={28} aria-hidden="true" />}

@@ -9,6 +9,7 @@ import styles from './RatingModal.module.css'
 import { registrar } from '../utils/analitica'
 import { valorar } from '../utils/escrituras'
 import { ETIQUETA_CUALIDAD, cualidadesPara, MAX_CUALIDADES } from '../utils/cualidades'
+import { avatarVigente } from '../utils/avatar'
 
 // PERFIL VIVO, pieza 1 (docs/perfil-vivo.md §3). Tres preguntas de un toque,
 // todas opcionales: basta con responder una. La mas honesta va primero.
@@ -77,7 +78,7 @@ export default function RatingModal({ helper, onClose, onEnviado }) {
           {!done ? (
             <>
               <div className={styles.person}>
-                {helper.avatarUrl ? <img className={styles.avatar} src={helper.avatarUrl} alt="" />
+                {avatarVigente(helper.avatarUrl, helper.helperName ?? helper.name ?? nombre) ? <img className={styles.avatar} src={avatarVigente(helper.avatarUrl, helper.helperName ?? helper.name ?? nombre)} alt="" />
                   : <span className={styles.avatarFallback}>{(helper.helperName ?? helper.name ?? nombre)[0]?.toUpperCase()}</span>}
                 <div><strong>{helper.helperName ?? helper.name ?? nombre}</strong><p>Responde solo a lo que quieras.</p></div>
               </div>
