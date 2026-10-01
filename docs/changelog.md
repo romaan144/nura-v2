@@ -170,6 +170,17 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — La primera vez: preguntas de quien no conoce Nüra
+
+- Probado como visitante nuevo. «Qué es Nüra», «cómo funciona», «cuánto cuesta», «ayuda» y «no sé qué necesito» recibían «No estoy segura de haberte entendido». «Busco trabajo» decía que no había nadie de «trabajo», y «quiero ofrecer mis servicios» recomendaba a un técnico informático.
+- Ahora se reconocen antes de buscar (`src/utils/seguimiento.js`) y se contestan:
+  - **Qué es Nüra:** «Soy Nüra: te ayudo a encontrar a la persona adecuada…», con ejemplos.
+  - **Cuánto cuesta:** «Cada profesional pone su precio y lo ves en su ficha antes de escribirle». No se inventan condiciones de Nüra.
+  - **No sé qué necesito:** le guía con ejemplos y «Ver todas las categorías».
+  - **Ofrecer sus servicios o buscar trabajo:** le invita al alta con el botón «Darme de alta como profesional». Si ya es profesional, le ofrece «Editar mi ficha».
+- Solo cuentan las frases enteras: «cuánto cuesta un fontanero» sigue siendo una búsqueda. Curiosidad: «quién eres» parecía pedir un abogado laboralista, porque «eres» se leía como varios ERE.
+- Pruebas: 18 casos en `test:matching` (279) y la visita real en `npm run recorrido`. La búsqueda sigue al 100 %.
+
 ## 2026-10-29 — Notificaciones: al tocarlas, a la pantalla correcta
 
 - La notificación «Te han escrito en Nüra» de la profesional llega por un canal aparte (ámbito `/pro/`) que no controla las páginas de la app. Con Nüra ya abierta, al tocarla el navegador no le dejaba cambiar de pantalla: la app se ponía delante pero se quedaba donde estuviera, sin llevarla a sus mensajes. Ahora, si no puede, se lo pide a la app (mensaje `nura-ir`, solo rutas de Nüra) y la app va a la pantalla.

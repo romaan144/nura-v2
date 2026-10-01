@@ -805,6 +805,40 @@ console.log('\n── Al tocar una notificación con Nüra abierta ──')
   await p.close()
 }
 
+console.log('\n── La primera vez: preguntas de quien no conoce Nüra ──')
+{
+  // 2026-10-01: antes «No estoy segura de haberte entendido», o un técnico
+  // informático a quien quería ofrecer sus servicios.
+  const pregunta = async frase => {
+    const p = await navegador.newPage()
+    p.on('pageerror', e => errores.push('primera vez: ' + String(e.message).split('\n')[0].slice(0, 60)))
+    await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+    await p.evaluate(() => { localStorage.clear(); sessionStorage.clear() })
+    await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+    await espera(1800)
+    await escribirEn(p, frase, 'x => x.getBoundingClientRect().width > 100')
+    await p.keyboard.press('Enter')
+    await espera(2500)
+    return p
+  }
+  const resp = p => p.evaluate(() => (document.querySelector('section[aria-label="Respuesta de Nüra"]')?.innerText || '').replace(/\s+/g, ' '))
+  let p = await pregunta('qué es Nüra')
+  let r = await resp(p)
+  paso('«qué es Nüra»: lo explica', /Soy Nüra: te ayudo a encontrar/.test(r) && !/haberte entendido/.test(r))
+  await p.close()
+  p = await pregunta('no sé qué necesito')
+  r = await resp(p)
+  paso('«no sé qué necesito»: le guía con ejemplos', /Te ayudo a aclararlo/.test(r) && /Ver todas las categorías/.test(r))
+  await p.close()
+  p = await pregunta('quiero ofrecer mis servicios')
+  r = await resp(p)
+  const sinResultados = !/Ver perfil/.test(r)
+  await tocar(p, /^Darme de alta como profesional$/)
+  await espera(1500)
+  paso('«quiero ofrecer mis servicios»: al alta de profesional, sin recomendar a nadie', sinResultados && /\/register-helper$/.test(p.url()), p.url().replace(BASE, ''))
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')

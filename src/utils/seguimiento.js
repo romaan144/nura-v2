@@ -15,6 +15,9 @@ const plano = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-�
 /**
  * 'saludo' | 'gracias' | 'nueva' | 'precio' | 'barato' | 'online' | 'presencial'
  * | 'otra' | { franja: 'manana'|'tarde'|'noche'|'finde' } | null (lo de siempre).
+ * Y lo que pregunta quien aún no conoce Nüra (2026-10-01): 'ofrecer' (quiere
+ * trabajar o darse de alta), 'que_es', 'coste' y 'no_se'. Las tres últimas solo
+ * con la frase entera: «cuánto cuesta un fontanero» es una búsqueda.
  * `oficiosAntes`: los oficios de la búsqueda anterior (analysis.oficios).
  */
 export function entenderSeguimiento(msg, { hayResultados = false, oficiosAntes = [] } = {}) {
@@ -22,6 +25,19 @@ export function entenderSeguimiento(msg, { hayResultados = false, oficiosAntes =
   if (!t) return null
   if (/^(hola|holi|hey|buenas|buenos dias|buenas tardes|buenas noches|que tal|hola nura|hola que tal)( nura)?$/.test(t)) return 'saludo'
   if (/^(gracias|muchas gracias|mil gracias|gracias nura|genial gracias|perfecto gracias|ok gracias)$/.test(t)) return 'gracias'
+
+  // Quiere ofrecer sus servicios, no contratar: aunque nombre su oficio
+  // («soy fontanero y quiero ofrecer mis servicios»). Antes le buscaba uno.
+  if (/\b(ofrecer|ofrezco|anunciar|anunciarme|publicar) (mis|tus|los) servicios\b|\b(busco|buscando|quiero|necesito) (trabajo|empleo|curro)\b|\b(quiero|como puedo) (trabajar|darme de alta|apuntarme|registrarme) (en|con|como)\b|\bdarme de alta como\b|\btrabajar (en|con|para) nura\b|\bquiero ser (profesional|de los profesionales)\b/.test(t)) return 'ofrecer'
+
+  // Frases enteras: «cuánto cuesta un fontanero» no encaja y sigue siendo una
+  // búsqueda. (No se mira el oficio: «quién eres» parecía pedir un ERE.)
+  {
+    if (/^(que|q) es (nura|esto|esta app|esta aplicacion)$|^(quien|que) eres( tu)?$|^como funciona( nura| esto| esta app| la app)?$|^para que sirve( nura| esto| esta app)?$|^que (haces|puedes hacer|hace nura)$|^como va esto$/.test(t)) return 'que_es'
+    // Sin resultados en pantalla, «cuánto cuesta» es por Nüra; con ellos, por esas personas.
+    if (/^(es gratis|es gratuito|hay que pagar|cuanto cobras|cuanto cobra nura|cuanto cuesta (usar )?(nura|la app|esto))$/.test(t) || (!hayResultados && /^cuanto (cuesta|vale|cobran)$/.test(t))) return 'coste'
+    if (/^(ayuda|ayudame|socorro|necesito ayuda|necesito algo|no se|no lo se|ni idea|no se que (necesito|buscar|quiero|pedir)|no se por donde empezar|que puedo (buscar|pedir)|que me recomiendas|que hay)$/.test(t)) return 'no_se'
+  }
   if (!hayResultados) return null
 
   // Nombra un oficio distinto: es otra búsqueda («no, era fontanero»).
