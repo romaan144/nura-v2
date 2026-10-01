@@ -898,3 +898,11 @@
 .menuBubble { background: var(--glass-floating); border-color: var(--glass-edge); box-shadow: var(--glass-floating-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
 .page:not(.focusPage) .bubbleNura { padding: 12px 16px; border: 1px solid var(--glass-edge); border-radius: 24px 24px 24px 8px; background: var(--glass-panel); box-shadow: var(--glass-control-shadow); }
 .page:not(.focusPage) .logoBubble { background: var(--glass-floating); border: 1px solid var(--glass-edge); box-shadow: var(--glass-floating-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); }
+
+/* «Ver todos» destaca como «Contratar» en el chat (Sergio, 2026-10-01):
+   mismo degradado lila, texto blanco y sombra de acción principal. */
+.browseTop, .browseTop:hover {
+  background: var(--grad-main); color: #fff;
+  border-color: #8152BD; box-shadow: var(--glass-primary-shadow);
+}
+.browseTop:hover { filter: brightness(1.06); }

@@ -170,6 +170,10 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — «Ver todos» en lila (Claude)
+
+Sergio quiere que en la portada destaque el botón «Ver todos», que lleva a los profesionales. Ahora tiene el mismo diseño que «Contratar» en el chat: lila con texto blanco.
+
 ## 2026-10-29 — Fuera «Identidad verificada» de las tarjetas; las frases de Nüra ya no se parten (Claude)
 
 Siguiendo a la retirada del bloque del perfil, las tarjetas grandes de profesional dejan la etiqueta «Identidad verificada». Y al revisar la legibilidad de los mensajes: los textos largos se cortaban a los 160 caracteres a mitad de frase, y en «No estoy segura de haberte entendido…» la última palabra quedaba sola en letra pequeña bajo el titular. Ahora el corte se hace al final de una frase.
