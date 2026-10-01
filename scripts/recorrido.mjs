@@ -947,6 +947,19 @@ console.log('\n── La frase principal de Nüra, grande en todas las respuesta
   await tocar(q, /^Para alguien de mi familia$/); await espera(1500)
   paso('y sus botones siguen funcionando', /Cuéntame qué le pasa/.test(await q.evaluate(() => document.body.innerText)))
   await q.close()
+  // Una frase no se parte a mitad: «madre".» caía sola en letra pequeña.
+  const r = await navegador.newPage()
+  await r.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await r.evaluate(() => { localStorage.clear(); sessionStorage.clear() })
+  await r.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1500)
+  await escribirEn(r, 'asdfg qwerty', 'x => x.getBoundingClientRect().width > 100')
+  await r.keyboard.press('Enter'); await espera(5500)
+  const trozos = await r.evaluate(() => [...document.querySelectorAll('section[aria-label="Respuesta de Nüra"] p')]
+    .filter(x => !/asdfg/.test(x.textContent)).map(x => ({ t: x.textContent.trim(), px: parseFloat(getComputedStyle(x).fontSize) })))
+  paso('la ayuda de Nüra se corta al final de una frase, no a mitad',
+    trozos.length >= 1 && trozos[0].px >= 18 && /palabras\?$/.test(trozos[0].t) && trozos.every(x => /[.!?]["»”]?$/.test(x.t)),
+    JSON.stringify(trozos.map(x => x.px + 'px ' + x.t.slice(-20))))
+  await r.close()
 }
 
 await navegador.close()

@@ -163,7 +163,7 @@ export default function HelperCardTall({ helper, small = false, compact = false,
         </div>
       )}
 
-      {!small && (helper.responseTime || experienciaTexto || helper.dniVerified) && (
+      {!small && (helper.responseTime || experienciaTexto) && (
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 'var(--space-6)', marginTop: 'var(--space-12)' }}>
           {helper.responseTime && (
             <span style={{ background: 'var(--paper)', border: '1px solid var(--ink-border)',
@@ -175,12 +175,6 @@ export default function HelperCardTall({ helper, small = false, compact = false,
             <span style={{ background: 'var(--paper)', border: '1px solid var(--ink-border)',
               borderRadius: 'var(--radius-full)', padding: 'var(--space-4) var(--space-10)', fontSize: 'var(--text-xs)', color: 'var(--ink-secondary)' }}>
               {experienciaTexto}
-            </span>
-          )}
-          {helper.dniVerified && (
-            <span style={{ background: 'var(--purple-10)', borderRadius: 'var(--radius-full)', padding: 'var(--space-4) var(--space-10)',
-              fontSize: 'var(--text-xs)', color: 'var(--purple-ink)', fontWeight: 600 }}>
-              Identidad verificada
             </span>
           )}
         </div>
