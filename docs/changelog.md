@@ -170,6 +170,15 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Con mala conexión: reintentar de verdad y no perder lo escrito
+
+- Probado en la versión real con la red cortada, lenta o que vuelve.
+- **Sin conexión.** Nüra decía «Cuando vuelvas, lo intento otra vez», pero no lo hacía: solo dejaba un botón con la frase buscada. Ahora repite la búsqueda sola en cuanto vuelve la conexión (solo si ese aviso sigue siendo lo último en pantalla). El botón dice «Buscar otra vez».
+- **Servidor lento o caído.** Con conexión, se anunciaba como «te has quedado sin conexión». Ahora dice que está tardando, o que no se pudo completar, y ofrece «Buscar otra vez».
+- **Lo que se escribe a un profesional.** Se perdía si la app se cerraba, se quedaba sin batería o se volvía atrás. Ahora se guarda en el móvil hasta enviarlo. La propuesta de primer mensaje sin tocar no se guarda, para que la próxima vez pueda ser otra. Empieza por `nura_`, así que «Borrar mis datos» también lo borra.
+- `src/pages/Home.jsx`, `src/pages/Chat.jsx`. `npm run recorrido-real` lo comprueba: con el código anterior fallaban las cinco comprobaciones.
+- Nota de lint: la expresión antigua del aviso de error hacía que el comprobador de React no analizara la pantalla de Inicio. Al cambiarla vuelve a analizarla y saca 18 avisos que ya existían en código no tocado. Ninguno está en las líneas de este cambio.
+
 ## 2026-10-29 — La primera vez: preguntas de quien no conoce Nüra
 
 - Probado como visitante nuevo. «Qué es Nüra», «cómo funciona», «cuánto cuesta», «ayuda» y «no sé qué necesito» recibían «No estoy segura de haberte entendido». «Busco trabajo» decía que no había nadie de «trabajo», y «quiero ofrecer mis servicios» recomendaba a un técnico informático.

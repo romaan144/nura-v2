@@ -178,9 +178,24 @@ export default function Chat() {
   const userQuery = location.state?.userQuery || window.__nuraLastQuery
 
   // La propuesta permanece en el campo: no se añade al historial ni se envía.
-  const [input, setInput] = useState(() =>
+  const [propuesta] = useState(() =>
     !hasHistory ? buildChatOpener({ helper, userQuery, analysis: location.state?.analysis || window.__nuraLastAnalysis }) : ''
   )
+  // LO QUE ESTÁ ESCRIBIENDO se guarda en este móvil hasta enviarlo: si la app
+  // se cierra, se queda sin batería o vuelve atrás, no se pierde. Solo lo
+  // suyo: la propuesta sin tocar no se guarda (la próxima vez puede ser
+  // otra). Empieza por `nura_`: «Borrar mis datos» también lo borra.
+  const BORRADOR = 'nura_borrador_chat_' + id
+  const [input, setInput] = useState(() => {
+    try { const b = localStorage.getItem(BORRADOR); if (b && b.trim()) return b } catch { /* sin almacenamiento */ }
+    return propuesta
+  })
+  useEffect(() => {
+    try {
+      if (input.trim() && input !== propuesta) localStorage.setItem(BORRADOR, input)
+      else localStorage.removeItem(BORRADOR)
+    } catch { /* sin almacenamiento: se escribe igual, solo que no se guarda */ }
+  }, [input, propuesta, BORRADOR])
   const [typing, setTyping] = useState(false)
 
   // ── La Conversación Viva: aceptar o mover la propuesta del profesional ──
