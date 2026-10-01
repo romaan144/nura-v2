@@ -741,7 +741,7 @@ export default function Profile() {
                 onClick={() => navigate('/siguiendo')} />
               {!user.isHelper && !ciudadAbierta && (
                 <Fila icono={MapPin} titulo={user.ciudad ? `Tu ciudad: ${user.ciudad}` : 'Tu ciudad'}
-                  detalle={user.ciudad ? 'Te enseño primero a quien trabaja allí' : 'Dime dónde buscas y te enseño primero a quien trabaja allí'}
+                  detalle={user.ciudad ? 'Te enseño primero a quienes trabajan allí' : 'Dime dónde buscas y te enseño primero a quienes trabajan allí'}
                   envolver onClick={() => { setCiudadAbierta(true); setCiudadDraft(user.ciudad || ''); setCiudadFallo('') }} />
               )}
             </div>
@@ -749,7 +749,7 @@ export default function Profile() {
               <div className={styles.tarjeta}>
                 <label htmlFor="campo-ciudad" className={styles.tarjetaTitulo}>Tu ciudad</label>
                 <p className={styles.tarjetaTexto} style={{margin:'0 0 var(--space-10)'}}>
-                  Cuando busques sin decir dónde, te enseño primero a quien trabaja allí o atiende online. No escondo a nadie.
+                  Cuando busques sin decir dónde, te enseño primero a quienes trabajan allí o atienden online. No escondo a nadie.
                 </p>
                 <input id="campo-ciudad" className={styles.campo} autoFocus value={ciudadDraft} placeholder="Madrid, Valencia, Barcelona…"
                   list="ciudades-nura" autoComplete="off"
