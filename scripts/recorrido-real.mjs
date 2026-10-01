@@ -537,6 +537,62 @@ try {
     await f.close(); await ctx.close()
   }
 
+  console.log('\n── La foto del profesional: cambiarla y quitarla ──')
+  {
+    // 2026-10-01: «Cambiar foto» sobrescribía (y el almacén no deja) y no
+    // había forma de quitarla. Ahora cada foto lleva su nombre y el servidor
+    // borra las viejas; quitarla deja la ficha sin foto y borra la carpeta.
+    const H = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': '*', 'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, OPTIONS' }
+    const subidas = [], cambios = [], limpiezas = []
+    const ctx = await b.createBrowserContext()
+    const f = await ctx.newPage()
+    await f.setViewport({ width: 390, height: 844 })
+    await f.setRequestInterception(true)
+    f.on('request', r => {
+      const u = r.url()
+      if (u.startsWith(B)) return r.continue()
+      if (r.method() === 'OPTIONS') return r.respond({ status: 204, headers: H })
+      const json = (body, status = 200) => r.respond({ status, headers: H, contentType: 'application/json', body: JSON.stringify(body) })
+      if (u.includes('/storage/v1/object/fotos/')) { subidas.push({ ruta: decodeURIComponent(u.split('/storage/v1/object/fotos/')[1]), upsert: r.headers()['x-upsert'] }); return json({ Key: 'fotos/x' }) }
+      if (u.includes('/rest/v1/helpers') && r.method() === 'PATCH') { cambios.push(JSON.parse(r.postData() || '{}')); return json([{ id: 7001 }]) }
+      if (u.includes('/auth/v1/user')) return json({ id: 'u-pro', aud: 'authenticated', role: 'authenticated', email: 'laura@ficticia.test' })
+      if (u.includes('funcion.ficticia')) {
+        const c = JSON.parse(r.postData() || '{}')
+        if (c.op === 'limpiar-fotos') limpiezas.push(c)
+        return json({ ok: true, avisos: [] })
+      }
+      return json([])
+    })
+    await f.goto(B + '/', { waitUntil: 'networkidle0' })
+    await f.evaluate(exp => {
+      localStorage.clear()
+      localStorage.setItem('nura_user', JSON.stringify({ name: 'Laura Vidal Soler', isHelper: true, helperId: 7001, joined: new Date().toISOString(),
+        avatar: 'https://x.supabase.co/storage/v1/object/public/fotos/u-pro/perfil-1.jpg',
+        helperProfile: { specialty: 'Logopeda infantil', zone: 'Barcelona, Gràcia', ciudad: 'Barcelona', price: '45 €', contacto: 'laura@ficticia.test', modality: 'Presencial' } }))
+      localStorage.setItem('nura_sesion', JSON.stringify({ access_token: 'sesion-pro', refresh_token: 'r', token_type: 'bearer', expires_in: 3600, expires_at: exp,
+        user: { id: 'u-pro', aud: 'authenticated', role: 'authenticated', email: 'laura@ficticia.test' } }))
+    }, Math.floor(Date.now() / 1000) + 3600)
+    await f.goto(B + '/profile', { waitUntil: 'networkidle0' }); await espera(1500)
+    // Cambiar: una imagen de 2×2 píxeles, elegida como desde la galería.
+    const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAFklEQVR4nGP8z8DAwMDAxMDAwMDAAAANHQEDasKb6QAAAABJRU5ErkJggg==', 'base64')
+    const { writeFileSync } = await import('node:fs')
+    writeFileSync('/tmp/nura-foto-prueba.png', png)
+    const [elegir] = await Promise.all([f.waitForFileChooser({ timeout: 5000 }), pulsar(f, 'Cambiar foto')])
+    await elegir.accept(['/tmp/nura-foto-prueba.png']); await espera(1200)
+    await pulsar(f, 'Usar esta foto'); await espera(2000)
+    const nueva = subidas.at(-1)?.ruta || ''
+    ok(/^u-pro\/perfil-\d+\.jpg$/.test(nueva) && subidas.at(-1)?.upsert !== 'true', `la foto nueva se sube con su propio nombre, sin sobrescribir (${nueva})`)
+    ok(String(cambios.at(-1)?.avatarUrl || '').includes(nueva) && limpiezas.at(-1)?.conservar === nueva && limpiezas.at(-1)?.token === 'sesion-pro',
+      'la ficha apunta a la nueva y el servidor borra las anteriores')
+    // Quitar: pide confirmación y deja la ficha sin foto.
+    await pulsar(f, 'Quitar')
+    ok(/¿Quitar tu foto\?/.test(await texto(f)) && !cambios.some(c => c.avatarUrl === null), 'quitar la foto pide confirmación antes')
+    await pulsar(f, 'Sí, quitarla'); await espera(1500)
+    ok(cambios.at(-1)?.avatarUrl === null && limpiezas.at(-1)?.conservar === '' && /Añade tu foto/.test(await texto(f)),
+      'al confirmarlo, la ficha queda sin foto y se borran todas las suyas')
+    await f.close(); await ctx.close()
+  }
+
   console.log('\n── Correo y móvil, los dos confirmados ──')
   {
     // 2026-10-01 (Sergio): cada cuenta con correo y móvil; ningún cambio

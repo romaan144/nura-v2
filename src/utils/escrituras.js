@@ -296,6 +296,12 @@ export async function reclamarFicha(token) {
 }
 
 /** Borra la cuenta, la ficha publica y sus avisos (etapa 6c, RGPD). */
+/** Borra las fotos de su carpeta menos `conservar` (vacío: todas). Con su sesión. */
+export async function limpiarFotos(token, conservar = '') {
+  if (!EDGE_URL) return { ok: false, motivo: 'sin-servidor' }
+  try { return await llamarFuncion({ op: 'limpiar-fotos', token, conservar }) } catch { return { ok: false, motivo: 'sin-red' } }
+}
+
 export async function borrarCuenta(token) {
   if (!EDGE_URL) return { ok: false, motivo: 'sin-servidor' }
   try { return await llamarFuncion({ op: 'borrar-cuenta', token }) } catch { return { ok: false, motivo: 'sin-red' } }

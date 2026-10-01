@@ -556,6 +556,20 @@ function enlaceDe(contacto: string, mensaje: string): string {
   return `https://wa.me/${tel}?text=${encodeURIComponent(mensaje)}`
 }
 
+// Borra las fotos de una cuenta (fotos/<cuenta>/), menos `conservar`.
+// Con la clave de servicio: el almacén no deja «ver» la carpeta desde el
+// navegador, y sin eso no se puede sobrescribir ni borrar.
+async function borrarFotos(uid: string, conservar = ''): Promise<boolean> {
+  const sk = { apikey: SERVICE_KEY ?? '', Authorization: `Bearer ${SERVICE_KEY ?? ''}`, 'Content-Type': 'application/json' }
+  const l = await fetch(`${SUPABASE_URL}/storage/v1/object/list/fotos`, { method: 'POST', headers: sk, body: JSON.stringify({ prefix: uid, limit: 100 }) })
+  if (!l.ok) return l.status === 404 || l.status === 400
+  const nombres = ((await l.json()) as { name?: string }[])
+    .map(o => `${uid}/${o?.name || ''}`).filter(n => !n.endsWith('/') && n !== conservar)
+  if (!nombres.length) return true
+  const d = await fetch(`${SUPABASE_URL}/storage/v1/object/fotos`, { method: 'DELETE', headers: sk, body: JSON.stringify({ prefixes: nombres }) })
+  return d.ok
+}
+
 Deno.serve(async (req: Request) => {
   const cors = cabecerasCors(req.headers.get('origin'))
 
@@ -1366,6 +1380,23 @@ Deno.serve(async (req: Request) => {
     return json({ ok: true, helper: filas[0] }, 200, cors)
   }
 
+  // ── LAS FOTOS VIEJAS (2026-10-01) ─────────────────────────────────────
+  // Cada foto nueva se sube con su propio nombre (solo hace falta permiso de
+  // subir) y aquí se borran las demás de SU carpeta. Quitar la foto es
+  // borrarlas todas. Con su sesión: nadie toca la carpeta de otro.
+  if (op === 'limpiar-fotos') {
+    const token = String(cuerpo.token || '')
+    if (!token) return json({ error: 'falta la sesion' }, 401, cors)
+    const u = await fetch(`${SUPABASE_URL}/auth/v1/user`, { headers: { apikey: SERVICE_KEY!, Authorization: `Bearer ${token}` } })
+    if (!u.ok) return json({ error: 'sesion no valida' }, 401, cors)
+    const usuario = await u.json()
+    if (!usuario?.id) return json({ error: 'sesion sin usuario' }, 400, cors)
+    const conservar = String(cuerpo.conservar || '')
+    const propia = conservar.startsWith(`${usuario.id}/`) && !conservar.includes('..') ? conservar : ''
+    if (!await borrarFotos(usuario.id, propia)) return json({ error: 'no se pudieron borrar las fotos' }, 502, cors)
+    return json({ ok: true }, 200, cors)
+  }
+
   // ── BORRAR LA CUENTA (etapa 6c · RGPD, derecho de supresion) ───────────
   // Borra, por este orden: los avisos que le llegaron (mensajes de clientes:
   // datos de terceros que solo existen por su ficha), su ficha publica y su
@@ -1399,11 +1430,8 @@ Deno.serve(async (req: Request) => {
       const al = await fetch(`${SUPABASE_URL}/rest/v1/alertas?correo=eq.${encodeURIComponent(String(usuario.email).trim().toLowerCase())}`, { method: 'DELETE', headers: rest })
       if (!al.ok && al.status !== 404) return json({ error: 'no se pudieron borrar las alertas', estado: al.status }, 502, cors)
     }
-    // La foto (etapa 7). 404 = no tenia foto: no es un error.
-    const fo = await fetch(`${SUPABASE_URL}/storage/v1/object/fotos/${usuario.id}/perfil.jpg`, {
-      method: 'DELETE', headers: { apikey: SERVICE_KEY!, Authorization: `Bearer ${SERVICE_KEY}` },
-    })
-    if (!fo.ok && fo.status !== 404 && fo.status !== 400) return json({ error: 'no se pudo borrar la foto', estado: fo.status }, 502, cors)
+    // Sus fotos (etapa 7): toda su carpeta, no solo la última.
+    if (!await borrarFotos(usuario.id)) return json({ error: 'no se pudo borrar la foto' }, 502, cors)
     const cu = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${usuario.id}`, {
       method: 'DELETE', headers: { apikey: SERVICE_KEY!, Authorization: `Bearer ${SERVICE_KEY}` },
     })
