@@ -20,5 +20,18 @@ const parts = splitResponseText(long)
 assert.equal(parts.join(' '), long)
 assert.ok(parts.every(part => part.length <= 160))
 assert.ok(parts.every(part => (part.match(/\*\*/g) || []).length % 2 === 0))
+// Corta al final de una frase, no a mitad (2026-10-01: «madre".» caía
+// sola en el trozo siguiente, en letra pequeña bajo el titular).
+const ayuda = 'No estoy segura de haberte entendido del todo. ¿Me lo cuentas con otras palabras? Por ejemplo: "entrenador personal cerca de casa" o "alguien que cuide a mi madre".'
+const trozos = splitResponseText(ayuda)
+assert.equal(trozos.join(' '), ayuda)
+assert.ok(trozos.every(t => /[.!?]["»”]?$/.test(t)), JSON.stringify(trozos))
+assert.equal(trozos[0], 'No estoy segura de haberte entendido del todo. ¿Me lo cuentas con otras palabras?')
+// Sin finales de frase, sigue cortando entre palabras dentro del límite.
+const sinPuntos = 'palabra '.repeat(60).trim()
+assert.ok(splitResponseText(sinPuntos).every(t => t.length <= 160))
+assert.equal(splitResponseText(sinPuntos).join(' '), sinPuntos)
+// Lo corto no se toca.
+assert.deepEqual(splitResponseText('Hola. ¿Qué tal?'), ['Hola. ¿Qué tal?'])
 assert.deepEqual(paginateResponse([], [], 400), [])
 console.log('Paginación: 200 escenarios, texto completo y negritas conservadas.')
