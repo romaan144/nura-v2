@@ -132,8 +132,9 @@ console.log('\n── El profesional ──')
   await espera(2600)
   paso('el alta recibe', /Perfil profesional|llamas/.test(await texto(p)))
 
+  // El contacto: primero un móvil (2026-10-01: el alta pide un correo).
   const respuestas = ['Marta Ferrer', 'Logopeda infantil', 'Grado en Logopedia UB',
-    'Gracia', '45 euros la sesión', 'Trabajo con juego', 'marta@ejemplo.com']
+    'Gracia', '45 euros la sesión', 'Trabajo con juego', '612 345 678', 'marta@ejemplo.com']
   await escribirEn(p, respuestas[0], 'x => x.getBoundingClientRect().width > 100')
   await p.keyboard.press('Enter')
   await espera(2400)
@@ -142,7 +143,9 @@ console.log('\n── El profesional ──')
     await p.keyboard.press('Enter')
     await espera(2400)
   }
-  paso('completa las siete preguntas', /Marta|formas parte|Buen/.test(await texto(p)))
+  const tAlta = await texto(p)
+  paso('con un móvil, pide el correo y explica por qué', /Mejor tu correo que el móvil/.test(tAlta))
+  paso('completa las siete preguntas', /Marta|formas parte|Buen/.test(tAlta))
   await p.close()
 
   const q = await navegador.newPage()

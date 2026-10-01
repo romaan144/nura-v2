@@ -91,7 +91,9 @@ const QUESTIONS = [
   // siempre. Nadie —ni Nura ni el fundador— podia avisarle de que alguien
   // le necesitaba. Es la ultima pregunta a proposito: se pide cuando la
   // persona ya ha invertido en el perfil, no en la puerta.
-  { id: 'contacto',       text: 'Y lo más importante: ¿cómo te avisamos cuando alguien te necesite?', placeholder: 'Tu móvil o tu email', campo: { autoComplete: 'email', name: 'email', autoCapitalize: 'none' } },
+  // Un correo, no un móvil (2026-10-01): con él le llegan los avisos solos y
+  // su cuenta se une a esta ficha (la prueba es ese correo).
+  { id: 'contacto',       text: 'Y lo más importante: ¿a qué correo te avisamos cuando alguien te necesite?', placeholder: 'Tu correo, así: nombre@gmail.com', campo: { autoComplete: 'email', name: 'email', autoCapitalize: 'none' } },
 ]
 
 export default function RegisterHelper() {
@@ -232,7 +234,7 @@ export default function RegisterHelper() {
     }
     // El contacto se comprueba: es por donde le llegarán los avisos.
     if (q.id === 'contacto') {
-      const r = revisarContacto(val)
+      const r = revisarContacto(val, { soloCorreo: true })
       // Si le sugerimos otro correo y reenvía el suyo tal cual, es el bueno.
       const insiste = r.sugerencia && contactoRechazado.current === val
       if (!r.ok && !insiste) {
@@ -386,7 +388,7 @@ export default function RegisterHelper() {
               Cómo funciona
             </div>
             <div style={{fontSize:'var(--text-sm)',color:'var(--ink)',lineHeight:1.5,letterSpacing:'-0.1px'}}>
-              Cuando alguien te necesite, te llega su mensaje al <strong>móvil o al correo</strong> y respondes desde ahí, sin descargar nada.
+              Cuando alguien te necesite, te llega su mensaje a tu <strong>correo</strong> y respondes desde ahí, sin descargar nada.
             </div>
             <div style={{fontSize:'var(--text-xs)',color:'var(--ink-tertiary)',marginTop:'var(--space-6)'}}>
               Tu perfil tarda menos de 3 minutos en estar publicado.
