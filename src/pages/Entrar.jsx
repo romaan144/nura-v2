@@ -4,7 +4,8 @@ import PageHeader from '../components/PageHeader'
 import styles from './Access.module.css'
 import PasswordField from '../components/PasswordField'
 import { KeyRound, Mail, UserRoundPlus } from 'lucide-react'
-import { crearCuenta, entrar, pedirRestablecer, sesionActual, salir, MIN_CONTRASENA } from '../utils/cuenta'
+import { crearCuenta, entrar, pedirRestablecer, sesionActual, salir, MIN_CONTRASENA, pedirCodigoParaEntrar, entrarConCodigo } from '../utils/cuenta'
+import { pareceTelefono, telefonoLegible } from '../utils/telefono'
 import { reclamarFicha } from '../utils/escrituras'
 import { useUser } from '../context/UserContext'
 import { revisarContacto } from '../utils/contactoProfesional'
@@ -14,15 +15,15 @@ import { usuarioDeFicha, usuarioCliente } from '../utils/usuarioDeFicha'
 const TEXTOS_ACCESO = {
   comentarios: {
     crear: 'Crea tu acceso con correo para comentar esta publicación. Después volverás al mismo hilo.',
-    entrar: 'Entra con tu correo y contraseña para volver a la publicación y comentar.',
+    entrar: 'Entra con tu correo o tu móvil y tu contraseña para volver a la publicación y comentar.',
   },
   avisos: {
     crear: 'Crea tu acceso con correo. Después vuelve a tu búsqueda y activa el aviso por correo.',
-    entrar: 'Entra con tu correo y contraseña. Después podrás volver a tu búsqueda y activar el aviso.',
+    entrar: 'Entra con tu correo o tu móvil y tu contraseña. Después podrás volver a tu búsqueda y activar el aviso.',
   },
   mensajes: {
     crear: 'Crea tu acceso con correo para continuar con tus mensajes en Nüra.',
-    entrar: 'Entra con tu correo y contraseña para continuar con tus mensajes.',
+    entrar: 'Entra con tu correo o tu móvil y tu contraseña para continuar con tus mensajes.',
   },
   // Desde un mensaje recibido: es la profesional, y su ficha se encuentra por el correo.
   proMensajes: {
@@ -35,7 +36,7 @@ const TEXTOS_ACCESO = {
   },
   continuar: {
     crear: 'Crea tu acceso con correo y contraseña. Después volverás a donde estabas.',
-    entrar: 'Entra con tu correo y contraseña para continuar donde estabas.',
+    entrar: 'Entra con tu correo o tu móvil y tu contraseña para continuar donde estabas.',
   },
 }
 
@@ -77,8 +78,24 @@ export default function Entrar() {
   const insistido = useRef('')
 
   const titulo = { entrar: 'Entrar', crear: 'Crea tu acceso', olvido: 'Restablecer contraseña' }[modo]
-  const listo = email.includes('@') && (modo === 'olvido' || pass.length >= (modo === 'crear' ? MIN_CONTRASENA : 1))
-  const cambiar = m => { setModo(m); setError(''); setAviso('') }
+  // Entrar y recuperar aceptan el correo o el móvil de la cuenta (Sergio,
+  // 2026-10-01): si cambias uno de los dos, sigues teniendo tu cuenta. Crear
+  // el acceso es con correo; el móvil se añade y confirma después, por SMS.
+  const esMovil = modo !== 'crear' && pareceTelefono(email)
+  const listo = (email.includes('@') || esMovil) && (modo === 'olvido' || pass.length >= (modo === 'crear' ? MIN_CONTRASENA : 1))
+  // Recuperar con el móvil: código por SMS y, con él, contraseña nueva.
+  const [codigoMovil, setCodigoMovil] = useState(null)
+  const [codigo, setCodigo] = useState('')
+  const cambiar = m => { setModo(m); setError(''); setAviso(''); setCodigoMovil(null); setCodigo('') }
+
+  async function confirmarCodigo() {
+    if (enviando || codigo.length < 6) return
+    setError(''); setEnviando(true)
+    const r = await entrarConCodigo(codigoMovil, codigo)
+    setEnviando(false)
+    if (r.error) { setError(r.error); return }
+    navigate('/restablecer')
+  }
 
   async function enviar() {
     if (!listo || enviando) return
@@ -94,6 +111,14 @@ export default function Entrar() {
         return
       }
     }
+    if (modo === 'olvido' && esMovil) {
+      setEnviando(true)
+      const r = await pedirCodigoParaEntrar(email)
+      setEnviando(false)
+      if (r.error) { setError(r.error); return }
+      setCodigoMovil(r.telefono); setCodigo('')
+      return
+    }
     setEnviando(true)
     const r = modo === 'entrar' ? await entrar(email, pass)
       : modo === 'crear' ? await crearCuenta(email, pass)
@@ -103,7 +128,7 @@ export default function Entrar() {
     if (modo === 'olvido') { setAviso(`Si hay una cuenta con ${email.trim()}, te hemos enviado un correo con un enlace para poner una contraseña nueva.`); return }
     // Al volver del correo de confirmación (Perfil) se sabrá que era la profesional.
     if (modo === 'crear' && r.pendienteConfirmar && esPro) { try { localStorage.setItem('nura_acceso_pro', '1') } catch { /* sin almacenamiento */ } }
-    if (modo === 'crear' && r.pendienteConfirmar) { setAviso(`Te hemos enviado un correo a ${email.trim()}. Pulsa el enlace para confirmarlo: volverás a Nüra ya dentro.`); return }
+    if (modo === 'crear' && r.pendienteConfirmar) { setAviso(`Te hemos enviado un correo a ${email.trim()}. Pulsa el enlace para confirmarlo: volverás a Nüra ya dentro. Después, en tu perfil, añade tu móvil: así no pierdes la cuenta si un día cambias de correo.`); return }
     // ── DESDE UN MOVIL NUEVO (etapa 8) ────────────────────────────────
     // Si este movil no sabe quien es (no hay usuario guardado), se pide su
     // ficha al servidor y se reconstruye a la profesional con ella. Antes,
@@ -112,15 +137,17 @@ export default function Entrar() {
       setEnviando(true)
       const ses = await sesionActual()
       const f = ses ? await reclamarFicha(ses.access_token) : null
+      // Si entró con el móvil, el correo es el de su cuenta.
+      const correo = ses?.user?.email || email
       setEnviando(false)
       if (f?.ok && f.helper) {
-        login(usuarioDeFicha(f.helper, email))
+        login(usuarioDeFicha(f.helper, correo))
       } else if (esPro && (f?.motivo === 'sin-ficha' || f?.motivo === 'varias')) {
         await salir()
         setAviso(SIN_FICHA)
         return
       } else if (volver) {
-        login(usuarioCliente(email))
+        login(usuarioCliente(correo))
       } else {
         setAviso('Has entrado, pero no encontramos una ficha de profesional con este correo. Si te diste de alta con otro contacto, escríbenos.')
         return
@@ -137,15 +164,31 @@ export default function Entrar() {
         <p className={styles.eyebrow}>Tu acceso a Nüra</p>
         <h1 className={styles.title}>{titulo}</h1>
         <p className={styles.description}>
-          {modo === 'olvido' ? 'Escribe tu correo y te enviaremos un enlace para poner una contraseña nueva.'
+          {modo === 'olvido' ? (codigoMovil
+              ? `Escribe el código que te hemos enviado por SMS al ${telefonoLegible(codigoMovil)}. Después pondrás una contraseña nueva.`
+              : 'Escribe tu correo o tu móvil. Al correo te llega un enlace; al móvil, un código por SMS. Con cualquiera de los dos pones una contraseña nueva.')
             : TEXTOS_ACCESO[contexto][modo]}
         </p>
 
+        {codigoMovil ? (
+          <form onSubmit={e => { e.preventDefault(); confirmarCodigo() }} noValidate>
+            <div className={styles.field}>
+              <label htmlFor="e-codigo" className={styles.label}>Código del SMS</label>
+              <input id="e-codigo" type="text" inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={codigo}
+                onChange={e => setCodigo(e.target.value.replace(/\D/g, ''))} placeholder="123456" className={styles.input} autoFocus />
+            </div>
+            {error && <p role="alert" className={styles.error}>{error}</p>}
+            <button type="submit" disabled={codigo.length < 6 || enviando} className={styles.primary}>
+              {enviando ? 'Un momento…' : 'Confirmar el código'}
+            </button>
+            <button type="button" onClick={() => { setCodigoMovil(null); setError('') }} className={styles.textButton} style={{ marginTop: 'var(--space-12)' }}>Cambiar el número o pedir otro código</button>
+          </form>
+        ) : (
         <form onSubmit={e => { e.preventDefault(); enviar() }} noValidate>
           <div className={styles.field}>
-            <label htmlFor="e-email" className={styles.label}>Correo electrónico</label>
-            <input id="e-email" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" spellCheck={false} value={email}
-              onChange={e => setEmail(e.target.value)} placeholder="tucorreo@ejemplo.com" className={styles.input} />
+            <label htmlFor="e-email" className={styles.label}>{modo === 'crear' ? 'Correo electrónico' : 'Correo o móvil'}</label>
+            <input id="e-email" type={modo === 'crear' ? 'email' : 'text'} inputMode="email" autoComplete={modo === 'crear' ? 'email' : 'username'} autoCapitalize="none" spellCheck={false} value={email}
+              onChange={e => setEmail(e.target.value)} placeholder={modo === 'crear' ? 'tucorreo@ejemplo.com' : 'tucorreo@ejemplo.com o 612 34 56 78'} className={styles.input} />
           </div>
           {modo !== 'olvido' && (
             <div className={styles.field}>
@@ -162,9 +205,10 @@ export default function Entrar() {
             onClick={() => { setEmail(sugerencia); setSugerencia(null); setError('') }}>Usar {sugerencia}</button>}
           {aviso && <p role="status" className={styles.notice}>{aviso}</p>}
           <button type="submit" disabled={!listo || enviando} className={styles.primary}>
-            {enviando ? 'Un momento…' : modo === 'entrar' ? 'Entrar' : modo === 'crear' ? 'Crear mi acceso' : 'Enviarme el enlace'}
+            {enviando ? 'Un momento…' : modo === 'entrar' ? 'Entrar' : modo === 'crear' ? 'Crear mi acceso' : esMovil ? 'Enviarme el código' : 'Enviarme el enlace'}
           </button>
         </form>
+        )}
         <div className={styles.alternative}>
           {modo === 'entrar'
             ? <button type="button" onClick={() => cambiar('crear')} className={styles.secondary}>¿Aún no tienes acceso? Créalo</button>

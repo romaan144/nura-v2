@@ -417,7 +417,7 @@ try {
       'profesional sin correo en su ficha: no entra como cliente, se le explica y la sesión se cierra')
     // Y si entra con correo y contraseña desde un mensaje (pro=1): lo mismo.
     await tel.goto(B + '/entrar?pro=1&volver=/chats', { waitUntil: 'networkidle0' }); await espera(800)
-    await tel.type('input[type="email"]', 'otra@ficticia.test')
+    await tel.type('#e-email', 'otra@ficticia.test')
     await tel.type('input[type="password"]', 'contrasena-ficticia')
     await pulsar(tel, 'Entrar'); await espera(2000)
     const e4 = await tel.evaluate(() => ({ user: localStorage.getItem('nura_user'), sesion: localStorage.getItem('nura_sesion') }))
@@ -535,6 +535,102 @@ try {
     const ultimo = cambios.at(-1) || {}
     ok(elegido && ultimo.online === true && ultimo.presential === false, `al elegir «Online», la ficha deja de ser presencial (${JSON.stringify({ online: ultimo.online, presential: ultimo.presential })})`)
     await f.close(); await ctx.close()
+  }
+
+  console.log('\n── Correo y móvil, los dos confirmados ──')
+  {
+    // 2026-10-01 (Sergio): cada cuenta con correo y móvil; ningún cambio
+    // se aplica sin confirmarlo (enlace al correo nuevo, código por SMS).
+    const H = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': '*', 'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS' }
+    const cuenta = { id: 'u-cli', aud: 'authenticated', role: 'authenticated', email: 'ana@ficticia.test', email_confirmed_at: '2026-09-01T00:00:00Z', phone: '' }
+    const pedidos = []
+    let smsRoto = true
+    // NURA_CAPTURAS=carpeta: guarda capturas de cada paso (para enseñarlas).
+    const captura = async (pg, n) => { if (process.env.NURA_CAPTURAS) { await pg.evaluate(() => document.querySelector('#acceso-codigo, #acceso-correo, #acceso-movil')?.scrollIntoView({ block: 'center' }) || [...document.querySelectorAll('h2')].find(h => /Tu acceso/.test(h.textContent))?.scrollIntoView({ block: 'start' })); await espera(300); await pg.screenshot({ path: `${process.env.NURA_CAPTURAS}/${n}.png` }) } }
+    const sesion = u => ({ access_token: 'sesion-cli', token_type: 'bearer', expires_in: 3600, expires_at: Math.floor(Date.now() / 1000) + 3600, refresh_token: 'r9', user: u })
+    const ctx = await b.createBrowserContext()
+    const f = await ctx.newPage()
+    await f.setViewport({ width: 390, height: 844 })
+    await f.setRequestInterception(true)
+    const manejar = r => {
+      const u = r.url()
+      if (u.startsWith(B)) return r.continue()
+      if (r.method() === 'OPTIONS') return r.respond({ status: 204, headers: H })
+      const cuerpo = JSON.parse(r.postData() || '{}')
+      const json = (status, body) => r.respond({ status, headers: H, contentType: 'application/json', body: JSON.stringify(body) })
+      if (u.includes('/auth/v1/user') && r.method() === 'PUT') {
+        pedidos.push(cuerpo)
+        if (cuerpo.phone && smsRoto) return json(422, { code: 422, error_code: 'sms_send_failed', msg: 'Unsupported phone provider' })
+        if (cuerpo.phone) return json(200, { ...cuenta, new_phone: cuerpo.phone.replace('+', '') })
+        if (cuerpo.email) return json(200, { ...cuenta, new_email: cuerpo.email })
+        return json(200, cuenta)
+      }
+      if (u.includes('/auth/v1/user')) return json(200, cuenta)
+      if (u.includes('/auth/v1/verify')) {
+        pedidos.push(cuerpo)
+        if (cuerpo.token !== '123456') return json(403, { code: 403, error_code: 'otp_expired', msg: 'Token has expired or is invalid' })
+        if (cuerpo.type === 'phone_change') { cuenta.phone = cuerpo.phone.replace('+', ''); cuenta.phone_confirmed_at = new Date().toISOString() }
+        return json(200, sesion(cuenta))
+      }
+      if (u.includes('/auth/v1/otp')) { pedidos.push(cuerpo); return json(200, {}) }
+      if (u.includes('/auth/v1/token')) { pedidos.push(cuerpo); return json(200, sesion(cuenta)) }
+      return json(200, u.includes('funcion.ficticia') ? { ok: true } : [])
+    }
+    f.on('request', manejar)
+    await f.goto(B + '/', { waitUntil: 'networkidle0' })
+    await f.evaluate(ses => {
+      localStorage.clear()
+      localStorage.setItem('nura_user', JSON.stringify({ name: 'Ana', email: 'ana@ficticia.test', joined: new Date().toISOString() }))
+      localStorage.setItem('nura_sesion', JSON.stringify(ses))
+    }, sesion(cuenta))
+    await f.goto(B + '/profile', { waitUntil: 'networkidle0' }); await espera(1500)
+    let t = await texto(f)
+    ok(/Tu acceso/.test(t) && /ana@ficticia\.test/.test(t) && /Añade tu móvil/.test(t), 'quien busca ayuda con cuenta ve «Tu acceso»: su correo y «Añade tu móvil»')
+    await captura(f, 'acceso-1-sin-movil')
+    const escribirCampo = async (sel, v) => { await f.$eval(sel, i => i.select?.()); await f.type(sel, v) }
+    // Sin proveedor de SMS: se dice claro y no se guarda nada.
+    await pulsar(f, 'Añadir'); await escribirCampo('#acceso-movil', '612 34 56 78'); await pulsar(f, 'Enviarme el código')
+    t = await texto(f)
+    ok(/Todavía no podemos enviar SMS/.test(t) && !/Confirmado por SMS/.test(t), 'sin SMS configurado, lo dice y no guarda el móvil')
+    smsRoto = false
+    await pulsar(f, 'Enviarme el código')
+    t = await texto(f)
+    await captura(f, 'acceso-2-codigo')
+    ok(pedidos.some(x => x.phone === '+34612345678') && /código que te hemos enviado por SMS al \+34 612 34 56 78/.test(t), 'pide el código para +34 612 34 56 78 (formato internacional)')
+    await escribirCampo('#acceso-codigo', '000000'); await pulsar(f, 'Confirmar mi móvil')
+    t = await texto(f)
+    ok(/El código no es correcto o ha caducado/.test(t) && !/Confirmado por SMS/.test(t), 'con un código equivocado, no se confirma')
+    await f.$eval('#acceso-codigo', i => { i.value = '' }); await f.click('#acceso-codigo', { clickCount: 3 }); await f.keyboard.press('Backspace')
+    for (let i = 0; i < 6; i++) await f.keyboard.press('Backspace')
+    await f.type('#acceso-codigo', '123456'); await pulsar(f, 'Confirmar mi móvil'); await espera(600)
+    t = await texto(f)
+    ok(pedidos.some(x => x.type === 'phone_change' && x.token === '123456') && /\+34 612 34 56 78/.test(t) && /Móvil confirmado/.test(t), 'con el código bueno, el móvil queda confirmado')
+    // Cambiar el correo: el enlace va al nuevo y, hasta pulsarlo, sigue el de antes.
+    await pulsar(f, 'Cambiar'); await escribirCampo('#acceso-correo', 'ana.nueva@ficticia.test'); await pulsar(f, 'Enviarme el enlace')
+    t = await texto(f)
+    await f.evaluate(() => [...document.querySelectorAll('h2')].find(h => /Tu acceso/.test(h.textContent))?.scrollIntoView({ block: 'start' }))
+    if (process.env.NURA_CAPTURAS) { await espera(300); await f.screenshot({ path: `${process.env.NURA_CAPTURAS}/acceso-3-confirmado.png` }) }
+    ok(pedidos.some(x => x.email === 'ana.nueva@ficticia.test') && /enlace a ana\.nueva@ficticia\.test\. Tu correo no cambia hasta que lo pulses/.test(t) && /ana@ficticia\.test/.test(t), 'cambiar el correo manda un enlace y no cambia hasta confirmarlo')
+    // Entrar con el móvil y la contraseña.
+    const g = await ctx.newPage(); await g.setViewport({ width: 390, height: 844 }); await g.setRequestInterception(true)
+    g.on('request', manejar)
+    await g.goto(B + '/', { waitUntil: 'networkidle0' }); await g.evaluate(() => localStorage.clear())
+    await g.goto(B + '/entrar', { waitUntil: 'networkidle0' }); await espera(800)
+    await g.type('#e-email', '612 34 56 78'); await g.type('#e-pass', 'contrasena-de-prueba')
+    await g.evaluate(() => [...document.querySelectorAll('button[type="submit"]')].find(x => x.offsetParent)?.click()); await espera(2000)
+    ok(pedidos.some(x => x.phone === '+34612345678' && x.password === 'contrasena-de-prueba'), 'se puede entrar con el móvil y la contraseña')
+    // Sin acceso al correo: código por SMS y contraseña nueva.
+    await g.evaluate(() => localStorage.clear())
+    await g.goto(B + '/entrar', { waitUntil: 'networkidle0' }); await espera(800)
+    await g.evaluate(() => [...document.querySelectorAll('button')].find(x => /olvidado tu contraseña/.test(x.textContent))?.click()); await espera(400)
+    await g.type('#e-email', '612345678')
+    await g.evaluate(() => [...document.querySelectorAll('button[type="submit"]')].find(x => x.offsetParent)?.click()); await espera(1200)
+    if (process.env.NURA_CAPTURAS) await g.screenshot({ path: `${process.env.NURA_CAPTURAS}/acceso-4-recuperar.png` })
+    ok(pedidos.some(x => x.phone === '+34612345678' && x.create_user === false), 'olvidé la contraseña con el móvil: pide un código, sin crear cuentas')
+    await g.type('#e-codigo', '123456')
+    await g.evaluate(() => [...document.querySelectorAll('button[type="submit"]')].find(x => x.offsetParent)?.click()); await espera(1500)
+    ok(new URL(g.url()).pathname === '/restablecer', 'con el código, a poner una contraseña nueva (' + new URL(g.url()).pathname + ')')
+    await g.close(); await f.close(); await ctx.close()
   }
 } catch (e) {
   ok(false, 'el recorrido se ha roto: ' + e.message)
