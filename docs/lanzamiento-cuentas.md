@@ -142,3 +142,10 @@ cuenta con el correo de otra persona y quedarse con su ficha.
 Si al darse de alta puso **su móvil** en vez de un correo, no hay forma
 segura de vincularla automáticamente: la app se lo dice, y hay que
 resolverlo a mano.
+
+## 2026-10-01 · «Solo online» y sin altas desde el navegador
+
+Migración `supabase/migrations/20261021000000_ficha_presencial_sin_insert_publico.sql` (aplicada):
+
+- `grant update (presential) on public.helpers to authenticated;` — al elegir «Online» en «Editar mi ficha» deja de salir en búsquedas presenciales. Sigue limitado a su fila por `helpers_owner_update`.
+- `revoke insert on public.helpers from anon, authenticated;` — el alta va siempre por `helpers-write` (clave de servidor). Comprobado tras aplicarla: `service_role` puede insertar; `anon` y `authenticated` no; la lectura pública por columnas sigue igual (35 columnas, sin `contacto` ni `owner_id`).

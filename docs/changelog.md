@@ -170,6 +170,13 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Editar mi ficha: «solo online» de verdad, y sin altas desde el navegador
+
+- **«Solo online».** En «Editar mi ficha», elegir «Online» solo cambiaba `online`. `presential` seguía en sí y la profesional salía en búsquedas de alguien que quiere ayuda en persona; la base de datos ni siquiera le dejaba cambiar esa columna. Ahora se envía y se permite, solo en su propia fila, como el resto de su ficha.
+- **Permiso sobrante.** Los roles públicos aún tenían permiso para INSERTAR filas en `helpers` en todas las columnas, incluidas `verified`, `rating` y `owner_id`. No se podía usar (no hay regla de inserción y la seguridad por filas está activa), pero sobraba: el alta va siempre por la función con su clave de servidor. Se retira, siguiendo la regla de no mantener acceso público por compatibilidad.
+- Comprobado en Supabase tras aplicar la migración: el servidor puede dar altas; `anon` y `authenticated` no; la lectura pública sigue igual (sin `contacto` ni `owner_id`).
+- Migración `supabase/migrations/20261021000000_ficha_presencial_sin_insert_publico.sql` (aplicada); `src/components/EditarFicha.jsx`; `docs/lanzamiento-cuentas.md`. `npm run recorrido-real` comprueba lo que se envía al guardar «Online».
+
 ## 2026-10-29 — Lo que Nüra recuerda del cliente: solo con permiso
 
 - Revisión de la memoria del cliente frente a las reglas de Sergio: las frases de búsqueda no se guardan y la memoria solo con permiso.
