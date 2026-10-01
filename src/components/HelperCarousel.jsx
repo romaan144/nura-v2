@@ -8,6 +8,7 @@ import styles from './HelperCarousel.module.css'
 import { haptic } from '../utils/haptic'
 import { recordarDestino, contextoDeChat } from '../utils/contacto'
 import { fmtNota, dondeEsta } from '../utils/formato'
+import { avatarVigente } from '../utils/avatar'
 
 /**
  * HelperCarousel — horizontal scroll of compact helper cards.
@@ -55,8 +56,8 @@ function CarouselCard({ helper, isTopPick, matchReason }) {
 
       {/* Avatar */}
       <div className={styles.avatarWrap}>
-        {helper.avatarUrl
-          ? <img src={helper.avatarUrl} alt={helper.name} className={styles.avatar} style={{opacity:0}} onLoad={e => e.target.style.animation="fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards"} />
+        {avatarVigente(helper.avatarUrl, helper.name)
+          ? <img src={avatarVigente(helper.avatarUrl, helper.name)} alt={helper.name} className={styles.avatar} style={{opacity:0}} onLoad={e => e.target.style.animation="fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards"} />
           : <div className={styles.avatarFallback} style={{ background: helper.avatarColor || 'var(--purple)' }}>
               {helper.avatar || helper.name?.[0]}
             </div>
