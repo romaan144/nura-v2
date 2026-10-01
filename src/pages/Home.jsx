@@ -365,6 +365,7 @@ function getDynamicSuggestions(user, searchHistory) {
 // Ahora llevan a donde se hace de verdad.
 const EDITAR_FICHA = 'Editar mi ficha'
 const DARSE_DE_ALTA = 'Darme de alta como profesional'
+const BUSCAR_OTRA_VEZ = 'Buscar otra vez'
 const HELPER_SUGGESTIONS = [
   { text: EDITAR_FICHA, ir: '/profile', estado: { editar: 'ficha' } },
   { text: 'Ver mis mensajes', ir: '/chats' },
@@ -1372,14 +1373,17 @@ export default function Home() {
       searchSeqRef.current++  // invalida temporizadores huérfanos de esta búsqueda
       stopThinking()
       console.error('[Nüra] búsqueda:', err)
+      // Ni tecnicismos ni callejón sin salida. Sin red de verdad (el móvil lo
+      // sabe): se repite sola al volver. Con red, si tarda o falla, es cosa
+      // nuestra: se dice así, no «te has quedado sin conexión». El botón
+      // repite la misma frase: no hay que reescribirla.
+      const sinRed = typeof navigator !== 'undefined' && navigator.onLine === false
+      const tarda = /timeout|timed out|abort/i.test(`${err?.name || ''} ${err?.message || err}`)
       setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-        // Ni tecnicismos ni callejon sin salida: se distingue la falta de
-        // conexion de un fallo nuestro, y el reintento se ofrece como chip
-        // con la consulta original — el usuario no la reescribe.
-        lines: (!navigator.onLine || /fetch|network|load failed/i.test(String(err?.message || err)))
-          ? ['Parece que te has quedado sin conexión. Cuando vuelvas, lo intento otra vez.']
+        lines: sinRed ? ['Parece que te has quedado sin conexión. En cuanto vuelva, lo busco otra vez yo sola.']
+          : tarda ? ['La búsqueda está tardando más de lo normal. Prueba otra vez en un momento.']
           : ['No he podido completar la búsqueda. Puedes intentarlo otra vez.'],
-        chips: [msg] }])
+        chips: [BUSCAR_OTRA_VEZ], reintentar: msg, esperaRed: sinRed }])
     }
     setLoading(false)
   }
@@ -1400,11 +1404,29 @@ export default function Home() {
       chips: ['Sí, acuérdate', 'No, gracias'] }]), 900)
   }
 
+  // SIN CONEXIÓN: al volver la red se repite sola la búsqueda que falló.
+  // Antes Nüra lo prometía («cuando vuelvas, lo intento otra vez») pero solo
+  // dejaba un botón. Solo si ese aviso sigue siendo lo último: si después
+  // ha hecho otra cosa, no se le busca nada por sorpresa.
+  const ultimo = messages[messages.length - 1]
+  const pendienteDeRed = ultimo?.esperaRed ? ultimo.reintentar : null
+  useEffect(() => {
+    if (!pendienteDeRed) return
+    const alVolver = () => handleSend(pendienteDeRed, { nueva: true })
+    window.addEventListener('online', alVolver, { once: true })
+    return () => window.removeEventListener('online', alVolver)
+  }, [pendienteDeRed])   // eslint-disable-line react-hooks/exhaustive-deps
+
   function handleChip(chip) {
     beginResponse()
     if (chip === EDITAR_FICHA) { navigate('/profile', { state: { editar: 'ficha' } }); return }
     if (chip === 'Ver todas las categorías') { navigate('/explore'); return }
     if (chip === DARSE_DE_ALTA) { navigate('/register-helper'); return }
+    if (chip === BUSCAR_OTRA_VEZ) {
+      const q = [...messages].reverse().find(m => m.reintentar)?.reintentar
+      if (q) handleSend(q, { nueva: true })
+      return
+    }
     if (otraNecesidadRef.current && chip === otraNecesidadRef.current.etiqueta) {
       const { texto } = otraNecesidadRef.current
       otraNecesidadRef.current = null

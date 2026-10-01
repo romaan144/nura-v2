@@ -425,6 +425,78 @@ try {
       'al entrar desde un mensaje sin ficha con ese correo: tampoco entra como cliente')
     await tel.close(); await ctx3.close()
   }
+
+  console.log('\n── Con mala conexión: reintentar de verdad y no perder lo escrito ──')
+  {
+    // 2026-10-01: decía «cuando vuelvas, lo intento otra vez» y no lo hacía;
+    // un servidor lento salía como «sin conexión»; el borrador se perdía.
+    const respuesta = p => p.evaluate(() => (document.querySelector('section[aria-label="Respuesta de Nüra"]')?.innerText || '').replace(/\s+/g, ' '))
+    const buscar = async (p, t) => {
+      const c = await p.evaluate(() => { const i = [...document.querySelectorAll('textarea,input')].find(x => x.checkVisibility() && x.getBoundingClientRect().width > 100); const r = i.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 } })
+      await p.mouse.click(c.x, c.y); await p.keyboard.type(t); await p.keyboard.press('Enter')
+    }
+    // Un servidor de mentira que de verdad no contesta mientras no hay red.
+    const H = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': '*', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS' }
+    const red = { cortada: false }
+    const ctx = await b.createBrowserContext()
+    const p = await ctx.newPage()
+    await p.setViewport({ width: 390, height: 844 })
+    await p.setRequestInterception(true)
+    p.on('request', r => {
+      const u = r.url()
+      if (u.startsWith(B)) return r.continue()
+      if (red.cortada) return r.abort('internetdisconnected')
+      if (r.method() === 'OPTIONS') return r.respond({ status: 204, headers: H })
+      return r.respond({ status: 200, headers: H, contentType: 'application/json',
+        body: u.includes('/rest/v1/helpers') ? JSON.stringify(BD) : JSON.stringify(u.includes('funcion.ficticia') ? backend(JSON.parse(r.postData() || '{}')) : []) })
+    })
+    await p.goto(B + '/', { waitUntil: 'networkidle0' }); await espera(1500)
+    red.cortada = true
+    await p.setOfflineMode(true)
+    await buscar(p, 'necesito una logopeda para mi hijo')
+    await espera(4000)
+    const sin = await respuesta(p)
+    ok(/te has quedado sin conexión/.test(sin) && /Buscar otra vez/.test(sin), 'sin conexión: lo dice y ofrece «Buscar otra vez»')
+    red.cortada = false
+    await p.setOfflineMode(false)
+    await espera(6000)
+    ok(/Laura/.test(await respuesta(p)), 'al volver la conexión, busca sola y encuentra a Laura')
+    await p.close(); await ctx.close()
+
+    // Servidor lento (más que el tiempo máximo): no es «sin conexión».
+    const ctx2 = await b.createBrowserContext()
+    const q = await ctx2.newPage()
+    await q.setViewport({ width: 390, height: 844 })
+    await q.setRequestInterception(true)
+    q.on('request', async r => {
+      const u = r.url()
+      if (u.startsWith(B)) return r.continue()
+      if (r.method() === 'OPTIONS') return r.respond({ status: 204, headers: H })
+      if (u.includes('/rest/v1/helpers')) await espera(11000)
+      try { await r.respond({ status: 200, headers: H, contentType: 'application/json', body: u.includes('funcion.ficticia') ? '{"ok":true}' : '[]' }) } catch { /* ya cancelada */ }
+    })
+    await q.goto(B + '/', { waitUntil: 'domcontentloaded' }); await espera(2000)
+    await buscar(q, 'necesito una logopeda para mi hijo')
+    await espera(16000)
+    const lenta = await respuesta(q)
+    ok(!/sin conexión/.test(lenta) && /tardando más de lo normal|No he podido completar/.test(lenta), `servidor lento: no dice «sin conexión» (${lenta.slice(-90)})`)
+    await q.close(); await ctx2.close()
+
+    // Lo que escribe a un profesional sobrevive a cerrar la app.
+    const ctx3 = await b.createBrowserContext()
+    const c = await pagina(ctx3)
+    await c.goto(B + '/chat/7001', { waitUntil: 'networkidle0' }); await espera(1500)
+    // Borra la propuesta y escribe lo suyo.
+    await c.$eval(CAMPO, i => i.select()); await c.click(CAMPO); await c.$eval(CAMPO, i => i.select()); await c.keyboard.press('Backspace')
+    await c.type(CAMPO, 'Hola Laura, mi hijo tiene 5 años y')
+    await espera(500)
+    await c.reload({ waitUntil: 'networkidle0' }); await espera(1500)
+    ok(await c.$eval(CAMPO, i => i.value) === 'Hola Laura, mi hijo tiene 5 años y', 'el borrador sigue ahí al volver a abrir el chat')
+    await c.click(ENVIAR); await espera(1500)
+    await c.reload({ waitUntil: 'networkidle0' }); await espera(1500)
+    ok(!/mi hijo tiene 5 años y$/.test(await c.$eval(CAMPO, i => i.value)), 'y una vez enviado, ya no se guarda')
+    await c.close(); await ctx3.close()
+  }
 } catch (e) {
   ok(false, 'el recorrido se ha roto: ' + e.message)
 } finally {
