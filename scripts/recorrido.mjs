@@ -839,6 +839,53 @@ console.log('\n── La primera vez: preguntas de quien no conoce Nüra ──'
   await p.close()
 }
 
+console.log('\n── Lo que Nüra recuerda del cliente: solo con permiso ──')
+{
+  // 2026-10-01: las personas solo se guardan con «Sí, acuérdate» y se pueden
+  // olvidar; las frases de búsqueda que guardaron versiones antiguas se borran.
+  const nueva = async (antes = () => {}) => {
+    const p = await navegador.newPage()
+    p.on('pageerror', e => errores.push('memoria: ' + String(e.message).split('\n')[0].slice(0, 60)))
+    await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+    await p.evaluate(antes)
+    await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+    await espera(1800)
+    return p
+  }
+  const personas = p => p.evaluate(() => JSON.parse(localStorage.getItem('nura_personas') || '[]').length)
+  const buscarMadre = async p => {
+    await escribirEn(p, 'alguien que cuide a mi madre por las tardes', 'x => x.getBoundingClientRect().width > 100')
+    await p.keyboard.press('Enter'); await espera(6500)
+  }
+  let p = await nueva(() => { localStorage.clear(); sessionStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Sergio', joined: new Date().toISOString() })) })
+  await buscarMadre(p)
+  // El botón puede estar en una parte de la respuesta aún fuera de la vista.
+  const pregunta = await p.evaluate(() => [...document.querySelectorAll('button')].some(b => b.textContent.trim() === 'Sí, acuérdate'))
+  const antesDelSi = await personas(p)
+  await tocar(p, /^No, gracias$/); await espera(1200)
+  paso('pregunta antes de recordar a su madre, y no la guarda sin el sí', pregunta && antesDelSi === 0 && await personas(p) === 0)
+  await p.close()
+
+  p = await nueva(() => { sessionStorage.clear(); localStorage.removeItem('nura_personas') })
+  await buscarMadre(p)
+  await tocar(p, /^Sí, acuérdate$/); await espera(1200)
+  paso('con «Sí, acuérdate», la recuerda', await personas(p) === 1)
+  await p.goto(BASE + '/profile', { waitUntil: 'networkidle0' }); await espera(1500)
+  const enPerfil = /Las personas de tu vida/.test(await texto(p))
+  await p.evaluate(() => [...document.querySelectorAll('button[aria-label^="Olvidar a"]')].find(b => b.checkVisibility())?.click())
+  await espera(800)
+  paso('la ve en su perfil y la puede olvidar', enPerfil && await personas(p) === 0)
+  await p.close()
+
+  p = await nueva(() => {
+    localStorage.setItem('nura_history', JSON.stringify([{ query: 'frase antigua de prueba', category: 'salud' }]))
+    localStorage.setItem('nura_search_history', JSON.stringify([{ query: 'otra frase antigua' }]))
+  })
+  const quedan = await p.evaluate(() => [localStorage.getItem('nura_history'), localStorage.getItem('nura_search_history')].filter(Boolean).length)
+  paso('las frases de búsqueda de versiones antiguas se borran al abrir', quedan === 0 && !/frase antigua/.test(await texto(p)))
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')

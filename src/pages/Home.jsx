@@ -168,17 +168,6 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
         `¿Cómo está ${linkedPersona.label}? Me alegra que **${helperFirst}** esté con vosotros. Si necesitas algo más, aquí estoy.`
       ]
     }
-    // Find what the user originally searched for when they contacted this helper
-    const relatedSearch = (searchHistory || []).find(s =>
-      s.category === last.category ||
-      (s.query && last.name && s.query.toLowerCase().includes(helperFirst.toLowerCase()))
-    )
-    if (relatedSearch) {
-      return [
-        saludo,
-        `¿Cómo va todo con **${helperFirst}**? ¿Necesitas algo más para lo que buscabas, o hay algo nuevo en lo que pueda ayudarte?`
-      ]
-    }
     return [
       saludo,
       `¿Cómo está yendo todo con **${helperFirst}**? Cuéntame si puedo ayudarte con algo más.`
@@ -230,7 +219,9 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
   // quien no lo conoce, y solo aparecia por la tarde: por la mañana leia
   // "¿en que puedo ayudarte?", que no dice a que viene Nura.
   // A quien ya conoce la casa no hace falta explicarsela.
-  const yaTeConoce = (searchHistory || []).length > 0
+  // Ya no por búsquedas guardadas (no se guardan): por haber escrito a alguien
+  // o por las personas que pidió recordar.
+  const yaTeConoce = (contactedHelpers || []).length > 0 || (personas || []).length > 0
   return [
     saludo,
     yaTeConoce

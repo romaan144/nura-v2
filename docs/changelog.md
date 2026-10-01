@@ -170,6 +170,13 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Lo que Nüra recuerda del cliente: solo con permiso
+
+- Revisión de la memoria del cliente frente a las reglas de Sergio: las frases de búsqueda no se guardan y la memoria solo con permiso.
+- **Frases de búsqueda.** Hace tiempo que nada las guarda, pero las que guardaron versiones anteriores seguían en esos móviles (`nura_history`, `nura_search_history`) y el saludo de Inicio las leía. Ahora se borran al abrir la app y no se vuelven a leer. Para saber si alguien «ya conoce la casa», el saludo mira si ha escrito a alguien o si pidió recordar a alguien.
+- **Las personas de tu vida.** Comprobado que solo se guardan con «Sí, acuérdate» (nada antes del sí, nada con «No, gracias»), que salen en el perfil y que se pueden olvidar. No había prueba de esto; ahora está en `npm run recorrido`.
+- `src/context/UserContext.jsx`, `src/pages/Home.jsx`.
+
 ## 2026-10-29 — Con mala conexión: reintentar de verdad y no perder lo escrito
 
 - Probado en la versión real con la red cortada, lenta o que vuelve.
