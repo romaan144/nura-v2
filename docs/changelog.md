@@ -170,6 +170,13 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — El alta del profesional pide siempre el correo
+
+- Decisión de Sergio. La última pregunta del alta aceptaba «tu móvil o tu email». Con un móvil, la cuenta del profesional no se podía unir a su ficha (se comprueba por el correo) y los avisos no le llegaban solos.
+- Ahora pregunta «¿a qué correo te avisamos cuando alguien te necesite?». Si escribe un móvil, Nüra se lo explica: «Mejor tu correo que el móvil: por ahí te llegan los avisos al momento y con él entras en Nüra desde cualquier móvil». La presentación del alta dice «te llega su mensaje a tu correo».
+- Solo cambia el alta: «Editar mi ficha» y los ya dados de alta con teléfono siguen igual (si hiciera falta, se vinculan a mano).
+- `src/utils/contactoProfesional.js` (opción `soloCorreo`), `src/pages/RegisterHelper.jsx`; pruebas en `test:matching` (261) y `npm run recorrido`.
+
 ## 2026-10-29 — El profesional sin correo en su ficha: no confundirle
 
 - Quien se dio de alta con un teléfono no puede vincular su acceso: se comprueba por el correo de la ficha. Aun así, al contestar su primer mensaje, Nüra le pedía «el mismo correo que diste» y, si creaba el acceso, le dejaba dentro como cliente, con una bandeja vacía en vez de sus mensajes.

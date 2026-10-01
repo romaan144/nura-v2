@@ -3,7 +3,9 @@
 // cualquier cosa: un móvil con una cifra de menos o «marta@gmial.com»
 // dejaban al profesional sin avisos PARA SIEMPRE, sin que nadie lo supiera.
 //
-// revisarContacto(texto) →
+// revisarContacto(texto, { soloCorreo }) →
+//   `soloCorreo` (el alta, desde 2026-10-01): solo vale un correo. Con un
+//   móvil la cuenta no se puede unir a la ficha (se comprueba por correo).
 //   { ok: true, valor }                      — listo para guardar
 //   { ok: false, motivo, sugerencia? }       — qué decirle y, si parece una
 //                                              falta en el correo, cuál sería
@@ -22,9 +24,16 @@ const DOMINIOS = {
 
 const CORREO = /^[^\s@,;]+@[^\s@,;]+\.[a-z]{2,}$/i
 
-export function revisarContacto(texto) {
+export function revisarContacto(texto, { soloCorreo = false } = {}) {
   const t = String(texto || '').trim()
-  if (!t) return { ok: false, motivo: 'Necesito un móvil o un correo para avisarte cuando alguien te escriba.' }
+  if (!t) return { ok: false, motivo: soloCorreo
+    ? 'Necesito tu correo para avisarte cuando alguien te escriba.'
+    : 'Necesito un móvil o un correo para avisarte cuando alguien te escriba.' }
+  if (soloCorreo && !t.includes('@')) {
+    return { ok: false, motivo: /^[+\d\s().-]{7,}$/.test(t)
+      ? 'Mejor tu correo que el móvil: por ahí te llegan los avisos al momento y con él entras en Nüra desde cualquier móvil. Escríbelo así: nombre@gmail.com'
+      : 'Eso no parece un correo. Escríbelo entero, así: nombre@gmail.com' }
+  }
 
   if (t.includes('@')) {
     const correo = t.toLowerCase().replace(/\s+/g, '')

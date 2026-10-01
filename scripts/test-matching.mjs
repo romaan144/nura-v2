@@ -538,6 +538,16 @@ for (const t of NEGATIVE) {
   const bien = !falta.ok && falta.sugerencia === 'marta@gmail.com'
   if (!bien) failed++
   console.log(`${bien ? '✓' : '✗'} contacto: «marta@gmial.com» → sugiere ${falta.sugerencia}`)
+  // El alta, desde 2026-10-01: solo un correo (con un móvil la cuenta no se une a la ficha).
+  const soloCorreo = [
+    ['612 345 678', false, /Mejor tu correo/], ['Marta@Gmail.com', true], ['no tengo', false, /no parece un correo/], ['', false, /tu correo/],
+  ]
+  for (const [t, ok, motivo] of soloCorreo) {
+    const r = revisarContacto(t, { soloCorreo: true })
+    const b = r.ok === ok && (ok || motivo.test(r.motivo))
+    if (!b) failed++
+    console.log(`${b ? '✓' : '✗'} contacto en el alta (solo correo): «${t}» → ${r.ok ? r.valor : r.motivo.slice(0, 40)}`)
+  }
 }
 
 // ── La agenda de los perfiles de ejemplo (2026-09-25) ──
