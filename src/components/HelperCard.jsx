@@ -7,7 +7,7 @@ import { getFirstName } from '../utils/name'
 import { ArrowUpRight, BadgeCheck, MapPin, MessageCircle, Star, Zap } from 'lucide-react'
 import styles from './HelperCard.module.css'
 import { recordarDestino, contextoDeChat } from '../utils/contacto'
-import { fmtNota, dondeEsta } from '../utils/formato'
+import { fmtNota, dondeEsta, fmtOficio } from '../utils/formato'
 import { avatarVigente } from '../utils/avatar'
 
 // ═══════════════════════════════════════════════════════════════
@@ -66,7 +66,7 @@ export default function HelperCard({ helper, onContact, showContact = true, show
             {helper.verified && <BadgeCheck size={16} className={styles.verified} aria-label="Identidad verificada" />}
             <ArrowUpRight size={15} className={styles.profileArrow} aria-hidden="true" />
           </span>
-          <span className={styles.specialty} title={helper.specialty}>{helper.specialty}</span>
+          <span className={styles.specialty} title={fmtOficio(helper.specialty)}>{fmtOficio(helper.specialty)}</span>
           <span className={styles.meta}>
             {helper.rating > 0 && <span className={styles.rating}><Star size={13} aria-hidden="true" />{fmtNota(helper.rating)}{helper.reviews > 0 && <span className={styles.reviews}>({helper.reviews})</span>}</span>}
             {helper.urgent && <span className={styles.urgent}><Zap size={13} aria-hidden="true" /><span>Urgencias</span></span>}

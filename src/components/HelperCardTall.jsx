@@ -8,7 +8,7 @@ import { haptic } from '../utils/haptic'
 import { getFirstName } from '../utils/name'
 import { LiveDot, Button, SectionLabel } from './ui'
 import { recordarDestino, contextoDeChat } from '../utils/contacto'
-import { fmtNota, dondeEsta } from '../utils/formato'
+import { fmtNota, dondeEsta, fmtOficio } from '../utils/formato'
 
 // ═══════════════════════════════════════════════════════════════
 // La Tarjeta Vertical — la recomendación como protagonista.
@@ -76,7 +76,7 @@ export default function HelperCardTall({ helper, small = false, compact = false,
           : <span className={styles.avatar} style={{ background: helper.avatarColor || 'var(--purple)' }}>{firstName?.[0]}</span>}
         <span className={styles.info}>
           <span className={styles.name}>{firstName}{lastInitial ? ` ${lastInitial}.` : ''}{helper.verified && <BadgeCheck size={15} aria-label="Verificado" />}</span>
-          <span className={styles.specialty}>{helper.specialty}</span>
+          <span className={styles.specialty}>{fmtOficio(helper.specialty)}</span>
           <span className={styles.meta}>
             {helper.rating > 0 && <span className={styles.rating}><Star size={12} aria-hidden="true" />{fmtNota(helper.rating)}</span>}
             {helper.price && <span>{helper.price}</span>}
@@ -130,7 +130,7 @@ export default function HelperCardTall({ helper, small = false, compact = false,
 
       <div style={{ fontSize: small ? 'var(--text-xs)' : 'var(--text-sm)', color: 'var(--ink-secondary)',
         marginTop: 'var(--space-3)', lineHeight: 1.35 }}>
-        {helper.specialty}
+        {fmtOficio(helper.specialty)}
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap',

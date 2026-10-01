@@ -473,7 +473,7 @@ console.log('\n── Búsqueda: lo que se dice después de buscar ──')
   await nueva()
   await decir('electricista')
   r = await decir('no, era fontanero')
-  paso('«no, era fontanero» busca fontanero', /Primera opción \S+ \S+ fontanero/.test(r), r.match(/Primera opción \S+ \S+ \S+/)?.[0] || r.slice(0, 80))
+  paso('«no, era fontanero» busca fontanero', /Primera opción \S+ \S+ Fontanero/.test(r), r.match(/Primera opción \S+ \S+ \S+/)?.[0] || r.slice(0, 80))
   await nueva()
   const a = await decir('cuidadora para mi padre con alzheimer')
   r = await decir('¿cuánto cobra?')
@@ -523,7 +523,7 @@ console.log('\n── Búsqueda: dos cosas a la vez ──')
   await tocar(p, /^Buscar electricista$/)
   await espera(3500)
   r = await resp()
-  paso('el botón busca la otra cosa', /Primera opción \S+ \S+ electricista/.test(r), r.match(/Primera opción .{0,30}/)?.[0] || '')
+  paso('el botón busca la otra cosa', /Primera opción \S+ \S+ Electricista/.test(r), r.match(/Primera opción .{0,30}/)?.[0] || '')
   await p.close()
 }
 
@@ -613,7 +613,7 @@ console.log('\n── Búsqueda: cuando no hay nadie, decirlo bien ──')
   r = await buscar('necesito ayuda')
   paso('sin nada concreto («necesito ayuda») pregunta, no dice que no hay nadie', !/Todavía no tengo a nadie/.test(r), r.slice(12, 90))
   r = await buscar('fontanero en Gràcia')
-  paso('una ficha sin ciudad cuenta como Barcelona («en Gràcia» encuentra al fontanero)', /Primera opción \S+ \S+ fontanero/.test(r), r.match(/Primera opción .{0,30}/)?.[0] || r.slice(0, 80))
+  paso('una ficha sin ciudad cuenta como Barcelona («en Gràcia» encuentra al fontanero)', /Primera opción \S+ \S+ Fontanero/.test(r), r.match(/Primera opción .{0,30}/)?.[0] || r.slice(0, 80))
   r = await buscar('clases de chino en Bilbao')
   paso('si la primera opción es online y de otra ciudad, se dice', /En Bilbao todavía no tengo a nadie en persona, pero \S+ trabaja online/.test(r), r.match(/En Bilbao[^.]+/)?.[0] || '')
   await p.close()
@@ -933,6 +933,17 @@ console.log('\n── La portada pregunta siempre «¿Para quién necesitas ayud
   await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1500)
   const conContacto = await pregunta()
   paso('la portada pregunta siempre: la primera vez, tras contestarla y tras escribir a alguien', primera && trasContestar && conContacto, `${primera} · ${trasContestar} · ${conContacto}`)
+  await p.close()
+}
+
+console.log('\n── Los oficios, con la primera letra en mayúscula ──')
+{
+  // 2026-10-01: en la base hay «fisioterapeuta» y «Logopeda infantil»; se
+  // enseñaba tal cual. Ahora siempre «Fisioterapeuta» (solo al mostrarlo).
+  const p = await navegador.newPage()
+  await p.goto(BASE + '/helper/2004', { waitUntil: 'networkidle0' }); await espera(1500)
+  const t = await p.evaluate(() => document.body.innerText)
+  paso('el perfil de Marc dice «Fisioterapeuta», no «fisioterapeuta»', /\bFisioterapeuta\b/.test(t.split('\n').slice(0, 12).join(' ')) && !/^fisioterapeuta$/m.test(t))
   await p.close()
 }
 

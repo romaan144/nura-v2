@@ -32,6 +32,7 @@ import { DEMO_MODE } from '../config'
 import RegisterGate from '../components/RegisterGate'
 import { registrar } from '../utils/analitica'
 import { construirAviso } from '../utils/aviso'
+import { fmtOficio } from '../utils/formato'
 
 // ── Context-aware first message ───────────────────────────────────────────
 
@@ -456,7 +457,7 @@ export default function Chat() {
 
   // El oficio entero: cortarlo a tres palabras dejaba «inglés todos los».
   // Si no cabe, el CSS (.helperSpecialty) pone los puntos suspensivos.
-  const chatSpecialty = helper.specialty || ''
+  const chatSpecialty = fmtOficio(helper.specialty)
 
   // FIX 7: Contract button label based on service state
   const serviceState = (() => {
