@@ -23,6 +23,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { abrirAviso, responderAviso, misAvisos, porLaFuncion } from '../utils/escrituras'
 import { refrescarSinContestar } from '../utils/sinContestar'
 import { yaPaso } from '../utils/citaAviso'
+import { partesDelAviso } from '../utils/mensajeAviso'
 
 // RESPUESTAS RAPIDAS: en el movil escribir cuesta. Rellenan la caja (no
 // envian): la profesional las retoca y decide. Si el mensaje es una
@@ -224,12 +225,27 @@ function ResponderAviso({ token }) {
           {nombre ? `Hola, ${nombre}. Alguien te necesita.` : 'Alguien te necesita.'}
         </p>
 
+        {/* Lo que dice la persona, lo primero y más grande; lo que añade Nüra,
+            pequeño. Sin el «Hola, Laura. Soy Nüra.» del aviso: ya saluda la
+            línea de arriba (ver utils/mensajeAviso). */}
         <div style={{
           background: 'var(--glass-control)', borderRadius: 'var(--radius-card)',
           padding: 'var(--space-16)', margin: '0 0 var(--space-20)',
           fontSize: 'var(--text-base)', lineHeight: 1.6,
-          color: 'var(--ink-primary)', whiteSpace: 'pre-wrap',
-        }}>{aviso?.mensaje}</div>
+          color: 'var(--ink-primary)',
+        }}>
+          {partesDelAviso(aviso?.mensaje).length ? partesDelAviso(aviso?.mensaje).map((p, i) => (
+            p.tipo === 'corte' ? <hr key={i} style={{ border: 0, borderTop: '1px solid var(--ink-border)', margin: 'var(--space-12) 0' }} />
+            : p.tipo === 'suyo' ? (
+              <p key={i} style={{ margin: '0 0 var(--space-10)', paddingLeft: 'var(--space-12)', borderLeft: '3px solid var(--purple)',
+                fontSize: 'var(--text-md)', lineHeight: 1.55, color: 'var(--ink-primary)', whiteSpace: 'pre-wrap' }}>
+                {p.texto.replace(/^«|»$/g, '')}
+              </p>
+            ) : (
+              <p key={i} style={{ margin: '0 0 var(--space-8)', fontSize: 'var(--text-sm)', lineHeight: 1.5, color: 'var(--ink-secondary)' }}>{p.texto}</p>
+            )
+          )) : <span style={{ whiteSpace: 'pre-wrap' }}>{aviso?.mensaje}</span>}
+        </div>
 
         {aviso?.cita?.estado === 'cancelada' && (
           <div role="status" style={{ border: '1px solid var(--ink-border)', background: 'var(--glass-control)',

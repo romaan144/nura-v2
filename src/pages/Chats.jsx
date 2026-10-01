@@ -166,15 +166,18 @@ export default function Chats() {
       )
     : allChats
 
+  const esPro = Boolean(user?.isHelper) && !DEMO_MODE
   return (
     <div className={styles.page}>
       <PageHeader />
+      {/* El profesional ve su trabajo (agenda y quién le ha escrito), no la
+          cabecera de quien busca ayuda. El buscador solo si tiene chats. */}
       <div className={`nura-page-intro ${styles.intro}`}>
-        <h1>Tus conversaciones</h1>
-        <p>Continúa donde lo dejaste.</p>
+        <h1>{esPro ? 'Tu trabajo' : 'Tus conversaciones'}</h1>
+        <p>{esPro ? 'Tus citas y quién te ha escrito.' : 'Continúa donde lo dejaste.'}</p>
       </div>
 
-      <div className={styles.searchWrap}>
+      {(!esPro || allChats.length > 0) && <div className={styles.searchWrap}>
         <div className={styles.searchBox}>
           <Search size={14} color="rgba(33,29,51,0.35)" />
           <input
@@ -185,9 +188,9 @@ export default function Chats() {
             onChange={e => setSearch(e.target.value)}
           />
         </div>
-      </div>
+      </div>}
 
-      {user?.isHelper && !DEMO_MODE && <BandejaProfesional />}
+      {esPro && <BandejaProfesional />}
 
       <div className={styles.list}>
         {allChats.length === 0 && !search.trim() && !user?.isHelper && (

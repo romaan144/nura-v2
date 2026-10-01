@@ -170,6 +170,14 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Diseño: el lado del profesional, al nivel del resto (Claude)
+
+- A petición de Sergio, Claude hace un repaso de diseño. Codex no tenía tareas activas. Se usan sus materiales (cristal, tokens, tipografías) sin inventar estilos.
+- **Responder.** Antes saludaba dos veces («Hola, Laura. Alguien te necesita.» y, dentro, «Hola, Laura. Soy Nüra.»), y lo que pedía la persona iba tercero, con el mismo peso que todo. Ahora se lee primero, más grande y con una barra morada como una cita. Quién escribe va pequeño encima. Sobra la frase «Puedes responderle desde Nüra» porque ya se está ahí. El mensaje que se envía por correo y WhatsApp no cambia; solo cómo se ve (`src/utils/mensajeAviso.js`).
+- **Chats del profesional.** Veía la cabecera del cliente («Tus conversaciones · Continúa donde lo dejaste») y un buscador que no buscaba nada suyo. Ahora pone «Tu trabajo · Tus citas y quién te ha escrito», y el buscador solo aparece si tiene chats.
+- **Mi agenda.** Cada cita dice de qué va («Mi hijo de 5 años no pronuncia la R…»), no solo «17:00 · Por contestar». Lo que ya pasó queda en segundo plano.
+- `src/pages/Responder.jsx`, `src/pages/Chats.jsx`, `src/components/AgendaProfesional.jsx`, `src/components/BandejaProfesional.jsx`. Comprobado con capturas antes y después en la versión real.
+
 ## 2026-10-29 — La portada pregunta siempre «¿Para quién necesitas ayuda?»
 
 - Sergio vio dos portadas distintas sin motivo aparente: una con la pregunta y los botones «Para mí / familia / hogar», y otra con sugerencias como «Fontanero para una gotera». La pregunta desaparecía si ya se había contestado en esa pestaña (se recordaba en el navegador mientras la pestaña seguía abierta) o si se había escrito a algún profesional.

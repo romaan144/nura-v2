@@ -6,6 +6,7 @@ import { misAvisos, porLaFuncion } from '../utils/escrituras'
 import { movilPuedeAvisar, esIphoneSinInstalar, avisosProActivos, activarAvisosPro, desactivarAvisosPro } from '../utils/alertas'
 import styles from '../pages/Chats.module.css'
 import AgendaProfesional from './AgendaProfesional'
+import { extractoDelAviso } from '../utils/mensajeAviso'
 
 // ── «TE HAN ESCRITO»: la bandeja de la profesional ──────────────────────
 // Antes solo podia contestar desde el enlace de cada aviso. Aqui ve todo lo
@@ -22,13 +23,8 @@ const fecha = iso => {
   } catch { return '' }
 }
 
-/** Lo que pide, sin el saludo de Nüra: la frase entre «» o el primer texto. */
-function extracto(mensaje) {
-  const t = String(mensaje || '')
-  const cita = /«([^»]{3,})»/.exec(t)
-  const base = cita ? cita[1] : t.split('\n').filter(l => l.trim() && !/^Hola.*soy Nüra\.?$/.test(l.trim()))[0] || t
-  return base.replace(/\s+/g, ' ').trim().slice(0, 140)
-}
+// Lo que pide, sin el saludo de Nüra (compartido con la agenda).
+const extracto = extractoDelAviso
 
 export default function BandejaProfesional() {
   const navigate = useNavigate()
