@@ -14,6 +14,7 @@
     "test:avisos": "node scripts/test-avisos.mjs",
     "test:sw": "node scripts/test-sw.mjs",
     "test:layout": "node scripts/test-response-layout.mjs",
+    "test:telefono": "node scripts/test-telefono.mjs",
     "test:vista": "node scripts/test-vista-previa.mjs",
     "smoke": "node scripts/smoke.mjs",
     "preflight": "node scripts/preflight.mjs",

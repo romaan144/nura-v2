@@ -23,6 +23,7 @@ import { fmtTel } from '../utils/formato'
 import { reclamarFicha, borrarCuenta } from '../utils/escrituras'
 import { usuarioDeFicha, usuarioCliente } from '../utils/usuarioDeFicha'
 import FotoPerfil from '../components/FotoPerfil'
+import AccesoCuenta from '../components/AccesoCuenta'
 import MisAlertas from '../components/MisAlertas'
 import LoQueSabeNura from '../components/LoQueSabeNura'
 import { quitarTodas } from '../utils/alertas'
@@ -464,7 +465,10 @@ export default function Profile() {
             <p className={styles.subtitulo}>En Nüra desde {joinedDate}</p>
           ) : null}
 
-          {editingPhone ? (
+          {/* El teléfono de verdad es el de la cuenta, confirmado por SMS (en
+              «Tu acceso»). Este, guardado solo en el móvil y sin confirmar,
+              queda para la demo. */}
+          {!DEMO_MODE ? null : editingPhone ? (
             <div className={styles.editRow} style={{marginTop:'var(--space-8)'}}>
               <input className={styles.editInput} value={phoneInput} placeholder="6XX XXX XXX" aria-label="Tu teléfono"
                 onChange={e => setPhoneInput(e.target.value)}
@@ -618,27 +622,17 @@ export default function Profile() {
             Correo y contraseña. La sesion se lee de `nura_sesion` sin
             importar la libreria de Supabase: el perfil no arrastra 211 kB
             que solo necesitan Entrar y Restablecer. */}
-        {user.isHelper && (
+        {(user.isHelper || correoAcceso) && (
           <section className={styles.seccion} style={entrada(200)}>
             <h2 className={styles.titulo}>Tu acceso</h2>
             {correoAcceso ? (
-              <div className={styles.lista}>
-                <div className={styles.fila} style={{cursor:'default'}}>
-                  <span className={styles.filaIcono} aria-hidden="true"><Mail size={17} /></span>
-                  <span className={styles.filaTexto}>
-                    <span className={styles.filaTitulo} style={{overflow:'hidden', textOverflow:'ellipsis'}}>{correoAcceso}</span>
-                    <span role="status" className={styles.filaDetalle} style={{whiteSpace:'normal',
-                      color: user.helperId != null ? 'var(--green-ink, #067647)' : undefined}}>
-                      {user.helperId != null ? 'Tu ficha está vinculada: lo que cambies se publica.'
-                        : vinculo === 'sin-confirmar' ? 'Confirma tu correo con el enlace que te enviamos para vincular tu ficha.'
-                        : vinculo === 'sin-ficha' ? 'No encontramos una ficha dada de alta con este correo.'
-                        : vinculo === 'varias' ? 'Hay varias fichas con este correo: escríbenos y lo resolvemos.'
-                        : vinculo ? 'No hemos podido vincular tu ficha ahora. Lo intentaremos al volver.'
-                        : 'Buscando tu ficha…'}
-                    </span>
-                  </span>
-                </div>
-              </div>
+              <AccesoCuenta detalleCorreo={!user.isHelper ? null
+                : user.helperId != null ? 'Tu ficha está vinculada: lo que cambies se publica.'
+                : vinculo === 'sin-confirmar' ? 'Confirma tu correo con el enlace que te enviamos para vincular tu ficha.'
+                : vinculo === 'sin-ficha' ? 'No encontramos una ficha dada de alta con este correo.'
+                : vinculo === 'varias' ? 'Hay varias fichas con este correo: escríbenos y lo resolvemos.'
+                : vinculo ? 'No hemos podido vincular tu ficha ahora. Lo intentaremos al volver.'
+                : 'Buscando tu ficha…'} />
             ) : (
               <div className={styles.tarjeta}>
                 <p className={styles.tarjetaTitulo}>Crea tu acceso</p>

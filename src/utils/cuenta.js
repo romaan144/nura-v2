@@ -1,5 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { SUPABASE_URL, SUPABASE_KEY } from './supabase'
+import { telefonoInternacional, pareceTelefono } from './telefono'
+export { telefonoInternacional, pareceTelefono }
 
 // ── CUENTAS: CORREO Y CONTRASEÑA ─────────────────────────────────────────
 //
@@ -38,6 +40,12 @@ export function explicar(error) {
   if (m.includes('invalid') && m.includes('email')) return 'Ese correo no parece válido.'
   if (m.includes('rate') || m.includes('too many') || m.includes('security purposes')) return 'Demasiados intentos seguidos. Espera un minuto y vuelve a probar.'
   if (m.includes('fetch') || m.includes('network')) return 'No hay conexión. Revisa tu internet y vuelve a probar.'
+  // Teléfono: sin proveedor de SMS en Supabase no sale ningún mensaje.
+  if (m.includes('phone provider') || m.includes('sms provider') || m.includes('unsupported phone') || (m.includes('sms') && m.includes('send'))) return 'Todavía no podemos enviar SMS. Tu correo sigue siendo tu acceso; vuelve a probar más adelante.'
+  if (m.includes('token') && (m.includes('expired') || m.includes('invalid'))) return 'El código no es correcto o ha caducado. Pide uno nuevo.'
+  if (m.includes('phone') && (m.includes('already') || m.includes('exists') || m.includes('registered'))) return 'Ese teléfono ya está en otra cuenta de Nüra.'
+  if (m.includes('phone') && m.includes('invalid')) return 'Ese teléfono no parece válido.'
+  if (m.includes('email') && (m.includes('already') || m.includes('exists'))) return 'Ese correo ya está en otra cuenta de Nüra.'
   return 'Algo no ha ido bien. Vuelve a probar en un momento.'
 }
 
@@ -52,8 +60,17 @@ export async function crearCuenta(email, contrasena) {
   return { usuario: data.user, pendienteConfirmar: !data.session }
 }
 
-export async function entrar(email, contrasena) {
-  const { data, error } = await cuentas.auth.signInWithPassword({ email: email.trim(), password: contrasena })
+// ── TELÉFONO, SIEMPRE CONFIRMADO (Sergio, 2026-10-01) ────────────────────
+// Cada cuenta tiene correo y teléfono, para no perderla si cambia uno de
+// los dos. Primero el correo (gratis, y ya era el acceso); después el
+// teléfono, confirmado con un código por SMS: nadie puede poner el número
+// de otra persona. Cambiar cualquiera de los dos solo surte efecto al
+// confirmarlo (enlace al correo nuevo, código al teléfono nuevo).
+export async function entrar(identificador, contrasena) {
+  const tel = pareceTelefono(identificador) ? telefonoInternacional(identificador) : null
+  const { data, error } = await cuentas.auth.signInWithPassword(tel
+    ? { phone: tel, password: contrasena }
+    : { email: String(identificador || '').trim(), password: contrasena })
   if (error) return { error: explicar(error) }
   return { usuario: data.user }
 }
@@ -74,6 +91,51 @@ export async function nuevaContrasena(contrasena) {
   const { error } = await cuentas.auth.updateUser({ password: contrasena })
   if (error) return { error: explicar(error) }
   return { ok: true }
+}
+
+// Sin acceso al correo y sin contraseña: un código por SMS al teléfono de la
+// cuenta. No crea cuentas nuevas. Con el código se abre sesión y se pone una
+// contraseña nueva en /restablecer.
+export async function pedirCodigoParaEntrar(telefono) {
+  const tel = telefonoInternacional(telefono)
+  if (!tel) return { error: 'Ese teléfono no parece válido.' }
+  const { error } = await cuentas.auth.signInWithOtp({ phone: tel, options: { shouldCreateUser: false } })
+  // Como con el correo, no se dice si el teléfono tiene cuenta.
+  if (error && !/not found|signups not allowed|no user/i.test(String(error.message || ''))) return { error: explicar(error) }
+  return { ok: true, telefono: tel }
+}
+export async function entrarConCodigo(telefono, codigo) {
+  const tel = telefonoInternacional(telefono)
+  const { data, error } = await cuentas.auth.verifyOtp({ phone: tel, token: String(codigo || '').replace(/\D/g, ''), type: 'sms' })
+  if (error) return { error: explicar(error) }
+  return { usuario: data.user }
+}
+
+// Cambiar el correo: Supabase manda un enlace y el cambio solo se aplica al
+// pulsarlo (con «cambio seguro», también se confirma desde el correo actual).
+export async function cambiarCorreo(nuevo) {
+  const { error } = await cuentas.auth.updateUser({ email: String(nuevo || '').trim() }, { emailRedirectTo: origen() + '/profile' })
+  if (error) return { error: explicar(error) }
+  return { ok: true }
+}
+
+// Añadir o cambiar el teléfono: se manda un código por SMS al número nuevo y
+// no se guarda hasta escribirlo bien.
+export async function pedirCodigoTelefono(telefono) {
+  const tel = telefonoInternacional(telefono)
+  if (!tel) return { error: 'Escribe un móvil válido, por ejemplo 612 34 56 78.' }
+  const { error } = await cuentas.auth.updateUser({ phone: tel })
+  if (error) return { error: explicar(error) }
+  return { ok: true, telefono: tel }
+}
+export async function confirmarCodigoTelefono(telefono, codigo) {
+  const { data, error } = await cuentas.auth.verifyOtp({ phone: telefonoInternacional(telefono), token: String(codigo || '').replace(/\D/g, ''), type: 'phone_change' })
+  if (error) return { error: explicar(error) }
+  return { ok: true, usuario: data.user }
+}
+
+export async function usuarioActual() {
+  try { const { data } = await cuentas.auth.getUser(); return data.user || null } catch { return null }
 }
 
 export async function sesionActual() {

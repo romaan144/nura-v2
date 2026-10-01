@@ -170,6 +170,10 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Correo y móvil en cada cuenta, los dos confirmados (Claude)
+
+Sergio: cada persona registrada con correo y móvil, para no perder la cuenta si cambia uno de los dos, y cada cambio confirmado (enlace al correo nuevo, SMS al móvil nuevo) para que nadie ponga los datos de otro. Claude decide el orden: primero el correo (gratis, y ya era el acceso) y después el móvil por SMS. Se puede entrar con cualquiera de los dos y recuperar la cuenta con un SMS. Los SMS empiezan a salir cuando se active un proveedor en Supabase.
+
 ## 2026-10-29 — Si Nüra no tiene a nadie, lo dice y recomienda «Ver todos» (Claude)
 
 Sergio: cuando Nüra no tiene a nadie para lo que se pide, debe decirlo y recomendar entrar en «Ver todos los profesionales» por si alguien convence. «Un astronauta para la luna» recomendaba a una psicóloga porque «luna» casaba con «lunar»; las raíces cortas ya no se alargan solas. Ahora responde «Todavía no tengo a nadie para eso en Nüra» con el botón a la lista. Lo mismo con un oficio que falta. Si la frase no dice nada concreto («necesito ayuda»), sigue preguntando.

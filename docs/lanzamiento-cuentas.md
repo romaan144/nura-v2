@@ -149,3 +149,23 @@ Migración `supabase/migrations/20261021000000_ficha_presencial_sin_insert_publi
 
 - `grant update (presential) on public.helpers to authenticated;` — al elegir «Online» en «Editar mi ficha» deja de salir en búsquedas presenciales. Sigue limitado a su fila por `helpers_owner_update`.
 - `revoke insert on public.helpers from anon, authenticated;` — el alta va siempre por `helpers-write` (clave de servidor). Comprobado tras aplicarla: `service_role` puede insertar; `anon` y `authenticated` no; la lectura pública por columnas sigue igual (35 columnas, sin `contacto` ni `owner_id`).
+
+## 2026-10-01 · Correo y móvil, los dos confirmados · ⏳ *falta activar los SMS*
+
+Decisión de Sergio: cada cuenta tiene correo **y** móvil, para no perderla si cambia uno de los dos. Ningún cambio se aplica sin confirmarlo.
+
+- **Orden (decidido por Claude):** primero el correo (crear el acceso con correo y contraseña, como hasta ahora: es gratis y sirve para recuperar la contraseña). Después, en «Perfil › Tu acceso», el móvil, confirmado con un código por SMS. Así cada persona recibe un solo SMS.
+- **Cambiar el correo:** `updateUser({ email })`. Supabase manda un enlace y el correo no cambia hasta pulsarlo.
+- **Añadir o cambiar el móvil:** `updateUser({ phone })` manda un código por SMS; `verifyOtp({ type: 'phone_change' })` lo confirma. Sin el código bueno no se guarda nada: nadie puede poner el número de otra persona.
+- **Entrar:** con el correo o con el móvil, más la contraseña.
+- **Sin acceso al correo:** en «¿Has olvidado tu contraseña?», con el móvil llega un código por SMS (`signInWithOtp`, sin crear cuentas nuevas) y con él se pone una contraseña nueva.
+- El teléfono que antes se guardaba solo en el móvil, sin confirmar, ya no se pide fuera de la demo.
+
+### Lo que tiene que hacer Sergio en Supabase (una vez)
+
+Sin esto, la app dice «Todavía no podemos enviar SMS» y el correo sigue siendo el acceso. No se rompe nada.
+
+1. Crear una cuenta en un proveedor de SMS compatible con Supabase. Twilio es el más habitual; cada SMS a España cuesta unos céntimos.
+2. **Authentication → Sign In / Providers → Phone**: activarlo, elegir el proveedor y pegar sus claves. Las claves van solo ahí, nunca en el repositorio.
+3. **Authentication → Sign In / Providers → Email**: dejar activado «Secure email change». Así el cambio de correo se confirma también desde el correo de antes.
+4. **Authentication → URL Configuration**: comprobar que `https://<dominio>/profile` y `https://<dominio>/restablecer` están entre las URLs de vuelta permitidas.
