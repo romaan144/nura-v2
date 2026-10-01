@@ -1,5 +1,5 @@
 import UserAvatar from '../components/UserAvatar'
-import { avatarDe } from '../utils/avatar'
+import { avatarDe, avatarVigente } from '../utils/avatar'
 import { useState, useEffect } from 'react'
 import PageHeader from '../components/PageHeader'
 import { Button, SectionLabel } from '../components/ui'
@@ -96,7 +96,9 @@ export default function Profile() {
     // el ✓ de verificado mientras su ficha publica real (la del alta) dice
     // verified: false. "Así te ven" le mentia a ella misma.
     verified: hp.verified === true,
-    avatarUrl: user.avatar || avatarDe(encodeURIComponent(user.name || 'pro')),
+    // La misma cara que ven los clientes (normalize() usa avatarVigente, con
+    // el nombre de pila): con el nombre completo salía otra (2026-10-01).
+    avatarUrl: user.avatar || avatarVigente('', user.name) || avatarDe('pro'),
   } : null
   function saveQuote() {
     const v = quoteDraft.trim()
@@ -492,7 +494,7 @@ export default function Profile() {
               <StatBar stats={[
                 { value: proSig.vistasHoy, label: 'vistas hoy' },
                 { value: proSig.busquedasSemana, label: 'búsquedas en tu zona' },
-                { value: '—', label: 'conexiones ✓' },
+                { value: proSig.vistasSemana, label: 'vistas esta semana' },
               ]} />
             </div>
           )}

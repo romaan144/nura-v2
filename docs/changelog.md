@@ -170,6 +170,10 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Recorrido de una profesional: tres arreglos (Claude)
+
+Al terminar el alta, Inicio la seguía tratando como invitada («¿Para quién necesitas ayuda?»). Ahora le dice «tu ficha ya está publicada». En «Así te ven», la vista previa ya enseña la misma cara que ven los clientes. Y en la demo, el recuadro de cifras sin terminar («— conexiones ✓») ahora dice cuántas vistas tuvo esta semana.
+
 ## 2026-10-29 — Los oficios, con mayúscula (Claude)
 
 Algunos oficios salían en minúscula («fisioterapeuta») porque así están guardados. Ahora siempre se enseñan con la primera letra en mayúscula, en todas las pantallas. Lo guardado no cambia: la búsqueda sigue igual.

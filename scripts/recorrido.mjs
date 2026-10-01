@@ -641,6 +641,26 @@ console.log('\n── Alta de profesional: una conversación natural ──')
   await p.close()
 }
 
+console.log('\n── Tras el alta, sin recargar: Inicio la saluda como profesional ──')
+{
+  // 2026-10-01: Inicio no se desmonta y preparaba el saludo una vez; tras
+  // darse de alta seguía con «¿Para quién necesitas ayuda?» de invitada.
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('alta sin recargar: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); sessionStorage.clear() })
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1500)
+  const antes = await texto(p)
+  await p.evaluate(() => window.history.pushState({}, '', '/register-helper')); await p.evaluate(() => window.dispatchEvent(new PopStateEvent('popstate')))
+  await espera(1500)
+  const decir = async t => { await escribirEn(p, t); await p.keyboard.press('Enter'); await espera(3000) }
+  for (const t of ['Nuria Camps Ferrer', 'logopeda infantil', 'Grado en Logopedia por la UB', 'Barcelona, Sant Andreu', '45€ la sesión', 'Trabajo con juego y doy pautas a las familias', 'nuria.camps@ejemplo.com']) await decir(t)
+  await espera(4500)
+  const r = await texto(p)
+  paso('tras darse de alta, Inicio dice «tu ficha ya está publicada» (sin recargar)', /Para quién necesitas ayuda/.test(antes) && new URL(p.url()).pathname === '/' && /Nuria, tu ficha ya está publicada/.test(r) && !/Para quién necesitas ayuda/.test(r), new URL(p.url()).pathname + ' · ' + r.slice(0, 80))
+  await p.close()
+}
+
 console.log('\n── Inicio del profesional: frases y botones que sirven ──')
 {
   const p = await navegador.newPage()
