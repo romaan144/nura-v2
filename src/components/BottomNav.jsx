@@ -38,7 +38,8 @@ export default function BottomNav() {
   // Y a quien busca, las respuestas de profesionales que aun no ha visto.
   const { total: respuestas } = useRespuestasNuevas()
   // Y solo mientras no se haya abierto (utils/demoLeidos.js).
-  const elenaSinLeer = DEMO_MODE && !(chats?.length > 0) && !demoLeidos().has(DEMO_SIN_LEER)
+  // A la profesional no: la conversación de Elena es de una clienta.
+  const elenaSinLeer = DEMO_MODE && !user?.isHelper && !(chats?.length > 0) && !demoLeidos().has(DEMO_SIN_LEER)
   const effectiveUnread = totalUnreadChats + (elenaSinLeer ? 1 : 0) + sinContestar + respuestas
 
   if (HIDE_ON.some(p => location.pathname.startsWith(p))) return null

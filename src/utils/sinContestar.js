@@ -2,8 +2,8 @@
 //
 // Un solo recuento compartido por la barra, el menú lateral y el inicio: se
 // pide a Nüra (op `mis-avisos`, con su sesión) al abrir, al volver a la app
-// y cada 2 minutos mientras está abierta. Fuera de la demo y solo para
-// profesionales con cuenta; si no, siempre 0.
+// y cada 2 minutos mientras está abierta. Solo para profesionales con
+// cuenta; en la demo, sus mensajes de ejemplo (data/demoAvisos.js).
 //
 // También cuenta las citas que le han CANCELADO y aún no ha visto: si no, se
 // enteraba solo abriendo ese aviso. Se dan por vistas con «Entendido» en «Mi
@@ -29,8 +29,9 @@ export async function refrescarSinContestar() {
   if (pidiendo) return pidiendo
   pidiendo = (async () => {
     try {
-      const { sesionActual } = await import('./cuenta')
-      const lista = await misAvisos((await sesionActual())?.access_token)
+      // En la demo, los mensajes de ejemplo: sin cargar la librería de cuentas.
+      const lista = DEMO_MODE ? await misAvisos(null)
+        : await misAvisos((await (await import('./cuenta')).sesionActual())?.access_token)
       if (Array.isArray(lista)) { ultimaLista = lista; cuenta = contar(lista) }
     } catch { /* sin red: se queda el último recuento */ }
     oyentes.forEach(fn => fn(cuenta))
@@ -48,7 +49,7 @@ export function marcarCancelacionesVistas(ids) {
 }
 
 export function useSinContestar(user) {
-  const activo = Boolean(user?.isHelper) && !DEMO_MODE && porLaFuncion()
+  const activo = Boolean(user?.isHelper) && (DEMO_MODE || porLaFuncion())
   const [n, setN] = useState(activo ? cuenta : 0)
   useEffect(() => {
     if (!activo) return

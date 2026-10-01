@@ -661,6 +661,30 @@ console.log('\n── Tras el alta, sin recargar: Inicio la saluda como profesio
   await p.close()
 }
 
+console.log('\n── Demo: la profesional ve quién le ha escrito, no los chats de una clienta ──')
+{
+  // 2026-10-01: en la demo veía las conversaciones de ejemplo de una
+  // clienta (Elena, Carlos…). Ahora, su bandeja con mensajes de ejemplo.
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('bandeja demo: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); sessionStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Nuria Camps', isHelper: true, helperProfile: { specialty: 'Logopeda infantil' }, joined: new Date().toISOString() })) })
+  await p.goto(BASE + '/chats', { waitUntil: 'networkidle0' }); await espera(1500)
+  const marca = () => p.evaluate(() => [...document.querySelectorAll('nav a, nav button')].find(x => /Chats/.test(x.textContent))?.textContent.replace(/\D/g, '') || '0')
+  let t = await texto(p)
+  paso('ve «Tu trabajo» y «Te han escrito» con 2 sin contestar, sin Elena ni Carlos', /Tu trabajo/.test(t) && /2 sin contestar/.test(t) && !/Elena Fernández|Carlos Martínez/.test(t), t.slice(0, 90))
+  paso('la pestaña Chats marca sus 2 mensajes sin contestar', (await marca()) === '2', await marca())
+  await p.evaluate(() => [...document.querySelectorAll('button')].find(b => /^Sin contestar: Hola, te he encontrado/.test(b.getAttribute('aria-label') || ''))?.click()); await espera(1500)
+  await tocar(p, /Aceptar la cita/); await espera(1500)
+  paso('al aceptar la cita de ejemplo, queda confirmada', /Cita confirmada/.test(await texto(p)))
+  await p.goto(BASE + '/chats', { waitUntil: 'networkidle0' }); await espera(1500)
+  t = await texto(p)
+  paso('y en su agenda sale Confirmada, con 1 sin contestar', /Confirmada/.test(t) && /1 sin contestar/.test(t) && (await marca()) === '1', await marca())
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(2500)
+  paso('Inicio le dice que tiene 1 mensaje sin contestar, con «Contestar»', /Tienes 1 mensaje sin contestar/.test(await texto(p)))
+  await p.close()
+}
+
 console.log('\n── Inicio del profesional: frases y botones que sirven ──')
 {
   const p = await navegador.newPage()
@@ -670,6 +694,9 @@ console.log('\n── Inicio del profesional: frases y botones que sirven ──
     localStorage.clear(); sessionStorage.clear()
     localStorage.setItem('nura_user', JSON.stringify({ name: 'Marta Ruiz', isHelper: true, helperProfile: { specialty: 'limpieza de casas' }, joined: new Date().toISOString() }))
     sessionStorage.setItem('nura_helper_registered', '1')
+    // Los mensajes de ejemplo de la demo, ya contestados: aquí se miran el
+    // saludo y sus botones (el aviso de «sin contestar» se prueba aparte).
+    localStorage.setItem('nura_demo_avisos', JSON.stringify({ 'demo-1': { respuesta: 'Sí', respondido_en: new Date().toISOString() }, 'demo-2': { respuesta: 'Sí', respondido_en: new Date().toISOString() } }))
   })
   await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
   await espera(1500)
