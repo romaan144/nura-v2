@@ -21,6 +21,7 @@ import ErrorPanel from '../components/ErrorPanel'
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { abrirAviso, responderAviso, misAvisos, porLaFuncion } from '../utils/escrituras'
+import { DEMO_MODE } from '../config'
 import { refrescarSinContestar } from '../utils/sinContestar'
 import { yaPaso } from '../utils/citaAviso'
 import { partesDelAviso } from '../utils/mensajeAviso'
@@ -129,11 +130,12 @@ function ResponderAviso({ token }) {
   })
 
   useEffect(() => {
-    if (estado !== 'enviado' || !porLaFuncion()) return
+    if (estado !== 'enviado' || (!porLaFuncion() && !DEMO_MODE)) return
     let vivo = true
     ;(async () => {
       const { sesionActual } = await import('../utils/cuenta')
-      const sesion = (await sesionActual())?.access_token
+      // En la demo no hay cuenta: los mensajes de ejemplo vienen igual.
+      const sesion = DEMO_MODE ? 'demo' : (await sesionActual())?.access_token
       if (!sesion) { if (vivo) setDespues({ conCuenta: false }); return }
       const lista = await misAvisos(sesion)
       const pendientes = (lista || []).filter(a => !a.respuesta && a.token !== token)

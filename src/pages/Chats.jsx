@@ -152,7 +152,9 @@ export default function Chats() {
   const realIds = new Set((chats||[]).map(c => String(c.helperId)))
   // Los de ejemplo ya abiertos en este móvil dejan de salir sin leer.
   const leidos = demoLeidos()
-  const demosToShow = DEMO_MODE ? DEMO_CHATS.filter(d => !realIds.has(String(d.helperId)))
+  // A la profesional no: son conversaciones de una clienta. Ella ve sus
+  // mensajes de ejemplo en «Te han escrito» (2026-10-01).
+  const demosToShow = DEMO_MODE && !user?.isHelper ? DEMO_CHATS.filter(d => !realIds.has(String(d.helperId)))
     .map(d => leidos.has(String(d.helperId)) ? { ...d, unread: 0 } : d) : []
   const allChats = [
     ...(chats||[]).filter(Boolean),
@@ -166,7 +168,7 @@ export default function Chats() {
       )
     : allChats
 
-  const esPro = Boolean(user?.isHelper) && !DEMO_MODE
+  const esPro = Boolean(user?.isHelper)
   return (
     <div className={styles.page}>
       <PageHeader />

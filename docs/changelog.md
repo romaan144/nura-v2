@@ -170,6 +170,10 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Demo: la profesional ve quién le ha escrito (Claude)
+
+En la demo, la profesional veía en Chats las conversaciones de ejemplo de una clienta. Ahora ve su trabajo, como lo verá de verdad: su agenda y tres mensajes de clientes de ejemplo, que puede contestar y cuya cita puede aceptar. Sirve para enseñar Nüra a un profesional. Todo se queda en el móvil; fuera de la demo no cambia nada.
+
 ## 2026-10-29 — Recorrido de una profesional: tres arreglos (Claude)
 
 Al terminar el alta, Inicio la seguía tratando como invitada («¿Para quién necesitas ayuda?»). Ahora le dice «tu ficha ya está publicada». En «Así te ven», la vista previa ya enseña la misma cara que ven los clientes. Y en la demo, el recuadro de cifras sin terminar («— conexiones ✓») ahora dice cuántas vistas tuvo esta semana.

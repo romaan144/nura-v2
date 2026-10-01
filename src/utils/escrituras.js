@@ -9,7 +9,8 @@
 // actual. Asi desplegar el frontend no rompe nada, y el cambio ocurre
 // cuando el fundador enciende VITE_EDGE_WRITES.
 
-import { EDGE_WRITES, EDGE_URL } from '../config'
+import { EDGE_WRITES, EDGE_URL, DEMO_MODE } from '../config'
+import { esAvisoDemo, abrirAvisoDemo, responderAvisoDemo, avisosDemo } from '../data/demoAvisos'
 import { SUPABASE_URL, SUPABASE_KEY } from './supabase'
 
 const directas = {
@@ -175,6 +176,7 @@ export async function atributosDe(helperId) {
 
 /** LA VUELTA: abrir el aviso con el token del enlace. Sin cuenta. */
 export async function abrirAviso(token) {
+  if (DEMO_MODE && esAvisoDemo(token)) return abrirAvisoDemo(token)
   if (!porLaFuncion()) return { ok: false }
   // `sinRed`: no se pudo preguntar (no es que el enlace no valga).
   try {
@@ -187,6 +189,7 @@ export async function abrirAviso(token) {
 /** LA VUELTA: el profesional responde. Si falla, se dice — no se finge. */
 /** `cita`: 'aceptada' | 'rechazada' si el aviso traía una propuesta de cita. */
 export async function responderAviso(token, respuesta, cita) {
+  if (DEMO_MODE && esAvisoDemo(token)) return responderAvisoDemo(token, respuesta, cita)
   if (!porLaFuncion()) return { ok: false }
   try { return await llamarFuncion({ op: 'responder-aviso', token, respuesta, ...(cita ? { cita } : {}) }) }
   catch { return { ok: false } }
@@ -329,6 +332,8 @@ export async function anularCitas(sesion, ids, nota) {
 }
 
 export async function misAvisos(sesion) {
+  // En la demo, los mensajes de ejemplo (sin cuenta ni servidor).
+  if (DEMO_MODE) return avisosDemo()
   if (!porLaFuncion() || !sesion) return null
   try {
     const r = await llamarFuncion({ op: 'mis-avisos', sesion })

@@ -7,6 +7,7 @@ import { movilPuedeAvisar, esIphoneSinInstalar, avisosProActivos, activarAvisosP
 import styles from '../pages/Chats.module.css'
 import AgendaProfesional from './AgendaProfesional'
 import { extractoDelAviso } from '../utils/mensajeAviso'
+import { DEMO_MODE } from '../config'
 
 // ── «TE HAN ESCRITO»: la bandeja de la profesional ──────────────────────
 // Antes solo podia contestar desde el enlace de cada aviso. Aqui ve todo lo
@@ -31,7 +32,8 @@ export default function BandejaProfesional() {
   const [avisos, setAvisos] = useState(null)   // null = cargando o sin acceso
   const [movil, setMovil] = useState(avisosProActivos)
   const [nota, setNota] = useState('')
-  const puedeMovil = movilPuedeAvisar() && !esIphoneSinInstalar()
+  // En la demo no hay cuenta a la que avisar: el botón no haría nada.
+  const puedeMovil = !DEMO_MODE && movilPuedeAvisar() && !esIphoneSinInstalar()
 
   async function cambiarMovil() {
     const { sesionActual } = await import('../utils/cuenta')
@@ -46,8 +48,10 @@ export default function BandejaProfesional() {
   }
 
   useEffect(() => {
-    if (!porLaFuncion()) return
     let vivo = true
+    // En la demo, los mensajes de ejemplo: sin cuenta ni servidor.
+    if (DEMO_MODE) { misAvisos(null).then(l => { if (vivo) setAvisos(l) }); return () => { vivo = false } }
+    if (!porLaFuncion()) return
     ;(async () => {
       const { sesionActual } = await import('../utils/cuenta')
       const sesion = (await sesionActual())?.access_token
