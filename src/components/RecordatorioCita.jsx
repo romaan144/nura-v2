@@ -11,6 +11,7 @@ import { useUser } from '../context/UserContext'
 import { citaEn24h, isoLocal } from '../data/horarios'
 import { getFirstName } from '../utils/name'
 import { showToast } from './Toast'
+import { fmtOficio } from '../utils/formato'
 
 const CERRADOS = 'nura_recordatorios_cerrados'
 const leerCerrados = () => { try { return JSON.parse(localStorage.getItem(CERRADOS) || '[]') } catch { return [] } }
@@ -102,7 +103,7 @@ export default function RecordatorioCita({ compact = false }) {
           <p style={{ margin: 0, fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--purple-ink)' }}>Tu cita</p>
           <p style={{ margin: '2px 0 0', fontSize: 'var(--text-md)', fontWeight: 700, color: 'var(--ink-primary)' }}>{cuandoEs(cita, ahora)}</p>
           <p style={{ margin: '2px 0 0', fontSize: 'var(--text-sm)', color: 'var(--ink-secondary)' }}>
-            Con {nombre}{cita.specialty ? ` · ${cita.specialty}` : ''}
+            Con {nombre}{cita.specialty ? ` · ${fmtOficio(cita.specialty)}` : ''}
           </p>
         </div>
       </div>

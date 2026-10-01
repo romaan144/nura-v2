@@ -10,6 +10,7 @@ import styles from './MyServices.module.css'
 import RatingModal from '../components/RatingModal'
 import { showToast } from '../components/Toast'
 import { yaPaso } from '../utils/citaAviso'
+import { fmtOficio } from '../utils/formato'
 
 // Demo services for realistic preview
 const DEMO_SERVICES = [
@@ -213,7 +214,7 @@ export default function MyServices() {
                   {/* Info */}
                   <span className={styles.info}>
                     <span className={styles.helperName}>{s.helperName}</span>
-                    <span className={styles.specialty}>{s.specialty}</span>
+                    <span className={styles.specialty}>{fmtOficio(s.specialty)}</span>
                     <span className={styles.profileLink}>Ver perfil</span>
                   </span>
 

@@ -7,7 +7,7 @@ import { showToast } from './Toast'
 import styles from './HelperCarousel.module.css'
 import { haptic } from '../utils/haptic'
 import { recordarDestino, contextoDeChat } from '../utils/contacto'
-import { fmtNota, dondeEsta } from '../utils/formato'
+import { fmtNota, dondeEsta, fmtOficio } from '../utils/formato'
 import { avatarVigente } from '../utils/avatar'
 
 /**
@@ -77,7 +77,7 @@ function CarouselCard({ helper, isTopPick, matchReason }) {
       </div>
 
       {/* Specialty */}
-      <div className={styles.specialty}>{helper.specialty}</div>
+      <div className={styles.specialty}>{fmtOficio(helper.specialty)}</div>
 
       {/* Rating + reviews + distance */}
       <div className={styles.meta}>

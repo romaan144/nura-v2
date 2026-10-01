@@ -19,7 +19,7 @@ import { proSignals } from '../utils/proSignals'
 import styles from './Profile.module.css'
 import { NURA_BUILD, CONTACTO_EMAIL, DEMO_MODE } from '../config'
 import EditarFicha from '../components/EditarFicha'
-import { fmtTel } from '../utils/formato'
+import { fmtTel, fmtOficio } from '../utils/formato'
 import { reclamarFicha, borrarCuenta } from '../utils/escrituras'
 import { usuarioDeFicha, usuarioCliente } from '../utils/usuarioDeFicha'
 import FotoPerfil from '../components/FotoPerfil'
@@ -458,7 +458,7 @@ export default function Profile() {
               detras. Al usuario, desde cuando esta en Nüra. */}
           {user.isHelper && hp.specialty ? (
             <p className={styles.subtitulo}>
-              <span className={styles.oficio}>{hp.specialty}</span>
+              <span className={styles.oficio}>{fmtOficio(hp.specialty)}</span>
               {joinedDate && <> · desde {joinedDate}</>}
             </p>
           ) : joinedDate ? (

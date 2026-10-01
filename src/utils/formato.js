@@ -49,3 +49,11 @@ export function dondeEsta(helper) {
   }
   return helper?.zone || ''
 }
+
+// El oficio, para enseñarlo: la primera letra en mayúscula. En la base hay
+// fichas con «fisioterapeuta» y otras con «Logopeda infantil»; la búsqueda
+// compara el valor tal cual, así que solo se cambia al mostrarlo.
+export function fmtOficio(texto) {
+  const t = String(texto || '').trim()
+  return t ? t.charAt(0).toLocaleUpperCase('es-ES') + t.slice(1) : ''
+}

@@ -6,7 +6,7 @@ import { useUser } from '../context/UserContext'
 import PageHeader from '../components/PageHeader'
 import EmptyPanel from '../components/EmptyPanel'
 import styles from './Siguiendo.module.css'
-import { fmtNota } from '../utils/formato'
+import { fmtNota, fmtOficio } from '../utils/formato'
 
 export default function Siguiendo() {
   const navigate = useNavigate()
@@ -43,7 +43,7 @@ export default function Siguiendo() {
                   <img src={h.avatarUrl || avatarDe(h.name)} alt="" className={styles.avatar} />
                   <span className={styles.details}>
                     <span className={styles.name}>{h.name}</span>
-                    <span className={styles.spec}>{h.specialty}</span>
+                    <span className={styles.spec}>{fmtOficio(h.specialty)}</span>
                     <span className={styles.meta}>
                       <span className={styles.rating}><Star size={13} aria-hidden="true" /> {fmtNota(h.rating)}</span>
                       <span className={styles.zone}><MapPin size={13} aria-hidden="true" /> {h.zone || h.city || 'Barcelona'}</span>

@@ -29,7 +29,7 @@ import { ETIQUETA_CUALIDAD } from '../utils/cualidades'
 import { etiquetaDe } from '../utils/declarado'
 import { Badge, LiveDot, Bubble, StatBar } from '../components/ui'
 import { getFirstName } from '../utils/name'
-import { fmtNota } from '../utils/formato'
+import { fmtNota, fmtOficio } from '../utils/formato'
 import { DEMO_MODE } from '../config'
 
 // ── HELPERS ─────────────────────────────────────────────────────────────────
@@ -240,7 +240,7 @@ function HelperProfileInner() {
               fontSize:'var(--text-sm)', color:'var(--ink-tertiary)', fontWeight:500,
               textAlign:'center', marginBottom:'var(--space-10)'
             }}>
-              {enrichedH.specialty}
+              {fmtOficio(enrichedH.specialty)}
               {enrichedH.dniVerified && (
                 <Badge variant="success" size="md" style={{marginLeft:'var(--space-8)', fontWeight:700}}>
                   <Shield size={9} color='#065f46' /> Verificado
