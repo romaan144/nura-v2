@@ -170,6 +170,10 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Móviles pequeños: revisión y un detalle del alta (Claude)
+
+Revisadas en un iPhone SE (antiguo y moderno) la respuesta del profesional, el chat y el alta, con y sin teclado: todo se ve. Solo en el alta, en el móvil más pequeño, el recuadro «Cómo funciona» quedaba un poco tapado por el título. Ya no.
+
 ## 2026-10-29 — Demo: la profesional ve quién le ha escrito (Claude)
 
 En la demo, la profesional veía en Chats las conversaciones de ejemplo de una clienta. Ahora ve su trabajo, como lo verá de verdad: su agenda y tres mensajes de clientes de ejemplo, que puede contestar y cuya cita puede aceptar. Sirve para enseñar Nüra a un profesional. Todo se queda en el móvil; fuera de la demo no cambia nada.
