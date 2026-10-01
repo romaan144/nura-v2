@@ -935,6 +935,17 @@ console.log('\n── La frase principal de Nüra, grande en todas las respuesta
     return el ? parseFloat(getComputedStyle(el).fontSize) : 0
   })
   paso('con resultados, «… es quien mejor encaja» también en grande', tamRes >= 20, `${tamRes}px`)
+  // Volver a empezar deja la misma portada que al entrar (Sergio,
+  // 2026-10-01): antes faltaba «¿Para quién necesitas ayuda?».
+  await q.click('button[aria-label="Empezar conversación de nuevo"]'); await espera(1200)
+  const portada = await q.evaluate(() => ({
+    pregunta: /Para quién necesitas ayuda/.test(document.body.innerText),
+    botones: ['Para mí', 'Para alguien de mi familia', 'Para mi hogar o negocio'].every(t => [...document.querySelectorAll('button')].some(b => b.textContent.trim() === t)),
+    sinResultados: !/mejor encaja/.test(document.body.innerText),
+  }))
+  paso('volver a empezar muestra la misma portada, con «¿Para quién necesitas ayuda?»', portada.pregunta && portada.botones && portada.sinResultados, JSON.stringify(portada))
+  await tocar(q, /^Para alguien de mi familia$/); await espera(1500)
+  paso('y sus botones siguen funcionando', /Cuéntame qué le pasa/.test(await q.evaluate(() => document.body.innerText)))
   await q.close()
 }
 
