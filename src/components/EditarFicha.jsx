@@ -142,6 +142,9 @@ export default function EditarFicha({ onClose, foco }) {
         city: limpio.ciudad || null,
         price: limpio.price || null,
         online: /online|las dos/i.test(limpio.modality || ''),
+        // «Solo online» también deja de ser presencial: antes seguía saliendo
+        // en búsquedas presenciales (migración 20261021).
+        presential: !/^online$/i.test((limpio.modality || '').trim()),
         contacto: limpio.contacto || null,
         horario: horarioOk,
         bloqueos,

@@ -497,6 +497,45 @@ try {
     ok(!/mi hijo tiene 5 años y$/.test(await c.$eval(CAMPO, i => i.value)), 'y una vez enviado, ya no se guarda')
     await c.close(); await ctx3.close()
   }
+
+  console.log('\n── Editar mi ficha: «solo online» de verdad ──')
+  {
+    // 2026-10-01: elegir «Online» solo cambiaba `online`; seguía presencial.
+    const H = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': '*', 'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS' }
+    const cambios = []
+    const ctx = await b.createBrowserContext()
+    const f = await ctx.newPage()
+    await f.setViewport({ width: 390, height: 844 })
+    await f.setRequestInterception(true)
+    f.on('request', r => {
+      const u = r.url()
+      if (u.startsWith(B)) return r.continue()
+      if (r.method() === 'OPTIONS') return r.respond({ status: 204, headers: H })
+      if (u.includes('/rest/v1/helpers') && r.method() === 'PATCH') {
+        cambios.push(JSON.parse(r.postData() || '{}'))
+        return r.respond({ status: 200, headers: H, contentType: 'application/json', body: '[{"id":7001}]' })
+      }
+      if (u.includes('/auth/v1/user')) return r.respond({ status: 200, headers: H, contentType: 'application/json', body: JSON.stringify({ id: 'u-pro', aud: 'authenticated', role: 'authenticated', email: 'laura@ficticia.test' }) })
+      return r.respond({ status: 200, headers: H, contentType: 'application/json', body: u.includes('funcion.ficticia') ? '{"ok":true,"avisos":[]}' : '[]' })
+    })
+    await f.goto(B + '/', { waitUntil: 'networkidle0' })
+    await f.evaluate(exp => {
+      localStorage.clear()
+      localStorage.setItem('nura_user', JSON.stringify({ name: 'Laura Vidal Soler', isHelper: true, helperId: 7001, joined: new Date().toISOString(),
+        helperProfile: { specialty: 'Logopeda infantil', zone: 'Barcelona, Gràcia', ciudad: 'Barcelona', price: '45 €', contacto: 'laura@ficticia.test', modality: 'Presencial',
+          horario: { dias: [1, 2, 3, 4, 5], horas: ['10:00', '17:00'] } } }))
+      localStorage.setItem('nura_sesion', JSON.stringify({ access_token: 'sesion-pro', refresh_token: 'r', token_type: 'bearer', expires_in: 3600, expires_at: exp,
+        user: { id: 'u-pro', aud: 'authenticated', role: 'authenticated', email: 'laura@ficticia.test' } }))
+    }, Math.floor(Date.now() / 1000) + 3600)
+    await f.goto(B + '/profile', { waitUntil: 'networkidle0' }); await espera(1500)
+    await pulsar(f, 'Editar mi ficha'); await espera(1200)
+    const elegido = await f.evaluate(() => { const b = [...document.querySelectorAll('[role="dialog"] button')].find(x => x.textContent.trim() === 'Online'); b?.click(); return !!b })
+    await espera(400)
+    await pulsar(f, 'Guardar cambios'); await espera(2500)
+    const ultimo = cambios.at(-1) || {}
+    ok(elegido && ultimo.online === true && ultimo.presential === false, `al elegir «Online», la ficha deja de ser presencial (${JSON.stringify({ online: ultimo.online, presential: ultimo.presential })})`)
+    await f.close(); await ctx.close()
+  }
 } catch (e) {
   ok(false, 'el recorrido se ha roto: ' + e.message)
 } finally {
