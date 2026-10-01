@@ -170,6 +170,10 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Fuera «Nüra lo ha comprobado» del perfil (Claude)
+
+Sergio quita del perfil de cada profesional el bloque verde con «Identidad verificada», «DNI comprobado» y «Sin antecedentes penales». Es lo obvio en cualquier profesional de Nüra y repetirlo en cada ficha sobraba. Los datos no se tocan; solo deja de mostrarse.
+
 ## 2026-10-29 — Volver a empezar muestra la misma portada (Claude)
 
 Sergio: al tocar el botón de volver a empezar no salía la portada elegida. Se montaba el saludo sin «¿Para quién necesitas ayuda?» ni sus tres botones, y además seguía recordando la respuesta anterior («para mi familia»). Ahora la pregunta se construye con una sola función (`conPregunta`) que usan tanto la entrada como el reinicio, y reiniciar también olvida esa respuesta. Con el profesional, o cuando Nüra pregunta «¿Pudiste resolver…?», todo sigue igual.

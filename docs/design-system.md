@@ -1037,6 +1037,9 @@ comprobado"*— donde cada línea se lee en 13px con su marca verde.
 No compite con nada, porque en el momento de decidir no hay nada más
 importante.
 
+**Retirado el 2026-10-01 (Sergio):** es lo obvio en cualquier profesional de
+Nüra; repetirlo en cada ficha sobraba. El bloque ya no aparece en el perfil.
+
 ### Lo que NO era un problema
 
 Se diagnosticó que *"el botón de contactar vive a 716px, casi una pantalla

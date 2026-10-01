@@ -307,43 +307,9 @@ function HelperProfileInner() {
             </div>
           )}
 
-          {/* Trust badges */}
-          {/* ── LO QUE SOSTIENE LA CONFIANZA ────────────────────────────
-              Eran tres insignias sueltas de 11px flotando centradas, del
-              tamaño de un pie de foto. Pero "sin antecedentes" y "DNI
-              comprobado" es lo que mas tranquiliza a alguien que va a dejar
-              entrar a un desconocido en casa de su madre.
-              Ahora es un bloque con nombre: una sola superficie, con su
-              titulo, donde cada linea se lee. No compite con nada porque no
-              hay nada mas importante que esto en el momento de decidir. */}
-          {(enrichedH.verified || enrichedH.dniVerified || enrichedH.criminalRecordClear) && (
-            <div style={{
-              margin:'0 0 var(--space-14)',
-              padding:'var(--space-14) var(--space-16)',
-              background:'rgba(4,120,87,0.05)',
-              border:'1px solid rgba(4,120,87,0.14)',
-              borderRadius:'var(--radius-md)',
-              animation:'fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both'
-            }}>
-              <p style={{
-                margin:'0 0 var(--space-10)', fontSize:'var(--text-xs)',
-                fontWeight:700, letterSpacing:'0.4px', textTransform:'uppercase',
-                color:'var(--green)'
-              }}>Nüra lo ha comprobado</p>
-              <div style={{display:'flex', flexDirection:'column', gap:'var(--space-8)'}}>
-                {[
-                  enrichedH.verified && 'Identidad verificada',
-                  enrichedH.dniVerified && 'DNI comprobado',
-                  enrichedH.criminalRecordClear && 'Sin antecedentes penales',
-                ].filter(Boolean).map(linea => (
-                  <div key={linea} style={{display:'flex', alignItems:'center', gap:'var(--space-8)'}}>
-                    <CheckCircle size={16} color="var(--green)" strokeWidth={2.2} />
-                    <span style={{fontSize:'var(--text-sm)', fontWeight:600, color:'var(--ink-primary)'}}>{linea}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* Aquí iba «Nüra lo ha comprobado» (identidad, DNI, sin
+              antecedentes). Sergio lo quitó el 2026-10-01: es lo obvio en
+              todos y repetirlo en cada ficha sobraba. */}
 
           {/* Nüra recomienda — justo antes del CTA */}
           <div style={{
