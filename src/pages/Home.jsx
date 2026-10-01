@@ -1134,7 +1134,8 @@ export default function Home() {
       // Empathy acknowledgment — instant, before searching
       const empathyLine = `Entendido${analysis?.persona && PERSONA_CHIP[analysis.persona] ? '. Buscas ayuda ' + PERSONA_CHIP[analysis.persona].charAt(0).toLowerCase() + PERSONA_CHIP[analysis.persona].slice(1) : ''}.`
       const empatiaId = Date.now() + 0.3
-      setMessages(prev => [...prev, { id: empatiaId, from: 'nura', lines: [empathyLine] }])
+      // `empatia`: no se destaca como titular (en un instante llegan los resultados).
+      setMessages(prev => [...prev, { id: empatiaId, from: 'nura', lines: [empathyLine], empatia: true }])
 
       // El pensando sereno — con dueño y cancelación (El Contrato)
       const thinkingTimer = setTimeout(() => {
@@ -1667,12 +1668,20 @@ export default function Home() {
   // La cita de las próximas 24 horas, mientras no haya buscado nada. No
   // depende de isWelcome: un aviso («Laura te ha contestado») la escondía.
   if (!messages.some(m => m.from === 'user')) blocks.push({ id: 'reminder', content: <RecordatorioCita compact /> })
+  // LA RESPUESTA CORTA, COMO TITULAR (Sergio, 2026-10-01): al tocar «Para
+  // mí» la contestación salía en texto pequeño bajo un panel vacío, cuando la
+  // portada habla en grande. Si el turno no trae resultados ni está buscando,
+  // la primera frase de Nüra se lee con la letra del título.
+  const turnoSinResultados = !response.some(m => m.results?.length || m.loading)
+  const destacada = turnoSinResultados && !isWelcome ? response.find(m => !m.empatia) : null
   response.forEach((msg, msgIndex) => {
     const lines = msg.lines || (msg.text ? [msg.text] : [])
     lines.forEach((line, i) => splitResponseText(line).forEach((part, j) => {
       const hero = isWelcome && i === 1 && j === 0
+      const pregunta = msg === destacada && i === 0 && j === 0 && String(part).length <= 140
       blocks.push({ id: `${msg.id}-line-${i}-${j}`, content: hero
         ? <h1 className={styles.screenTitle}>{formatLine(part)}</h1>
+        : pregunta ? <p className={styles.screenPrompt}>{formatLine(part)}</p>
         : <p className={`${styles.screenText} ${msg.results && i === 0 ? styles.screenLead : ''}`}>{formatLine(part)}</p> })
     }))
     if (msg.loading) blocks.push({ id: `${msg.id}-loading`, content: <div className={styles.typingDots} role="status" aria-label="Buscando"><span /><span /><span /></div> })

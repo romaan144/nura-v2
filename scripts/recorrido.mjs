@@ -908,6 +908,23 @@ console.log('\n── La portada pregunta siempre «¿Para quién necesitas ayud
   await p.close()
 }
 
+console.log('\n── Las respuestas cortas de Nüra, tan legibles como la portada ──')
+{
+  // 2026-10-01 (Sergio): tras «Para mí» la respuesta salía en texto pequeño.
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('respuesta corta: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); sessionStorage.clear() })
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1500)
+  await tocar(p, /^Para alguien de mi familia$/); await espera(1500)
+  const tam = await p.evaluate(() => {
+    const el = [...document.querySelectorAll('section[aria-label="Respuesta de Nüra"] p')].find(x => /Cuéntame qué le pasa/.test(x.textContent))
+    return el ? parseFloat(getComputedStyle(el).fontSize) : 0
+  })
+  paso('tras «Para alguien de mi familia», la respuesta se lee en grande', tam >= 20, `${tam}px`)
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')
