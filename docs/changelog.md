@@ -170,6 +170,15 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Diseño: la frase principal de Nüra, grande en todas las respuestas (Claude)
+
+- Sergio: «que pase en todos los casos». La frase principal de cada respuesta va ahora con la voz del titular (`.screenPrompt`):
+  - también con resultados («Antoni es quien mejor encaja», antes en letra normal);
+  - las respuestas largas (más de 140 letras) llevan una variante algo menor, para no ocupar media pantalla (`.screenPromptLarga`).
+- El texto secundario sube de 15 a 16 px.
+- Mientras busca no cambia nada: el «Entendido.» del principio sigue pequeño, sin saltos de tamaño.
+- `src/pages/Home.jsx`, `src/pages/Home.module.css`. `npm run recorrido` comprueba el tamaño tras «Para alguien de mi familia» y con resultados. Revisado con capturas: resultados, «qué es Nüra», sin cobertura y «cuide a mi madre».
+
 ## 2026-10-29 — Diseño: las respuestas cortas de Nüra, tan legibles como la portada (Claude)
 
 - Sergio: al tocar «Para mí / familia / hogar», la respuesta («Entendido. Cuéntame qué le pasa…») salía en texto pequeño, arriba de un panel vacío, mientras que la portada habla en grande.
