@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Tarea activa · El alta del profesional pide siempre el correo
+### Última tarea integrada · El alta del profesional pide siempre el correo
 
-Desde 2026-10-01. Rama `claude/funny-clarke-e6m64r`. Decisión de Sergio: la última pregunta del alta («¿cómo te avisamos?») admitía móvil o correo, y con un móvil la cuenta no se puede vincular a la ficha. Ahora pide un correo (con él le llegan los avisos y tiene su acceso); si escribe un móvil, se le explica y se le pide el correo. Los ya dados de alta con teléfono se vincularían a mano si hiciera falta. Archivos: `src/utils/contactoProfesional.js` (opción `soloCorreo`), `src/pages/RegisterHelper.jsx` (texto y comprobación de esa pregunta), `scripts/test-matching.mjs`, `scripts/recorrido.mjs`.
+Desde 2026-10-01. Rama `claude/funny-clarke-e6m64r`. Decisión de Sergio: la última pregunta del alta («¿cómo te avisamos?») admitía móvil o correo, y con un móvil la cuenta no se puede vincular a la ficha. Ahora pide un correo (con él le llegan los avisos y tiene su acceso); si escribe un móvil, se le explica y se le pide el correo. Los ya dados de alta con teléfono se vincularían a mano si hiciera falta. Archivos: `src/utils/contactoProfesional.js` (opción `soloCorreo`), `src/pages/RegisterHelper.jsx` (texto y comprobación de esa pregunta), `scripts/test-matching.mjs`, `scripts/recorrido.mjs`. Comprobado: build, recorrido, recorrido-real, smoke, test:vista, test:chat-scroll, test:busqueda 100%, test:matching 261, test:avisos 204; lint igual que en `main`.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
