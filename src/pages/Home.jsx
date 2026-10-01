@@ -366,6 +366,11 @@ const HELPER_SUGGESTIONS = [
 const CONTESTAR = 'Contestar ahora'
 const LEER_RESPUESTA = 'Leer la respuesta'
 
+// Cuando Nüra no tiene a nadie para lo que se pide: lo dice y manda a mirar
+// la lista entera (Sergio, 2026-10-01).
+const VER_TODOS_PROFESIONALES = 'Ver todos los profesionales'
+const SIN_NADIE_VER_TODOS = 'Te recomiendo entrar en «Ver todos los profesionales», por si encuentras a alguien que te convenza.'
+
 // ── La Pregunta — contexto antes del texto ──
 // SIEMPRE a quien busca ayuda (decisión de Sergio, 2026-10-01): antes
 // desaparecía si ya la había contestado en esa pestaña o había escrito a
@@ -1217,10 +1222,23 @@ export default function Home() {
           // (-ero, -ista, -dor, -logo…). «xyzzy blabla» no es un oficio.
           const pideAlguien = /^(hola[,.!]?\s+)?(busco|necesito|quiero|me hace falta|hay)\b/i.test(msg.trim())
           const sufijoOficio = /(er[oa]|ista|dor[a]?|log[oa]|ari[oa]|ter[oa]|ic[oa]|ist[oa]|nt[ae])$/i.test(oficioSuelto || '')
+          // Pide a alguien para algo concreto que Nüra no tiene («un
+          // astronauta para la luna»): se dice claro y se ofrece mirar a
+          // todos (Sergio, 2026-10-01). Antes: «no te he entendido» o, peor,
+          // alguien al azar. Sin nada concreto («necesito ayuda») se pregunta.
+          const GENERICAS = /^(ayuda|ayude|ayudar|ayudarme|alguien|algo|persona|profesional|servicio|cosa|hola|urgente|favor)$/i
+          const concretas = (analysis.palabrasPropias || []).filter(w => !GENERICAS.test(w))
+          const pideAlgo = pideAlguien || /\balguien que\b/i.test(msg)
           if (!urge && oficioSuelto && oficioSuelto.split(/\s+/).length <= 2 && (pideAlguien || sufijoOficio)) {
             setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
-              lines: [`Todavía no tengo a nadie de «${oficioSuelto.toLowerCase()}» en Nüra. Si me cuentas qué necesitas exactamente, busco lo más parecido.`],
-              chips: ['Ver todas las categorías'] }])
+              lines: [`Todavía no tengo a nadie de «${oficioSuelto.toLowerCase()}» en Nüra.`, SIN_NADIE_VER_TODOS],
+              chips: [VER_TODOS_PROFESIONALES] }])
+            return
+          }
+          if (!urge && pideAlgo && concretas.length) {
+            setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
+              lines: ['Todavía no tengo a nadie para eso en Nüra.', SIN_NADIE_VER_TODOS],
+              chips: [VER_TODOS_PROFESIONALES] }])
             return
           }
           setMessages(prev => [...prev, { id: Date.now() + 2, from: 'nura',
@@ -1416,7 +1434,7 @@ export default function Home() {
   function handleChip(chip) {
     beginResponse()
     if (chip === EDITAR_FICHA) { navigate('/profile', { state: { editar: 'ficha' } }); return }
-    if (chip === 'Ver todas las categorías') { navigate('/explore'); return }
+    if (chip === 'Ver todas las categorías' || chip === VER_TODOS_PROFESIONALES) { navigate('/explore'); return }
     if (chip === DARSE_DE_ALTA) { navigate('/register-helper'); return }
     if (chip === BUSCAR_OTRA_VEZ) {
       const q = [...messages].reverse().find(m => m.reintentar)?.reintentar

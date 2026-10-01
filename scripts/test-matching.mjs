@@ -784,6 +784,24 @@ for (const t of NEGATIVE) {
   console.log(`${conRes === 'precio' ? '✓' : '✗'} primera vez: con resultados, «cuánto cuesta» → ${conRes}`)
 }
 
+// ── Palabras que solo empiezan igual (2026-10-01) ──
+// «luna» casaba con «lunar» (dermatología) y «un astronauta para la luna»
+// recomendaba a una psicóloga. Una raíz corta ya no se alarga sola.
+{
+  for (const [q, no] of [['necesito un astronauta para la luna', 'salud']]) {
+    const a = await analyzeNeed(q)
+    const b = a.categoria !== no
+    if (!b) failed++
+    console.log(`${b ? '✓' : '✗'} raíces: «${q}» → ${a.categoria} (no ${no})`)
+  }
+  for (const [q, si] of [['tengo un lunar raro', 'salud'], ['me han salido lunares', 'salud']]) {
+    const a = await analyzeNeed(q)
+    const b = a.categoria === si
+    if (!b) failed++
+    console.log(`${b ? '✓' : '✗'} raíces: «${q}» → ${a.categoria}`)
+  }
+}
+
 // El total se contaba sumando los tres catalogos, asi que se quedo en 32
 // mientras las pruebas reales llegaban a 51: cada bloque añadido despues
 // (obra, agenda, silencios, interceptor, aviso) pasaba sin figurar. Un

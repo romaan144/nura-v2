@@ -520,7 +520,7 @@ function stem(w) {
 function wordMatches(tw, kw) {
   if (tw === kw) return true
   const st = stem(tw), sk = stem(kw)
-  return st === sk || (st.length >= 4 && sk.length >= 4 && (st.startsWith(sk) || sk.startsWith(st)))
+  return st === sk || (st.length >= 5 && sk.length >= 5 && (st.startsWith(sk) || sk.startsWith(st)))
 }
 function hitStem(textWords, kw) {
   return kw.split(' ').every(k => textWords.some(w => wordMatches(w, k)))
