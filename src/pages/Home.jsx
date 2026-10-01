@@ -366,6 +366,23 @@ const HELPER_SUGGESTIONS = [
 const CONTESTAR = 'Contestar ahora'
 const LEER_RESPUESTA = 'Leer la respuesta'
 
+// ── La Pregunta — contexto antes del texto ──
+// SIEMPRE a quien busca ayuda (decisión de Sergio, 2026-10-01): antes
+// desaparecía si ya la había contestado en esa pestaña o había escrito a
+// alguien, y la portada parecía cambiar sola. Salvo al profesional (tiene
+// sus botones: «Editar mi ficha», «Ver mis mensajes») y cuando Nüra
+// pregunta «¿Pudiste resolver…?» tras un contacto: esos botones van antes.
+// La usan la portada al entrar y el botón de volver a empezar.
+function conPregunta(msg, user) {
+  if (user?.isHelper || msg.isConfirmacion) return msg
+  return {
+    ...msg,
+    lines: [...msg.lines, '¿Para quién necesitas ayuda?'],
+    isPregunta: true,
+    chips: ['Para mí', 'Para alguien de mi familia', 'Para mi hogar o negocio']
+  }
+}
+
 export default function Home() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -538,20 +555,8 @@ export default function Home() {
       }
     }
 
-    // ── La Pregunta — contexto antes del texto ──
-    // SIEMPRE a quien busca ayuda (decisión de Sergio, 2026-10-01): antes
-    // desaparecía si ya la había contestado en esa pestaña o había escrito a
-    // alguien, y la portada parecía cambiar sola. Salvo al profesional (tiene
-    // sus botones: «Editar mi ficha», «Ver mis mensajes») y cuando Nüra
-    // pregunta «¿Pudiste resolver…?» tras un contacto: esos botones van antes.
-    if (!user?.isHelper && !msgs[0].isConfirmacion) {
-      msgs[0] = {
-        ...msgs[0],
-        lines: [...msgs[0].lines, '¿Para quién necesitas ayuda?'],
-        isPregunta: true,
-        chips: ['Para mí', 'Para alguien de mi familia', 'Para mi hogar o negocio']
-      }
-    }
+    // ── La Pregunta (ver conPregunta) ──
+    msgs[0] = conPregunta(msgs[0], user)
 
 
     // Only init if no previous conversation
@@ -1772,7 +1777,10 @@ export default function Home() {
                 setViewStart(0)
                 setMessages([])
                 setLastMatches([])
-                setTimeout(() => setMessages([{ id: 1, from: 'nura', lines: getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas) }]), 100)
+                // La misma portada que al entrar: antes volvía sin «¿Para
+                // quién necesitas ayuda?» y con la respuesta anterior viva.
+                setForWhom('')
+                setTimeout(() => setMessages([conPregunta({ id: 1, from: 'nura', lines: getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas) }, user)]), 100)
               }} aria-label="Empezar conversación de nuevo">
               <RotateCcw size={15} color="rgba(33,29,51,0.6)" />
             </button>
