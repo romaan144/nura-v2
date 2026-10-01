@@ -289,9 +289,9 @@ Mientras esta tarea siga sin integrar, Claude no debe editar esos mismos archivo
 
 La siguiente funcionalidad la decide Sergio con Claude. Preferir trabajo independiente en datos, servicios y lógica. Si necesita tocar una pantalla activa de Codex, coordinar el archivo antes de editar; una rama distinta por sí sola no evita conflictos.
 
-### Última tarea integrada · La primera vez: preguntas de quien no conoce Nüra
+### Tarea activa · Con mala conexión: reintentar de verdad y no perder lo escrito
 
-Desde 2026-10-01. Rama `claude/funny-clarke-e6m64r`. Probado como visitante nuevo: «qué es Nüra», «cómo funciona», «cuánto cuesta», «ayuda» y «no sé qué necesito» recibían «No estoy segura de haberte entendido»; «busco trabajo» decía que no hay nadie de «trabajo»; «quiero ofrecer mis servicios» recomendaba a un técnico informático. Ahora se reconocen antes de buscar (solo si no nombran un oficio) y se contestan; quien quiere ofrecer sus servicios va al alta de profesional. Sin inventar precios ni condiciones de Nüra. Archivos: `src/utils/seguimiento.js`, `src/pages/Home.jsx` (respuestas y un botón), `scripts/test-matching.mjs`, `scripts/recorrido.mjs`. Comprobado: build, recorrido, recorrido-real, smoke, test:vista, test:chat-scroll, test:busqueda 100%, test:matching 279, test:avisos 204, test:sw 10; lint igual que en `main`.
+Desde 2026-10-01. Rama `claude/funny-clarke-e6m64r`. Probado en la versión real con la red cortada o lenta. (1) Sin conexión, Nüra decía «Cuando vuelvas, lo intento otra vez», pero no lo hacía: solo dejaba un botón con la frase. Ahora reintenta sola al volver la conexión y el botón dice «Buscar otra vez». (2) Un servidor lento se anunciaba como «te has quedado sin conexión»; ahora dice que está tardando. (3) Lo que se escribía a un profesional se perdía si la app se cerraba; ahora se guarda en el móvil hasta enviarlo. Archivos: `src/pages/Home.jsx` (el error de búsqueda y el reintento), `src/pages/Chat.jsx` (guardar el borrador; nada visual), `scripts/recorrido-real.mjs`.
 
 **Deuda existente observada:** lint general con variables sin uso, bloques vacíos y advertencias de hooks. Se conserva fuera del alcance visual; el detalle se obtiene ejecutando `npm run lint`. No confundir una compilación correcta con lint completamente limpio.
 
