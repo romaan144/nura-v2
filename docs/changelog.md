@@ -170,6 +170,12 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Notificaciones: al tocarlas, a la pantalla correcta
+
+- La notificación «Te han escrito en Nüra» de la profesional llega por un canal aparte (ámbito `/pro/`) que no controla las páginas de la app. Con Nüra ya abierta, al tocarla el navegador no le dejaba cambiar de pantalla: la app se ponía delante pero se quedaba donde estuviera, sin llevarla a sus mensajes. Ahora, si no puede, se lo pide a la app (mensaje `nura-ir`, solo rutas de Nüra) y la app va a la pantalla.
+- Si llega un aviso a un móvil que esperaba una respuesta y no se puede preguntar quién contestó, ya no dice «Ha llegado alguien a Nüra» (podía no tener ninguna alerta): dice «Tienes una novedad en Nüra» y lleva a «Chats».
+- `public/sw.js`, `src/App.jsx`. Nueva prueba `npm run test:sw`: ejecuta el `sw.js` real con un móvil de mentira (qué aviso enseña y adónde lleva; con el anterior fallaba). `npm run recorrido` comprueba que la app obedece el mensaje y no sale de Nüra.
+
 ## 2026-10-29 — El alta del profesional pide siempre el correo
 
 - Decisión de Sergio. La última pregunta del alta aceptaba «tu móvil o tu email». Con un móvil, la cuenta del profesional no se podía unir a su ficha (se comprueba por el correo) y los avisos no le llegaban solos.

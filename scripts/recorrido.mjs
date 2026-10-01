@@ -788,6 +788,23 @@ console.log('\n── Después de la cita: preguntar a tiempo y «Mis servicios�
   await pg.close()
 }
 
+console.log('\n── Al tocar una notificación con Nüra abierta ──')
+{
+  // 2026-10-01: el canal de la profesional no puede cambiar la pantalla; se
+  // lo pide a la app con un mensaje y la app navega.
+  const p = await navegador.newPage()
+  p.on('pageerror', e => errores.push('notificación: ' + String(e.message).split('\n')[0].slice(0, 60)))
+  await p.goto(BASE + '/explore', { waitUntil: 'networkidle0' })
+  await espera(800)
+  const manda = url => p.evaluate(u => navigator.serviceWorker.dispatchEvent(new MessageEvent('message', { data: { tipo: 'nura-ir', url: u } })), url)
+  await manda('//otra-web.test/robo'); await espera(400)
+  const sigue = new URL(p.url()).pathname
+  await manda('/chats'); await espera(800)
+  paso('la app va a la pantalla que pide la notificación', new URL(p.url()).pathname === '/chats', p.url().replace(BASE, ''))
+  paso('y no sale de Nüra por un mensaje con otra dirección', sigue === '/explore')
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')

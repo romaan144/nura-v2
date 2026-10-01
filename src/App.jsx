@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useUser } from './context/UserContext'
 import { ponerTitulo, tituloDeRuta } from './utils/titulo'
 
@@ -49,6 +49,19 @@ function AppRoutes() {
   useEffect(() => installKeyboardViewport(), [])
   // En toda la app, el dedo no arrastra la web entera (utils/sinArrastre.js).
   useEffect(() => sinArrastreDePagina(document.body), [])
+  // Al tocar una notificación con Nüra abierta, el trabajador (public/sw.js)
+  // pide aquí la pantalla cuando él no puede cambiarla. Solo rutas propias.
+  const irA = useNavigate()
+  useEffect(() => {
+    const sw = typeof navigator !== 'undefined' ? navigator.serviceWorker : null
+    if (!sw) return
+    const alRecibir = e => {
+      const url = e.data?.tipo === 'nura-ir' ? e.data.url : null
+      if (typeof url === 'string' && url.startsWith('/') && !url.startsWith('//')) irA(url)
+    }
+    sw.addEventListener('message', alRecibir)
+    return () => sw.removeEventListener('message', alRecibir)
+  }, [irA])
   // Entrada directa: un solo respiro del iso mientras arranca el JS
   const [booting, setBooting] = useState(true)
   useEffect(() => {
