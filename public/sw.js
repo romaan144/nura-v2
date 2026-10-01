@@ -31,17 +31,25 @@ function abrir() {
 }
 const pedir = (req) => new Promise((ok, mal) => { req.onsuccess = () => ok(req.result); req.onerror = () => mal(req.error) })
 
-/** Quien ha contestado de los que este movil esperaba (y deja de esperarlos). */
+/**
+ * Quien ha contestado de los que este movil esperaba (y deja de esperarlos).
+ * Si esperaba a alguien y no se ha podido preguntar, devuelve null: no se
+ * sabe que aviso es (antes se daba por hecho «ha llegado alguien»).
+ */
 async function contestados() {
   let db
   try {
     db = await abrir()
     const t = db.transaction(['esperando', 'ajustes'], 'readonly')
     const [esperando, funcion] = await Promise.all([pedir(t.objectStore('esperando').getAll()), pedir(t.objectStore('ajustes').get('funcion'))])
-    if (!esperando.length || !funcion) return []
-    const r = await fetch(funcion, { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ op: 'respuestas', llaves: esperando.map(e => e.llave) }) })
-    if (!r.ok) return []
+    if (!esperando.length) return []
+    if (!funcion) return null
+    let r
+    try {
+      r = await fetch(funcion, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ op: 'respuestas', llaves: esperando.map(e => e.llave) }) })
+    } catch { return null }
+    if (!r.ok) return null
     const con = new Set(((await r.json()).respuestas || []).map(x => x.llave))
     const listos = esperando.filter(e => con.has(e.llave))
     if (listos.length) {
@@ -63,6 +71,14 @@ self.addEventListener('push', e => {
       })
     }
     const listos = await contestados()
+    // No se ha podido saber: ni «te ha contestado» ni «ha llegado alguien».
+    if (listos === null) {
+      return self.registration.showNotification('Tienes una novedad en Nüra', {
+        body: 'Tócalo para verla.',
+        icon: '/icono-192.png', badge: '/logo-iso.png', tag: 'nura-novedad',
+        data: { url: '/chats' },
+      })
+    }
     if (listos.length) {
       const [p] = listos
       return self.registration.showNotification(`${p.nombre || 'Un profesional'} te ha contestado`, {
@@ -79,13 +95,24 @@ self.addEventListener('push', e => {
   })())
 })
 
+// Al tocarla: si Nüra ya está abierta, se trae delante y se lleva a esa
+// pantalla; si no, se abre en ella. El canal de la profesional (ámbito
+// /pro/) no controla las páginas de la app y el navegador no le deja
+// cambiarlas de pantalla (`navigate` falla): entonces se lo pide a la app
+// con un mensaje (`nura-ir`, ver src/App.jsx). Antes Nüra se quedaba en la
+// pantalla en que estuviera.
 self.addEventListener('notificationclick', e => {
   e.notification.close()
   const url = e.notification.data?.url || '/'
   e.waitUntil((async () => {
     const abiertas = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
     for (const c of abiertas) {
-      if ('focus' in c) { await c.focus(); if ('navigate' in c) await c.navigate(url); return }
+      if (!('focus' in c)) continue
+      try { await c.focus() } catch { /* sigue: al menos que cambie de pantalla */ }
+      let ido = false
+      if ('navigate' in c) { try { ido = Boolean(await c.navigate(url)) } catch { ido = false } }
+      if (!ido) c.postMessage({ tipo: 'nura-ir', url })
+      return
     }
     await self.clients.openWindow(url)
   })())

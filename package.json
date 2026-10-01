@@ -12,6 +12,7 @@
     "test:following": "node scripts/test-following.mjs",
     "test:matching": "node scripts/test-matching.mjs",
     "test:avisos": "node scripts/test-avisos.mjs",
+    "test:sw": "node scripts/test-sw.mjs",
     "test:vista": "node scripts/test-vista-previa.mjs",
     "smoke": "node scripts/smoke.mjs",
     "preflight": "node scripts/preflight.mjs",
