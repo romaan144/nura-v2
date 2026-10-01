@@ -22,7 +22,13 @@ export function UserProvider({ children }) {
   const [user, setUser] = useState(() => load('nura_user', null))
   const [chats, setChats] = useState(() => load('nura_chats', []))
   const [ratings, setRatings] = useState(() => load('nura_ratings', []))
-  const [searchHistory, setSearchHistory] = useState(() => load('nura_search_history', []))
+  // LAS FRASES DE BÚSQUEDA NO SE GUARDAN (regla de Sergio). Desde hace
+  // tiempo nada las escribe, pero las que guardaron versiones anteriores
+  // seguían en esos móviles y el saludo las leía: se borran al abrir.
+  const [searchHistory, setSearchHistory] = useState([])
+  useEffect(() => {
+    try { localStorage.removeItem('nura_history'); localStorage.removeItem('nura_search_history') } catch { /* sin almacenamiento */ }
+  }, [])
   const [contactedHelpers, setContactedHelpers] = useState(() => load('nura_contacted', []))
   const [personas, setPersonas] = useState(() => load('nura_personas', []))
   const [citas, setCitas] = useState(() => load('nura_citas', []))
@@ -52,8 +58,6 @@ export function UserProvider({ children }) {
     if (savedChats.length) setChats(savedChats)
     const savedRatings = load('nura_ratings', [])
     if (savedRatings.length) setRatings(savedRatings)
-    const savedHistory = localStorage.getItem('nura_history')
-    if (savedHistory) setSearchHistory(JSON.parse(savedHistory))
     const savedContacted = localStorage.getItem('nura_contacted')
     if (savedContacted) setContactedHelpers(JSON.parse(savedContacted))
     const savedNotifs = localStorage.getItem('nura_notifications')
@@ -65,7 +69,6 @@ export function UserProvider({ children }) {
   useEffect(() => { save('nura_user', user) }, [user])
   useEffect(() => { save('nura_chats', chats) }, [chats])
   useEffect(() => { save('nura_ratings', ratings) }, [ratings])
-  useEffect(() => { save('nura_search_history', searchHistory) }, [searchHistory])
   useEffect(() => {
     save('nura_following', following)
     save('nura_favorites', following)
@@ -231,9 +234,9 @@ export function UserProvider({ children }) {
   }
 
   function addSearch(query, category) {
+    // Solo en memoria mientras la app está abierta: nunca en el móvil.
     const updated = [{ query, category, date: new Date().toISOString(), ts: Date.now() }, ...searchHistory].slice(0, 10)
     setSearchHistory(updated)
-    save('nura_history', updated)
   }
 
   function cacheHelpers(helpers) {
