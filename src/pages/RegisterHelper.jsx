@@ -141,7 +141,10 @@ export default function RegisterHelper() {
 
   useEffect(() => {
     const scroller = bottomRef.current?.parentElement
-    scroller?.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' })
+    // Al empezar (solo «Cómo funciona» y la primera pregunta) se queda
+    // arriba: en un móvil pequeño bajar al final escondía el recuadro bajo
+    // el título (2026-10-01). Con la conversación ya en marcha, al final.
+    if (messages.length > 1 || typing) scroller?.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' })
     if (!done) inputRef.current?.focus({ preventScroll: true })
   }, [messages, typing])
 
