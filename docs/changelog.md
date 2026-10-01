@@ -170,6 +170,10 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Si Nüra no tiene a nadie, lo dice y recomienda «Ver todos» (Claude)
+
+Sergio: cuando Nüra no tiene a nadie para lo que se pide, debe decirlo y recomendar entrar en «Ver todos los profesionales» por si alguien convence. «Un astronauta para la luna» recomendaba a una psicóloga porque «luna» casaba con «lunar»; las raíces cortas ya no se alargan solas. Ahora responde «Todavía no tengo a nadie para eso en Nüra» con el botón a la lista. Lo mismo con un oficio que falta. Si la frase no dice nada concreto («necesito ayuda»), sigue preguntando.
+
 ## 2026-10-29 — «Ver todos» en lila (Claude)
 
 Sergio quiere que en la portada destaque el botón «Ver todos», que lleva a los profesionales. Ahora tiene el mismo diseño que «Contratar» en el chat: lila con texto blanco.
