@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom'
 import { CalendarDays, CalendarOff, CalendarX, CalendarClock } from 'lucide-react'
 import { agendaDe, isoLocal, cancelacionesNuevas, cambiosNuevos } from '../data/horarios'
 import { cancelacionesVistas, marcarCancelacionesVistas } from '../utils/sinContestar'
+import { extractoDelAviso } from '../utils/mensajeAviso'
 
 const DIAS = 14
 
@@ -174,12 +175,23 @@ export default function AgendaProfesional({ avisos }) {
               textAlign: 'left',
               cursor: 'pointer',
               fontFamily: 'inherit',
+              // Lo que ya pasó, en segundo plano: lo que importa es lo que viene.
+              opacity: c.pasada ? 0.6 : 1,
               ...(cancelada ? { ...glass.panel, borderStyle: 'dashed' } : glass.panel) }}>
                         <span style={{ fontSize: 'var(--text-md)', fontWeight: 800, color: cancelada ? 'var(--ink-secondary)' : 'var(--ink)',
                           textDecoration: cancelada ? 'line-through' : 'none', minWidth: 52 }}>{c.hora}</span>
-                        <span style={{ fontSize: 'var(--text-sm)', fontWeight: 700, color: e.color }}>{e.texto}</span>
+                        {/* El estado y, debajo, de qué va: antes solo «17:00 · Por contestar». */}
+                        <span style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                          <span style={{ fontSize: 'var(--text-sm)', fontWeight: 700, color: e.color }}>{e.texto}</span>
+                          {extractoDelAviso(c.mensaje) && (
+                            <span style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-secondary)', lineHeight: 1.4,
+                              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              «{extractoDelAviso(c.mensaje)}»
+                            </span>
+                          )}
+                        </span>
                         {c.estado === 'cancelada' && (
-                          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-secondary)', marginLeft: 'auto' }}>Hora libre</span>
+                          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-secondary)', flexShrink: 0 }}>Hora libre</span>
                         )}
                       </button>
                     </li>
