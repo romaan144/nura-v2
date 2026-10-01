@@ -170,6 +170,13 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Diseño: las respuestas cortas de Nüra, tan legibles como la portada (Claude)
+
+- Sergio: al tocar «Para mí / familia / hogar», la respuesta («Entendido. Cuéntame qué le pasa…») salía en texto pequeño, arriba de un panel vacío, mientras que la portada habla en grande.
+- Ahora la primera frase de una respuesta corta de Nüra sin resultados se lee como titular (`.screenPrompt`): la letra del título de la portada, un punto más pequeña para no competir con él. Pasa también con «Te ayudo a aclararlo…», «Soy Nüra…» y respuestas parecidas.
+- No cambia cuando hay resultados (la frase de los resultados conserva su estilo) ni mientras busca: la línea «Entendido.» de la búsqueda va marcada para no saltar de tamaño.
+- `src/pages/Home.jsx`, `src/pages/Home.module.css`; `npm run recorrido` comprueba el tamaño de la respuesta.
+
 ## 2026-10-29 — Diseño: el lado del profesional, al nivel del resto (Claude)
 
 - A petición de Sergio, Claude hace un repaso de diseño. Codex no tenía tareas activas. Se usan sus materiales (cristal, tokens, tipografías) sin inventar estilos.
