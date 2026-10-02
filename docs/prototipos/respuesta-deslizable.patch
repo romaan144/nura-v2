@@ -1,0 +1,112 @@
+diff --git a/src/components/ResponseScreen.jsx b/src/components/ResponseScreen.jsx
+index 7f849b8..0e55c11 100644
+--- a/src/components/ResponseScreen.jsx
++++ b/src/components/ResponseScreen.jsx
+@@ -1,12 +1,69 @@
+ import { useLayoutEffect, useRef, useState } from 'react'
+-import { ArrowLeft, ArrowRight, SlidersHorizontal, Users } from 'lucide-react'
++import { ArrowDown, ArrowLeft, ArrowRight, SlidersHorizontal, Users } from 'lucide-react'
+ import { paginateResponse } from '../utils/responseLayout'
+ import styles from './ResponseScreen.module.css'
+ 
+ 
+ // Los bloques se miden y se reparten en páginas. Los que no están activos
+ // quedan fuera de interacción/lectura, pero conservan su estado (p. ej. citas).
++// ── DESLIZAR EN VEZ DE PASAR PÁGINAS (Sergio, 2026-10-02) ──────────────
++// Quien no veía «Siguiente» se perdía el resto: en el móvil se desliza con
++// el dedo. La respuesta se lee de arriba abajo dentro de la tarjeta; cada
++// parte («Otras opciones», «Ajustar esta búsqueda») lleva su título, y
++// mientras quede algo debajo, un aviso «Desliza para ver más».
++const DESLIZAR = true
++
+ export default function ResponseScreen({ blocks, welcome, query }) {
++  if (DESLIZAR) return <RespuestaDeslizable blocks={blocks} welcome={welcome} query={query} />
++  return <RespuestaPaginada blocks={blocks} welcome={welcome} query={query} />
++}
++
++function RespuestaDeslizable({ blocks, welcome, query }) {
++  const areaRef = useRef(null)
++  const [quedaDebajo, setQuedaDebajo] = useState(false)
++  const [bajado, setBajado] = useState(false)
++  const signature = blocks.map(b => b.id).join('|')
++  useLayoutEffect(() => {
++    const area = areaRef.current
++    if (!area) return
++    const mirar = () => { setQuedaDebajo(area.scrollHeight - area.clientHeight - area.scrollTop > 24); setBajado(area.scrollTop > 4) }
++    mirar()
++    const observer = new ResizeObserver(mirar)
++    observer.observe(area)
++    ;[...area.children].forEach(el => observer.observe(el))
++    area.addEventListener('scroll', mirar, { passive: true })
++    return () => { observer.disconnect(); area.removeEventListener('scroll', mirar) }
++  }, [signature])
++  const ajustes = blocks.findIndex(block => block.section === 'Ajustar esta búsqueda')
++  const ir = id => areaRef.current?.querySelector(`[data-bloque="${CSS.escape(id)}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
++  const bajar = () => areaRef.current?.scrollBy({ top: areaRef.current.clientHeight * 0.75, behavior: 'smooth' })
++  return (
++    <section className={styles.screen} data-paged="false" data-deslizar="true" aria-label="Respuesta de Nüra">
++      <header className={styles.header}>
++        <img src="/logo-iso.png" alt="" width="32" height="32" />
++        <div className={styles.heading}>
++          <span className={styles.label}>{welcome ? 'Cerca de ti' : 'Tu búsqueda'}</span>
++          {query && <p className={styles.query} title={query}>{query}</p>}
++        </div>
++        {ajustes >= 0 && <button type="button" className={styles.adjust} onClick={() => ir(blocks[ajustes].id)} aria-label="Ir a ajustes de búsqueda" title="Ajustar búsqueda"><SlidersHorizontal size={18} aria-hidden="true" /></button>}
++      </header>
++      <div className={styles.deslizable}>
++        <div ref={areaRef} className={styles.cuerpoDeslizable} data-debajo={quedaDebajo} data-arriba={bajado} tabIndex={-1} aria-label="Contenido de la respuesta">
++          {blocks.map((block, index) => {
++            const titulo = block.section && block.section !== blocks[index - 1]?.section ? block.section : null
++            return <div key={block.id} data-bloque={block.id} className={styles.bloqueDeslizable} aria-hidden="false">
++              {titulo && <h2 className={styles.tituloParte}>{titulo === 'Otras opciones' ? <Users size={16} aria-hidden="true" /> : <SlidersHorizontal size={16} aria-hidden="true" />}{titulo}</h2>}
++              {block.content}
++            </div>
++          })}
++        </div>
++        {quedaDebajo && <button type="button" className={styles.masDebajo} onClick={bajar}>Desliza para ver más<ArrowDown size={15} aria-hidden="true" /></button>}
++      </div>
++    </section>
++  )
++}
++
++function RespuestaPaginada({ blocks, welcome, query }) {
+   const areaRef = useRef(null)
+   const blockRefs = useRef(new Map())
+   const directionRef = useRef(1)
+diff --git a/src/components/ResponseScreen.module.css b/src/components/ResponseScreen.module.css
+index a898f91..008b678 100644
+--- a/src/components/ResponseScreen.module.css
++++ b/src/components/ResponseScreen.module.css
+@@ -39,3 +39,18 @@
+ .screen { background: var(--glass-floating); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); box-shadow: var(--glass-floating-shadow); }
+ .footer .restart { background: var(--glass-control); border-color: var(--glass-edge); }
+ .footer button:hover:not(:disabled):not(.next), .adjust:hover { background: var(--glass-selected); }
++
++/* ── Deslizar en vez de pasar páginas (Sergio, 2026-10-02) ─────────────
++   El mismo marco; dentro, la respuesta se desliza. Abajo se funde con la
++   tarjeta y, si queda algo, lo dice una píldora del mismo cristal. */
++.deslizable { position: relative; min-height: 0; }
++.cuerpoDeslizable { height: 100%; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; display: flex; flex-direction: column; gap: 12px; padding-bottom: 8px; scrollbar-width: none; }
++.cuerpoDeslizable::-webkit-scrollbar { display: none; }
++.cuerpoDeslizable:focus { outline: none; }
++.bloqueDeslizable { flex: none; min-width: 0; overflow-wrap: anywhere; scroll-margin-top: 4px; }
++.tituloParte { display: flex; align-items: center; gap: 8px; margin: 10px 0 10px; font-size: 11px; font-weight: 700; letter-spacing: .6px; color: var(--ink-secondary); }
++.tituloParte svg { color: var(--purple-ink); }
++.masDebajo { position: absolute; left: 50%; bottom: 6px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--glass-edge); background: var(--glass-control); box-shadow: var(--glass-control-shadow); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); color: var(--purple-ink); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
++.cuerpoDeslizable[data-debajo='true'] { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 56px), transparent); mask-image: linear-gradient(to bottom, #000 calc(100% - 56px), transparent); }
++.cuerpoDeslizable[data-arriba='true'] { -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18px); mask-image: linear-gradient(to bottom, transparent, #000 18px); }
++.cuerpoDeslizable[data-arriba='true'][data-debajo='true'] { -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18px, #000 calc(100% - 56px), transparent); mask-image: linear-gradient(to bottom, transparent, #000 18px, #000 calc(100% - 56px), transparent); }
+diff --git a/src/pages/Home.module.css b/src/pages/Home.module.css
+index 691c5cc..429cbd2 100644
+--- a/src/pages/Home.module.css
++++ b/src/pages/Home.module.css
+@@ -967,3 +967,9 @@
+ .inicioFila::-webkit-scrollbar { display: none; }
+ .inicioFila .inicioEjemplo { flex: none; white-space: nowrap; padding: 7px 12px; }
+ @media (max-width: 374px) { .inicioFila .inicioEjemplo { font-size: 12px; padding: 6px 10px; } }
++
++/* Con la respuesta deslizable, las alternativas tienen su altura propia
++   (antes ocupaban la página entera). */
++:global([data-deslizar='true']) .alternativeGroup { height: auto; container-type: inline-size; }
++:global([data-deslizar='true']) .alternativeGrid { height: auto; grid-auto-rows: 88px; }
++@container alternatives (min-width: 520px) { :global([data-deslizar='true']) .alternativeGrid { grid-auto-rows: 126px; } }

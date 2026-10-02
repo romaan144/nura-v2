@@ -39,3 +39,9 @@
 .screen { background: var(--glass-floating); -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter); box-shadow: var(--glass-floating-shadow); }
 .footer .restart { background: var(--glass-control); border-color: var(--glass-edge); }
 .footer button:hover:not(:disabled):not(.next), .adjust:hover { background: var(--glass-selected); }
+
+/* «Nueva búsqueda», con texto y en la propia tarjeta (Sergio, 2026-10-02):
+   el ↻ suelto de arriba no se entendía. Mismo cristal que los controles. */
+.nueva { flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 13px; border-radius: 999px; border: 1px solid var(--glass-edge); background: var(--glass-control); box-shadow: var(--glass-control-shadow); color: var(--purple-ink); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.nueva:hover { background: var(--glass-selected); }
+.screen[data-paged='true'] { touch-action: pan-x; }

@@ -1693,6 +1693,22 @@ export default function Home() {
   }, [location.pathname])
 
 
+  // NUEVA BÚSQUEDA (Sergio, 2026-10-02): el botón redondo de arriba (↻) no
+  // se entendía. Ahora va con texto dentro de la tarjeta de respuesta.
+  // Reiniciar es cancelar: sin `searchSeqRef`, una búsqueda viva volcaba sus
+  // resultados bajo el saludo nuevo.
+  function nuevaBusqueda() {
+    searchSeqRef.current++
+    stopThinking()
+    correctionRef.current = null
+    setCorrigiendo(false)
+    setViewStart(0)
+    setMessages([])
+    setLastMatches([])
+    setForWhom('')
+    setTimeout(() => setMessages([conPregunta({ id: 1, from: 'nura', lines: getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas, hasRated) }, user)]), 100)
+  }
+
   const isWelcome = nuraChatMessages.length <= 1
   // Al entrar, la caja de escribir va en el centro, bajo el saludo; tras la
   // primera búsqueda vuelve abajo para seguir la conversación.
@@ -1839,29 +1855,6 @@ export default function Home() {
           <span className={styles.wordmark}>Nüra</span>
         </div>
         <div style={{display:'flex',alignItems:'center',justifyContent:'flex-end',gap:'var(--space-8)',pointerEvents:'all'}}>
-          {messages.length > 1 && (
-            <button
-              className={styles.resetBubble}
-              onClick={() => {
-                // Reiniciar es cancelar. Sin esto, la busqueda viva seguia
-                // su curso y volcaba sus resultados bajo el saludo nuevo:
-                // el usuario borraba la conversacion y dos segundos despues
-                // le aparecia una recomendacion que ya no habia pedido.
-                searchSeqRef.current++
-                stopThinking()
-                correctionRef.current = null
-                setCorrigiendo(false)
-                setViewStart(0)
-                setMessages([])
-                setLastMatches([])
-                // La misma portada que al entrar: antes volvía sin «¿Para
-                // quién necesitas ayuda?» y con la respuesta anterior viva.
-                setForWhom('')
-                setTimeout(() => setMessages([conPregunta({ id: 1, from: 'nura', lines: getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas, hasRated) }, user)]), 100)
-              }} aria-label="Empezar conversación de nuevo">
-              <RotateCcw size={15} color="rgba(33,29,51,0.6)" />
-            </button>
-          )}
           {/* Su contenido es una imagen decorativa (alt="") o un icono: sin
               aria-label, un lector de pantalla solo dice "boton". Y es el
               unico camino al perfil desde Inicio. */}
@@ -1879,7 +1872,7 @@ export default function Home() {
       </div>
 
       <div className={styles.screenArea}>
-        <ResponseScreen key={responseKey} blocks={blocks} welcome={isWelcome} query={isWelcome ? '' : latestQuery} />
+        <ResponseScreen key={responseKey} blocks={blocks} welcome={isWelcome} query={isWelcome ? '' : latestQuery} onNuevaBusqueda={messages.length > 1 ? nuevaBusqueda : null} />
       </div>
       {!inicio && <div className={styles.focusComposer}>{composer}</div>}
 

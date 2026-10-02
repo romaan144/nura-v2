@@ -170,6 +170,10 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Pasar de página deslizando y «Nueva búsqueda» en la tarjeta (Claude)
+
+La respuesta sigue por partes, con su botón de siempre («Ver otras opciones», «Ajustar búsqueda»), pero ahora también se pasa deslizando el dedo hacia arriba (y hacia abajo para volver), con el contenido acompañando al dedo. Las flechas del botón apuntan hacia abajo y hacia arriba, como el movimiento. El botón redondo ↻ de arriba, que nadie entendía, pasa a la tarjeta con texto: «Nueva búsqueda». Se valoró hacer la respuesta deslizable entera (sin páginas) y se descartó por ahora: no hay pruebas de que «Siguiente» despiste y el botón dice lo que viene; el prototipo queda en `docs/prototipos/respuesta-deslizable.patch`.
+
 ## 2026-10-29 — La portada se entiende: la caja de escribir, junto al saludo (Claude)
 
 La gente que probaba Nüra no entendía que había que escribir: la caja estaba abajo del todo y antes salía «¿Para quién necesitas ayuda?» con tres botones. Ahora, al entrar, la caja va dentro de la tarjeta, justo bajo «Cuéntame qué necesitas y te encuentro a la persona» (la misma frase con o sin cuenta), con «Un fontanero para mañana» dentro y tres ejemplos que buscan al tocarlos: «Fontanero», «Clases de inglés», «Cuidadora». Ya no se pregunta para quién al entrar: sale de lo que se escribe. Tras la primera búsqueda, la caja vuelve abajo para seguir la conversación. Mismo estilo visual de la app.
