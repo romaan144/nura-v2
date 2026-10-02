@@ -1037,7 +1037,10 @@ console.log('\n── La frase principal de Nüra, grande en todas las respuesta
   })
   paso('con resultados, «… es quien mejor encaja» también en grande', tamRes >= 20, `${tamRes}px`)
   // Volver a empezar deja la misma portada que al entrar.
-  await q.click('button[aria-label="Empezar conversación de nuevo"]'); await espera(1200)
+  // «Nueva búsqueda», con texto en la tarjeta (el ↻ de arriba ya no está).
+  const arriba = await q.evaluate(() => Boolean(document.querySelector('button[aria-label="Empezar conversación de nuevo"]')))
+  paso('el botón redondo de reiniciar ya no está arriba', !arriba)
+  await q.evaluate(() => [...document.querySelectorAll('section[aria-label="Respuesta de Nüra"] button')].find(b => b.textContent.trim() === 'Nueva búsqueda').click()); await espera(1200)
   const portada = await q.evaluate(() => ({
     caja: Boolean(document.querySelector('section[aria-label="Respuesta de Nüra"] input[aria-label="Cuéntale a Nüra qué necesitas"]')),
     ejemplos: ['Fontanero', 'Clases de inglés', 'Cuidadora'].every(t => [...document.querySelectorAll('button')].some(b => b.textContent.trim() === t)),
@@ -1140,6 +1143,37 @@ console.log('\n── móvil bajo, valorar, teclado y «Ver todos» ──')
   await p.goto(BASE + '/explore?c=hogar', { waitUntil: 'networkidle0' }); await espera(1800)
   const dentro = await p.evaluate(() => ({ buscador: Boolean(document.querySelector('input[aria-label="Buscar profesionales"]')), filtros: Boolean(document.querySelector('#explore-specialty')), lista: document.querySelectorAll('[class*=resultItem]').length }))
   paso('dentro de una categoría no hay buscador: filtros y lista', !dentro.buscador && dentro.filtros && dentro.lista > 0, JSON.stringify(dentro))
+  await p.close()
+}
+
+console.log('\n── Pasar de página deslizando, con flechas hacia abajo y arriba ──')
+{
+  const p = await navegador.newPage()
+  await p.setViewport({ width: 393, height: 660, isMobile: true, hasTouch: true })
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); sessionStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Babi', joined: new Date().toISOString() })) })
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1500)
+  await escribirEn(p, 'Pintor', 'x => x.getBoundingClientRect().width > 80'); await p.keyboard.press('Enter')
+  await p.waitForFunction(() => /mejor encaja/.test(document.body.innerText), { timeout: 20000 }).catch(() => {}); await espera(1200)
+  const estado = () => p.evaluate(() => document.querySelector('section[aria-label="Respuesta de Nüra"] [role=status]')?.textContent || '')
+  const cdp = await p.createCDPSession()
+  const toque = (type, y) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x: 200, y }] })
+  const deslizar = async (desde, hasta) => {
+    await toque('touchStart', desde)
+    const paso_ = desde > hasta ? -10 : 10
+    for (let y = desde + paso_; paso_ < 0 ? y >= hasta : y <= hasta; y += paso_) { await toque('touchMove', y); await espera(16) }
+    await toque('touchEnd'); await espera(700)
+  }
+  const inicio = await estado()
+  const flechas = await p.evaluate(() => [...document.querySelectorAll('section[aria-label="Respuesta de Nüra"] footer svg')].map(s => s.getAttribute('class') || '').join(' '))
+  await deslizar(380, 260); const arriba = await estado()
+  await deslizar(300, 420); const abajo = await estado()
+  await deslizar(300, 280); const corto = await estado()
+  paso('deslizar hacia arriba pasa a la siguiente parte; hacia abajo, vuelve; un roce no cambia nada',
+    /^1 de/.test(inicio) && /^2 de/.test(arriba) && /^1 de/.test(abajo) && /^1 de/.test(corto), `${inicio} → ${arriba} → ${abajo} → ${corto}`)
+  paso('el botón de seguir lleva la flecha hacia abajo', /arrow-down/.test(flechas), flechas)
+  const nueva = await p.evaluate(() => Boolean([...document.querySelectorAll('section[aria-label="Respuesta de Nüra"] header button')].find(b => b.textContent.trim() === 'Nueva búsqueda')))
+  paso('«Nueva búsqueda» está en la tarjeta de la respuesta', nueva)
   await p.close()
 }
 
