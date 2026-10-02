@@ -170,6 +170,10 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — La flecha nunca saca de Nüra, y «Tu teléfono» tiene salida (Claude)
+
+Revisadas todas las pantallas. Si se entraba directo con un enlace (un perfil compartido por WhatsApp, un aviso), la flecha de volver llevaba a una página en blanco, fuera de Nüra; ahora, si no hay pantalla anterior dentro de Nüra, lleva a la portada. Navegando dentro, vuelve a la pantalla anterior como siempre. La pantalla «Tu teléfono» (sale al tocar «Escribir» sin cuenta) no tenía flecha ni barra: ahora tiene flecha (en el paso del código, vuelve al teléfono). Se dejan como están las pestañas (sin flecha, con su barra) y la página de respuesta del profesional (sin flecha a propósito).
+
 ## 2026-10-29 — El mismo fondo en Chats, Perfil y «Ver todos» que en Buscar (Claude)
 
 Chats tenía un fondo blanco grisáceo y Buscar, lila con un toque verde. Ahora Chats, Perfil (con cuenta) y «Ver todos» usan el mismo fondo que Buscar (`--fondo-app`), que se queda quieto al desplazar la pantalla. El Perfil sin cuenta conserva su fondo propio, que ya era de la misma familia.

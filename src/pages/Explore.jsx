@@ -2,6 +2,7 @@ import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import PageHeader from '../components/PageHeader'
 import ErrorPanel from '../components/ErrorPanel'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { useVolver } from '../utils/volver'
 import { Search, SlidersHorizontal, Check, X, ArrowUpRight,
          Heart, Wrench, BookOpen, Scale, Home, PawPrint,
          Dumbbell, Baby, Star, Laptop, Palette, Car, PartyPopper, Globe } from 'lucide-react'
@@ -188,6 +189,7 @@ async function buscarProfesionales(q) {
 
 export default function Explore() {
   const navigate  = useNavigate()
+  const volver    = useVolver()
   const inputRef  = useRef(null)
 
   // ── State ────────────────────────────────────────────────────
@@ -355,8 +357,7 @@ export default function Explore() {
       if (location.state?.desdeRejilla) navigate(-1)
       else navigate('/explore', { replace: true })
     } else if (searchText) setSearchText('')
-    else if (location.key !== 'default') navigate(-1)
-    else navigate('/')
+    else volver()
   }
 
   // ── Display list ──────────────────────────────────────────────

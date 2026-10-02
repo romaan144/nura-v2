@@ -8,6 +8,7 @@ import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react
 import { attachChatScroll } from '../utils/chatScroll'
 import ConNegritas from '../components/ConNegritas'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import { useVolver } from '../utils/volver'
 import { ArrowLeft, Send, Mic, MicOff } from 'lucide-react'
 import { HELPERS_DEMO as HELPERS } from '../data/helpers'
 import { useUser } from '../context/UserContext'
@@ -86,6 +87,7 @@ const AVISAME = 'Avísame cuando conteste'
 export default function Chat() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const volver = useVolver()
   const location = useLocation()
   const { addChat, markRead, hasRated, helpersCache, addService,
     services, getChatHistory, saveChatHistory, user
@@ -480,7 +482,7 @@ export default function Chat() {
 
       {/* Controles flotantes sobre el historial de pantalla completa. */}
       <header className={styles.header}>
-        <button className={styles.back} onClick={() => navigate(-1)} aria-label="Volver">
+        <button className={styles.back} onClick={volver} aria-label="Volver">
           <ArrowLeft size={17} />
         </button>
 

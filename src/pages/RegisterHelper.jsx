@@ -2,6 +2,7 @@ import { revisarContacto } from '../utils/contactoProfesional'
 import { ciudadDeZona, faltaCiudad, ciudadDeRespuesta } from '../data/ciudades'
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { useVolver } from '../utils/volver'
 import { ArrowLeft, Send, Mic, MicOff } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import { DEMO_MODE } from '../config'
@@ -98,6 +99,7 @@ const QUESTIONS = [
 
 export default function RegisterHelper() {
   const navigate   = useNavigate()
+  const volver     = useVolver()
   const location   = useLocation()   // el de react-router, NO el global del navegador
   const { login }  = useUser()
   // Si venimos del onboarding con el nombre escrito, no se vuelve a pedir:
@@ -340,7 +342,7 @@ export default function RegisterHelper() {
 
       {/* ── HEADER — mismo floatTop que Home ── */}
       <div className={styles.floatTop} ref={topRef}>
-        <button className={styles.menuBubble} aria-label="Volver" onClick={() => navigate(-1)}>
+        <button className={styles.menuBubble} aria-label="Volver" onClick={volver}>
           <ArrowLeft size={17} />
         </button>
 
