@@ -1197,6 +1197,26 @@ console.log('\n── Chats: el oficio de cada persona, bajo su nombre ──')
   await p.close()
 }
 
+console.log('\n── «Ver todos»: flecha para volver también en la rejilla ──')
+{
+  const p = await navegador.newPage()
+  await p.setViewport({ width: 393, height: 760, isMobile: true, hasTouch: true })
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); sessionStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Babi', joined: new Date().toISOString() })) })
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1500)
+  await tocar(p, /^Ver todos los profesionales$/); await espera(1200)
+  const flecha = () => p.evaluate(() => { const b = [...document.querySelectorAll('button[aria-label="Volver"]')].find(x => x.checkVisibility?.()); return Boolean(b) })
+  const hay = await flecha()
+  await p.evaluate(() => [...document.querySelectorAll('button[aria-label="Volver"]')].find(x => x.checkVisibility?.()).click()); await espera(1000)
+  const vuelta = new URL(p.url()).pathname
+  // Entrando directo (un enlace), la flecha lleva a Inicio.
+  await p.goto(BASE + '/explore', { waitUntil: 'networkidle0' }); await espera(1000)
+  await p.evaluate(() => [...document.querySelectorAll('button[aria-label="Volver"]')].find(x => x.checkVisibility?.()).click()); await espera(1000)
+  const directo = new URL(p.url()).pathname
+  paso('en «Ver todos» hay flecha arriba a la izquierda y vuelve atrás (o a Inicio si se entró directo)', hay && vuelta === '/' && directo === '/', `${hay} · ${vuelta} · ${directo}`)
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')

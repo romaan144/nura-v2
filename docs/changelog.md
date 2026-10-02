@@ -170,6 +170,10 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — «Ver todos»: flecha para volver también en la rejilla (Claude)
+
+Al entrar en «Ver todos» ya hay flecha arriba a la izquierda, como en las demás pantallas. Si hay algo escrito en el buscador, lo borra; si no, vuelve a donde se estaba, o a Inicio si se entró directamente con un enlace. Dentro de una categoría hace lo de siempre.
+
 ## 2026-10-29 — Seis ejemplos que cambian, «Ver todos» en la portada y el oficio en Chats (Claude)
 
 La portada enseña seis ejemplos en dos filas de tres, distintos en cada visita: dos de casa, uno de cuidados, dos de salud y uno más, de oficios con muchos profesionales y que el buscador reconoce (se quitó «Abogado», que no lo entendía). Debajo, «Ver todos los profesionales», porque el botón de arriba a la izquierda no lo veía nadie. En Chats, el hueco en blanco bajo el nombre muestra ahora el oficio de cada persona («Técnico de calderas y calefacción»).
