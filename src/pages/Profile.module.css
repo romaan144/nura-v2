@@ -462,3 +462,6 @@
 /* El contenido aparece al estar listo, sin retener la vista de carga. */
 @media (prefers-reduced-motion: no-preference) { .page { animation: contentReady 180ms ease-out; } }
 @keyframes contentReady { from { opacity: .65; } to { opacity: 1; } }
+
+/* Mismo fondo que Buscar (ver --fondo-app en design-system.css). */
+.page { background: var(--fondo-app); }

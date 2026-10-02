@@ -56,3 +56,6 @@
 
 .specialtySelect { background: var(--glass-control); box-shadow: var(--glass-control-shadow); }
 .clearBtn { background: var(--glass-control); border: 1px solid var(--glass-edge); border-radius: 50%; box-shadow: var(--glass-control-shadow); }
+
+/* Mismo fondo que Buscar (ver --fondo-app en design-system.css). */
+.page { background: var(--fondo-app); }
