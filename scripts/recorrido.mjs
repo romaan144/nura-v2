@@ -657,7 +657,7 @@ console.log('\n── Tras el alta, sin recargar: Inicio la saluda como profesio
   for (const t of ['Nuria Camps Ferrer', 'logopeda infantil', 'Grado en Logopedia por la UB', 'Barcelona, Sant Andreu', '45€ la sesión', 'Trabajo con juego y doy pautas a las familias', 'nuria.camps@ejemplo.com']) await decir(t)
   await espera(4500)
   const r = await texto(p)
-  paso('tras darse de alta, Inicio dice «tu ficha ya está publicada» (sin recargar)', /Para quién necesitas ayuda/.test(antes) && new URL(p.url()).pathname === '/' && /Nuria, tu ficha ya está publicada/.test(r) && !/Para quién necesitas ayuda/.test(r), new URL(p.url()).pathname + ' · ' + r.slice(0, 80))
+  paso('tras darse de alta, Inicio dice «tu ficha ya está publicada» (sin recargar)', /Por ejemplo:/.test(antes) && new URL(p.url()).pathname === '/' && /Nuria, tu ficha ya está publicada/.test(r) && !/Por ejemplo:/.test(r), new URL(p.url()).pathname + ' · ' + r.slice(0, 80))
   await p.close()
 }
 
@@ -961,25 +961,29 @@ console.log('\n── Lo que Nüra recuerda del cliente: solo con permiso ──
   await p.close()
 }
 
-console.log('\n── La portada pregunta siempre «¿Para quién necesitas ayuda?» ──')
+console.log('\n── La portada: la caja de escribir, junto al saludo, siempre ──')
 {
-  // 2026-10-01 (Sergio, opción A): antes desaparecía si ya la había
-  // contestado en esa pestaña o había escrito a alguien.
+  // 2026-10-02 (Sergio): la gente no entendía que había que escribir. La
+  // caja va en la tarjeta, bajo el saludo, con ejemplos que se pueden tocar.
   const p = await navegador.newPage()
   p.on('pageerror', e => errores.push('portada: ' + String(e.message).split('\n')[0].slice(0, 60)))
-  const pregunta = () => p.evaluate(() => /Para quién necesitas ayuda/.test(document.body.innerText) && [...document.querySelectorAll('button')].some(b => b.textContent.trim() === 'Para mí'))
+  const pregunta = () => p.evaluate(() => {
+    const s = document.querySelector('section[aria-label="Respuesta de Nüra"]')
+    return Boolean(s?.querySelector('input[aria-label="Cuéntale a Nüra qué necesitas"]')) && [...s.querySelectorAll('button')].some(b => b.textContent.trim() === 'Fontanero')
+      && !/Para quién necesitas ayuda/.test(document.body.innerText)
+  })
   await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
   await p.evaluate(() => { localStorage.clear(); sessionStorage.clear() })
   await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1500)
   const primera = await pregunta()
-  await tocar(p, /^Para mí$/); await espera(1500)
+  await tocar(p, /^Fontanero$/); await espera(5000)
   await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1500)
   const trasContestar = await pregunta()
   // Con alguien a quien ya escribió (sin pregunta de «¿pudiste resolver?» pendiente).
   await p.evaluate(() => localStorage.setItem('nura_contacted', JSON.stringify([{ id: 2001, name: 'Carlos Martínez Vidal', contactedAt: Date.now() - 60000 }])))
   await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1500)
   const conContacto = await pregunta()
-  paso('la portada pregunta siempre: la primera vez, tras contestarla y tras escribir a alguien', primera && trasContestar && conContacto, `${primera} · ${trasContestar} · ${conContacto}`)
+  paso('la caja está en la portada siempre: la primera vez, tras buscar y tras escribir a alguien', primera && trasContestar && conContacto, `${primera} · ${trasContestar} · ${conContacto}`)
   await p.close()
 }
 
@@ -1020,20 +1024,7 @@ console.log('\n── «Ver todos»: los pintores, juntos en «Poner mi casa a p
 
 console.log('\n── La frase principal de Nüra, grande en todas las respuestas ──')
 {
-  // 2026-10-01 (Sergio): tras «Para mí» la respuesta salía en texto pequeño.
-  const p = await navegador.newPage()
-  p.on('pageerror', e => errores.push('respuesta corta: ' + String(e.message).split('\n')[0].slice(0, 60)))
-  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
-  await p.evaluate(() => { localStorage.clear(); sessionStorage.clear() })
-  await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1500)
-  await tocar(p, /^Para alguien de mi familia$/); await espera(1500)
-  const tam = await p.evaluate(() => {
-    const el = [...document.querySelectorAll('section[aria-label="Respuesta de Nüra"] p')].find(x => /Cuéntame qué le pasa/.test(x.textContent))
-    return el ? parseFloat(getComputedStyle(el).fontSize) : 0
-  })
-  paso('tras «Para alguien de mi familia», la respuesta se lee en grande', tam >= 20, `${tam}px`)
-  await p.close()
-  // Y con resultados, su frase principal también («X es quien mejor encaja»).
+  // Con resultados, su frase principal en grande («X es quien mejor encaja»).
   const q = await navegador.newPage()
   await q.goto(BASE + '/', { waitUntil: 'networkidle0' })
   await q.evaluate(() => { localStorage.clear(); sessionStorage.clear() })
@@ -1045,17 +1036,16 @@ console.log('\n── La frase principal de Nüra, grande en todas las respuesta
     return el ? parseFloat(getComputedStyle(el).fontSize) : 0
   })
   paso('con resultados, «… es quien mejor encaja» también en grande', tamRes >= 20, `${tamRes}px`)
-  // Volver a empezar deja la misma portada que al entrar (Sergio,
-  // 2026-10-01): antes faltaba «¿Para quién necesitas ayuda?».
+  // Volver a empezar deja la misma portada que al entrar.
   await q.click('button[aria-label="Empezar conversación de nuevo"]'); await espera(1200)
   const portada = await q.evaluate(() => ({
-    pregunta: /Para quién necesitas ayuda/.test(document.body.innerText),
-    botones: ['Para mí', 'Para alguien de mi familia', 'Para mi hogar o negocio'].every(t => [...document.querySelectorAll('button')].some(b => b.textContent.trim() === t)),
+    caja: Boolean(document.querySelector('section[aria-label="Respuesta de Nüra"] input[aria-label="Cuéntale a Nüra qué necesitas"]')),
+    ejemplos: ['Fontanero', 'Clases de inglés', 'Cuidadora'].every(t => [...document.querySelectorAll('button')].some(b => b.textContent.trim() === t)),
     sinResultados: !/mejor encaja/.test(document.body.innerText),
   }))
-  paso('volver a empezar muestra la misma portada, con «¿Para quién necesitas ayuda?»', portada.pregunta && portada.botones && portada.sinResultados, JSON.stringify(portada))
-  await tocar(q, /^Para alguien de mi familia$/); await espera(1500)
-  paso('y sus botones siguen funcionando', /Cuéntame qué le pasa/.test(await q.evaluate(() => document.body.innerText)))
+  paso('volver a empezar muestra la misma portada, con la caja y los ejemplos', portada.caja && portada.ejemplos && portada.sinResultados, JSON.stringify(portada))
+  await tocar(q, /^Clases de inglés$/); await espera(5500)
+  paso('y los ejemplos buscan al tocarlos', /mejor encaja|única opción/.test(await q.evaluate(() => document.body.innerText)))
   await q.close()
   // Una frase no se parte a mitad: «madre".» caía sola en letra pequeña.
   const r = await navegador.newPage()
@@ -1089,8 +1079,8 @@ console.log('\n── móvil bajo, valorar, teclado y «Ver todos» ──')
   await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1500)
   const visibles = () => p.evaluate(() => [...document.querySelectorAll('section[aria-label="Respuesta de Nüra"] [aria-hidden="false"]')].map(e => e.textContent).join(' | '))
   const portada = await visibles()
-  paso('en un móvil bajo, «¿Para quién…?» y sus tres respuestas salen en la primera página',
-    ['Para mí', 'Para alguien de mi familia', 'Para mi hogar o negocio'].every(t => portada.includes(t)), portada.slice(0, 200))
+  paso('en un móvil bajo, la caja y los tres ejemplos salen en la primera página',
+    ['Fontanero', 'Clases de inglés', 'Cuidadora'].every(t => portada.includes(t)) && await p.evaluate(() => Boolean(document.querySelector('section[aria-label="Respuesta de Nüra"] [aria-hidden="false"] input'))), portada.slice(0, 200))
   // Teclado abierto en Inicio: la barra de abajo no sube; la cápsula, sí.
   await p.evaluate(() => { const i = [...document.querySelectorAll('input')].find(x => x.checkVisibility?.() && x.getBoundingClientRect().width > 80); i.focus() })
   await p.evaluate(() => window.__teclado(300)); await espera(700)
@@ -1131,7 +1121,7 @@ console.log('\n── móvil bajo, valorar, teclado y «Ver todos» ──')
   paso('al enviar la valoración, Nüra da las gracias en la misma pantalla', /Gracias por valorar a Miquel/.test(gracias) && !/Valorar a Miquel/.test(gracias), gracias.slice(0, 160))
   await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1800)
   const vuelta = await p.evaluate(() => document.querySelector('section[aria-label="Respuesta de Nüra"]')?.innerText || '')
-  paso('al volver, no pregunta «¿Cómo está yendo todo con Miquel?» si ya le valoró', !/Cómo está yendo/.test(vuelta) && /Para quién necesitas ayuda/.test(vuelta), vuelta.slice(0, 160))
+  paso('al volver, no pregunta «¿Cómo está yendo todo con Miquel?» si ya le valoró', !/Cómo está yendo/.test(vuelta) && /Por ejemplo:/.test(vuelta), vuelta.slice(0, 160))
   await p.close()
 }
 {

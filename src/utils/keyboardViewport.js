@@ -18,7 +18,13 @@ export function installKeyboardViewport(win = window, doc = document) {
     const field = editable()
     if (!host || !field || !host.contains(field)) return
     // Inicio no se desplaza: solo sube su cápsula (ver Home.module.css).
-    if (host.dataset.screen === 'home') { host.scrollTop = 0; return }
+    // Si la caja está en el centro (la portada), sube lo justo para verla.
+    if (host.dataset.screen === 'home') {
+      const box = field.getBoundingClientRect()
+      const limite = host.getBoundingClientRect().bottom - 12
+      host.scrollTop = box.bottom > limite ? host.scrollTop + box.bottom - limite : 0
+      return
+    }
     if (['chat', 'register-helper'].includes(host.dataset.screen)) {
       host.scrollTop = host.scrollHeight - host.clientHeight
       return
