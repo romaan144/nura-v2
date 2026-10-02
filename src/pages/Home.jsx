@@ -565,6 +565,10 @@ export default function Home() {
       .find(x => String(x.helperId) === String(hid) && !['cancelled', 'rejected'].includes(x.status)) || null
     const pending = (contactedHelpers || []).find(c => {
       if (!c?.contactedAt) return false
+      // Si ya lo contó (valoró, o marcó la cita como hecha en Mis servicios),
+      // no se le pregunta «¿qué tal fue?» (Sergio, 2026-10-02).
+      if (hasRated?.(c.id)) return false
+      if ((services || []).some(x => String(x.helperId) === String(c.id) && x.status === 'completed')) return false
       const elapsed = Date.now() - c.contactedAt
       const alreadyAnswered = c.confirmed !== undefined
       const ci = citaCon(c.id)

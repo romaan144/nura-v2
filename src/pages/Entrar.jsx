@@ -30,9 +30,11 @@ const TEXTOS_ACCESO = {
     crear: 'Usa el correo que diste al darte de alta en Nüra: así encontramos tu ficha y ves aquí todo lo que te escriban.',
     entrar: 'Entra con el correo de tu alta para ver aquí todo lo que te escriban.',
   },
+  // Sin más contexto: vale para quien busca y para quien ofrece (antes solo
+  // hablaba de «tu ficha profesional», también a los clientes).
   profesional: {
-    crear: 'Con tu correo y una contraseña podrás cambiar tu ficha desde cualquier móvil.',
-    entrar: 'Entra con el correo de tu cuenta para gestionar tu ficha profesional.',
+    crear: 'Con tu correo y una contraseña podrás entrar en tu cuenta desde cualquier móvil.',
+    entrar: 'Entra con tu correo o tu móvil y tu contraseña.',
   },
   continuar: {
     crear: 'Crea tu acceso con correo y contraseña. Después volverás a donde estabas.',

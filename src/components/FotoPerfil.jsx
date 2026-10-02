@@ -40,7 +40,10 @@ function recortar(archivo) {
   })
 }
 
-export default function FotoPerfil({ actual, helperId, onCambio }) {
+// `local` (solo en la demo, sin acceso creado): la foto se guarda en este
+// móvil, como el resto de cambios de la ficha de demostración. Así se puede
+// probar lo que recomienda la portada («una foto ayuda a que te escriban»).
+export default function FotoPerfil({ actual, helperId, onCambio, local = false }) {
   const entrada = useRef(null)
   const [previa, setPrevia] = useState(null)   // { blob, url }
   const [subiendo, setSubiendo] = useState(false)
@@ -58,6 +61,13 @@ export default function FotoPerfil({ actual, helperId, onCambio }) {
   async function usar() {
     if (!previa || subiendo) return
     setSubiendo(true); setError('')
+    if (local) {
+      const lector = new FileReader()
+      lector.onload = () => { onCambio(lector.result); URL.revokeObjectURL(previa.url); setPrevia(null); setSubiendo(false) }
+      lector.onerror = () => { setError('No hemos podido guardar esa foto. Prueba con otra.'); setSubiendo(false) }
+      lector.readAsDataURL(previa.blob)
+      return
+    }
     try {
       const { cuentas } = await import('../utils/cuenta')
       const { data: { session } } = await cuentas.auth.getSession()
@@ -81,6 +91,7 @@ export default function FotoPerfil({ actual, helperId, onCambio }) {
 
   async function quitar() {
     if (subiendo) return
+    if (local) { setQuitando(false); onCambio(null); return }
     setSubiendo(true); setError('')
     try {
       const { cuentas } = await import('../utils/cuenta')

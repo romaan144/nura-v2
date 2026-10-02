@@ -545,8 +545,8 @@ export default function Profile() {
 
               {/* La foto, solo con la ficha vinculada (etapa 7): sin saber
                   quien es, cualquiera podria cambiar la foto de cualquiera. */}
-              {user.helperId != null && tieneCuenta && (
-                <FotoPerfil actual={user.avatar} helperId={user.helperId} onCambio={url => updateUser({ avatar: url })} />
+              {((user.helperId != null && tieneCuenta) || (DEMO_MODE && !tieneCuenta)) && (
+                <FotoPerfil actual={user.avatar} helperId={user.helperId} local={!tieneCuenta} onCambio={url => updateUser({ avatar: url })} />
               )}
 
               <div>
