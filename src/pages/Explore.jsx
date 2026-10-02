@@ -35,7 +35,7 @@ const CATEGORIES = [
     color: '#F59E0B',
     bg: 'rgba(245,158,11,0.10)',
     supabaseCategories: ['tecnico'],
-    subcategories: ['Todos', 'Fontanero', 'Electricista', 'Albañil', 'Pintor', 'Carpintero', 'Cerrajero', 'Técnico aire acondicionado', 'Técnico calefacción', 'Técnico gas natural', 'Técnico electrodomésticos', 'Reparación de móviles'],
+    subcategories: ['Todos', 'Fontanero', 'Electricista', 'Albañil', 'Carpintero', 'Cerrajero', 'Técnico aire acondicionado', 'Técnico calefacción', 'Técnico gas natural', 'Técnico electrodomésticos', 'Reparación de móviles'],
   },
   {
     id: 'clases',
@@ -66,7 +66,7 @@ const CATEGORIES = [
     color: '#10B981',
     bg: 'rgba(16,185,129,0.10)',
     supabaseCategories: ['hogar', 'limpieza'],
-    subcategories: ['Todos', 'Limpieza doméstica', 'Limpieza por horas', 'Limpieza profunda', 'Planchado a domicilio', 'Organización del hogar', 'Cocinero a domicilio', 'Manitas del hogar', 'Montador de muebles IKEA y similares', 'Pintor de interiores', 'Electricista domicilio urgencias', 'Albañil reformas parciales', 'Carpintero a medida', 'Jardinero y mantenimiento de terrazas', 'Diseñador de interiores', 'Arquitecto reformas domicilio'],
+    subcategories: ['Todos', 'Limpieza doméstica', 'Limpieza por horas', 'Limpieza profunda', 'Planchado a domicilio', 'Organización del hogar', 'Cocinero a domicilio', 'Manitas del hogar', 'Montador de muebles IKEA y similares', 'Pintor', 'Electricista domicilio urgencias', 'Albañil reformas parciales', 'Carpintero a medida', 'Jardinero y mantenimiento de terrazas', 'Diseñador de interiores', 'Arquitecto reformas domicilio'],
   },
   {
     id: 'mascotas',
@@ -150,6 +150,13 @@ const CATEGORIES = [
     subcategories: ['Todos', 'Guía turístico', 'Traductora chino-español', 'Traductor árabe-español', 'Intérprete', 'Profesora de inglés'],
   },
 ]
+
+// ── OFICIOS QUE SE ENSEÑAN EN OTRA CATEGORÍA ─────────────────────────
+// La categoría sale de la ficha, y en la base hay pintores como `tecnico`
+// y otros como `hogar`: la madre de Sergio veía «Pintor» en «Arreglar algo
+// en casa» y «Pintor de interiores» en «Poner mi casa a punto» (2026-10-02).
+// Aquí solo cambia dónde se enseñan; lo guardado y la búsqueda, no.
+const MOVIDOS = [{ es: h => /^pintor/i.test((h.specialty || '').trim()), de: 'tecnico', a: 'hogar' }]
 
 export default function Explore() {
   const navigate  = useNavigate()
@@ -249,19 +256,24 @@ export default function Explore() {
     setCategoryResults([])
     try {
       // Fetch all subcategories in parallel
-      const results = await Promise.all(
-        cat.supabaseCategories.map(c => searchHelpers(c))
-      )
+      const traer = MOVIDOS.filter(m => m.a === cat.id && !cat.supabaseCategories.includes(m.de))
+      const [results, deOtras] = await Promise.all([
+        Promise.all(cat.supabaseCategories.map(c => searchHelpers(c))),
+        Promise.all(traer.map(m => searchHelpers(m.de).then(l => (l || []).filter(m.es)))),
+      ])
       // Fuera de la demo, si no contestó ninguna: es la conexión, no que
       // no haya nadie.
       if (!DEMO_MODE && results.every(r => r === null)) { setSinRed(true); setCategoryResults([]); setLoadingCat(false); return }
       setSinRed(false)
       // Los de ejemplo (id >= 2000) solo en la demo.
       const demoHelpers = DEMO_MODE ? LOCAL_DEMO_HELPERS.filter(h =>
-        h.id >= 2000 && cat.supabaseCategories.includes(h.category)
+        h.id >= 2000 && (cat.supabaseCategories.includes(h.category) || traer.some(m => m.de === h.category && m.es(h)))
       ) : []
 
-      let merged = [...demoHelpers, ...results.flat().filter(Boolean)]
+      // Los que se enseñan en otra categoría salen de esta.
+      const vaAOtra = h => MOVIDOS.some(m => m.a !== cat.id && cat.supabaseCategories.includes(m.de) && m.es(h))
+      let merged = [...demoHelpers, ...results.flat().filter(Boolean), ...deOtras.flat()]
+        .filter(h => h && !vaAOtra(h))
         .filter((h, i, arr) => arr.findIndex(x => x.id === h.id) === i)
         .sort((a, b) => {
           // Demo helpers always first
@@ -319,7 +331,7 @@ export default function Explore() {
         'electricista':                         ['electricista', 'electricista domicilio'],
         'albañil':                              ['albañil', 'albañil y reformas pequeñas'],
         'técnico calefacción':                  ['técnico calefacción', 'técnico calderas y calefacción'],
-        'pintor':                               ['pintor', 'pintor domicilio'],
+        'pintor':                               ['pintor', 'pintor domicilio', 'pintor de interiores'],
         'manitas del hogar':                    ['manitas del hogar', 'manitas'],
         'montador de muebles ikea y similares': ['montador de muebles ikea y similares', 'montaje de muebles'],
         'mecánico':                             ['mecánico', 'mecánico a domicilio'],
