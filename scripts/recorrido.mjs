@@ -432,7 +432,7 @@ console.log('\n── Tras «Sí, genial», Nüra entiende lo que le cuentas ─
   const p = await navegador.newPage()
   p.on('pageerror', e => errores.push('tras sí: ' + String(e.message).split('\n')[0].slice(0, 60)))
   await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
-  // El caso de Sergio: ya la había valorado, así que la ventana no se abre.
+  // Si ya la había valorado, ni se pregunta (Sergio, 2026-10-02): lo contó.
   await p.evaluate(() => {
     localStorage.clear()
     localStorage.setItem('nura_user', JSON.stringify({ name: 'Sergio', joined: new Date().toISOString() }))
@@ -441,10 +441,16 @@ console.log('\n── Tras «Sí, genial», Nüra entiende lo que le cuentas ─
   })
   await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
   await espera(1500)
+  paso('si ya la valoró, no se pregunta «¿Pudiste resolver…?»', !/Pudiste resolver/.test(await texto(p)))
+  // Sin valorar: se pregunta, y tras «Sí, genial» lo que cuenta se agradece.
+  await p.evaluate(() => localStorage.removeItem('nura_ratings'))
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await espera(1500)
   await tocar(p, /Sí, genial/)
   await espera(2000)
+  await p.evaluate(() => document.querySelector('button[aria-label="Cerrar valoración"]')?.click()); await espera(1200)
   const tras = await texto(p)
-  paso('sin género inventado ni pedir lo que no se puede hacer', /Anoto que con Júlia funcionó/.test(tras) && !/queda anotado/.test(tras) && !/Si me cuentas cómo fue/.test(tras), tras.match(/Me alegra.{0,120}/)?.[0] || '')
+  paso('sin género inventado', /Anoto que con Júlia funcionó/.test(tras) && !/queda anotado/.test(tras), tras.match(/Me alegra.{0,120}/)?.[0] || '')
   await escribirEn(p, 'Muy bien!')
   await p.keyboard.press('Enter')
   await espera(2000)
@@ -1333,6 +1339,33 @@ console.log('\n── El profesional: su inicio y contestar desde la bandeja ─
   await p.goto(BASE + '/profile', { waitUntil: 'networkidle0' }); await espera(1500)
   paso('en su perfil no se habla de «cita personal» (se confundía con las citas)', !/cita personal|Guardar mi cita/.test(await p.evaluate(() => document.body.innerText)))
   await p.close()
+}
+
+console.log('\n── Valorar desde Mis servicios y la foto en la demo ──')
+{
+  const p = await navegador.newPage()
+  await p.setViewport({ width: 393, height: 760, isMobile: true, hasTouch: true })
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => {
+    localStorage.clear(); sessionStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Babi', joined: new Date().toISOString() }))
+    const pas = new Date(); pas.setDate(pas.getDate() - 2)
+    localStorage.setItem('nura_services', JSON.stringify([{ id: 2, helperId: 2001, helperName: 'Carlos Martínez Vidal', specialty: 'logopeda infantil', date: pas.toISOString().slice(0, 10), time: '17:00', status: 'confirmed', price: '45€/sesión' }]))
+    localStorage.setItem('nura_contacted', JSON.stringify([{ id: 2001, name: 'Carlos Martínez Vidal', contactedAt: Date.now() - 5 * 864e5 }]))
+  })
+  await p.goto(BASE + '/my-services', { waitUntil: 'networkidle0' }); await espera(1500)
+  await p.evaluate(() => [...document.querySelectorAll('button')].find(b => b.textContent.trim() === 'Marcar como hecho y valorar')?.click()); await espera(1200)
+  await p.evaluate(() => [...document.querySelectorAll('[role=dialog] button')].find(b => b.textContent.trim() === 'Sí')?.click()); await espera(300)
+  await p.evaluate(() => [...document.querySelectorAll('[role=dialog] button')].find(b => /Enviar valoración/.test(b.textContent))?.click()); await espera(3500)
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1800)
+  paso('tras valorar desde Mis servicios, Inicio no pregunta «¿qué tal fue la visita?»', !/Qué tal fue la visita|Pudiste resolver/.test(await p.evaluate(() => document.body.innerText)))
+  await p.close()
+  const q = await navegador.newPage()
+  await q.setViewport({ width: 393, height: 760, isMobile: true, hasTouch: true })
+  await q.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await q.evaluate(() => { localStorage.clear(); sessionStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Rosa García', isHelper: true, joined: new Date().toISOString(), helperProfile: { specialty: 'cuidadora', price: '14€' } })) })
+  await q.goto(BASE + '/profile', { waitUntil: 'networkidle0' }); await espera(1500)
+  paso('el profesional de la demo puede poner su foto (se guarda en su móvil)', Boolean(await q.$('input[type=file]')))
+  await q.close()
 }
 
 await navegador.close()

@@ -170,6 +170,10 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Tercera ronda: acceso, valorar y foto (Claude)
+
+Entrar, «¿Has olvidado tu contraseña?» (por correo y por SMS), crear acceso y restablecer: sin conexión lo dicen claro y el botón no se activa con un correo mal escrito; «Entrar» ya no habla de «tu ficha profesional» a quien solo busca. Tras marcar una cita como hecha y valorarla en Mis servicios, Inicio ya no pregunta «¿Qué tal fue la visita…?». En la demo, el profesional puede poner y quitar su foto (se guarda en su móvil, como el resto de su ficha de prueba); con cuenta real sigue subiéndose al servidor.
+
 ## 2026-10-29 — Repaso como profesional y en pantallas pequeñas u horizontales (Claude)
 
 Usando la app como profesional (alta, inicio, bandeja, contestar y aceptar citas, bloquear horas, ficha): al volver, su inicio decía «Tu búsqueda» y ofrecía «Nueva búsqueda» sin haber buscado nada; la página de contestar no tenía forma de volver a la bandeja si quedaban mensajes (ahora, flecha y «Volver a mis mensajes»); en su perfil, «Tu cita personal» se confundía con las citas y pasa a «Tu frase». En pantallas estrechas (320-359px, o el «tamaño de pantalla» grande de Android) la portada no cabía en una página y «Tu búsqueda» se cortaba: título algo menor y sin el logotipo pequeño en la cabecera de la respuesta. En horizontal todo funciona; los ejemplos de la portada pasan a la segunda página.
