@@ -170,6 +170,10 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Los pintores, juntos en «Poner mi casa a punto» (Claude)
+
+La madre de Sergio encontró un pintor en «Arreglar algo en casa» y otro en «Poner mi casa a punto». Ahora todos los pintores salen en «Poner mi casa a punto», agrupados en la especialidad «Pintor».
+
 ## 2026-10-29 — El logotipo de Inicio, en su burbuja (Claude)
 
 Sergio: en la pantalla de buscar, el logotipo «Nüra» de arriba iba sin burbuja, al contrario que en las demás pestañas. Ahora la tiene, igual que en Chats. En los móviles más estrechos se ajustan un poco los márgenes para que todo quepa sin tocarse.

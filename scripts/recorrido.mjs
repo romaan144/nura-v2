@@ -994,6 +994,23 @@ console.log('\n── Los oficios, con la primera letra en mayúscula ──')
   await p.close()
 }
 
+console.log('\n── «Ver todos»: los pintores, juntos en «Poner mi casa a punto» ──')
+{
+  // 2026-10-02 (la madre de Sergio): «Pintor» salía en «Arreglar algo en
+  // casa» y «Pintor de interiores» en «Poner mi casa a punto».
+  const p = await navegador.newPage()
+  const pintores = () => p.evaluate(() => [...document.querySelectorAll('button[aria-label^="Ver perfil de"]')].map(b => b.closest('article, div')?.innerText || '').filter(t => /pintor/i.test(t)).length)
+  await p.goto(BASE + '/explore?c=tecnico', { waitUntil: 'networkidle0' }); await espera(1800)
+  const enTecnico = await pintores()
+  await p.goto(BASE + '/explore?c=hogar', { waitUntil: 'networkidle0' }); await espera(1800)
+  const enHogar = await pintores()
+  await p.select('#explore-specialty', 'Pintor'); await espera(800)
+  const conFiltro = await p.evaluate(() => document.querySelectorAll('button[aria-label^="Ver perfil de"]').length)
+  paso('ningún pintor en «Arreglar algo en casa» y los dos en «Poner mi casa a punto»', enTecnico === 0 && enHogar === 2, `técnico ${enTecnico} · hogar ${enHogar}`)
+  paso('el filtro «Pintor» los reúne a los dos', conFiltro === 2, String(conFiltro))
+  await p.close()
+}
+
 console.log('\n── La frase principal de Nüra, grande en todas las respuestas ──')
 {
   // 2026-10-01 (Sergio): tras «Para mí» la respuesta salía en texto pequeño.
