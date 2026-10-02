@@ -1941,7 +1941,10 @@ export default function Home() {
       </div>
 
       <div className={styles.screenArea}>
-        <ResponseScreen key={responseKey} blocks={blocks} welcome={isWelcome} query={isWelcome ? '' : latestQuery} onNuevaBusqueda={messages.length > 1 ? nuevaBusqueda : null} />
+        {/* «Tu búsqueda» y «Nueva búsqueda» solo cuando se ha buscado algo: al
+            profesional que vuelve (saludo + «tienes 2 mensajes») le salían
+            sin haber buscado nada. */}
+        <ResponseScreen key={responseKey} blocks={blocks} welcome={isWelcome || !latestQuery} query={isWelcome ? '' : latestQuery} onNuevaBusqueda={latestQuery ? nuevaBusqueda : null} />
       </div>
       {!inicio && <div className={styles.focusComposer}>{composer}</div>}
 

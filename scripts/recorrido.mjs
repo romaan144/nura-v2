@@ -1309,6 +1309,32 @@ console.log('\n── Capturas de Sergio (2026-10-02, tarde): cabecera, ajustes 
   await c.close()
 }
 
+console.log('\n── El profesional: su inicio y contestar desde la bandeja ──')
+{
+  const p = await navegador.newPage()
+  await p.setViewport({ width: 393, height: 760, isMobile: true, hasTouch: true })
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); sessionStorage.clear() })
+  await p.goto(BASE + '/register-helper', { waitUntil: 'networkidle0' }); await espera(1500)
+  for (const t of ['Rosa García López', 'cuidadora de personas mayores', 'Auxiliar de enfermería', 'Barcelona, Sants', '14€ la hora', 'Soy paciente', 'rosa.prueba@ejemplo.com']) {
+    await p.evaluate(() => [...document.querySelectorAll('input, textarea')].find(x => x.checkVisibility?.())?.focus()); await p.keyboard.type(t); await p.keyboard.press('Enter'); await espera(2500)
+  }
+  await espera(2500)
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1800)
+  const cab = await p.evaluate(() => document.querySelector('section[aria-label="Respuesta de Nüra"] header')?.innerText || '')
+  paso('el profesional que vuelve no ve «Tu búsqueda» ni «Nueva búsqueda» sin haber buscado', /Cerca de ti/.test(cab) && !/Nueva búsqueda/.test(cab), cab.replace(/\s+/g, ' '))
+  await p.goto(BASE + '/chats', { waitUntil: 'networkidle0' }); await espera(1500)
+  await p.evaluate(() => [...document.querySelectorAll('button, a')].find(e => e.checkVisibility?.() && /Sin contestar/.test(e.textContent))?.click()); await espera(1800)
+  const flecha = await p.evaluate(() => Boolean([...document.querySelectorAll('button[aria-label="Volver"]')].find(e => e.checkVisibility?.())))
+  await p.evaluate(() => document.querySelector('textarea')?.focus()); await p.keyboard.type('Hola, sí puedo.')
+  await p.evaluate(() => [...document.querySelectorAll('button')].find(b => b.textContent.trim() === 'Enviar respuesta')?.click()); await espera(2000)
+  const volver = await p.evaluate(() => Boolean([...document.querySelectorAll('button')].find(b => b.textContent.trim() === 'Volver a mis mensajes')))
+  paso('al contestar desde la bandeja hay flecha y «Volver a mis mensajes»', flecha && volver, `${flecha} · ${volver}`)
+  await p.goto(BASE + '/profile', { waitUntil: 'networkidle0' }); await espera(1500)
+  paso('en su perfil no se habla de «cita personal» (se confundía con las citas)', !/cita personal|Guardar mi cita/.test(await p.evaluate(() => document.body.innerText)))
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')

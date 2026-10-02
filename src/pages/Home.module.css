@@ -973,3 +973,14 @@
 .inicioRejilla { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .inicioRejilla .inicioEjemplo { min-width: 0; padding: 7px 6px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 @media (max-width: 374px) { .inicioRejilla .inicioEjemplo { font-size: 12px; padding-inline: 4px; } }
+/* Pantallas estrechas (320-359px, o «tamaño de pantalla» grande en Android):
+   la portada, con su caja, ejemplos y «Ver todos», cabe en una página. */
+@media (max-width: 359px) {
+  .pageWelcome .screenTitle { font-size: 21px; letter-spacing: -0.6px; }
+  .inicioRejilla { gap: 6px; }
+  .inicioRejilla .inicioEjemplo { min-height: 34px; padding-block: 5px; }
+  .inicioCaja .inputCapsule { min-height: 54px; }
+}
+/* La regla de pantallas bajas (26px) pesaba más que las de arriba. */
+.focusPage.pageWelcome[data-focus-size='short'] .screenTitle { font-size: 22px; letter-spacing: -0.6px; }
+@media (max-width: 359px) { .focusPage.pageWelcome[data-focus-size] .screenTitle { font-size: 21px; } }

@@ -20,6 +20,9 @@ import ErrorPanel from '../components/ErrorPanel'
 
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { ArrowLeft } from 'lucide-react'
+import cabecera from '../components/PageHeader.module.css'
+import { hayPasoAnterior } from '../utils/volver'
 import { abrirAviso, responderAviso, misAvisos, porLaFuncion } from '../utils/escrituras'
 import { DEMO_MODE } from '../config'
 import { refrescarSinContestar } from '../utils/sinContestar'
@@ -221,6 +224,14 @@ function ResponderAviso({ token }) {
 
   return (
     <div className="nura-service-flow" style={marco}>
+      {/* Quien llega desde su bandeja (dentro de Nüra) puede volver a ella
+          (Sergio, 2026-10-02). Desde el enlace del aviso no hay a dónde. */}
+      {hayPasoAnterior() && (
+        <button type="button" className={cabecera.circleBtn} onClick={() => navigate(-1)} aria-label="Volver"
+          style={{ position: 'fixed', zIndex: 5, top: 'max(env(safe-area-inset-top, 0px), 12px)', left: 16 }}>
+          <ArrowLeft size={18} />
+        </button>
+      )}
       <span className="nura-wordmark" style={{marginBottom: 24}}>Nüra</span>
       <div style={caja}>
         <p style={{fontSize: 'var(--text-sm)', color: 'var(--ink-tertiary)', margin: '0 0 var(--space-12)'}}>
@@ -295,6 +306,13 @@ function ResponderAviso({ token }) {
                 {despues.siguiente
                   ? `Siguiente mensaje sin contestar${despues.quedan > 1 ? ` (${despues.quedan})` : ''}`
                   : 'Volver a mis mensajes'}
+              </button>
+            )}
+            {despues?.conCuenta && despues.siguiente && (
+              <button type="button" onClick={() => navigate('/chats')}
+                style={{ marginTop: 'var(--space-8)', width: '100%', minHeight: 44, border: 'none', background: 'none', cursor: 'pointer',
+                  fontFamily: 'inherit', fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--purple-ink)' }}>
+                Volver a mis mensajes
               </button>
             )}
             {despues && !despues.conCuenta && (
