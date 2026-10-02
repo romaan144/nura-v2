@@ -382,7 +382,17 @@ const SIN_NADIE_VER_TODOS = 'Te recomiendo entrar en «Ver todos los profesional
 // pregunta «¿Pudiste resolver…?» tras un contacto: esos botones van antes.
 // La usan la portada al entrar y el botón de volver a empezar.
 const PORTADA_ESCRIBIR = true
-const EJEMPLOS = ['Fontanero', 'Clases de inglés', 'Cuidadora']
+// SEIS EJEMPLOS, DISTINTOS EN CADA VISITA (Sergio, 2026-10-02): de oficios
+// con muchos profesionales en Nüra, cortos (caben tres por fila en 360px) y
+// variados: dos de casa, uno de cuidados, dos de salud y uno más.
+const EJEMPLOS_POR_TIPO = [
+  [['Fontanero', 'Electricista', 'Pintor', 'Cerrajero', 'Albañil', 'Carpintero', 'Jardinero', 'Limpieza'], 2],
+  [['Cuidadora', 'Enfermera'], 1],
+  [['Logopeda', 'Psicóloga', 'Fisio', 'Yoga', 'Pilates', 'Masajista'], 2],
+  [['Arquitecto', 'Dietista'], 1],
+]
+const barajar = lista => lista.map(x => [Math.random(), x]).sort((a, b) => a[0] - b[0]).map(x => x[1])
+const elegirEjemplos = () => barajar(EJEMPLOS_POR_TIPO.flatMap(([lista, n]) => barajar(lista).slice(0, n)))
 
 function conPregunta(msg, user) {
   // PORTADA NUEVA (Sergio, 2026-10-02): la gente tocaba «Para mí» y no
@@ -406,6 +416,7 @@ export default function Home() {
   const messages = nuraChatMessages
   const setMessages = setNuraChatMessages
   const [input, setInput] = useState('')
+  const [ejemplos] = useState(elegirEjemplos)
   // Solo cambia la presentación: el historial sigue disponible para la comprensión.
   const [viewStart, setViewStart] = useState(() => Math.max(0,
     messages.findLastIndex(m => m.from === 'user'), messages.findLastIndex(m => m.results?.length)))
@@ -1777,10 +1788,16 @@ export default function Home() {
       blocks.push({ id: 'inicio-ejemplos', content:
         <div className={styles.inicioEjemplos}>
           <span>Por ejemplo:</span>
-          <div className={styles.inicioFila}>
-            {EJEMPLOS.map(e => <button key={e} type="button" className={styles.inicioEjemplo} onClick={() => handleSend(e)}>{e}</button>)}
+          <div className={styles.inicioRejilla}>
+            {ejemplos.map(e => <button key={e} type="button" className={styles.inicioEjemplo} onClick={() => handleSend(e)}>{e}</button>)}
           </div>
         </div> })
+      // «Ver todos» arriba a la izquierda no lo veía nadie: aquí, a la vista.
+      blocks.push({ id: 'inicio-ver-todos', content:
+        <button type="button" className={styles.screenChoice} onClick={() => navigate('/explore')}>
+          <span className={styles.choiceIcon} aria-hidden="true"><Compass size={18} /></span>
+          <span>Ver todos los profesionales</span><ArrowUpRight size={16} aria-hidden="true" />
+        </button> })
     }
     if (msg.loading) blocks.push({ id: `${msg.id}-loading`, content: <div className={styles.typingDots} role="status" aria-label="Buscando"><span /><span /><span /></div> })
     // Un botón que va con el texto («Buscar electricista»), antes de las tarjetas.

@@ -967,3 +967,7 @@
 .inicioFila::-webkit-scrollbar { display: none; }
 .inicioFila .inicioEjemplo { flex: none; white-space: nowrap; padding: 7px 12px; }
 @media (max-width: 374px) { .inicioFila .inicioEjemplo { font-size: 12px; padding: 6px 10px; } }
+/* Seis ejemplos en dos filas de tres, todos del mismo ancho (Sergio). */
+.inicioRejilla { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.inicioRejilla .inicioEjemplo { min-width: 0; padding: 7px 6px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 374px) { .inicioRejilla .inicioEjemplo { font-size: 12px; padding-inline: 4px; } }
