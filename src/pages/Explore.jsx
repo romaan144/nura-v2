@@ -347,9 +347,16 @@ export default function Explore() {
 
   // La flecha de la pantalla hace lo mismo que «atrás»; si se entró directo
   // a una categoría (un enlace), vuelve a la rejilla sin salir de Nüra.
+  // En la rejilla también hay flecha (Sergio, 2026-10-02), como en las
+  // demás pantallas: si hay algo buscado, lo borra; si no, vuelve a donde
+  // estaba (o a Inicio, si se entró directo con un enlace).
   function goBack() {
-    if (location.state?.desdeRejilla) navigate(-1)
-    else navigate('/explore', { replace: true })
+    if (activeCategory) {
+      if (location.state?.desdeRejilla) navigate(-1)
+      else navigate('/explore', { replace: true })
+    } else if (searchText) setSearchText('')
+    else if (location.key !== 'default') navigate(-1)
+    else navigate('/')
   }
 
   // ── Display list ──────────────────────────────────────────────
@@ -440,7 +447,7 @@ export default function Explore() {
   return (
     <div className={styles.page}>
       <PageHeader
-        showBack={!!activeCategory}
+        showBack
         onBack={goBack}
       />
 
