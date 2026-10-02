@@ -939,8 +939,31 @@
    entera ni la barra de abajo sube sobre el teclado (el teclado la tapa).
    Solo sube la cápsula de escribir, justo encima del teclado. */
 @media (max-width: 767px) {
-  :global(html[data-keyboard-open='true']) .focusPage .inputCapsule {
+  :global(html[data-keyboard-open='true']) .focusComposer .inputCapsule {
     position: relative; z-index: 6;
     transform: translateY(min(0px, calc(var(--app-visible-height, 100dvh) - var(--app-layout-height, 100dvh) + var(--nav-h) + 2px)));
   }
 }
+
+/* ── LA PORTADA PARA ESCRIBIR (Sergio, 2026-10-02) ─────────────────────
+   Al entrar, la caja de escribir va dentro de la tarjeta, justo bajo el
+   saludo: es lo primero que hay que hacer. Mismo material que la cápsula de
+   abajo; los ejemplos, píldoras del mismo cristal que los botones. */
+.focusPage.pageInicio,
+.focusPage.pageInicio[data-focus-size='short'] { grid-template-rows: 50px minmax(0, 1fr); }
+.focusPage.pageInicio[data-focus-size='short'] { grid-template-rows: 38px minmax(0, 1fr); }
+.focusPage.pageInicio[data-focus-size='tiny'] { grid-template-rows: minmax(0, 1fr); }
+.inicioCaja { padding-top: 4px; }
+.inicioCaja .inputCapsule { min-height: 60px; border: 1.5px solid #CDBDE3; box-shadow: 0 0 0 5px var(--purple-05), var(--alzado-flota); }
+.inicioCaja .inputCapsule:focus-within { border-color: var(--purple-40); }
+.inicioEjemplos { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.inicioEjemplos > span { font-size: 13px; color: var(--ink-secondary); margin-right: 2px; }
+.inicioEjemplo { min-height: 38px; padding: 7px 13px; border-radius: 999px; border: 1px solid #DDD4E9; background: #FFFFFFE0; font: inherit; font-size: 13px; color: var(--brand-deep); cursor: pointer; text-align: left; }
+.inicioEjemplo:hover { background: white; border-color: #B49ACE; }
+/* Los ejemplos, en una sola fila a la misma altura (Sergio): si no caben,
+   se deslizan de lado. */
+.inicioEjemplos { flex-direction: column; align-items: stretch; gap: 8px; }
+.inicioFila { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 0 -2px; padding: 0 2px 2px; }
+.inicioFila::-webkit-scrollbar { display: none; }
+.inicioFila .inicioEjemplo { flex: none; white-space: nowrap; padding: 7px 12px; }
+@media (max-width: 374px) { .inicioFila .inicioEjemplo { font-size: 12px; padding: 6px 10px; } }

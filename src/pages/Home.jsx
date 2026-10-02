@@ -136,7 +136,8 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
 
   if (!user) return [
     `Hola. Soy **Nüra**.`,
-    `Encuentra a quien puede ayudarte.`,
+    // La misma frase que con cuenta (Sergio, 2026-10-02): dice qué hacer.
+    `Cuéntame qué necesitas y te encuentro a la persona.`,
   ]
 
   // ── La Memoria Viva ─────────────────────────────────────────────────
@@ -380,7 +381,14 @@ const SIN_NADIE_VER_TODOS = 'Te recomiendo entrar en «Ver todos los profesional
 // sus botones: «Editar mi ficha», «Ver mis mensajes») y cuando Nüra
 // pregunta «¿Pudiste resolver…?» tras un contacto: esos botones van antes.
 // La usan la portada al entrar y el botón de volver a empezar.
+const PORTADA_ESCRIBIR = true
+const EJEMPLOS = ['Fontanero', 'Clases de inglés', 'Cuidadora']
+
 function conPregunta(msg, user) {
+  // PORTADA NUEVA (Sergio, 2026-10-02): la gente tocaba «Para mí» y no
+  // sabía que luego había que escribir. Ahora se entra escribiendo, con la
+  // caja junto al saludo; el «para quién» sale de lo que escriba.
+  if (PORTADA_ESCRIBIR) return msg
   if (user?.isHelper || msg.isConfirmacion) return msg
   return {
     ...msg,
@@ -1686,10 +1694,13 @@ export default function Home() {
 
 
   const isWelcome = nuraChatMessages.length <= 1
+  // Al entrar, la caja de escribir va en el centro, bajo el saludo; tras la
+  // primera búsqueda vuelve abajo para seguir la conversación.
+  const inicio = PORTADA_ESCRIBIR && isWelcome && !user?.isHelper && !messages[0]?.isConfirmacion
   const composer = (<>
         <div className={styles.inputCapsule}>
           <input ref={inputRef} className={styles.input} aria-label="Cuéntale a Nüra qué necesitas"
-            placeholder={corrigiendo ? 'Dime qué he entendido mal…' : forWhom === 'familia' ? 'Cuéntame qué le pasa...' : forWhom === 'hogar' ? 'Cuéntame qué necesita tu hogar...' : (searchHistory?.length ? 'Cuéntame qué necesitas...' : 'Cuéntale a Nüra qué necesitas…')}
+            placeholder={inicio ? 'Un fontanero para mañana' : corrigiendo ? 'Dime qué he entendido mal…' : forWhom === 'familia' ? 'Cuéntame qué le pasa...' : forWhom === 'hogar' ? 'Cuéntame qué necesita tu hogar...' : (searchHistory?.length ? 'Cuéntame qué necesitas...' : 'Cuéntale a Nüra qué necesitas…')}
             value={input} onChange={e => setInput(e.target.value)}
             onKeyDown={handleKey} readOnly={false} />
           {input.trim()
@@ -1745,6 +1756,16 @@ export default function Home() {
         : principal ? <p className={`${styles.screenPrompt} ${larga ? styles.screenPromptLarga : ''}`}>{formatLine(part)}</p>
         : <p className={styles.screenText}>{formatLine(part)}</p> })
     }))
+    if (inicio && msgIndex === 0) {
+      blocks.push({ id: 'inicio-caja', content: <div className={styles.inicioCaja}>{composer}</div> })
+      blocks.push({ id: 'inicio-ejemplos', content:
+        <div className={styles.inicioEjemplos}>
+          <span>Por ejemplo:</span>
+          <div className={styles.inicioFila}>
+            {EJEMPLOS.map(e => <button key={e} type="button" className={styles.inicioEjemplo} onClick={() => handleSend(e)}>{e}</button>)}
+          </div>
+        </div> })
+    }
     if (msg.loading) blocks.push({ id: `${msg.id}-loading`, content: <div className={styles.typingDots} role="status" aria-label="Buscando"><span /><span /><span /></div> })
     // Un botón que va con el texto («Buscar electricista»), antes de las tarjetas.
     const chipBlock = (chip, i) => ({ id: `${msg.id}-chip-${i}`, content:
@@ -1786,7 +1807,7 @@ export default function Home() {
           <span className={styles.choiceIcon}><RefinementIcon label={chip} /></span><span>{chip}</span><ArrowUpRight size={16} aria-hidden="true" />
         </button>, section: 'Ajustar esta búsqueda' }))
     }
-    if (showSuggestions && !msg.chips?.length && !msg.refineChips?.length && msgIndex === response.length - 1) {
+    if (!inicio && showSuggestions && !msg.chips?.length && !msg.refineChips?.length && msgIndex === response.length - 1) {
       suggestions.forEach((suggestion, i) => blocks.push({ id: `suggestion-${i}`, content:
         <button className={styles.screenChoice} onClick={() => suggestion.ir ? navigate(suggestion.ir, suggestion.estado ? { state: suggestion.estado } : undefined) : handleSend(suggestion.text)}><span className={styles.choiceIcon}><Sparkles size={18} aria-hidden="true" /></span><span>{suggestion.text}</span><ArrowUpRight size={16} aria-hidden="true" /></button> }))
     }
@@ -1794,7 +1815,7 @@ export default function Home() {
   if (!blocks.length) blocks.push({ id: 'waiting', content: <p className={styles.screenText} role="status">{loading ? 'Estoy buscando a quien puede ayudarte…' : 'Cuéntame qué necesitas.'}</p> })
 
   return (
-    <div ref={pageRef} className={`${styles.page} ${styles.focusPage} ${isWelcome ? styles.pageWelcome : ''} ${user ? styles.pageReturning : ''}`}>
+    <div ref={pageRef} className={`${styles.page} ${styles.focusPage} ${isWelcome ? styles.pageWelcome : ''} ${inicio ? styles.pageInicio : ''} ${user ? styles.pageReturning : ''}`}>
       {/* New search button — appears when chat has content */}
 
 
@@ -1860,7 +1881,7 @@ export default function Home() {
       <div className={styles.screenArea}>
         <ResponseScreen key={responseKey} blocks={blocks} welcome={isWelcome} query={isWelcome ? '' : latestQuery} />
       </div>
-      <div className={styles.focusComposer}>{composer}</div>
+      {!inicio && <div className={styles.focusComposer}>{composer}</div>}
 
       {showGate && <RegisterGate reason={gateReason} onClose={() => setShowGate(false)} />}
       {valorar && <RatingModal helper={valorar} onClose={() => setValorar(null)} onEnviado={() => {

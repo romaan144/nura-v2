@@ -170,6 +170,10 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — La portada se entiende: la caja de escribir, junto al saludo (Claude)
+
+La gente que probaba Nüra no entendía que había que escribir: la caja estaba abajo del todo y antes salía «¿Para quién necesitas ayuda?» con tres botones. Ahora, al entrar, la caja va dentro de la tarjeta, justo bajo «Cuéntame qué necesitas y te encuentro a la persona» (la misma frase con o sin cuenta), con «Un fontanero para mañana» dentro y tres ejemplos que buscan al tocarlos: «Fontanero», «Clases de inglés», «Cuidadora». Ya no se pregunta para quién al entrar: sale de lo que se escribe. Tras la primera búsqueda, la caja vuelve abajo para seguir la conversación. Mismo estilo visual de la app.
+
 ## 2026-10-29 — Lo que vio la madre de Sergio en su Android (Claude)
 
 Ocho arreglos. En móviles bajos, el profesional recomendado sale siempre en la primera página, justo bajo la frase principal (el porqué va debajo de la tarjeta y el «Entendido.» ya no ocupa sitio). «¿Para quién necesitas ayuda?» y sus tres respuestas van juntas y caben en la primera página. «Valorar a Miquel» abre la ventana sin dejar «Tu búsqueda: Valorar a Miquel»; al enviar, Nüra da las gracias en la misma pantalla y, al volver, no pregunta otra vez «¿Cómo está yendo todo con Miquel?». En el chat, la cápsula de escribir sube un poco; con el teclado deja aire y los mensajes desaparecen bajo la cabecera en vez de verse a través. En Inicio, con el teclado, la pantalla no se desplaza ni la barra de abajo sube: solo la cápsula. En «Ver todos», buscar «pintor» lista a los pintores con el mismo diseño que dentro de las categorías (la frase no se guarda); dentro de una categoría ya no hay buscador, solo filtros y lista.
