@@ -592,7 +592,7 @@ export default function Profile() {
               {/* La cita: es lo primero que leen, con su voz. */}
               {!proQuote ? (
                 <div className={styles.tarjeta}>
-                  <label htmlFor="cita-personal" className={styles.tarjetaTitulo}>Tu cita personal</label>
+                  <label htmlFor="cita-personal" className={styles.tarjetaTitulo}>Tu frase</label>
                   <p className={styles.tarjetaTexto}>
                     Es lo primero que leen, con tu voz: ayuda a que te conozcan antes de escribirte.
                   </p>
@@ -602,7 +602,7 @@ export default function Profile() {
                     style={{marginTop:'var(--space-12)', fontFamily:'var(--font-voice)', resize:'none'}} />
                   <Button variant="primary" full disabled={!quoteDraft.trim()} onClick={saveQuote}
                     style={{marginTop:'var(--space-12)', ...(quoteDraft.trim() ? {} : apagado)}}>
-                    Guardar mi cita
+                    Guardar mi frase
                   </Button>
                 </div>
               ) : (
