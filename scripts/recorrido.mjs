@@ -1230,6 +1230,38 @@ console.log('\n── «Ver todos»: flecha para volver también en la rejilla �
   await p.close()
 }
 
+console.log('\n── La flecha nunca saca de Nüra ──')
+{
+  const atras = q => q.evaluate(() => { const vis = e => e && e.checkVisibility?.() && e.getBoundingClientRect().width > 0; const b = [...document.querySelectorAll('button[aria-label="Volver"]')].filter(vis).find(e => e.getBoundingClientRect().top < 140); b?.click(); return Boolean(b) })
+  const p = await navegador.newPage()
+  await p.setViewport({ width: 393, height: 760, isMobile: true, hasTouch: true })
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); sessionStorage.clear() })
+  // Entrando directo con un enlace (un perfil compartido): la flecha va a Inicio.
+  const fuera = []
+  for (const r of ['/helper/2001', '/chat/2001', '/my-services', '/legal/privacidad', '/login']) {
+    await p.goto(BASE + r, { waitUntil: 'networkidle0' }); await espera(1000)
+    const hay = await atras(p); await espera(800)
+    const fin = p.url().startsWith(BASE) ? new URL(p.url()).pathname : 'FUERA'
+    if (!hay || fin !== '/') fuera.push(`${r}→${hay ? fin : 'sin flecha'}`)
+  }
+  paso('entrando directo con un enlace, la flecha lleva a Inicio (no fuera de Nüra)', fuera.length === 0, fuera.join(' · ') || 'todas a Inicio')
+  // Navegando dentro: categoría → perfil → flecha → la misma categoría.
+  await p.goto(BASE + '/explore?c=hogar', { waitUntil: 'networkidle0' }); await espera(1800)
+  await p.evaluate(() => document.querySelector('button[aria-label^="Ver perfil de"]').click()); await espera(1500)
+  const enPerfil = new URL(p.url()).pathname
+  await atras(p); await espera(1000)
+  const vuelta = new URL(p.url()).pathname + new URL(p.url()).search
+  paso('navegando dentro, la flecha vuelve a la pantalla anterior', enPerfil.startsWith('/helper/') && vuelta === '/explore?c=hogar', `${enPerfil} → ${vuelta}`)
+  // Sin cuenta, «Escribir» lleva a «Tu teléfono»: con flecha, se vuelve.
+  await p.goto(BASE + '/explore?c=hogar', { waitUntil: 'networkidle0' }); await espera(1800)
+  await p.evaluate(() => [...document.querySelectorAll('button')].find(b => b.textContent.trim() === 'Escribir')?.click()); await espera(1500)
+  const enLogin = new URL(p.url()).pathname
+  await atras(p); await espera(1000)
+  paso('«Tu teléfono» tiene flecha y vuelve a donde se estaba', enLogin === '/login' && new URL(p.url()).pathname === '/explore', `${enLogin} → ${new URL(p.url()).pathname}`)
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')

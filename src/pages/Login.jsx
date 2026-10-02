@@ -2,7 +2,9 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 import styles from './Access.module.css'
-import { Phone, UserRound, KeyRound } from 'lucide-react'
+import { Phone, UserRound, KeyRound, ArrowLeft } from 'lucide-react'
+import cabecera from '../components/PageHeader.module.css'
+import { useVolver } from '../utils/volver'
 import { DEMO_MODE, NURA_BUILD } from '../config'
 
 // ═══════════════════════════════════════════════════════════════
@@ -36,6 +38,11 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const { login } = useUser()
   const navigate = useNavigate()
+  const volver = useVolver()
+  // Con flecha, como las demás pantallas (Sergio, 2026-10-02): se llega al
+  // tocar «Escribir» sin cuenta y no había forma de salir sin registrarse.
+  // En el paso del código vuelve al teléfono; si no, a donde se estaba.
+  const atras = () => (step === 'code' ? (setStep('phone'), setCode('')) : volver())
 
   const salir = () => {
     const returnTo = sessionStorage.getItem('nura_return_to')
@@ -79,6 +86,10 @@ export default function Login() {
 
   return (
     <div className={styles.loginPage}>
+      <button type="button" className={cabecera.circleBtn} onClick={atras} aria-label="Volver"
+        style={{ position: 'fixed', zIndex: 5, top: 'max(env(safe-area-inset-top, 0px), 12px)', left: 16 }}>
+        <ArrowLeft size={18} />
+      </button>
       <div className={styles.loginInner}>
         <div className={styles.brand}>
           <img src="/logo-iso.png" alt="" width="44" height="44" />
