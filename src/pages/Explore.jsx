@@ -5,7 +5,8 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { Search, SlidersHorizontal, Check, X, ArrowUpRight,
          Heart, Wrench, BookOpen, Scale, Home, PawPrint,
          Dumbbell, Baby, Star, Laptop, Palette, Car, PartyPopper, Globe } from 'lucide-react'
-import { searchHelpers } from '../utils/supabase'
+import { searchHelpers, searchPorEspecialidad } from '../utils/supabase'
+import { oficiosDe, esDelOficio, patronesDe, normalizar } from '../data/oficios'
 import { HELPERS as LOCAL_DEMO_HELPERS } from '../data/helpers'
 import { DEMO_MODE } from '../config'
 import HelperCard from '../components/HelperCard'
@@ -163,6 +164,28 @@ const MOVIDOS = [
   { es: h => /^(electricista|albañil|carpinter)/i.test((h.specialty || '').trim()), de: 'hogar', a: 'tecnico' },
 ]
 
+// ── BUSCAR EN «VER TODOS» (Sergio, 2026-10-02) ───────────────────────
+// Escribir «pintor» antes de entrar en una categoría enseña a todos los
+// pintores, en la misma lista que dentro de las categorías. Se busca por el
+// oficio (con sus variantes: «pintora», «pintor de interiores») y, si la
+// frase no nombra ninguno, por trozos de la especialidad. La frase no se
+// guarda en ningún sitio.
+const palabrasDe = q => normalizar(q).split(' ').filter(w => w.length >= 3).slice(0, 4)
+async function buscarProfesionales(q) {
+  const ids = oficiosDe(q).map(x => x.id)
+  const palabras = palabrasDe(q)
+  if (!ids.length && !palabras.length) return []
+  const encaja = h => ids.length
+    ? ids.some(id => esDelOficio(h.specialty || '', id))
+    : palabras.every(w => normalizar(h.specialty).includes(w))
+  const remotos = await searchPorEspecialidad(ids.length ? patronesDe(ids) : palabras)
+  const demo = DEMO_MODE ? LOCAL_DEMO_HELPERS.filter(h => h.id >= 2000) : []
+  return [...demo, ...(remotos || [])]
+    .filter(h => h && encaja(h))
+    .filter((h, i, arr) => arr.findIndex(x => x.id === h.id) === i)
+    .sort((a, b) => ((a.id >= 2000) !== (b.id >= 2000) ? (a.id >= 2000 ? -1 : 1) : (b.rating || 0) - (a.rating || 0)))
+}
+
 export default function Explore() {
   const navigate  = useNavigate()
   const inputRef  = useRef(null)
@@ -222,6 +245,20 @@ export default function Explore() {
   const [filterRating,      setFilterRating]      = useState(false)
   const [filterOnline,      setFilterOnline]      = useState(false)
   const [activeSubcategory, setActiveSubcategory] = useState('Todos')
+  // Lo que se busca desde la rejilla y lo encontrado: { q, lista }. Mientras
+  // llega lo nuevo se sigue viendo lo anterior.
+  const consulta = activeCategory ? '' : searchText.trim()
+  const [hallado, setHallado] = useState(null)
+  useEffect(() => {
+    if (consulta.length < 3) return
+    let vivo = true
+    const t = setTimeout(() => {
+      buscarProfesionales(consulta).then(lista => {
+        if (vivo) { setHallado({ q: consulta, lista }); setVisibleCount(20) }
+      })
+    }, 300)
+    return () => { vivo = false; clearTimeout(t) }
+  }, [consulta])
 
   // ── AI Search ─────────────────────────────────────────────────
 
@@ -229,10 +266,14 @@ export default function Explore() {
   // (analisis propio + llamada a la API) que servia una version pobre del
   // producto: sin la voz de Nura, sin el porque, sin el silencio honesto,
   // sin la carta. Ahora entrega la frase a Nura, que es quien sabe.
+  // Al pulsar Intro solo se cierra el teclado: la lista ya está debajo.
   function handleSearch(e) {
     e.preventDefault()
+    inputRef.current?.blur()
+  }
+  // Si no encuentra a nadie, se lo puede preguntar a Nüra.
+  function preguntarANura() {
     const q = searchText.trim()
-    if (!q) return
     setSearchText('')
     navigate('/', { state: { q } })
   }
@@ -382,6 +423,9 @@ export default function Explore() {
   const hasMore     = displayList.length > visibleCount
   const isLoading   = loadingCat
   const isListView  = activeCategory !== null
+  const enBusqueda  = consulta.length >= 3
+  const encontrados = enBusqueda && hallado ? hallado.lista : null
+  const buscado     = hallado?.q || ''
 
   const hasFilters = filterAvailable || filterRating || filterOnline || activeSubcategory !== 'Todos'
   function resetFilters() {
@@ -404,31 +448,72 @@ export default function Explore() {
         <div className={styles.intro}>
           <span className={styles.eyebrow}>Explorar profesionales</span>
           <h1>{activeCategory ? activeCategory.label : '¿Qué necesitas resolver?'}</h1>
-          {!activeCategory && <p>Elige una categoría o cuéntaselo a Nüra.</p>}
+          {!activeCategory && <p>Elige una categoría o busca un oficio.</p>}
         </div>
 
-        {/* ── SEARCH BAR ──────────────────────────────────── */}
-        <div className={styles.searchWrap}>
+        {/* ── SEARCH BAR (solo en la rejilla: dentro de una categoría
+            bastan los filtros, Sergio 2026-10-02) ──────────────────── */}
+        {!isListView && <div className={styles.searchWrap}>
           <form className={styles.searchBar} onSubmit={handleSearch}>
             <Search size={16} color="var(--ink-tertiary)" style={{flexShrink:0}} />
             <input
               ref={inputRef}
               className={styles.searchInput}
               aria-label="Buscar profesionales"
-              placeholder="¿Qué necesitas?"
+              placeholder="Busca un oficio: pintor, fontanero…"
               value={searchText}
               onChange={e => setSearchText(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSearch(e)}
             />
-            {(searchText || isListView) && (
+            {searchText && (
               <button type="button" aria-label="Limpiar búsqueda" className={styles.clearBtn} onClick={clearSearch}>
                 <X size={18} aria-hidden="true" />
               </button>
             )}
           </form>
-        </div>
+        </div>}
 
-        {!isListView && !isLoading && (
+        {/* ── LO ENCONTRADO DESDE LA REJILLA ──────────────── */}
+        {!isListView && enBusqueda && (
+          <section aria-label="Profesionales encontrados">
+            {!encontrados ? (
+              <div style={{display:'flex',flexDirection:'column',gap:'var(--space-10)',padding:'0 var(--space-16)'}}>
+                <Skeleton variant="card" count={3} />
+              </div>
+            ) : encontrados?.length ? (
+              <>
+                <div className={styles.resultsHeader}>
+                  <span className={styles.resultCount} role="status">
+                    <strong>{encontrados.length}</strong> profesional{encontrados.length !== 1 ? 'es' : ''} para «{buscado}»
+                  </span>
+                </div>
+                <div className={styles.list}>
+                  {encontrados.slice(0, visibleCount).map((h, i) => (
+                    <div className={styles.resultItem} key={h.id} style={{ animationDelay: `${Math.min(i, 5) * 40}ms` }}>
+                      <HelperCard helper={h} showPrice />
+                    </div>
+                  ))}
+                </div>
+                {encontrados.length > visibleCount && (
+                  <div className={styles.loadMoreWrap}>
+                    <button className={styles.loadMoreBtn} onClick={() => setVisibleCount(v => v + 20)}>
+                      Ver más profesionales
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <EmptyState
+                title={`No he encontrado a nadie para «${buscado}».`}
+                hint="Prueba con otra palabra, o cuéntaselo a Nüra y lo busco yo."
+                actionLabel="Preguntar a Nüra"
+                onAction={preguntarANura}
+              />
+            )}
+          </section>
+        )}
+
+        {!isListView && !isLoading && !enBusqueda && (
           <div className={styles.catGrid}>
             {CATEGORIES.map(cat => {
               const Icon = cat.icon

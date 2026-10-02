@@ -1072,6 +1072,87 @@ console.log('\n── La frase principal de Nüra, grande en todas las respuesta
   await r.close()
 }
 
+// ── El móvil de la madre de Sergio (2026-10-02) ─────────────────────────
+console.log('\n── móvil bajo, valorar, teclado y «Ver todos» ──')
+{
+  const p = await navegador.newPage()
+  await p.setViewport({ width: 393, height: 660, isMobile: true, hasTouch: true })
+  await p.evaluateOnNewDocument(() => {
+    // Sin teclado, la altura real (al cargar, innerHeight aún no es la del móvil).
+    const vv = new EventTarget(); let h = null
+    Object.defineProperties(vv, { height: { get: () => h ?? window.innerHeight }, width: { get: () => window.innerWidth }, offsetTop: { get: () => 0 }, offsetLeft: { get: () => 0 }, scale: { get: () => 1 }, pageTop: { get: () => 0 } })
+    Object.defineProperty(window, 'visualViewport', { get: () => vv })
+    window.__teclado = alto => { h = alto ? window.innerHeight - alto : null; vv.dispatchEvent(new Event('resize')) }
+  })
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); sessionStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Babi', joined: new Date().toISOString() })) })
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1500)
+  const visibles = () => p.evaluate(() => [...document.querySelectorAll('section[aria-label="Respuesta de Nüra"] [aria-hidden="false"]')].map(e => e.textContent).join(' | '))
+  const portada = await visibles()
+  paso('en un móvil bajo, «¿Para quién…?» y sus tres respuestas salen en la primera página',
+    ['Para mí', 'Para alguien de mi familia', 'Para mi hogar o negocio'].every(t => portada.includes(t)), portada.slice(0, 200))
+  // Teclado abierto en Inicio: la barra de abajo no sube; la cápsula, sí.
+  await p.evaluate(() => { const i = [...document.querySelectorAll('input')].find(x => x.checkVisibility?.() && x.getBoundingClientRect().width > 80); i.focus() })
+  await p.evaluate(() => window.__teclado(300)); await espera(700)
+  const teclado = await p.evaluate(() => {
+    const nav = [...document.querySelectorAll('nav[aria-label="Navegación principal"]')].find(n => n.getBoundingClientRect().height > 0)
+    return { nav: Math.round(nav.getBoundingClientRect().bottom), campo: Math.round(document.activeElement.getBoundingClientRect().bottom), desplazado: document.querySelector('.desktopMain').scrollTop }
+  })
+  paso('con el teclado, la barra de abajo se queda abajo y el campo queda a la vista', teclado.nav > 600 && teclado.campo <= 360 && teclado.desplazado === 0, JSON.stringify(teclado))
+  await p.evaluate(() => { document.activeElement.blur(); window.__teclado(0) }); await espera(500)
+  await escribirEn(p, 'Pintor', 'x => x.getBoundingClientRect().width > 80')
+  await p.keyboard.press('Enter')
+  await p.waitForFunction(() => /Primera opción/.test(document.querySelector('section[aria-label="Respuesta de Nüra"]')?.textContent || ''), { timeout: 20000 }).catch(() => {})
+  await espera(800)
+  const busqueda = await visibles()
+  paso('en un móvil bajo, el profesional recomendado sale en la primera página', /Primera opción/.test(busqueda), busqueda.slice(0, 160))
+  await p.close()
+}
+{
+  // Valorar: sin «Tu búsqueda: Valorar a…» y, al volver, sin preguntar
+  // «¿Cómo está yendo todo con…?» por alguien ya valorado.
+  const p = await navegador.newPage()
+  await p.setViewport({ width: 393, height: 760, isMobile: true, hasTouch: true })
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => {
+    localStorage.clear(); sessionStorage.clear()
+    localStorage.setItem('nura_user', JSON.stringify({ name: 'Babi', joined: new Date().toISOString() }))
+    localStorage.setItem('nura_contacted', JSON.stringify([{ id: 2006, name: 'Miquel Font Roca', contactedAt: Date.now() - 4 * 864e5 }]))
+  })
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1800)
+  await tocar(p, /^Sí, genial$/); await espera(1500)
+  await p.click('button[aria-label="Cerrar valoración"]'); await espera(1200)
+  await tocar(p, /^Valorar a Miquel$/); await espera(1000)
+  const tras = await p.evaluate(() => ({ ventana: Boolean(document.querySelector('[role=dialog]')), etiqueta: /Valorar a Miquel/.test(document.querySelector('section[aria-label="Respuesta de Nüra"] p[class*=query]')?.textContent || ''), vacio: /^Cuéntame qué necesitas\.$/.test(document.querySelector('section[aria-label="Respuesta de Nüra"] p')?.textContent || '') }))
+  await p.evaluate(() => [...document.querySelectorAll('[role=dialog] button')].find(b => b.textContent.trim() === 'Sí')?.click()); await espera(300)
+  await p.evaluate(() => [...document.querySelectorAll('[role=dialog] button')].find(b => /Enviar valoración/.test(b.textContent))?.click()); await espera(3500)
+  const gracias = await p.evaluate(() => document.querySelector('section[aria-label="Respuesta de Nüra"]')?.innerText || '')
+  paso('«Valorar a Miquel» abre la ventana sin dejar «Tu búsqueda: Valorar a Miquel»', tras.ventana && !tras.etiqueta && !tras.vacio, JSON.stringify(tras))
+  paso('al enviar la valoración, Nüra da las gracias en la misma pantalla', /Gracias por valorar a Miquel/.test(gracias) && !/Valorar a Miquel/.test(gracias), gracias.slice(0, 160))
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1800)
+  const vuelta = await p.evaluate(() => document.querySelector('section[aria-label="Respuesta de Nüra"]')?.innerText || '')
+  paso('al volver, no pregunta «¿Cómo está yendo todo con Miquel?» si ya le valoró', !/Cómo está yendo/.test(vuelta) && /Para quién necesitas ayuda/.test(vuelta), vuelta.slice(0, 160))
+  await p.close()
+}
+{
+  const p = await navegador.newPage()
+  await p.setViewport({ width: 393, height: 760, isMobile: true, hasTouch: true })
+  await p.goto(BASE + '/explore', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Babi', joined: new Date().toISOString() })) })
+  await p.goto(BASE + '/explore', { waitUntil: 'networkidle0' }); await espera(800)
+  await p.type('input[aria-label="Buscar profesionales"]', 'pintor'); await espera(3500)
+  const lista = await p.evaluate(() => {
+    const s = document.querySelector('section[aria-label="Profesionales encontrados"]')
+    return { titulo: s?.querySelector('[role=status]')?.textContent || '', oficios: [...(s?.querySelectorAll('[class*=resultItem]') || [])].map(x => x.innerText.split('\n')[1]), rejilla: document.querySelectorAll('[class*=catCard]').length }
+  })
+  paso('en «Ver todos», buscar «pintor» lista a los pintores, como dentro de las categorías',
+    /profesionales? para «pintor»/.test(lista.titulo) && lista.oficios.length >= 2 && lista.oficios.every(o => /^Pintor/.test(o)) && lista.rejilla === 0, JSON.stringify(lista))
+  await p.goto(BASE + '/explore?c=hogar', { waitUntil: 'networkidle0' }); await espera(1800)
+  const dentro = await p.evaluate(() => ({ buscador: Boolean(document.querySelector('input[aria-label="Buscar profesionales"]')), filtros: Boolean(document.querySelector('#explore-specialty')), lista: document.querySelectorAll('[class*=resultItem]').length }))
+  paso('dentro de una categoría no hay buscador: filtros y lista', !dentro.buscador && dentro.filtros && dentro.lista > 0, JSON.stringify(dentro))
+  await p.close()
+}
+
 await navegador.close()
 
 console.log('')

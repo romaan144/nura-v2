@@ -254,3 +254,9 @@ span.nura-user-initials { background: #F0E9FA; }
   .desktopMain[data-screen='chat'] { overflow: hidden; }
   .desktopMain[data-screen='chat'] .appCanvas { height: 100%; }
 }
+
+/* La barra de abajo no sube con el teclado: se queda abajo y el teclado la
+   tapa, como en las apps del móvil (Sergio, 2026-10-02). */
+@media (max-width: 767px) {
+  html[data-keyboard-open='true'] nav[aria-label="Navegación principal"] { bottom: max(env(safe-area-inset-bottom, 0px), 10px); }
+}

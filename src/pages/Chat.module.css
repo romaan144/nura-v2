@@ -528,3 +528,19 @@
     padding-bottom: 70px; scroll-padding-bottom: 70px;
   }
 }
+
+/* LA CÁPSULA DE ESCRIBIR, UN POCO MÁS ARRIBA (Sergio, 2026-10-02): en Android
+   quedaba pegada al borde. Con el teclado, deja aire para que no lo corte, y
+   los mensajes desaparecen del todo bajo la cabecera en vez de verse a
+   través de ella. */
+.inputWrap { bottom: max(calc(env(safe-area-inset-bottom, 0px) + 8px), 20px); }
+.messages {
+  padding-bottom: calc(max(calc(env(safe-area-inset-bottom, 0px) + 8px), 20px) + 74px);
+  scroll-padding-bottom: calc(max(calc(env(safe-area-inset-bottom, 0px) + 8px), 20px) + 74px);
+  mask-image: linear-gradient(to bottom, transparent calc(max(env(safe-area-inset-top, 0px), 8px) + 82px), #000 calc(max(env(safe-area-inset-top, 0px), 8px) + 98px), #000 calc(100% - 8px), transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent calc(max(env(safe-area-inset-top, 0px), 8px) + 82px), #000 calc(max(env(safe-area-inset-top, 0px), 8px) + 98px), #000 calc(100% - 8px), transparent);
+}
+@media (max-width: 767px) {
+  :global(html[data-keyboard-open='true']) .inputWrap { bottom: 10px; }
+  :global(html[data-keyboard-open='true']) .messages { padding-bottom: 84px; scroll-padding-bottom: 84px; }
+}
