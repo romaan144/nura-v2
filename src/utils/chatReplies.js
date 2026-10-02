@@ -46,6 +46,7 @@ const OFICIOS = {
   automocion: { encaja: 'Es una avería que veo a menudo.', preguntas: ['¿Qué coche es y de qué año?', '¿Desde cuándo lo notas?'], paso: 'le eche un vistazo' },
   entrenador: { encaja: 'Es justo con lo que trabajo.', preguntas: ['¿Qué objetivo tienes?', '¿Tienes alguna lesión que deba tener en cuenta?'], paso: 'hagamos la primera sesión' },
 }
+const LIMPIEZA_COCHE = { encaja: 'Es justo el tipo de trabajo que hago.', preguntas: ['¿Qué coche es, más o menos de qué tamaño?', '¿Lo tienes en un garaje o en la calle?'], paso: 'pase a limpiarlo' }
 const GENERICO = { encaja: 'Creo que puedo ayudarte.', preguntas: ['¿Me cuentas un poco más?'], paso: 'lo hablemos' }
 
 const DIAS_RE = /\b(hoy|manana|pasado manana|lunes|martes|miercoles|jueves|viernes|sabado|domingo|esta semana|la semana que viene|el finde|fin de semana)\b/
@@ -68,10 +69,13 @@ function diaYFranja(t) {
  * La respuesta del profesional de ejemplo a `userMsg`.
  * `historial`: los mensajes anteriores del chat ({ from, text }).
  */
-function getHelperReply(helper, count, userMsg = '', { historial = [] } = {}) {
+function getHelperReply(helper, count, userMsg = '', { historial = [], conCita = false } = {}) {
   const t = plano(userMsg).replace(/[¿?¡!.,;]/g, ' ').replace(/\s+/g, ' ').trim()
   const cat = ALIAS_CATEGORIA[helper?.category] || helper?.category
-  const oficio = OFICIOS[cat] || GENERICO
+  // Limpiar un coche no es «una avería» (Sergio, 2026-10-02): por el oficio,
+  // no solo por la categoría.
+  const esLimpieza = /limpieza|lavado|limpiador/.test(plano(helper?.specialty || ''))
+  const oficio = esLimpieza && cat === 'automocion' ? LIMPIEZA_COCHE : OFICIOS[cat] || GENERICO
   const dichoPorMi = historial.filter(m => m.from === 'helper').map(m => plano(m.text)).join(' | ')
   const yaContado = historial.some(m => m.from === 'user' && plano(m.text).length >= 25)
   const zona = helper?.zone || helper?.city || ''
@@ -100,7 +104,12 @@ function getHelperReply(helper, count, userMsg = '', { historial = [] } = {}) {
     partes.push(helper?.price ? `Mi tarifa es de ${helper.price}.` : 'El precio depende del trabajo. Cuando lo vea te doy un presupuesto cerrado.')
   }
   if (pideDia && !pideUrgencia) {
-    partes.push(cuando ? `${cuando[0].toUpperCase()}${cuando.slice(1)} me va bien. Si te encaja, lo confirmas con el botón Contratar.` : '¿Qué día y a qué hora te vendría bien?')
+    // Con una cita ya pedida no se habla del botón Contratar: ya no está.
+    // Si ya preguntó «¿qué día…?» y le devuelven la pregunta, propone él.
+    const yaPregunto = /que dia y a que hora/.test(dichoPorMi)
+    partes.push(cuando ? `${cuando[0].toUpperCase()}${cuando.slice(1)} me va bien.${conCita ? ' Si quieres cambiar la cita que pediste, puedes hacerlo en Mis servicios.' : ' Si te encaja, lo confirmas con el botón Contratar.'}`
+      : yaPregunto ? `Tengo hueco el ${nextBusinessDay()} por la mañana o el ${nextBusinessDay(2)} por la tarde. ¿Cuál te va mejor?`
+      : '¿Qué día y a qué hora te vendría bien?')
   }
   if (pideZona) {
     const donde = zona ? `en ${zona}` : 'en persona'
@@ -227,9 +236,9 @@ function getNuraIntervention(helper, count, messages) {
 // ── La Conversación Viva — respuesta construida desde el contexto real ──
 const DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado']
 
-function nextBusinessDay() {
+function nextBusinessDay(n = 1) {
   const d = new Date()
-  do { d.setDate(d.getDate() + 1) } while (d.getDay() === 0 || d.getDay() === 6)
+  for (let i = 0; i < n; i++) do { d.setDate(d.getDate() + 1) } while (d.getDay() === 0 || d.getDay() === 6)
   return DIAS[d.getDay()]
 }
 

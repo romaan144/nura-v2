@@ -1242,7 +1242,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
   {
     id: 2062,
     name: "Marta Roca Mas",
-    specialty: "abogado de familia",
+    specialty: "abogada de familia",
     category: "legal",
     bio: "Abogada de familia con 10 años de experiencia. Divorcios, custodia de hijos, pensiones alimenticias, herencias y adopciones. Mediación familiar disponible. Trato cercano y humano en momentos difíciles.",
     quote: "Mi trabajo es que el derecho esté de tu lado. Y si no lo está, hacerlo estar.",
@@ -1296,7 +1296,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
   {
     id: 2065,
     name: "Anna Bosch Mas",
-    specialty: "abogado herencias y sucesiones",
+    specialty: "abogada de herencias y sucesiones",
     category: "legal",
     bio: "Abogada especializada en herencias, testamentos y sucesiones. Tramitación completa de herencias, impugnaciones testamentarias y pactos sucesorios. 9 años de experiencia. Primera consulta gratuita.",
     quote: "Mi trabajo es que el derecho esté de tu lado. Y si no lo está, hacerlo estar.",
@@ -1332,7 +1332,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
   {
     id: 2067,
     name: "Laia Puig Vilar",
-    specialty: "abogado administrativo",
+    specialty: "abogada administrativa",
     category: "legal",
     bio: "Abogada administrativa con 10 años de experiencia en recursos contra Administración Pública, licencias urbanísticas, sanciones y contratación pública. Eficacia demostrada en más de 200 recursos.",
     quote: "Mi trabajo es que el derecho esté de tu lado. Y si no lo está, hacerlo estar.",
@@ -1639,7 +1639,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
   {
     id: 2092,
     name: "Sandra Mas Pons",
-    specialty: "diseñador de interiores",
+    specialty: "diseñadora de interiores",
     category: "hogar",
     bio: "Diseñadora de interiores con 9 años de experiencia. Proyectos de reforma integral con gestión completa de obras. Estilo mediterráneo contemporáneo. Renderizado 3D incluido. Presupuesto desde el primer meeting.",
     quote: "Cuido tu casa como si fuera la mía. Porque para mí, cada hogar merece lo mejor.",
@@ -1838,7 +1838,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
   {
     id: 2111,
     name: "Mia Mas Ferrer",
-    specialty: "instructor de yoga",
+    specialty: "instructora de yoga",
     category: "entrenador",
     bio: "Instructora de Yoga certificada con formación de 500h en India. Hatha, Vinyasa y Restaurativo. Clases individuales o grupales en tu espacio o el mío. También clases online sincrónicas y grabadas.",
     quote: "El cuerpo siempre puede más de lo que la mente cree. Mi trabajo es demostrártelo.",
@@ -1910,7 +1910,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
   {
     id: 2115,
     name: "Laia Mas Ferrer",
-    specialty: "profesor de natación",
+    specialty: "profesora de natación",
     category: "entrenador",
     bio: "Profesora de natación titulada por la RFEN con 10 años de experiencia. Adultos que aprenden desde cero, niños a partir de 3 años y natación terapéutica. Clases en piscinas municipales y privadas de Barcelona.",
     quote: "El cuerpo siempre puede más de lo que la mente cree. Mi trabajo es demostrártelo.",
@@ -2508,7 +2508,7 @@ managerOpinion: { name:"Enric Ruiz-Geli", role:"Director del estudio", text:"Mar
   {
     id: 2173,
     name: "Erika Mas Torres",
-    specialty: "decorador de eventos",
+    specialty: "decoradora de eventos",
     category: "eventos",
     bio: "Decoradora de eventos con 7 años de experiencia. Bodas, cumpleaños, comuniones y eventos corporativos. Diseño floral, arcos, ambientación temática y montaje completo. Me adapto a todos los estilos y presupuestos.",
     quote: "Los mejores eventos son aquellos en los que los invitados solo disfrutan. El resto lo gestiono yo.",

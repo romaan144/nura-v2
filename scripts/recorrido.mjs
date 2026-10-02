@@ -1262,6 +1262,53 @@ console.log('\n── La flecha nunca saca de Nüra ──')
   await p.close()
 }
 
+console.log('\n── Capturas de Sergio (2026-10-02, tarde): cabecera, ajustes y reserva ──')
+{
+  const p = await navegador.newPage()
+  await p.setViewport({ width: 393, height: 760, isMobile: true, hasTouch: true })
+  await p.browserContext().overridePermissions(BASE, ['geolocation'])
+  await p.setGeolocation({ latitude: 41.403, longitude: 2.174, accuracy: 30 })
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); sessionStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Babi', joined: new Date().toISOString() })) })
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1200)
+  await escribirEn(p, 'Pintor', 'x => x.getBoundingClientRect().width > 80'); await p.keyboard.press('Enter')
+  await p.waitForFunction(() => /encaja/.test(document.body.innerText), { timeout: 20000 }).catch(() => {}); await espera(1000)
+  const posiciones = []
+  for (let i = 0; i < 4; i++) {
+    posiciones.push(await p.evaluate(() => { const b = [...document.querySelectorAll('section[aria-label="Respuesta de Nüra"] header button')].find(x => /Nueva búsqueda/.test(x.textContent)); return b ? Math.round(b.getBoundingClientRect().top) : -1 }))
+    const sig = await p.evaluate(() => { const b = [...document.querySelectorAll('section[aria-label="Respuesta de Nüra"] footer button')].find(x => /Siguiente|Ver otras|Ajustar/.test(x.textContent)); b?.click(); return Boolean(b) })
+    if (!sig) break; await espera(600)
+  }
+  paso('«Nueva búsqueda» está a la misma altura en todas las páginas de la respuesta', posiciones.length > 1 && posiciones.every(y => y === posiciones[0] && y > 0), posiciones.join(' · '))
+  const pulsar = async t => { await p.evaluate(t => [...document.querySelectorAll('section[aria-label="Respuesta de Nüra"] button')].find(b => b.textContent.trim() === t)?.click(), t); await espera(2500) }
+  const principal = () => p.evaluate(() => document.querySelector('section[aria-label="Respuesta de Nüra"] [class*=screenPrompt]')?.textContent || '')
+  await pulsar('Más cerca')
+  const cerca = await principal()
+  paso('«Más cerca» dice quién está más cerca (sin el mensaje de «no tienen zona»)', /está más cerca/.test(cerca) && !/inventar distancias/.test(await p.evaluate(() => document.body.innerText)), cerca)
+  await pulsar('No es lo que buscaba'); await pulsar('Era otra cosa')
+  paso('«Era otra cosa» no se toma por una búsqueda', /Cuéntame qué necesitas/.test(await principal()), await principal())
+  await p.close()
+  // Chat: «Confirmar reserva» pide la cita hablada, sin abrir otra.
+  const c = await navegador.newPage()
+  await c.setViewport({ width: 393, height: 760, isMobile: true, hasTouch: true })
+  await c.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await c.evaluate(() => { localStorage.clear(); sessionStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Babi', joined: new Date().toISOString() })) })
+  await c.goto(BASE + '/chat/2162', { waitUntil: 'networkidle0' }); await espera(1500)
+  const decir = async t => { await c.evaluate(() => { const i = document.querySelector('textarea, input[placeholder^="Escribe"]'); const set = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(i), 'value').set; set.call(i, ''); i.dispatchEvent(new Event('input', { bubbles: true })) }); await c.type('textarea, input[placeholder^="Escribe"]', t); await c.keyboard.press('Enter'); await espera(3500) }
+  for (const t of ['Necesito que me limpien el coche por dentro', '¿Qué día podrías?', 'El martes por la mañana']) await decir(t)
+  const charla = await c.evaluate(() => [...document.querySelectorAll('[class*=msgBubble]')].map(e => e.innerText).join(' | '))
+  paso('el profesional no llama «avería» a limpiar un coche ni repite «¿qué día?»', !/avería/.test(charla) && (charla.match(/Qué día y a qué hora/g) || []).length <= 1, charla.slice(0, 200))
+  await c.evaluate(() => [...document.querySelectorAll('button')].find(b => b.textContent.trim() === 'Confirmar reserva')?.click()); await espera(1500)
+  const tras = await c.evaluate(() => ({ hoja: Boolean(document.querySelector('[role=dialog]')), texto: document.body.innerText, cab: document.querySelector('[class*=contractBtn]')?.textContent }))
+  paso('«Confirmar reserva» pide esa cita sin abrir el formulario, y la cabecera pasa a «Pendiente»', !tras.hoja && /He pedido a \*?\*?Biel|He pedido a Biel/.test(tras.texto) && tras.cab === 'Pendiente', `${tras.hoja} · ${tras.cab}`)
+  for (const t of ['¿Y el jueves?', 'Vale, perfecto']) await decir(t)
+  const otraVez = await c.evaluate(() => (document.body.innerText.match(/Confirmo la reserva/g) || []).length)
+  paso('con la cita pedida, Nüra no vuelve a proponer reservar', otraVez <= 1, String(otraVez))
+  await c.evaluate(() => document.querySelector('[class*=contractBtn]').click()); await espera(1200)
+  paso('el botón «Pendiente» lleva a Mis servicios (no abre otra solicitud)', new URL(c.url()).pathname === '/my-services', new URL(c.url()).pathname)
+  await c.close()
+}
+
 await navegador.close()
 
 console.log('')

@@ -26,7 +26,7 @@ import { citaDeLaConversacion } from '../utils/citaDeLaConversacion'
 import { ocupacionesDe } from '../data/horarios'
 import { getHelperReply, getNuraIntervention, respuestasRapidas, CONTRATAR, OTRAS_OPCIONES } from '../utils/chatReplies'
 import { buildChatOpener } from '../utils/introLetter'
-import { notaDeCita } from '../utils/citaAviso'
+import { notaDeCita, fechaDeCita } from '../utils/citaAviso'
 
 const VER_SERVICIOS = 'Ver mis servicios'
 import { DEMO_MODE } from '../config'
@@ -373,7 +373,7 @@ export default function Chat() {
     const delay = 1000 + Math.random() * 600
     setTimeout(() => {
       setTyping(false)
-      const replyText = getHelperReply(helper, msgCount, msg, { historial: messages })
+      const replyText = getHelperReply(helper, msgCount, msg, { historial: messages, conCita: Boolean(servicioVivo()) })
       const reply = { id: Date.now() + 1, text: replyText, from: 'helper', time: new Date().toISOString() }
       // Log for future Claude analysis (silently)
       if (helper.isFromSupabase) {
@@ -386,7 +386,11 @@ export default function Chat() {
 
       // Nüra intervention at key moments
       const nura = getNuraIntervention(helper, newCount, [...messages, newMsg, reply])
-      if (nura) {
+      // Con una cita ya pedida (o confirmada) con esta persona, Nüra no
+      // propone «¿Confirmo la reserva?»: sería pedir otra (Sergio, 2026-10-02).
+      const yaHayCita = servicioVivo()
+      // Ni sus otros comentarios («Biel tiene 4,8…», «confirma la reserva»).
+      if (nura && !yaHayCita) {
         setTimeout(() => {
           const isBookingMoment = nura.includes('Confirmo la reserva') || nura.includes('confirmar')
           const ofreceOtras = nura.includes('otras opciones')
@@ -461,6 +465,32 @@ export default function Chat() {
   // Si no cabe, el CSS (.helperSpecialty) pone los puntos suspensivos.
   const chatSpecialty = fmtOficio(helper.specialty)
 
+  // La cita viva con esta persona (pedida, confirmada o en curso), o nada.
+  function servicioVivo() {
+    return (services || []).find(s => String(s.helperId) === String(helper.id) && ['pending', 'confirmed', 'in_progress'].includes(s.status)) || null
+  }
+
+  // «Confirmar reserva»: si ya se habló de día y hora, se pide directamente
+  // esa cita y se dice cuál (antes se abría el formulario entero, como si se
+  // empezara de cero). Sin día y hora claros, el formulario para elegirlos.
+  function confirmarReserva(msgId) {
+    setMessages(prev => prev.map(m => m.id === msgId ? { ...m, chips: undefined } : m))
+    const viva = servicioVivo()
+    const nombre = getFirstName(helper.name) || helper.name
+    if (viva) {
+      setMessages(prev => [...prev, { id: Date.now(), from: 'nura', time: new Date().toISOString(), chips: [VER_SERVICIOS],
+        text: `Ya tienes una cita ${viva.status === 'pending' ? 'pedida' : 'confirmada'} con **${nombre}**: ${fechaDeCita({ fecha: viva.date, hora: viva.time })}.` }])
+      return
+    }
+    const { date, time } = citaDeLaConversacion(messages, helper, ocupacionesDe(citas, services))
+    if (!date || !time) { setShowConfirm(true); return }
+    addService(helper, date, time, '')
+    if (!DEMO_MODE) enviarPropuestaCita(helper, date, time, '', user?.name?.split(' ')?.[0])
+    notifyServiceConfirmed(nombre); haptic('success')
+    setMessages(prev => [...prev, { id: Date.now(), from: 'nura', time: new Date().toISOString(), chips: [VER_SERVICIOS],
+      text: `Hecho. He pedido a **${nombre}** la cita del ${fechaDeCita({ fecha: date, hora: time })}. Te aviso aquí en cuanto la confirme.` }])
+  }
+
   // FIX 7: Contract button label based on service state
   const serviceState = (() => {
     const svc = services?.find(s => s.helperId === helper.id || s.helperId === String(helper.id))
@@ -501,7 +531,11 @@ export default function Chat() {
           </span>
         </button>
 
-        <button className={styles.contractBtn} onClick={() => serviceState === 'Valorar' ? setShowRating(true) : setShowConfirm(true)}>
+        <button className={styles.contractBtn} onClick={() => serviceState === 'Valorar' ? setShowRating(true)
+          // Con una cita pedida o confirmada, el botón la enseña; antes abría
+          // el formulario y se pedía otra sin querer.
+          : ['Pendiente', 'Próxima visita', 'En curso'].includes(serviceState) ? navigate('/my-services')
+          : setShowConfirm(true)}>
           {serviceState}
         </button>
       </header>
@@ -552,7 +586,7 @@ export default function Chat() {
                     {msg.chips.map((chip, ci) => (
                       <button className="nura-glass-action" key={ci}
                         onClick={() => {
-                          if (chip === 'Confirmar reserva') { setShowConfirm(true); return }
+                          if (chip === 'Confirmar reserva') { confirmarReserva(msg.id); return }
                           if (chip === VER_SERVICIOS) { navigate('/my-services'); return }
                           // Quita los botones del aviso: vuelven las respuestas rápidas.
                           if (chip === 'Todavía no') { setMessages(prev => prev.map(m => m.id === msg.id ? { ...m, chips: undefined } : m)); return }

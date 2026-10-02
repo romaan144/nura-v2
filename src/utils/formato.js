@@ -53,7 +53,13 @@ export function dondeEsta(helper) {
 // El oficio, para enseñarlo: la primera letra en mayúscula. En la base hay
 // fichas con «fisioterapeuta» y otras con «Logopeda infantil»; la búsqueda
 // compara el valor tal cual, así que solo se cambia al mostrarlo.
+// Y se completan las que vienen sin preposición (Sergio, 2026-10-02):
+// «Técnico calefacción» → «Técnico de calefacción», «Cuidadora personas con
+// Alzheimer» → «Cuidadora de personas…», «Pintor domicilio» → «a domicilio».
 export function fmtOficio(texto) {
   const t = String(texto || '').trim()
+    .replace(/^(t[ée]cnic[oa]) (aire|calderas|calefacci[oó]n|electrodom[ée]sticos|gas)\b/i, '$1 de $2')
+    .replace(/^(cuidador|cuidadora) (personas|ni[ñn]os|ancianos|enfermos)\b/i, '$1 de $2')
+    .replace(/(\p{L}{2}) domicilio$/u, "$1 a domicilio")
   return t ? t.charAt(0).toLocaleUpperCase('es-ES') + t.slice(1) : ''
 }

@@ -45,3 +45,8 @@
 .nueva { flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 13px; border-radius: 999px; border: 1px solid var(--glass-edge); background: var(--glass-control); box-shadow: var(--glass-control-shadow); color: var(--purple-ink); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
 .nueva:hover { background: var(--glass-selected); }
 .screen[data-paged='true'] { touch-action: pan-x; }
+/* La cabecera mide siempre lo mismo (Sergio, 2026-10-02): «Otras opciones»
+   se partía en dos líneas en Android y «Nueva búsqueda» bajaba de sitio. */
+.header { height: 44px; flex: none; }
+.label { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.35; }
+.query { line-height: 1.35; }
