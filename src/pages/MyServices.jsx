@@ -236,7 +236,9 @@ export default function MyServices() {
                     {s.notaCancelacion && <> «{s.notaCancelacion}»</>}
                   </p>
                 )}
-                {s.reprogramada && (
+                {/* Solo si esa otra cita sigue en pie: si también se canceló,
+                    decir «ya has pedido otra hora» confundía. */}
+                {s.reprogramada && !(services || []).some(o => o.sustituye === s.id && ['cancelled', 'rejected'].includes(o.status)) && (
                   <p className={styles.notice} role="status">
                     Ya has pedido otra hora: {formatDate(s.reprogramada.date)}{s.reprogramada.time ? ` · ${s.reprogramada.time}` : ''}.
                   </p>

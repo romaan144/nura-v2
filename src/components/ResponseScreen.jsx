@@ -103,7 +103,7 @@ export default function ResponseScreen({ blocks, welcome, query, onNuevaBusqueda
       <header className={styles.header}>
         <img src="/logo-iso.png" alt="" width="32" height="32" />
         <div className={styles.heading}>
-          <span className={styles.label}>{section || (welcome ? 'Cerca de ti' : 'Tu búsqueda')}</span>
+          <span className={styles.label}>{section === 'Ajustar esta búsqueda' ? 'Ajustar' : section || (welcome ? 'Cerca de ti' : 'Tu búsqueda')}</span>
           {query && <p className={styles.query} title={query}>{query}</p>}
         </div>
         {onNuevaBusqueda && <button type="button" className={styles.nueva} onClick={onNuevaBusqueda}><RotateCcw size={14} aria-hidden="true" />Nueva búsqueda</button>}

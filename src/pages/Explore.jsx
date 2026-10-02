@@ -410,7 +410,10 @@ export default function Explore() {
       // deduce —genero gramatical, sinonimos—, pero no puede ser la UNICA
       // via: cada profesional nuevo escribe su especialidad a mano, y nadie
       // va a mantener una lista de variantes de 1008 filas.
-      const limpia = t => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      // Masculino y femenino valen igual (Sergio, 2026-10-02): el filtro
+      // «Abogado administrativo» encuentra a «Abogada administrativa».
+      const neutro = t => t.split(/\s+/).map(w => w.replace(/ora$/, 'or').replace(/(\p{L}{3})a$/u, '$1o')).join(' ')
+      const limpia = t => neutro(t.normalize('NFD').replace(/[\u0300-\u036f]/g, ''))
       const e = limpia(spec)
       const q = limpia(sub)
       // Palabra completa, no subcadena: "dieta" no debe casar con "dietista"

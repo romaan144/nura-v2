@@ -27,10 +27,10 @@ import { oficiosDe, esDelOficio } from '../data/oficios'
 import { entenderSeguimiento, puntosFranja, preferenciasDe, necesidadesDe, NOMBRE_FRANJA } from '../utils/seguimiento'
 import { tieneAlerta, misAlertas, alertasGuardadas } from '../utils/alertas'
 import styles from './Home.module.css'
-import { PULSO_THRESHOLD, PULSO_DELAY, CONFIRMACION_THRESHOLD } from '../config'
+import { PULSO_THRESHOLD, PULSO_DELAY, CONFIRMACION_THRESHOLD, DEMO_MODE } from '../config'
 import { extractPersona } from '../utils/personas'
 import { proSignals } from '../utils/proSignals'
-import { fmtNota, fmtKm } from '../utils/formato'
+import { fmtNota, fmtKm, fmtOficio } from '../utils/formato'
 import RecordatorioCita from '../components/RecordatorioCita'
 import ResponseScreen from '../components/ResponseScreen'
 import { splitResponseText } from '../utils/responseLayout'
@@ -83,7 +83,8 @@ function buildWhy(helper, analysis) {
   // Quien da clases tiene de especialidad la materia («guitarra clásica»).
   const materia = ['clases', 'educacion', 'matematicas', 'idiomas'].includes(helper?.category)
     && !/^(profesor|profesora|maestr|tutor|monitor|entrenador|instructor)/i.test(esp)
-  const espMin = `${esp.charAt(0).toLowerCase()}${esp.slice(1)}`
+  const espBonita = fmtOficio(esp)
+  const espMin = `${espBonita.charAt(0).toLowerCase()}${espBonita.slice(1)}`
   if (clave && esp) parts.push(`${materia ? 'da clases de ' : 'es '}${espMin}, justo lo que buscas`)
   else if (clave) parts.push(`trabaja justo esto: ${clave}`)
   else if (s.alzheimer) parts.push('lleva años acompañando casos de Alzheimer')
@@ -922,6 +923,25 @@ export default function Home() {
       }
     }
 
+    // ── «Vivo en Gràcia» con resultados delante: se ordenan desde ese barrio
+    // (Sergio, 2026-10-02: Nüra lo decía —«o escríbeme tu zona»— y luego no
+    // hacía nada con él).
+    const barrio = lastMatches?.length > 1 && !oficiosDe(msg).length ? barrioEnTexto(msg) : null
+    if (barrio) {
+      const ordenados = ordenarDesdeUbicacion(lastMatches.map(conZona), barrio)
+      const primero = ordenados[0]
+      setTimeout(() => {
+        setMessages(prev => [...prev, { id: Date.now(), from: 'nura', results: ordenados,
+          lines: primero?.distance != null
+            ? [`**${getFirstName(primero.name)}** es quien está más cerca de ${barrio.nombre}${primero.distance >= 0.5 ? `: a unos ${fmtKm(primero.distance)}` : ''}.`, 'He ordenado al resto por cercanía a tu barrio.']
+            : [`No sé en qué zona trabaja cada uno.`, `Te los dejo igual; si quieres a alguien de ${barrio.nombre}, dímelo con lo que necesitas.`],
+          refineChips: chipsTras('Más cerca', ordenados) }])
+        setLastMatches(ordenados)
+        setLoading(false)
+      }, 500)
+      return
+    }
+
     // ── Lo que se dice después de buscar (ver utils/seguimiento) ──────
     // `opciones.nueva`: la manda un botón («Buscar electricista»): siempre es
     // una búsqueda nueva, aunque el oficio saliera en la anterior.
@@ -976,7 +996,7 @@ export default function Home() {
     // Con resultados: se contesta sobre ESOS resultados.
     const mostrar = (lines, results) => {
       setMessages(prev => [...prev, { id: Date.now(), from: 'nura', lines, results,
-        refineChips: ['Más cerca', 'Mejor valorado', 'Más barato'] }])
+        refineChips: chipsTras(null, results || []) }])
       setLastMatches(results)
       setLoading(false)
     }
@@ -1086,8 +1106,10 @@ export default function Home() {
           refineLine = 'He ajustado los resultados.'
         }
 
+        const usado = t.includes('barato') || t.includes('precio') || t.includes('económico') ? 'Más barato'
+          : t.includes('valorad') || t.includes('valoración') ? 'Mejor valorado' : null
         const resultMsg = { id: Date.now(), from: 'nura', lines: [refineLine], results: refined,
-          refineChips: ['Más cerca', 'Mejor valorado', 'Más barato'] }
+          refineChips: chipsTras(usado, refined || []) }
         setMessages(prev => [...prev, resultMsg])
       setLoading(false)
         setLastMatches(refined)
@@ -1388,7 +1410,7 @@ export default function Home() {
         lines: [resultLine, whyLine],
         results: matches,
         refineChips: matches.length > 0
-          ? ['Más cerca', 'Mejor valorado', 'Más barato', 'No es lo que buscaba']
+          ? chipsTras(null, matches)
           : ['Ampliar búsqueda', 'Cambiar zona', 'Online también']
       }
       // DOS COSAS A LA VEZ («fontanero y electricista»): se enseña la primera
@@ -1486,6 +1508,9 @@ export default function Home() {
       handleSend(texto, { nueva: true })
       return
     }
+    // Sale como botón de la respuesta (no de «Ajustar»): antes se tomaba por
+    // una búsqueda de «Era otra cosa» y recomendaba a alguien al azar.
+    if (chip === 'Era otra cosa') { handleRefine(chip); return }
     if (chip === CONTESTAR) { navigate('/chats'); return }
     if (chip === LEER_RESPUESTA) { navigate(respuestaAbrir.current ? `/chat/${respuestaAbrir.current}` : '/chats'); return }
     const responde = (lines, chips) =>
@@ -1584,7 +1609,30 @@ export default function Home() {
 
   const suggestions = user?.isHelper ? HELPER_SUGGESTIONS : getDynamicSuggestions(user, searchHistory)
 
+  // ── AJUSTAR LA BÚSQUEDA, CLIC A CLIC (Sergio, 2026-10-02) ──────────────
+  // Tras cada ajuste, los botones que quedan: nunca el que se acaba de usar,
+  // «Online» solo si alguno lo ofrece, y siempre «No es lo que buscaba».
+  const chipsTras = (usado, lista) => [
+    ...(lista.length >= 2 ? ['Más cerca', 'Más barato', 'Mejor valorado'] : []),
+    ...(lista.some(h => h.online) && lista.some(h => !h.online) ? ['Online'] : []),
+  ].filter(c => c !== usado).concat('No es lo que buscaba')
+
+  // Los perfiles de ejemplo no tienen barrio: en la demo se les da uno fijo
+  // (siempre el mismo para cada uno), para que «Más cerca» funcione igual que
+  // con los profesionales de verdad, que sí lo tienen.
+  const ZONAS_DEMO = ['Gràcia', 'Eixample', 'Sants', 'Sant Andreu', 'Poblenou', 'Les Corts', 'Sarrià', 'Horta', 'Sant Martí', 'Raval', 'Guinardó', 'Poble Sec']
+  const conZona = h => (DEMO_MODE && !h.zone && Number(h.id) >= 2000) ? { ...h, zone: ZONAS_DEMO[Number(h.id) % ZONAS_DEMO.length] } : h
+
   async function buscarMasCerca() {
+    // Si ninguno tiene una zona que se pueda situar, ni se pide la ubicación:
+    // antes la pedía y luego decía, en grande, que no servía de nada.
+    const lista = lastMatches.map(conZona)
+    if (!ordenarDesdeUbicacion(lista, { lat: 41.39, lng: 2.17 }).some(h => h.distance != null)) {
+      setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
+        lines: ['No puedo ordenarlos por distancia.', 'No sé en qué zona trabaja cada uno. Puedes mirarlo en su perfil, o decirme tu barrio y busco a alguien de allí.'],
+        results: lastMatches, refineChips: chipsTras('Más cerca', lastMatches) }])
+      return
+    }
     stopThinking()
     const sid = ++searchSeqRef.current
     const controller = new AbortController()
@@ -1595,21 +1643,22 @@ export default function Home() {
     setLoading(true)
     setMessages(prev => [...prev, { id, from: 'nura', loading: true,
       lines: ['Buscando tu ubicación. Si el dispositivo te pide permiso, pulsa «Permitir».'] }])
-    const answer = (lines, results) => setMessages(prev => prev.map(m => m.id === id
-      ? { id, from: 'nura', lines, results, refineChips: ['Más cerca', 'Más barato', 'Mejor valorado', 'Online'] } : m))
+    const answer = (lines, results, fallo = false) => setMessages(prev => prev.map(m => m.id === id
+      ? { id, from: 'nura', lines, results, refineChips: chipsTras(fallo ? null : 'Más cerca', results || lastMatches) } : m))
     try {
       const origin = await pedirUbicacion({ signal: controller.signal })
       if (!alive()) return
-      const sorted = ordenarDesdeUbicacion(lastMatches, origin)
+      const sorted = ordenarDesdeUbicacion(lista, origin)
       const located = sorted.filter(h => h.distance != null)
-      if (!located.length) {
-        answer(['Ya tengo tu ubicación, pero estos profesionales no tienen una zona que pueda localizar. Mantengo los resultados sin inventar distancias.'], sorted)
-      } else {
-        answer([`Ordenados por cercanía a tu ubicación, según la zona aproximada de cada profesional.${located.length < sorted.length ? ' Sin zona localizable, al final.' : ''}`], sorted)
-      }
+      const primero = sorted[0]
+      answer([
+        `**${getFirstName(primero?.name) || primero?.name}** es quien está más cerca: a unos ${fmtKm(primero?.distance)}.`,
+        `He ordenado al resto por cercanía, según el barrio donde trabaja cada uno${located.length < sorted.length ? '; los que no dicen su barrio, al final' : ''}.`,
+      ], sorted)
       setLastMatches(sorted)
     } catch (error) {
-      if (alive()) answer([mensajeErrorUbicacion(error)])
+      // En dos frases: la primera es la principal (en grande) y debe ser corta.
+      if (alive()) { const m = mensajeErrorUbicacion(error); const i = m.indexOf('. '); answer(i > 0 ? [m.slice(0, i + 1), m.slice(i + 2)] : [m], lastMatches, true) }
     } finally {
       if (alive()) {
         ubicacionRef.current = null
@@ -1648,9 +1697,12 @@ export default function Home() {
         const pb = parseFloat((b.price||'').replace(/[^0-9.]/g,'')) || 9999
         return pa - pb
       })
+      const barato = sorted[0]
       setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-        lines: [`${sorted[0]?.name?.split(' ')?.[0]} es el más económico. Su tarifa es ${sorted[0]?.price}.`],
-        results: sorted, refineChips: ['Más cerca','Mejor valorado','Online'] }])
+        lines: barato?.price
+          ? [`**${getFirstName(barato.name)}** es el más económico.`, `Su tarifa es ${barato.price}. He ordenado al resto de más barato a más caro.`]
+          : ['No todos dicen su tarifa.', 'Te los dejo en el mismo orden; puedes preguntársela al escribirles.'],
+        results: sorted, refineChips: chipsTras('Más barato', sorted) }])
       setLastMatches(sorted); return
     }
     if (chip === 'Más cerca' && lastMatches?.length > 0) {
@@ -1660,8 +1712,8 @@ export default function Home() {
     if (chip === 'Mejor valorado' && lastMatches?.length > 0) {
       const sorted = [...lastMatches].sort((a,b) => (b.rating||0)-(a.rating||0))
       setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
-        lines: [`${sorted[0]?.name?.split(' ')?.[0]} tiene la mejor valoración: ${fmtNota(sorted[0]?.rating)} sobre 5.`],
-        results: sorted, refineChips: ['Más barato','Más cerca','Online'] }])
+        lines: [`**${getFirstName(sorted[0]?.name)}** es el mejor valorado.`, `Tiene ${fmtNota(sorted[0]?.rating)} sobre 5. He ordenado al resto de mejor a peor valoración.`],
+        results: sorted, refineChips: chipsTras('Mejor valorado', sorted) }])
       setLastMatches(sorted); return
     }
     if (chip === 'Online' && lastMatches?.length > 0) {
@@ -1672,7 +1724,7 @@ export default function Home() {
             ? 'Solo uno de ellos ofrece sesiones online.'
             : `${online.length} de ellos ofrecen sesiones online.`],
           results: online,
-          refineChips: [...ordenar(online.length, ['Más barato','Más cerca','Mejor valorado']), 'Ver todos'] }])
+          refineChips: [...chipsTras('Online', online).filter(c => c !== 'Online' && c !== 'No es lo que buscaba'), 'Ver todos', 'No es lo que buscaba'] }])
         setLastMatches(online)
       } else {
         setMessages(prev => [...prev, { id: Date.now(), from: 'nura',
