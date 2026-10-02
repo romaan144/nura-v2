@@ -1098,15 +1098,28 @@ console.log('\n── móvil bajo, valorar, teclado y «Ver todos» ──')
   await p.evaluate(() => window.__teclado(300)); await espera(700)
   const teclado = await p.evaluate(() => {
     const nav = [...document.querySelectorAll('nav[aria-label="Navegación principal"]')].find(n => n.getBoundingClientRect().height > 0)
-    return { nav: Math.round(nav.getBoundingClientRect().bottom), campo: Math.round(document.activeElement.getBoundingClientRect().bottom), desplazado: document.querySelector('.desktopMain').scrollTop }
+    return { nav: Math.round(nav.getBoundingClientRect().bottom), oculta: getComputedStyle(nav).visibility === 'hidden', campo: Math.round(document.activeElement.getBoundingClientRect().bottom), desplazado: document.querySelector('.desktopMain').scrollTop }
   })
-  paso('con el teclado, la barra de abajo se queda abajo y el campo queda a la vista', teclado.nav > 600 && teclado.campo <= 360 && teclado.desplazado === 0, JSON.stringify(teclado))
+  paso('con el teclado, la barra de abajo queda detrás (oculta) y el campo a la vista', teclado.nav > 600 && teclado.oculta && teclado.campo <= 360 && teclado.desplazado === 0, JSON.stringify(teclado))
   await p.evaluate(() => { document.activeElement.blur(); window.__teclado(0) }); await espera(500)
   await escribirEn(p, 'Pintor', 'x => x.getBoundingClientRect().width > 80')
   await p.keyboard.press('Enter')
   await p.waitForFunction(() => /Primera opción/.test(document.querySelector('section[aria-label="Respuesta de Nüra"]')?.textContent || ''), { timeout: 20000 }).catch(() => {})
   await espera(800)
   const busqueda = await visibles()
+  // Tras buscar, al escribir abajo (captura de Sergio en el iPhone): la barra
+  // no tapa la caja.
+  await p.evaluate(() => document.querySelector('input[aria-label="Cuéntale a Nüra qué necesitas"]').focus())
+  await p.evaluate(() => window.__teclado(300)); await espera(700)
+  const tras = await p.evaluate(() => {
+    const nav = [...document.querySelectorAll('nav[aria-label="Navegación principal"]')].find(n => n.getBoundingClientRect().height > 0)
+    const caja = document.activeElement.closest('[class*=inputCapsule]').getBoundingClientRect()
+    const n = nav.getBoundingClientRect()
+    const tapa = getComputedStyle(nav).visibility !== 'hidden' && n.top < caja.bottom && n.bottom > caja.top
+    return { tapa, cajaAbajo: Math.round(caja.bottom) }
+  })
+  paso('tras buscar, al escribir, la barra de abajo no tapa la caja y la caja queda sobre el teclado', !tras.tapa && tras.cajaAbajo <= 360, JSON.stringify(tras))
+  await p.evaluate(() => { document.activeElement.blur(); window.__teclado(0) }); await espera(500)
   paso('en un móvil bajo, el profesional recomendado sale en la primera página', /Primera opción/.test(busqueda), busqueda.slice(0, 160))
   await p.close()
 }

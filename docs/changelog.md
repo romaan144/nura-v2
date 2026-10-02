@@ -170,6 +170,10 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — iPhone: la barra de abajo ya no tapa la caja al escribir (Claude)
+
+En el iPhone de Sergio, tras buscar y tocar la caja de escribir, la barra Buscar/Chats/Perfil subía con el teclado y se ponía encima de la caja. Ahora, mientras el teclado está abierto, la barra no se enseña (queda «detrás del teclado», en cualquier navegador), y la caja, al subir sobre la respuesta, es opaca para que no se transparente el texto de debajo.
+
 ## 2026-10-29 — «Ver todos»: flecha para volver también en la rejilla (Claude)
 
 Al entrar en «Ver todos» ya hay flecha arriba a la izquierda, como en las demás pantallas. Si hay algo escrito en el buscador, lo borra; si no, vuelve a donde se estaba, o a Inicio si se entró directamente con un enlace. Dentro de una categoría hace lo de siempre.
