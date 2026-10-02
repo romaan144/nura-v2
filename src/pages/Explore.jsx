@@ -66,7 +66,7 @@ const CATEGORIES = [
     color: '#10B981',
     bg: 'rgba(16,185,129,0.10)',
     supabaseCategories: ['hogar', 'limpieza'],
-    subcategories: ['Todos', 'Limpieza doméstica', 'Limpieza por horas', 'Limpieza profunda', 'Planchado a domicilio', 'Organización del hogar', 'Cocinero a domicilio', 'Manitas del hogar', 'Montador de muebles IKEA y similares', 'Pintor', 'Electricista domicilio urgencias', 'Albañil reformas parciales', 'Carpintero a medida', 'Jardinero y mantenimiento de terrazas', 'Diseñador de interiores', 'Arquitecto reformas domicilio'],
+    subcategories: ['Todos', 'Limpieza doméstica', 'Limpieza por horas', 'Limpieza profunda', 'Planchado a domicilio', 'Organización del hogar', 'Cocinero a domicilio', 'Manitas del hogar', 'Montador de muebles IKEA y similares', 'Pintor', 'Jardinero y mantenimiento de terrazas', 'Diseñador de interiores', 'Arquitecto reformas domicilio'],
   },
   {
     id: 'mascotas',
@@ -156,7 +156,12 @@ const CATEGORIES = [
 // y otros como `hogar`: la madre de Sergio veía «Pintor» en «Arreglar algo
 // en casa» y «Pintor de interiores» en «Poner mi casa a punto» (2026-10-02).
 // Aquí solo cambia dónde se enseñan; lo guardado y la búsqueda, no.
-const MOVIDOS = [{ es: h => /^pintor/i.test((h.specialty || '').trim()), de: 'tecnico', a: 'hogar' }]
+// Y al revés (Sergio, 2026-10-02): electricista, albañil y carpintero salen
+// solo en «Arreglar algo en casa», aunque su ficha diga `hogar`.
+const MOVIDOS = [
+  { es: h => /^pintor/i.test((h.specialty || '').trim()), de: 'tecnico', a: 'hogar' },
+  { es: h => /^(electricista|albañil|carpinter)/i.test((h.specialty || '').trim()), de: 'hogar', a: 'tecnico' },
+]
 
 export default function Explore() {
   const navigate  = useNavigate()

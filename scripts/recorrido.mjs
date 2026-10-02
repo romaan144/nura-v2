@@ -1008,6 +1008,13 @@ console.log('\n── «Ver todos»: los pintores, juntos en «Poner mi casa a p
   const conFiltro = await p.evaluate(() => document.querySelectorAll('button[aria-label^="Ver perfil de"]').length)
   paso('ningún pintor en «Arreglar algo en casa» y los dos en «Poner mi casa a punto»', enTecnico === 0 && enHogar === 2, `técnico ${enTecnico} · hogar ${enHogar}`)
   paso('el filtro «Pintor» los reúne a los dos', conFiltro === 2, String(conFiltro))
+  // Y al revés: electricista, albañil y carpintero, solo en «Arreglar algo en casa».
+  const oficios = () => p.evaluate(() => { const t = [...document.querySelectorAll('button[aria-label^="Ver perfil de"]')].map(b => b.closest('article, div')?.innerText || ''); return ['electricista', 'albañil', 'carpinter'].map(o => t.filter(x => new RegExp(o, 'i').test(x)).length) })
+  await p.goto(BASE + '/explore?c=hogar', { waitUntil: 'networkidle0' }); await espera(1800)
+  const hogarOf = await oficios()
+  await p.goto(BASE + '/explore?c=tecnico', { waitUntil: 'networkidle0' }); await espera(1800)
+  const tecnicoOf = await oficios()
+  paso('electricista, albañil y carpintero: los dos de cada, solo en «Arreglar algo en casa»', hogarOf.every(n => n === 0) && tecnicoOf.every(n => n === 2), `hogar ${hogarOf} · técnico ${tecnicoOf}`)
   await p.close()
 }
 
