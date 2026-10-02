@@ -264,3 +264,8 @@ span.nura-user-initials { background: #F0E9FA; }
      enseña: queda «detrás del teclado» en cualquier navegador. */
   html[data-keyboard-open='true'] nav[aria-label="Navegación principal"] { visibility: hidden; opacity: 0; pointer-events: none; }
 }
+
+/* EL MISMO FONDO EN TODAS LAS PESTAÑAS (Sergio, 2026-10-02): Chats era
+   blanco grisáceo y Buscar, lila con un toque verde. El de Buscar es el de
+   referencia; en una pantalla que se desplaza, el fondo queda quieto. */
+:root { --fondo-app: radial-gradient(ellipse at 10% 0%, #E3DCED, transparent 70%), radial-gradient(ellipse at 95% 90%, #DDE8E2, transparent 70%), #EAE6EF; }

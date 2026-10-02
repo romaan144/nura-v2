@@ -170,6 +170,10 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — El mismo fondo en Chats, Perfil y «Ver todos» que en Buscar (Claude)
+
+Chats tenía un fondo blanco grisáceo y Buscar, lila con un toque verde. Ahora Chats, Perfil (con cuenta) y «Ver todos» usan el mismo fondo que Buscar (`--fondo-app`), que se queda quieto al desplazar la pantalla. El Perfil sin cuenta conserva su fondo propio, que ya era de la misma familia.
+
 ## 2026-10-29 — iPhone: la barra de abajo ya no tapa la caja al escribir (Claude)
 
 En el iPhone de Sergio, tras buscar y tocar la caja de escribir, la barra Buscar/Chats/Perfil subía con el teclado y se ponía encima de la caja. Ahora, mientras el teclado está abierto, la barra no se enseña (queda «detrás del teclado», en cualquier navegador), y la caja, al subir sobre la respuesta, es opaca para que no se transparente el texto de debajo.
