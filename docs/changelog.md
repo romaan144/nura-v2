@@ -170,6 +170,10 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Seis ejemplos que cambian, «Ver todos» en la portada y el oficio en Chats (Claude)
+
+La portada enseña seis ejemplos en dos filas de tres, distintos en cada visita: dos de casa, uno de cuidados, dos de salud y uno más, de oficios con muchos profesionales y que el buscador reconoce (se quitó «Abogado», que no lo entendía). Debajo, «Ver todos los profesionales», porque el botón de arriba a la izquierda no lo veía nadie. En Chats, el hueco en blanco bajo el nombre muestra ahora el oficio de cada persona («Técnico de calderas y calefacción»).
+
 ## 2026-10-29 — Pasar de página deslizando y «Nueva búsqueda» en la tarjeta (Claude)
 
 La respuesta sigue por partes, con su botón de siempre («Ver otras opciones», «Ajustar búsqueda»), pero ahora también se pasa deslizando el dedo hacia arriba (y hacia abajo para volver), con el contenido acompañando al dedo. Las flechas del botón apuntan hacia abajo y hacia arriba, como el movimiento. El botón redondo ↻ de arriba, que nadie entendía, pasa a la tarjeta con texto: «Nueva búsqueda». Se valoró hacer la respuesta deslizable entera (sin páginas) y se descartó por ahora: no hay pruebas de que «Siguiente» despiste y el botón dice lo que viene; el prototipo queda en `docs/prototipos/respuesta-deslizable.patch`.

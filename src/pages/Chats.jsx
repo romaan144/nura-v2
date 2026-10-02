@@ -12,6 +12,7 @@ import { Badge } from '../components/ui'
 import BandejaProfesional from '../components/BandejaProfesional'
 import { useRespuestasNuevas } from '../utils/respuestasNuevas'
 import { sinMarcas } from '../utils/texto'
+import { fmtOficio } from '../utils/formato'
 import { avatarVigente } from '../utils/avatar'
 import { demoLeidos, marcarDemoLeido } from '../utils/demoLeidos'
 
@@ -265,6 +266,10 @@ export default function Chats() {
                     )}
                   </span>
                 </div>
+                {/* Su oficio, bajo el nombre (Sergio, 2026-10-02): ahí había un
+                    hueco en blanco, y «Roberto» no dice quién es; «Técnico de
+                    calefacción», sí. */}
+                {(helper?.specialty || chat.specialty) && <span className={styles.chatOficio}>{fmtOficio(helper?.specialty || chat.specialty)}</span>}
                 {(() => {
                   const lp = (personas || []).find(p => (p.contactedHelperIds || []).includes(chat.helperId))
                   const contacto = (contactedHelpers || []).find(x => (x.id || x) === chat.helperId)

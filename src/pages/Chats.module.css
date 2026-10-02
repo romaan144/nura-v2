@@ -259,3 +259,8 @@
 /* El contenido aparece al estar listo, sin retener la vista de carga. */
 @media (prefers-reduced-motion: no-preference) { .page { animation: contentReady 180ms ease-out; } }
 @keyframes contentReady { from { opacity: .65; } to { opacity: 1; } }
+
+/* El oficio de cada persona, en el hueco que quedaba bajo el nombre. */
+.chatName { min-height: 0; }
+.chatTop { margin-bottom: 2px; }
+.chatOficio { display: block; margin-bottom: 8px; font-size: 13px; line-height: 1.35; font-weight: 600; color: var(--purple-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

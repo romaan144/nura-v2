@@ -969,14 +969,23 @@ console.log('\n── La portada: la caja de escribir, junto al saludo, siempre 
   p.on('pageerror', e => errores.push('portada: ' + String(e.message).split('\n')[0].slice(0, 60)))
   const pregunta = () => p.evaluate(() => {
     const s = document.querySelector('section[aria-label="Respuesta de Nüra"]')
-    return Boolean(s?.querySelector('input[aria-label="Cuéntale a Nüra qué necesitas"]')) && [...s.querySelectorAll('button')].some(b => b.textContent.trim() === 'Fontanero')
+    return Boolean(s?.querySelector('input[aria-label="Cuéntale a Nüra qué necesitas"]')) && s.querySelectorAll('[class*=inicioRejilla] button').length === 6
+      && [...s.querySelectorAll('button')].some(b => b.textContent.trim() === 'Ver todos los profesionales')
       && !/Para quién necesitas ayuda/.test(document.body.innerText)
   })
   await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
   await p.evaluate(() => { localStorage.clear(); sessionStorage.clear() })
   await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1500)
   const primera = await pregunta()
-  await tocar(p, /^Fontanero$/); await espera(5000)
+  // Seis ejemplos que cambian al volver a entrar (Sergio, 2026-10-02).
+  const lote = () => p.evaluate(() => [...document.querySelectorAll('[class*=inicioRejilla] button')].map(b => b.textContent).join(','))
+  const lotes = new Set([await lote()])
+  for (let i = 0; i < 3; i++) { await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1000); lotes.add(await lote()) }
+  paso('los ejemplos de la portada cambian al volver a entrar', lotes.size >= 2, [...lotes].join(' | '))
+  await tocar(p, /^Ver todos los profesionales$/); await espera(1200)
+  paso('«Ver todos los profesionales», en la portada, lleva a la lista', new URL(p.url()).pathname === '/explore')
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1500)
+  await p.evaluate(() => document.querySelector('[class*=inicioRejilla] button').click()); await espera(5000)
   await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1500)
   const trasContestar = await pregunta()
   // Con alguien a quien ya escribió (sin pregunta de «¿pudiste resolver?» pendiente).
@@ -1043,11 +1052,11 @@ console.log('\n── La frase principal de Nüra, grande en todas las respuesta
   await q.evaluate(() => [...document.querySelectorAll('section[aria-label="Respuesta de Nüra"] button')].find(b => b.textContent.trim() === 'Nueva búsqueda').click()); await espera(1200)
   const portada = await q.evaluate(() => ({
     caja: Boolean(document.querySelector('section[aria-label="Respuesta de Nüra"] input[aria-label="Cuéntale a Nüra qué necesitas"]')),
-    ejemplos: ['Fontanero', 'Clases de inglés', 'Cuidadora'].every(t => [...document.querySelectorAll('button')].some(b => b.textContent.trim() === t)),
+    ejemplos: document.querySelectorAll('section[aria-label="Respuesta de Nüra"] [class*=inicioRejilla] button').length === 6,
     sinResultados: !/mejor encaja/.test(document.body.innerText),
   }))
   paso('volver a empezar muestra la misma portada, con la caja y los ejemplos', portada.caja && portada.ejemplos && portada.sinResultados, JSON.stringify(portada))
-  await tocar(q, /^Clases de inglés$/); await espera(5500)
+  await q.evaluate(() => [...document.querySelectorAll('[class*=inicioRejilla] button')].find(b => /^(Fontanero|Electricista|Pintor|Carpintero|Logopeda|Psicóloga|Cuidadora)$/.test(b.textContent))?.click() || document.querySelector('[class*=inicioRejilla] button').click()); await espera(5500)
   paso('y los ejemplos buscan al tocarlos', /mejor encaja|única opción/.test(await q.evaluate(() => document.body.innerText)))
   await q.close()
   // Una frase no se parte a mitad: «madre".» caía sola en letra pequeña.
@@ -1082,8 +1091,8 @@ console.log('\n── móvil bajo, valorar, teclado y «Ver todos» ──')
   await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1500)
   const visibles = () => p.evaluate(() => [...document.querySelectorAll('section[aria-label="Respuesta de Nüra"] [aria-hidden="false"]')].map(e => e.textContent).join(' | '))
   const portada = await visibles()
-  paso('en un móvil bajo, la caja y los tres ejemplos salen en la primera página',
-    ['Fontanero', 'Clases de inglés', 'Cuidadora'].every(t => portada.includes(t)) && await p.evaluate(() => Boolean(document.querySelector('section[aria-label="Respuesta de Nüra"] [aria-hidden="false"] input'))), portada.slice(0, 200))
+  paso('en un móvil bajo, la caja, los seis ejemplos y «Ver todos» salen en la primera página',
+    /Ver todos los profesionales/.test(portada) && await p.evaluate(() => document.querySelectorAll('section[aria-label="Respuesta de Nüra"] [aria-hidden="false"] [class*=inicioRejilla] button').length === 6 && Boolean(document.querySelector('section[aria-label="Respuesta de Nüra"] [aria-hidden="false"] input'))), portada.slice(0, 200))
   // Teclado abierto en Inicio: la barra de abajo no sube; la cápsula, sí.
   await p.evaluate(() => { const i = [...document.querySelectorAll('input')].find(x => x.checkVisibility?.() && x.getBoundingClientRect().width > 80); i.focus() })
   await p.evaluate(() => window.__teclado(300)); await espera(700)
@@ -1174,6 +1183,17 @@ console.log('\n── Pasar de página deslizando, con flechas hacia abajo y arr
   paso('el botón de seguir lleva la flecha hacia abajo', /arrow-down/.test(flechas), flechas)
   const nueva = await p.evaluate(() => Boolean([...document.querySelectorAll('section[aria-label="Respuesta de Nüra"] header button')].find(b => b.textContent.trim() === 'Nueva búsqueda')))
   paso('«Nueva búsqueda» está en la tarjeta de la respuesta', nueva)
+  await p.close()
+}
+
+console.log('\n── Chats: el oficio de cada persona, bajo su nombre ──')
+{
+  const p = await navegador.newPage()
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await p.evaluate(() => { localStorage.clear(); localStorage.setItem('nura_user', JSON.stringify({ name: 'Babi', joined: new Date().toISOString() })) })
+  await p.goto(BASE + '/chats', { waitUntil: 'networkidle0' }); await espera(1500)
+  const filas = await p.evaluate(() => [...document.querySelectorAll('[class*=chatRow]')].map(f => f.querySelector('[class*=chatOficio]')?.textContent || ''))
+  paso('cada conversación dice el oficio bajo el nombre', filas.length > 0 && filas.every(t => /^[A-ZÁÉÍÓÚ]/.test(t)), filas.join(' · '))
   await p.close()
 }
 
