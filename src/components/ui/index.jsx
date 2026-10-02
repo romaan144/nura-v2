@@ -101,8 +101,10 @@ export function StatBar({ stats, style }) {
           flex: 1, padding: 'var(--space-10) var(--space-8)', textAlign: 'center',
           borderRight: i < items.length - 1 ? '1px solid var(--ink-border)' : 'none',
         }}>
+          {/* En una sola línea: en un móvil de 320 px «< 1 hora» se partía en
+              dos y descuadraba la fila. La letra baja un poco si no cabe. */}
           <div style={{
-            fontSize: 'var(--text-base)', fontWeight: 800,
+            fontSize: 'clamp(13px, 4.2vw, var(--text-base))', fontWeight: 800, whiteSpace: 'nowrap',
             color: s.color || 'var(--ink)', letterSpacing: '-0.4px',
           }}>{s.value}</div>
           <div style={{

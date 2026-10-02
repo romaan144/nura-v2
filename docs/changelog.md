@@ -170,6 +170,10 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Pantallas de la clienta en un móvil pequeño (Claude)
+
+Revisadas en un iPhone SE antiguo «Ver todos», el perfil de un profesional y «Mis servicios»: todo cabe. Dos detalles arreglados: en el perfil, «< 1 hora» ya no se parte en dos líneas, y en «Ver todos» el texto de ejemplo de la búsqueda («¿Qué necesitas?») cabe entero.
+
 ## 2026-10-29 — Móviles pequeños: revisión y un detalle del alta (Claude)
 
 Revisadas en un iPhone SE (antiguo y moderno) la respuesta del profesional, el chat y el alta, con y sin teclado: todo se ve. Solo en el alta, en el móvil más pequeño, el recuadro «Cómo funciona» quedaba un poco tapado por el título. Ya no.
