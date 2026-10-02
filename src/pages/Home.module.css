@@ -941,6 +941,8 @@
 @media (max-width: 767px) {
   :global(html[data-keyboard-open='true']) .focusComposer .inputCapsule {
     position: relative; z-index: 6;
+    /* Opaca: al subir se pone sobre la respuesta y el texto se transparentaba. */
+    background: #FFFFFF; -webkit-backdrop-filter: none; backdrop-filter: none;
     transform: translateY(min(0px, calc(var(--app-visible-height, 100dvh) - var(--app-layout-height, 100dvh) + var(--nav-h) + 2px)));
   }
 }
