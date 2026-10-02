@@ -906,3 +906,18 @@
   border-color: #8152BD; box-shadow: var(--glass-primary-shadow);
 }
 .browseTop:hover { filter: brightness(1.06); }
+
+/* El logotipo de Inicio, en su burbuja como en las demás pestañas (Sergio,
+   2026-10-02): mismo material y medidas que la de PageHeader. */
+.focusPage .logoBubble {
+  background: var(--glass-floating); border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-floating-shadow);
+  -webkit-backdrop-filter: var(--glass-filter); backdrop-filter: var(--glass-filter);
+  padding: var(--space-10) var(--space-20);
+}
+/* En móviles estrechos (320 px) no cabía junto a «Ver todos» y los botones
+   de la derecha sin tocarse: menos relleno lateral. */
+@media (max-width: 360px) {
+  .focusPage .logoBubble { padding: var(--space-8) var(--space-10); }
+  .browseTop { padding-inline: var(--space-10); gap: var(--space-4); }
+}
