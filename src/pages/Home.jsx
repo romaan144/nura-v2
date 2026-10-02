@@ -1,5 +1,5 @@
 import UserAvatar from '../components/UserAvatar'
-import { useState, useEffect, useRef } from 'react'
+import { Fragment, useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { CAT_HUMANA } from '../data/categorias'
 import { hayEnLaCiudad, ciudadDe } from '../data/ciudades'
@@ -123,7 +123,7 @@ function RefinementIcon({ label }) {
 
 
 
-function getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas) {
+function getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas, hasRated) {
   const hour = new Date().getHours()
   const greeting = hour < 14 ? 'Buenos días' : hour < 21 ? 'Buenas tardes' : 'Buenas noches'
   const firstName = user?.name?.split(' ')?.[0] || user?.name || ''
@@ -156,7 +156,9 @@ function getWelcome(user, searchHistory, following, helpersCache, contactedHelpe
     ]
   }
 
-  const confirmedContacts = (contactedHelpers || []).filter(c => c?.confirmed === true)
+  // Si ya le ha valorado, no se le vuelve a preguntar «¿Cómo está yendo todo
+  // con Miquel?» (Sergio, 2026-10-02): lo acaba de contar con estrellas.
+  const confirmedContacts = (contactedHelpers || []).filter(c => c?.confirmed === true && !hasRated?.(c.id || c))
   if (confirmedContacts.length > 0) {
     const last = confirmedContacts[confirmedContacts.length - 1]
     const helperFirst = getFirstName(last.name) || last.name
@@ -497,7 +499,7 @@ export default function Home() {
   const inputRef = useRef(null)
 
   useEffect(() => {
-    let lines = getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas)
+    let lines = getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas, hasRated)
     // If helper just registered
     let helperRegistered; try { helperRegistered = sessionStorage.getItem('nura_helper_registered') } catch {}
     if (helperRegistered) {
@@ -1446,6 +1448,10 @@ export default function Home() {
   }, [pendienteDeRed])   // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleChip(chip) {
+    // «Valorar a Miquel» abre la ventana y ya: no es una búsqueda. Antes
+    // quedaba como «Tu búsqueda: Valorar a Miquel» sobre una pantalla vacía.
+    const tras = messages[messages.length - 1]?.trasConfirmacion
+    if (tras?.valorar && chip === `Valorar a ${tras.helperName}`) { setValorar(tras.valorar); return }
     beginResponse()
     if (chip === EDITAR_FICHA) { navigate('/profile', { state: { editar: 'ficha' } }); return }
     if (chip === 'Ver todas las categorías' || chip === VER_TODOS_PROFESIONALES) { navigate('/explore'); return }
@@ -1713,9 +1719,23 @@ export default function Home() {
   const buscandoAun = response.some(m => m.loading)
   const destacada = isWelcome || buscandoAun ? null
     : (response.find(m => m.results?.length) || response.find(m => !m.empatia))
+  // EL PROFESIONAL, SIEMPRE EN LA PRIMERA PÁGINA (Sergio, 2026-10-02): en
+  // un móvil bajo, «Entendido.» + la frase + el porqué llenaban la primera
+  // página y la tarjeta caía a la segunda. Con resultados, el «Entendido.» ya
+  // sobra, y la tarjeta va justo después de la frase principal; el porqué,
+  // debajo de ella.
+  const conResultados = response.some(m => m.results?.length)
   response.forEach((msg, msgIndex) => {
+    if (conResultados && msg.empatia) return
     const lines = msg.lines || (msg.text ? [msg.text] : [])
+    const primaryBlock = msg.results?.length ? { id: `${msg.id}-primary`, content:
+      <div className={styles.screenResult}>
+        <div className={styles.screenResultLabel}>Primera opción</div>
+        <HelperCardTall helper={msg.results[0]} compact featured />
+      </div> } : null
     lines.forEach((line, i) => splitResponseText(line).forEach((part, j) => {
+      if (primaryBlock && i === 1 && j === 0) blocks.push(primaryBlock)
+      if (msg.isPregunta && msg.chips?.length && i === lines.length - 1) return
       const hero = isWelcome && i === 1 && j === 0
       const principal = msg === destacada && i === 0 && j === 0
       // Si es larga, un punto menor: que no ocupe media pantalla.
@@ -1734,11 +1754,7 @@ export default function Home() {
       </button> })
     if (msg.chipsPrimero) msg.chips?.forEach((chip, i) => blocks.push(chipBlock(chip, i)))
     if (msg.results?.length) {
-      blocks.push({ id: `${msg.id}-primary`, content:
-        <div className={styles.screenResult}>
-          <div className={styles.screenResultLabel}>Primera opción</div>
-          <HelperCardTall helper={msg.results[0]} compact featured />
-        </div> })
+      if (lines.length < 2) blocks.push(primaryBlock)
       const alternatives = msg.results.slice(1, 4)
       if (alternatives.length) blocks.push({ id: `${msg.id}-alternatives`, section: 'Otras opciones', content:
         <div className={styles.alternativeGroup} style={{ '--alternatives-count': alternatives.length }}>
@@ -1754,7 +1770,15 @@ export default function Home() {
         if (opt.includes('busca')) handleSend(searchHistory[0]?.query)
         else setMessages(prev => [...prev, { id: Date.now(), from: 'nura', lines: ['Me alegra saberlo. Cuando lo necesites, vuelve a buscar.'] }])
       }}>{opt}<ArrowUpRight size={16} aria-hidden="true" /></button> }))
-    if (!msg.chipsPrimero) msg.chips?.forEach((chip, i) => blocks.push(chipBlock(chip, i)))
+    // «¿Para quién necesitas ayuda?» y sus tres respuestas, juntas en la misma
+    // página (Sergio, 2026-10-02): «Para mí» quedaba en la primera y las otras
+    // dos en la segunda.
+    if (msg.isPregunta && msg.chips?.length) blocks.push({ id: `${msg.id}-pregunta`, content:
+      <div className={styles.preguntaGrupo}>
+        <p className={styles.screenText}>{formatLine(lines[lines.length - 1])}</p>
+        {msg.chips.map((chip, i) => <Fragment key={chip}>{chipBlock(chip, i).content}</Fragment>)}
+      </div> })
+    else if (!msg.chipsPrimero) msg.chips?.forEach((chip, i) => blocks.push(chipBlock(chip, i)))
     if (msg.refineChips?.length) {
       // Cada ajuste es una unidad: incluso en pantallas pequeñas se llega a todos.
       msg.refineChips.forEach((chip, i) => blocks.push({ id: `${msg.id}-refine-${i}`, content:
@@ -1812,7 +1836,7 @@ export default function Home() {
                 // La misma portada que al entrar: antes volvía sin «¿Para
                 // quién necesitas ayuda?» y con la respuesta anterior viva.
                 setForWhom('')
-                setTimeout(() => setMessages([conPregunta({ id: 1, from: 'nura', lines: getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas) }, user)]), 100)
+                setTimeout(() => setMessages([conPregunta({ id: 1, from: 'nura', lines: getWelcome(user, searchHistory, following, helpersCache, contactedHelpers, personas, citas, hasRated) }, user)]), 100)
               }} aria-label="Empezar conversación de nuevo">
               <RotateCcw size={15} color="rgba(33,29,51,0.6)" />
             </button>
@@ -1839,7 +1863,15 @@ export default function Home() {
       <div className={styles.focusComposer}>{composer}</div>
 
       {showGate && <RegisterGate reason={gateReason} onClose={() => setShowGate(false)} />}
-      {valorar && <RatingModal helper={valorar} onClose={() => setValorar(null)} />}
+      {valorar && <RatingModal helper={valorar} onClose={() => setValorar(null)} onEnviado={() => {
+        // Valorado: el botón de valorar se cambia por las gracias, en la
+        // misma pantalla.
+        const quien = getFirstName(valorar.name) || valorar.name || ''
+        setMessages(prev => prev.map(m => m.trasConfirmacion ? { ...m, chips: undefined, trasConfirmacion: undefined, lines: [
+          `Gracias por valorar${quien ? ` a **${quien}**` : ''}.`,
+          'Tu opinión ayuda a otros a elegir bien. Si necesitas algo más, dime qué buscas.',
+        ] } : m))
+      }} />}
       {alerta && (
         <AlertaSheet categoria={alerta.categoria} que={alerta.que} zona={alerta.zona} ciudad={alerta.ciudad}
           onClose={() => setAlerta(null)}

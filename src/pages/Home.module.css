@@ -921,3 +921,26 @@
   .focusPage .logoBubble { padding: var(--space-8) var(--space-10); }
   .browseTop { padding-inline: var(--space-10); gap: var(--space-4); }
 }
+
+/* «¿Para quién necesitas ayuda?» y sus tres respuestas: un solo bloque, para
+   que la paginación no las separe (Sergio, 2026-10-02). */
+.preguntaGrupo { display: flex; flex-direction: column; gap: 12px; }
+.preguntaGrupo > p { margin: 0; }
+/* En móviles bajos (el de la madre de Sergio, ~660px), el saludo y las tres
+   respuestas caben en la primera página: título algo menor y botones más
+   juntos. */
+@media (max-height: 760px) {
+  .pageWelcome .screenTitle { font-size: 24px; letter-spacing: -0.8px; }
+  .preguntaGrupo { gap: 8px; }
+  .preguntaGrupo .screenChoice { min-height: 46px; padding-block: 7px; }
+}
+
+/* CON EL TECLADO ABIERTO (Sergio, 2026-10-02): la pantalla ya no se desplaza
+   entera ni la barra de abajo sube sobre el teclado (el teclado la tapa).
+   Solo sube la cápsula de escribir, justo encima del teclado. */
+@media (max-width: 767px) {
+  :global(html[data-keyboard-open='true']) .focusPage .inputCapsule {
+    position: relative; z-index: 6;
+    transform: translateY(min(0px, calc(var(--app-visible-height, 100dvh) - var(--app-layout-height, 100dvh) + var(--nav-h) + 2px)));
+  }
+}

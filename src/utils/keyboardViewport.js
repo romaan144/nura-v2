@@ -17,7 +17,9 @@ export function installKeyboardViewport(win = window, doc = document) {
     const host = doc.querySelector('.desktopMain')
     const field = editable()
     if (!host || !field || !host.contains(field)) return
-    if (['home', 'chat', 'register-helper'].includes(host.dataset.screen)) {
+    // Inicio no se desplaza: solo sube su cápsula (ver Home.module.css).
+    if (host.dataset.screen === 'home') { host.scrollTop = 0; return }
+    if (['chat', 'register-helper'].includes(host.dataset.screen)) {
       host.scrollTop = host.scrollHeight - host.clientHeight
       return
     }

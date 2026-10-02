@@ -56,7 +56,9 @@ export default function RatingModal({ helper, onClose, onEnviado }) {
       helperId: String(id), valoracion: rating || null, volveria,
       cualidades: elegidas.length, conComentario: Boolean(comment?.trim()),
     })
-    if (rating) addRating(id, rating, comment)
+    // Se anota aunque no ponga estrellas («volvería» ya es valorar): así no
+    // se le vuelve a pedir ni a preguntar «¿Cómo está yendo todo con…?».
+    addRating(id, rating || null, comment)
     const r = await valorar(id, { estrellas: rating, volveria, cualidades: elegidas, comentario: comment.trim(), publico })
     onEnviado?.(r)
     setDone(r)
