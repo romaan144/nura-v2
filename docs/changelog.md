@@ -170,6 +170,10 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Cambiar el correo: dos enlaces, dicho claro (Claude)
+
+Sergio probó a cambiar su correo: pulsó el enlace del correo nuevo, volvió a Nüra y «no hacía nada». El registro del servidor lo aclara: Supabase manda dos enlaces (al correo nuevo y al de ahora) y el cambio se hace al pulsar los dos; mientras, se sigue entrando con el de siempre. La app no lo decía. Ahora, al pedir el cambio, avisa de los dos enlaces; al volver del primero dice «Primer enlace confirmado. Falta pulsar el del otro correo» y en «Tu acceso», «Falta un paso…»; al volver del segundo, «Listo: ya puedes entrar con tu correo nuevo»; y un enlace ya usado o caducado lo dice. «Tu acceso» pregunta al servidor al abrirse, así ve un cambio a medias aunque se pidiera en otro móvil.
+
 ## 2026-10-29 — Tercera ronda: acceso, valorar y foto (Claude)
 
 Entrar, «¿Has olvidado tu contraseña?» (por correo y por SMS), crear acceso y restablecer: sin conexión lo dicen claro y el botón no se activa con un correo mal escrito; «Entrar» ya no habla de «tu ficha profesional» a quien solo busca. Tras marcar una cita como hecha y valorarla en Mis servicios, Inicio ya no pregunta «¿Qué tal fue la visita…?». En la demo, el profesional puede poner y quitar su foto (se guarda en su móvil, como el resto de su ficha de prueba); con cuenta real sigue subiéndose al servidor.

@@ -169,6 +169,27 @@ export default function Profile() {
     try { return Boolean(JSON.parse(localStorage.getItem('nura_sesion') || 'null')?.access_token) } catch { return false }
   }
   const [reconociendo, setReconociendo] = useState(() => !user && haySesionQueLeer())
+
+  // ── LA VUELTA DE LOS ENLACES DE CAMBIO DE CORREO (Sergio, 2026-10-03) ──
+  // Supabase manda dos enlaces (al correo actual y al nuevo) y el cambio se
+  // hace al pulsar los dos. Al volver del primero la dirección trae un
+  // «message» y la app no decía nada: parecía que no había pasado nada. Se
+  // anota en qué punto está para que «Tu acceso» lo diga claro.
+  useEffect(() => {
+    const h = decodeURIComponent((window.location.hash || '').replace(/\+/g, ' '))
+    const anotar = estado => { try { sessionStorage.setItem('nura_cambio_correo', estado) } catch { /* nada */ } }
+    const limpiar = () => window.history.replaceState(window.history.state, '', window.location.pathname)
+    if (/other email/i.test(h)) {
+      anotar('medio'); limpiar()
+      showToast('Primer enlace confirmado. Falta pulsar el del otro correo.')
+    } else if (/type=email_change/.test(h)) {
+      anotar('hecho')
+      showToast('Listo: ya puedes entrar con tu correo nuevo.')
+    } else if (user && /error_description=/.test(h)) {
+      anotar('caducado'); limpiar()
+      showToast('Ese enlace ya se usó o caducó.')
+    }
+  }, [])   // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (user || !haySesionQueLeer()) return
     let vivo = true
