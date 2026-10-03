@@ -170,6 +170,10 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Correos de acceso en español: plantillas para Supabase (Claude)
+
+Sergio quiere que los correos (confirmar, cambiar correo, contraseña…) lleguen en español. Los manda Supabase con sus plantillas, que se cambian en su panel. Preparadas las seis plantillas y el SMS en `docs/correos-supabase.md` (y en una página con botón de copiar). Pendiente: que Sergio las pegue en Authentication → Emails. El remitente solo cambia con un servidor de correo propio.
+
 ## 2026-10-29 — Cambiar el correo: dos enlaces, dicho claro (Claude)
 
 Sergio probó a cambiar su correo: pulsó el enlace del correo nuevo, volvió a Nüra y «no hacía nada». El registro del servidor lo aclara: Supabase manda dos enlaces (al correo nuevo y al de ahora) y el cambio se hace al pulsar los dos; mientras, se sigue entrando con el de siempre. La app no lo decía. Ahora, al pedir el cambio, avisa de los dos enlaces; al volver del primero dice «Primer enlace confirmado. Falta pulsar el del otro correo» y en «Tu acceso», «Falta un paso…»; al volver del segundo, «Listo: ya puedes entrar con tu correo nuevo»; y un enlace ya usado o caducado lo dice. «Tu acceso» pregunta al servidor al abrirse, así ve un cambio a medias aunque se pidiera en otro móvil.
