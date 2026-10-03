@@ -1,3 +1,4 @@
+import { showToast } from '../components/Toast'
 import { useState, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import PageHeader from '../components/PageHeader'
@@ -148,10 +149,14 @@ export default function Entrar() {
         await salir()
         setAviso(SIN_FICHA)
         return
-      } else if (volver) {
+      } else if (volver || f?.motivo === 'sin-ficha' || f?.motivo === 'varias') {
+        // Sin ficha de profesional es, sin más, alguien que busca ayuda
+        // (Sergio, 2026-10-03: tras cambiar su correo, entraba y se quedaba
+        // en esta pantalla con «no encontramos una ficha de profesional»).
         login(usuarioCliente(correo))
+        showToast('Has entrado en tu cuenta.')
       } else {
-        setAviso('Has entrado, pero no encontramos una ficha de profesional con este correo. Si te diste de alta con otro contacto, escríbenos.')
+        setAviso('Has entrado, pero ahora no podemos cargar tu cuenta. Revisa tu conexión y vuelve a pulsar «Entrar».')
         return
       }
     }
