@@ -622,7 +622,8 @@ try {
         pedidos.push(cuerpo)
         if (cuerpo.phone && smsRoto) return json(422, { code: 422, error_code: 'sms_send_failed', msg: 'Unsupported phone provider' })
         if (cuerpo.phone) return json(200, { ...cuenta, new_phone: cuerpo.phone.replace('+', '') })
-        if (cuerpo.email) return json(200, { ...cuenta, new_email: cuerpo.email })
+        // Como el servidor de verdad: el cambio queda pendiente en la cuenta.
+        if (cuerpo.email) { cuenta.new_email = cuerpo.email; return json(200, cuenta) }
         return json(200, cuenta)
       }
       if (u.includes('/auth/v1/user')) return json(200, cuenta)
@@ -670,7 +671,12 @@ try {
     t = await texto(f)
     await f.evaluate(() => [...document.querySelectorAll('h2')].find(h => /Tu acceso/.test(h.textContent))?.scrollIntoView({ block: 'start' }))
     if (process.env.NURA_CAPTURAS) { await espera(300); await f.screenshot({ path: `${process.env.NURA_CAPTURAS}/acceso-3-confirmado.png` }) }
-    ok(pedidos.some(x => x.email === 'ana.nueva@ficticia.test') && /enlace a ana\.nueva@ficticia\.test\. Tu correo no cambia hasta que lo pulses/.test(t) && /ana@ficticia\.test/.test(t), 'cambiar el correo manda un enlace y no cambia hasta confirmarlo')
+    ok(pedidos.some(x => x.email === 'ana.nueva@ficticia.test') && /dos enlaces: uno a ana\.nueva@ficticia\.test y otro a ana@ficticia\.test\. Pulsa los dos; hasta entonces sigues entrando con ana@ficticia\.test/.test(t), 'cambiar el correo avisa de los dos enlaces y de que se sigue entrando con el de antes')
+    // 2026-10-03 (Sergio): al volver del primer enlace «no hacía nada».
+    await f.goto(B + '/', { waitUntil: 'networkidle0' })
+    await f.goto(B + '/profile#message=Confirmation+link+accepted.+Please+proceed+to+confirm+link+sent+to+the+other+email', { waitUntil: 'networkidle0' }); await espera(1500)
+    t = await texto(f)
+    ok(/Falta un paso: pulsa también el enlace del otro correo/.test(t) && !/#message/.test(f.url()), 'al volver del primer enlace dice que falta el del otro correo')
     // Entrar con el móvil y la contraseña.
     const g = await ctx.newPage(); await g.setViewport({ width: 390, height: 844 }); await g.setRequestInterception(true)
     g.on('request', manejar)

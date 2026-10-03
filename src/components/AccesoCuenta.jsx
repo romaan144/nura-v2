@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Mail, Phone } from 'lucide-react'
 import { Button } from './ui'
 import styles from '../pages/Profile.module.css'
@@ -37,6 +37,11 @@ export default function AccesoCuenta({ detalleCorreo }) {
   const [error, setError] = useState('')
   const [ocupado, setOcupado] = useState(false)
   const [hecho, setHecho] = useState('')
+
+  // Lo que sabe el servidor (p. ej. un cambio de correo a medias), al entrar.
+  useEffect(() => { cuenta().then(c => c.usuarioActual()).then(u => { if (u) setUsuario(u) }).catch(() => {}) }, [])
+  let paso = ''
+  try { paso = sessionStorage.getItem('nura_cambio_correo') || '' } catch { /* nada */ }
 
   if (!usuario?.email) return null
   const movil = usuario.phone && usuario.phone_confirmed_at ? usuario.phone : ''
@@ -81,8 +86,13 @@ export default function AccesoCuenta({ detalleCorreo }) {
         <span className={styles.filaTexto}>
           <span className={styles.filaTitulo} style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{usuario.email}</span>
           <span role="status" className={styles.filaDetalle} style={{ whiteSpace: 'normal' }}>
+            {/* Dos enlaces, uno a cada correo: hasta pulsar los dos se sigue
+                entrando con el de siempre (Sergio, 2026-10-03). */}
             {correoPedido || usuario.new_email
-              ? `Te hemos enviado un enlace a ${correoPedido || usuario.new_email}. Tu correo no cambia hasta que lo pulses.`
+              ? (paso === 'medio'
+                ? `Falta un paso: pulsa también el enlace del otro correo. Hasta entonces sigues entrando con ${usuario.email}.`
+                : `Te hemos enviado dos enlaces: uno a ${correoPedido || usuario.new_email} y otro a ${usuario.email}. Pulsa los dos; hasta entonces sigues entrando con ${usuario.email}.`)
+              : paso === 'hecho' ? 'Correo cambiado. Ya entras con este.'
               : detalleCorreo || 'Con él entras y recuperas tu contraseña.'}
           </span>
         </span>
@@ -90,7 +100,7 @@ export default function AccesoCuenta({ detalleCorreo }) {
       </div>
       {editando === 'correo' && (
         <form style={campo} onSubmit={e => { e.preventDefault(); enviarCorreo() }} noValidate>
-          <label htmlFor="acceso-correo" style={aviso}>Tu correo nuevo. Te enviaremos un enlace para confirmarlo.</label>
+          <label htmlFor="acceso-correo" style={aviso}>Tu correo nuevo. Te enviaremos un enlace a este correo y otro al de ahora: el cambio se hace al pulsar los dos.</label>
           <input id="acceso-correo" type="email" inputMode="email" autoComplete="email" autoCapitalize="none" spellCheck={false}
             value={texto} onChange={e => setTexto(e.target.value)} placeholder="tucorreo@ejemplo.com" style={entrada} autoFocus />
           {error && <p role="alert" style={fallo}>{error}</p>}
