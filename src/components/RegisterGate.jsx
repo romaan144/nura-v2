@@ -101,7 +101,7 @@ export default function RegisterGate({ onClose, reason = 'contact', volverA }) {
             Crear cuenta gratis <ArrowRight size={16} />
           </Button>
           <button className="nura-glass-action"
-            onClick={() => { onClose(); sessionStorage.setItem('nura_return_to', volverA || location.pathname + location.search); navigate('/login') }}
+            onClick={() => { onClose(); navigate('/entrar?volver=' + encodeURIComponent(volverA || location.pathname + location.search)) }}
             style={{ width:'100%',
               padding:'13px',
               color:'var(--ink-tertiary)',

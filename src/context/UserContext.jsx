@@ -115,6 +115,9 @@ export function UserProvider({ children }) {
   function login(userData) {
     setUser(userData)
     save('nura_user', userData)
+    // Demostración: su cuenta guarda siempre el perfil al día. Si no, quien
+    // volvía a entrar sin haber cerrado sesión recuperaba uno viejo.
+    if (DEMO_MODE) guardarPerfilDemo(userData)
   }
 
   /**
@@ -153,6 +156,7 @@ export function UserProvider({ children }) {
     const updated = { ...user, ...updates }
     setUser(updated)
     save('nura_user', updated)
+    if (DEMO_MODE) guardarPerfilDemo(updated)
   }
 
   function logout() {

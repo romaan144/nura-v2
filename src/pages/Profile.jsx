@@ -386,6 +386,7 @@ export default function Profile() {
 
   let correoAcceso = ''
   try { correoAcceso = JSON.parse(localStorage.getItem('nura_sesion') || 'null')?.user?.email || '' } catch { /* sin sesion */ }
+  const cuentaTelefono = DEMO_MODE && !!user?.cuentaDemo && !correoAcceso
 
   // ── Lo que le falta a la ficha: UNA invitacion concreta, nunca una nota ──
   // (paso 1 de docs/plan-perfil.md: fuera el porcentaje). Un profesional con
@@ -501,6 +502,13 @@ export default function Profile() {
               <button className={styles.editConfirm} onClick={savePhone} aria-label="Guardar teléfono"><Check size={16} /></button>
               <button className={styles.editCancel} onClick={() => setEditingPhone(false)} aria-label="Cancelar"><X size={16} /></button>
             </div>
+          ) : user.cuentaDemo ? (
+            // Con cuenta, el teléfono es con el que entra: no se cambia aquí
+            // sin confirmarlo por SMS.
+            <span className={styles.dato}>
+              <Phone size={13} strokeWidth={2} aria-hidden="true" />
+              {fmtTel(user.phone)}
+            </span>
           ) : (
             <button className={`${styles.dato} ${user.phone ? '' : styles.datoVacio}`}
               onClick={() => { setPhoneInput(user.phone || ''); setEditingPhone(true) }}>
@@ -646,7 +654,7 @@ export default function Profile() {
             Correo y contraseña. La sesion se lee de `nura_sesion` sin
             importar la libreria de Supabase: el perfil no arrastra 211 kB
             que solo necesitan Entrar y Restablecer. */}
-        {(user.isHelper || correoAcceso) && (
+        {!cuentaTelefono && (user.isHelper || correoAcceso) && (
           <section className={styles.seccion} style={entrada(200)}>
             <h2 className={styles.titulo}>Tu acceso</h2>
             {correoAcceso ? (
@@ -826,6 +834,19 @@ export default function Profile() {
           </section>
         )}
 
+        {/* Demostración con cuenta de teléfono: ya la tiene; no se le ofrece
+            «Crea tu acceso» con correo como si le faltara (va abajo, con Ajustes). */}
+        {cuentaTelefono && (
+          <section className={styles.seccion}>
+            <h2 className={styles.titulo}>Tu cuenta</h2>
+            <div className={styles.tarjeta}>
+              <p className={styles.tarjetaTexto}>
+                Entras con tu teléfono {fmtTel(user.phone)} y tu contraseña. Si la olvidas, en «Entrar» toca «¿Has olvidado tu contraseña?» y te llegará un código por SMS.
+              </p>
+            </div>
+          </section>
+        )}
+
         {/* ── AJUSTES (etapa 3 de estudio-perfil.md) ───────────────────
             Lo legal primero, y BORRAR LOS DATOS, que el RGPD exige. Al
             final y discreto; un solo sello de version, lo ultimo. */}
@@ -838,15 +859,17 @@ export default function Profile() {
               {CONTACTO_EMAIL && (
                 <Fila icono={Mail} titulo="Ayuda y contacto" onClick={() => { window.location.href = 'mailto:' + CONTACTO_EMAIL }} />
               )}
-              <Fila icono={Trash2} peligro titulo={tieneCuenta ? 'Borrar mi cuenta' : 'Borrar mis datos de este móvil'}
+              <Fila icono={Trash2} peligro titulo={tieneCuenta || cuentaTelefono ? 'Borrar mi cuenta' : 'Borrar mis datos de este móvil'}
                 abierta={borrarAbierto} onClick={() => setBorrarAbierto(v => !v)} />
               {borrarAbierto && (
                 <div className={styles.borrar}>
                   <p className={styles.tarjetaTexto}>
                     {tieneCuenta
                       ? `Se borra tu acceso${user.helperId != null ? ', tu ficha pública y los mensajes que te han llegado' : ''}, y todo lo que Nüra guarda en este teléfono. No se puede deshacer.`
+                      : cuentaTelefono
+                      ? `Se borra al momento tu cuenta${user.isHelper ? ', tu ficha' : ''} y todo lo que Nüra guarda en este teléfono: tus búsquedas, tus conversaciones y a quién sigues. No se puede deshacer.`
                       : 'Se borra al momento todo lo que Nüra guarda en este teléfono: tus búsquedas, tus conversaciones y a quién sigues. No se puede deshacer.'}
-                    {!tieneCuenta && user.isHelper && ' Tu ficha pública no se borra desde aquí: para eso, crea tu acceso y bórralo desde él.'}
+                    {!tieneCuenta && !cuentaTelefono && user.isHelper && ' Tu ficha pública no se borra desde aquí: para eso, crea tu acceso y bórralo desde él.'}
                   </p>
                   {borrarError && <p role="alert" className={styles.tarjetaTexto} style={{color:'var(--red-ink)', marginTop:'var(--space-10)'}}>{borrarError}</p>}
                   <div className={styles.acciones}>

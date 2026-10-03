@@ -170,6 +170,10 @@ A petición de Sergio, experiencia y formación pasan a un bloque propio antes d
 
 Sergio pide profundizar el aspecto visual y retirar «Personas que hacen bien». Inicio, navegación, perfiles, catálogo, chats, formularios y estados secundarios comparten nuevas superficies y efectos breves. Se conservan funciones y datos. Alcance, coordinación y pruebas: `docs/diseno-detalle.md`. Primera entrega visual ya integrada en PR #65.
 
+## 2026-10-29 — Ronda con la cuenta nueva: textos y botones que no encajaban (Claude)
+
+Usando la app con el proceso nuevo (crear cuenta, hacerse profesional, salir y volver a entrar). «Ya tengo cuenta» de la hoja de registro llevaba a crear cuenta: ahora va a «Entrar» y vuelve a donde se estaba. Quien tiene cuenta con teléfono ya no ve «Crea tu acceso» con correo como si le faltara: ve «Tu cuenta» junto a Ajustes, con el teléfono con el que entra (que no se cambia sin confirmarlo). Borrar los datos dice que también se borra la cuenta. El saludo semanal del profesional en la demostración ya no pide «crea tu acceso con correo». En «Para profesionales», «¿Ya tienes cuenta? Entra». La cuenta guarda el perfil al día, no solo al cerrar sesión.
+
 ## 2026-10-29 — Primero la cuenta, después hacerse profesional (Claude)
 
 Sergio: quien tenía una cuenta normal no sabía por dónde entrar («¿Ya tienes acceso de profesional? Entra»). Ahora el perfil sin sesión ofrece solo «Crear cuenta» y «Entrar», igual para todos. Crear cuenta pide nombre, teléfono y contraseña y se confirma con un código por SMS; como aún no se paga un proveedor de SMS, en la demostración el SMS se simula y aparece arriba como una notificación. Ya dentro, el perfil ofrece «Hazte profesional»: el alta no vuelve a pedir el nombre y, al terminar, el perfil pasa a ser el de profesional. Al cerrar sesión y volver a entrar con teléfono y contraseña se recupera el perfil, también el de profesional; «¿Has olvidado tu contraseña?» con el móvil también funciona con el SMS simulado. Sin cuenta, el alta de profesional pide crearla primero y después vuelve. Fuera de la demostración la cuenta sigue siendo la de correo hasta activar los SMS.

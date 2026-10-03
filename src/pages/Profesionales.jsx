@@ -122,7 +122,7 @@ export default function Profesionales() {
             <Share2 size={16} aria-hidden="true" /> Compartir con un compañero
           </button>
           <button className={styles.textoBoton} onClick={() => navigate('/entrar')}>
-            ¿Ya tienes ficha? Entra
+            ¿Ya tienes cuenta? Entra
           </button>
         </section>
       </main>

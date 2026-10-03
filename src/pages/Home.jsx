@@ -647,7 +647,7 @@ export default function Home() {
             // Lo que dijeron de ti: cuántas valoraciones y la media (sin comentarios).
             if (pulso.valoraciones?.n) lineas.push(`Te ${pulso.valoraciones.n === 1 ? 'ha' : 'han'} valorado ${n(pulso.valoraciones.n, 'persona', 'personas')}${pulso.valoraciones.media != null ? `, con **${String(pulso.valoraciones.media).replace('.', ',')}** estrellas de media` : ''}.`)
             lineas.push(...lineasSinEncontrar(pulso.sinEncontrar, user?.helperProfile?.specialty))
-          } else {
+          } else if (!DEMO_MODE) {
             lineas.push('Crea tu acceso con correo y cada semana te diré cuántas personas buscan lo que haces y cuántas veces sale tu ficha.')
           }
           lineas.push(`${consejos[Math.floor(Math.random() * consejos.length)]}`)
