@@ -3,6 +3,7 @@ import { SEED_COMMENTS, SEED_REACCIONES } from '../data/obraPosts'
 import { cancelarCitaServidor } from '../utils/escrituras'
 
 import { DEMO_MODE } from '../config'
+import { guardarPerfilDemo } from '../utils/cuentaDemo'
 import { avatarVigente } from '../utils/avatar'
 import { initialFollowing, hasFollowed, addFollowed, removeFollowed } from '../utils/following'
 
@@ -155,6 +156,8 @@ export function UserProvider({ children }) {
   }
 
   function logout() {
+    // Demostración: su perfil (también el de profesional) vuelve al entrar.
+    if (DEMO_MODE) guardarPerfilDemo(user)
     setUser(null)
     setChats([]); setRatings([]); setSearchHistory([])
     setContactedHelpers([]); updateFollowing([]); setNotifications([])

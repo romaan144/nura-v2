@@ -65,3 +65,14 @@
 
 /* Los errores mantienen su tinta de aviso sobre una superficie de cristal legible. */
 .error { background: linear-gradient(135deg, #FFF8F6F2, #FBECE7D9); border-color: #CE9C90; border-radius: 18px; box-shadow: var(--glass-shine); color: #87382D; }
+
+/* Código de seis cifras y el SMS simulado de la demostración (2026-10-03). */
+.codeRow6 { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 7px; }
+.codeRow6 > span { height: 54px; font-size: 22px; }
+.sms { position: fixed; z-index: 50; top: max(env(safe-area-inset-top, 0px), 10px); left: 50%; width: min(420px, calc(100% - 24px)); transform: translateX(-50%); display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border: 1px solid var(--glass-edge); border-radius: 20px; background: rgba(255, 255, 255, .96); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); box-shadow: 0 14px 36px -18px #39214B88; color: var(--ink-primary); font: inherit; text-align: left; cursor: pointer; animation: smsLlega .35s cubic-bezier(.2, .8, .2, 1); }
+.smsIcono { flex: none; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 10px; background: #34C759; color: white; }
+.smsDe { display: block; font-size: 12px; font-weight: 650; color: var(--ink-secondary); line-height: 1.4; }
+.smsTexto { display: block; margin-top: 2px; font-size: 14px; line-height: 1.45; overflow-wrap: anywhere; }
+@keyframes smsLlega { from { opacity: 0; transform: translate(-50%, -24px); } to { opacity: 1; transform: translate(-50%, 0); } }
+@media (prefers-reduced-motion: reduce) { .sms { animation: none; } }
+@media (max-width: 359px) { .codeRow6 { gap: 5px; } .codeRow6 > span { font-size: 19px; } }

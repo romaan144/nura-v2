@@ -334,10 +334,20 @@ try {
   console.log('\n── Al darse de alta: quién le busca, y oficios que ya existen ──')
   const darseDeAlta = async (nombre, especialidad) => {
     const p = await pagina(await b.createBrowserContext())
+    // Primero la cuenta (2026-10-03): el alta es para quien ya ha entrado.
+    await p.goto(B + '/', { waitUntil: 'networkidle0' })
+    await p.evaluate(exp => localStorage.setItem('nura_sesion', JSON.stringify({ access_token: 'sesion-alta', refresh_token: 'r', token_type: 'bearer', expires_in: 3600, expires_at: exp,
+      user: { id: 'u-alta', aud: 'authenticated', role: 'authenticated', email: 'alta@ficticia.test' } })), Math.floor(Date.now() / 1000) + 3600)
     await p.goto(B + '/register-helper', { waitUntil: 'networkidle0' }); await espera(1500)
     for (const r of [nombre, especialidad]) { await p.type('input', r); await p.keyboard.press('Enter'); await espera(2500) }
     await espera(1500)
     return p
+  }
+  {
+    const sin = await pagina(await b.createBrowserContext())
+    await sin.goto(B + '/register-helper', { waitUntil: 'networkidle0' }); await espera(1200)
+    ok(sin.url().includes('/entrar?modo=crear'), `sin cuenta, el alta pide crearla primero (${sin.url().replace(B, '')})`)
+    await sin.close()
   }
   const fon = await darseDeAlta('Pedro Sanz', 'Fontanero')
   ok(/una persona buscó técnico|buscó fontanero|buscaron fontanero/.test(await texto(fon)) && /Te estaban esperando/.test(await texto(fon)),
