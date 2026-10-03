@@ -635,6 +635,8 @@ try {
       }
       if (u.includes('/auth/v1/otp')) { pedidos.push(cuerpo); return json(200, {}) }
       if (u.includes('/auth/v1/token')) { pedidos.push(cuerpo); return json(200, sesion(cuenta)) }
+      // Como el servidor: quien busca ayuda no tiene ficha de profesional.
+      if (u.includes('funcion.ficticia') && cuerpo.op === 'reclamar-ficha') return json(200, { ok: false, motivo: 'sin-ficha' })
       return json(200, u.includes('funcion.ficticia') ? { ok: true } : [])
     }
     f.on('request', manejar)
@@ -685,6 +687,10 @@ try {
     await g.type('#e-email', '612 34 56 78'); await g.type('#e-pass', 'contrasena-de-prueba')
     await g.evaluate(() => [...document.querySelectorAll('button[type="submit"]')].find(x => x.offsetParent)?.click()); await espera(2000)
     ok(pedidos.some(x => x.phone === '+34612345678' && x.password === 'contrasena-de-prueba'), 'se puede entrar con el móvil y la contraseña')
+    // 2026-10-03 (Sergio): sin ficha de profesional se quedaba en «Entrar»
+    // con «no encontramos una ficha de profesional». Es quien busca ayuda: dentro.
+    const dentro = await g.evaluate(() => ({ ruta: location.pathname, texto: document.body.innerText, usuario: JSON.parse(localStorage.getItem('nura_user') || 'null') }))
+    ok(dentro.ruta === '/profile' && dentro.usuario && !dentro.usuario.isHelper && !/ficha de profesional con este correo/.test(dentro.texto), 'quien busca ayuda entra y llega a su perfil, sin el aviso de «ficha de profesional» (' + dentro.ruta + ')')
     // Sin acceso al correo: código por SMS y contraseña nueva.
     await g.evaluate(() => localStorage.clear())
     await g.goto(B + '/entrar', { waitUntil: 'networkidle0' }); await espera(800)
