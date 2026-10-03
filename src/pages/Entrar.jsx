@@ -6,11 +6,14 @@ import styles from './Access.module.css'
 import PasswordField from '../components/PasswordField'
 import { KeyRound, Mail, UserRoundPlus } from 'lucide-react'
 import { crearCuenta, entrar, pedirRestablecer, sesionActual, salir, MIN_CONTRASENA, pedirCodigoParaEntrar, entrarConCodigo } from '../utils/cuenta'
-import { pareceTelefono, telefonoLegible } from '../utils/telefono'
+import { pareceTelefono, telefonoLegible, telefonoInternacional } from '../utils/telefono'
 import { reclamarFicha } from '../utils/escrituras'
 import { useUser } from '../context/UserContext'
 import { revisarContacto } from '../utils/contactoProfesional'
 import { usuarioDeFicha, usuarioCliente } from '../utils/usuarioDeFicha'
+import { DEMO_MODE } from '../config'
+import { entrarDemo, existeCuentaDemo, nuevaContrasenaDemo, codigoSms } from '../utils/cuentaDemo'
+import SmsSimulado from '../components/SmsSimulado'
 
 // El motivo solo cambia el texto: no los permisos ni el destino del acceso.
 const TEXTOS_ACCESO = {
@@ -89,10 +92,29 @@ export default function Entrar() {
   // Recuperar con el móvil: código por SMS y, con él, contraseña nueva.
   const [codigoMovil, setCodigoMovil] = useState(null)
   const [codigo, setCodigo] = useState('')
-  const cambiar = m => { setModo(m); setError(''); setAviso(''); setCodigoMovil(null); setCodigo('') }
+  const cambiar = m => { setModo(m); setError(''); setAviso(''); setCodigoMovil(null); setCodigo(''); setSmsDemo(''); setCodigoDemo(''); setNuevaDemo(false) }
+  // Demostración: las cuentas con teléfono viven en este móvil
+  // (utils/cuentaDemo.js) y el SMS se simula. Con correo, la cuenta de verdad.
+  const demoMovil = DEMO_MODE && esMovil
+  const [codigoDemo, setCodigoDemo] = useState('')
+  const [smsDemo, setSmsDemo] = useState('')
+  const [nuevaDemo, setNuevaDemo] = useState(false)
+  // Crear cuenta en la demostración es con teléfono, en su pantalla.
+  const irACrear = () => (DEMO_MODE ? navigate('/login') : cambiar('crear'))
+
+  function dentroDemo(usuario) {
+    login(usuario)
+    showToast(`Has entrado en tu cuenta${usuario.name ? `, ${usuario.name.split(' ')[0]}` : ''}.`)
+    navigate(volver || '/profile')
+  }
 
   async function confirmarCodigo() {
     if (enviando || codigo.length < 6) return
+    if (codigoDemo) {
+      if (codigo !== codigoDemo) { setError('El código no es correcto. Míralo en el SMS que te hemos enviado.'); return }
+      setSmsDemo(''); setNuevaDemo(true); setError(''); setPass('')
+      return
+    }
     setError(''); setEnviando(true)
     const r = await entrarConCodigo(codigoMovil, codigo)
     setEnviando(false)
@@ -113,6 +135,21 @@ export default function Entrar() {
           : 'Ese correo no parece completo. Escríbelo entero, así: nombre@gmail.com')
         return
       }
+    }
+    if (demoMovil && modo === 'olvido') {
+      if (!existeCuentaDemo(email)) { setError('No hay ninguna cuenta con ese móvil. Puedes crearla.'); return }
+      const c = codigoSms()
+      setCodigoDemo(c); setCodigoMovil(telefonoInternacional(email)); setCodigo(''); setSmsDemo('')
+      setTimeout(() => setSmsDemo(c), 1200)
+      return
+    }
+    if (demoMovil && modo === 'entrar') {
+      setEnviando(true)
+      const r = await entrarDemo(email, pass)
+      setEnviando(false)
+      if (r.error) { setError(r.error); return }
+      dentroDemo(r.usuario)
+      return
     }
     if (modo === 'olvido' && esMovil) {
       setEnviando(true)
@@ -166,18 +203,39 @@ export default function Entrar() {
   return (
     <div className={styles.page}>
       <PageHeader showBack />
+      {codigoDemo && <SmsSimulado codigo={smsDemo} onUsar={c => { setCodigo(c); setError('') }} />}
       <main className={styles.card}>
         <div className={styles.icon} aria-hidden="true">{modo === 'olvido' ? <Mail size={24} /> : modo === 'crear' ? <UserRoundPlus size={24} /> : <KeyRound size={24} />}</div>
         <p className={styles.eyebrow}>Tu acceso a Nüra</p>
         <h1 className={styles.title}>{titulo}</h1>
         <p className={styles.description}>
-          {modo === 'olvido' ? (codigoMovil
+          {modo === 'olvido' ? (nuevaDemo ? 'Código correcto. Escribe tu contraseña nueva: con ella entrarás a partir de ahora.' : codigoMovil
               ? `Escribe el código que te hemos enviado por SMS al ${telefonoLegible(codigoMovil)}. Después pondrás una contraseña nueva.`
               : 'Escribe tu correo o tu móvil. Al correo te llega un enlace; al móvil, un código por SMS. Con cualquiera de los dos pones una contraseña nueva.')
             : TEXTOS_ACCESO[contexto][modo]}
         </p>
 
-        {codigoMovil ? (
+        {nuevaDemo ? (
+          <form onSubmit={async e => {
+            e.preventDefault()
+            if (pass.length < MIN_CONTRASENA || enviando) return
+            setEnviando(true)
+            const r = await nuevaContrasenaDemo(codigoMovil, pass)
+            setEnviando(false)
+            if (r.error) { setError(r.error); return }
+            dentroDemo(r.usuario)
+          }} noValidate>
+            <div className={styles.field}>
+              <label htmlFor="e-nueva" className={styles.label}>Contraseña nueva</label>
+              <PasswordField id="e-nueva" value={pass} onChange={e => setPass(e.target.value)} autoComplete="new-password" aria-describedby="e-nueva-hint" />
+              <p id="e-nueva-hint" className={styles.hint}>Al menos {MIN_CONTRASENA} caracteres.</p>
+            </div>
+            {error && <p role="alert" className={styles.error}>{error}</p>}
+            <button type="submit" disabled={pass.length < MIN_CONTRASENA || enviando} className={styles.primary}>
+              {enviando ? 'Un momento…' : 'Guardar y entrar'}
+            </button>
+          </form>
+        ) : codigoMovil ? (
           <form onSubmit={e => { e.preventDefault(); confirmarCodigo() }} noValidate>
             <div className={styles.field}>
               <label htmlFor="e-codigo" className={styles.label}>Código del SMS</label>
@@ -188,14 +246,15 @@ export default function Entrar() {
             <button type="submit" disabled={codigo.length < 6 || enviando} className={styles.primary}>
               {enviando ? 'Un momento…' : 'Confirmar el código'}
             </button>
-            <button type="button" onClick={() => { setCodigoMovil(null); setError('') }} className={styles.textButton} style={{ marginTop: 'var(--space-12)' }}>Cambiar el número o pedir otro código</button>
+            {codigoDemo && <p className={styles.hint}>Demostración: el SMS no sale de verdad, te aparece arriba. Tócalo para escribir el código.</p>}
+            <button type="button" onClick={() => { setCodigoMovil(null); setCodigoDemo(''); setSmsDemo(''); setError('') }} className={styles.textButton} style={{ marginTop: 'var(--space-12)' }}>Cambiar el número o pedir otro código</button>
           </form>
         ) : (
         <form onSubmit={e => { e.preventDefault(); enviar() }} noValidate>
           <div className={styles.field}>
-            <label htmlFor="e-email" className={styles.label}>{modo === 'crear' ? 'Correo electrónico' : 'Correo o móvil'}</label>
+            <label htmlFor="e-email" className={styles.label}>{modo === 'crear' ? 'Correo electrónico' : DEMO_MODE ? 'Tu móvil (o tu correo)' : 'Correo o móvil'}</label>
             <input id="e-email" type={modo === 'crear' ? 'email' : 'text'} inputMode="email" autoComplete={modo === 'crear' ? 'email' : 'username'} autoCapitalize="none" spellCheck={false} value={email}
-              onChange={e => setEmail(e.target.value)} placeholder={modo === 'crear' ? 'tucorreo@ejemplo.com' : 'tucorreo@ejemplo.com o 612 34 56 78'} className={styles.input} />
+              onChange={e => setEmail(e.target.value)} placeholder={modo === 'crear' ? 'tucorreo@ejemplo.com' : DEMO_MODE ? '612 34 56 78' : 'tucorreo@ejemplo.com o 612 34 56 78'} className={styles.input} />
           </div>
           {modo !== 'olvido' && (
             <div className={styles.field}>
@@ -218,7 +277,7 @@ export default function Entrar() {
         )}
         <div className={styles.alternative}>
           {modo === 'entrar'
-            ? <button type="button" onClick={() => cambiar('crear')} className={styles.secondary}>¿Aún no tienes acceso? Créalo</button>
+            ? <button type="button" onClick={irACrear} className={styles.secondary}>{DEMO_MODE ? '¿No tienes cuenta? Créala' : '¿Aún no tienes acceso? Créalo'}</button>
             : <button type="button" onClick={() => cambiar('entrar')} className={styles.secondary}>{modo === 'crear' ? '¿Ya tienes acceso? Entra' : 'Volver a entrar'}</button>}
         </div>
       </main>

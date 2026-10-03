@@ -6,6 +6,7 @@ import { useVolver } from '../utils/volver'
 import { ArrowLeft, Send, Mic, MicOff } from 'lucide-react'
 import { useUser } from '../context/UserContext'
 import { DEMO_MODE } from '../config'
+import { showToast } from '../components/Toast'
 import { altaProfesional } from '../utils/escrituras'
 import ConfirmarDeclarado from '../components/ConfirmarDeclarado'
 import { ordenarPerfil } from '../utils/declarado'
@@ -101,10 +102,23 @@ export default function RegisterHelper() {
   const navigate   = useNavigate()
   const volver     = useVolver()
   const location   = useLocation()   // el de react-router, NO el global del navegador
-  const { login }  = useUser()
-  // Si venimos del onboarding con el nombre escrito, no se vuelve a pedir:
-  // se saluda y se empieza por la pregunta siguiente.
-  const nombrePrevio = (location.state?.name || '').trim()
+  const { user, login } = useUser()
+  // PRIMERO LA CUENTA (Sergio, 2026-10-03): uno se registra en Nüra y, ya
+  // dentro, se hace profesional desde su perfil. Sin cuenta, se crea antes
+  // y se vuelve aquí. En la demostración la cuenta es la de este móvil;
+  // fuera, la de correo y contraseña.
+  let sesion = false
+  try { sesion = !!JSON.parse(localStorage.getItem('nura_sesion') || 'null')?.access_token } catch { /* sin sesion */ }
+  const sinCuenta = DEMO_MODE ? !user : !sesion
+  useEffect(() => {
+    if (!sinCuenta) return
+    try { sessionStorage.setItem('nura_return_to', '/register-helper') } catch { /* sin memoria */ }
+    showToast('Primero crea tu cuenta. Después te haces profesional.')
+    navigate(DEMO_MODE ? '/login' : '/entrar?modo=crear&volver=/register-helper', { replace: true })
+  }, [sinCuenta, navigate])
+  // El nombre ya lo tiene la cuenta (o llega escrito del onboarding): no
+  // se vuelve a pedir; se saluda y se empieza por la pregunta siguiente.
+  const nombrePrevio = (location.state?.name || (user?.name && user.name !== 'Usuario' ? user.name : '') || '').trim()
   const [messages, setMessages]   = useState(() => nombrePrevio
     ? [{ id: 1, from: 'nura', text: QUESTIONS[1].text.replace('{name}', pila(nombrePrevio)) }]
     : [{ id: 1, from: 'nura', text: QUESTIONS[0].text }])
@@ -336,6 +350,8 @@ export default function RegisterHelper() {
 
   const currentQ = QUESTIONS[qIdx]
   const progress  = (qIdx / QUESTIONS.length) * 100
+
+  if (sinCuenta) return null
 
   return (
     <div className={styles.page}>

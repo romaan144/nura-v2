@@ -306,17 +306,18 @@ export default function Profile() {
             ))}
           </ul>
 
-          <Button variant="primary" full onClick={() => navigate('/login')} style={{minHeight:48}}>
-            Crear cuenta gratis
+          {/* DOS PUERTAS (Sergio, 2026-10-03): crear cuenta o entrar, igual
+              para todos. Ser profesional se pide ya dentro, en el perfil: antes
+              quien tenía una cuenta normal no sabía por dónde entrar. */}
+          <Button variant="primary" full style={{minHeight:48}} onClick={() => {
+            try { sessionStorage.setItem('nura_return_to', '/profile') } catch { /* sin memoria */ }
+            navigate(DEMO_MODE ? '/login' : '/entrar?modo=crear')
+          }}>
+            Crear cuenta
           </Button>
-          <Button variant="secondary" full onClick={() => navigate('/register-helper')}
+          <Button variant="secondary" full onClick={() => navigate('/entrar')}
             style={{minHeight:48, marginTop:'var(--space-10)', color:'var(--purple-ink)', boxShadow:'var(--glass-control-shadow)'}}>
-            <User size={15} aria-hidden="true" /> Quiero ser profesional
-          </Button>
-          {/* Sin esto, una profesional con acceso que cambiaba de movil no
-              tenia por donde entrar: solo "crear cuenta" y "darse de alta". */}
-          <Button variant="secondary" full onClick={() => navigate('/entrar')} style={professionalInfoButton}>
-            ¿Ya tienes acceso de profesional? Entra
+            Entrar
           </Button>
         </div>
 
@@ -795,14 +796,14 @@ export default function Profile() {
         {/* ── ¿TIENES ALGO QUE OFRECER? (usuario) ─────────────────── */}
         {!user.isHelper && (
           <section className={styles.seccion} style={entrada(160)}>
-            <h2 className={styles.titulo}>¿Tienes algo que ofrecer?</h2>
+            <h2 className={styles.titulo}>Hazte profesional</h2>
             <div className={styles.tarjeta}>
               <p className={styles.tarjetaTexto}>
-                ¿Ayudas a otras personas con lo que sabes hacer? Crea tu ficha y te llegarán los mensajes de quien te necesite.
+                ¿Ayudas a otras personas con lo que sabes hacer? Crea tu ficha con tu cuenta: te encontrarán en Nüra y te llegarán los mensajes de quien te necesite.
               </p>
-              <Button variant="secondary" full onClick={() => navigate('/register-helper')}
-                style={{marginTop:'var(--space-16)', color:'var(--purple-ink)'}}>
-                <User size={15} aria-hidden="true" /> Crear perfil profesional
+              <Button variant="primary" full onClick={() => navigate('/register-helper')}
+                style={{marginTop:'var(--space-16)'}}>
+                <User size={15} aria-hidden="true" /> Hazte profesional
               </Button>
               <Button variant="secondary" full onClick={() => navigate('/profesionales')} style={professionalInfoButton}>
                 Cómo funciona para profesionales

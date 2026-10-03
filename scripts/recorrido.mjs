@@ -49,6 +49,8 @@ async function escribirEn(p, texto, filtro = () => true) {
 }
 
 const texto = p => p.evaluate(() => (document.body.innerText || '').replace(/\s+/g, ' '))
+// Primero la cuenta, después el alta (2026-10-03): una cuenta de la demo.
+const conCuenta = (p, name) => p.evaluate(n => localStorage.setItem('nura_user', JSON.stringify({ name: n, phone: '612345678', cuentaDemo: '+34612345678', joined: new Date().toISOString() })), name)
 const tocar = (p, re) => p.evaluate(r => {
   const x = [...document.querySelectorAll('button,a')]
     .filter(b => b.checkVisibility?.())
@@ -100,15 +102,17 @@ console.log('\n── La persona que busca ayuda ──')
   await tocar(p, /Escribir a/)
   await espera(2000)
   paso('para escribir, pide identificarse', (await p.evaluate(() => location.pathname)) === '/login')
+  // Cuenta completa (2026-10-03): nombre, teléfono y contraseña, y el
+  // código del SMS simulado, que aparece arriba como una notificación.
+  await p.type('#login-name', 'Sergio', { delay: 6 })
   await p.type('#login-phone', '612345678', { delay: 6 })
-  await tocar(p, /Continuar/)
-  await espera(1600)
-  await p.focus('#login-code')
-  await p.keyboard.type('1234', { delay: 6 })
-  await tocar(p, /^Entrar$/)
-  await espera(1400)
-  await escribirEn(p, 'Sergio', 'x => /nombre/i.test(x.placeholder || "")')
-  await tocar(p, /Entrar en Nüra/)
+  await p.type('#login-pass', 'clave-de-prueba', { delay: 6 })
+  await tocar(p, /Enviarme el código/)
+  await espera(2600)
+  paso('llega el SMS simulado con el código', /Tu código de Nüra es \d{6}/.test(await texto(p)))
+  await tocar(p, /SMS de Nüra/)
+  await espera(300)
+  await tocar(p, /Crear mi cuenta/)
   await espera(3000)
   paso('abre el chat', (await p.evaluate(() => location.pathname)).startsWith('/chat/'))
   paso('guarda la fecha de alta', await p.evaluate(() => {
@@ -128,12 +132,14 @@ console.log('\n── El profesional ──')
   const p = await navegador.newPage()
   p.on('pageerror', e => errores.push('profesional: ' + String(e.message).split('\n')[0].slice(0, 60)))
 
+  await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
+  await conCuenta(p, 'Marta Ferrer')
   await p.goto(BASE + '/register-helper', { waitUntil: 'networkidle0' })
   await espera(2600)
-  paso('el alta recibe', /Perfil profesional|llamas/.test(await texto(p)))
+  paso('el alta recibe, sin volver a pedir el nombre de la cuenta', /Encantada, Marta\. ¿Cuál es tu especialidad/.test(await texto(p)) && !/¿Cómo te llamas/.test(await texto(p)))
 
   // El contacto: primero un móvil (2026-10-01: el alta pide un correo).
-  const respuestas = ['Marta Ferrer', 'Logopeda infantil', 'Grado en Logopedia UB',
+  const respuestas = ['Logopeda infantil', 'Grado en Logopedia UB',
     'Gracia', '45 euros la sesión', 'Trabajo con juego', '612 345 678', 'marta@ejemplo.com']
   await escribirEn(p, respuestas[0], 'x => x.getBoundingClientRect().width > 100')
   await p.keyboard.press('Enter')
@@ -634,10 +640,11 @@ console.log('\n── Alta de profesional: una conversación natural ──')
   p.on('request', r => (/supabase\.co|functions\/v1/.test(r.url()) && r.method() !== 'GET') ? r.respond({ status: 503, body: '{}' }) : r.continue())
   await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
   await p.evaluate(() => { localStorage.clear(); sessionStorage.clear() })
+  await conCuenta(p, 'Marta Ruiz')
   await p.goto(BASE + '/register-helper', { waitUntil: 'networkidle0' })
   await espera(1500)
   const decir = async t => { await escribirEn(p, t); await p.keyboard.press('Enter'); await espera(3200) }
-  for (const t of ['Marta Ruiz', 'limpieza de casas', 'no tengo']) await decir(t)
+  for (const t of ['limpieza de casas', 'no tengo']) await decir(t)
   let r = await texto(p)
   paso('usa el nombre de pila', /Encantada, Marta\./.test(r) && !/Encantada, Marta Ruiz/.test(r))
   paso('sin formación, una frase breve antes de seguir', /la experiencia también cuenta/.test(r))
@@ -655,12 +662,13 @@ console.log('\n── Tras el alta, sin recargar: Inicio la saluda como profesio
   p.on('pageerror', e => errores.push('alta sin recargar: ' + String(e.message).split('\n')[0].slice(0, 60)))
   await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
   await p.evaluate(() => { localStorage.clear(); sessionStorage.clear() })
+  await conCuenta(p, 'Nuria Camps Ferrer')
   await p.goto(BASE + '/', { waitUntil: 'networkidle0' }); await espera(1500)
   const antes = await texto(p)
   await p.evaluate(() => window.history.pushState({}, '', '/register-helper')); await p.evaluate(() => window.dispatchEvent(new PopStateEvent('popstate')))
   await espera(1500)
   const decir = async t => { await escribirEn(p, t); await p.keyboard.press('Enter'); await espera(3000) }
-  for (const t of ['Nuria Camps Ferrer', 'logopeda infantil', 'Grado en Logopedia por la UB', 'Barcelona, Sant Andreu', '45€ la sesión', 'Trabajo con juego y doy pautas a las familias', 'nuria.camps@ejemplo.com']) await decir(t)
+  for (const t of ['logopeda infantil', 'Grado en Logopedia por la UB', 'Barcelona, Sant Andreu', '45€ la sesión', 'Trabajo con juego y doy pautas a las familias', 'nuria.camps@ejemplo.com']) await decir(t)
   await espera(4500)
   const r = await texto(p)
   paso('tras darse de alta, Inicio dice «tu ficha ya está publicada» (sin recargar)', /Por ejemplo:/.test(antes) && new URL(p.url()).pathname === '/' && /Nuria, tu ficha ya está publicada/.test(r) && !/Por ejemplo:/.test(r), new URL(p.url()).pathname + ' · ' + r.slice(0, 80))
@@ -916,7 +924,9 @@ console.log('\n── La primera vez: preguntas de quien no conoce Nüra ──'
   const sinResultados = !/Ver perfil/.test(r)
   await tocar(p, /^Darme de alta como profesional$/)
   await espera(1500)
-  paso('«quiero ofrecer mis servicios»: al alta de profesional, sin recomendar a nadie', sinResultados && /\/register-helper$/.test(p.url()), p.url().replace(BASE, ''))
+  // Sin cuenta, primero se crea (2026-10-03) y después se vuelve al alta.
+  const vuelveAlAlta = await p.evaluate(() => sessionStorage.getItem('nura_return_to'))
+  paso('«quiero ofrecer mis servicios»: sin recomendar a nadie, primero crear la cuenta y después el alta', sinResultados && /\/login$/.test(p.url()) && vuelveAlAlta === '/register-helper', p.url().replace(BASE, '') + ' → ' + vuelveAlAlta)
   await p.close()
 }
 
@@ -1259,12 +1269,12 @@ console.log('\n── La flecha nunca saca de Nüra ──')
   await atras(p); await espera(1000)
   const vuelta = new URL(p.url()).pathname + new URL(p.url()).search
   paso('navegando dentro, la flecha vuelve a la pantalla anterior', enPerfil.startsWith('/helper/') && vuelta === '/explore?c=hogar', `${enPerfil} → ${vuelta}`)
-  // Sin cuenta, «Escribir» lleva a «Tu teléfono»: con flecha, se vuelve.
+  // Sin cuenta, «Escribir» lleva a «Crea tu cuenta»: con flecha, se vuelve.
   await p.goto(BASE + '/explore?c=hogar', { waitUntil: 'networkidle0' }); await espera(1800)
   await p.evaluate(() => [...document.querySelectorAll('button')].find(b => b.textContent.trim() === 'Escribir')?.click()); await espera(1500)
   const enLogin = new URL(p.url()).pathname
   await atras(p); await espera(1000)
-  paso('«Tu teléfono» tiene flecha y vuelve a donde se estaba', enLogin === '/login' && new URL(p.url()).pathname === '/explore', `${enLogin} → ${new URL(p.url()).pathname}`)
+  paso('«Crea tu cuenta» tiene flecha y vuelve a donde se estaba', enLogin === '/login' && new URL(p.url()).pathname === '/explore', `${enLogin} → ${new URL(p.url()).pathname}`)
   await p.close()
 }
 
@@ -1321,8 +1331,9 @@ console.log('\n── El profesional: su inicio y contestar desde la bandeja ─
   await p.setViewport({ width: 393, height: 760, isMobile: true, hasTouch: true })
   await p.goto(BASE + '/', { waitUntil: 'networkidle0' })
   await p.evaluate(() => { localStorage.clear(); sessionStorage.clear() })
+  await conCuenta(p, 'Rosa García López')
   await p.goto(BASE + '/register-helper', { waitUntil: 'networkidle0' }); await espera(1500)
-  for (const t of ['Rosa García López', 'cuidadora de personas mayores', 'Auxiliar de enfermería', 'Barcelona, Sants', '14€ la hora', 'Soy paciente', 'rosa.prueba@ejemplo.com']) {
+  for (const t of ['cuidadora de personas mayores', 'Auxiliar de enfermería', 'Barcelona, Sants', '14€ la hora', 'Soy paciente', 'rosa.prueba@ejemplo.com']) {
     await p.evaluate(() => [...document.querySelectorAll('input, textarea')].find(x => x.checkVisibility?.())?.focus()); await p.keyboard.type(t); await p.keyboard.press('Enter'); await espera(2500)
   }
   await espera(2500)
